@@ -1016,6 +1016,14 @@
             "issue": "http://anglebug.com/42266906"
         },
         {
+            "name": "generate_fragment_shading_rate_attchement_with_cpu",
+            "category": "Features",
+            "description": [
+                "Generate the fragment shading rates on the CPU instead of a compute shader"
+            ],
+            "issue": "http://anglebug.com/42266906"
+        },
+        {
             "name": "supports_fragment_shader_pixel_interlock",
             "category": "Features",
             "description": [

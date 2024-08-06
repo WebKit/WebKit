@@ -110,8 +110,15 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
     bool clearColor   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
     bool clearDepth   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
     bool clearStencil = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
+
     // TODO(anglebug.com/42267012): support clearing depth and stencil buffers.
-    ASSERT(!clearDepth && !clearStencil && clearColor);
+    if (clearDepth || clearStencil)
+    {
+        UNIMPLEMENTED();
+        return angle::Result::Continue;
+    }
+
+    ASSERT(clearColor);
 
     ContextWgpu *contextWgpu             = GetImplAs<ContextWgpu>(context);
     gl::ColorF colorClearValue           = context->getState().getColorClearValue();
@@ -253,15 +260,13 @@ angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
 
     GLuint outputSkipBytes = 0;
     PackPixelsParams params;
-    const angle::Format &angleFormat = GetFormatFromFormatType(format, type);
     ANGLE_TRY(webgpu::ImageHelper::getReadPixelsParams(contextWgpu, pack, packBuffer, format, type,
                                                        origArea, clippedArea, &params,
                                                        &outputSkipBytes));
 
-    RenderTargetWgpu *renderTarget = getReadPixelsRenderTarget(angleFormat);
-    ANGLE_TRY(
-        renderTarget->getImage()->readPixels(contextWgpu, params.area, params, angleFormat,
-                                             static_cast<uint8_t *>(pixels) + outputSkipBytes));
+    webgpu::ImageHelper *sourceImageHelper = getReadPixelsRenderTarget()->getImage();
+    ANGLE_TRY(sourceImageHelper->readPixels(contextWgpu, params.area, params,
+                                            static_cast<uint8_t *>(pixels) + outputSkipBytes));
 
     return angle::Result::Continue;
 }
@@ -394,12 +399,8 @@ angle::Result FramebufferWgpu::getSamplePosition(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-RenderTargetWgpu *FramebufferWgpu::getReadPixelsRenderTarget(const angle::Format &format) const
+RenderTargetWgpu *FramebufferWgpu::getReadPixelsRenderTarget() const
 {
-    if (format.hasDepthOrStencilBits())
-    {
-        return mRenderTargetCache.getDepthStencil();
-    }
     return mRenderTargetCache.getColorRead(mState);
 }
 

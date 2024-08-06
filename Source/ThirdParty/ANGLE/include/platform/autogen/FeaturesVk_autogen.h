@@ -938,6 +938,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/42266906"
     };
 
+    FeatureInfo generateFragmentShadingRateAttchementWithCpu = {
+        "generateFragmentShadingRateAttchementWithCpu",
+        FeatureCategory::VulkanFeatures,
+        "Generate the fragment shading rates on the CPU instead of a compute shader",
+        &members, "http://anglebug.com/42266906"
+    };
+
     FeatureInfo supportsFragmentShaderPixelInterlock = {
         "supportsFragmentShaderPixelInterlock",
         FeatureCategory::VulkanFeatures,

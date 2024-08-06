@@ -274,7 +274,8 @@ angle::Result WindowSurfaceWgpu::initializeImpl(const egl::Display *display)
     ANGLE_TRY(getCurrentWindowSize(display, &size));
 
     wgpu::SwapChainDescriptor swapChainDesc = {};
-    swapChainDesc.usage                     = wgpu::TextureUsage::RenderAttachment;
+    swapChainDesc.usage = wgpu::TextureUsage::RenderAttachment | wgpu::TextureUsage::CopySrc |
+                          wgpu::TextureUsage::CopyDst;
     swapChainDesc.format                    = wgpu::TextureFormat::BGRA8Unorm;
     swapChainDesc.width                     = size.width;
     swapChainDesc.height                    = size.height;
@@ -308,7 +309,8 @@ angle::Result WindowSurfaceWgpu::updateCurrentTexture(const egl::Display *displa
     wgpu::Texture texture  = mSwapChain.GetCurrentTexture();
     wgpu::TextureView view = mSwapChain.GetCurrentTextureView();
 
-    ANGLE_TRY(mColorAttachment.texture.initExternal(texture));
+    ANGLE_TRY(mColorAttachment.texture.initExternal(angle::FormatID::B8G8R8A8_UNORM,
+                                                    angle::FormatID::B8G8R8A8_UNORM, texture));
 
     mColorAttachment.renderTarget.set(&mColorAttachment.texture, view, webgpu::LevelIndex(0), 0,
                                       mColorAttachment.texture.toWgpuTextureFormat());

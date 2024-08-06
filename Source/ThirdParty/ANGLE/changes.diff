@@ -1595,7 +1595,7 @@ index 16ae6340e37283bcd49e8ea926f75a1f6f17f1d6..34aadf0c7e20c05ab4c6791ba412ae2a
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a68a63850 100644
+index faf3ce89f10dba6d83dafe4460dda337afe980e9..e2cb837dc6ac2d51a20c34d44900f15a68a63850 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -1621,16 +1621,7 @@ index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1077,6 +1087,8 @@ void DisplayMtl::initializeExtensions() const
-     // GL_NV_pixel_buffer_object
-     mNativeExtensions.pixelBufferObjectNV = true;
- 
-+    mNativeExtensions.packReverseRowOrderANGLE = true;
-+
-     if (mFeatures.hasEvents.enabled)
-     {
-         // MTLSharedEvent is only available since Metal 2.1
-@@ -1174,6 +1186,14 @@ void DisplayMtl::initializeExtensions() const
+@@ -1176,6 +1186,14 @@ void DisplayMtl::initializeExtensions() const
              mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
          }
      }
@@ -1645,7 +1636,7 @@ index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1246,6 +1266,8 @@ void DisplayMtl::initializeFeatures()
+@@ -1248,6 +1266,8 @@ void DisplayMtl::initializeFeatures()
                              supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -1654,7 +1645,7 @@ index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1436,8 +1458,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1438,8 +1458,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -1664,7 +1655,7 @@ index 54aac1963594e58f7d687dc0f253b13409a086e5..e2cb837dc6ac2d51a20c34d44900f15a
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
-@@ -1457,6 +1478,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+@@ -1459,6 +1478,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
      return false;
  #endif
  }
@@ -2691,10 +2682,10 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..43017fd33fe6be5af07864c2ec472b16
             blendable == other.blendable;
  }
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 95c5c04a77de0302e58ae7fbd8710e20947b6497..6d8f029619e651953434f27ce399de664178834e 100644
+index b16fdeab51f65588f18e9ae7c19140474fd36eb2..2ee73c386b5fb03f3c52f9ed56476de4b93336fe 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1560,6 +1560,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1573,6 +1573,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -2719,7 +2710,7 @@ index 95c5c04a77de0302e58ae7fbd8710e20947b6497..6d8f029619e651953434f27ce399de66
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1574,10 +1592,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1587,10 +1605,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -2732,7 +2723,7 @@ index 95c5c04a77de0302e58ae7fbd8710e20947b6497..6d8f029619e651953434f27ce399de66
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1600,7 +1618,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1613,7 +1631,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].
@@ -2741,7 +2732,7 @@ index 95c5c04a77de0302e58ae7fbd8710e20947b6497..6d8f029619e651953434f27ce399de66
      UNREACHABLE();
      return false;
  #    else
-@@ -1649,8 +1667,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
+@@ -1662,8 +1680,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
                                                 const Context *context,
                                                 NSUInteger currentRenderTargetSize)
  {
@@ -2823,10 +2814,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 9a6129de41e94f452c5529a5266aef6a74a2445c..80e568f2b10c85cb66576f49e6ea86c175ebab36 100644
+index 9a4828b31126de00a6152886ecd09797fa5e3f66..a404ad2d33bdb4031e7930ca0b93da57030e358c 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5926,6 +5926,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5929,6 +5929,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -3359,10 +3350,10 @@ index 969cd2f96d302d74dd3515ac842b93eb51387cd2..730d0ffa536caf536ec750e2bac82c81
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index fd0de447a80fcf20e600e0dcbb603216b7747076..24e987b86b833a1dc36622f5dc084eb1c8e42d72 100644
+index e88058987f8106847c4df94afc7cb385cbb19d62..0039bd26c9f925f7aa65c8ad63d26e1beb10c78b 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -203,6 +203,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -204,6 +204,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -3371,10 +3362,10 @@ index fd0de447a80fcf20e600e0dcbb603216b7747076..24e987b86b833a1dc36622f5dc084eb1
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 25f26dc7dba0eaa092f9473b2de9c0c33d8571d0..350e080bac811bb6eee547d064aa16a6c043bf4e 100644
+index b9878bf856c75e1bd044108bd870c1976db88fab..15aab7123eca8c7efcb8f2754ec393087e52c8d0 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -203,6 +203,7 @@ enum class Feature
+@@ -204,6 +204,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

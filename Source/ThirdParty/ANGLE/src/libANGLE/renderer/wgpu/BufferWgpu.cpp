@@ -77,7 +77,8 @@ angle::Result BufferWgpu::setData(const gl::Context *context,
 
     // Allocate a new buffer if the current one is invalid, the size is different, or the current
     // buffer cannot be mapped for writing when data needs to be uploaded.
-    if (!mBuffer.valid() || mBuffer.size() != size || (hasData && !mBuffer.canMapForWrite()))
+    if (!mBuffer.valid() || mBuffer.requestedSize() != size ||
+        (hasData && !mBuffer.canMapForWrite()))
     {
         // Allocate a new buffer
         ANGLE_TRY(mBuffer.initBuffer(device, size, GetDefaultWGPUBufferUsageForBinding(target),

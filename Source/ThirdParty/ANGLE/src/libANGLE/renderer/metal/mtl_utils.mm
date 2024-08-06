@@ -1511,6 +1511,19 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
             case 6:
                 family = MTLGPUFamilyApple6;
                 break;
+            case 7:
+                family = MTLGPUFamilyApple7;
+                break;
+#        if __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 150000
+            case 8:
+                family = MTLGPUFamilyApple8;
+                break;
+#        endif
+#        if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000
+            case 9:
+                family = MTLGPUFamilyApple9;
+                break;
+#        endif
 #    endif
             default:
                 return false;

@@ -185,6 +185,17 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotat
     }
 #endif
 
+#if (DE_OS == DE_OS_WIN32) || (DE_OS == DE_OS_UNIX) || (DE_OS == DE_OS_OSX)
+    {
+        std::vector<eglw::EGLAttrib> webgpuAttribs =
+            initAttribs(EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE);
+
+        auto *webgpuFactory = new ANGLENativeDisplayFactory("angle-webgpu", "ANGLE WebGPU Display",
+                                                            webgpuAttribs, &mEvents);
+        m_nativeDisplayFactoryRegistry.registerFactory(webgpuFactory);
+    }
+#endif
+
 #if (DE_OS == DE_OS_OSX)
     {
         std::vector<eglw::EGLAttrib> mtlAttribs = initAttribs(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);

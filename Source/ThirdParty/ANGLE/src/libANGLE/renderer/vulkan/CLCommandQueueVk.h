@@ -264,6 +264,7 @@ class CLCommandQueueVk : public CLCommandQueueImpl
 
     // Resource reference capturing during execution
     cl::MemoryPtrs mMemoryCaptures;
+    cl::KernelPtrs mKernelCaptures;
 
     // Check to see if flush/finish can be skipped
     bool mHasAnyCommandsPendingSubmission;

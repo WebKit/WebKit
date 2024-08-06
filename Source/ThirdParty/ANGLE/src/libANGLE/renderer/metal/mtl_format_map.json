@@ -410,11 +410,11 @@
                 "colorRenderable": "true"
             },
             "MTLPixelFormatR32Float":{
-                "filterable": "display->supportsMacGPUFamily(1)",
+                "filterable": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "writable": "true",
                 "blendable": "true",
                 "multisample": "true",
-                "resolve": "display->supportsMacGPUFamily(1)",
+                "resolve": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "colorRenderable": "true"
             },
             "MTLPixelFormatBGR10A2Unorm":{
@@ -602,19 +602,19 @@
                 "colorRenderable": "true"
             },
             "MTLPixelFormatRG32Float":{
-                "filterable": "display->supportsMacGPUFamily(1)",
+                "filterable": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "writable": "true",
                 "blendable": "true",
                 "multisample": "display->supportsEitherGPUFamily(7, 1)",
-                "resolve": "display->supportsMacGPUFamily(1)",
+                "resolve": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "colorRenderable": "true"
             },
             "MTLPixelFormatRGBA32Float":{
-                "filterable": "display->supportsMacGPUFamily(1)",
+                "filterable": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "writable": "true",
-                "blendable": "display->supportsMacGPUFamily(1)",
+                "blendable": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "multisample": "display->supportsEitherGPUFamily(7, 1)",
-                "resolve": "display->supportsMacGPUFamily(1)",
+                "resolve": "display->supportsMacGPUFamily(1) || (display->supportsAppleGPUFamily(7) && display->supports32BitFloatFiltering())",
                 "colorRenderable": "true"
             },
             "MTLPixelFormatDepth32Float":{

@@ -25,6 +25,11 @@ namespace rx
 
 namespace
 {
+#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::YesIfAvailable;
+#else
+constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::No;
+#endif
 
 std::string CreateExtensionString(const NameVersionVector &extList)
 {
@@ -47,9 +52,9 @@ angle::Result CLPlatformVk::initBackendRenderer()
 {
     ASSERT(mRenderer != nullptr);
 
-    ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0,
-                                    vk::UseDebugLayers::YesIfAvailable, getWSIExtension(),
-                                    getWSILayer(), getWindowSystem(), angle::FeatureOverrides{}));
+    ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0, kUseDebugLayers,
+                                    getWSIExtension(), getWSILayer(), getWindowSystem(),
+                                    angle::FeatureOverrides{}));
 
     return angle::Result::Continue;
 }

@@ -30,6 +30,34 @@ wgpu::TextureDescriptor TextureDescriptorFromTexture(const wgpu::Texture &textur
     descriptor.viewFormatCount = 0;
     return descriptor;
 }
+
+size_t GetSafeBufferMapOffset(size_t offset)
+{
+    static_assert(gl::isPow2(kBufferMapOffsetAlignment));
+    return roundDownPow2(offset, kBufferMapOffsetAlignment);
+}
+
+size_t GetSafeBufferMapSize(size_t offset, size_t size)
+{
+    // The offset is rounded down for alignment and the size is rounded up. The safe size must cover
+    // both of these offsets.
+    size_t offsetChange = offset % kBufferMapOffsetAlignment;
+    static_assert(gl::isPow2(kBufferMapSizeAlignment));
+    return roundUpPow2(size + offsetChange, kBufferMapSizeAlignment);
+}
+
+uint8_t *AdjustMapPointerForOffset(uint8_t *mapPtr, size_t offset)
+{
+    // Fix up a map pointer that has been adjusted for alignment
+    size_t offsetChange = offset % kBufferMapOffsetAlignment;
+    return mapPtr + offsetChange;
+}
+
+const uint8_t *AdjustMapPointerForOffset(const uint8_t *mapPtr, size_t offset)
+{
+    return AdjustMapPointerForOffset(const_cast<uint8_t *>(mapPtr), offset);
+}
+
 }  // namespace
 
 ImageHelper::ImageHelper() {}
@@ -52,8 +80,12 @@ angle::Result ImageHelper::initImage(angle::FormatID intendedFormatID,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::initExternal(wgpu::Texture externalTexture)
+angle::Result ImageHelper::initExternal(angle::FormatID intendedFormatID,
+                                        angle::FormatID actualFormatID,
+                                        wgpu::Texture externalTexture)
 {
+    mIntendedFormatID    = intendedFormatID;
+    mActualFormatID      = actualFormatID;
     mTextureDescriptor   = TextureDescriptorFromTexture(externalTexture);
     mFirstAllocatedLevel = gl::LevelIndex(0);
     mTexture             = externalTexture;
@@ -228,21 +260,22 @@ angle::Result ImageHelper::getReadPixelsParams(rx::ContextWgpu *contextWgpu,
 angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
                                       const gl::Rectangle &area,
                                       const rx::PackPixelsParams &packPixelsParams,
-                                      const angle::Format &aspectFormat,
                                       void *pixels)
 {
     wgpu::Device device          = contextWgpu->getDisplay()->getDevice();
     wgpu::CommandEncoder encoder = device.CreateCommandEncoder();
     wgpu::Queue queue            = contextWgpu->getDisplay()->getQueue();
-    BufferHelper bufferHelper;
+
+    const angle::Format &actualFormat = angle::Format::Get(mActualFormatID);
     uint32_t textureBytesPerRow =
-        roundUp(aspectFormat.pixelBytes * area.width, kCopyBufferAlignment);
+        roundUp(actualFormat.pixelBytes * area.width, kCopyBufferAlignment);
     wgpu::TextureDataLayout textureDataLayout;
     textureDataLayout.bytesPerRow  = textureBytesPerRow;
     textureDataLayout.rowsPerImage = area.height;
 
     size_t allocationSize = textureBytesPerRow * area.height;
 
+    BufferHelper bufferHelper;
     ANGLE_TRY(bufferHelper.initBuffer(device, allocationSize,
                                       wgpu::BufferUsage::MapRead | wgpu::BufferUsage::CopyDst,
                                       MapAtCreation::No));
@@ -269,7 +302,7 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
 
     ANGLE_TRY(bufferHelper.mapImmediate(contextWgpu, wgpu::MapMode::Read, 0, allocationSize));
     const uint8_t *readPixelBuffer = bufferHelper.getMapReadPointer(0, allocationSize);
-    PackPixels(packPixelsParams, aspectFormat, textureBytesPerRow, readPixelBuffer,
+    PackPixels(packPixelsParams, actualFormat, textureBytesPerRow, readPixelBuffer,
                static_cast<uint8_t *>(pixels));
     return angle::Result::Continue;
 }
@@ -349,7 +382,7 @@ angle::Result BufferHelper::initBuffer(wgpu::Device device,
                                        MapAtCreation mappedAtCreation)
 {
     wgpu::BufferDescriptor descriptor;
-    descriptor.size             = size;
+    descriptor.size             = roundUp(size, kBufferSizeAlignment);
     descriptor.usage            = usage;
     descriptor.mappedAtCreation = mappedAtCreation == MapAtCreation::Yes;
 
@@ -363,6 +396,8 @@ angle::Result BufferHelper::initBuffer(wgpu::Device device,
     {
         mMappedState.reset();
     }
+
+    mRequestedSize = size;
 
     return angle::Result::Continue;
 }
@@ -384,7 +419,8 @@ angle::Result BufferHelper::mapImmediate(ContextWgpu *context,
     callbackInfo.userdata = &mapResult;
 
     wgpu::FutureWaitInfo waitInfo;
-    waitInfo.future = mBuffer.MapAsync(mode, offset, size, callbackInfo);
+    waitInfo.future = mBuffer.MapAsync(mode, GetSafeBufferMapOffset(offset),
+                                       GetSafeBufferMapSize(offset, size), callbackInfo);
 
     wgpu::Instance instance = context->getDisplay()->getInstance();
     ANGLE_WGPU_TRY(context, instance.WaitAny(1, &waitInfo, -1));
@@ -412,10 +448,11 @@ uint8_t *BufferHelper::getMapWritePointer(size_t offset, size_t size) const
     ASSERT(mMappedState->offset <= offset);
     ASSERT(mMappedState->offset + mMappedState->size >= offset + size);
 
-    void *mapPtr = mBuffer.GetMappedRange(offset, size);
+    void *mapPtr =
+        mBuffer.GetMappedRange(GetSafeBufferMapOffset(offset), GetSafeBufferMapSize(offset, size));
     ASSERT(mapPtr);
 
-    return static_cast<uint8_t *>(mapPtr);
+    return AdjustMapPointerForOffset(static_cast<uint8_t *>(mapPtr), offset);
 }
 
 const uint8_t *BufferHelper::getMapReadPointer(size_t offset, size_t size) const
@@ -426,10 +463,11 @@ const uint8_t *BufferHelper::getMapReadPointer(size_t offset, size_t size) const
     ASSERT(mMappedState->offset + mMappedState->size >= offset + size);
 
     // GetConstMappedRange is used for reads whereas GetMappedRange is only used for writes.
-    const void *mapPtr = mBuffer.GetConstMappedRange(offset, size);
+    const void *mapPtr = mBuffer.GetConstMappedRange(GetSafeBufferMapOffset(offset),
+                                                     GetSafeBufferMapSize(offset, size));
     ASSERT(mapPtr);
 
-    return static_cast<const uint8_t *>(mapPtr);
+    return AdjustMapPointerForOffset(static_cast<const uint8_t *>(mapPtr), offset);
 }
 
 const std::optional<BufferMapState> &BufferHelper::getMappedState() const
@@ -454,9 +492,15 @@ wgpu::Buffer &BufferHelper::getBuffer()
     return mBuffer;
 }
 
-uint64_t BufferHelper::size() const
+uint64_t BufferHelper::requestedSize() const
+{
+    return mRequestedSize;
+}
+
+uint64_t BufferHelper::actualSize() const
 {
     return mBuffer ? mBuffer.GetSize() : 0;
 }
+
 }  // namespace webgpu
 }  // namespace rx

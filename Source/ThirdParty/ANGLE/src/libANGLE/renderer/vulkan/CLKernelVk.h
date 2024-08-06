@@ -82,6 +82,7 @@ class CLKernelVk : public CLKernelImpl
     const CLKernelArguments &getArgs() { return mArgs; }
     vk::AtomicBindingPointer<vk::PipelineLayout> &getPipelineLayout() { return mPipelineLayout; }
     vk::DescriptorSetLayoutPointerArray &getDescriptorSetLayouts() { return mDescriptorSetLayouts; }
+    cl::Kernel &getFrontendObject() { return const_cast<cl::Kernel &>(mKernel); }
 
     angle::Result getOrCreateComputePipeline(vk::PipelineCacheAccess *pipelineCache,
                                              const cl::NDRange &ndrange,
