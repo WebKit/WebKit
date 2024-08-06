@@ -5487,7 +5487,7 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-external-module.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-inline-classic.html [ Pass Failure ]
 
-webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
+webkit.org/b/220325 imported/w3c/web-platform-tests/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
 
 # Tests need updating relating to Highlight Spec
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/css-target-text-decoration-001.html [ ImageOnlyFailure ]

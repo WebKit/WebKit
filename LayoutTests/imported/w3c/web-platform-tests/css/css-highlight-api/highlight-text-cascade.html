@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>Multiple custom highlight pseudo elements.</title>
     <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#creating-highlights">
-    <link rel="match" href="highlight-text-expected.html">
-    <metad name="assert" content="Multiple highlights should be able to be specified.">
-        <style>
+    <link rel="match" href="highlight-text-cascade-ref.html">
+    <meta name="assert" content="Multiple highlights should be able to be specified.">
+    <style>
         #out::highlight(example-highlight) {
             background-color: yellow;
             color:green;
@@ -15,7 +15,7 @@
             background-color: blue;
             color:red;
         }
-        </style>
+    </style>
 </head>
 <body>
     <div id="out"><span id="text1">One two three</span></div>

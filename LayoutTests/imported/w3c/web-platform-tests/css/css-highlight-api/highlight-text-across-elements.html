@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Custom highlight pseudo elements across elements.</title>
-  <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#painting">
-  <link rel="match" href="highlight-text-expected.html">
-  <meta name="assert" content="Highlights should be able to be specified across elements.">
+    <meta charset="utf-8">
+    <title>Custom highlight pseudo elements across elements.</title>
+    <link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#painting">
+    <link rel="match" href="highlight-text-across-elements-ref.html">
+    <meta name="assert" content="Highlights should be able to be specified across elements.">
     <style>
-    ::highlight(example-highlight1) {
-        background-color: yellow;
-        color:green;
-    }
-    ::highlight(example-highlight2) {
-        background-color: blue;
-        color:red;
-    }
-    ::highlight(example-highlight3) {
-        background-color: purple;
-        color:pink;
-    }
+        ::highlight(example-highlight1) {
+            background-color: yellow;
+            color:green;
+        }
+        ::highlight(example-highlight2) {
+            background-color: blue;
+            color:red;
+        }
+        ::highlight(example-highlight3) {
+            background-color: purple;
+            color:pink;
+        }
     </style>
 </head>
 <body>
