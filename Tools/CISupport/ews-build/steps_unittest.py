@@ -2949,7 +2949,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
                         logEnviron=False,
                         maxTime=18000,
                         timeout=19800,
-                        command=['/bin/sh', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --wpe --results-directory layout-test-results --debug-rwt-logging --skip-failing-tests --fully-parallel --repeat-each=10 \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?exclude=(Document|Window|HTML.*)\' \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?include=HTML.*\' \'try/crash/for/test_with spaces " and \'"\'"\' quotes\' \'try/crash/for/test_with_brackets[]{}\' 2>&1 | Tools/Scripts/filter-test-logs layout']
+                        command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --wpe --results-directory layout-test-results --debug-rwt-logging --skip-failing-tests --fully-parallel --repeat-each=10 \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?exclude=(Document|Window|HTML.*)\' \'imported/w3c/web-platform-tests/html/dom/idlharness.https.html?include=HTML.*\' \'try/crash/for/test_with spaces " and \'"\'"\' quotes\' \'try/crash/for/test_with_brackets[]{}\' 2>&1 | Tools/Scripts/filter-test-logs layout']
                         )
             + 0,
         )
