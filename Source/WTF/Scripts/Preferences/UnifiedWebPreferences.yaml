@@ -804,6 +804,21 @@ BeaconAPIEnabled:
     WebCore:
       default: false
 
+BlobFileAccessEnforcementEnabled:
+  type: bool
+  status: testable
+  category: security
+  humanReadableName: "Enforce blob backed file access valid for web process"
+  humanReadableDescription: "Validate file backed blobs were created by the correct web process"
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 BlobRegistryTopOriginPartitioningEnabled:
   type: bool
   status: stable

@@ -200,17 +200,18 @@ void WebPageProxy::loadRecentSearches(IPC::Connection& connection, const String&
     m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
-void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, std::optional<FrameIdentifier> frameID)
+std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
-    if (!hasRunningProcess())
-        return;
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return std::nullopt;
+    }
     if (frameID) {
         if (auto* frame = WebFrameProxy::webFrame(*frameID)) {
-            WebPasteboardProxy::singleton().grantAccessToCurrentData(frame->process(), pasteboardName);
-            return;
+            return WebPasteboardProxy::singleton().grantAccessToCurrentData(frame->process(), pasteboardName, WTFMove(completionHandler));
         }
     }
-    WebPasteboardProxy::singleton().grantAccessToCurrentData(m_legacyMainFrameProcess, pasteboardName);
+    return WebPasteboardProxy::singleton().grantAccessToCurrentData(m_legacyMainFrameProcess, pasteboardName, WTFMove(completionHandler));
 }
 
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)

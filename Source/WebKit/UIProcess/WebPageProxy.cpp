@@ -1696,21 +1696,21 @@ void WebPageProxy::tryCloseTimedOut()
     closePage();
 }
 
-void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, SandboxExtension::Handle& sandboxExtensionHandle, bool checkAssumedReadAccessToResourceURL)
+void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtension::Handle>)>&& completionHandler)
 {
     if (!url.protocolIsFile())
-        return;
+        return completionHandler(std::nullopt);
 
 #if HAVE(AUDIT_TOKEN)
     // If the process is still launching then it does not have a PID yet. We will take care of creating the sandbox extension
     // once the process has finished launching.
     if (process.isLaunching() || process.wasTerminated())
-        return;
+        return completionHandler(std::nullopt);
 #endif
-
+    SandboxExtension::Handle sandboxExtensionHandle;
     if (!resourceDirectoryURL.isEmpty()) {
         if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL))
-            return;
+            return completionHandler(std::nullopt);
 
         bool createdExtension = false;
 #if HAVE(AUDIT_TOKEN)
@@ -1730,13 +1730,15 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         }
 
         if (createdExtension) {
-            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
+            process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string(), [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(WTFMove(sandboxExtensionHandle));
+            });
             return;
         }
     }
 
     if (process.hasAssumedReadAccessToURL(url))
-        return;
+        return completionHandler(std::nullopt);
 
     // Inspector resources are in a directory with assumed access.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!WebKit::isInspectorPage(*this));
@@ -1760,6 +1762,11 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 
     if (createdExtension) {
         willAcquireUniversalFileReadSandboxExtension(process);
+        auto baseURL = url.truncatedForUseAsBase();
+        auto basePath = baseURL.fileSystemPath();
+        process.assumeReadAccessToBaseURL(*this, basePath, [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(WTFMove(sandboxExtensionHandle));
+        });
         return;
     }
 
@@ -1772,7 +1779,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     auto baseURL = url.truncatedForUseAsBase();
     auto basePath = baseURL.fileSystemPath();
     if (basePath.isNull())
-        return;
+        return completionHandler(std::nullopt);
 #if HAVE(AUDIT_TOKEN)
     if (process.connection() && process.connection()->getAuditToken()) {
         if (auto handle = SandboxExtension::createHandleForReadByAuditToken(basePath, *(process.connection()->getAuditToken()))) {
@@ -1789,7 +1796,9 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     }
 
     if (createdExtension)
-        process.assumeReadAccessToBaseURL(*this, baseURL.string());
+        process.assumeReadAccessToBaseURL(*this, baseURL.string(), [sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), completionHandler = WTFMove(completionHandler)] mutable {
+            completionHandler(WTFMove(sandboxExtensionHandle));
+        });
 }
 
 void WebPageProxy::prepareToLoadWebPage(WebProcessProxy& process, LoadParameters& parameters)
@@ -1879,21 +1888,25 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.advancedPrivacyProtections = navigation.originatorAdvancedPrivacyProtections();
     loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
     loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
-    maybeInitializeSandboxExtensionHandle(process, url, internals().pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
-    prepareToLoadWebPage(process, loadParameters);
+    maybeInitializeSandboxExtensionHandle(process, url, internals().pageLoadState.resourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, loadParameters = WTFMove(loadParameters), url, navigation = Ref { navigation }, webPageID, shouldTreatAsContinuingLoad] (std::optional<SandboxExtension::Handle> sandboxExtensionHandle) mutable {
+        if (!weakProcess || !weakThis)
+            return;
+        if (sandboxExtensionHandle)
+            loadParameters.sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle);
+        weakThis->prepareToLoadWebPage(*weakProcess, loadParameters);
 
-    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
-        preconnectTo(ResourceRequest { loadParameters.request });
+        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
+            weakThis->preconnectTo(ResourceRequest { loadParameters.request });
 
-    navigation.setIsLoadedWithNavigationShared(true);
-
-    process->markProcessAsRecentlyUsed();
-    if (!process->isLaunching() || !url.protocolIsFile())
-        process->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
-    else
-        process->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTFMove(loadParameters), internals().pageLoadState.resourceDirectoryURL(), internals().identifier, true), webPageID);
-    process->startResponsivenessTimer();
+        navigation->setIsLoadedWithNavigationShared(true);
+        weakProcess->markProcessAsRecentlyUsed();
+        if (!weakProcess->isLaunching() || !url.protocolIsFile())
+            weakProcess->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageID);
+        else
+            weakProcess->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTFMove(loadParameters), weakThis->internals().pageLoadState.resourceDirectoryURL(), weakThis->internals().identifier, true), webPageID);
+        weakProcess->startResponsivenessTimer();
+    });
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, bool isAppInitiated, API::Object* userData)
@@ -1956,17 +1969,23 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.userData = UserData(legacyMainFrameProcess().transformObjectsToHandles(userData).get());
     loadParameters.publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(loadParameters.request.url());
     loadParameters.isRequestFromClientOrUserInput = isAppInitiated;
-    const bool checkAssumedReadAccessToResourceURL = false;
     Ref process = m_legacyMainFrameProcess;
-    maybeInitializeSandboxExtensionHandle(process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
-    prepareToLoadWebPage(process, loadParameters);
+    maybeInitializeSandboxExtensionHandle(process, fileURL, resourceDirectoryURL, true, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, loadParameters = WTFMove(loadParameters), fileURL, resourceDirectoryURL] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
+        const bool checkAssumedReadAccessToResourceURL = false;
+        if (!weakThis || !weakProcess)
+            return;
+        if (sandboxExtension)
+            loadParameters.sandboxExtensionHandle = WTFMove(*sandboxExtension);
 
-    process->markProcessAsRecentlyUsed();
-    if (process->isLaunching())
-        send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTFMove(loadParameters), resourceDirectoryURL, internals().identifier, checkAssumedReadAccessToResourceURL));
-    else
-        send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)));
-    process->startResponsivenessTimer();
+        weakThis->prepareToLoadWebPage(*weakProcess, loadParameters);
+
+        weakProcess->markProcessAsRecentlyUsed();
+        if (weakProcess->isLaunching())
+            weakThis->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTFMove(loadParameters), resourceDirectoryURL, weakThis->internals().identifier, checkAssumedReadAccessToResourceURL));
+        else
+            weakThis->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)));
+        weakProcess->startResponsivenessTimer();
+    });
 
     return navigation;
 }
@@ -2028,9 +2047,12 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     prepareToLoadWebPage(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
-    process->assumeReadAccessToBaseURL(*this, baseURL);
-    process->send(Messages::WebPage::LoadData(WTFMove(loadParameters)), webPageID);
-    process->startResponsivenessTimer();
+    process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, webPageID, loadParameters = WTFMove(loadParameters)] () mutable {
+        if (!weakProcess)
+            return;
+        weakProcess->send(Messages::WebPage::LoadData(WTFMove(loadParameters)), webPageID);
+        weakProcess->startResponsivenessTimer();
+    }, true);
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequest&& simulatedRequest, WebCore::ResourceResponse&& simulatedResponse, std::span<const uint8_t> data)
@@ -2088,9 +2110,10 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     prepareToLoadWebPage(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
-    process->assumeReadAccessToBaseURL(*this, baseURL);
-    process->send(Messages::WebPage::LoadSimulatedRequestAndResponse(WTFMove(loadParameters), simulatedResponse), internals().webPageID);
-    process->startResponsivenessTimer();
+    process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, loadParameters = WTFMove(loadParameters), simulatedResponse = WTFMove(simulatedResponse), webPageID = internals().webPageID] () mutable {
+        weakProcess->send(Messages::WebPage::LoadSimulatedRequestAndResponse(WTFMove(loadParameters), simulatedResponse), webPageID);
+        weakProcess->startResponsivenessTimer();
+    });
 
     return navigation;
 }
@@ -2144,14 +2167,16 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     ] () mutable {
         loadParameters.data = htmlData->span();
         process->markProcessAsRecentlyUsed();
-        process->assumeReadAccessToBaseURL(*this, baseURL.string());
-        process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
-        if (baseURL.protocolIsFile())
-            process->addPreviouslyApprovedFileURL(baseURL);
-        if (unreachableURL.protocolIsFile())
-            process->addPreviouslyApprovedFileURL(unreachableURL);
-        send(Messages::WebPage::LoadAlternateHTML(WTFMove(loadParameters)));
-        process->startResponsivenessTimer();
+        process->assumeReadAccessToBaseURLs(*this, { baseURL.string(), unreachableURL.string() }, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, baseURL, unreachableURL, loadParameters = WTFMove(loadParameters)] () mutable {
+            if (!weakThis || !weakProcess)
+                return;
+            if (baseURL.protocolIsFile())
+                weakProcess->addPreviouslyApprovedFileURL(baseURL);
+            if (unreachableURL.protocolIsFile())
+                weakProcess->addPreviouslyApprovedFileURL(unreachableURL);
+            weakThis->send(Messages::WebPage::LoadAlternateHTML(WTFMove(loadParameters)));
+            weakProcess->startResponsivenessTimer();
+        });
     };
 
     websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, RegistrableDomain(baseURL), LoadedWebArchive::No, WTFMove(continueLoad));
@@ -2207,17 +2232,12 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
 
     SandboxExtension::Handle sandboxExtensionHandle;
 
-    String url = currentURL();
-    if (!url.isEmpty()) {
-        // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
-        maybeInitializeSandboxExtensionHandle(protectedLegacyMainFrameProcess(), URL { url }, currentResourceDirectoryURL(), sandboxExtensionHandle);
-    }
-
     if (!hasRunningProcess())
         return launchProcessForReload();
     
     Ref navigation = m_navigationState->createReloadNavigation(legacyMainFrameProcess().coreProcessIdentifier(), m_backForwardList->protectedCurrentItem());
 
+    String url = currentURL();
     if (!url.isEmpty()) {
         auto transaction = internals().pageLoadState.transaction();
         internals().pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), url });
@@ -2230,15 +2250,24 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
 
     Ref process = m_legacyMainFrameProcess;
     process->markProcessAsRecentlyUsed();
-    send(Messages::WebPage::Reload(navigation->navigationID(), options, WTFMove(sandboxExtensionHandle)));
-    process->startResponsivenessTimer();
+    if (!url.isEmpty()) {
+        // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
+        maybeInitializeSandboxExtensionHandle(protectedLegacyMainFrameProcess(), URL { url }, currentResourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, process = WTFMove(process), options = WTFMove(options), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), navigation](std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
+            if (!weakThis)
+                return;
+            if (sandboxExtension)
+                sandboxExtensionHandle = WTFMove(*sandboxExtension);
+            weakThis->send(Messages::WebPage::Reload(navigation->navigationID(), options, WTFMove(sandboxExtensionHandle)));
+            process->startResponsivenessTimer();
 
-    if (shouldForceForegroundPriorityForClientNavigation())
-        navigation->setClientNavigationActivity(process->throttler().foregroundActivity("Client reload"_s));
+            if (weakThis->shouldForceForegroundPriorityForClientNavigation())
+                navigation->setClientNavigationActivity(process->throttler().foregroundActivity("Client reload"_s));
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    resetSpeechSynthesizer();
+            weakThis->resetSpeechSynthesizer();
 #endif
+        });
+    }
 
     return navigation;
 }
@@ -3177,33 +3206,49 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
         return;
     }
 
-    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
-        willPerformPasteCommand(*pasteAccessCategory);
-
     auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
-    sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument), [callbackFunction = WTFMove(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s)] () mutable {
-        callbackFunction();
-    });
+
+    auto completionHandler = [weakThis = WeakPtr { * this }, callbackFunction = WTFMove(callbackFunction), commandName, argument, targetFrameID] () mutable {
+        if (!weakThis)
+            return callbackFunction();
+
+        weakThis->sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument), [callbackFunction = WTFMove(callbackFunction), backgroundActivity = weakThis->m_legacyMainFrameProcess->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s)] () mutable {
+            callbackFunction();
+        });
+    };
+
+    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
+        willPerformPasteCommand(*pasteAccessCategory, WTFMove(completionHandler), targetFrameID);
+    else
+        completionHandler();
 }
 
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument)
 {
-    static NeverDestroyed<String> ignoreSpellingCommandName(MAKE_STATIC_STRING_IMPL("ignoreSpelling"));
-
     if (!hasRunningProcess())
         return;
 
     RefPtr focusedFrame = focusedOrMainFrame();
     if (!focusedFrame)
         return;
+    auto frameID = focusedFrame->frameID();
 
-    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName))
-        willPerformPasteCommand(*pasteAccessCategory, focusedFrame->frameID());
+    auto completionHandler = [weakThis = WeakPtr { *this }, commandName, argument, frameID] () mutable {
+        static NeverDestroyed<String> ignoreSpellingCommandName(MAKE_STATIC_STRING_IMPL("ignoreSpelling"));
+        if (!weakThis)
+            return;
 
-    if (commandName == ignoreSpellingCommandName)
-        ++m_pendingLearnOrIgnoreWordMessageCount;
+        if (commandName == ignoreSpellingCommandName)
+            ++weakThis->m_pendingLearnOrIgnoreWordMessageCount;
 
-    sendToProcessContainingFrame(focusedFrame->frameID(), Messages::WebPage::ExecuteEditCommand(commandName, argument));
+        weakThis->sendToProcessContainingFrame(frameID, Messages::WebPage::ExecuteEditCommand(commandName, argument));
+    };
+
+    if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName)) {
+        if (auto replyID = willPerformPasteCommand(*pasteAccessCategory, WTFMove(completionHandler), frameID))
+            websiteDataStore().protectedNetworkProcess()->connection()->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+    } else
+        completionHandler();
 }
 
 void WebPageProxy::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& callback)
@@ -3393,18 +3438,17 @@ void WebPageProxy::dragExited(DragData& dragData)
 
 void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
 {
-#if PLATFORM(COCOA)
-    grantAccessToCurrentPasteboardData(dragStorageName);
-#endif
 
 #if PLATFORM(GTK)
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
-#else
+#endif
+#if PLATFORM(COCOA)
     if (!hasRunningProcess())
         return;
-
-    sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-        protectedPageClient()->didPerformDragOperation(handled);
+    grantAccessToCurrentPasteboardData(dragStorageName, [this, protectedThis = Ref { *this }, dragStorageName, dragData = WTFMove(dragData), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), sandboxExtensionsForUpload = WTFMove(sandboxExtensionsForUpload)] () mutable {
+        sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
+            protectedPageClient()->didPerformDragOperation(handled);
+        });
     });
 #endif
 }
@@ -3422,18 +3466,37 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
         dragData.setClientPosition(remoteUserInputEventData->transformedPoint);
         performDragControllerAction(action, dragData, remoteUserInputEventData->targetFrameID);
     };
+    auto filenames = dragData.fileNames();
 
+    auto afterAllowed = [weakThis = WeakPtr { *this }, frameID, action, dragData = WTFMove(dragData), completionHandler = WTFMove(completionHandler)] () mutable {
 #if PLATFORM(GTK)
-    UNUSED_PARAM(frameID);
-    String url = dragData.asURL();
-    if (!url.isEmpty())
-        protectedLegacyMainFrameProcess()->assumeReadAccessToBaseURL(*this, url);
+        UNUSED_PARAM(frameID);
+        String url = dragData.asURL();
+        if (!url.isEmpty()) {
+            weakThis->protectedLegacyMainFrameProcess()->assumeReadAccessToBaseURL(*weakThis, url, [weakThis = WTFMove(weakThis), frameID, action, dragData = WTFMove(dragData), completionHandler = WTFMove(completionHandler)] () mutable {
+                ASSERT(dragData.platformData());
+                weakThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
+            });
+            return;
+        }
 
-    ASSERT(dragData.platformData());
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
+        ASSERT(dragData.platformData());
+        weakThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
 #else
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(frameID, action, dragData), WTFMove(completionHandler));
+        weakThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(frameID, action, dragData), WTFMove(completionHandler));
 #endif
+    };
+
+    auto processID = siteIsolatedProcess().coreProcessIdentifier();
+    if (frameID) {
+        if (RefPtr frame = WebFrameProxy::webFrame(*frameID))
+            processID = frame->process().coreProcessIdentifier();
+    }
+
+    if (!filenames.size())
+        return afterAllowed();
+
+    websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(processID, filenames), WTFMove(afterAllowed));
 }
 
 void WebPageProxy::didPerformDragControllerAction(std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect)
@@ -4543,9 +4606,12 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         if (policyAction == PolicyAction::Use && item) {
             URL fullURL { item->url() };
             if (fullURL.protocolIsFile()) {
-                SandboxExtension::Handle sandboxExtensionHandle;
-                maybeInitializeSandboxExtensionHandle(processNavigatingTo.get(), fullURL, item->resourceDirectoryURL(), sandboxExtensionHandle);
-                optionalHandle = WTFMove(sandboxExtensionHandle);
+                maybeInitializeSandboxExtensionHandle(processNavigatingTo.get(), fullURL, item->resourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, navigation = WTFMove(navigation), navigationAction = WTFMove(navigationAction), message = WTFMove(message), completionHandler = WTFMove(completionHandler), policyAction] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+                    if (!weakThis)
+                        return;
+                    weakThis->receivedPolicyDecision(policyAction, navigation.ptr(), navigation->websitePolicies(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, WTFMove(sandboxExtension), WTFMove(message), WTFMove(completionHandler));
+                });
+                return;
             }
         }
 
@@ -9208,11 +9274,12 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
             m_navigationClient->contextMenuDidCreateDownload(*this, *download);
         });
     }
-
-    platformDidSelectItemFromActiveContextMenu(item);
-
     auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
-    sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+    platformDidSelectItemFromActiveContextMenu(item, [weakThis = WeakPtr { *this }, item, targetFrameID] () mutable {
+        if (!weakThis)
+            return;
+        weakThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+    });
 }
 
 void WebPageProxy::handleContextMenuKeyEvent()
@@ -9250,15 +9317,21 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
     if (!hasRunningProcess())
         return;
 
+    auto completionHandler = [weakThis = WeakPtr { *this }, fileURLs, displayString, iconData = RefPtr { iconData }] () mutable {
+        if (!weakThis)
+            return;
+        RefPtr openPanelResultListener = std::exchange(weakThis->m_openPanelResultListener, nullptr);
+        if (RefPtr process = openPanelResultListener->process()) {
 #if ENABLE(SANDBOX_EXTENSIONS)
-    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
-    send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
+            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
+            process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)), weakThis->webPageIDInMainFrameProcess());
 #endif
+            process->send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->span() : std::span<const uint8_t>()), weakThis->webPageIDInMainFrameProcess());
+        }
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->span() : std::span<const uint8_t>()));
-
-    RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
-    openPanelResultListener->invalidate();
+        openPanelResultListener->invalidate();
+    };
+    websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(m_legacyMainFrameProcess->coreProcessIdentifier(), fileURLs), WTFMove(completionHandler));
 }
 #endif
 
@@ -9307,18 +9380,23 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, co
     if (!hasRunningProcess())
         return;
 
-    RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
-    if (RefPtr process = openPanelResultListener->process()) {
-        if (!didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
+    auto completionHandler = [weakThis = WeakPtr { *this }, fileURLs, allowedMIMETypes] () mutable {
+        if (!weakThis)
+            return;
+        RefPtr openPanelResultListener = std::exchange(weakThis->m_openPanelResultListener, nullptr);
+        if (RefPtr process = openPanelResultListener->process()) {
+            if (!weakThis->didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
 #if ENABLE(SANDBOX_EXTENSIONS)
-            auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
-            process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)), webPageIDInProcess(*process));
+                auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
+                process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)), weakThis->webPageIDInMainFrameProcess());
 #endif
-            process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }), webPageIDInProcess(*process));
+                process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs, { }), weakThis->webPageIDInMainFrameProcess());
+            }
         }
-    }
 
-    openPanelResultListener->invalidate();
+        openPanelResultListener->invalidate();
+    };
+    websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(m_legacyMainFrameProcess->coreProcessIdentifier(), fileURLs), WTFMove(completionHandler));
 }
 
 void WebPageProxy::didCancelForOpenPanel()
@@ -13509,7 +13587,7 @@ void WebPageProxy::modelProcessExited(ProcessTerminationReason)
 
 #if ENABLE(CONTEXT_MENUS) && !PLATFORM(MAC)
 
-void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&)
+void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&, CompletionHandler<void()>&&)
 {
 }
 
@@ -13517,8 +13595,10 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #if !PLATFORM(COCOA)
 
-void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory, std::optional<FrameIdentifier>)
+std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier>)
 {
+    completionHandler();
+    return std::nullopt;
 }
 
 #endif
