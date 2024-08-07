@@ -6647,8 +6647,6 @@ imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-002.html
 
 # WPT tests that are timing out.
 imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-within-database.any.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-within-database.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Skip ]

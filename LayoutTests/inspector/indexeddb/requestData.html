@@ -181,155 +181,165 @@ function test()
                 // Index: Name Index
                 // Keys: [3, 2, 4, 1]
                 // Values: ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hamster"];
+                let keyRanges = [
+                    // Keys >= "M"
+                    {lower: stringKeyWithString("M"), lowerOpen: false, upperOpen: true},
+                    // Keys > "M"
+                    {lower: stringKeyWithString("M"), lowerOpen: true, upperOpen: true},
+                    // Keys > "Monstrous Beaver"
+                    keyRange = {lower: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: true},
+                    // Keys <= "M"
+                    keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: false},
+                    // Keys <= "Monstrous Beaver"
+                    keyRange = {upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: false},
+                    // Keys < "M"
+                    keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: true},
+                    // "Monstrous Beaver" <= Key <= "Monstrous Beaver"
+                    keyRange = {lower: stringKeyWithString("Monstrous Beaver"), upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: false, upperOpen: false}
 
-                // Keys >= "M"
-                let keyRange = {lower: stringKeyWithString("M"), lowerOpen: false, upperOpen: true};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys >= 'M'");
-                    InspectorTest.log("-- Lower Bound: 'M' (closed)");
-                    InspectorTest.log("-- Upper Bound: -");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+                ];
+                var callbacks = [
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys >= 'M'");
+                        InspectorTest.log("-- Lower Bound: 'M' (closed)");
+                        InspectorTest.log("-- Upper Bound: -");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
-                    let expectedPrimaryKeyOrder = [4, 1];
-                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        let expectedPrimaryKeyOrder = [4, 1];
+                        let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys > 'M'");
+                        InspectorTest.log("-- Lower Bound: 'M' (open)");
+                        InspectorTest.log("-- Upper Bound: -");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [4, 1];
+                        let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys > 'Monstrous Beaver'");
+                        InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (open)");
+                        InspectorTest.log("-- Upper Bound: -");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [1];
+                        let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys <= 'M'");
+                        InspectorTest.log("-- Lower Bound: -");
+                        InspectorTest.log("-- Upper Bound: 'M' (closed)");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [3, 2];
+                        let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys <= 'Monstrous Beaver'");
+                        InspectorTest.log("-- Lower Bound: -");
+                        InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 3, "Should be 3 entries.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [3, 2, 4];
+                        let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- Keys < 'M'");
+                        InspectorTest.log("-- Lower Bound: -");
+                        InspectorTest.log("-- Upper Bound: 'M' (open)");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [3, 2];
+                        let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
+                    },
+                    (error, entries, hasMore) => {
+                        InspectorTest.log("-- 'Monstrous Beaver' <= Key <= 'Monstrous Beaver'");
+                        InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (closed)");
+                        InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
+                        InspectorTest.expectThat(!hasMore, "Should not have more entries.");
+
+                        let expectedPrimaryKeyOrder = [4];
+                        let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver"];
+                        for (let i = 0; i < entries.length; ++i) {
+                            let entryPayload = entries[i];
+                            let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                            let value = WI.RemoteObject.fromPayload(entryPayload.value);
+                            InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
+                            InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                        }
                     }
-                });
+                ];
 
-                // Keys > "M"
-                keyRange = {lower: stringKeyWithString("M"), lowerOpen: true, upperOpen: true};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys > 'M'");
-                    InspectorTest.log("-- Lower Bound: 'M' (open)");
-                    InspectorTest.log("-- Upper Bound: -");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [4, 1];
-                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
+                function test() {
+                    keyRange = keyRanges.shift();
+                    callback = callbacks.shift();
+                    if (!keyRange) {
+                        InspectorBackend.runAfterPendingDispatches(resolve);
+                        return;
                     }
-                });
-
-                // Keys > "Monstrous Beaver"
-                keyRange = {lower: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: true};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys > 'Monstrous Beaver'");
-                    InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (open)");
-                    InspectorTest.log("-- Upper Bound: -");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [1];
-                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
-                    }
-                });
-
-                // Keys <= "M"
-                keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: false};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys <= 'M'");
-                    InspectorTest.log("-- Lower Bound: -");
-                    InspectorTest.log("-- Upper Bound: 'M' (closed)");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [3, 2];
-                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
-                    }
-                });
-
-                // Keys <= "Monstrous Beaver"
-                keyRange = {upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: true, upperOpen: false};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys <= 'Monstrous Beaver'");
-                    InspectorTest.log("-- Lower Bound: -");
-                    InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 3, "Should be 3 entries.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [3, 2, 4];
-                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
-                    }
-                });
-
-                // Keys < "M"
-                keyRange = {upper: stringKeyWithString("M"), lowerOpen: true, upperOpen: true};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- Keys < 'M'");
-                    InspectorTest.log("-- Lower Bound: -");
-                    InspectorTest.log("-- Upper Bound: 'M' (open)");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 2, "Should be 2 entries.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [3, 2];
-                    let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
-                    }
-                });
-
-                // "Monstrous Beaver" <= Key <= "Monstrous Beaver"
-                keyRange = {lower: stringKeyWithString("Monstrous Beaver"), upper: stringKeyWithString("Monstrous Beaver"), lowerOpen: false, upperOpen: false};
-                IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
-                    InspectorTest.log("-- 'Monstrous Beaver' <= Key <= 'Monstrous Beaver'");
-                    InspectorTest.log("-- Lower Bound: 'Monstrous Beaver' (closed)");
-                    InspectorTest.log("-- Upper Bound: 'Monstrous Beaver' (closed)");
-                    InspectorTest.expectNoError(error);
-                    InspectorTest.expectThat(entries.length === 1, "Should be 1 entry.");
-                    InspectorTest.expectThat(!hasMore, "Should not have more entries.");
-
-                    let expectedPrimaryKeyOrder = [4];
-                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver"];
-                    for (let i = 0; i < entries.length; ++i) {
-                        let entryPayload = entries[i];
-                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
-                        InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
-                        InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
-                    }
-                });
-
-                InspectorBackend.runAfterPendingDispatches(resolve);
+                    IndexedDBAgent.requestData(securityOrigin, database.name, reviewersObjectStore.name, indexName, skipCount, pageSize, keyRange, (error, entries, hasMore) => {
+                            callback(error, entries, hasMore);
+                            test();
+                    });
+                }
+                test();
             });
         }
     });

@@ -67,7 +67,9 @@ public:
     IDBTransactionMode mode() const { return m_info.mode(); }
     IDBTransactionDurability durability() const { return m_info.durability(); }
     bool inProgress() const;
+    bool inProgressOrReadOnly() const;
 
+    SQLiteDatabase* sqliteDatabase() const;
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
     SQLiteIDBBackingStore& backingStore() { return m_backingStore; }
 
@@ -80,10 +82,12 @@ private:
 
     void moveBlobFilesIfNecessary();
     void deleteBlobFilesIfNecessary();
+    bool isReadOnly() const { return mode() == IDBTransactionMode::Readonly; }
 
     IDBTransactionInfo m_info;
 
     SQLiteIDBBackingStore& m_backingStore;
+    CheckedPtr<SQLiteDatabase> m_sqliteDatabase;
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBCursor>> m_cursors;
     HashSet<SQLiteIDBCursor*> m_backingStoreCursors;

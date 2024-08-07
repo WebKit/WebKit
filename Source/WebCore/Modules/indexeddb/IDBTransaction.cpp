@@ -484,8 +484,11 @@ void IDBTransaction::commitInternal()
 
     LOG(IndexedDBOperations, "IDB commit operation: Transaction %s", info().identifier().loggingString().utf8().data());
 
-    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, nullptr, [protectedThis = Ref { *this }] (auto& operation) {
-        protectedThis->commitOnServer(operation, protectedThis->m_handledRequestResultsCount);
+    uint64_t handledRequestResultsCount = m_handledRequestResultsCount;
+    if (m_currentlyCompletingRequest && m_currentlyCompletingRequest->isEventBeingDispatched())
+        ++handledRequestResultsCount;
+    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, nullptr, [protectedThis = Ref { *this }, handledRequestResultsCount] (auto& operation) {
+        protectedThis->commitOnServer(operation, handledRequestResultsCount);
     }));
 }
 

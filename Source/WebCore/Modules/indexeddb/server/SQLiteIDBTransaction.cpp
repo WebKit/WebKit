@@ -51,12 +51,16 @@ SQLiteIDBTransaction::~SQLiteIDBTransaction()
     clearCursors();
 }
 
-
 IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 {
     ASSERT(!m_sqliteTransaction);
 
-    m_sqliteTransaction = makeUnique<SQLiteTransaction>(database, m_info.mode() == IDBTransactionMode::Readonly);
+    if (isReadOnly()) {
+        m_sqliteDatabase = &database;
+        return IDBError { };
+    }
+
+    m_sqliteTransaction = makeUnique<SQLiteTransaction>(database, true);
     m_sqliteTransaction->begin();
 
     if (m_sqliteTransaction->inProgress())
@@ -68,11 +72,16 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 IDBError SQLiteIDBTransaction::commit()
 {
     LOG(IndexedDB, "SQLiteIDBTransaction::commit");
+
+    if (isReadOnly()) {
+        reset();
+        return IDBError { };
+    }
+
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
         return IDBError { ExceptionCode::UnknownError, "No SQLite transaction in progress to commit"_s };
 
     m_sqliteTransaction->commit();
-
     if (m_sqliteTransaction->inProgress())
         return IDBError { ExceptionCode::UnknownError, "Unable to commit SQLite transaction in database backend"_s };
 
@@ -85,6 +94,8 @@ IDBError SQLiteIDBTransaction::commit()
 
 void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
 {
+    ASSERT(!isReadOnly());
+
     String databaseDirectory = m_backingStore.databaseDirectory();
     for (auto& entry : m_blobTemporaryAndStoredFilenames) {
         if (!FileSystem::hardLinkOrCopyFile(entry.first, FileSystem::pathByAppendingComponent(databaseDirectory, entry.second)))
@@ -98,6 +109,8 @@ void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
 
 void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
 {
+    ASSERT(!isReadOnly());
+
     if (m_blobRemovedFilenames.isEmpty())
         return;
 
@@ -113,6 +126,11 @@ void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
 
 IDBError SQLiteIDBTransaction::abort()
 {
+    if (isReadOnly()) {
+        reset();
+        return IDBError { };
+    }
+
     for (auto& entry : m_blobTemporaryAndStoredFilenames)
         FileSystem::deleteFile(entry.first);
 
@@ -139,8 +157,7 @@ void SQLiteIDBTransaction::reset()
 
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData& range)
 {
-    ASSERT(m_sqliteTransaction);
-    ASSERT(m_sqliteTransaction->inProgress());
+    ASSERT(inProgressOrReadOnly());
 
     auto cursor = SQLiteIDBCursor::maybeCreateBackingStoreCursor(*this, objectStoreID, indexID, range);
 
@@ -152,12 +169,10 @@ std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCurs
 
 SQLiteIDBCursor* SQLiteIDBTransaction::maybeOpenCursor(const IDBCursorInfo& info)
 {
-    ASSERT(m_sqliteTransaction);
-    if (!m_sqliteTransaction->inProgress())
+    if (m_sqliteTransaction && !m_sqliteTransaction->inProgress())
         return nullptr;
 
     auto addResult = m_cursors.add(info.identifier(), SQLiteIDBCursor::maybeCreate(*this, info));
-
     ASSERT(addResult.isNewEntry);
 
     // It is possible the cursor failed to create and we just stored a null value.
@@ -185,6 +200,8 @@ void SQLiteIDBTransaction::closeCursor(SQLiteIDBCursor& cursor)
 
 void SQLiteIDBTransaction::notifyCursorsOfChanges(int64_t objectStoreID)
 {
+    ASSERT(!isReadOnly());
+
     for (auto& i : m_cursors) {
         if (i.value->objectStoreID() == objectStoreID)
             i.value->objectStoreRecordsChanged();
@@ -209,15 +226,32 @@ bool SQLiteIDBTransaction::inProgress() const
     return m_sqliteTransaction && m_sqliteTransaction->inProgress();
 }
 
+bool SQLiteIDBTransaction::inProgressOrReadOnly() const
+{
+    return isReadOnly() || inProgress();
+}
+
 void SQLiteIDBTransaction::addBlobFile(const String& temporaryPath, const String& storedFilename)
 {
+    ASSERT(!isReadOnly());
+
     m_blobTemporaryAndStoredFilenames.append({ temporaryPath, storedFilename });
 }
 
 void SQLiteIDBTransaction::addRemovedBlobFile(const String& removedFilename)
 {
+    ASSERT(!isReadOnly());
     ASSERT(!m_blobRemovedFilenames.contains(removedFilename));
+
     m_blobRemovedFilenames.add(removedFilename);
+}
+
+SQLiteDatabase* SQLiteIDBTransaction::sqliteDatabase() const
+{
+    if (m_sqliteTransaction)
+        return &m_sqliteTransaction->database();
+
+    return m_sqliteDatabase.get();
 }
 
 

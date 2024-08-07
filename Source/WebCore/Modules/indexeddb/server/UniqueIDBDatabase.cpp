@@ -1347,11 +1347,9 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
     if (m_pendingTransactions.isEmpty())
         return nullptr;
 
-    if (!m_backingStore->supportsSimultaneousTransactions() && !m_inProgressTransactions.isEmpty()) {
-        LOG(IndexedDB, "UniqueIDBDatabase::takeNextRunnableTransaction - Backing store only supports 1 transaction, and we already have 1");
-        return nullptr;
-    }
-
+    bool hasReadWriteTransactionInProgress = WTF::anyOf(m_inProgressTransactions, [&](auto& entry) {
+        return !entry.value->isReadOnly();
+    });
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> deferredTransactions;
     RefPtr<UniqueIDBDatabaseTransaction> currentTransaction;
 
@@ -1373,8 +1371,8 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
         case IDBTransactionMode::Readwrite: {
             bool hasOverlappingScopes = scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers());
             hasOverlappingScopes |= scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
-
-            if (hasOverlappingScopes) {
+            bool hasBackingStoreSupport = m_backingStore->supportsSimultaneousReadWriteTransactions() || !hasReadWriteTransactionInProgress;
+            if (hasOverlappingScopes || !hasBackingStoreSupport) {
                 for (auto objectStore : currentTransaction->objectStoreIdentifiers())
                     deferredReadWriteScopes.add(objectStore);
                 deferredTransactions.append(WTFMove(currentTransaction));
