@@ -55,6 +55,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput;
+    bool isPerformingHTTPFallback;
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };

@@ -2084,6 +2084,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     if (auto onwerPermissionsPolicy = std::exchange(loadParameters.ownerPermissionsPolicy, { }))
         localFrame->setOwnerPermissionsPolicy(WTFMove(*onwerPermissionsPolicy));
 
+    localFrame->loader().setHTTPFallbackInProgress(loadParameters.isPerformingHTTPFallback);
+
     localFrame->loader().load(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);

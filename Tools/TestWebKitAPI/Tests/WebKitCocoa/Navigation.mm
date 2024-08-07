@@ -1922,22 +1922,22 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackContinue)
 
     EXPECT_WK_STREQ([webView title], "This Connection Is Not Secure");
     checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[4], "Continue");
-    Util::run(&failedNavigation);
+    Util::run(&finishedSuccessfully);
 
-    EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
-    EXPECT_FALSE(finishedSuccessfully);
-    EXPECT_EQ(loadCount, 1);
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_FALSE(failedNavigation);
+    EXPECT_EQ(loadCount, 2);
 
     __block bool doneEvaluatingJavaScript { false };
     doneEvaluatingJavaScript = false;
     [webView evaluateJavaScript:@"window.location.href" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([value isKindOfClass:[NSString class]]);
-        EXPECT_WK_STREQ(@"about:blank", (NSString *)value);
+        EXPECT_WK_STREQ(@"http://site.example/secure", (NSString *)value);
         doneEvaluatingJavaScript = true;
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"", [webView URL].absoluteString);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabledCertificateError)
