@@ -69,6 +69,52 @@ namespace WebPushD {
 
 static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };
 
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+static bool platformShouldPlaySound(const WebCore::NotificationData& data)
+{
+#if PLATFORM(IOS)
+    return data.silent == std::nullopt || !(*data.silent);
+#elif PLATFORM(MAC)
+    return data.silent != std::nullopt && !(*data.silent);
+#else
+    return false;
+#endif
+}
+
+static NSString *platformDefaultActionBundleIdentifier()
+{
+#if PLATFORM(IOS)
+    return @"com.apple.webapp";
+#else
+    // FIXME: Calculate appropriate value on macOS
+    return nil;
+#endif
+}
+
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
+{
+#if PLATFORM(IOS)
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
+#else
+    // FIXME: Calculate the correct values on macOS in a non-testing environment.
+    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
+#endif
+}
+
+static NSString *platformNotificationSourceForDisplay(PushClientConnection& connection)
+{
+#if PLATFORM(IOS)
+    return (NSString *)connection.associatedWebClipTitle();
+#else
+    // FIXME: Calculate appropriate value on macOS
+    return nil;
+#endif
+}
+
+#endif
+
 WebPushDaemon& WebPushDaemon::singleton()
 {
     static NeverDestroyed<WebPushDaemon> daemon;
@@ -489,6 +535,29 @@ void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, Co
 
 void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
 {
+#if PLATFORM(IOS)
+    auto origin = WebCore::SecurityOriginData::fromURL(scopeURL);
+
+    const auto& webClipIdentifier = connection.subscriptionSetIdentifier().pushPartition;
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
+    auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
+
+    if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8().data(), origin.toString().utf8().data());
+        return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Unexpected service worker scope"_s }));
+    }
+#endif
+
+#if PLATFORM(IOS) && HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    RetainPtr notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+    UNNotificationSettings *settings = [center notificationSettings];
+    if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not have correct permissions", origin.toString().utf8().data());
+        return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
+    }
+#endif
+
     runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), vapidPublicKey, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
             replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "Push service initialization failed"_s }));
@@ -596,48 +665,6 @@ PushClientConnection* WebPushDaemon::toPushClientConnection(xpc_connection_t con
 }
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-
-static bool platformShouldPlaySound(const WebCore::NotificationData& data)
-{
-#if PLATFORM(IOS)
-    return data.silent == std::nullopt || !(*data.silent);
-#elif PLATFORM(MAC)
-    return data.silent != std::nullopt && !(*data.silent);
-#else
-    return false;
-#endif
-}
-
-static NSString *platformDefaultActionBundleIdentifier()
-{
-#if PLATFORM(IOS)
-    return @"com.apple.webapp";
-#else
-    // FIXME: Calculate appropriate value on macOS
-    return nil;
-#endif
-}
-
-static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
-{
-#if PLATFORM(IOS)
-    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
-#else
-    // FIXME: Calculate the correct values on macOS in a non-testing environment.
-    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)connection.pushPartitionString()];
-#endif
-}
-
-static NSString *platformNotificationSourceForDisplay(PushClientConnection& connection)
-{
-#if PLATFORM(IOS)
-    return (NSString *)connection.associatedWebClipTitle();
-#else
-    // FIXME: Calculate appropriate value on macOS
-    return nil;
-#endif
-}
 
 void WebPushDaemon::showNotification(PushClientConnection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> resources, CompletionHandler<void()>&& completionHandler)
 {

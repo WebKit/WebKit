@@ -36,6 +36,7 @@
 - (void)getNotificationSettingsWithCompletionHandler:(void(^)(UNNotificationSettings *settings))completionHandler;
 - (void)requestAuthorizationWithOptions:(UNAuthorizationOptions)options completionHandler:(void (^)(BOOL granted, NSError *))completionHandler;
 - (NSNumber *)getAppBadgeForTesting;
+- (UNNotificationSettings *)notificationSettings;
 @end
 
 #endif
