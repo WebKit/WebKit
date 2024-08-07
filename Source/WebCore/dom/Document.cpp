@@ -2763,9 +2763,9 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
                 } else
                     context = nullptr;
             }
-            if (frameView->layoutContext().needsLayout()) {
+            if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
                 ContentVisibilityForceLayoutScope scope(*renderView(), context);
-                frameView->layoutContext().layout(layoutOptions.contains(LayoutOptions::CanDeferUpdateLayerPositions));
+                frameView->layoutContext().layout();
                 result = UpdateLayoutResult::ChangesDone;
             }
 
