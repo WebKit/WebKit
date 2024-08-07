@@ -59,15 +59,15 @@
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTParser.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCue);
-WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCueBox);
 
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr

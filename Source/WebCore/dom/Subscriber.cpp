@@ -32,7 +32,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserverCallback.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -179,6 +179,6 @@ void Subscriber::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     observerConcurrently()->visitAdditionalChildren(visitor);
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Subscriber);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Subscriber);
 
 } // namespace WebCore

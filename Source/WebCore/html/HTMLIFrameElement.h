@@ -34,7 +34,7 @@ class RenderIFrame;
 class TrustedHTML;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
-    WTF_MAKE_ISO_ALLOCATED(HTMLIFrameElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLIFrameElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLIFrameElement);
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);

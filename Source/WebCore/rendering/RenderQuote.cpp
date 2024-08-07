@@ -28,13 +28,13 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 using namespace WTF::Unicode;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderQuote);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderQuote);
 
 RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quote)
     : RenderInline(Type::Quote, document, WTFMove(style))

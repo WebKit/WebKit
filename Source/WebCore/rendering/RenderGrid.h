@@ -50,7 +50,7 @@ public:
 enum class GridAxisPosition : uint8_t { GridAxisStart, GridAxisEnd, GridAxisCenter };
 
 class RenderGrid final : public RenderBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderGrid);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderGrid);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderGrid);
 public:
     RenderGrid(Element&, RenderStyle&&);

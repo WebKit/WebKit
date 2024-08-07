@@ -40,7 +40,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class PermissionStatus final : public ActiveDOMObject, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PermissionStatus>, public EventTarget  {
-    WTF_MAKE_ISO_ALLOCATED(PermissionStatus);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PermissionStatus);
 public:
     static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, SingleThreadWeakPtr<Page>&&);
     ~PermissionStatus();

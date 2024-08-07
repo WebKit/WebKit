@@ -40,11 +40,11 @@
 #include "Node.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBDatabase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabase);
 
 static Vector<String> sortAndRemoveDuplicates(Vector<String>&& vector)
 {

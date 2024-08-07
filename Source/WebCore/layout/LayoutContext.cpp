@@ -39,12 +39,12 @@
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
 #include "TableWrapperBlockFormattingContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutContext);
 
 LayoutContext::LayoutContext(LayoutState& layoutState)
     : m_layoutState(layoutState)

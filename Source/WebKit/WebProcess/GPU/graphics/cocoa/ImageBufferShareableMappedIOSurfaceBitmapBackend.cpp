@@ -31,14 +31,14 @@
 #include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/IOSurfacePool.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBitmapBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferShareableMappedIOSurfaceBitmapBackend);
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBitmapBackend> ImageBufferShareableMappedIOSurfaceBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {

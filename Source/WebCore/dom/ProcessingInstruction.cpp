@@ -37,12 +37,12 @@
 #include "StyleSheetContents.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ProcessingInstruction);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProcessingInstruction);
 
 inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
     : CharacterData(document, WTFMove(data), PROCESSING_INSTRUCTION_NODE)

@@ -34,10 +34,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,7 +60,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 
 class WEBCORE_EXPORT IDBConnectionProxy final {
-    WTF_MAKE_ISO_ALLOCATED(IDBConnectionProxy);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBConnectionProxy);
 public:
     IDBConnectionProxy(IDBConnectionToServer&);
 

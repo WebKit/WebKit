@@ -42,11 +42,11 @@
 #include "TextDecorationThickness.h"
 #include "TextUnderlineOffset.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineFlowBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyInlineFlowBox);
 
 struct SameSizeAsLegacyInlineFlowBox : public LegacyInlineBox {
     uint32_t bitfields : 23;

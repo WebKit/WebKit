@@ -27,7 +27,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 
 class RenderSVGInline : public RenderInline {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGInline);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
     RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);

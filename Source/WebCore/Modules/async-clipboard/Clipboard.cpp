@@ -44,11 +44,11 @@
 #include "UserGestureIndicator.h"
 #include "WebContentReader.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Clipboard);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Clipboard);
 
 static bool shouldProceedWithClipboardWrite(const LocalFrame& frame)
 {

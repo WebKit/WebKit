@@ -37,7 +37,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "ExceptionOr.h"
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
 
 Ref<CSSUnparsedValue> CSSUnparsedValue::create(Vector<CSSUnparsedSegment>&& segments)
 {

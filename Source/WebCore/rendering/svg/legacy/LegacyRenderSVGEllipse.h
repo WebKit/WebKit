@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class LegacyRenderSVGEllipse final : public LegacyRenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGEllipse);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGEllipse);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGEllipse);
 public:
     LegacyRenderSVGEllipse(SVGGraphicsElement&, RenderStyle&&);

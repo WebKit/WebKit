@@ -55,7 +55,7 @@ class HTMLImageElement
 #endif
     , public FormAssociatedElement
     , public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLImageElement);
 public:
     static Ref<HTMLImageElement> create(Document&);

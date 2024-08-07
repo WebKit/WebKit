@@ -30,11 +30,11 @@
 
 #include "RenderMathMLBlockInlines.h"
 #include <cmath>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLPadded);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLPadded);
 
 RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLPadded, element, WTFMove(style))

@@ -59,13 +59,13 @@
 #include "Settings.h"
 #include "WebAudioSourceProvider.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack, RegisterCaptureTrackToOwner registerCaptureTrackToOwner)
 {

@@ -47,14 +47,14 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EventSource);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EventSource);
 
 const uint64_t EventSource::defaultReconnectDelay = 3000;
 

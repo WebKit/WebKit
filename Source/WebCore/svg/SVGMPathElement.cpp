@@ -27,11 +27,11 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMPathElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGMPathElement);
 
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

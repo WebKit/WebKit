@@ -31,11 +31,11 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <skia/core/SkPixmap.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferSkiaUnacceleratedBackend);
 
 std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnacceleratedBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {

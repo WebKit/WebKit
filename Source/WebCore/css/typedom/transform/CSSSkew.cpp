@@ -37,11 +37,11 @@
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkew);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSSkew);
 
 ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
 {

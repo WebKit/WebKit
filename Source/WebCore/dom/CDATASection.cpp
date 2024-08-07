@@ -24,11 +24,11 @@
 
 #include "Document.h"
 #include "DocumentInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CDATASection);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CDATASection);
 
 inline CDATASection::CDATASection(Document& document, String&& data)
     : Text(document, WTFMove(data), CDATA_SECTION_NODE, { })

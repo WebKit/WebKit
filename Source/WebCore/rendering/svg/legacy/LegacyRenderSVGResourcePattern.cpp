@@ -32,11 +32,11 @@
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
 LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTFMove(style))

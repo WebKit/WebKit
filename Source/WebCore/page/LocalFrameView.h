@@ -40,9 +40,9 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -89,7 +89,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
 
 class LocalFrameView final : public FrameView {
-    WTF_MAKE_ISO_ALLOCATED(LocalFrameView);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LocalFrameView);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocalFrameView);
 public:
     friend class Internals;

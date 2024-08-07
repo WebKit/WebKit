@@ -57,14 +57,14 @@
 #include "RenderView.h"
 #include "TextUtil.h"
 #include "WidthIterator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutTree);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutTree);
 LayoutTree::LayoutTree(std::unique_ptr<ElementBox> root)
     : m_root(WTFMove(root))
 {

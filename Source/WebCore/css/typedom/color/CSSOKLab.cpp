@@ -27,11 +27,11 @@
 #include "CSSOKLab.h"
 
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSOKLab);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSOKLab);
 
 ExceptionOr<Ref<CSSOKLab>> CSSOKLab::create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha)
 {

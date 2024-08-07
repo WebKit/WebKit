@@ -29,11 +29,11 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySessionError.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayCancelEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayCancelEvent);
 
 ApplePayCancelEvent::ApplePayCancelEvent(const AtomString& type, PaymentSessionError&& sessionError)
     : Event { EventInterfaceType::ApplePayCancelEvent, type, CanBubble::No, IsCancelable::No }

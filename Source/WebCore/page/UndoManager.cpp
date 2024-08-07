@@ -32,11 +32,11 @@
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
 #include "UndoItem.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(UndoManager);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UndoManager);
 
 UndoManager::UndoManager(Document& document)
     : m_document(document)

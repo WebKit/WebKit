@@ -37,7 +37,7 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "NodeName.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSourceElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSourceElement);
 
 using namespace HTMLNames;
 

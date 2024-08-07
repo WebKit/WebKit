@@ -53,11 +53,11 @@
 #include "SerializedScriptValue.h"
 #include "WorkerRunLoop.h"
 #include <JavaScriptCore/JSLock.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorkletNode);
 
 ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject& globalObject, BaseAudioContext& context, String&& name, AudioWorkletNodeOptions&& options)
 {

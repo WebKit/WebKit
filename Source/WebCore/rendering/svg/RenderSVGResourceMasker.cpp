@@ -37,11 +37,11 @@
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceMasker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceMasker);
 
 RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(Type::SVGResourceMasker, element, WTFMove(style))

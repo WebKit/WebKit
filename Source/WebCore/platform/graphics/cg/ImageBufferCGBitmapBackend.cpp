@@ -33,11 +33,11 @@
 #include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
 IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
 {

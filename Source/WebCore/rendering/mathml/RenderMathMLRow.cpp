@@ -36,13 +36,13 @@
 #include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLRow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLRow);
 
 RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLBlock(type, element, WTFMove(style))

@@ -40,7 +40,7 @@ class Animation;
 class RenderStyle;
 
 class CSSTransition final : public StyleOriginatedAnimation {
-    WTF_MAKE_ISO_ALLOCATED(CSSTransition);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransition);
 public:
     static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;

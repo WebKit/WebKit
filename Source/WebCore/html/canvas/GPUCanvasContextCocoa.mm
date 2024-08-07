@@ -36,7 +36,7 @@
 #include "ImageBitmap.h"
 #include "PlatformCALayerDelegatedContents.h"
 #include "RenderBox.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -86,7 +86,7 @@ private:
     const bool m_isOpaque;
 };
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
 std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, GPU& gpu)
 {

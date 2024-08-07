@@ -32,11 +32,11 @@
 #include "Document.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSpace);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRSpace);
 
 WebXRSpace::WebXRSpace(Document& document, Ref<WebXRRigidTransform>&& offset)
     : ContextDestructionObserver(&document)
@@ -66,7 +66,7 @@ std::optional<bool> WebXRSpace::isPositionEmulated() const
     return xrSession->isPositionEmulated();
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRViewerSpace);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRViewerSpace);
 
 WebXRViewerSpace::WebXRViewerSpace(Document& document, WebXRSession& session)
     : WebXRSpace(document, WebXRRigidTransform::create())

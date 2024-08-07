@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class RenderDetailsMarker final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderDetailsMarker);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderDetailsMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDetailsMarker);
 public:
     RenderDetailsMarker(DetailsMarkerControl&, RenderStyle&&);

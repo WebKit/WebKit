@@ -38,12 +38,12 @@
 #include "Document.h"
 #include "EventNames.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ScriptProcessorNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ScriptProcessorNode);
 
 Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {

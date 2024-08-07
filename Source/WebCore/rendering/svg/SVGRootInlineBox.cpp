@@ -35,11 +35,11 @@
 #include "SVGNames.h"
 #include "SVGRenderingContext.h"
 #include "SVGTextPositioningElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGRootInlineBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGRootInlineBox);
 
 SVGRootInlineBox::SVGRootInlineBox(RenderSVGText& renderSVGText)
     : LegacyRootInlineBox(renderSVGText)

@@ -39,12 +39,12 @@
 #include "Text.h"
 #include "ToggleEvent.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDetailsElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDetailsElement);
 
 using namespace HTMLNames;
 

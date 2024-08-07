@@ -84,9 +84,9 @@
 #include "VisitedLinkState.h"
 #include "WebAnimationTypes.h"
 #include "WebKitFontFamilyNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -95,7 +95,7 @@ namespace Style {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Resolver);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Resolver);
 
 class Resolver::State {
 public:

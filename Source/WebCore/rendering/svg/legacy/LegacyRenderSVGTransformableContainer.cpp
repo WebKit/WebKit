@@ -28,11 +28,11 @@
 #include "SVGGElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGUseElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
 
 LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTFMove(style))

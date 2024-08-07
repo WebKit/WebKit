@@ -36,14 +36,14 @@
 #include "RenderChildIterator.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderAttachment);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderAttachment);
 
 RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&& style)
     : RenderReplaced(Type::Attachment, element, WTFMove(style), LayoutSize())

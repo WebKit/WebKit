@@ -48,13 +48,13 @@
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include "UnicodeBidi.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSearchField);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSearchField);
 
 RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControlSingleLine(Type::SearchField, element, WTFMove(style))

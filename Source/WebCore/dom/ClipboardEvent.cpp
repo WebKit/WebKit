@@ -24,11 +24,11 @@
 #include "ClipboardEvent.h"
 
 #include "DataTransfer.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ClipboardEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ClipboardEvent);
 
 ClipboardEvent::ClipboardEvent(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
     : Event(EventInterfaceType::ClipboardEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes)

@@ -35,9 +35,9 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "ScriptController.h"
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
 AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, NodeType type)
     : AudioNode(context, type)

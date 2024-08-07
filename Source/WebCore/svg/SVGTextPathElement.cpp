@@ -30,12 +30,12 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextPathElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextPathElement);
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

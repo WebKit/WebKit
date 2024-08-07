@@ -31,12 +31,12 @@
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGForeignObjectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGForeignObjectElement);
 
 inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

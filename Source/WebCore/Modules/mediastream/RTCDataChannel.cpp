@@ -39,14 +39,14 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannel);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCDataChannel);
 
 Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
 {

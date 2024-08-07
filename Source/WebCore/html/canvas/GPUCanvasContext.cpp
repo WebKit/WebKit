@@ -26,11 +26,11 @@
 #include "config.h"
 #include "GPUCanvasContext.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUCanvasContext);
 
 #if !PLATFORM(COCOA)
 std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase&, GPU&)

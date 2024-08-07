@@ -60,7 +60,7 @@ private:
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
 class HTMLCollection : public NodeList {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~HTMLCollection();
 

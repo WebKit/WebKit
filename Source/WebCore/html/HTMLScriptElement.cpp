@@ -34,12 +34,12 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TrustedType.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLScriptElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLScriptElement);
 
 using namespace HTMLNames;
 

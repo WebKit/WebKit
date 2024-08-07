@@ -38,11 +38,11 @@
 #include "EventNames.h"
 #include "SourceBuffer.h"
 #include "WebCoreOpaqueRoot.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBufferList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SourceBufferList);
 
 Ref<SourceBufferList> SourceBufferList::create(ScriptExecutionContext* context)
 {

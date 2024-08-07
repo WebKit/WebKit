@@ -41,12 +41,12 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGImage);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGImage);
 
 LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : LegacyRenderSVGModelObject(Type::LegacySVGImage, element, WTFMove(style), SVGModelObjectFlag::UsesBoundaryCaching)

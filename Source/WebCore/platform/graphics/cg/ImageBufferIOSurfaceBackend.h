@@ -31,12 +31,12 @@
 #include "ImageBufferCGBackend.h"
 #include "IOSurface.h"
 #include "IOSurfacePool.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferIOSurfaceBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);

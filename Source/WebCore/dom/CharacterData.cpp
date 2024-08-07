@@ -35,13 +35,13 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {

@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class SVGFEGaussianBlurElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEGaussianBlurElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEGaussianBlurElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEGaussianBlurElement);
 public:
     static Ref<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);

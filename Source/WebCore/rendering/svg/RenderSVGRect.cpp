@@ -32,11 +32,11 @@
 #include "RenderSVGShapeInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRectElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRect);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGRect);
 
 RenderSVGRect::RenderSVGRect(SVGRectElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGRect, element, WTFMove(style))

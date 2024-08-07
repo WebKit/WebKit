@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class SVGDescElement final : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGDescElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGDescElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDescElement);
 public:
     static Ref<SVGDescElement> create(const QualifiedName&, Document&);

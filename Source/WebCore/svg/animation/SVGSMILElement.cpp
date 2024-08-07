@@ -49,16 +49,16 @@
 #include "SVGUseElement.h"
 #include "SVGVisitedElementTracking.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSMILElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGSMILElement);
 
 static SMILEventSender& smilEventSender()
 {

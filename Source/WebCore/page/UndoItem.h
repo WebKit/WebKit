@@ -27,8 +27,8 @@
 
 #include "EventTarget.h"
 #include "VoidCallback.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +38,7 @@ class Document;
 class UndoManager;
 
 class UndoItem : public RefCounted<UndoItem>, public CanMakeWeakPtr<UndoItem> {
-    WTF_MAKE_ISO_ALLOCATED(UndoItem);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UndoItem);
 public:
     struct Init {
         String label;

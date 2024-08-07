@@ -28,12 +28,12 @@
 
 #include "FormData.h"
 #include "ReportBody.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Report);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Report);
 
 Ref<Report> Report::create(const String& type, const String& url, RefPtr<ReportBody>&& body)
 {

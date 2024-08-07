@@ -42,12 +42,12 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TrustedType.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLIFrameElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLIFrameElement);
 
 using namespace HTMLNames;
 

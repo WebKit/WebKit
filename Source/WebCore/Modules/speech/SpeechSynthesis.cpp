@@ -39,12 +39,12 @@
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
 #include "UserGestureIndicator.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesis);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechSynthesis);
 
 Ref<SpeechSynthesis>SpeechSynthesis::create(ScriptExecutionContext& context)
 {

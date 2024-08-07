@@ -48,13 +48,13 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTextAreaElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTextAreaElement);
 
 using namespace HTMLNames;
 

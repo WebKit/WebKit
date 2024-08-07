@@ -35,7 +35,7 @@ class FileSystemSyncAccessHandle;
 template<typename> class ExceptionOr;
 
 class FileSystemFileHandle final : public FileSystemHandle {
-    WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemFileHandle);
 public:
     WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);

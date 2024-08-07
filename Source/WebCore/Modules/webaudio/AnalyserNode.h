@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class AnalyserNode final : public AudioBasicInspectorNode {
-    WTF_MAKE_ISO_ALLOCATED(AnalyserNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AnalyserNode);
 public:
     static ExceptionOr<Ref<AnalyserNode>> create(BaseAudioContext&, const AnalyserOptions& = { });
 

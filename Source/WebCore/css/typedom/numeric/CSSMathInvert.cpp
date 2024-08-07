@@ -29,12 +29,12 @@
 #include "CSSCalcInvertNode.h"
 #include "CSSNumericValue.h"
 #include "CSSPrimitiveValue.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathInvert);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathInvert);
 
 Ref<CSSMathInvert> CSSMathInvert::create(CSSNumberish&& numberish)
 {

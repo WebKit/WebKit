@@ -39,7 +39,7 @@ class GraphicsContextStateSaver;
 class SVGGraphicsElement;
 
 class LegacyRenderSVGShape : public LegacyRenderSVGModelObject {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGShape);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGShape);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGShape);
 public:
     friend FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderElement&);

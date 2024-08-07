@@ -62,9 +62,9 @@
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
 #include <wtf/BitSet.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -82,7 +82,7 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderText);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderText);
 
 struct SameSizeAsRenderText : public RenderObject {
 #if ENABLE(TEXT_AUTOSIZING)

@@ -23,8 +23,8 @@
 #include <variant>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -115,7 +115,7 @@ private:
 };
 
 class FormData final : public RefCounted<FormData> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(FormData, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(FormData, WEBCORE_EXPORT);
 public:
     enum class EncodingType : uint8_t {
         FormURLEncoded, // for application/x-www-form-urlencoded

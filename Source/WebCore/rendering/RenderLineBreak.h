@@ -29,7 +29,7 @@ class HTMLElement;
 class Position;
 
 class RenderLineBreak final : public RenderBoxModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderLineBreak);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderLineBreak);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLineBreak);
 public:
     RenderLineBreak(HTMLElement&, RenderStyle&&);

@@ -44,13 +44,13 @@
 #include "XRFrameRequestCallback.h"
 #include "XRRenderStateInit.h"
 #include "XRSessionEvent.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRSession);
 
 Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
 {

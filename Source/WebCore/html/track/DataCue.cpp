@@ -36,12 +36,12 @@
 #include "TextTrackCueList.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DataCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataCue);
 
 DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     : TextTrackCue(document, start, end)

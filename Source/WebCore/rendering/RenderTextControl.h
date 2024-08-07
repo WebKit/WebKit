@@ -30,7 +30,7 @@ class TextControlInnerTextElement;
 class HTMLTextFormControlElement;
 
 class RenderTextControl : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderTextControl);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControl);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControl);
 public:
     virtual ~RenderTextControl();
@@ -84,7 +84,7 @@ private:
 // baseline definition, and then inputs of different types wouldn't line up
 // anymore.
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderTextControlInnerContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControlInnerContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlInnerContainer);
 public:
     RenderTextControlInnerContainer(Element&, RenderStyle&&);

@@ -28,8 +28,8 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "Shape.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -42,7 +42,7 @@ class Rect;
 // PlacedFloats may be inherited by IFCs with mismataching writing mode. In such cases floats
 // are added to PlacledFloats as if they had matching inline direction (i.e. all boxes within PlacedFloats share the same writing mode)
 class PlacedFloats {
-    WTF_MAKE_ISO_ALLOCATED(PlacedFloats);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PlacedFloats);
 public:
     PlacedFloats(const ElementBox& blockFormattingContextRoot);
 

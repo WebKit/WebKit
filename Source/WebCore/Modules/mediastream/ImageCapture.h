@@ -42,7 +42,7 @@ class Logger;
 namespace WebCore {
 
 class ImageCapture : public RefCounted<ImageCapture>, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(ImageCapture);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageCapture);
 public:
     static ExceptionOr<Ref<ImageCapture>> create(Document&, Ref<MediaStreamTrack>);
 

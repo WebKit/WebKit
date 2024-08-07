@@ -37,7 +37,7 @@ class CSSParserTokenRange;
 using CSSUnparsedSegment = std::variant<String, RefPtr<CSSOMVariableReferenceValue>>;
 
 class CSSUnparsedValue final : public CSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSUnparsedValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSUnparsedValue);
 public:
     static Ref<CSSUnparsedValue> create(Vector<CSSUnparsedSegment>&&);
     static Ref<CSSUnparsedValue> create(CSSParserTokenRange);

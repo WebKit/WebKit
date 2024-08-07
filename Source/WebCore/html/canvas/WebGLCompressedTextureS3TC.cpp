@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "WebGLCompressedTextureS3TC.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TC);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TC);
 
 WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLCompressedTextureS3TC)

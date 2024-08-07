@@ -36,12 +36,12 @@
 #include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
 IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {

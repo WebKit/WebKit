@@ -29,11 +29,11 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechSynthesisEvent);
 
 Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, const SpeechSynthesisEventInit& initializer)
 {

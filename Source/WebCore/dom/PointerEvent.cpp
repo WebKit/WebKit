@@ -30,11 +30,11 @@
 #include "Node.h"
 #include "PlatformMouseEvent.h"
 #include "PointerEventTypeNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PointerEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PointerEvent);
 
 static AtomString pointerEventType(const AtomString& mouseEventType)
 {

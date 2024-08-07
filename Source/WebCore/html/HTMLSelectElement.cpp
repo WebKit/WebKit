@@ -59,12 +59,12 @@
 #include "RenderTheme.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSelectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSelectElement);
 
 using namespace WTF::Unicode;
 

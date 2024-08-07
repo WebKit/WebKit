@@ -52,15 +52,15 @@
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentRequest);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentRequest);
 
 // Implements the IsWellFormedCurrencyCode abstract operation from ECMA 402
 // https://tc39.github.io/ecma402/#sec-iswellformedcurrencycode

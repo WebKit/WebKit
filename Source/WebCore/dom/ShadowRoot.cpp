@@ -45,11 +45,11 @@
 #include "TrustedType.h"
 #include "WebAnimation.h"
 #include "markup.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t flagsAndModes[3];

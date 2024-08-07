@@ -45,7 +45,7 @@ enum class InterceptionState : uint8_t {
 };
 
 class NavigateEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(NavigateEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigateEvent);
 public:
     struct Init : EventInit {
         NavigationNavigationType navigationType { NavigationNavigationType::Push };

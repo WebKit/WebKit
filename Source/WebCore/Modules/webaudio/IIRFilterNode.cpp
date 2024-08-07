@@ -32,11 +32,11 @@
 #include "IIRFilter.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/TypedArrays.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IIRFilterNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IIRFilterNode);
 
 // Determine if filter is stable based on the feedback coefficients.
 // We compute the reflection coefficients for the filter. If, at any

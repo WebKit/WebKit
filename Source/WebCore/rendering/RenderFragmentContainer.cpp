@@ -48,11 +48,11 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
 
 RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsFragmentContainer)

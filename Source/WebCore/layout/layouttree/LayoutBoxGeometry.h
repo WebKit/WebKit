@@ -27,13 +27,13 @@
 
 #include "LayoutGeometryRect.h"
 #include "LayoutUnits.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
 class BoxGeometry {
-    WTF_MAKE_ISO_ALLOCATED(BoxGeometry);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BoxGeometry);
 public:
     BoxGeometry(const BoxGeometry&);
     BoxGeometry() = default;

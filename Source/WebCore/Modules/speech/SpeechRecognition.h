@@ -37,7 +37,7 @@ class Document;
 class SpeechRecognitionResult;
 
 class SpeechRecognition final : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
-    WTF_MAKE_ISO_ALLOCATED(SpeechRecognition);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognition);
 public:
     static Ref<SpeechRecognition> create(Document&);
 

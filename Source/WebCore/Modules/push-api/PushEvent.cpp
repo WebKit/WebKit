@@ -30,11 +30,11 @@
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushEvent);
 
 static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
 {

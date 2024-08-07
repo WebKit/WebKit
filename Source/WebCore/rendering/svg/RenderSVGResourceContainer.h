@@ -25,7 +25,7 @@
 namespace WebCore {
 
 class RenderSVGResourceContainer : public RenderSVGHiddenContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceContainer);
 public:
     virtual ~RenderSVGResourceContainer();

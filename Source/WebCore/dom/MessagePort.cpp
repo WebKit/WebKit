@@ -38,13 +38,13 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MessagePort);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MessagePort);
 
 static Lock allMessagePortsLock;
 static HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)

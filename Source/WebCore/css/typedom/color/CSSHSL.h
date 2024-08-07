@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSHSL final : public CSSColorValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSHSL);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSHSL);
 public:
     static ExceptionOr<Ref<CSSHSL>> create(CSSColorAngle&& hue, CSSColorPercent&& saturation, CSSColorPercent&& lightness, CSSColorPercent&& alpha);
 

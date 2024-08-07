@@ -131,7 +131,6 @@
 #include <algorithm>
 #include <memory>
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
@@ -139,6 +138,7 @@
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -191,7 +191,7 @@ static Seconds transientActivationDuration()
     return defaultTransientActivationDuration;
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LocalDOMWindow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LocalDOMWindow);
 
 typedef HashCountedSet<LocalDOMWindow*> LocalDOMWindowSet;
 

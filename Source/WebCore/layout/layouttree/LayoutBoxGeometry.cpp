@@ -26,12 +26,12 @@
 #include "config.h"
 #include "LayoutBoxGeometry.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BoxGeometry);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BoxGeometry);
 
 BoxGeometry::BoxGeometry(const BoxGeometry& other)
     : m_topLeft(other.m_topLeft)

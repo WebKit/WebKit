@@ -52,8 +52,8 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "markup.h"
 #include <stdio.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -70,7 +70,7 @@ static ExceptionOr<void> processNodes(Range::ActionType, Vector<Ref<Node>>&, Nod
 static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType, RefPtr<DocumentFragment>, RefPtr<Node> container, unsigned startOffset, unsigned endOffset);
 static ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType, Node* container, ContentsProcessDirection, ExceptionOr<RefPtr<Node>>&& passedClonedContainer, Node* commonRoot);
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Range);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Range);
 
 inline Range::Range(Document& ownerDocument)
     : m_ownerDocument(ownerDocument)

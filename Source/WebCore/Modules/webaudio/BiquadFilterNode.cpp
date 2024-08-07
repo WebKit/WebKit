@@ -29,11 +29,11 @@
 
 #include "BiquadFilterNode.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BiquadFilterNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BiquadFilterNode);
 
 ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& context, const BiquadFilterOptions& options)
 {

@@ -26,8 +26,8 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,7 +38,7 @@ class ReportingScope;
 class ScriptExecutionContext;
 
 class ReportingObserver final : public RefCounted<ReportingObserver>, public ActiveDOMObject  {
-    WTF_MAKE_ISO_ALLOCATED(ReportingObserver);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReportingObserver);
 public:
     struct Options {
         std::optional<Vector<AtomString>> types;

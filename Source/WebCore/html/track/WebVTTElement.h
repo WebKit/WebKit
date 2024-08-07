@@ -45,7 +45,7 @@ enum WebVTTNodeType {
 };
 
 class WebVTTElement final : public Element {
-    WTF_MAKE_ISO_ALLOCATED(WebVTTElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebVTTElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebVTTElement);
 public:
     static Ref<Element> create(const WebVTTNodeType, AtomString language, Document&);

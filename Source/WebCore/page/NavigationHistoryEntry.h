@@ -40,7 +40,7 @@ namespace WebCore {
 class SerializedScriptValue;
 
 class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ContextDestructionObserver {
-    WTF_MAKE_ISO_ALLOCATED(NavigationHistoryEntry);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationHistoryEntry);
 public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;

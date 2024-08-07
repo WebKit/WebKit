@@ -37,12 +37,12 @@
 #include "SVGStringList.h"
 #include "SVGUnitTypes.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMaskElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGMaskElement);
 
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

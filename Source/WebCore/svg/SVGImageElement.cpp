@@ -34,12 +34,12 @@
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGImageElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGImageElement);
 
 inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)

@@ -31,11 +31,11 @@
 #include "HTMLParserIdioms.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLHRElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLHRElement);
 
 using namespace HTMLNames;
 

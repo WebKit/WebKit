@@ -32,16 +32,16 @@
 #include "WebXRJointSpace.h"
 #include "WebXRSession.h"
 #include "XRHandJoint.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class WebXRHand : public RefCounted<WebXRHand>, public CanMakeWeakPtr<WebXRHand> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRHand);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRHand);
 public:
 
     static Ref<WebXRHand> create(const WebXRInputSource&);

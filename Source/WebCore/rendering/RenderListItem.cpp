@@ -39,15 +39,15 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "UnicodeBidi.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListItem);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderListItem);
 
 RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::ListItem, element, WTFMove(style))

@@ -38,7 +38,7 @@ namespace WebCore {
 class AudioContext;
 
 class StereoPannerNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(StereoPannerNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StereoPannerNode);
 public:
     static ExceptionOr<Ref<StereoPannerNode>> create(BaseAudioContext&, const StereoPannerOptions& = { });
     

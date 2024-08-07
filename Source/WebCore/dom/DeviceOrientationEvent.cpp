@@ -31,12 +31,12 @@
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DeviceOrientationEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeviceOrientationEvent);
 
 DeviceOrientationEvent::~DeviceOrientationEvent() = default;
 

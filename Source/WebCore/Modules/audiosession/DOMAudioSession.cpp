@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMAudioSession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMAudioSession);
 
 static inline AudioSessionCategory fromDOMAudioSessionType(DOMAudioSession::Type type)
 {

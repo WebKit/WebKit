@@ -29,11 +29,11 @@
 #include "Document.h"
 #include "ElementRareData.h"
 #include "FormAssociatedCustomElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMaybeFormAssociatedCustomElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMaybeFormAssociatedCustomElement);
 
 using namespace HTMLNames;
 

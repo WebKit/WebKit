@@ -53,12 +53,12 @@
 #include "SVGVisitedRendererTracking.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGText);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGText);
 
 RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTFMove(style))

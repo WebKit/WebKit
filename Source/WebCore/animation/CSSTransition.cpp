@@ -32,11 +32,11 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransition);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransition);
 
 Ref<CSSTransition> CSSTransition::create(const Styleable& owningElement, const AnimatableCSSProperty& property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {

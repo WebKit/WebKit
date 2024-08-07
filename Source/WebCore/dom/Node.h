@@ -36,11 +36,11 @@
 #include <wtf/CompactUniquePtrTuple.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -96,7 +96,7 @@ const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
 
 class Node : public EventTarget, public CanMakeCheckedPtr<Node> {
-    WTF_MAKE_COMPACT_ISO_ALLOCATED(Node);
+    WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(Node);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Node);
 
     friend class Document;

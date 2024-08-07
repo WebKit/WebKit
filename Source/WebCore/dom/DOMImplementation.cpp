@@ -57,8 +57,8 @@
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MODEL_ELEMENT)
 #include "ModelDocument.h"
@@ -68,7 +68,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMImplementation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMImplementation);
 
 Ref<Document> DOMImplementation::protectedDocument()
 {

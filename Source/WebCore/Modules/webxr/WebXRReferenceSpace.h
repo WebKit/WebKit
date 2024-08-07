@@ -29,8 +29,8 @@
 
 #include "WebXRSpace.h"
 #include "XRReferenceSpaceType.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ class WebXRRigidTransform;
 class WebXRSession;
 
 class WebXRReferenceSpace : public RefCounted<WebXRReferenceSpace>, public WebXRSpace {
-    WTF_MAKE_ISO_ALLOCATED(WebXRReferenceSpace);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRReferenceSpace);
 public:
     static Ref<WebXRReferenceSpace> create(Document&, WebXRSession&, XRReferenceSpaceType);
     static Ref<WebXRReferenceSpace> create(Document&, WebXRSession&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class AnimationPlaybackEvent final : public AnimationEventBase {
-    WTF_MAKE_ISO_ALLOCATED(AnimationPlaybackEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AnimationPlaybackEvent);
 public:
     static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
     {

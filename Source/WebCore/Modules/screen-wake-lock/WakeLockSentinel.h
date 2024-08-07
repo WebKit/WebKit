@@ -36,7 +36,7 @@ class DeferredPromise;
 class WakeLockManager;
 
 class WakeLockSentinel final : public RefCounted<WakeLockSentinel>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(WakeLockSentinel);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WakeLockSentinel);
 public:
     static Ref<WakeLockSentinel> create(Document& document, WakeLockType type)
     {

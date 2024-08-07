@@ -58,6 +58,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(WEBXR)
 #include "JSDOMPromiseDeferredForward.h"
@@ -168,7 +169,7 @@ class VideoFrame;
 #endif
 
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext {
-    WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using GPUBasedCanvasRenderingContext::weakPtrFactory;
     using GPUBasedCanvasRenderingContext::WeakValueType;

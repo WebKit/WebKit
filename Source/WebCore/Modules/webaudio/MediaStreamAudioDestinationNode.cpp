@@ -32,12 +32,12 @@
 #include "Document.h"
 #include "MediaStream.h"
 #include "MediaStreamAudioSource.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamAudioDestinationNode);
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNode::create(BaseAudioContext& context, const AudioNodeOptions& options)
 {

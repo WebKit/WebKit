@@ -51,7 +51,7 @@ class Blob;
 class RTCPeerConnectionHandler;
 
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDataChannel);
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);

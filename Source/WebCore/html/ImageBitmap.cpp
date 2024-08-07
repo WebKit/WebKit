@@ -55,9 +55,9 @@
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "OffscreenCanvas.h"
@@ -80,7 +80,7 @@ DetachedImageBitmap::~DetachedImageBitmap() = default;
 
 DetachedImageBitmap& DetachedImageBitmap::operator=(DetachedImageBitmap&&) = default;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBitmap);
 
 static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
 {

@@ -46,12 +46,12 @@
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGUseElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGUseElement);
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

@@ -60,7 +60,7 @@ enum class SelectionRenderingBehavior : bool;
 #endif
 
 class HTMLElement : public StyledElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLElement);
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);

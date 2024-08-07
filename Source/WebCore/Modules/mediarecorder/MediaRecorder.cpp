@@ -38,11 +38,11 @@
 #include "Page.h"
 #include "SharedBuffer.h"
 #include "WindowEventLoop.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRecorder);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaRecorder);
 
 MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
 

@@ -50,7 +50,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "VideoFrameMetadata.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -64,7 +64,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLVideoElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLVideoElement);
 
 using namespace HTMLNames;
 

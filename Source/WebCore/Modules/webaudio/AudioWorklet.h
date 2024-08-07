@@ -40,7 +40,7 @@ class BaseAudioContext;
 class AudioWorkletMessagingProxy;
 
 class AudioWorklet final : public Worklet {
-    WTF_MAKE_ISO_ALLOCATED(AudioWorklet);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioWorklet);
 public:
     static Ref<AudioWorklet> create(BaseAudioContext&);
 

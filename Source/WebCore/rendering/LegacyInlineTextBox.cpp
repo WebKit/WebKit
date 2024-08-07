@@ -60,13 +60,13 @@
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include <stdio.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
 
 struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     void* pointers[2];

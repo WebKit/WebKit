@@ -39,7 +39,7 @@ namespace WebCore {
 class DeferredPromise;
 
 class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManagerObserver, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
-    WTF_MAKE_ISO_ALLOCATED(ScreenOrientation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScreenOrientation);
 public:
     static Ref<ScreenOrientation> create(Document*);
     ~ScreenOrientation();

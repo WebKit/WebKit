@@ -33,11 +33,11 @@
 #include "AudioParam.h"
 #include "AudioUtilities.h"
 #include "ConstantSourceOptions.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ConstantSourceNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConstantSourceNode);
 
 ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext& context, const ConstantSourceOptions& options)
 {

@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class SVGSymbolElement final : public SVGGraphicsElement, public SVGFitToViewBox {
-    WTF_MAKE_ISO_ALLOCATED(SVGSymbolElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSymbolElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSymbolElement);
 public:
     static Ref<SVGSymbolElement> create(const QualifiedName&, Document&);

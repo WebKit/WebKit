@@ -30,11 +30,11 @@
 
 #include "HTMLModelElement.h"
 #include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderModel);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderModel);
 
 RenderModel::RenderModel(HTMLModelElement& element, RenderStyle&& style)
     : RenderReplaced { Type::Model, element, WTFMove(style) }

@@ -152,13 +152,13 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
@@ -179,7 +179,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
 
 static constexpr Seconds secondsBetweenRestoreAttempts { 1_s };
 static constexpr int maxGLErrorsAllowedToConsole = 256;

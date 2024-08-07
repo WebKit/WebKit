@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "EXTConservativeDepth.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTConservativeDepth);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTConservativeDepth);
 
 EXTConservativeDepth::EXTConservativeDepth(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTConservativeDepth)

@@ -37,11 +37,11 @@
 #include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceMarker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceMarker);
 
 RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(Type::SVGResourceMarker, element, WTFMove(style))

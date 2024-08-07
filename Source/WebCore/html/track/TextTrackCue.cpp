@@ -54,16 +54,16 @@
 #include "VTTRegionList.h"
 #include <limits.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCue);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueBox);
 
 Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& cue)
 {

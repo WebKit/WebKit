@@ -50,7 +50,7 @@ struct StructuredSerializeOptions;
 
 class MessagePort final : public ActiveDOMObject, public EventTarget, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MessagePort> {
     WTF_MAKE_NONCOPYABLE(MessagePort);
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(MessagePort, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MessagePort, WEBCORE_EXPORT);
 public:
     static Ref<MessagePort> create(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
     WEBCORE_EXPORT virtual ~MessagePort();

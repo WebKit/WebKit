@@ -27,7 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "RegistrableDomain.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class LoginStatus {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
 public:
     static constexpr uint32_t UsernameMaxLength = 64;
     static constexpr Seconds TimeToLiveShort { 24_h * 7 };

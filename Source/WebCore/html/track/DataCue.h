@@ -44,7 +44,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class DataCue final : public TextTrackCue {
-    WTF_MAKE_ISO_ALLOCATED(DataCue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DataCue);
 public:
     static Ref<DataCue> create(Document&, double start, double end, ArrayBuffer& data);
     static Ref<DataCue> create(Document&, double start, double end, JSC::JSValue, const String& type);

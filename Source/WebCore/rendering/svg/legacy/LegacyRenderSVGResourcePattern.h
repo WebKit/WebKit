@@ -27,8 +27,8 @@
 #include "PatternAttributes.h"
 #include "SVGPatternElement.h"
 #include <memory>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ public:
 };
 
 class LegacyRenderSVGResourcePattern final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourcePattern);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourcePattern);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourcePattern);
 public:
     LegacyRenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);

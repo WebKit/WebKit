@@ -61,15 +61,15 @@
 #include "StyleResolver.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGElement);
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : StyledElement(tagName, document, typeFlags | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks)

@@ -31,7 +31,7 @@ namespace WebCore {
 class WindowProxy;
 
 class HTMLFrameSetElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLFrameSetElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFrameSetElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameSetElement);
 public:
     static Ref<HTMLFrameSetElement> create(const QualifiedName&, Document&);

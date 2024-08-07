@@ -35,7 +35,7 @@ namespace WebCore {
 class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElement, private TypeAheadDataSource {
-    WTF_MAKE_ISO_ALLOCATED(HTMLSelectElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLSelectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSelectElement);
 public:
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);

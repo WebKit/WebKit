@@ -33,7 +33,7 @@ class SVGTextElement;
 class RenderSVGInlineText;
 
 class RenderSVGText final : public RenderSVGBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGText);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGText);
 public:
     RenderSVGText(SVGTextElement&, RenderStyle&&);

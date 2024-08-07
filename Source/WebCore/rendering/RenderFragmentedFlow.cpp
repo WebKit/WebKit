@@ -47,12 +47,12 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, RenderStyle&& style)
     : RenderBlockFlow(type, document, WTFMove(style), BlockFlowFlag::IsFragmentedFlow)

@@ -28,12 +28,12 @@
 
 #include "CSSCalcNegateNode.h"
 #include "CSSNumericValue.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathNegate);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathNegate);
 
 static CSSNumericType copyType(const CSSNumberish& numberish)
 {

@@ -29,12 +29,12 @@
 #include "LayoutBox.h"
 #include "LayoutElementBox.h"
 #include "RenderObject.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 // Floating boxes intersect their margin box with the other floats in the context,
 // while other float avoiders (e.g. non-floating formatting context roots) intersect their border box.

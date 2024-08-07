@@ -37,14 +37,14 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
 #include "StyleScope.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListMarker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderListMarker);
 
 constexpr int cMarkerPadding = 7;
 

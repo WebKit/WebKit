@@ -31,7 +31,7 @@ class RenderObject;
 enum class RepaintRectCalculation : bool;
 
 class SVGClipPathElement final : public SVGGraphicsElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGClipPathElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGClipPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGClipPathElement);
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);

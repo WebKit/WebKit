@@ -75,10 +75,10 @@
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -86,7 +86,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlock);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBlock);
 
 struct SameSizeAsRenderBlock : public RenderBox {
 };

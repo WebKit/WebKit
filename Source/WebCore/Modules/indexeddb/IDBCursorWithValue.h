@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class IDBCursorWithValue final : public IDBCursor {
-    WTF_MAKE_ISO_ALLOCATED(IDBCursorWithValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBCursorWithValue);
 public:
     static Ref<IDBCursorWithValue> create(IDBObjectStore&, const IDBCursorInfo&);
     static Ref<IDBCursorWithValue> create(IDBIndex&, const IDBCursorInfo&);

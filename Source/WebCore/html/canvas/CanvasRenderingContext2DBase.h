@@ -90,7 +90,7 @@ using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
     >;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
-    WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasRenderingContext2DBase);
     friend class CanvasFilterContextSwitcher;
     friend class CanvasLayerContextSwitcher;
 protected:

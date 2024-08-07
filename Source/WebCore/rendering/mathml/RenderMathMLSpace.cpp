@@ -31,11 +31,11 @@
 #include "GraphicsContext.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLSpace);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLSpace);
 
 RenderMathMLSpace::RenderMathMLSpace(MathMLSpaceElement& element, RenderStyle&& style)
     : RenderMathMLBlock(Type::MathMLSpace, element, WTFMove(style))

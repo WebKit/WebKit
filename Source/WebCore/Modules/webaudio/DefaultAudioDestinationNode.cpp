@@ -39,14 +39,14 @@
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerRunLoop.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 constexpr unsigned EnabledInputChannels = 2;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, std::optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.value_or(AudioDestination::hardwareSampleRate()))

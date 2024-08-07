@@ -37,7 +37,7 @@ class DOMMatrix;
 template<typename> class ExceptionOr;
 
 class CSSTransformValue final : public CSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSTransformValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransformValue);
 public:
     static ExceptionOr<Ref<CSSTransformValue>> create(const CSSTransformListValue&);
     static ExceptionOr<Ref<CSSTransformValue>> create(Vector<Ref<CSSTransformComponent>>&&);

@@ -29,13 +29,13 @@
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderDetailsMarker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderDetailsMarker);
 
 RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, RenderStyle&& style)
     : RenderBlockFlow(Type::DetailsMarker, element, WTFMove(style))

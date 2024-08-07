@@ -44,7 +44,7 @@
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
@@ -73,7 +73,7 @@ namespace WebCore {
 constexpr unsigned maxHardwareContexts = 4;
 #endif
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioContext);
 
 #if OS(WINDOWS)
 static unsigned hardwareContextCount;

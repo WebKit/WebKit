@@ -36,7 +36,7 @@ class Animation;
 class RenderStyle;
 
 class CSSAnimation final : public StyleOriginatedAnimation {
-    WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSAnimation);
 public:
     static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;

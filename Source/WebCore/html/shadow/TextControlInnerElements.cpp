@@ -52,18 +52,18 @@
 #include "TextEvent.h"
 #include "TextEventInputType.h"
 #include "UserAgentParts.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerContainer);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerTextElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlPlaceholderElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerTextElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlPlaceholderElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
 
 using namespace HTMLNames;
 

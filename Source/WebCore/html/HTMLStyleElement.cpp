@@ -40,12 +40,12 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLStyleElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLStyleElement);
 
 using namespace HTMLNames;
 

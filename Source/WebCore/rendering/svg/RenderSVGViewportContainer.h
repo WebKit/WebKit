@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGSVGElement;
 
 class RenderSVGViewportContainer final : public RenderSVGContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGViewportContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGViewportContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGViewportContainer);
 public:
     RenderSVGViewportContainer(RenderSVGRoot&, RenderStyle&&);

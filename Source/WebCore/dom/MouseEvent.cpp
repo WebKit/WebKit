@@ -35,11 +35,11 @@
 #include "PlatformMouseEvent.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MouseEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MouseEvent);
 
 bool isAnyClick(const AtomString& eventType)
 {

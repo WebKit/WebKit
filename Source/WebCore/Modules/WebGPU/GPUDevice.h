@@ -39,8 +39,8 @@
 #include "ScriptExecutionContext.h"
 #include "WebGPUDevice.h"
 #include <optional>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -81,7 +81,7 @@ class GPUTexture;
 struct GPUTextureDescriptor;
 
 class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(GPUDevice);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GPUDevice);
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     {

@@ -85,7 +85,7 @@ private:
 };
 
 class Navigation final : public RefCounted<Navigation>, public EventTarget, public LocalDOMWindowProperty {
-    WTF_MAKE_ISO_ALLOCATED(Navigation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigation);
 public:
     ~Navigation();
 

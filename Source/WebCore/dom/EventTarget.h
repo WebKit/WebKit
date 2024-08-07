@@ -39,7 +39,7 @@
 #include <variant>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -80,7 +80,7 @@ private:
 };
 
 class EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
-    WTF_MAKE_ISO_ALLOCATED(EventTarget);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
 

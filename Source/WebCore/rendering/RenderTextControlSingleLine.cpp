@@ -46,8 +46,8 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
@@ -57,8 +57,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTFMove(style))

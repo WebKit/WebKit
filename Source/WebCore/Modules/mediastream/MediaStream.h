@@ -55,7 +55,7 @@ class MediaStream final
     , private LoggerHelper
 #endif
     , public RefCounted<MediaStream> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);

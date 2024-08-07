@@ -35,13 +35,13 @@
 #include "StyleProperties.h"
 #include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControl);
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControl);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
 RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, RenderStyle&& style)
     : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsTextControl)

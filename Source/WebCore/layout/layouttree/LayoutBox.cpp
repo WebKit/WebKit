@@ -35,13 +35,13 @@
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
 #include "Shape.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Box);
 
 Box::Box(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_nodeType(elementAttributes.nodeType)

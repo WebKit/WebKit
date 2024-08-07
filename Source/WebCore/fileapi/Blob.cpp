@@ -46,16 +46,16 @@
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
 #include "WebCoreOpaqueRoot.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:

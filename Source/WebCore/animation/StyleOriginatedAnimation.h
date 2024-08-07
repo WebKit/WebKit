@@ -41,7 +41,7 @@ class Element;
 class RenderStyle;
 
 class StyleOriginatedAnimation : public WebAnimation {
-    WTF_MAKE_ISO_ALLOCATED(StyleOriginatedAnimation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleOriginatedAnimation);
 public:
     ~StyleOriginatedAnimation();
 

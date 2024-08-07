@@ -40,7 +40,7 @@ class HTMLSelectElement;
 class RenderText;
 
 class RenderMenuList final : public RenderFlexibleBox, private PopupMenuClient {
-    WTF_MAKE_ISO_ALLOCATED(RenderMenuList);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMenuList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
     RenderMenuList(HTMLSelectElement&, RenderStyle&&);

@@ -32,7 +32,7 @@ class TextRun;
 // Renderer for embeds and objects, often, but not always, rendered via plug-ins.
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject final : public RenderWidget {
-    WTF_MAKE_ISO_ALLOCATED(RenderEmbeddedObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderEmbeddedObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderEmbeddedObject);
 public:
     RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);

@@ -37,14 +37,14 @@
 #include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderDeprecatedFlexibleBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderDeprecatedFlexibleBox);
 
 class FlexBoxIterator {
 public:

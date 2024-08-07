@@ -31,11 +31,11 @@
 #include "SVGInlineFlowBox.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGInline);
     
 RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(type, element, WTFMove(style))

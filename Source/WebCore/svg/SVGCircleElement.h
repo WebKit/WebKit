@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class SVGCircleElement final : public SVGGeometryElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGCircleElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGCircleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGCircleElement);
 public:
     static Ref<SVGCircleElement> create(const QualifiedName&, Document&);

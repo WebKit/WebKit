@@ -50,7 +50,7 @@
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBGL)
 #include "Settings.h"
@@ -65,7 +65,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
 DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
     : m_placeholderSource(WTFMove(placeholderSource))

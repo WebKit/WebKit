@@ -37,12 +37,12 @@
 #include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextContentElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextContentElement);
  
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))

@@ -43,12 +43,12 @@
 #include "WebCodecsVideoEncoderEncodeOptions.h"
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebCodecsVideoEncoder);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsVideoEncoder);
 
 Ref<WebCodecsVideoEncoder> WebCodecsVideoEncoder::create(ScriptExecutionContext& context, Init&& init)
 {

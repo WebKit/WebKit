@@ -30,12 +30,12 @@
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathMin);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathMin);
 
 ExceptionOr<Ref<CSSMathMin>> CSSMathMin::create(FixedVector<CSSNumberish>&& numberishes)
 {

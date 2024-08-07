@@ -42,7 +42,7 @@ class WorkletGlobalScopeProxy;
 class WorkletPendingTasks;
 
 class Worklet : public RefCounted<Worklet>, public ScriptWrappable, public CanMakeWeakPtr<Worklet>, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(Worklet);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worklet);
 public:
     virtual ~Worklet();
 

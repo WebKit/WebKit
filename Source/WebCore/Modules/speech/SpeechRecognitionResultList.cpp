@@ -27,11 +27,11 @@
 #include "SpeechRecognitionResultList.h"
 
 #include "SpeechRecognitionResult.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechRecognitionResultList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionResultList);
 
 Ref<SpeechRecognitionResultList> SpeechRecognitionResultList::create()
 {

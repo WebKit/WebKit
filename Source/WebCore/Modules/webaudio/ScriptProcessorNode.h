@@ -46,7 +46,7 @@ class AudioProcessingEvent;
 // AudioBuffers for each input and output.
 
 class ScriptProcessorNode final : public AudioNode, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(ScriptProcessorNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScriptProcessorNode);
 public:
     // bufferSize must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
     // This value controls how frequently the onaudioprocess event handler is called and how many sample-frames need to be processed each call.

@@ -40,7 +40,7 @@ class HTMLCanvasElement;
 class Image;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
-    WTF_MAKE_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
 public:
     static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 

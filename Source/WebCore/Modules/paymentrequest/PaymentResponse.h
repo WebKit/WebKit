@@ -47,7 +47,7 @@ enum class PaymentComplete;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class PaymentResponse final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentResponse> {
-    WTF_MAKE_ISO_ALLOCATED(PaymentResponse);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentResponse);
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::JSGlobalObject&)>;
 

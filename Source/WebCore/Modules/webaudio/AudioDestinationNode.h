@@ -34,7 +34,7 @@ class AudioBus;
 struct AudioIOPosition;
 
 class AudioDestinationNode : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(AudioDestinationNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioDestinationNode);
 public:
     ~AudioDestinationNode();
     

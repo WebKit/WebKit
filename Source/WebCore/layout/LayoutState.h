@@ -57,7 +57,7 @@ class TableFormattingState;
 
 class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_NONCOPYABLE(LayoutState);
-    WTF_MAKE_ISO_ALLOCATED(LayoutState);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LayoutState);
 public:
     // Primary layout state has a direct geometry cache in layout boxes.
     enum class Type { Primary, Secondary };

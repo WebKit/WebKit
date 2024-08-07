@@ -31,13 +31,13 @@
 #include "MediaSource.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaSourceHandle);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaSourceHandle);
 
 class MediaSourceHandle::SharedPrivate final : public ThreadSafeRefCounted<SharedPrivate> {
 public:

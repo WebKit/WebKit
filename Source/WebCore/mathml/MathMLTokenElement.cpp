@@ -33,11 +33,11 @@
 #include "HTTPParsers.h"
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLTokenElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLTokenElement);
 
 using namespace MathMLNames;
 

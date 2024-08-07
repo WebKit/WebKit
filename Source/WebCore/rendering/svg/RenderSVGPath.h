@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class RenderSVGPath final : public RenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGPath);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGPath);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGPath);
 public:
     RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);

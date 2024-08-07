@@ -45,12 +45,12 @@
 #include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceClipper);
 
 LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceClipper, element, WTFMove(style))

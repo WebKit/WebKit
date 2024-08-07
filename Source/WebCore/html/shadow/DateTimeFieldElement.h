@@ -67,7 +67,7 @@ public:
 };
 
 class DateTimeFieldElement : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(DateTimeFieldElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DateTimeFieldElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DateTimeFieldElement);
 public:
     enum EventBehavior : bool { DispatchNoEvent, DispatchInputAndChangeEvents };

@@ -33,12 +33,12 @@
 #include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 #include "Logging.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FetchEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FetchEvent);
 
 Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {

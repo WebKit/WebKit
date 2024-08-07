@@ -61,7 +61,7 @@ struct ResolutionContext;
 }
 
 class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingClient, public KeyframeInterpolation {
-    WTF_MAKE_ISO_ALLOCATED(KeyframeEffect);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KeyframeEffect);
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);

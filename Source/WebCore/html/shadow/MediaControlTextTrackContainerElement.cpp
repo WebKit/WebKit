@@ -58,12 +58,12 @@
 #include "TextTrackList.h"
 #include "UserAgentParts.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlTextTrackContainerElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaControlTextTrackContainerElement);
 
 using namespace HTMLNames;
 

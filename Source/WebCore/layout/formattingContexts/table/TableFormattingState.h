@@ -27,7 +27,7 @@
 
 #include "FormattingState.h"
 #include "TableGrid.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -35,7 +35,7 @@ namespace Layout {
 
 // TableFormattingState holds the state for a particular table formatting context tree.
 class TableFormattingState : public FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(TableFormattingState);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableFormattingState);
 public:
     TableFormattingState(LayoutState&, const ElementBox& tableBox);
     ~TableFormattingState();

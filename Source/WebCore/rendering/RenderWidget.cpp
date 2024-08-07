@@ -39,13 +39,13 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/StackStats.h>
 #include <wtf/Ref.h>
+#include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderWidget);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderWidget);
 
 static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
 {

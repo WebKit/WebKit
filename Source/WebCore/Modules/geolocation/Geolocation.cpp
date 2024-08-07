@@ -44,8 +44,8 @@
 #include "PermissionsPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -56,7 +56,7 @@ static const ASCIILiteral failedToStartServiceErrorMessage { "Failed to start Ge
 static const ASCIILiteral framelessDocumentErrorMessage { "Geolocation cannot be used in frameless documents"_s };
 static const ASCIILiteral originCannotRequestGeolocationErrorMessage { "Origin does not have permission to use Geolocation service"_s };
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Geolocation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Geolocation);
 
 static RefPtr<GeolocationPosition> createGeolocationPosition(std::optional<GeolocationPositionData>&& position)
 {

@@ -124,11 +124,11 @@
 #include "VisualViewport.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
@@ -151,7 +151,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LocalFrameView);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LocalFrameView);
 
 MonotonicTime LocalFrameView::sCurrentPaintTimeStamp { };
 

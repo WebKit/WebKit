@@ -39,11 +39,11 @@
 #include "RenderLayoutState.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderGrid);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderGrid);
 
 enum class TrackSizeRestriction : uint8_t {
     AllowInfinity,
