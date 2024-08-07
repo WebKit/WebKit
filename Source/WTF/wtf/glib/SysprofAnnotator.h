@@ -61,13 +61,13 @@ public:
     {
         auto key = std::make_pair(pointer, static_cast<const void*>(name.data()));
 
-        Vector<char, 1024> buffer;
+        Vector<char> buffer(1024);
         va_list args;
         va_start(args, description);
-        vsnprintf(buffer.data(), 1024, description, args);
+        vsnprintf(buffer.data(), buffer.size(), description, args);
         va_end(args);
 
-        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, Vector<char>(buffer));
+        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, WTFMove(buffer));
 
         Locker locker { m_lock };
         m_ongoingMarks.set(key, value);
