@@ -760,13 +760,26 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
 
 LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
+    // If the min/max height and logical height are both percentages we take advantage of already knowing the current resolved percentage height
+    // to avoid recursing up through our containing blocks again to determine it.
     const RenderStyle& styleToUse = style();
     if (!styleToUse.logicalMaxHeight().isUndefined()) {
-        if (std::optional<LayoutUnit> maxH = computeContentLogicalHeight(MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight))
-            logicalHeight = std::min(logicalHeight, maxH.value());
+        if (styleToUse.logicalMaxHeight().isPercent() && styleToUse.logicalHeight().isPercent()) {
+            auto availableLogicalHeight = logicalHeight / styleToUse.logicalHeight().value() * 100;
+            logicalHeight = std::min(logicalHeight, valueForLength(styleToUse.logicalMaxHeight(), availableLogicalHeight));
+        } else {
+            if (std::optional<LayoutUnit> maxH = computeContentLogicalHeight(MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight))
+                logicalHeight = std::min(logicalHeight, maxH.value());
+        }
     }
-    if (std::optional<LayoutUnit> computedContentLogicalHeight = computeContentLogicalHeight(MinSize, styleToUse.logicalMinHeight(), intrinsicContentHeight))
-        return std::max(logicalHeight, computedContentLogicalHeight.value());
+
+    if (styleToUse.logicalMinHeight().isPercent() && styleToUse.logicalHeight().isPercent()) {
+        auto availableLogicalHeight = logicalHeight / styleToUse.logicalHeight().value() * 100;
+        logicalHeight = std::max(logicalHeight, valueForLength(styleToUse.logicalMinHeight(), availableLogicalHeight));
+    } else {
+        if (std::optional<LayoutUnit> computedContentLogicalHeight = computeContentLogicalHeight(MinSize, styleToUse.logicalMinHeight(), intrinsicContentHeight))
+            logicalHeight = std::max(logicalHeight, computedContentLogicalHeight.value());
+    }
     return logicalHeight;
 }
 
