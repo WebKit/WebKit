@@ -46,12 +46,13 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
     m_flooredToDevicePixelWidth = floorf(edgeWidth * devicePixelRatio) / devicePixelRatio;
 }
 
-BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, bool setColorsToBlack, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     bool horizontal = style.isHorizontalWritingMode();
 
     auto constructBorderEdge = [&](float width, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
-        return BorderEdge(width, style.visitedDependentColorWithColorFilter(borderColorProperty), borderStyle, isTransparent, isPresent, deviceScaleFactor);
+        auto color = setColorsToBlack ? Color::black : style.visitedDependentColorWithColorFilter(borderColorProperty);
+        return BorderEdge(width, color, borderStyle, !setColorsToBlack && isTransparent, isPresent, deviceScaleFactor);
     };
 
     return {
