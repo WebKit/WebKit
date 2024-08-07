@@ -307,8 +307,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
             glyphOverflow = nullptr;
     }
 
-    bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
-    float* cacheEntry = protectedFonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, glyphOverflow);
+    float* cacheEntry = protectedFonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), false, glyphOverflow);
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
