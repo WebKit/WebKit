@@ -1102,9 +1102,9 @@ test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
   default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
   strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
-test/intl402/DurationFormat/prototype/format/rounding-mode-trunc-for-seconds.js:
-  default: 'Test262Error: Intl.DurationFormat should format seconds, milliseconds and microseconds with `roundingMode: "trunc"` Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: Intl.DurationFormat should format seconds, milliseconds and microseconds with `roundingMode: "trunc"` Expected SameValue(«2», «1») to be true'
+test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-en.js:
+  default: 'Test262Error: value for entry 6 Expected SameValue(«123456788», «123456789») to be true'
+  strict mode: 'Test262Error: value for entry 6 Expected SameValue(«123456788», «123456789») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
