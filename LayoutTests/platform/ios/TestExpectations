@@ -7437,3 +7437,6 @@ http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure 
 
 # webkit.org/b/277758 [ iOS ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant text failure
 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
+
+# webkit.org/b/277762 [ iOS ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html is a constant text failure
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Failure ]
