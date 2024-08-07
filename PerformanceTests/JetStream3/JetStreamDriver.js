@@ -42,8 +42,10 @@ if (typeof testWorstCaseCountMap === "undefined")
 if (typeof dumpJSONResults === "undefined")
     var dumpJSONResults = false;
 
+if (typeof customTestList === "undefined")
+    var customTestList = [];
+
 let shouldReport = false;
-let customTestList = [];
 if (typeof(URLSearchParams) !== "undefined") {
     const urlParameters = new URLSearchParams(window.location.search);
     shouldReport = urlParameters.has('report') && urlParameters.get('report').toLowerCase() == 'true';
@@ -242,9 +244,8 @@ class Driver {
             statusElement = document.getElementById("status");
             summaryElement = document.getElementById("result-summary");
             statusElement.innerHTML = `<label>Running...</label>`;
-        } else {
+        } else if (!dumpJSONResults)
             console.log("Starting JetStream3");
-        }
 
         await updateUI();
 
@@ -278,7 +279,7 @@ class Driver {
         if (measureTotalTimeAsSubtest) {
             if (isInBrowser)
                 document.getElementById("benchmark-total-time-score").innerHTML = uiFriendlyNumber(totalTime);
-            else
+            else if (!dumpJSONResults)
                 console.log("Total time:", uiFriendlyNumber(totalTime));
             allScores.push(totalTime);
         }
@@ -307,7 +308,7 @@ class Driver {
             if (showScoreDetails)
                 displayCategoryScores();
             statusElement.innerHTML = '';
-        } else {
+        } else if (!dumpJSONResults) {
             console.log("\n");
             for (let [category, scores] of categoryScores)
                 console.log(`${category}: ${uiFriendlyNumber(geomean(scores))}`);
@@ -866,7 +867,8 @@ class Benchmark {
 
     updateUIBeforeRun() {
         if (!isInBrowser) {
-            console.log(`Running ${this.name}:`);
+            if (!dumpJSONResults)
+                console.log(`Running ${this.name}:`);
             return;
         }
 
@@ -955,6 +957,9 @@ class DefaultBenchmark extends Benchmark {
             document.getElementById(scoreID(this)).innerHTML = uiFriendlyNumber(this.score);
             return;
         }
+
+        if (dumpJSONResults)
+            return;
 
         console.log("    Startup:", uiFriendlyNumber(this.firstIteration));
         console.log("    Worst Case:", uiFriendlyNumber(this.worst4));
@@ -1050,6 +1055,9 @@ class WSLBenchmark extends Benchmark {
             document.getElementById("wsl-score-score").innerHTML = uiFriendlyNumber(this.score);
             return;
         }
+
+        if (dumpJSONResults)
+            return;
 
         console.log("    Stdlib:", uiFriendlyNumber(this.stdlib));
         console.log("    Tests:", uiFriendlyNumber(this.mainRun));
@@ -1228,6 +1236,10 @@ class WasmBenchmark extends Benchmark {
             document.getElementById(this.scoreID).innerHTML = uiFriendlyNumber(this.score);
             return;
         }
+
+        if (dumpJSONResults)
+            return;
+
         console.log("    Startup:", uiFriendlyNumber(this.startupTime));
         console.log("    Run time:", uiFriendlyNumber(this.runTime));
         if (RAMification) {
