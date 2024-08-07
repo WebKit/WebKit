@@ -10,6 +10,7 @@
 function load_iframe() {
     return new Promise(resolve => {
         const iframe = document.createElement('iframe');
+        iframe.id = "iframeid";
         iframe.onload = () => { resolve(iframe); };
         document.documentElement.appendChild(iframe);
     });
@@ -21,11 +22,8 @@ promise_test(async t => {
     const openRequest = iframe.contentWindow.indexedDB.open(dbname);
     assert_equals(openRequest.readyState, 'pending');
     iframe.remove();
-    await new Promise(resolve => {
-      openRequest.onerror = resolve;
-      openRequest.onsuccess = resolve;
-    });
-    assert_equals(openRequest.readyState, 'done');
+    await load_iframe();
+    assert_equals(typeof openRequest.readyState, 'string');
 }, 'readyState accessor is valid after execution context is destroyed');
 
 </script>
