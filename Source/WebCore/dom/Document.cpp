@@ -148,6 +148,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMWindowCustom.h"
 #include "JSLazyEventListener.h"
+#include "JSViewTransitionUpdateCallback.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
@@ -255,6 +256,7 @@
 #include "SleepDisabler.h"
 #include "SocketProvider.h"
 #include "SpeechRecognition.h"
+#include "StartViewTransitionOptions.h"
 #include "StaticNodeList.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
@@ -10678,9 +10680,13 @@ bool Document::activeViewTransitionCapturedDocumentElement() const
 
 void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 {
-    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
-    if (documentElement())
-        styleInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionInvalidation;
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionTypeInvalidation;
+    if (documentElement()) {
+        activeViewTransitionInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
+        activeViewTransitionTypeInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
+    }
+
     clearRenderingIsSuppressedForViewTransition();
     m_activeViewTransition = WTFMove(viewTransition);
 }
@@ -10723,19 +10729,57 @@ void Document::flushDeferredRenderingIsSuppressedForViewTransitionChanges()
     }
 }
 
-RefPtr<ViewTransition> Document::startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+ExceptionOr<RefPtr<ViewTransition>> Document::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions)
 {
     if (!globalObject())
         return nullptr;
 
-    Ref viewTransition = ViewTransition::create(*this, WTFMove(updateCallback));
+    if (callbackOptions && std::holds_alternative<StartViewTransitionOptions>(*callbackOptions) && !settings().viewTransitionsTypeEnabled())
+        return Exception { ExceptionCode::TypeError };
+
+    // https://drafts.csswg.org/css-view-transitions-2/#extend-document-types
+
+    // 1. Let updateCallback be null.
+    RefPtr<ViewTransitionUpdateCallback> updateCallback = nullptr;
+
+    Vector<AtomString> activeTypes { };
+
+    // 2. If callbackOptions is an an UpdateCallback, set updateCallback to callbackOptions.
+    // 3. Otherwise, if callbackOptions is a StartViewTransitionOptions, then set updateCallback to callbackOptions’s update.
+    // Also extract active types for step 6.
+    if (callbackOptions) {
+        WTF::switchOn(*callbackOptions, [&](const RefPtr<JSViewTransitionUpdateCallback>& argUpdateCallback) {
+            updateCallback = WTFMove(argUpdateCallback);
+        }, [&](const StartViewTransitionOptions& transitionOptions) {
+            ASSERT(settings().viewTransitionsTypeEnabled());
+
+            updateCallback = WTFMove(transitionOptions.update);
+            if (transitionOptions.types)
+                activeTypes = WTFMove(*transitionOptions.types);
+        });
+    }
+
+    // 4. If this’s active view transition is not null and its outbound post-capture steps is not null, then:
+    // FIXME: assume "outbound post-capture steps" is null for now. This is needed to do cross-document view transitions.
+
+    // 5. Let viewTransition be the result of running the method steps for startViewTransition(updateCallback) given updateCallback.
+    // https://drafts.csswg.org/css-view-transitions-1/#ViewTransition-prepare
+
+    Ref viewTransition = ViewTransition::create(*this, WTFMove(updateCallback), WTFMove(activeTypes));
+
+    if (visibilityState() == VisibilityState::Hidden) {
+        viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Visibility of current document is hidden"_s });
+        return { WTFMove(viewTransition) };
+    }
 
     if (RefPtr activeViewTransition = m_activeViewTransition)
         activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });
 
     setActiveViewTransition(WTFMove(viewTransition));
+
     scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
-    return m_activeViewTransition;
+
+    return { m_activeViewTransition.copyRef() };
 }
 
 void Document::performPendingViewTransitions()

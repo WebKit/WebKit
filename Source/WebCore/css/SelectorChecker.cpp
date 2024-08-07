@@ -1164,6 +1164,12 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
         case CSSSelector::PseudoClass::ActiveViewTransition:
             return matchesActiveViewTransitionPseudoClass(element);
+
+        case CSSSelector::PseudoClass::ActiveViewTransitionType: {
+            ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+            return matchesActiveViewTransitionTypePseudoClass(element, *selector.argumentList());
+        }
+
         }
         return false;
     }

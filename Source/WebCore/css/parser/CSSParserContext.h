@@ -100,6 +100,7 @@ struct CSSParserContext {
     bool imageControlsEnabled : 1 { false };
 #endif
     bool lightDarkEnabled : 1 { false };
+    bool viewTransitionsTypeEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

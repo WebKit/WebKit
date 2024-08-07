@@ -2877,6 +2877,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisUtterance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisUtterance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisVoice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisVoice.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStartViewTransitionOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStartViewTransitionOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStaticRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStaticRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStereoPannerNode.cpp
@@ -3047,8 +3049,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTimeline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTimeline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTimelineOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTimelineOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransition+Types.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransition+Types.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionTypeSet.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionTypeSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.cpp

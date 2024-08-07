@@ -462,6 +462,7 @@ namespace WebCore {
     macro(VideoFrame) \
     macro(ViewTimeline) \
     macro(ViewTransition) \
+    macro(ViewTransitionTypeSet) \
     macro(VisualViewport) \
     macro(WGSLLanguageFeatures) \
     macro(WakeLock) \

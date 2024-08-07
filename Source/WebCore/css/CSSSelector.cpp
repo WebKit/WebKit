@@ -511,6 +511,12 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 serializeIdentifier(cs->argument(), builder);
                 builder.append(')');
                 break;
+            case PseudoClass::ActiveViewTransitionType: {
+                builder.append('(');
+                // FIXME do things here
+                builder.append(')');
+                break;
+            }
             default:
                 ASSERT(!pseudoClassMayHaveArgument(cs->pseudoClass()), "Missing serialization for pseudo-class argument");
                 break;

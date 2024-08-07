@@ -63,20 +63,21 @@ static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(
     return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
 }
 
-ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
     , m_finished(createPromiseAndWrapper(document))
+    , m_types(ViewTransitionTypeSet::create(document, WTFMove(initialActiveTypes)))
 {
 }
 
 ViewTransition::~ViewTransition() = default;
 
-Ref<ViewTransition> ViewTransition::create(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+Ref<ViewTransition> ViewTransition::create(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
 {
-    Ref viewTransition = adoptRef(*new ViewTransition(document, WTFMove(updateCallback)));
+    Ref viewTransition = adoptRef(*new ViewTransition(document, WTFMove(updateCallback), WTFMove(initialActiveTypes)));
     viewTransition->suspendIfNeeded();
     return viewTransition;
 }

@@ -7420,6 +7420,20 @@ ViewTransitionsEnabled:
     WebCore:
       default: true
 
+ViewTransitionsTypeEnabled:
+  type: bool
+  category: animation
+  status: testable
+  humanReadableName: "View Transitions :active-view-transition-type() support"
+  humanReadableDescription: "Support specifying active view transition types"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 VisibleDebugOverlayRegions:
   type: uint32_t
   status: embedder

@@ -277,6 +277,68 @@ static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTo
     return FixedVector<PossiblyQuotedIdentifier> { WTFMove(list) };
 }
 
+static std::optional<AtomString> consumeCustomIdent(CSSParserTokenRange& range)
+{
+    const auto& token = range.consumeIncludingWhitespace();
+
+    if (token.type() != IdentToken) {
+        WTFLogAlways("consumeCustomIdent: not a ident token, bailing");
+        return std::nullopt;
+    }
+
+    if (!isValidCustomIdentifier(token.id())) {
+        WTFLogAlways("comsumeCustomIdent: is ident, but not valid custom identifier, bailing");
+        return std::nullopt;
+    }
+
+    return token.value().toAtomString();
+}
+
+static std::optional<FixedVector<PossiblyQuotedIdentifier>> consumeCommaSeparatedCustomIdentsList(CSSParserTokenRange& range)
+{
+    WTFLogAlways("consumeCommaSeparatedCustomIdentsList: entry");
+
+    Vector<PossiblyQuotedIdentifier> customIdents;
+
+    {
+        // MUST have at least one custom ident in the list
+        auto maybeItem = consumeCustomIdent(range);
+
+        if (!maybeItem) {
+            WTFLogAlways("consumeCommaSeparatedCustomIdentsList: unable to parse first custom ident, bailing");
+            return std::nullopt;
+        }
+
+        WTFLogAlways("consumeCommaSeparatedCustomIdentsList: got custom ident %s", (*maybeItem).string().ascii().data());
+        customIdents.append({ *maybeItem, false });
+    }
+
+    while (!range.atEnd()) {
+        const CSSParserToken comma = range.consumeIncludingWhitespace();
+
+        if (comma.type() != CommaToken) {
+            WTFLogAlways("consumeCommaSeparatedCustomIdentsList: expecting comma, got something else, bailing");
+            return std::nullopt;
+        }
+
+        auto maybeItem = consumeCustomIdent(range);
+
+        if (!maybeItem) {
+            WTFLogAlways("consumeCommaSeparatedCustomIdentsList: unable to parse custom ident following comma, bailing");
+            return std::nullopt;
+        }
+
+        WTFLogAlways("consumeCommaSeparatedCustomIdentsList: got custom ident %s", (*maybeItem).string().ascii().data());
+        customIdents.append({ *maybeItem, false });
+    }
+
+    // The parsing code guarantees there has to be at least one custom ident.
+    ASSERT(!customIdents.isEmpty());
+
+    WTFLogAlways("consumeCommaSeparatedCustomIdentsList: returning");
+    return FixedVector<PossiblyQuotedIdentifier> { WTFMove(customIdents) };
+}
+
 enum class CompoundSelectorFlag {
     HasPseudoElementForRightmostCompound = 1 << 0,
 };
@@ -851,6 +913,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
             selector->setArgument(ident.value().toAtomString());
+            return selector;
+        }
+        case CSSSelector::PseudoClass::ActiveViewTransitionType: {
+            auto maybeTypesList = consumeCommaSeparatedCustomIdentsList(block);
+            if (!maybeTypesList)
+                return nullptr;
+            selector->setArgumentList(WTFMove(*maybeTypesList));
             return selector;
         }
         default:

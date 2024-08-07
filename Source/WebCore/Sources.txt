@@ -1280,6 +1280,7 @@ dom/UserActionElementSet.cpp
 dom/UserGestureIndicator.cpp
 dom/UserTypingGestureIndicator.cpp
 dom/ViewTransition.cpp
+dom/ViewTransitionTypeSet.cpp
 dom/ViewportArguments.cpp
 dom/VisitedLinkState.cpp
 dom/WheelEvent.cpp
@@ -4442,6 +4443,7 @@ JSSpeechSynthesisUtterance.cpp
 JSSpeechSynthesisVoice.cpp
 JSStereoPannerNode.cpp
 JSStereoPannerOptions.cpp
+JSStartViewTransitionOptions.cpp
 JSStaticRange.cpp
 JSStorage.cpp
 JSStorageManager.cpp
@@ -4561,6 +4563,7 @@ JSVideoTransferCharacteristics.cpp
 JSViewTimeline.cpp
 JSViewTimelineOptions.cpp
 JSViewTransition.cpp
+JSViewTransitionTypeSet.cpp
 JSViewTransitionUpdateCallback.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp

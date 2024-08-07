@@ -1,5 +1,9 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Old view transition aborted by new view transition.
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Old view transition aborted by new view transition.
 
-FAIL ViewTransition.types is a ViewTransitionTypeSet Can't find variable: ViewTransitionTypeSet
-FAIL ViewTransitionTypeSet behaves like an ordinary Set of strings undefined is not an object (evaluating 'types.add')
-FAIL ViewTransitionTypeSet should reflect its members for a non-active transition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transition.types.add')"
+Harness Error (FAIL), message = Unhandled rejection: Old view transition aborted by new view transition.
+
+PASS ViewTransition.types is a ViewTransitionTypeSet
+PASS ViewTransitionTypeSet behaves like an ordinary Set of strings
+PASS ViewTransitionTypeSet should reflect its members for a non-active transition
 

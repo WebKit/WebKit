@@ -33,6 +33,7 @@
 #include "JSValueInWrappedObject.h"
 #include "MutableStyleProperties.h"
 #include "Styleable.h"
+#include "ViewTransitionTypeSet.h"
 #include "ViewTransitionUpdateCallback.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
@@ -134,7 +135,7 @@ private:
 
 class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition>, public ActiveDOMObject {
 public:
-    static Ref<ViewTransition> create(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
+    static Ref<ViewTransition> create(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     ~ViewTransition();
 
     // ActiveDOMObject.
@@ -159,10 +160,13 @@ public:
 
     bool documentElementIsCaptured() const;
 
+    const ViewTransitionTypeSet& types() const { return m_types; }
+    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = newTypes; }
+
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
 private:
-    ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&);
+    ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
 
     Ref<MutableStyleProperties> copyElementBaseProperties(RenderLayerModelObject&, LayoutSize&);
 
@@ -195,6 +199,8 @@ private:
     PromiseAndWrapper m_updateCallbackDone;
     PromiseAndWrapper m_finished;
     EventLoopTimerHandle m_updateCallbackTimeout;
+
+    Ref<ViewTransitionTypeSet> m_types;
 };
 
 }

@@ -172,6 +172,7 @@ class ImageBitmapRenderingContext;
 class IntPoint;
 class IntersectionObserver;
 class JSNode;
+class JSViewTransitionUpdateCallback;
 class LayoutPoint;
 class LayoutRect;
 class LazyLoadImageObserver;
@@ -277,6 +278,7 @@ struct IntersectionObserverData;
 struct OwnerPermissionsPolicyData;
 struct QuerySelectorAllResults;
 struct SecurityPolicyViolationEventInit;
+struct StartViewTransitionOptions;
 
 #if ENABLE(TOUCH_EVENTS)
 struct EventTrackingRegions;
@@ -403,6 +405,8 @@ using RenderingContext = std::variant<
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>
 >;
+
+using StartViewTransitionCallbackOptions = std::optional<std::variant<WTF::RefPtr<JSViewTransitionUpdateCallback>, StartViewTransitionOptions>>;
 
 class DocumentParserYieldToken {
     WTF_MAKE_FAST_ALLOCATED;
@@ -1699,7 +1703,7 @@ public:
     void unobserveForContainIntrinsicSize(Element&);
     void resetObservationSizeForContainIntrinsicSize(Element&);
 
-    RefPtr<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
+    ExceptionOr<RefPtr<ViewTransition>> startViewTransition(StartViewTransitionCallbackOptions&&);
     ViewTransition* activeViewTransition() const;
     bool activeViewTransitionCapturedDocumentElement() const;
     void setActiveViewTransition(RefPtr<ViewTransition>&&);

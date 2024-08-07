@@ -108,6 +108,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , imageControlsEnabled { document.settings().imageControlsEnabled() }
 #endif
     , lightDarkEnabled { document.settings().cssLightDarkEnabled() }
+    , viewTransitionsTypeEnabled { document.settings().viewTransitionsTypeEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -141,7 +142,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.imageControlsEnabled                      << 21
 #endif
         | context.lightDarkEnabled                          << 22
-        | (uint32_t)context.mode                            << 23; // This is multiple bits, so keep it last.
+        | context.viewTransitionsTypeEnabled                << 23
+        | (uint32_t)context.mode                            << 24; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 
