@@ -4598,43 +4598,7 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
     // Disable unstable Experimental settings, even if the user enabled them for local use.
     settings.disableUnstableFeaturesForModernWebKit();
     Settings::disableGlobalUnstableFeaturesForModernWebKit();
-
-    settings.setWebGLEnabled(false);
-#if HAVE(WEBGPU_IMPLEMENTATION)
-    settings.setWebGPUEnabled(false);
-#endif
-#if ENABLE(GAMEPAD)
-    settings.setGamepadsEnabled(false);
-#endif
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    settings.setRemotePlaybackEnabled(false);
-#endif
-    settings.setFileSystemAccessEnabled(false);
-    settings.setAllowsPictureInPictureMediaPlayback(false);
-#if ENABLE(PICTURE_IN_PICTURE_API)
-    settings.setPictureInPictureAPIEnabled(false);
-#endif
-    settings.setSpeechRecognitionEnabled(false);
-#if ENABLE(SPEECH_SYNTHESIS)
-    settings.setSpeechSynthesisAPIEnabled(false);
-#endif
-#if ENABLE(NOTIFICATIONS)
-    settings.setNotificationsEnabled(false);
-#endif
-    settings.setPushAPIEnabled(false);
-#if ENABLE(WEBXR)
-    settings.setWebXREnabled(false);
-    settings.setWebXRAugmentedRealityModuleEnabled(false);
-#endif
-#if ENABLE(MODEL_ELEMENT)
-    settings.setModelElementEnabled(false);
-#endif
-#if ENABLE(MEDIA_STREAM)
-    settings.setMediaDevicesEnabled(false);
-#endif
-#if ENABLE(WEB_AUDIO)
-    settings.setWebAudioEnabled(false);
-#endif
+    settings.disableFeaturesForLockdownMode();
 #if PLATFORM(COCOA)
     if (settings.downloadableBinaryFontTrustedTypes() != DownloadableBinaryFontTrustedTypes::None) {
         settings.setDownloadableBinaryFontTrustedTypes(
@@ -4643,29 +4607,6 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
                 : DownloadableBinaryFontTrustedTypes::Restricted);
     }
 #endif
-#if ENABLE(WEB_CODECS)
-    settings.setWebCodecsVideoEnabled(false);
-    settings.setWebCodecsAV1Enabled(false);
-#endif
-#if ENABLE(WEB_RTC)
-    settings.setPeerConnectionEnabled(false);
-    settings.setWebRTCEncodedTransformEnabled(false);
-#endif
-#if ENABLE(MATHML)
-    settings.setMathMLEnabled(false);
-#endif
-#if ENABLE(PDFJS)
-    settings.setPDFJSViewerEnabled(true);
-#endif
-#if USE(SYSTEM_PREVIEW)
-    settings.setSystemPreviewEnabled(false);
-#endif
-    settings.setEmbedElementEnabled(false);
-    settings.setFileReaderAPIEnabled(false);
-    settings.setFileSystemAccessEnabled(false);
-    settings.setIndexedDBAPIEnabled(false);
-    settings.setWebLocksAPIEnabled(false);
-    settings.setCacheAPIEnabled(false);
 
     // FIXME: This seems like an odd place to put logic for setting global state in CoreGraphics.
 #if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
