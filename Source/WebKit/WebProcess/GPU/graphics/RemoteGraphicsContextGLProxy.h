@@ -368,7 +368,7 @@ public:
     void deleteExternalSync(GCGLExternalSync) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
 
 #if ENABLE(WEBXR)
-    bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void enableFoveation(GCGLuint) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
