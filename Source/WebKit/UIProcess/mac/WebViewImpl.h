@@ -739,7 +739,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationForAnimationID(WTF::UUID, const WebKit::TextAnimationData&);
+    void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);
 #endif
 

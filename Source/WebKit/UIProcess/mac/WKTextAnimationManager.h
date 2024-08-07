@@ -29,7 +29,9 @@
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-#import "TextAnimationType.h"
+namespace WebCore {
+struct TextAnimationData;
+}
 
 namespace WebKit {
 class WebViewImpl;
@@ -38,7 +40,7 @@ class WebViewImpl;
 @interface WKTextAnimationManager : NSObject
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebKit::TextAnimationData&)data;
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data;
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 
 - (BOOL)hasActiveTextAnimationType;

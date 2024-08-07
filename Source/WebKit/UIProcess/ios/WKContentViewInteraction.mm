@@ -134,6 +134,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextAnimationTypes.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextRecognitionResult.h>
@@ -13275,7 +13276,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid
 {
     auto animationUUID = WTF::UUID::fromNSUUID(uuid);
-    _page->callCompletionHandlerForAnimationID(*animationUUID);
+    _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
 }
 
 #endif

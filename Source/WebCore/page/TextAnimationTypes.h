@@ -27,7 +27,13 @@
 
 #include <wtf/UUID.h>
 
-namespace WebKit {
+namespace WebCore {
+
+enum class TextAnimationRunMode : uint8_t {
+    DoNotRun,
+    OnlyReplaceText,
+    RunAnimation
+};
 
 enum class TextAnimationType : uint8_t {
     Initial,
@@ -37,6 +43,7 @@ enum class TextAnimationType : uint8_t {
 
 struct TextAnimationData {
     TextAnimationType style;
+    TextAnimationRunMode runMode;
     WTF::UUID unanimatedRangeUUID { WTF::UUID::emptyValue };
 
 };
