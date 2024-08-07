@@ -480,6 +480,10 @@ static bool shouldReportAuxiliaryProcessCrash(ProcessTerminationReason reason)
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
         return false;
+    case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
     return false;
@@ -543,7 +547,7 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationRe
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
             m_resetGPUProcessCrashCountTimer.stop();
             m_recentGPUProcessCrashCount = 0;
-            terminateAllWebContentProcesses();
+            terminateAllWebContentProcesses(ProcessTerminationReason::GPUProcessCrashedTooManyTimes);
         } else if (!m_resetGPUProcessCrashCountTimer.isActive())
             m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
     }
@@ -596,7 +600,7 @@ void WebProcessPool::modelProcessExited(ProcessID identifier, ProcessTermination
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "modelProcessDidExit: Model Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses, resetModelProcessCrashCountDelay.seconds());
             m_resetModelProcessCrashCountTimer.stop();
             m_recentModelProcessCrashCount = 0;
-            terminateAllWebContentProcesses();
+            terminateAllWebContentProcesses(ProcessTerminationReason::ModelProcessCrashedTooManyTimes);
         } else if (!m_resetModelProcessCrashCountTimer.isActive())
             m_resetModelProcessCrashCountTimer.startOneShot(resetModelProcessCrashCountDelay);
     }
@@ -889,18 +893,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
 void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
-#if PLATFORM(MAC)
-    auto initializationActivity = process.throttler().foregroundActivity("WebProcess initialization"_s);
-#else
-    auto initializationActivity = process.throttler().backgroundActivity("WebProcess initialization"_s);
-#endif
-    auto scopeExit = makeScopeExit([&process, initializationActivity = WTFMove(initializationActivity)]() mutable {
-        // Round-trip to the Web Content process before releasing the
-        // initialization activity, so that we're sure that all
-        // messages sent from this function have been handled.
-        process.isResponsive([initializationActivity = WTFMove(initializationActivity)] (bool) { });
-    });
-
     WebProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = AuxiliaryProcessProxy::auxiliaryProcessParameters();
 
@@ -1619,12 +1611,12 @@ void WebProcessPool::stopMemorySampler()
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
 }
 
-void WebProcessPool::terminateAllWebContentProcesses()
+void WebProcessPool::terminateAllWebContentProcesses(ProcessTerminationReason reason)
 {
     WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "terminateAllWebContentProcesses");
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (Ref process : processes)
-        process->terminate();
+        process->requestTermination(reason);
 }
 
 void WebProcessPool::terminateServiceWorkers()
@@ -1695,7 +1687,7 @@ WebProcessProxy* WebProcessPool::webProcessProxyFromConnection(const IPC::Connec
 
 const SharedPreferencesForWebProcess& WebProcessPool::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    return *webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
+    return webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
 void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)

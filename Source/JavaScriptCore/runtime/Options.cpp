@@ -635,7 +635,7 @@ static inline void disableAllJITOptions()
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
 
-    if (!OptionsHelper::wasOverridden(Options::useWasmID))
+    if (!Options::useInterpretedJSEntryWrappers())
         Options::useWasm() = false;
 
     Options::usePollingTraps() = true;
@@ -718,17 +718,12 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWasmSIMD() = false;
-    Options::useInterpretedJSEntryWrappers() = false;
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
 #if CPU(ARM_THUMB2)
     Options::useBBQTierUpChecks() = false;
 #endif
-#endif
-
-#if ENABLE(C_LOOP) || !CPU(ADDRESS64) || !(CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
-    Options::useInterpretedJSEntryWrappers() = false;
 #endif
 
 #if !CPU(ARM64)
@@ -929,10 +924,8 @@ void Options::notifyOptionsChanged()
     Options::useWasmFastMemory() = false;
 #endif
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
     uint8_t* reservedConfigBytes = reinterpret_cast_ptr<uint8_t*>(WebConfig::g_config + WebConfig::reservedSlotsForExecutableAllocator);
     reservedConfigBytes[WebConfig::ReservedByteForAllocationProfiling] = Options::useAllocationProfiling() ? 1 : 0;
-#endif
 
     // Do range checks where needed and make corrections to the options:
     ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
@@ -962,9 +955,10 @@ void Options::initialize()
             RELEASE_ASSERT(OptionsHelper::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
             RELEASE_ASSERT(OptionsHelper::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
 
-#ifndef NDEBUG
+#if ENABLE(JSC_RESTRICTED_OPTIONS_BY_DEFAULT)
             Config::enableRestrictedOptions();
 #endif
+
             // Initialize each of the options with their default values:
 #define INIT_OPTION(type_, name_, defaultValue_, availability_, description_) { \
                 name_() = defaultValue_; \
@@ -1370,7 +1364,7 @@ void Option::dump(StringBuilder& builder) const
         builder.append('"', m_optionString ? span8(m_optionString) : ""_span, '"');
         break;
     case Options::Type::GCLogLevel:
-        builder.append(GCLogging::levelAsString(m_gcLogLevel));
+        builder.append(m_gcLogLevel);
         break;
     case Options::Type::OSLogType:
         builder.append(asString(m_osLogType));

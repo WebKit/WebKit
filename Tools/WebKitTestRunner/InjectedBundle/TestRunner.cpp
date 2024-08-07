@@ -1437,9 +1437,15 @@ void TestRunner::statisticsDidScanDataRecordsCallback()
     callTestRunnerCallback(StatisticsDidScanDataRecordsCallbackID);
 }
 
-bool TestRunner::statisticsNotifyObserver()
+void TestRunner::statisticsNotifyObserver(JSContextRef context, JSValueRef callback)
 {
-    return InjectedBundle::singleton().statisticsNotifyObserver();
+    auto globalContext = JSContextGetGlobalContext(context);
+    JSValueProtect(globalContext, callback);
+    InjectedBundle::singleton().statisticsNotifyObserver([callback, globalContext = JSRetainPtr { globalContext }] {
+        JSContextRef context = globalContext.get();
+        JSObjectCallAsFunction(context, JSValueToObject(context, callback, nullptr), JSContextGetGlobalObject(context), 0, nullptr, nullptr);
+        JSValueUnprotect(context, callback);
+    });
 }
 
 void TestRunner::statisticsProcessStatisticsAndDataRecords(JSContextRef context, JSValueRef completionHandler)
@@ -2134,6 +2140,11 @@ void TestRunner::dumpBackForwardList()
 bool TestRunner::shouldDumpBackForwardListsForAllWindows() const
 {
     return postSynchronousPageMessageReturningBoolean("ShouldDumpBackForwardListsForAllWindows");
+}
+
+void TestRunner::setTopContentInset(JSContextRef context, double contentInset, JSValueRef callback)
+{
+    postMessageWithAsyncReply(context, "SetTopContentInset", adoptWK(WKDoubleCreate(contentInset)), callback);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

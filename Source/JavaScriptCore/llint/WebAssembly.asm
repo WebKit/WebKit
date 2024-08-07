@@ -31,7 +31,8 @@ if HAVE_FAST_TLS
     const WTF_WASM_CONTEXT_KEY = constexpr WTF_WASM_CONTEXT_KEY
 end
 
-if X86_64 or X86_64_WIN
+# Must match GPRInfo.h
+if X86_64
     const NumberOfWasmArgumentJSRs = 6
 elsif ARM64 or ARM64E or RISCV64
     const NumberOfWasmArgumentJSRs = 8
@@ -48,7 +49,7 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 # All callee saves must match the definition in WasmCallee.cpp
 
 # These must match the definition in GPRInfo.h
-if X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+if X86_64 or ARM64 or ARM64E or RISCV64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
@@ -61,7 +62,7 @@ else
 end
 
 # This must match the definition in LowLevelInterpreter.asm
-if X86_64 or X86_64_WIN
+if X86_64
     const PB = csr2
 elsif ARM64 or ARM64E or RISCV64
     const PB = csr7
@@ -246,7 +247,7 @@ macro preserveCalleeSavesUsedByWasm()
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq wasmInstance, PB, -16[cfr]
-    elsif X86_64 or X86_64_WIN or RISCV64
+    elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
     elsif ARMv7
@@ -263,7 +264,7 @@ macro restoreCalleeSavesUsedByWasm()
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         loadpairq -16[cfr], wasmInstance, PB
-    elsif X86_64 or X86_64_WIN or RISCV64
+    elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
     elsif ARMv7
@@ -285,7 +286,7 @@ macro restoreGPRsUsedByTailCall(gpr0, gpr1)
 end
 
 macro preserveReturnAddress(scratch)
-if X86_64 or X86_64_WIN
+if X86_64
     loadp ReturnPC[cfr], scratch
     storep scratch, ReturnPC[sp]
 elsif ARM64 or ARM64E or ARMv7 or RISCV64
@@ -296,7 +297,7 @@ end
 macro usePreviousFrame()
     if ARM64 or ARM64E
         loadpairq -PtrSize[cfr], PB, cfr
-    elsif ARMv7 or X86_64 or X86_64_WIN or RISCV64
+    elsif ARMv7 or X86_64 or RISCV64
         loadp -PtrSize[cfr], PB
         loadp [cfr], cfr
     else
@@ -560,43 +561,28 @@ macro boxInt32(r, rTag)
     end
 end
 
-// This is the interpreted analogue to createJSToWasmWrapper
-if JSVALUE64 and (ARM64 or ARM64E or X86_64 or X86_64_WIN)
-op(js_to_wasm_wrapper_entry, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+// This is the interpreted analogue to createJSToWasmJITInterpreterCrashForSIMDParameters
+op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro()
+    if not WEBASSEMBLY or C_LOOP
         error
     end
+    tagReturnAddress sp
+    preserveCallerPCAndCFR()
 
-    const AccumulatorTag = invalidGPR # Only used for JSVALUE32_64
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], a2
+    // copyCalleeSavesToVMEntryFrameCalleeSavesBuffer
+    move wasmInstance, a0
+    move constexpr Wasm::ExceptionType::TypeErrorInvalidV128Use, a1
+    cCall3(_operationWasmToJSException)
+    jumpToException()
+end)
 
-if ARM64 or ARM64E or ARMv7
-    const MPC = t8
-    const CalleeExecutableAddress = ws3 # Callee prologue (jump target) pointer
-    const Accumulator = ws0
-    const Scratch = ws1
-    const Scratch2 = ws2
-
-    const MPCSpill = -4 * SlotSize
-else
-    const MPC = metadataTable
-    const Accumulator = csr2
-    const Scratch = ws1
-
-    # Any callee saves clobbered here would also have to be saved by the JS->WASM thunk,
-    # since the exception unwinder cannot tell if an interpreted callee had a replacementCallee installed
-    # when the stack frame was created.
-    # Instead of making every thunk save more callee-saves, we should just restore these extra
-    # clobbered callee-saves here before calling JS.
-    # TODO: https://bugs.webkit.org/show_bug.cgi?id=274768 ([WASM + Global GC] Interpreted Wasm->JS ICs should be able to be replaced directly).
-    # If we could replace the interpreted callee directly, we could just add these clobbered callee-saves
-    # directly to the callee save list in JSEntrypointInterpreterCallee.
-    const MPCCSRSlot = -4 * SlotSize
-    const AccumulatorCSRSlot = -5 * SlotSize
-
-    const MPCSpill = -6 * SlotSize
-    const AccumulatorSpill = -7 * SlotSize
-    const CalleeExecutableAddress = -8 * SlotSize
-end
+// This is the interpreted analogue to createJSToWasmWrapper
+// If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITInterpreter
+op(js_to_wasm_wrapper_entry, macro ()
+    if not WEBASSEMBLY or C_LOOP
+        error
+    end
 
     macro clobberVolatileRegisters()
         if ARM64 or ARM64E
@@ -624,37 +610,56 @@ end
         end
     end
 
+    macro repeat(f)
+        move 0xBEEF, ws0
+        f(0)
+        f(1)
+        f(2)
+        f(3)
+        f(4)
+        f(5)
+        f(6)
+        f(7)
+        f(8)
+        f(9)
+        f(10)
+        f(11)
+        f(12)
+        f(13)
+        f(14)
+        f(15)
+        f(16)
+        f(17)
+        f(18)
+        f(19)
+        f(20)
+        f(21)
+        f(22)
+        f(23)
+        f(24)
+        f(25)
+        f(26)
+        f(27)
+        f(28)
+        f(29)
+    end
+
+if ASSERT_ENABLED
     clobberVolatileRegisters()
-
-
-if ARM64 or ARM64E or ARMv7
-    const JSEntrypointInterpreterSpillSpaceStackAligned = (4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
-else
-    const JSEntrypointInterpreterSpillSpaceStackAligned = (8 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
 end
 
     macro saveJSEntrypointInterpreterRegisters()
-        subp JSEntrypointInterpreterSpillSpaceStackAligned, sp
+        subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
-            # These are just for us to spill things
-            # MPCSpill
-        elsif X86_64 or X86_64_WIN
-            # These must match the wasmToJS thunk, since the unwinder won't be able to tell the difference between us and them.
-            # See calleeSaveRegistersImpl
+        elsif X86_64
+            # These must match the wasmToJS thunk, since the unwinder won't be able to tell who made this frame.
             storep boundsCheckingSize, -1 * SlotSize[cfr]
             storep memoryBase, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
-            # This gets restored before call too, since it doesn't get saved/restored by the wasmToJS thunk
-            storep MPC, MPCCSRSlot[cfr]
-            storep Accumulator, AccumulatorCSRSlot[cfr]
-            # These are just for us to spill things
-            # AccumulatorSpill
-            # MPCSpill
-            # CalleeExecutableAddress
         else
-            error
+            storei wasmInstance, -1 * SlotSize[cfr]
         end
     end
 
@@ -662,306 +667,223 @@ end
         if ARM64 or ARM64E
             loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
             loadp -3 * SlotSize[cfr], wasmInstance
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             loadp -1 * SlotSize[cfr], boundsCheckingSize
             loadp -2 * SlotSize[cfr], memoryBase
             loadp -3 * SlotSize[cfr], wasmInstance
-            loadp MPCCSRSlot[cfr], MPC
-            loadp AccumulatorCSRSlot[cfr], Accumulator
         else
-            error
+            loadi -1 * SlotSize[cfr], wasmInstance
         end
-        addp JSEntrypointInterpreterSpillSpaceStackAligned, sp
+        addp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
     end
 
     tagReturnAddress sp
     preserveCallerPCAndCFR()
     saveJSEntrypointInterpreterRegisters()
 
-    # Load metadata from the entry callee
+    # Load data from the entry callee
     # This was written by doVMEntry
     loadp Callee[cfr], ws0 # WebAssemblyFunction*
-    loadp WebAssemblyFunction::m_jsToWasmBoxedInterpreterCallee[ws0], ws1 # JSEntrypointInterpreterCallee*
-    # Store the boxed entry callee
-    storep ws1, Callee[cfr]
     loadp WebAssemblyFunction::m_jsToWasmInterpreterCallee[ws0], ws0 # JSEntrypointInterpreterCallee*
 
-    # Debugging sanity check to confirm we have the right kind of callee
-    loadp Wasm::JSEntrypointInterpreterCallee::ident[ws0], ws1
+if ASSERT_ENABLED
+    # Check to confirm we have the right kind of callee
+    loadi Wasm::JSEntrypointInterpreterCallee::ident[ws0], ws1
     move 0xBF, wa0
     bpeq wa0, ws1, .ident_ok
     break
 .ident_ok:
-    leap (constexpr (Wasm::JSEntrypointInterpreterCallee::offsetOfMetadataStorage()))[ws0], t1
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmFunctionPrologue[ws0], t2
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee[ws0], t3
+end
 
-    # Load the FrameSize op
-    loadb [t1], ws0
-    addp 1, t1
+    # Allocate stack space (no stack check)
+    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    subp ws1, sp
 
-    # TODO attacker controlled sp?
-    move constexpr Wasm::JSEntrypointInterpreterCalleeMetadata::FrameSize, ws1
-    bpeq ws0, ws1, .stack
-    break
-.stack:
-    # Load the stack size
-    loadb [t1], ws0
-    addp 1, t1
-    lshiftq 3, ws0
-    subp ws0, sp
+if ASSERT_ENABLED
+    repeat(macro (i)
+        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+    end)
+end
 
-    # Store Callee's wasm callee
-    storep t3, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
+    # Prepare frame
+    move sp, a0
+    move cfr, a1
+    cCall2(_operationJSToWasmEntryWrapperBuildFrame)
 
+    # Instance
     loadp constexpr CallFrameSlot::codeBlock * 8[cfr], wasmInstance
 
-    # Callee saves are saved, so now we can use our prefered registers
-    # and free up the argument registers (t* and wa* overlap on some platforms)
-    move t1, MPC
-if ARM64 or ARM64E or ARMv7
-    move t2, CalleeExecutableAddress
-else
-    storeq t2, CalleeExecutableAddress[cfr]
-end
-
-if JSVALUE64
-    move 0xBADBEEFBADBEEF, memoryBase
-    move 0xBADBEEFBADBEEF, boundsCheckingSize
-end
-
-    # Each op can have at most this number of instructions.
-    # There are at most OpcodeMask opcodes
-    # We do an unauthenticated jump, but due to the masking, it is only possible to reach
-    # one of the opcode handlers below.
-    const OpcodeSize = 8
-    const OpcodeSizeShift = 5 # 8 instructions * 4 bytes per instruction
-
-    macro advance()
-        loadb [MPC], Scratch
-        addp 1, MPC
-    end
-
-    macro advanceSigned()
-        loadbsq [MPC], Scratch
-        addp 1, MPC
-    end
-
-    macro idispatch()
-        jmp .idispatch
-    end
-
-    # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-    macro opcode(label)
-        idispatch()
-        emit ".balign 32"
-        unalignedglobal _js_to_wasm_wrapper_entry_interp_%label%_validate
-        _js_to_wasm_wrapper_entry_interp_%label%:
-        _js_to_wasm_wrapper_entry_interp_%label%_validate:
-    end
-
-    # This must be updated after adding/removing opcodes.
-    # It pads unused opcode values.
-    macro opcodesEnd()
-        idispatch()
-        break
-        emit ".balign 32"
-        unalignedglobal _js_to_wasm_wrapper_entry_interp_invalidop_validate
-        _js_to_wasm_wrapper_entry_interp_invalidop:
-        _js_to_wasm_wrapper_entry_interp_invalidop_validate:
-        # Padding, set based on release assert in InPlaceInterpreter.cpp
-        emit ".fill 240, 4, 0xBF"
-        unalignedglobal _js_to_wasm_wrapper_entry_interp_afterops_validate
-        _js_to_wasm_wrapper_entry_interp_afterops_validate:
-        break
-    end
-
-opcode(LoadI32)
-_js_to_wasm_wrapper_entry_interp_begin:
-    advanceSigned()
-    lshiftq 3, Scratch
-    addp cfr, Scratch
-    loadi [Scratch], Accumulator
-
-opcode(LoadI64)
-    break
-
-opcode(LoadF32)
-    break
-
-opcode(LoadF64)
-    break
-
-opcode(StoreI32)
-    advanceSigned()
-    lshiftq 3, Scratch
-if X86_64 or X86_64_WIN
-    addp sp, Scratch
-else
-    move sp, Scratch2
-    addp Scratch2, Scratch
-end
-    storei Accumulator, [Scratch]
-
-opcode(StoreI64)
-    break
-
-opcode(StoreF32)
-    break
-
-opcode(StoreF64)
-    break
-
-opcode(BoxInt32)
-    zeroExtend32ToWord(Accumulator)
-    boxInt32(Accumulator, AccumulatorTag)
-
-opcode(BoxInt64)
-    break
-
-opcode(BoxFloat32)
-    break
-
-opcode(BoxFloat64)
-    break
-
-opcode(UnBoxInt32)
-    break
-
-opcode(UnBoxInt64)
-    break
-
-opcode(UnBoxFloat32)
-    break
-
-opcode(UnBoxFloat64)
-    break
-
-opcode(Zero)
-    break
-
-opcode(Undefined)
-    move ValueUndefined, Accumulator
-
-opcode(ShiftTag)
-    break
-
-opcode(Memory)
-    jmp .memory
-
-opcode(Call)
-    jmp .call
-
-opcode(Done)
-    jmp .done
-
-opcode(WA0)
-    move Accumulator, wa0
-
-opcode(WA1)
-    move Accumulator, wa1
-
-opcode(WA2)
-    move Accumulator, wa2
-
-opcode(WA3)
-    move Accumulator, wa3
-
-opcode(WA4)
-    move Accumulator, wa4
-
-opcode(WA5)
-    move Accumulator, wa5
-
-opcode(WA6)
-    if ARM64 or ARM64E
-        move Accumulator, wa6
-    else
-        break
-    end
-
-opcode(WA7)
-    if ARM64 or ARM64E
-        move Accumulator, wa7
-    else
-        break
-    end
-
-opcode(WR0)
-    move Accumulator, r0
-
-opcode(WA0_READ)
-    move wa0, Accumulator
-
-opcode(WR1)
-    move Accumulator, r1
-
-opcode(WAF0)
-    break
-
-opcodesEnd()
-.idispatch:
-
-    advance()
-    andp constexpr Wasm::JSEntrypointInterpreterCalleeMetadata::OpcodeMask, Scratch
-    lshiftq OpcodeSizeShift, Scratch
-
-    if ARM64 or ARM64E
-        pcrtoaddr _js_to_wasm_wrapper_entry_interp_begin, Scratch2
-        addp Scratch2, Scratch
-    elsif X86_64 or X86_64_WIN
-        storeq Accumulator, AccumulatorSpill[cfr]
-        leap (_js_to_wasm_wrapper_entry_interp_begin), Accumulator
-        addp Accumulator, Scratch
-        loadq AccumulatorSpill[cfr], Accumulator
-    else
-        break
-    end
-    if ARM64E
-        emit "br x10" # Scratch
-    else
-        jmp Scratch
-    end
-    break
-
-.memory:
+    # Memory
     if ARM64 or ARM64E
         loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
         loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, Scratch)
+        cagedPrimitiveMayBeNull(memoryBase, ws0)
     end
-    idispatch()
 
-.call:
-    storeq MPC, MPCSpill[cfr]
-if ARM64 or ARM64E or ARMv7
-    call CalleeExecutableAddress, LLIntToWasmEntryPtrTag
+    # Arguments
+
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        loadpairq offset[sp], gpr1, gpr2
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        loadq offset[sp], gpr
+    end)
 else
-    loadq MPCCSRSlot[cfr], MPC
-    loadq AccumulatorCSRSlot[cfr], Accumulator
-    call CalleeExecutableAddress[cfr]
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        load2ia offset[sp], gpLsw, gprMsw
+    end)
 end
-    loadq MPCSpill[cfr], MPC
+
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        loadpaird offset[sp], fpr1, fpr2
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        loadd offset[sp], fpr
+    end)
+end
+
+    # Pop argument space values
+    addp constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned, sp
+
+if ASSERT_ENABLED
+    repeat(macro (i)
+        storep ws0, -i * SlotSize[sp]
+    end)
+end
+
+    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+if JSVALUE64
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+end
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
+
+    # Store Callee's wasm callee
+if JSVALUE64
+    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee[ws0], ws1
+    storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
+else
+    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + PayloadOffset[ws0], ws1
+    storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
+    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + TagOffset[ws0], ws1
+    storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
+end
+
+    loadp Wasm::JSEntrypointInterpreterCallee::wasmFunctionPrologue[ws0], ws0
+    call ws0, WasmEntryPtrTag
+
     clobberVolatileRegisters()
     clobberArgumentOnlyRegisters()
-    idispatch()
 
-.done:
+    # Restore SP
+    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+if JSVALUE64
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+end
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
+    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    subp cfr, ws1, ws1
+    move ws1, sp
+    subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+
+if ASSERT_ENABLED
+    repeat(macro (i)
+        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+    end)
+end
+
+    # Save return registers
+    macro forEachReturnWasmJSR(fn)
+        if ARM64 or ARM64E
+            fn(0 * 8, wa0, wa1)
+            fn(2 * 8, wa2, wa3)
+            fn(4 * 8, wa4, wa5)
+            fn(6 * 8, wa6, wa7)
+        elsif X86_64
+            fn(0 * 8, wa0)
+            fn(1 * 8, wa1)
+            fn(2 * 8, wa2)
+            fn(3 * 8, wa3)
+            fn(4 * 8, wa4)
+            fn(5 * 8, wa5)
+        elsif JSVALUE64
+            fn(0 * 8, wa0)
+            fn(1 * 8, wa1)
+            fn(2 * 8, wa2)
+            fn(3 * 8, wa3)
+            fn(4 * 8, wa4)
+            fn(5 * 8, wa5)
+        else
+            fn(0 * 8, wa1, wa0)
+            fn(1 * 8, wa3, wa2)
+        end
+    end
+    macro forEachReturnJSJSR(fn)
+        if ARM64 or ARM64E
+            fn(0 * 8, r0, r1)
+        elsif X86_64
+            fn(0 * 8, r0)
+            fn(1 * 8, r1)
+        elsif JSVALUE64
+            fn(0 * 8, r0)
+            fn(1 * 8, r1)
+        else
+            fn(0 * 8, r1, r0)
+        end
+    end
+
+if ARM64 or ARM64E
+    forEachReturnWasmJSR(macro (offset, gpr1, gpr2)
+        storepairq gpr1, gpr2, offset[sp]
+    end)
+elsif JSVALUE64
+    forEachReturnWasmJSR(macro (offset, gpr)
+        storeq gpr, offset[sp]
+    end)
+else
+    forEachReturnWasmJSR(macro (offset, gprMsw, gpLsw)
+        store2ia gpLsw, gprMsw, offset[sp]
+    end)
+end
+
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        storepaird fpr1, fpr2, offset[sp]
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        stored fpr, offset[sp]
+    end)
+end
+
+    # Prepare frame
+    move sp, a0
+    move cfr, a1
+    cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
+
+    btpnz r1, .handleException
+
+    # Clean up and return
     restoreJSEntrypointInterpreterRegisters()
     clobberVolatileRegisters()
     restoreCallerPCAndCFR()
     ret
+
+.handleException:
+    throwException(OutOfMemory)
     break
 end)
-else
-    op(js_to_wasm_wrapper_entry, macro ()
-        break
-    end)
-end
 
 macro traceExecution()
     if TRACING
@@ -1169,7 +1091,7 @@ op(wasm_function_prologue_trampoline, macro ()
 end)
 
 op(wasm_function_prologue, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1177,8 +1099,13 @@ op(wasm_function_prologue, macro ()
     wasmNextInstruction()
 end)
 
+op(wasm_function_prologue_simd_trampoline, macro ()
+    tagReturnAddress sp
+    jmp _wasm_function_prologue_simd
+end)
+
 op(wasm_function_prologue_simd, macro ()
-    if not WEBASSEMBLY or C_LOOP or C_LOOP_WIN
+    if not WEBASSEMBLY or C_LOOP
         error
     end
 
@@ -1688,7 +1615,7 @@ end
             # ws1 is the new stack pointer.
             # cfr is the caller's caller's frame pointer.
 
-if X86_64 or X86_64_WIN
+if X86_64
             addp PtrSize, ws1, sp
 elsif ARMv7
             addp CallerFrameAndPCSize, ws1
@@ -1905,7 +1832,7 @@ end)
 
 wasmI64ToFOp(f32_convert_u_i64, WasmF32ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64 or X86_64_WIN
+    if X86_64
         cq2f t0, t1, ft0
     else
         cq2f t0, ft0
@@ -1915,7 +1842,7 @@ end)
 
 wasmI64ToFOp(f64_convert_u_i64, WasmF64ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
-    if X86_64 or X86_64_WIN
+    if X86_64
         cq2d t0, t1, ft0
     else
         cq2d t0, ft0

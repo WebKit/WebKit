@@ -59,7 +59,6 @@ public:
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
 
-    void setContextVisibility(bool) final;
     bool reshapeDrawingBuffer() final;
     void prepareForDisplay() final;
 #if ENABLE(WEBXR)

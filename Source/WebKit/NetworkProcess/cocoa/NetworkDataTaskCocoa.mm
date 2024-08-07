@@ -273,6 +273,13 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.protocolIsFile(), parameters.contentEncodingSniffingPolicy);
 
+    if (url.protocolIs("ws"_s) || url.protocolIs("wss"_s)) {
+        // FIXME: Remove this once configuration._usesNWLoader is always effectively YES.
+        // It will be no longer needed, as verified by the WebSocket.LoadRequestWSS API test.
+        scheduleFailure(FailureType::RestrictedURL);
+        return;
+    }
+
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
 
 #if HAVE(CFNETWORK_HOSTOVERRIDE)

@@ -49,12 +49,12 @@
     }
 
     // Called from subframe.
-    function testDone()
+    async function testDone()
     {
         if (window.eventSender) {
-            eventSender.mouseMoveTo(82, 52);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(82, 52);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
         }
 
         if (window.testRunner)

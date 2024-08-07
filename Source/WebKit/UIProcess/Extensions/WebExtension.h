@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,12 +50,12 @@ OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS UTType;
-OBJC_CLASS _WKWebExtension;
+OBJC_CLASS WKWebExtension;
+OBJC_CLASS WKWebExtensionMatchPattern;
 OBJC_CLASS _WKWebExtensionLocalization;
-OBJC_CLASS _WKWebExtensionMatchPattern;
 
 #ifdef __OBJC__
-#include "_WKWebExtensionPermission.h"
+#include "WKWebExtensionPermission.h"
 #endif
 
 namespace API {
@@ -237,6 +237,12 @@ public:
     bool hasBrowserAction();
     bool hasPageAction();
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    CocoaImage *sidebarIcon(CGSize idealSize);
+    NSString *sidebarDocumentPath();
+    NSString *sidebarTitle();
+#endif
+
     CocoaImage *imageForPath(NSString *);
 
     NSString *pathForBestImageInIconsDictionary(NSDictionary *, size_t idealPixelSize);
@@ -300,7 +306,7 @@ public:
     NSArray *errors();
 
 #ifdef __OBJC__
-    _WKWebExtension *wrapper() const { return (_WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
+    WKWebExtension *wrapper() const { return (WKWebExtension *)API::ObjectImpl<API::Object::Type::WebExtension>::wrapper(); }
 #endif
 
 private:
@@ -318,6 +324,11 @@ private:
     void populateCommandsIfNeeded();
     void populateDeclarativeNetRequestPropertiesIfNeeded();
     void populateExternallyConnectableIfNeeded();
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    void populateSidebarPropertiesIfNeeded();
+    void populateSidebarActionProperties(RetainPtr<NSDictionary>);
+    void populateSidePanelProperties(RetainPtr<NSDictionary>);
+#endif
 
     std::optional<WebExtension::DeclarativeNetRequestRulesetData> parseDeclarativeNetRequestRulesetDictionary(NSDictionary *, NSError **);
 
@@ -358,6 +369,12 @@ private:
     RetainPtr<NSString> m_displayActionLabel;
     RetainPtr<NSString> m_actionPopupPath;
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    RetainPtr<CocoaImage> m_sidebarIcon;
+    RetainPtr<NSString> m_sidebarDocumentPath;
+    RetainPtr<NSString> m_sidebarTitle;
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
     RetainPtr<NSString> m_contentSecurityPolicy;
 
     RetainPtr<NSArray> m_backgroundScriptPaths;
@@ -386,6 +403,9 @@ private:
     bool m_parsedManifestCommands : 1 { false };
     bool m_parsedManifestDeclarativeNetRequestRulesets : 1 { false };
     bool m_parsedExternallyConnectable : 1 { false };
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    bool m_parsedManifestSidebarProperties : 1 { false };
+#endif
 };
 
 } // namespace WebKit

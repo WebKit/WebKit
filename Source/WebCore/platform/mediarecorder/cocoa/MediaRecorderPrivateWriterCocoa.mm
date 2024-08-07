@@ -506,8 +506,12 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
         m_audioCompressor->flush();
 
     // We hop to the main thread since flushing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        flushCompressedSampleBuffers([weakThis = WTFMove(weakThis)]() mutable {
+    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->flushCompressedSampleBuffers([weakThis = WTFMove(weakThis)]() mutable {
             auto protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

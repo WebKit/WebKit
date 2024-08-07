@@ -37,6 +37,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "LocalDOMWindow.h"
+#include "Page.h"
 #include "VisibilityState.h"
 
 namespace WebCore {
@@ -50,8 +51,14 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
     if (!performCommonChecks(options, promise))
         return;
 
+    if (!options.digital || options.publicKey) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only digital member is supported."_s });
+        return;
+    }
+
     RefPtr document = this->document();
     ASSERT(document);
+
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::DigitalCredentialsGetRule, *document, PermissionsPolicy::ShouldReportViolation::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call .get() unless explicitly allowed via Permissions Policy (digital-credentials-get)"_s });
         return;
@@ -73,21 +80,15 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
         return;
     }
 
-    if (!options.digital) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "Only digital member is supported."_s });
-        return;
-    }
-
     if (options.digital->providers.isEmpty()) {
         promise.reject(Exception { ExceptionCode::TypeError, "At least one provider must be specified."_s });
         return;
     }
 
-    // FIXME: Implement the actual get logic.
+    // FIXME: <https://webkit.org/b/277322> mediation requirement,
+    // which is waiting on https://github.com/WICG/digital-credentials/pull/149
 
-    // Default as per Cred Man spec is to resolve with null.
-    // https://www.w3.org/TR/credential-management-1/#algorithm-discover-creds
-    promise.resolve(nullptr);
+    document->page()->credentialRequestCoordinator().discoverFromExternalSource(*document, WTFMove(options), WTFMove(promise));
 }
 
 void IdentityCredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)

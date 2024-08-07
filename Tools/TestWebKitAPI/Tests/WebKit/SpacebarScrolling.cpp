@@ -53,15 +53,11 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 }
 
 
-static void didRunJavascript(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error, void* context)
+static void didRunJavascript(WKTypeRef result, WKErrorRef error, void* context)
 {
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    JSValueRef jsValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
-    isScrolled = JSValueToBoolean(scriptContext, jsValue);
-
+    EXPECT_EQ(WKGetTypeID(result), WKBooleanGetTypeID());
+    isScrolled = WKBooleanGetValue((WKBooleanRef)result);
     javascriptRun = true;
-
-    JSGlobalContextRelease(scriptContext);
 }
 
 TEST(WebKit, SpacebarScrolling)
@@ -118,7 +114,7 @@ TEST(WebKit, SpacebarScrolling)
 
     while (!isScrolled) {
         javascriptRun = false;
-        WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("isDocumentScrolled()").get(), 0, didRunJavascript);
+        WKPageEvaluateJavaScriptInMainFrame(webView.page(), Util::toWK("isDocumentScrolled()").get(), nullptr, didRunJavascript);
         Util::run(&javascriptRun);
     }
 

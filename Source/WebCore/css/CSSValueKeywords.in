@@ -606,18 +606,27 @@ full-size-kana
 visible
 //hidden
 collapse
-//
-// Unordered rest
-//
+
+// @page size
 a3
 a4
 a5
+b4
+b5
+jis-b4
+jis-b5
+landscape
+ledger
+legal
+letter
+
+//
+// Unordered rest
+//
 above
 absolute
 always
 avoid
-b4
-b5
 below
 bidi-override
 blink
@@ -637,10 +646,6 @@ plaintext
 -webkit-isolate
 -webkit-isolate-override
 -webkit-plaintext
-landscape
-ledger
-legal
-letter
 level
 line-through
 local
@@ -1357,7 +1362,7 @@ ccw
 // small
 by
 close
-via
+using
 of
 
 // @font-face src
@@ -1761,7 +1766,10 @@ false
 // text-spacing-trim
 space-all
 // text-autospace
+// normal
 no-autospace
+ideograph-alpha
+ideograph-numeric
 
 // scrollbar-gutter
 // auto

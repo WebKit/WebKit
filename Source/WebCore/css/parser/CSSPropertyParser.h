@@ -84,8 +84,14 @@ private:
     // @keyframe descriptors.
     bool parseKeyframeDescriptor(CSSPropertyID, bool important);
 
+    // @page descriptors.
+    bool parsePageDescriptor(CSSPropertyID, bool important);
+
     // @property descriptors.
     bool parsePropertyDescriptor(CSSPropertyID);
+
+    // @view-transition descriptors.
+    bool parseViewTransitionDescriptor(CSSPropertyID);
 
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);

@@ -39,6 +39,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkSession.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "RemoteAudioHardwareListener.h"
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
@@ -256,7 +257,7 @@ namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
 
-WTF_MAKE_WK_TZONE_ALLOCATED_IMPL(WebProcess);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcess);
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 NO_RETURN static void callExit(IPC::Connection*)
@@ -2143,6 +2144,14 @@ bool WebProcess::areAllPagesThrottleable() const
 
 void WebProcess::setAppBadge(std::optional<WebPageProxyIdentifier> pageIdentifier, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        if (m_sessionID)
+            ensureNetworkProcessConnection().connection().send(Messages::NotificationManagerMessageHandler::SetAppBadge({ origin, badge }), m_sessionID->toUInt64());
+        return;
+    }
+#endif
+
     parentProcessConnection()->send(Messages::WebProcessProxy::SetAppBadge(pageIdentifier, origin, badge), 0);
 }
 

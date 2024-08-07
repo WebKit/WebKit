@@ -28,6 +28,7 @@ from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from datetime import date
+from shlex import quote
 
 from twisted.internet import defer, reactor, task
 
@@ -540,10 +541,19 @@ class ShellMixin(object):
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
 
-    def shell_command(self, command):
+    def shell_command(self, command, pipefail=True):
         if self.has_windows_shell():
-            return ['sh', '-c', command]
-        return ['/bin/sh', '-c', command]
+            shell = 'sh'
+        else:
+            shell = '/bin/sh'
+
+        if pipefail:
+            # -o pipefail is new in POSIX 2024, but commonly `sh` is provided by `bash`
+            # or `zsh` which have long supported the `pipefail` option, even when
+            # invoked as `sh` (and in POSIX-compliant mode).
+            return [shell, '-o', 'pipefail', '-c', command]
+        else:
+            return [shell, '-c', command]
 
     def shell_exit_0(self):
         if self.has_windows_shell():
@@ -3616,7 +3626,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
         self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
-        self.command = self.shell_command(' '.join(self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
+        self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
         return super().start()
 
     def evaluateCommand(self, cmd):
@@ -3992,8 +4002,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
-        if self.getProperty('buildername', '').lower() != 'merge-queue':
-            self.command = self.shell_command(' '.join(str(c) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
+        self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
         return super().start()
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
@@ -4120,19 +4129,17 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
-        steps_to_add = []
-        if self.getProperty('buildername', '').lower() != 'merge-queue':
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -4146,8 +4153,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
             self.build.results = SUCCESS
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
-            if self.getProperty('buildername', '').lower() != 'merge-queue':
-                steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
+            steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
             self.finished(WARNINGS)
         else:
             steps_to_add += [
@@ -4218,19 +4224,17 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        steps_to_add = []
-        if self.getProperty('buildername', '').lower() != 'merge-queue':
-            steps_to_add += [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
             self.descriptionDone = message
@@ -4273,19 +4277,17 @@ class ReRunWebKitTests(RunWebKitTests):
         flaky_failures = sorted(list(flaky_failures))[:self.NUM_FAILURES_TO_DISPLAY]
         flaky_failures_string = ', '.join(flaky_failures)
         previous_build_summary = self.getProperty('build_summary', '')
-        steps_to_add = []
-        if self.getProperty('buildername', '').lower() != 'merge-queue':
-            steps_to_add += [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
 
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
@@ -4394,19 +4396,17 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
-        steps_to_add = []
-        if self.getProperty('buildername', '').lower() != 'merge-queue':
-            steps_to_add += [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
         self.setProperty('clean_tree_run_status', rc)

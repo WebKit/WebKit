@@ -760,10 +760,10 @@ inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderSt
     return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
 }
 
-inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState&, const CSSValue& value)
+inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState& builderState, const CSSValue& value)
 {
     if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
-        return basicShapePathForValue(*pathValue);
+        return basicShapePathForValue(*pathValue, builderState, 1);
 
     ASSERT(is<CSSPrimitiveValue>(value));
     ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
@@ -799,7 +799,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         if (is<CSSRayValue>(singleValue))
             operation = convertRayPathOperation(builderState, singleValue);
         else if (!singleValue.isValueID())
-            operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(), singleValue, builderState.style().usedZoom()));
+            operation = ShapePathOperation::create(basicShapeForValue(singleValue, builderState));
         else
             referenceBox = fromCSSValue<CSSBoxType>(singleValue);
     };
@@ -1084,7 +1084,7 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
     auto referenceBox = CSSBoxType::BoxMissing;
     auto processSingleValue = [&](const CSSValue& currentValue) {
         if (!currentValue.isValueID())
-            shape = basicShapeForValue(builderState.cssToLengthConversionData(), currentValue);
+            shape = basicShapeForValue(currentValue, builderState, 1);
         else
             referenceBox = fromCSSValue<CSSBoxType>(currentValue);
     };
@@ -2029,10 +2029,30 @@ inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(BuilderState&, c
 inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState&, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueNoAutospace)
+            return { };
         if (primitiveValue->valueID() == CSSValueAuto)
-            return { .m_autoSpace = TextAutospace::TextAutospaceType::Auto };
+            return { TextAutospace::Type::Auto };
+        if (primitiveValue->valueID() == CSSValueNormal)
+            return { TextAutospace::Type::Normal };
     }
-    return { };
+
+    TextAutospace::Options options;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& value = downcast<CSSPrimitiveValue>(item);
+        switch (value.valueID()) {
+        case CSSValueIdeographAlpha:
+            options.add(TextAutospace::Type::IdeographAlpha);
+            break;
+        case CSSValueIdeographNumeric:
+            options.add(TextAutospace::Type::IdeographNumeric);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    return options;
 }
 
 inline std::optional<Length> BuilderConverter::convertBlockStepSize(BuilderState& builderState, const CSSValue& value)

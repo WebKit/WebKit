@@ -28,7 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "TestCocoa.h"
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionDataRecord.h>
+#import <WebKit/WKWebExtensionDataRecord.h>
 
 namespace TestWebKitAPI {
 
@@ -46,7 +46,7 @@ static auto *dataRecordTestTwoManifest = @{
     @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 };
 
-static auto *allDataTypesSet = [NSSet setWithArray:@[ _WKWebExtensionDataTypeLocal, _WKWebExtensionDataTypeSession, _WKWebExtensionDataTypeSync ]];
+static auto *allDataTypesSet = [NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSync ]];
 
 TEST(WKWebExtensionDataRecord, GetDataRecords)
 {
@@ -57,11 +57,11 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
         @"await browser?.storage?.sync?.set(data)",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScript  }]);
-    auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScript  }]);
+    auto *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
-    auto *context = [[_WKWebExtensionContext alloc] initForExtension:extension.get()];
-    [context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *context = [[WKWebExtensionContext alloc] initForExtension:extension.get()];
+    [context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -72,7 +72,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
     TestWebKitAPI::Util::runFor(4_s);
 
     __block bool fetchComplete = false;
-    [testController fetchDataRecordOfTypes:allDataTypesSet forExtensionContext:context completionHandler:^(_WKWebExtensionDataRecord *dataRecord) {
+    [testController fetchDataRecordOfTypes:allDataTypesSet forExtensionContext:context completionHandler:^(WKWebExtensionDataRecord *dataRecord) {
         EXPECT_EQ(dataRecord.errors.count, 0UL);
 
         EXPECT_NS_EQUAL(dataRecord.displayName, @"DataRecord");
@@ -81,9 +81,9 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
         EXPECT_EQ(dataRecord.dataTypes.count, 3UL);
         EXPECT_EQ(dataRecord.totalSize, 237UL);
 
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeLocal]], 79UL);
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSession]], 79UL);
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSync]], 79UL);
+        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
+        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
+        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 79UL);
 
         unsigned long long sizeOfDataTypes = [dataRecord sizeOfDataTypes:allDataTypesSet];
         EXPECT_EQ(sizeOfDataTypes, 237UL);
@@ -107,16 +107,16 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
         @"await browser?.storage?.sync?.set(data)",
     ]);
 
-    auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
+    auto *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
-    auto *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
-    auto *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
-    [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *testExtensionOne = [[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
+    auto *testContextOne = [[WKWebExtensionContext alloc] initForExtension:testExtensionOne];
+    [testContextOne setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
-    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
-    auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
-    [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *testExtensionTwo = [[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
+    auto *testContextTwo = [[WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
+    [testContextTwo setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
 
     [testController loadExtensionContext:testContextOne error:nil];
@@ -126,13 +126,13 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::runFor(4_s);
 
     __block bool fetchComplete = false;
-    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *dataRecords) {
+    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
         EXPECT_EQ(dataRecords[0].errors.count, 0UL);
         EXPECT_EQ(dataRecords[1].errors.count, 0UL);
 
-        _WKWebExtensionDataRecord *dataRecordOne;
-        _WKWebExtensionDataRecord *dataRecordTwo;
+        WKWebExtensionDataRecord *dataRecordOne;
+        WKWebExtensionDataRecord *dataRecordTwo;
 
         if ([dataRecords[0].uniqueIdentifier isEqualToString:@"org.webkit.testOne.extension (76C788B8)"]) {
             dataRecordOne = dataRecords[0];
@@ -153,13 +153,13 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
         EXPECT_EQ(dataRecordOne.totalSize, 79UL);
         EXPECT_EQ(dataRecordTwo.totalSize, 158UL);
 
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeLocal]], 79UL);
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSession]], 0UL);
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSync]], 0UL);
+        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
+        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 0UL);
+        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 0UL);
 
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeLocal]], 0UL);
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSession]], 79UL);
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:_WKWebExtensionDataTypeSync]], 79UL);
+        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 0UL);
+        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
+        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 79UL);
 
         fetchComplete = true;
     }];
@@ -176,11 +176,11 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
         @"await browser?.storage?.sync?.set(data)",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScript  }]);
-    auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScript  }]);
+    auto *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
-    auto *context = [[_WKWebExtensionContext alloc] initForExtension:extension.get()];
-    [context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *context = [[WKWebExtensionContext alloc] initForExtension:extension.get()];
+    [context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
@@ -191,12 +191,12 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
     TestWebKitAPI::Util::runFor(4_s);
 
     __block bool removalComplete = false;
-    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *dataRecords) {
+    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 1UL);
         EXPECT_EQ(dataRecords.firstObject.totalSize, 237UL);
 
-        [testController removeDataOfTypes:[NSSet setWithArray:@[ _WKWebExtensionDataTypeLocal, _WKWebExtensionDataTypeSession ]] forDataRecords:dataRecords completionHandler:^{
-            [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedRecords) {
+        [testController removeDataOfTypes:[NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession ]] forDataRecords:dataRecords completionHandler:^{
+            [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *updatedRecords) {
                 EXPECT_EQ(updatedRecords.count, 1UL);
 
                 EXPECT_EQ(updatedRecords[0].errors.count, 0UL);
@@ -223,16 +223,16 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
         @"await browser?.storage?.sync?.set(data)",
     ]);
 
-    auto *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration];
+    auto *testController = [[WKWebExtensionController alloc] initWithConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration];
 
-    auto *testExtensionOne = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
-    auto *testContextOne = [[_WKWebExtensionContext alloc] initForExtension:testExtensionOne];
-    [testContextOne setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *testExtensionOne = [[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestManifest resources:@{ @"background.js": backgroundScriptOne }];
+    auto *testContextOne = [[WKWebExtensionContext alloc] initForExtension:testExtensionOne];
+    [testContextOne setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
     testContextOne.uniqueIdentifier = @"org.webkit.testOne.extension (76C788B8)";
 
-    auto *testExtensionTwo = [[_WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
-    auto *testContextTwo = [[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
-    [testContextTwo setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionStorage];
+    auto *testExtensionTwo = [[WKWebExtension alloc] _initWithManifestDictionary:dataRecordTestTwoManifest resources:@{ @"background.js": backgroundScriptTwo }];
+    auto *testContextTwo = [[WKWebExtensionContext alloc] initForExtension:testExtensionTwo];
+    [testContextTwo setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionStorage];
     testContextTwo.uniqueIdentifier = @"org.webkit.testTwo.extension (76C788B8)";
 
     [testController loadExtensionContext:testContextOne error:nil];
@@ -242,14 +242,14 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::runFor(4_s);
 
     __block bool removalComplete = false;
-    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *dataRecords) {
+    [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
         EXPECT_EQ(dataRecords[0].totalSize + dataRecords[1].totalSize, 237UL);
 
         [testController removeDataOfTypes:allDataTypesSet forDataRecords:dataRecords completionHandler:^{
             EXPECT_EQ(dataRecords[0].errors.count, 0UL);
             EXPECT_EQ(dataRecords[1].errors.count, 0UL);
-            [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<_WKWebExtensionDataRecord *> *updatedDataRecords) {
+            [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *updatedDataRecords) {
                 EXPECT_EQ(updatedDataRecords[0].errors.count, 0UL);
                 EXPECT_EQ(updatedDataRecords[1].errors.count, 0UL);
 

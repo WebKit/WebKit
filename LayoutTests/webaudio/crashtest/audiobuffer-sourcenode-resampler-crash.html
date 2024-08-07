@@ -1,0 +1,25 @@
+<html>
+<head>
+    <script>
+        async function main() {
+            var ctx = new AudioContext();
+            var src = new AudioBufferSourceNode(ctx);
+            src.buffer = ctx.createBuffer(1, 8192, 44100);
+            src.start(undefined, 0.5);
+            src.playbackRate.value = -1;
+            src.connect(ctx.destination, 0, 0);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="main()">
+    <p>This test passes if it does not crash.</p>
+    <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    </script>
+</body>
+</html>

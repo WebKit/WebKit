@@ -57,6 +57,8 @@ private:
     void clearNotificationPermissionState();
 #endif
 
+    void setTopContentInset(float, CompletionHandler<void()>&&);
+
     void clearWheelEventTestMonitor();
     Ref<WebPage> protectedPage() const;
 

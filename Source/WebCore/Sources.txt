@@ -145,6 +145,7 @@ Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegistry.cpp
 Modules/highlight/Highlight.cpp
+Modules/identity/CredentialRequestCoordinator.cpp
 Modules/identity/DigitalCredential.cpp
 Modules/identity/IdentityCredentialsContainer.cpp
 Modules/identity/NavigatorIdentity.cpp
@@ -826,6 +827,7 @@ crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 css/BasicShapeConversion.cpp
+css/BasicShapesShapeSegmentConversion.cpp
 css/CSSAnchorValue.cpp
 css/CSSAspectRatioValue.cpp
 css/CSSBackgroundRepeatValue.cpp
@@ -924,6 +926,7 @@ css/CSSValuePool.cpp
 css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
+css/CSSViewTransitionRule.cpp
 css/ComputedStyleExtractor.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
@@ -1182,6 +1185,7 @@ dom/InternalObserverFromScript.cpp
 dom/InternalObserverFilter.cpp
 dom/InternalObserverMap.cpp
 dom/InternalObserverTake.cpp
+dom/InternalObserverDrop.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp
@@ -2800,6 +2804,7 @@ rendering/shapes/RectangleShape.cpp
 rendering/shapes/Shape.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/BasicShapes.cpp
+rendering/style/BasicShapesShape.cpp
 rendering/style/BorderData.cpp
 rendering/style/BorderValue.cpp
 rendering/style/ContentData.cpp
@@ -3397,6 +3402,7 @@ JSCSSSupportsRule.cpp
 JSCSSTransition.cpp
 JSCSSTransitionEvent.cpp
 JSCSSUnknownRule.cpp
+JSCSSViewTransitionRule.cpp
 JSCOEPInheritenceViolationReportBody.cpp
 JSCORPViolationReportBody.cpp
 JSCacheQueryOptions.cpp

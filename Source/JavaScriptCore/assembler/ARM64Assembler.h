@@ -44,12 +44,14 @@
 
 #define CHECK_DATASIZE_OF(datasize) static_assert(datasize == 32 || datasize == 64)
 #define CHECK_DATASIZE_OF_SIMD(datasize) static_assert(datasize == 32 || datasize == 64 || datasize == 128)
+#define CHECK_DATASIZE_OF_FP(datasize) static_assert(datasize == 16 || datasize == 32 || datasize == 64)
 #define CHECK_MEMOPSIZE_OF(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64);
 #define CHECK_MEMOPSIZE_OF_SIMD(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
-#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : ((datasize == 128) ? Datasize_128 : Datasize_32))
+#define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : ((datasize == 128) ? Datasize_128 : ((datasize == 16) ? Datasize_16 : Datasize_32)))
 #define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
 #define CHECK_DATASIZE() CHECK_DATASIZE_OF(datasize)
 #define CHECK_DATASIZE_SIMD() CHECK_DATASIZE_OF_SIMD(datasize)
+#define CHECK_DATASIZE_FP() CHECK_DATASIZE_OF_FP(datasize)
 #define CHECK_MEMOPSIZE() CHECK_MEMOPSIZE_OF(datasize)
 #define CHECK_MEMOPSIZE_SIMD() CHECK_MEMOPSIZE_OF_SIMD(datasize)
 #define CHECK_VECTOR_DATASIZE() ASSERT(datasize == 64 || datasize == 128)
@@ -2908,9 +2910,9 @@ public:
     template<int dstsize, int srcsize>
     ALWAYS_INLINE void fcvt(FPRegisterID vd, FPRegisterID vn)
     {
-        ASSERT(dstsize == 16 || dstsize == 32 || dstsize == 64);
-        ASSERT(srcsize == 16 || srcsize == 32 || srcsize == 64);
-        ASSERT(dstsize != srcsize);
+        CHECK_DATASIZE_OF_FP(dstsize);
+        CHECK_DATASIZE_OF_FP(srcsize);
+        static_assert(dstsize != srcsize);
         Datasize type = (srcsize == 64) ? Datasize_64 : (srcsize == 32) ? Datasize_32 : Datasize_16;
         FPDataOp1Source opcode = (dstsize == 64) ? FPDataOp_FCVT_toDouble : (dstsize == 32) ? FPDataOp_FCVT_toSingle : FPDataOp_FCVT_toHalf;
         insn(floatingPointDataProcessing1Source(type, opcode, vn, vd));
@@ -3048,14 +3050,14 @@ public:
     template<int datasize>
     ALWAYS_INLINE void fmov(FPRegisterID vd, RegisterID rn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointIntegerConversions(DATASIZE, DATASIZE, FPIntConvOp_FMOV_XtoQ, rn, vd));
     }
 
     template<int datasize>
     ALWAYS_INLINE void fmov(RegisterID rd, FPRegisterID vn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointIntegerConversions(DATASIZE, DATASIZE, FPIntConvOp_FMOV_QtoX, vn, rd));
     }
 
@@ -3297,7 +3299,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void stur(FPRegisterID rt, RegisterID rn, int simm)
     {
-        CHECK_DATASIZE_SIMD();
+        CHECK_FP_MEMOP_DATASIZE();
         insn(loadStoreRegisterUnscaledImmediate(MEMOPSIZE, true, datasize == 128 ? MemOp_STORE_V128 : MemOp_STORE, simm, rn, rt));
     }
 

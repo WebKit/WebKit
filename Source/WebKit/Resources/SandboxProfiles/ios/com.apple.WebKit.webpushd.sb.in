@@ -178,6 +178,10 @@
 (allow mach-lookup
     (global-name "com.apple.usernotifications.listener"))
 
+;; Support for app badging
+(allow mach-lookup
+    (global-name "com.apple.frontboard.systemappservices"))
+
 ;; Web Clip metadata.
 (allow file-read*
     (home-subpath "/Library/WebClips"))

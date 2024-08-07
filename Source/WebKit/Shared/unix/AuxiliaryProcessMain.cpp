@@ -38,6 +38,10 @@
 #include "unix/BreakpadExceptionHandler.h"
 #endif
 
+#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX) && (!PLATFORM(PLAYSTATION) || USE(WPE_BACKEND_PLAYSTATION))
+#include "ProcessProviderLibWPE.h"
+#endif
+
 namespace WebKit {
 
 AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()

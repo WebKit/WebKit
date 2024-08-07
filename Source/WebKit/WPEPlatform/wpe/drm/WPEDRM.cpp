@@ -169,7 +169,8 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
         drmPropertyForName(fd, properties.get(), "SRC_Y"),
         drmPropertyForName(fd, properties.get(), "SRC_W"),
         drmPropertyForName(fd, properties.get(), "SRC_H"),
-        drmPropertyForName(fd, properties.get(), "FB_DAMAGE_CLIPS")
+        drmPropertyForName(fd, properties.get(), "FB_DAMAGE_CLIPS"),
+        drmPropertyForName(fd, properties.get(), "IN_FENCE_FD")
     };
     return makeUnique<Plane>(plane, WTFMove(formats), WTFMove(props));
 }

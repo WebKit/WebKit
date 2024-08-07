@@ -515,6 +515,7 @@ AppBadgeEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 AppHighlightsEnabled:
   type: bool
@@ -928,6 +929,20 @@ CSSAnchorPositioningEnabled:
     WebCore:
       default: false
 
+CSSBackgroundClipBorderAreaEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS background-clip: border-area"
+  humanReadableDescription: "Enable the border-area value for background-clip"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSColorContrastEnabled:
   type: bool
   status: testable
@@ -1254,7 +1269,7 @@ CSSScrollbarWidthEnabled:
 
 CSSShapeFunctionEnabled:
   type: bool
-  status: unstable
+  status: preview
   category: css
   humanReadableName: "CSS shape() function"
   humanReadableDescription: "Enable the CSS shape() function"
@@ -1293,6 +1308,20 @@ CSSStyleQueriesEnabled:
       default: true
     WebCore:
       default: true
+
+CSSTextAutospaceEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-autospace property"
+  humanReadableDescription: "Enable the property text-autospace, defined in CSS Text 4"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 CSSTextBoxTrimEnabled:
   type: bool
@@ -1830,6 +1859,20 @@ CoreMathMLEnabled:
       default: false
     WebKit:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+    WebCore:
+      default: false
+
+CrossDocumentViewTransitionsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Cross document view-transitions"
+  humanReadableDescription: "Enable support for view-transitions cross-document"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
       default: false
     WebCore:
       default: false
@@ -2883,6 +2926,20 @@ GetCoalescedEventsEnabled:
     WebCore:
       default: true
 
+GetPredictedEventsEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Pointer Events getPredictedEvents API"
+  humanReadableDescription: "Enable the `getPredictedEvents` function of the Pointer Events API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 GetUserMediaRequiresFocus:
   type: bool
   status: internal
@@ -3167,7 +3224,7 @@ InWindowFullscreenEnabled:
     WebCore:
       default: false
 
-InactiveMediaCaptureSteamRepromptIntervalInMinutes:
+InactiveMediaCaptureStreamRepromptIntervalInMinutes:
   type: double
   status: embedder
   webcoreBinding: none
@@ -3655,6 +3712,18 @@ JavaScriptRuntimeFlags:
       default: 0
     WebCore:
       default: '{ }'
+
+KeyboardDismissalGestureEnabled:
+  type: bool
+  status: internal
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "Keyboard Dismissal Gesture"
+  humanReadableDescription: "Enable the keyboard dismissal gesture"
+  defaultValue:
+    WebKit:
+      "PLATFORM(APPLETV)" : true
+      default: false
 
 LargeImageAsyncDecodingEnabled:
   type: bool
@@ -4379,6 +4448,20 @@ MediaRecorderEnabled:
     WebKit:
       "PLATFORM(COCOA)": true
       "USE(GSTREAMER_TRANSCODER)": true
+      default: false
+    WebCore:
+      default: false
+
+MediaSessionCaptureToggleAPIEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "MediaSession capture related API"
+  humanReadableDescription: "Enable MediaSession capture related API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
       default: false
     WebCore:
       default: false
@@ -6922,8 +7005,10 @@ UnifiedPDFEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
     WebCore:
+      "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
 
 UnifyDamagedRegions:
@@ -7717,24 +7802,6 @@ WebGLTimerQueriesEnabled:
     WebKit:
       default: false
     WebCore:
-      default: false
-
-WebGLUsingMetal:
-  type: bool
-  status: internal
-  category: dom
-  humanReadableName: "WebGL via Metal"
-  humanReadableDescription: "Use the Metal backend for ANGLE"
-  condition: ENABLE(WEBGL) && PLATFORM(COCOA)
-  defaultValue:
-    WebKitLegacy:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
-      default: false
-    WebKit:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
-      default: false
-    WebCore:
-      "HAVE(WEBGL_COMPATIBLE_METAL)": true
       default: false
 
 WebGPUEnabled:

@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Float16.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
 #include <wtf/SIMDHelpers.h>
@@ -622,6 +623,15 @@ ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character
 ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
 {
     return findImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const Float16* findFloat16(const Float16* pointer, Float16 target, size_t length)
+{
+    for (size_t index = 0; index < length; ++index) {
+        if (pointer[index] == target)
+            return pointer + index;
+    }
+    return nullptr;
 }
 
 WTF_EXPORT_PRIVATE const float* findFloatAlignedImpl(const float* pointer, float target, size_t length);

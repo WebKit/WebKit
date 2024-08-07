@@ -69,12 +69,14 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundle, WKBundlePageRef page, bool enabled);
 
-WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
-WK_EXPORT bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
+WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef bundle);
+
+typedef void (*NotifyObserverCallback)(void* functionContext);
+WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef bundle, void* context, NotifyObserverCallback callback);
 
 WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
 
-WK_EXPORT void WKBundleReleaseMemory(WKBundleRef);
+WK_EXPORT void WKBundleReleaseMemory(WKBundleRef bundle);
 
 #ifdef __cplusplus
 }

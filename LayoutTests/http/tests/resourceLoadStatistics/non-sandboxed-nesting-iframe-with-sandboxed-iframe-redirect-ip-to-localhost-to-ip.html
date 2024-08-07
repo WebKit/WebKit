@@ -15,7 +15,7 @@
         var lastPageInRedirectChainLoaded = false;
         var statsChecked = false;
 
-        function receiveMessage(event) {
+        async function receiveMessage(event) {
             if (event.origin === "null") {
                 if (event.data.indexOf("PASS") === -1)
                     testFailed(event.data.replace("FAIL ", ""));
@@ -26,7 +26,7 @@
             if (statsChecked)
                 finishTest();
             else
-                testRunner.statisticsNotifyObserver();
+                await testRunner.statisticsNotifyObserver();
         }
 
         function checkStats() {

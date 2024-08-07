@@ -86,8 +86,8 @@ PointerEvent::PointerEvent()
 {
 }
 
-PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
-    : MouseEvent(EventInterfaceType::PointerEvent, type, initializer)
+PointerEvent::PointerEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : MouseEvent(EventInterfaceType::PointerEvent, type, initializer, isTrusted)
     , m_pointerId(initializer.pointerId)
     , m_width(initializer.width)
     , m_height(initializer.height)
@@ -99,6 +99,7 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
     , m_pointerType(initializer.pointerType)
     , m_isPrimary(initializer.isPrimary)
     , m_coalescedEvents(initializer.coalescedEvents)
+    , m_predictedEvents(initializer.predictedEvents)
 {
 }
 
@@ -118,6 +119,22 @@ static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& 
     return result;
 }
 
+static Vector<Ref<PointerEvent>> createPredictedPointerEvents(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+{
+    if (type != eventNames().pointermoveEvent)
+        return { };
+
+    // Populated in accordance with the https://www.w3.org/TR/pointerevents3/#populating-and-maintaining-the-coalesced-and-predicted-events-lists spec.
+
+    Vector<Ref<PointerEvent>> result;
+    for (Ref predictedMouseEvent : mouseEvent.predictedEvents()) {
+        Ref pointerEvent = PointerEvent::create(type, button, predictedMouseEvent.get(), pointerId, pointerType, Event::CanBubble::No, Event::IsCancelable::No);
+        result.append(WTFMove(pointerEvent));
+    }
+
+    return result;
+}
+
 PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
     : MouseEvent(EventInterfaceType::PointerEvent, type, canBubble, isCancelable, typeIsComposed(type), mouseEvent.timeStamp(), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
         { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
@@ -129,6 +146,7 @@ PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const Mou
     , m_pointerType(pointerType)
     , m_isPrimary(true)
     , m_coalescedEvents(createCoalescedPointerEvents(type, button, mouseEvent, pointerId, pointerType))
+    , m_predictedEvents(createPredictedPointerEvents(type, button, mouseEvent, pointerId, pointerType))
 {
 }
 
@@ -151,33 +169,67 @@ Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents() const
     if (isTrusted()) {
         auto& names = eventNames();
         if (type() == names.pointermoveEvent)
-            ASSERT(m_coalescedEvents.size() >= 1, "Trusted pointermove events must have more than zero coalesced events.");
+            ASSERT(!m_coalescedEvents.isEmpty(), "Trusted pointermove events must have more than zero coalesced events.");
         else
-            ASSERT(m_coalescedEvents.size() == 0, "Trusted non-pointermove events must have zero coalesced events.");
+            ASSERT(m_coalescedEvents.isEmpty(), "Trusted non-pointermove events must have zero coalesced events.");
+
+        auto timestampsAreMonotonicallyIncreasing = std::ranges::is_sorted(m_coalescedEvents, [](const auto& previousEvent, const auto& newEvent) {
+            return previousEvent->timeStamp() <= newEvent->timeStamp();
+        });
+
+        ASSERT(timestampsAreMonotonicallyIncreasing, "Coalesced event timestamps are not monotonically increasing.");
+
+        auto canBubbleOrIsCancelable = std::ranges::any_of(m_coalescedEvents, [](const auto& event) {
+            return event->bubbles() || event->cancelable();
+        });
+
+        ASSERT(!canBubbleOrIsCancelable, "Coalesced events must not bubble and must not be cancelable.");
     }
-
-    auto timestampsAreMonotonicallyIncreasing = std::ranges::is_sorted(m_coalescedEvents, [](const auto& previousEvent, const auto& newEvent) {
-        return previousEvent->timeStamp() <= newEvent->timeStamp();
-    });
-
-    ASSERT(timestampsAreMonotonicallyIncreasing, "Coalesced event timestamps are not monotonically increasing.");
-
-    auto canBubbleOrIsCancelable = std::ranges::any_of(m_coalescedEvents, [](const auto& event) {
-        return event->bubbles() || event->cancelable();
-    });
-
-    ASSERT(!canBubbleOrIsCancelable, "Coalesced events must not bubble and must not be cancelable.");
 #endif
 
     return m_coalescedEvents;
+}
+
+Vector<Ref<PointerEvent>> PointerEvent::getPredictedEvents() const
+{
+#if ASSERT_ENABLED
+    if (isTrusted()) {
+        auto& names = eventNames();
+        if (type() != names.pointermoveEvent)
+            ASSERT(m_predictedEvents.isEmpty(), "Trusted non-pointermove events must have zero predicted events.");
+
+        auto timestampsAreMonotonicallyIncreasing = std::ranges::is_sorted(m_predictedEvents, [](const auto& previousEvent, const auto& newEvent) {
+            return previousEvent->timeStamp() <= newEvent->timeStamp();
+        });
+
+        ASSERT(timestampsAreMonotonicallyIncreasing, "Predicted event timestamps are not monotonically increasing.");
+
+        if (!m_predictedEvents.isEmpty())
+            ASSERT(m_predictedEvents.first()->timeStamp() >= this->timeStamp(), "Predicted events must have a timestamp greater than or equal to the dispatched event.");
+
+        auto canBubbleOrIsCancelable = std::ranges::any_of(m_predictedEvents, [](const auto& event) {
+            return event->bubbles() || event->cancelable();
+        });
+
+        ASSERT(!canBubbleOrIsCancelable, "Predicted events must not bubble and must not be cancelable.");
+    }
+#endif
+
+    return m_predictedEvents;
 }
 
 void PointerEvent::receivedTarget()
 {
     MouseRelatedEvent::receivedTarget();
 
+    if (!isTrusted())
+        return;
+
     for (Ref coalescedEvent : m_coalescedEvents)
         coalescedEvent->setTarget(this->target());
+
+    for (Ref predictedEvent : m_predictedEvents)
+        predictedEvent->setTarget(this->target());
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "WKSnapshotConfiguration.h"
+#import "WKWebExtensionTab.h"
+#import "WKWebExtensionTabCreationOptionsInternal.h"
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
@@ -45,13 +47,11 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
-#import "_WKWebExtensionTab.h"
-#import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
-WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExtensionTab *delegate)
+WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtensionTab *delegate)
     : m_extensionContext(context)
     , m_delegate(delegate)
     , m_respondsToWindow([delegate respondsToSelector:@selector(windowForWebExtensionContext:)])
@@ -328,11 +328,11 @@ WKWebView *WebExtensionTab::webView() const
 
     THROW_UNLESS([webView isKindOfClass:WKWebView.class], @"Object returned by webViewForWebExtensionContext: is not a WKWebView");
 
-    auto *configuredExtensionController = webView.configuration._webExtensionController;
+    auto *configuredExtensionController = webView.configuration.webExtensionController;
     auto *expectedExtensionController = extensionContext()->extensionController()->wrapper();
     if (!configuredExtensionController || configuredExtensionController != expectedExtensionController) {
-        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with a _WKWebExtensionController", webView);
-        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with the same _WKWebExtensionController as extension context; %{public}@ != %{public}@", webView, configuredExtensionController, expectedExtensionController);
+        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with a WKWebExtensionController", webView);
+        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with the same WKWebExtensionController as extension context; %{public}@ != %{public}@", webView, configuredExtensionController, expectedExtensionController);
         ASSERT_NOT_REACHED();
         return nil;
     }
@@ -772,13 +772,13 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     else if (auto currentIndex = this->index(); currentIndex != notFound)
         index = currentIndex + 1;
 
-    _WKWebExtensionTabCreationOptions *duplicateOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    WKWebExtensionTabCreationOptions *duplicateOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
     duplicateOptions.active = parameters.active.value_or(true);
     duplicateOptions.selected = duplicateOptions.active ?: parameters.selected.value_or(false);
     duplicateOptions.window = window ? window->delegate() : nil;
     duplicateOptions.index = index;
 
-    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
+    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

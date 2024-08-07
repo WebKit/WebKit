@@ -3650,6 +3650,10 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     }
 
     switch (elementSize(type)) {
+    case 2:
+        loadFloat16(BaseIndex(storageReg, propertyReg, TimesTwo), resultReg);
+        convertFloat16ToDouble(resultReg, resultReg);
+        break;
     case 4:
         loadFloat(BaseIndex(storageReg, propertyReg, TimesFour), resultReg);
         convertFloatToDouble(resultReg, resultReg);
@@ -3704,8 +3708,12 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
 
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
     switch (elementSize(type)) {
+    case 2: {
+        convertDoubleToFloat16(valueFPR, scratchFPR);
+        storeFloat16(scratchFPR, BaseIndex(storageReg, propertyReg, TimesTwo));
+        break;
+    }
     case 4: {
-        moveDouble(valueFPR, scratchFPR);
         convertDoubleToFloat(valueFPR, scratchFPR);
         storeFloat(scratchFPR, BaseIndex(storageReg, propertyReg, TimesFour));
         break;
@@ -5872,6 +5880,25 @@ void SpeculativeJIT::compileArithFRound(Node* node)
     doubleResult(result.fpr(), node);
 }
 
+void SpeculativeJIT::compileArithF16Round(Node* node)
+{
+    if (node->child1().useKind() == DoubleRepUse) {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this, op1);
+        convertDoubleToFloat16(op1.fpr(), result.fpr());
+        convertFloat16ToDouble(result.fpr(), result.fpr());
+        doubleResult(result.fpr(), node);
+        return;
+    }
+
+    JSValueOperand op1(this, node->child1());
+    JSValueRegs op1Regs = op1.jsValueRegs();
+    flushRegisters();
+    FPRResult result(this);
+    callOperation(operationArithF16Round, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+    doubleResult(result.fpr(), node);
+}
+
 void SpeculativeJIT::compileValueMod(Node* node)
 {
     Edge& leftChild = node->child1();
@@ -6997,11 +7024,11 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-    if (node->isReflexiveBinaryUseKind(BooleanUse, UntypedUse)
+    if (node->isSymmetricBinaryUseKind(BooleanUse, UntypedUse)
         || node->isBinaryUseKind(OtherUse)
-        || node->isReflexiveBinaryUseKind(OtherUse, UntypedUse)
+        || node->isSymmetricBinaryUseKind(OtherUse, UntypedUse)
         || node->isBinaryUseKind(MiscUse)
-        || node->isReflexiveBinaryUseKind(MiscUse, UntypedUse)) {
+        || node->isSymmetricBinaryUseKind(MiscUse, UntypedUse)) {
         compileBitwiseStrictEq(node);
         return false;
     }
@@ -8215,29 +8242,49 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
 
-    SpeculateStrictInt32Operand argumentCount(this, node->child1());    
-    JSValueOperand arguments(this, node->argumentsChild());
+    SpeculateStrictInt32Operand argumentCount(this, node->child1());
+    JSValueOperand arguments(this, node->argumentsChild(), ManualOperandSpeculation);
+
     GPRReg argumentCountIncludingThis = argumentCount.gpr();
     JSValueRegs argumentsRegs = arguments.jsValueRegs();
 
-    speculationCheck(
-        VarargsOverflow, JSValueSource(), Edge(), branchTest32(
-            Zero,
-            argumentCountIncludingThis));
+    speculate(node, node->argumentsChild());
 
-    speculationCheck(
-        VarargsOverflow, JSValueSource(), Edge(), branch32(
-            Above,
-            argumentCountIncludingThis,
-            TrustedImm32(data->limit)));
+    switch (node->argumentsChild().useKind()) {
+    case UntypedUse: {
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
 
-    flushRegisters();
+        flushRegisters();
+        store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+        callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+        noResult(node);
+        break;
+    }
+    case OtherUse: {
+        // argumentCountIncludingThis is 1
+        if (!data->limit) {
+            terminateSpeculativeExecution(VarargsOverflow, JSValueRegs(), nullptr);
+            break;
+        }
 
-    store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+        if (data->mandatoryMinimum) {
+            flushRegisters();
+            store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+            callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
+            noResult(node);
+        } else {
+            store32(argumentCountIncludingThis, payloadFor(data->machineCount));
+            noResult(node);
+        }
+        break;
+    }
+    default:
+        DFG_CRASH(m_graph, node, "Bad use kind");
+        break;
+    }
 
-    callOperation(operationLoadVarargs, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), argumentsRegs, data->offset, argumentCountIncludingThis, data->mandatoryMinimum);
 
-    noResult(node);
 }
 
 void SpeculativeJIT::compileForwardVarargs(Node* node)

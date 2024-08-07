@@ -57,6 +57,7 @@ struct WKTouchEvent {
 
     Vector<WKTouchPoint> touchPoints;
     Vector<WKTouchEvent> coalescedEvents;
+    Vector<WKTouchEvent> predictedEvents;
     bool isPotentialTap { false };
 };
 

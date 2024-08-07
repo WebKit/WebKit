@@ -489,11 +489,17 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
 
     Vector<Ref<MouseEvent>> childMouseEvents;
     for (const auto& childPlatformEvent : platformEvent.coalescedEvents()) {
-        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, detail, relatedTarget);
+        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
         childMouseEvents.append(WTFMove(childMouseEvent));
     }
 
-    Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, childMouseEvents, detail, relatedTarget);
+    Vector<Ref<MouseEvent>> predictedEvents;
+    for (const auto& childPlatformEvent : platformEvent.predictedEvents()) {
+        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
+        predictedEvents.append(WTFMove(childMouseEvent));
+    }
+
+    Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, childMouseEvents, predictedEvents, detail, relatedTarget);
 
     if (mouseEvent->type().isEmpty())
         return { Element::EventIsDispatched::Yes, eventIsDefaultPrevented }; // Shouldn't happen.
@@ -1072,7 +1078,7 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
     }
 }
 
-static std::optional<std::pair<CheckedRef<RenderElement>, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
+static std::optional<std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect>> listBoxElementScrollIntoView(const Element& element)
 {
     auto owningSelectElement = [](const Element& element) -> HTMLSelectElement* {
         if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(element))
@@ -1099,7 +1105,7 @@ static std::optional<std::pair<CheckedRef<RenderElement>, LayoutRect>> listBoxEl
         itemIndex = 0;
 
     auto itemLocalRect = renderListBox->itemBoundingBoxRect({ }, itemIndex);
-    return std::pair<CheckedRef<RenderElement>, LayoutRect> { renderListBox.releaseNonNull(), itemLocalRect };
+    return std::pair<SingleThreadWeakPtr<RenderElement>, LayoutRect> { renderListBox.releaseNonNull(), itemLocalRect };
 }
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
@@ -1109,7 +1115,7 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
 
     document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
-    CheckedPtr<RenderElement> renderer;
+    SingleThreadWeakPtr<RenderElement> renderer;
     bool insideFixed = false;
     LayoutRect absoluteBounds;
 
@@ -3898,7 +3904,7 @@ bool Element::dispatchMouseForceWillBegin()
         return false;
 
     PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), MouseButton::None, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
-    auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, { }, 0, nullptr);
+    auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, { }, { }, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
 

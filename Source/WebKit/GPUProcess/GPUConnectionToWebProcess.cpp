@@ -1101,7 +1101,7 @@ const String& GPUConnectionToWebProcess::mediaCacheDirectory() const
     return protectedGPUProcess()->mediaCacheDirectory(m_sessionID);
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 const String& GPUConnectionToWebProcess::mediaKeysStorageDirectory() const
 {
     return protectedGPUProcess()->mediaKeysStorageDirectory(m_sessionID);
@@ -1163,25 +1163,6 @@ RemoteVideoFrameObjectHeap& GPUConnectionToWebProcess::videoFrameObjectHeap() co
 }
 #endif
 
-#if PLATFORM(MAC)
-void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
-{
-#if ENABLE(WEBGL)
-    if (flags & kCGDisplaySetModeFlag)
-        dispatchDisplayWasReconfigured();
-#else
-    UNUSED_VARIABLE(flags);
-#endif
-}
-#endif
-
-#if PLATFORM(MAC) && ENABLE(WEBGL)
-void GPUConnectionToWebProcess::dispatchDisplayWasReconfigured()
-{
-    for (auto& context : m_remoteGraphicsContextGLMap.values())
-        context->displayWasReconfigured();
-}
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
 void GPUConnectionToWebProcess::enableMockMediaSource()

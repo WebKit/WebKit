@@ -16,7 +16,7 @@ PASS Check response clone use structureClone for teed ReadableStreams (Uint16Arr
 PASS Check response clone use structureClone for teed ReadableStreams (Uint32Arraychunk)
 PASS Check response clone use structureClone for teed ReadableStreams (BigInt64Arraychunk)
 PASS Check response clone use structureClone for teed ReadableStreams (BigUint64Arraychunk)
-FAIL Check response clone use structureClone for teed ReadableStreams (Float16Arraychunk) promise_test: Unhandled rejection with value: object "TypeError: structuredClone not implemented for non-ArrayBuffer / non-ArrayBufferView"
+PASS Check response clone use structureClone for teed ReadableStreams (Float16Arraychunk)
 PASS Check response clone use structureClone for teed ReadableStreams (Float32Arraychunk)
 PASS Check response clone use structureClone for teed ReadableStreams (Float64Arraychunk)
 PASS Check response clone use structureClone for teed ReadableStreams (DataViewchunk)

@@ -220,9 +220,9 @@ end
 
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
-if X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+if X86_64 or ARM64 or ARM64E or RISCV64
     const CalleeSaveSpaceAsVirtualRegisters = 4
-elsif C_LOOP or C_LOOP_WIN
+elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
 elsif ARMv7
     const CalleeSaveSpaceAsVirtualRegisters = 1
@@ -282,12 +282,12 @@ if JSVALUE64
         const PB = csr7
         const numberTag = csr8
         const notCellMask = csr9
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         const metadataTable = csr1
         const PB = csr2
         const numberTag = csr3
         const notCellMask = csr4
-    elsif C_LOOP or C_LOOP_WIN
+    elsif C_LOOP
         const PB = csr0
         const numberTag = csr1
         const notCellMask = csr2
@@ -296,7 +296,7 @@ if JSVALUE64
 
 else
     const PC = t4 # When changing this, make sure LLIntPC is up to date in LLIntPCRanges.h
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         const PB = csr0
         const metadataTable = csr3
     elsif ARMv7
@@ -318,16 +318,10 @@ const OpcodeIDWide32SizeJS = 2 # Wide32 Prefix + OpcodeID
 const OpcodeIDWide16SizeWasm = 2 # Wide16 Prefix + OpcodeID(1 byte)
 const OpcodeIDWide32SizeWasm = 2 # Wide32 Prefix + OpcodeID(1 byte)
 
-if X86_64_WIN or C_LOOP_WIN
-    const WTFConfig = _g_wtfConfigForLLInt
-    const GigacageConfig = _g_gigacageConfig
-    const JSCConfig = _g_jscConfig
-else
-    const WTFConfig = _g_config + constexpr WTF::startOffsetOfWTFConfig
-    const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConfig
-    const JSCConfigOffset = constexpr WTF::offsetOfWTFConfigExtension
-    const JSCConfigGateMapOffset = JSCConfigOffset + constexpr JSC::offsetOfJSCConfigGateMap
-end
+const WTFConfig = _g_config + constexpr WTF::startOffsetOfWTFConfig
+const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConfig
+const JSCConfigOffset = constexpr WTF::offsetOfWTFConfigExtension
+const JSCConfigGateMapOffset = JSCConfigOffset + constexpr JSC::offsetOfJSCConfigGateMap
 
 macro nextInstruction()
     loadb [PB, PC, 1], t0
@@ -574,6 +568,7 @@ const Int16ArrayType = constexpr Int16ArrayType
 const Uint16ArrayType = constexpr Uint16ArrayType
 const Int32ArrayType = constexpr Int32ArrayType
 const Uint32ArrayType = constexpr Uint32ArrayType
+const Float16ArrayType = constexpr Float16ArrayType
 const Float32ArrayType = constexpr Float32ArrayType
 const Float64ArrayType = constexpr Float64ArrayType
 
@@ -638,7 +633,7 @@ const VectorSizeOffset = Vector::m_size
 
 # Some common utilities.
 macro crash()
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCrash
     else
         call _llint_crash
@@ -738,9 +733,9 @@ end
 
 macro checkStackPointerAlignment(tempReg, location)
     if ASSERT_ENABLED
-        if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
+        if ARM64 or ARM64E or C_LOOP
             # ARM64 and ARM64E will check for us!
-            # C_LOOP or C_LOOP_WIN does not need the alignment, and can use a little perf
+            # C_LOOP does not need the alignment, and can use a little perf
             # improvement from avoiding useless work.
         else
             if ARMv7
@@ -758,7 +753,7 @@ macro checkStackPointerAlignment(tempReg, location)
     end
 end
 
-if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
+if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
     const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
@@ -775,7 +770,7 @@ macro pushCalleeSaves()
     # but are not in RegisterSetBuilder::vmCalleeSaveRegisters() need to be saved here,
     # i.e.: only those registers that are callee save in the C ABI, but are not
     # callee save in the JIT ABI.
-    if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
+    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
     elsif ARMv7
         emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
@@ -783,7 +778,7 @@ macro pushCalleeSaves()
 end
 
 macro popCalleeSaves()
-    if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
+    if C_LOOP or ARM64 or ARM64E or X86_64 or RISCV64
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
         emit "vpop.64 {d14, d15}"
@@ -791,10 +786,10 @@ macro popCalleeSaves()
 end
 
 macro preserveCallerPCAndCFR()
-    if C_LOOP or C_LOOP_WIN or ARMv7
+    if C_LOOP or ARMv7
         push lr
         push cfr
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
@@ -806,10 +801,10 @@ end
 
 macro restoreCallerPCAndCFR()
     move cfr, sp
-    if C_LOOP or C_LOOP_WIN or ARMv7
+    if C_LOOP or ARMv7
         pop cfr
         pop lr
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
@@ -818,7 +813,7 @@ end
 
 macro preserveCalleeSavesUsedByLLInt()
     subp CalleeSaveSpaceStackAligned, sp
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         storep metadataTable, -PtrSize[cfr]
     elsif ARMv7
         storep PB, -4[cfr]
@@ -826,7 +821,7 @@ macro preserveCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         storepairq csr8, csr9, -16[cfr]
         storepairq csr6, csr7, -32[cfr]
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
         storep csr2, -24[cfr]
@@ -840,7 +835,7 @@ macro preserveCalleeSavesUsedByLLInt()
 end
 
 macro restoreCalleeSavesUsedByLLInt()
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         loadp -PtrSize[cfr], metadataTable
     elsif ARMv7
         loadp -4[cfr], PB
@@ -848,7 +843,7 @@ macro restoreCalleeSavesUsedByLLInt()
     elsif ARM64 or ARM64E
         loadpairq -32[cfr], csr6, csr7
         loadpairq -16[cfr], csr8, csr9
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2
         loadp -16[cfr], csr3
@@ -862,7 +857,7 @@ macro restoreCalleeSavesUsedByLLInt()
 end
 
 macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
         vmEntryRecord(entryFrame, entryFrame)
         leap VMEntryRecord::calleeSaveRegistersBuffer[entryFrame], entryFrame
         if ARM64 or ARM64E
@@ -875,7 +870,7 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storepaird csfr2, csfr3, 96[entryFrame]
             storepaird csfr4, csfr5, 112[entryFrame]
             storepaird csfr6, csfr7, 128[entryFrame]
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             storeq csr0, [entryFrame]
             storeq csr1, 8[entryFrame]
             storeq csr2, 16[entryFrame]
@@ -919,14 +914,14 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
 end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
         loadp VM::topEntryFrame[vm], temp
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(temp)
     end
 end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or RISCV64
+    if ARM64 or ARM64E or X86_64 or ARMv7 or RISCV64
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -940,7 +935,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadpaird 96[temp], csfr2, csfr3
             loadpaird 112[temp], csfr4, csfr5
             loadpaird 128[temp], csfr6, csfr7
-        elsif X86_64 or X86_64_WIN
+        elsif X86_64
             loadq [temp], csr0
             loadq 8[temp], csr1
             loadq 16[temp], csr2
@@ -984,10 +979,10 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP or C_LOOP_WIN or ARMv7 or ARM64 or ARM64E or RISCV64
-        # In C_LOOP or C_LOOP_WIN case, we're only preserving the bytecode vPC.
+    if C_LOOP or ARMv7 or ARM64 or ARM64E or RISCV64
+        # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
-    elsif X86_64 or X86_64_WIN
+    elsif X86_64
         pop destinationRegister
     else
         error
@@ -996,11 +991,11 @@ end
 
 macro functionPrologue()
     tagReturnAddress sp
-    if X86_64 or X86_64_WIN
+    if X86_64
         push cfr
     elsif ARM64 or ARM64E or RISCV64
         push cfr, lr
-    elsif C_LOOP or C_LOOP_WIN or ARMv7 
+    elsif C_LOOP or ARMv7 
         push lr
         push cfr
     end
@@ -1008,11 +1003,11 @@ macro functionPrologue()
 end
 
 macro functionEpilogue()
-    if X86_64 or X86_64_WIN
+    if X86_64
         pop cfr
     elsif ARM64 or ARM64E or RISCV64
         pop lr, cfr
-    elsif C_LOOP or C_LOOP_WIN or ARMv7
+    elsif C_LOOP or ARMv7
         pop cfr
         pop lr
     end
@@ -1069,7 +1064,7 @@ if ARM64E
 end
 
 macro callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallJSFunction callee
     elsif ARM64E
         macro callNarrow()
@@ -1173,7 +1168,7 @@ macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
-    if ARMv7 or ARM64 or ARM64E or C_LOOP or C_LOOP_WIN or RISCV64
+    if ARMv7 or ARM64 or ARM64E or C_LOOP or RISCV64
         subi CallerFrameAndPCSize, temp2
         loadp CallerFrameAndPC::returnPC[cfr], lr
     else
@@ -1290,6 +1285,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     #    Uint16ArrayType,
     #    Int32ArrayType,
     #    Uint32ArrayType,
+    #    Float16ArrayType,
     #    Float32ArrayType,
     #    Float64ArrayType,
     #
@@ -1334,7 +1330,7 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
 
 .opGetByValAboveUint16Array:
     # We have one of Int32ArrayType .. Float64ArrayType.
-    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat32ArrayOrFloat64Array
+    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat16OrFloat32ArrayOrFloat64Array
 
     # We have either Int32ArrayType or Uint32ArrayType
     bia t2, Int32ArrayType - FirstTypedArrayType, .opGetByValUint32Array
@@ -1350,10 +1346,10 @@ macro getByValTypedArray(base, index, finishIntGetByVal, finishDoubleGetByVal, s
     bilt t0, 0, slowPath # This case is still awkward to implement in LLInt.
     finishIntGetByVal(t0, t1)
 
-.opGetByValFloat32ArrayOrFloat64Array:
-    # We have one of Float32ArrayType or Float64ArrayType. Sadly, we cannot handle Float32Array
+.opGetByValFloat16OrFloat32ArrayOrFloat64Array:
+    # We have one of Float16ArrayType, Float32ArrayType, or Float64ArrayType. Sadly, we cannot handle Float16Array and Float32Array
     # inline yet. That would require some offlineasm changes.
-    bieq t2, Float32ArrayType - FirstTypedArrayType, slowPath
+    bineq t2, Float64ArrayType - FirstTypedArrayType, slowPath
 
     # We have Float64ArrayType.
     loadd [t3, index, 8], ft0
@@ -1447,7 +1443,7 @@ macro prologue(osrSlowPath, traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp
     end
     loadp CodeBlock[cfr], t1
-    if not (C_LOOP or C_LOOP_WIN)
+    if not C_LOOP
         loadp CodeBlock::m_unlinkedCode[t1], t0
         baddis 5, (UnlinkedCodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter)[t0], .continue
         if JSVALUE64
@@ -1501,7 +1497,7 @@ macro prologue(osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
     bpa t0, cfr, .needStackCheck
     loadp CodeBlock::m_vm[t1], t2
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
     else
         bpbeq VM::m_softStackLimit[t2], t0, .stackHeightOK
@@ -1530,7 +1526,7 @@ macro prologue(osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
 
 .stackHeightOK:
-    if X86_64 or X86_64_WIN or ARM64
+    if X86_64 or ARM64
         # We need to start zeroing from sp as it has been adjusted after saving callee saves.
         move sp, t2
         move t0, sp
@@ -1608,7 +1604,7 @@ end
 # EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
 
-if C_LOOP or C_LOOP_WIN
+if C_LOOP
     _llint_vm_entry_to_javascript:
 else
     global _vmEntryToJavaScript
@@ -1687,7 +1683,7 @@ if (ARM64E or ARM64) and ADDRESS64
         jmp _llint_call_javascript
 end
 
-if C_LOOP or C_LOOP_WIN
+if C_LOOP
     _llint_vm_entry_to_native:
 else
     global _vmEntryToNative
@@ -1745,7 +1741,7 @@ if ARM64E
         ret
 end
 
-if not (C_LOOP or C_LOOP_WIN)
+if not C_LOOP
     # void sanitizeStackForVMImpl(VM* vm)
     global _sanitizeStackForVMImpl
     _sanitizeStackForVMImpl:
@@ -1870,13 +1866,13 @@ if ARM64E
         jmp _llint_function_for_construct_arity_check
 end
 
-if C_LOOP or C_LOOP_WIN
+if C_LOOP
     # Dummy entry point the C Loop uses to initialize.
     _llint_entry:
         crash()
 else
     macro initPCRelative(kind, pcBase)
-        if X86_64 or X86_64_WIN
+        if X86_64
             call _%kind%_relativePCBase
         _%kind%_relativePCBase:
             pop pcBase
@@ -1891,7 +1887,7 @@ else
     # The PC base is in t3, as this is what _llint_entry leaves behind through
     # initPCRelative(t3)
     macro setEntryAddressCommon(kind, index, label, map)
-        if X86_64 or X86_64_WIN
+        if X86_64
             leap (label - _%kind%_relativePCBase)[t3], t4
             move index, t5
             storep t4, [map, t5, 8]
@@ -1943,13 +1939,8 @@ macro entry(kind, initialize)
         # Include generated bytecode initialization file.
         includeEntriesAtOffset(kind, initialize)
 
-        if X86_64_WIN or C_LOOP_WIN
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled, t3
-            bbeq [t3], 0, .notFrozen
-        else
-            leap _g_config, t3
-            bbeq JSCConfigOffset + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled[t3], 0, .notFrozen
-        end
+        leap _g_config, t3
+        bbeq JSCConfigOffset + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled[t3], 0, .notFrozen
         crash()
     .notFrozen:
 
@@ -1963,7 +1954,7 @@ entry(llint, macro()
     include InitBytecodes
 end)
 
-end // not (C_LOOP or C_LOOP_WIN)
+end // not C_LOOP
 
 _llint_op_wide16:
     nextInstructionWide16()
@@ -2640,7 +2631,7 @@ else
 end
 
 op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
-    if (JSVALUE64 and not (C_LOOP or C_LOOP_WIN)) or ARMv7
+    if (JSVALUE64 and not C_LOOP) or ARMv7
         restoreStackPointerAfterCall()
 
         # Make sure we move r0 to a1 first since r0 might be the same as a0, for instance, on arm.
@@ -2681,7 +2672,7 @@ end)
 op(checkpoint_osr_exit_trampoline, macro ()
     # FIXME: We can probably dispatch to the checkpoint handler directly but this was easier 
     # and probably doesn't matter for performance.
-    if (JSVALUE64 and not (C_LOOP or C_LOOP_WIN)) or ARMv7
+    if (JSVALUE64 and not C_LOOP) or ARMv7
         restoreStackPointerAfterCall()
 
         move cfr, a0
@@ -2766,6 +2757,10 @@ _wasmLLIntPCRangeEnd:
 else
 
 # These need to be defined even when WebAssembly is disabled
+op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro ()
+    crash()
+end)
+
 op(js_to_wasm_wrapper_entry, macro ()
     crash()
 end)
@@ -2775,6 +2770,10 @@ op(wasm_function_prologue_trampoline, macro ()
 end)
 
 op(wasm_function_prologue, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_simd_trampoline, macro ()
     crash()
 end)
 

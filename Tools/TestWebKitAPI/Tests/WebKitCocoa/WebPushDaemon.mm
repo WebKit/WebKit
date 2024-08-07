@@ -466,6 +466,55 @@ async function unsubscribe()
     }
 }
 
+async function getNotificationPermissionFromServiceWorker()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "notificationPermission", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
+async function getPushPermissionState()
+{
+    try {
+        return await globalRegistration.pushManager.permissionState();
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function getPushPermissionStateFromServiceWorker()
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "getPushPermissionState", port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
+async function queryPermission(name)
+{
+    try {
+        let status = await navigator.permissions.query({ name });
+        return status.state;
+    } catch (error) {
+        return "Error: " + error;
+    }
+}
+
+async function queryPermissionFromServiceWorker(name)
+{
+    const channel = new MessageChannel();
+    const promise = new Promise((resolve) => {
+        channel.port1.onmessage = (event) => resolve(event.data);
+    });
+    globalRegistration.active.postMessage({ message: "queryPermission", arguments: [name], port: channel.port2 }, [channel.port2]);
+    return await promise;
+}
+
 async function getPushSubscription()
 {
     try {
@@ -519,11 +568,24 @@ function notificationToString(n)
 }
 
 self.addEventListener("message", (event) => {
-    let { message, port } = event.data;
+    let { message, arguments, port } = event.data;
     var closeAllNotifications = message === "closeAllNotifications";
     if (message === "setup") {
         globalPort = port;
         port.postMessage("Ready");
+    } else if (message === "notificationPermission") {
+        port.postMessage(Notification.permission);
+    } else if (message === "getPushPermissionState") {
+        registration.pushManager.permissionState().then(port.postMessage.bind(port), (error) => {
+            port.postMessage("getPushPermissionState failed: " + error);
+        });
+    } else if (message === "queryPermission") {
+        let [name] = arguments;
+        navigator.permissions.query({ name }).then((status) => {
+            port.postMessage(status.state);
+        }, (error) => {
+            port.postMessage("queryPermission failed: " + error);
+        });
     } else if (message === "disableShowNotifications") {
         showNotifications = false;
         port.postMessage(true);
@@ -587,6 +649,7 @@ self.addEventListener("push", async (event) => {
     try {
         if (showNotifications) {
             await self.registration.showNotification("notification");
+            navigator.setAppBadge(42);
         }
         if (!event.data) {
             globalPort.postMessage("Received: null data");
@@ -702,6 +765,8 @@ public:
 
         m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
+        [m_webView _setDontResetTransientActivationAfterRunJavaScript:YES];
+
         [m_webView setUIDelegate:m_delegate.get()];
 
         auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -721,6 +786,13 @@ public:
 
     RetainPtr<WKWebsiteDataStore> dataStore() { return m_dataStore; }
 
+    id requestNotificationPermission()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await Notification.requestPermission()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
     id subscribe(String key = validServerKey)
     {
         NSError *error = nil;
@@ -733,6 +805,46 @@ public:
     {
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await unsubscribe()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getNotificationPermission()
+    {
+        return [m_webView stringByEvaluatingJavaScript:@"Notification.permission"];
+    }
+
+    id getNotificationPermissionFromServiceWorker()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotificationPermissionFromServiceWorker()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getPushPermissionState()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getPushPermissionState()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id getPushPermissionStateFromServiceWorker()
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await getPushPermissionStateFromServiceWorker()" withArguments:@{ } error:&error];
+        return error ?: obj;
+    }
+
+    id queryPermission(NSString *name)
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await queryPermission(name)" withArguments:@{ @"name": name } error:&error];
+        return error ?: obj;
+    }
+
+    id queryPermissionFromServiceWorker(NSString *name)
+    {
+        NSError *error = nil;
+        id obj = [m_webView objectByCallingAsyncFunction:@"return await queryPermissionFromServiceWorker(name)" withArguments:@{ @"name": name } error:&error];
         return error ?: obj;
     }
 
@@ -785,6 +897,19 @@ public:
         NSError *error = nil;
         id obj = [m_webView objectByCallingAsyncFunction:@"return await getNotifications()" withArguments:@{ } error:&error];
         return error ?: obj;
+    }
+
+    NSNumber *getAppBadge()
+    {
+        __block bool done = false;
+        __block NSNumber *result = nil;
+        [m_webView.get().configuration.websiteDataStore _getAppBadgeForTesting:^(NSNumber *badge) {
+            result = badge;
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+        return result;
     }
 
     void closeAllNotifications()
@@ -1592,11 +1717,8 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Legacy;
     message.payload = @"hello";
 
-    __block bool done = false;
-    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::EnableMockUserNotificationCenterForTesting(), ^() {
-        done = true;
-    });
-    TestWebKitAPI::Util::run(&done);
+    // No badge had been set, so confirm its `nil`
+    EXPECT_FALSE(view->getAppBadge());
 
     done = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
@@ -1625,6 +1747,61 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
 
     result = view->getNotifications();
     EXPECT_TRUE([result isEqualToString:@""]);
+
+    // The push message handler should set the app badge to 42
+    EXPECT_TRUE([view->getAppBadge() isEqual:@42]);
+}
+
+TEST_F(WebPushDBuiltInTest, TestPermissionsAfterNotificatonRequestPermission)
+{
+    auto& view = webViews().last();
+
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"default"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"default"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"prompt"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"prompt"]);
+
+    EXPECT_TRUE([view->requestNotificationPermission() isEqual:@"granted"]);
+
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"granted"]);
+}
+
+TEST_F(WebPushDBuiltInTest, TestPermissionsAfterSubscribe)
+{
+    auto& view = webViews().last();
+
+    EXPECT_FALSE(view->hasPushSubscription());
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"default"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"default"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"prompt"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"prompt"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"prompt"]);
+
+    view->subscribe();
+
+    EXPECT_TRUE(view->hasPushSubscription());
+    EXPECT_TRUE([view->getNotificationPermission() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getNotificationPermissionFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionState() isEqual:@"granted"]);
+    EXPECT_TRUE([view->getPushPermissionStateFromServiceWorker() isEqualToString:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"push") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"granted"]);
+    EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"granted"]);
 }
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 

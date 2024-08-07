@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,14 +33,14 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionTabCreationOptionsInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMessagePort.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebPageProxy.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 
@@ -89,14 +89,14 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
 
     auto frontmostWindow = this->frontmostWindow();
 
-    auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    auto *creationOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
     creationOptions.active = YES;
     creationOptions.selected = YES;
     creationOptions.window = frontmostWindow ? frontmostWindow->delegate() : nil;
     creationOptions.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
     creationOptions.url = optionsPageURL();
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

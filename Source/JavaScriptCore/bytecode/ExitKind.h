@@ -62,14 +62,6 @@ enum ExitKind : uint8_t {
     UnexpectedResizableArrayBufferView, // We exited because we made an incorrect assumption about what type of ArrayBufferView we would see.
 };
 
-ASCIILiteral exitKindToString(ExitKind);
 bool exitKindMayJettison(ExitKind);
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-void printInternal(PrintStream&, JSC::ExitKind);
-
-} // namespace WTF

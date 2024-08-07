@@ -311,13 +311,13 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         asyncRenderer->setShowDebugBorders(showDebugBorders);
 }
 
-void PDFScrollingPresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability>)
+void PDFScrollingPresentationController::updateForCurrentScrollability(OptionSet<TiledBackingScrollability> scrollability)
 {
     if (auto* tiledBacking = m_contentsLayer->tiledBacking())
-        tiledBacking->setScrollability(m_plugin->computeScrollability());
+        tiledBacking->setScrollability(scrollability);
 }
 
-void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement> repaintRequirements, const FloatRect& rectInDocumentCoordinates, std::optional<PDFLayoutRow>)
+void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement> repaintRequirements, const FloatRect& rectInDocumentCoordinates, std::optional<PDFLayoutRow> layoutRow)
 {
     if (!repaintRequirements)
         return;
@@ -325,7 +325,7 @@ void PDFScrollingPresentationController::setNeedsRepaintInDocumentRect(OptionSet
     auto contentsRect = m_plugin->convertUp(UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, UnifiedPDFPlugin::CoordinateSpace::Contents, rectInDocumentCoordinates);
     if (repaintRequirements.contains(RepaintRequirement::PDFContent)) {
         if (RefPtr asyncRenderer = asyncRendererIfExists())
-            asyncRenderer->pdfContentChangedInRect(m_contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect);
+            asyncRenderer->pdfContentChangedInRect(m_contentsLayer.get(), m_plugin->nonNormalizedScaleFactor(), contentsRect, layoutRow);
     }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)

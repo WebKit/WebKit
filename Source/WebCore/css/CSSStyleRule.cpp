@@ -242,20 +242,23 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     if (!newRule->isStyleRule() && !newRule->isGroupRule())
         return Exception { ExceptionCode::HierarchyRequestError };
 
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
     if (!m_styleRule->isStyleRuleWithNesting()) {
         // Call the parent rule (or parent stylesheet if top-level or nothing if it's an orphaned rule) to transform the current StyleRule to StyleRuleWithNesting.
         RefPtr<StyleRuleWithNesting> styleRuleWithNesting;
         if (RefPtr parent = parentRule())
-            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule);
+            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule.get());
         else if (RefPtr parent = parentStyleSheet())
-            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(WTFMove(m_styleRule.get()));
+            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule.get());
         else
             styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(m_styleRule.get()));
         ASSERT(styleRuleWithNesting);
         m_styleRule = *styleRuleWithNesting;
     }
 
-    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    if (auto styleSheet = parentStyleSheet())
+        styleSheet->contents().clearHasNestingRulesCache();
+
     downcast<StyleRuleWithNesting>(m_styleRule)->nestedRules().insert(index, newRule.releaseNonNull());
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;

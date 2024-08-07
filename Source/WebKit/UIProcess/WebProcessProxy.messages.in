@@ -60,11 +60,6 @@ messages -> WebProcessProxy LegacyReceiver {
     CacheMediaMIMETypes(Vector<String> types)
 #endif
 
-#if PLATFORM(MAC)
-    RequestHighPerformanceGPU()
-    ReleaseHighPerformanceGPU()
-#endif
-
 #if HAVE(DISPLAY_LINK)
     StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
     StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
@@ -76,11 +71,11 @@ messages -> WebProcessProxy LegacyReceiver {
     SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
-    CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
-    DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
+    [EnabledBy=SpeechRecognitionEnabled] CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
+    [EnabledBy=SpeechRecognitionEnabled] DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
 
     SystemBeep()
-    
+
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     IsAXAuthenticated(struct WebKit::CoreIPCAuditToken auditToken) -> (bool authenticated) Synchronous
 #endif
@@ -91,9 +86,9 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
     GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
-    SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
-    SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
-    
+    [EnabledBy=AppBadgeEnabled] SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    [EnabledBy=AppBadgeEnabled] SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+
     WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
     UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
 }

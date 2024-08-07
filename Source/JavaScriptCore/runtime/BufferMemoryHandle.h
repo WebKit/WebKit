@@ -63,8 +63,6 @@ struct BufferMemoryResult {
         SyncTryToReclaimMemory
     };
 
-    static ASCIILiteral toString(Kind);
-
     BufferMemoryResult() { }
 
     BufferMemoryResult(void* basePtr, Kind kind)

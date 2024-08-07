@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUBindGroup.h"
 
+#include "GPUExternalTexture.h"
+
 namespace WebCore {
 
 String GPUBindGroup::label() const
@@ -36,6 +38,11 @@ String GPUBindGroup::label() const
 void GPUBindGroup::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));
+}
+
+void GPUBindGroup::updateExternalTextures(const GPUExternalTexture& externalTexture)
+{
+    m_backing->updateExternalTextures(externalTexture.backing());
 }
 
 }

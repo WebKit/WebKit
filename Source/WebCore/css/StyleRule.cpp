@@ -41,6 +41,7 @@
 #include "CSSStartingStyleRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "CSSViewTransitionRule.h"
 #include "MediaList.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
@@ -124,6 +125,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleScope>(*this));
     case StyleRuleType::StartingStyle:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleStartingStyle>(*this));
+    case StyleRuleType::ViewTransition:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleViewTransition>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:
@@ -216,6 +219,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         },
         [&](StyleRuleStartingStyle& rule) -> Ref<CSSRule> {
             return CSSStartingStyleRule::create(rule, parentSheet);
+        },
+        [&](StyleRuleViewTransition& rule) -> Ref<CSSRule> {
+            return CSSViewTransitionRule::create(rule, parentSheet);
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();

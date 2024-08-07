@@ -107,6 +107,7 @@ SOAuthorizationSession::~SOAuthorizationSession()
 #if PLATFORM(MAC)
     AUTHORIZATIONSESSION_RELEASE_LOG("~SOAuthorizationSession: m_sheetWindow=%p", m_sheetWindow.get());
 #endif
+    m_isInDestructor = true;
 
     if (m_state == State::Active && !!m_soAuthorization)
         [m_soAuthorization cancelAuthorization];
@@ -450,7 +451,7 @@ void SOAuthorizationSession::dismissViewController()
 
     // This is a workaround for an AppKit issue: <rdar://problem/59125329>.
     // [m_sheetWindow sheetParent] is null if the parent is minimized or the host app is hidden.
-    if (m_page && m_page->platformWindow()) {
+    if (!m_isInDestructor && m_page && m_page->platformWindow()) {
         auto *presentingWindow = m_page->platformWindow();
         if (presentingWindow.miniaturized) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Page's window is miniaturized. Waiting to dismiss until active.");
@@ -468,7 +469,7 @@ void SOAuthorizationSession::dismissViewController()
         }
     }
 
-    if (NSApp.hidden) {
+    if (!m_isInDestructor && NSApp.hidden) {
         AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is hidden. Waiting to dismiss until active.");
         if (m_applicationDidUnhideObserver) {
             AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());

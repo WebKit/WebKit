@@ -208,6 +208,7 @@ public:
     LValue floatToDouble(LValue);
     LValue bitCast(LValue, LType);
     LValue fround(LValue);
+    LValue f16round(LValue);
 
     LValue load(TypedPointer, LType);
     LValue store(LValue, TypedPointer);
@@ -222,6 +223,7 @@ public:
     LValue loadPtr(TypedPointer pointer) { return load(pointer, B3::pointerType()); }
     LValue loadFloat(TypedPointer pointer) { return load(pointer, B3::Float); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, B3::Double); }
+    LValue loadFloat16AsDouble(TypedPointer);
     LValue store32As8(LValue, TypedPointer);
     LValue store32As16(LValue, TypedPointer);
     LValue store32(LValue value, TypedPointer pointer)
@@ -249,6 +251,7 @@ public:
         ASSERT(value->type() == B3::Double);
         return store(value, pointer);
     }
+    LValue storeDoubleAsFloat16(LValue, TypedPointer);
 
     enum LoadType {
         Load8SignExt32,

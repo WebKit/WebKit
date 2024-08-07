@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKPreferences;
 @class WKProcessPool;
 @class WKUserContentController;
+@class WKWebExtensionController;
 @class WKWebpagePreferences;
 @class WKWebsiteDataStore;
 
@@ -115,6 +116,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract The user content controller to associate with the web view.
 */
 @property (nonatomic, strong) WKUserContentController *userContentController;
+
+/*! @abstract The web extension controller to associate with the web view.
+*/
+@property (nullable, nonatomic, strong) WKWebExtensionController *webExtensionController;
 
 /*! @abstract The website data store to be used by the web view.
  */

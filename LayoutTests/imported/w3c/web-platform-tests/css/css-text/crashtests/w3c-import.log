@@ -14,10 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/eol-spaces-bidi-min-content-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/line-break-float-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/overflow-wrap-anywhere-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-rtl-bidi-override-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-table-caption-with-list-item-and-svg-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/rendering-table-caption-with-negative-margins-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/text-indent-each-line-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/text-wrap-balance-float-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/text-wrap-balance-nested-blocks-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/crashtests/trailing-space-with-cr-crash.html

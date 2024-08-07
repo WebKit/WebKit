@@ -1,6 +1,6 @@
 var createBuiltin = $vm.createBuiltin;
 
-let typedArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array];
+let typedArrays = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float16Array, Float32Array, Float64Array];
 
 function makeFn(dontInline) {
     let foo = createBuiltin(`(function (a) { "use strict"; return @isTypedArrayView(a); })`);

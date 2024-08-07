@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+#import "WKScrollViewTrackingTapGestureRecognizer.h"
 
 @class WKTouchEventsGestureRecognizer;
 
@@ -33,13 +33,12 @@
 // the gesture is recognized, as well as the typical time when
 // a gesture should be handled. This allows it to be used while
 // it is waiting for another gesture recognizer to fail.
-@interface WKSyntheticTapGestureRecognizer : UITapGestureRecognizer
+@interface WKSyntheticTapGestureRecognizer : WKScrollViewTrackingTapGestureRecognizer
 - (void)setGestureIdentifiedTarget:(id)target action:(SEL)action;
 - (void)setGestureFailedTarget:(id)target action:(SEL)action;
 - (void)setResetTarget:(id)target action:(SEL)action;
 @property (nonatomic, weak) WKTouchEventsGestureRecognizer *supportingTouchEventsGestureRecognizer;
 @property (nonatomic, readonly) NSNumber *lastActiveTouchIdentifier;
-@property (nonatomic, readonly, weak) UIScrollView *lastTouchedScrollView;
 @end
 
 #endif

@@ -88,4 +88,14 @@ void ServiceWorkerNotificationHandler::requestPermission(WebCore::SecurityOrigin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ServiceWorkerNotificationHandler::getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit

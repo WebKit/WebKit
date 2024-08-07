@@ -368,6 +368,15 @@ public:
     static constexpr GPRReg regCS3 = X86Registers::r14; // numberTagRegister
     static constexpr GPRReg regCS4 = X86Registers::r15; // notCellMaskRegister
 
+    static constexpr GPRReg regWS0 = X86Registers::eax;
+    static constexpr GPRReg regWS1 = X86Registers::r10;
+    static constexpr GPRReg regWA0 = X86Registers::edi;
+    static constexpr GPRReg regWA1 = X86Registers::esi;
+    static constexpr GPRReg regWA2 = X86Registers::edx;
+    static constexpr GPRReg regWA3 = X86Registers::ecx;
+    static constexpr GPRReg regWA4 = X86Registers::r8;
+    static constexpr GPRReg regWA5 = X86Registers::r9;
+
     // These constants provide the names for the general purpose argument & return value registers.
     static constexpr GPRReg argumentGPR0 = X86Registers::edi; // regT6
     static constexpr GPRReg argumentGPR1 = X86Registers::esi; // regT1
@@ -405,10 +414,10 @@ public:
         return registerForIndex[index];
     }
     
-    static GPRReg toArgumentRegister(unsigned index)
+    static constexpr GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
-        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
         return registerForIndex[index];
     }
     
@@ -472,6 +481,13 @@ public:
     static constexpr GPRReg jitDataRegister = regCS1;
     static constexpr GPRReg metadataTableRegister = regCS0;
 
+    static constexpr GPRReg regWS0 = ARMRegisters::r5;
+    static constexpr GPRReg regWS1 = ARMRegisters::r8;
+    static constexpr GPRReg regWA0 = ARMRegisters::r0;
+    static constexpr GPRReg regWA1 = ARMRegisters::r1;
+    static constexpr GPRReg regWA2 = ARMRegisters::r2;
+    static constexpr GPRReg regWA3 = ARMRegisters::r3;
+
     // These constants provide the names for the general purpose argument & return value registers.
     static constexpr GPRReg argumentGPR0 = ARMRegisters::r0; // regT0
     static constexpr GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
@@ -500,10 +516,10 @@ public:
         return registerForIndex[index];
     }
 
-    static GPRReg toArgumentRegister(unsigned index)
+    static constexpr GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
-        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
         return registerForIndex[index];
     }
 
@@ -602,6 +618,17 @@ public:
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
 
+    static constexpr GPRReg regWS0 = ARM64Registers::x9;
+    static constexpr GPRReg regWS1 = ARM64Registers::x10;
+    static constexpr GPRReg regWA0 = ARM64Registers::x0;
+    static constexpr GPRReg regWA1 = ARM64Registers::x1;
+    static constexpr GPRReg regWA2 = ARM64Registers::x2;
+    static constexpr GPRReg regWA3 = ARM64Registers::x3;
+    static constexpr GPRReg regWA4 = ARM64Registers::x4;
+    static constexpr GPRReg regWA5 = ARM64Registers::x5;
+    static constexpr GPRReg regWA6 = ARM64Registers::x6;
+    static constexpr GPRReg regWA7 = ARM64Registers::x7;
+
     // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.
     static_assert(ARM64Registers::q0 == 0);
@@ -631,9 +658,9 @@ public:
         return (unsigned)reg;
     }
 
-    static GPRReg toArgumentRegister(unsigned index)
+    static constexpr GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
         return toRegister(index);
     }
 
@@ -729,6 +756,17 @@ public:
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
 
+    static constexpr GPRReg regWS0 = RICSV64Registers::x6;
+    static constexpr GPRReg regWS1 = RICSV64Registers::x7;
+    static constexpr GPRReg regWA0 = RICSV64Registers::x10;
+    static constexpr GPRReg regWA1 = RICSV64Registers::x11;
+    static constexpr GPRReg regWA2 = RICSV64Registers::x12;
+    static constexpr GPRReg regWA3 = RICSV64Registers::x13;
+    static constexpr GPRReg regWA4 = RICSV64Registers::x14;
+    static constexpr GPRReg regWA5 = RICSV64Registers::x15;
+    static constexpr GPRReg regWA6 = RICSV64Registers::x16;
+    static constexpr GPRReg regWA7 = RICSV64Registers::x17;
+
     static constexpr GPRReg patchpointScratchRegister = RISCV64Registers::x30; // Should match dataTempRegister
 
     static constexpr GPRReg toRegister(unsigned index)
@@ -741,10 +779,10 @@ public:
         return registerForIndex[index];
     }
 
-    static GPRReg toArgumentRegister(unsigned index)
+    static constexpr GPRReg toArgumentRegister(unsigned index)
     {
-        ASSERT(index < numberOfArgumentRegisters);
-        static const GPRReg registerForIndex[numberOfArgumentRegisters] = {
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
+        constexpr GPRReg registerForIndex[numberOfArgumentRegisters] = {
             argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3,
             argumentGPR4, argumentGPR5, argumentGPR6, argumentGPR7,
         };

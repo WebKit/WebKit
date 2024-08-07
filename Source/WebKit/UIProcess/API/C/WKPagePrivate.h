@@ -216,6 +216,9 @@ WK_EXPORT void WKPageExecuteCommandForTesting(WKPageRef pageRef, WKStringRef com
 WK_EXPORT bool WKPageIsEditingCommandEnabledForTesting(WKPageRef page, WKStringRef command);
 WK_EXPORT void WKPageSetPermissionLevelForTesting(WKPageRef page, WKStringRef origin, bool allowed);
 
+typedef void (*WKPageSetTopContentInsetForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetTopContentInsetForTesting(WKPageRef page, float contentInset, void* context, WKPageSetTopContentInsetForTestingFunction callback);
+
 #ifdef __cplusplus
 }
 #endif

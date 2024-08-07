@@ -168,7 +168,7 @@ class SpeechRecognitionRealtimeMediaSourceManager;
 
 class WebProcess : public AuxiliaryProcess
 {
-    WTF_MAKE_WK_TZONE_ALLOCATED(WebProcess);
+    WTF_MAKE_TZONE_ALLOCATED(WebProcess);
 public:
     using TopFrameDomain = WebCore::RegistrableDomain;
     using SubResourceDomain = WebCore::RegistrableDomain;
@@ -596,7 +596,6 @@ private:
 
 #if PLATFORM(MAC)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)

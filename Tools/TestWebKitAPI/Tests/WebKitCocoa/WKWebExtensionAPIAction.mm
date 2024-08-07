@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,7 +116,7 @@ TEST(WKWebExtensionAPIAction, ClickedEvent)
         @"browser.test.yield('Test Action')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager loadAndRun];
@@ -146,10 +146,10 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
         @"toolbar-32.png": largeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_TRUE(action.isEnabled);
         EXPECT_NS_EQUAL(action.badgeText, @"");
@@ -221,10 +221,10 @@ TEST(WKWebExtensionAPIAction, GetCurrentTabAndWindowFromPopupPage)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_NOT_NULL(action.popupWebView);
     };
@@ -266,10 +266,10 @@ TEST(WKWebExtensionAPIAction, UpdateTabFromPopupPage)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_NOT_NULL(action.popupWebView);
     };
@@ -315,10 +315,10 @@ TEST(WKWebExtensionAPIAction, SetDefaultActionProperties)
         @"toolbar-48.png": extraLargeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
         EXPECT_TRUE(defaultAction.presentsPopup);
@@ -396,10 +396,10 @@ TEST(WKWebExtensionAPIAction, TabSpecificActionProperties)
         @"toolbar-48.png": extraLargeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
         EXPECT_TRUE(defaultAction.presentsPopup);
@@ -511,10 +511,10 @@ TEST(WKWebExtensionAPIAction, WindowSpecificActionProperties)
         @"window-toolbar-48.png": windowToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
         EXPECT_TRUE(defaultAction.presentsPopup);
@@ -583,10 +583,10 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePath)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -637,10 +637,10 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePathRelative)
         },
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -671,10 +671,10 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizes)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -746,10 +746,10 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizesRelative)
         },
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -795,10 +795,10 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageData)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
 
         EXPECT_NOT_NULL(icon);
@@ -835,10 +835,10 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -889,10 +889,10 @@ TEST(WKWebExtensionAPIAction, SetIconWithSVGDataURL)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -936,10 +936,10 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
         @"popup.html": @"Hello world!",
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon48);
 #if USE(APPKIT)
@@ -1003,10 +1003,10 @@ TEST(WKWebExtensionAPIAction, BrowserAction)
         @"toolbar-48.png": extraLargeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:browserActionManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:browserActionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
         EXPECT_TRUE(defaultAction.presentsPopup);
@@ -1097,10 +1097,10 @@ TEST(WKWebExtensionAPIAction, PageAction)
         @"toolbar-48.png": extraLargeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:pageActionManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:pageActionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *defaultAction = [manager.get().context actionForTab:nil];
 
         EXPECT_TRUE(defaultAction.presentsPopup);
@@ -1192,16 +1192,16 @@ TEST(WKWebExtensionAPIAction, ClearTabSpecificActionPropertiesOnNavigation)
         @"toolbar-48.png": extraLargeToolbarIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
 
     auto *localhostRequest = server.requestWithLocalhost();
     auto *addressRequest = server.request();
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.URL];
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:addressRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:localhostRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:addressRequest.URL];
 
     [manager.get().defaultTab.webView loadRequest:localhostRequest];
 
@@ -1274,15 +1274,15 @@ TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         EXPECT_NOT_NULL(action);
     };
 
-    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
         EXPECT_NS_EQUAL(options.url, localhostRequest.URL);
         EXPECT_NS_EQUAL(options.window, manager.get().defaultWindow);
         EXPECT_EQ(options.index, 1ul);
@@ -1351,10 +1351,10 @@ TEST(WKWebExtensionAPIAction, ClickedEventAndPermissionsRequest)
         @"browser.test.yield('Test Action')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+    manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
         EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"webNavigation"]]);
         callback(requestedPermissions, nil);
@@ -1384,10 +1384,10 @@ TEST(WKWebExtensionAPIAction, SubframeNavigation)
         @"popup.html": [NSString stringWithFormat:@"<iframe src='%@'></iframe>", server.requestWithLocalhost("/"_s).URL],
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         EXPECT_TRUE(action.presentsPopup);
         EXPECT_NOT_NULL(action.popupWebView);
     };

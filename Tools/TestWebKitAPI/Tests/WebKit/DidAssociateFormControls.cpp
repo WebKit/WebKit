@@ -37,10 +37,6 @@ static bool didReceiveAllMessages = false;
 static bool receivedMessageForAddingForm = false;
 static const uint64_t expectedNumberOfElements = 1;
 
-static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
-{
-}
-
 static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*)
 {
     EXPECT_WK_STREQ("DidReceiveDidAssociateFormControls", messageName);
@@ -56,7 +52,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
         receivedMessageForAddingForm = true;
 
         WKPageRef page = static_cast<WKPageRef>(WKDictionaryGetItemForKey(dictionary, Util::toWK("Page").get()));
-        WKPageRunJavaScriptInMainFrame(page, Util::toWK("addPasswordFieldToForm()").get(), 0, nullJavaScriptCallback);
+        WKPageEvaluateJavaScriptInMainFrame(page, Util::toWK("addPasswordFieldToForm()").get(), nullptr, nullptr);
 
         return;
     }

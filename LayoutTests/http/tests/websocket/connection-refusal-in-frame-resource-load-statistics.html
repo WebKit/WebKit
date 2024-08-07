@@ -11,7 +11,7 @@
 
     const numberOfNotificationsExpected = 2;
     let numberOfNotificationsReceived = 0;
-    function completeTest() {
+    async function completeTest() {
         numberOfNotificationsReceived++;
         if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1")) {
             testPassed("localhost registered as subresource under 127.0.0.1.");
@@ -22,7 +22,7 @@
                 setEnableFeature(false, finishJSTest);
             } else {
                 testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-                testRunner.statisticsNotifyObserver();
+                await testRunner.statisticsNotifyObserver();
             }
         }
     }

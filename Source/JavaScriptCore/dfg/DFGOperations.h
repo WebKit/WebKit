@@ -98,6 +98,7 @@ JSC_DECLARE_JIT_OPERATION(operationDec, EncodedJSValue, (JSGlobalObject*, Encode
 JSC_DECLARE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithClz32, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithFRound, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
+JSC_DECLARE_JIT_OPERATION(operationArithF16Round, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithSqrt, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
@@ -154,6 +155,8 @@ JSC_DECLARE_JIT_OPERATION(operationNewUint16ArrayWithSize, char*, (JSGlobalObjec
 JSC_DECLARE_JIT_OPERATION(operationNewUint16ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewUint32ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewUint32ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationNewFloat16ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
+JSC_DECLARE_JIT_OPERATION(operationNewFloat16ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat32ArrayWithOneArgument, char*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewFloat64ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
@@ -442,6 +445,8 @@ inline auto operationNewTypedArrayWithSizeForType(TypedArrayType type) -> declty
         return operationNewUint16ArrayWithSize;
     case TypeUint32:
         return operationNewUint32ArrayWithSize;
+    case TypeFloat16:
+        return operationNewFloat16ArrayWithSize;
     case TypeFloat32:
         return operationNewFloat32ArrayWithSize;
     case TypeFloat64:
@@ -475,6 +480,8 @@ inline auto operationNewTypedArrayWithOneArgumentForType(TypedArrayType type) ->
         return operationNewUint16ArrayWithOneArgument;
     case TypeUint32:
         return operationNewUint32ArrayWithOneArgument;
+    case TypeFloat16:
+        return operationNewFloat16ArrayWithOneArgument;
     case TypeFloat32:
         return operationNewFloat32ArrayWithOneArgument;
     case TypeFloat64:

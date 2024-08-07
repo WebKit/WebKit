@@ -107,6 +107,12 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
+void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<void()>&& completionHandler)
+{
+    protectedPage()->setTopContentInset(contentInset);
+    completionHandler();
+}
+
 Ref<WebPage> WebPageTesting::protectedPage() const
 {
     return m_page.get();

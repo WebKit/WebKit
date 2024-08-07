@@ -135,9 +135,6 @@ const TestFeatures& TestOptions::defaults()
             { "UnifiedPDFEnabled", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
-#if ENABLE(WEBGL) && PLATFORM(COCOA)
-            { "WebGLUsingMetal", true },
-#endif
 #if ENABLE(WEBGL)
             { "WebGLDraftExtensionsEnabled", true },
 #endif

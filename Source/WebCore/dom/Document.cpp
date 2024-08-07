@@ -39,6 +39,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
+#include "CSSViewTransitionRule.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFontLoadRequest.h"
 #include "CachedFrame.h"
@@ -2941,17 +2942,17 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     int width = pageSize.width();
     int height = pageSize.height();
     switch (style->pageSizeType()) {
-    case PAGE_SIZE_AUTO:
+    case PageSizeType::Auto:
         break;
-    case PAGE_SIZE_AUTO_LANDSCAPE:
+    case PageSizeType::AutoLandscape:
         if (width < height)
             std::swap(width, height);
         break;
-    case PAGE_SIZE_AUTO_PORTRAIT:
+    case PageSizeType::AutoPortrait:
         if (width > height)
             std::swap(width, height);
         break;
-    case PAGE_SIZE_RESOLVED: {
+    case PageSizeType::Resolved: {
         auto& size = style->pageSize();
         ASSERT(size.width.isFixed());
         ASSERT(size.height.isFixed());
@@ -8067,6 +8068,18 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
     dispatchWindowEvent(PageTransitionEvent::create(eventNames().pagehideEvent, persisted == PageshowEventPersistence::Persisted), this);
 }
 
+// https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
+bool Document::resolveViewTransitionRule()
+{
+    if (visibilityState() == VisibilityState::Hidden)
+        return false;
+
+    auto rule = styleScope().resolver().viewTransitionRule();
+    if (rule)
+        return rule->computedNavigation() == ViewTransitionNavigation::Auto;
+    return false;
+}
+
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
     queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
@@ -10188,7 +10201,12 @@ const FixedVector<CSSPropertyID>& Document::exposedComputedCSSPropertyIDs()
     if (!m_exposedComputedCSSPropertyIDs.has_value()) {
         std::remove_const_t<decltype(computedPropertyIDs)> exposed;
         auto end = std::copy_if(computedPropertyIDs.begin(), computedPropertyIDs.end(), exposed.begin(), [&](auto property) {
-            return isExposed(property, m_settings.ptr());
+            if (!isExposed(property, m_settings.ptr()))
+                return false;
+            // If the standard property is exposed no need to expose the alias.
+            if (auto standard = cascadeAliasProperty(property); standard != property && isExposed(standard, m_settings.ptr()))
+                return false;
+            return true;
         });
         m_exposedComputedCSSPropertyIDs.emplace(exposed.begin(), end);
     }

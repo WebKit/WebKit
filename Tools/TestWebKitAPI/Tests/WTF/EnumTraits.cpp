@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/text/ASCIILiteral.h>
 
 enum class TestEnum {
     A,
@@ -91,6 +92,59 @@ TEST(WTF_EnumTraits, ZeroBasedContiguousEnum)
     EXPECT_FALSE(isZeroBasedContiguousEnum<TestNonContiguousEnum>());
     static_assert(!isZeroBasedContiguousEnum<TestNonZeroBasedEnum>());
     EXPECT_FALSE(isZeroBasedContiguousEnum<TestNonZeroBasedEnum>());
+}
+
+static bool isExpectedEnumString(const ASCIILiteral& expected, const std::span<const char>& result)
+{
+    // result won't have a null terminator.
+    bool equal = true;
+    for (size_t i = 0; i < result.size(); ++i)
+        equal &= expected[i] == result[i];
+    return equal;
+}
+
+enum NonClassMultiWord {
+    FooBar,
+    BazBloop,
+    WordW1thNumb3rs,
+    Hole = WordW1thNumb3rs + 2,
+    Duplicate = Hole,
+};
+
+enum class ClassMultiWord {
+    FooBar,
+    BazBloop,
+    WordW1thNumb3rs,
+    Hole = WordW1thNumb3rs + 2,
+    Duplicate = Hole,
+};
+
+TEST(WTF_EnumTraits, EnumNameTemplate)
+{
+    EXPECT_TRUE(isExpectedEnumString("NonClassMultiWord"_s, enumTypeName<NonClassMultiWord>()));
+    EXPECT_TRUE(isExpectedEnumString("FooBar"_s, enumName<FooBar>()));
+    EXPECT_TRUE(isExpectedEnumString("WordW1thNumb3rs"_s, enumName<WordW1thNumb3rs>()));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName<Hole>()));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName<Duplicate>()));
+
+    EXPECT_TRUE(isExpectedEnumString("ClassMultiWord"_s, enumTypeName<ClassMultiWord>()));
+    EXPECT_TRUE(isExpectedEnumString("FooBar"_s, enumName<ClassMultiWord::FooBar>()));
+    EXPECT_TRUE(isExpectedEnumString("WordW1thNumb3rs"_s, enumName<ClassMultiWord::WordW1thNumb3rs>()));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName<ClassMultiWord::Hole>()));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName<ClassMultiWord::Duplicate>()));
+}
+
+TEST(WTF_EnumTraits, EnumNameArgument)
+{
+    EXPECT_TRUE(isExpectedEnumString("FooBar"_s, enumName(FooBar)));
+    EXPECT_TRUE(isExpectedEnumString("WordW1thNumb3rs"_s, enumName(WordW1thNumb3rs)));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(Hole)));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(Duplicate)));
+
+    EXPECT_TRUE(isExpectedEnumString("FooBar"_s, enumName(ClassMultiWord::FooBar)));
+    EXPECT_TRUE(isExpectedEnumString("WordW1thNumb3rs"_s, enumName(ClassMultiWord::WordW1thNumb3rs)));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(ClassMultiWord::Hole)));
+    EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(ClassMultiWord::Duplicate)));
 }
 
 } // namespace TestWebKitAPI

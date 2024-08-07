@@ -157,5 +157,15 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+String ScrollingTreeFrameScrollingNodeRemoteIOS::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    if (auto* scrollView = this->scrollView()) {
+        auto showsScrollbar = orientation == ScrollbarOrientation::Horizontal ?  [scrollView showsHorizontalScrollIndicator] :  [scrollView showsVerticalScrollIndicator];
+        return showsScrollbar ? ""_s : "none"_s;
+    }
+    return ""_s;
+}
+
+
 }
 #endif

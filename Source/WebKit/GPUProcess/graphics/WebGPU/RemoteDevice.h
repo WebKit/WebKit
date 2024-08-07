@@ -122,6 +122,7 @@ private:
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
+    void updateExternalTexture(WebGPUIdentifier, const WebCore::MediaPlayerIdentifier&);
 #endif
 
     void createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&, WebGPUIdentifier);

@@ -81,6 +81,7 @@
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+#include "WebExtensionSidebar.h"
 #include "WebExtensionSidebarParameters.h"
 #endif
 
@@ -96,15 +97,15 @@ OBJC_CLASS NSUUID;
 OBJC_CLASS WKContentRuleListStore;
 OBJC_CLASS WKNavigation;
 OBJC_CLASS WKNavigationAction;
+OBJC_CLASS WKWebExtensionContext;
+OBJC_CLASS _WKWebExtensionRegisteredScriptsSQLiteStore;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWebViewConfiguration;
-OBJC_CLASS _WKWebExtensionContext;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_CLASS _WKWebExtensionDeclarativeNetRequestSQLiteStore;
-OBJC_CLASS _WKWebExtensionRegisteredScriptsSQLiteStore;
 OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
-OBJC_PROTOCOL(_WKWebExtensionTab);
-OBJC_PROTOCOL(_WKWebExtensionWindow);
+OBJC_PROTOCOL(WKWebExtensionTab);
+OBJC_PROTOCOL(WKWebExtensionWindow);
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSEvent;
@@ -375,11 +376,11 @@ public:
 
     void removePage(WebPageProxy&);
 
-    Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *) const;
+    Ref<WebExtensionWindow> getOrCreateWindow(WKWebExtensionWindow *) const;
     RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     void forgetWindow(WebExtensionWindowIdentifier) const;
 
-    Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *) const;
+    Ref<WebExtensionTab> getOrCreateTab(WKWebExtensionTab *) const;
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IncludeExtensionViews = IncludeExtensionViews::No, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IncludeExtensionViews = IncludeExtensionViews::Yes, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
@@ -436,6 +437,14 @@ public:
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionTab*);
     void performAction(WebExtensionTab*, UserTriggered = UserTriggered::No);
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    WebExtensionSidebar& defaultSidebar();
+    std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionWindow const&);
+    std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
+    std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
+    std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionTab&);
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     const CommandsVector& commands();
     WebExtensionCommand* command(const String& identifier);
@@ -549,7 +558,7 @@ public:
     void sendToContentScriptProcessesForEvent(WebExtensionEventListenerType, const T& message) const;
 
 #ifdef __OBJC__
-    _WKWebExtensionContext *wrapper() const { return (_WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
+    WKWebExtensionContext *wrapper() const { return (WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
 #endif
 
 private:
@@ -954,6 +963,12 @@ private:
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;
     WeakHashMap<WebExtensionTab, Ref<WebExtensionAction>> m_actionTabMap;
     RefPtr<WebExtensionAction> m_defaultAction;
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    WeakHashMap<WebExtensionWindow, Ref<WebExtensionSidebar>> m_sidebarWindowMap;
+    WeakHashMap<WebExtensionTab, Ref<WebExtensionSidebar>> m_sidebarTabMap;
+    RefPtr<WebExtensionSidebar> m_defaultSidebar;
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     PortCountedSet m_ports;
     PageProxyIdentifierPortMap m_pagePortMap;

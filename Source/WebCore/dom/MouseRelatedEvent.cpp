@@ -69,12 +69,11 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
 }
 
 MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventInterface, eventType, initializer)
+    : UIEventWithKeyState(eventInterface, eventType, initializer, isTrusted)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
     , m_movementX(initializer.movementX)
     , m_movementY(initializer.movementY)
 {
-    ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));
 }
 

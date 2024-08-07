@@ -27,4 +27,7 @@ messages -> NotificationManagerMessageHandler NotRefCounted {
     DidDestroyNotification(WTF::UUID notificationID)
     PageWasNotifiedOfNotificationPermission()
     RequestPermission(WebCore::SecurityOriginData origin) -> (bool granted)
+    SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    GetPermissionState(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission)
+    GetPermissionStateSync(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission) Synchronous
 }

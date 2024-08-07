@@ -32,9 +32,12 @@ class TVOSLayoutTraits extends LayoutTraits
         return IOSInlineMediaControls;
     }
 
-    overridenSupportingObjectClasses()
+    supportingObjectClasses()
     {
-        return null;
+        var supportingObjectClasses = super.supportingObjectClasses();
+        if (this.isFullscreen)
+            supportingObjectClasses.push(MetadataSupport);
+        return supportingObjectClasses;
     }
 
     resourceDirectory()

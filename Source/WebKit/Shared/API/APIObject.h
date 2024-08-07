@@ -185,6 +185,9 @@ public:
         WebExtensionDataRecord,
         WebExtensionMatchPattern,
         WebExtensionMessagePort,
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+        WebExtensionSidebar,
+#endif
 #endif
         WebResourceLoadStatisticsManager,
         WebsiteDataRecord,

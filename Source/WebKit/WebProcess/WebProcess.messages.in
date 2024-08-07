@@ -119,7 +119,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 #if PLATFORM(MAC)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
-    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -419,10 +419,10 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
         }
     }
 
-    if (m_dynamicOffsetsVertexBuffer)
+    if (m_dynamicOffsetsVertexBuffer && vertexDynamicOffset < m_dynamicOffsetsVertexBuffer.length)
         [icbCommand setVertexBuffer:m_dynamicOffsetsVertexBuffer offset:vertexDynamicOffset atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage()];
 
-    if (m_dynamicOffsetsFragmentBuffer) {
+    if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffset < m_dynamicOffsetsFragmentBuffer.length) {
         RELEASE_ASSERT(m_fragmentBuffers.size());
         [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:m_fragmentBuffers.size() - 1];
     }
@@ -861,8 +861,10 @@ void RenderBundleEncoder::endCurrentICB()
     }
     m_fragmentDynamicOffset = 0;
 
-    if (!m_renderPassEncoder)
+    if (!m_renderPassEncoder) {
         m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
+        m_device->setOwnerWithIdentity(m_indirectCommandBuffer);
+    }
 
     uint64_t completedDraws = 0, lastIndexOfRecordedCommand = 0;
     for (auto& command : m_recordedCommands) {

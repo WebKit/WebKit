@@ -341,9 +341,9 @@ enum class FillAttachment : uint8_t {
 };
 
 enum class FillBox : uint8_t {
-    Border,
-    Padding,
-    Content,
+    BorderBox,
+    PaddingBox,
+    ContentBox,
     Text,
     NoClip
 };
@@ -1019,8 +1019,8 @@ enum class LineAlign : bool {
 };
 
 enum class RubyPosition : uint8_t {
-    Before,
-    After,
+    Over,
+    Under,
     InterCharacter
 };
 

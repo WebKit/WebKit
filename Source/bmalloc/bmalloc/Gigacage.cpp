@@ -47,10 +47,6 @@
 
 namespace Gigacage {
 
-#if !BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-Config g_gigacageConfig;
-#endif
-
 struct Callback {
     Callback() { }
     
@@ -98,11 +94,9 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
 
-#if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
             // We might only get page size alignment, but that's also the minimum
             // alignment we need for freezing the Config.
             RELEASE_BASSERT(!(reinterpret_cast<size_t>(&WebConfig::g_config) & (vmPageSize() - 1)));
-#endif
 
             Kind shuffledKinds[NumberOfKinds];
             for (unsigned i = 0; i < NumberOfKinds; ++i)

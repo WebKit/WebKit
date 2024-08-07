@@ -983,6 +983,30 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setLocal(uint32_t localIndex, Value val
     return { };
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::teeLocal(uint32_t localIndex, Value value, Value& result)
+{
+    auto type = m_parser->typeOfLocal(localIndex);
+    Value local = Value::fromLocal(type.kind, localIndex);
+    if (value.isConst()) {
+        Location localLocation = locationOf(local);
+        emitStore(value, localLocation);
+        consume(value);
+        result = topValue(type.kind);
+        Location resultLocation = allocate(result);
+        emitMoveConst(value, resultLocation);
+    } else {
+        Location srcLocation = loadIfNecessary(value);
+        Location localLocation = locationOf(local);
+        emitStore(value, localLocation);
+        consume(value);
+        result = topValue(type.kind);
+        Location resultLocation = allocate(result);
+        emitMove(type.kind, srcLocation, resultLocation);
+    }
+    LOG_INSTRUCTION("TeeLocal", localIndex, value, RESULT(result));
+    return { };
+}
+
 // Globals
 
 Value BBQJIT::topValue(TypeKind type)
@@ -3997,7 +4021,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
     Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
     Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;
@@ -4073,9 +4097,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
         static_assert(sizeof(JSWebAssemblyInstance::ImportFunctionInfo) * maxImports < std::numeric_limits<int32_t>::max());
         RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex) < std::numeric_limits<int32_t>::max());
-        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
-
-        m_jit.farJump(wasmScratchGPR, WasmEntryPtrTag);
+        m_jit.farJump(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), WasmEntryPtrTag);
     } else {
         // Emit the call.
         Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
@@ -4110,9 +4132,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const T
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
         static_assert(sizeof(JSWebAssemblyInstance::ImportFunctionInfo) * maxImports < std::numeric_limits<int32_t>::max());
         RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex) < std::numeric_limits<int32_t>::max());
-        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
-
-        m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
+        m_jit.call(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), WasmEntryPtrTag);
     } else {
         // Emit the call.
         Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
@@ -4194,7 +4214,7 @@ void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstanc
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
 
     const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
-    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex);
+    const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfo = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
     Checked<int32_t> callerStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallerInfo.headerAndArgumentStackSizeInBytes);
     Checked<int32_t> tailCallStackOffsetFromFP = callerStackSize - calleeStackSize;

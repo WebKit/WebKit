@@ -269,6 +269,9 @@ bool NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
     if (!isMainResource())
         return true;
     m_contentFilter = ContentFilter::create(*this);
+#if HAVE(AUDIT_TOKEN)
+    m_contentFilter->setHostProcessAuditToken(connectionToWebProcess().networkProcess().sourceApplicationAuditToken());
+#endif
     m_contentFilter->startFilteringMainResource(request.url());
     if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse())) {
         m_contentFilter->stopFilteringMainResource();

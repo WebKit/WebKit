@@ -87,6 +87,7 @@ set(WTF_PUBLIC_HEADERS
     FixedVector.h
     FixedWidthDouble.h
     FlipBytes.h
+    Float16.h
     ForbidHeapAllocation.h
     Forward.h
     Function.h

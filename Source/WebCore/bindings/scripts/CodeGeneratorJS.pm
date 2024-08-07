@@ -3252,8 +3252,7 @@ sub GenerateHeader
     }
     push(@headerContent, "    }\n\n");
 
-    # Custom pushEventHandlerScope function
-    if ($interface->extendedAttributes->{CustomPushEventHandlerScope}) {
+    if ($codeGenerator->InheritsInterface($interface, "HTMLElement")) {
         push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::JSGlobalObject*, JSC::JSScope*) const;\n\n");
     }
 
@@ -7375,6 +7374,7 @@ sub GetBaseIDLType
         "Uint16Array" => "IDLUint16Array",
         "Uint32Array" => "IDLUint32Array",
         "Uint8ClampedArray" => "IDLUint8ClampedArray",
+        "Float16Array" => "IDLFloat16Array",
         "Float32Array" => "IDLFloat32Array",
         "Float64Array" => "IDLFloat64Array",
         "BigInt64Array" => "IDLBigInt64Array",

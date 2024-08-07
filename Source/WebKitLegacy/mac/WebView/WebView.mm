@@ -289,7 +289,6 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
-#import "WebSwitchingGPUClient.h"
 #import "WebVideoFullscreenController.h"
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -1484,9 +1483,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();
 #endif
-#if PLATFORM(MAC)
-        WebCore::SwitchingGPUClient::setSingleton(WebKit::WebSwitchingGPUClient::singleton());
-#endif
+
 
 #if PLATFORM(IOS_FAMILY)
         if (WebCore::IOSApplication::isMobileSafari())
@@ -4162,6 +4159,12 @@ IGNORE_WARNINGS_END
     }
 
     return nil;
+}
+
+- (void)_setTopContentInsetForTesting:(float)contentInset
+{
+    if (_private && _private->page)
+        _private->page->setTopContentInset(contentInset);
 }
 
 - (BOOL)_isSoftwareRenderable

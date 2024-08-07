@@ -46,6 +46,13 @@
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKWebExtensionContextInternal.h"
+#import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionControllerInternal.h"
+#import "WKWebExtensionMatchPatternInternal.h"
+#import "WKWebExtensionPermission.h"
+#import "WKWebExtensionTab.h"
+#import "WKWebExtensionWindow.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebpagePreferencesPrivate.h"
@@ -65,18 +72,11 @@
 #import "WebPreferences.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
-#import "_WKWebExtensionContextInternal.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
-#import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
 #import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import "_WKWebExtensionLocalization.h"
-#import "_WKWebExtensionMatchPatternInternal.h"
-#import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import "_WKWebExtensionStorageSQLiteStore.h"
-#import "_WKWebExtensionTab.h"
-#import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
@@ -186,21 +186,21 @@ WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     m_tabDelegateToIdentifierMap = [NSMapTable weakToStrongObjectsMapTable];
 }
 
-static _WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
+static WKWebExtensionContextError toAPI(WebExtensionContext::Error error)
 {
     switch (error) {
     case WebExtensionContext::Error::Unknown:
-        return _WKWebExtensionContextErrorUnknown;
+        return WKWebExtensionContextErrorUnknown;
     case WebExtensionContext::Error::AlreadyLoaded:
-        return _WKWebExtensionContextErrorAlreadyLoaded;
+        return WKWebExtensionContextErrorAlreadyLoaded;
     case WebExtensionContext::Error::NotLoaded:
-        return _WKWebExtensionContextErrorNotLoaded;
+        return WKWebExtensionContextErrorNotLoaded;
     case WebExtensionContext::Error::BaseURLAlreadyInUse:
-        return _WKWebExtensionContextErrorBaseURLAlreadyInUse;
+        return WKWebExtensionContextErrorBaseURLAlreadyInUse;
     case WebExtensionContext::Error::NoBackgroundContent:
-        return _WKWebExtensionContextErrorNoBackgroundContent;
+        return WKWebExtensionContextErrorNoBackgroundContent;
     case WebExtensionContext::Error::BackgroundContentFailedToLoad:
-        return _WKWebExtensionContextErrorBackgroundContentFailedToLoad;
+        return WKWebExtensionContextErrorBackgroundContentFailedToLoad;
     }
 }
 
@@ -242,7 +242,7 @@ NSError *WebExtensionContext::createError(Error error, NSString *customLocalized
     if (underlyingError)
         userInfo = @{ NSLocalizedDescriptionKey: localizedDescription, NSUnderlyingErrorKey: underlyingError };
 
-    return [[NSError alloc] initWithDomain:_WKWebExtensionContextErrorDomain code:errorCode userInfo:userInfo];
+    return [[NSError alloc] initWithDomain:WKWebExtensionContextErrorDomain code:errorCode userInfo:userInfo];
 }
 
 bool WebExtensionContext::load(WebExtensionController& controller, String storageDirectory, NSError **outError)
@@ -355,6 +355,9 @@ bool WebExtensionContext::unload(NSError **outError)
     m_actionWindowMap.clear();
     m_actionTabMap.clear();
     m_defaultAction = nullptr;
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    m_defaultSidebar = nullptr;
+#endif
     m_popupPageActionMap.clear();
 
     m_ports.clear();
@@ -648,7 +651,7 @@ void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
 
 const WebExtensionContext::PermissionsMap& WebExtensionContext::grantedPermissions()
 {
-    return removeExpired(m_grantedPermissions, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
+    return removeExpired(m_grantedPermissions, m_nextGrantedPermissionsExpirationDate, WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
 }
 
 void WebExtensionContext::setGrantedPermissions(PermissionsMap&& grantedPermissions)
@@ -676,13 +679,13 @@ void WebExtensionContext::setGrantedPermissions(PermissionsMap&& grantedPermissi
 
     removeDeniedPermissions(addedPermissions);
 
-    postAsyncNotification(_WKWebExtensionContextGrantedPermissionsWereRemovedNotification, removedPermissions);
-    postAsyncNotification(_WKWebExtensionContextPermissionsWereGrantedNotification, addedPermissions);
+    postAsyncNotification(WKWebExtensionContextGrantedPermissionsWereRemovedNotification, removedPermissions);
+    postAsyncNotification(WKWebExtensionContextPermissionsWereGrantedNotification, addedPermissions);
 }
 
 const WebExtensionContext::PermissionsMap& WebExtensionContext::deniedPermissions()
 {
-    return removeExpired(m_deniedPermissions, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    return removeExpired(m_deniedPermissions, m_nextDeniedPermissionsExpirationDate, WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
 }
 
 void WebExtensionContext::setDeniedPermissions(PermissionsMap&& deniedPermissions)
@@ -709,13 +712,13 @@ void WebExtensionContext::setDeniedPermissions(PermissionsMap&& deniedPermission
 
     removeGrantedPermissions(addedPermissions);
 
-    postAsyncNotification(_WKWebExtensionContextDeniedPermissionsWereRemovedNotification, removedPermissions);
-    postAsyncNotification(_WKWebExtensionContextPermissionsWereDeniedNotification, addedPermissions);
+    postAsyncNotification(WKWebExtensionContextDeniedPermissionsWereRemovedNotification, removedPermissions);
+    postAsyncNotification(WKWebExtensionContextPermissionsWereDeniedNotification, addedPermissions);
 }
 
 const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::grantedPermissionMatchPatterns()
 {
-    return removeExpired(m_grantedPermissionMatchPatterns, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
+    return removeExpired(m_grantedPermissionMatchPatterns, m_nextGrantedPermissionMatchPatternsExpirationDate, WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
 }
 
 void WebExtensionContext::setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&& grantedPermissionMatchPatterns)
@@ -743,13 +746,13 @@ void WebExtensionContext::setGrantedPermissionMatchPatterns(PermissionMatchPatte
     removeDeniedPermissionMatchPatterns(addedMatchPatterns, EqualityOnly::Yes);
     clearCachedPermissionStates();
 
-    postAsyncNotification(_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
-    postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, addedMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, addedMatchPatterns);
 }
 
 const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::deniedPermissionMatchPatterns()
 {
-    return removeExpired(m_deniedPermissionMatchPatterns, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification);
+    return removeExpired(m_deniedPermissionMatchPatterns, m_nextDeniedPermissionMatchPatternsExpirationDate, WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification);
 }
 
 void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&& deniedPermissionMatchPatterns)
@@ -777,8 +780,8 @@ void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatter
     removeGrantedPermissionMatchPatterns(addedMatchPatterns, EqualityOnly::Yes);
     clearCachedPermissionStates();
 
-    postAsyncNotification(_WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
-    postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
 }
 
 void WebExtensionContext::permissionsDidChange(const PermissionsSet& changedPermissions)
@@ -788,8 +791,8 @@ void WebExtensionContext::permissionsDidChange(const PermissionsSet& changedPerm
 
     extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::UpdateGrantedPermissions(m_grantedPermissions), identifier());
 
-    if (changedPermissions.contains(_WKWebExtensionPermissionClipboardWrite)) {
-        bool granted = hasPermission(_WKWebExtensionPermissionClipboardWrite);
+    if (changedPermissions.contains(WKWebExtensionPermissionClipboardWrite)) {
+        bool granted = hasPermission(WKWebExtensionPermissionClipboardWrite);
 
         enumerateExtensionPages([&](auto& page, bool&) {
             page.preferences().setJavaScriptCanAccessClipboard(granted);
@@ -805,14 +808,14 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     permissionsDidChange(permissions);
 
     if (isLoaded()) {
-        if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
+        if ([notificationName isEqualToString:WKWebExtensionContextPermissionsWereGrantedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
-        else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
+        else if ([notificationName isEqualToString:WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
     }
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), permissions]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
+        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
     }).get());
 }
 
@@ -822,9 +825,9 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
         return;
 
     if (isLoaded()) {
-        if ([notificationName isEqualToString:_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
+        if ([notificationName isEqualToString:WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
-        else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
+        else if ([notificationName isEqualToString:WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
     }
 
@@ -838,7 +841,7 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     }
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), matchPatterns]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
+        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
     }).get());
 }
 
@@ -857,7 +860,7 @@ void WebExtensionContext::grantPermissions(PermissionsSet&& permissions, WallTim
 
     removeDeniedPermissions(permissions);
 
-    postAsyncNotification(_WKWebExtensionContextPermissionsWereGrantedNotification, permissions);
+    postAsyncNotification(WKWebExtensionContextPermissionsWereGrantedNotification, permissions);
 }
 
 void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime expirationDate)
@@ -875,7 +878,7 @@ void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime
 
     removeGrantedPermissions(permissions);
 
-    postAsyncNotification(_WKWebExtensionContextPermissionsWereDeniedNotification, permissions);
+    postAsyncNotification(WKWebExtensionContextPermissionsWereDeniedNotification, permissions);
 }
 
 void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
@@ -896,7 +899,7 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
 
     addInjectedContent(injectedContents(), permissionMatchPatterns);
 
-    postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, permissionMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, permissionMatchPatterns);
 }
 
 void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
@@ -917,12 +920,12 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
 
     updateInjectedContent();
 
-    postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, permissionMatchPatterns);
+    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, permissionMatchPatterns);
 }
 
 bool WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
 {
-    return removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
+    return removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
 }
 
 bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
@@ -939,7 +942,7 @@ bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& 
         }
     }
 
-    if (!removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification))
+    if (!removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification))
         return false;
 
     removeInjectedContent(matchPatternsToRemove);
@@ -949,12 +952,12 @@ bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& 
 
 bool WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToRemove)
 {
-    return removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    return removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
 }
 
 bool WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification))
+    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification))
         return false;
 
     updateInjectedContent();
@@ -1126,8 +1129,8 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
         THROW_UNLESS([allowedMatchPatterns isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a set");
         THROW_UNLESS(!expirationDate || [expirationDate isKindOfClass:NSDate.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a date");
 
-        for (_WKWebExtensionMatchPattern *pattern in allowedMatchPatterns) {
-            THROW_UNLESS([pattern isKindOfClass:_WKWebExtensionMatchPattern.class], @"Object returned in set by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionMatchPattern");
+        for (WKWebExtensionMatchPattern *pattern in allowedMatchPatterns) {
+            THROW_UNLESS([pattern isKindOfClass:WKWebExtensionMatchPattern.class], @"Object returned in set by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a WKWebExtensionMatchPattern");
             THROW_UNLESS(neededMatchPatterns.contains(pattern._webExtensionMatchPattern), @"Set returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: doesn't contain the requested match patterns");
         }
 
@@ -1250,8 +1253,8 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
         THROW_UNLESS([allowedPermissions isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a set");
         THROW_UNLESS(!expirationDate || [expirationDate isKindOfClass:NSDate.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a date");
 
-        for (_WKWebExtensionPermission permission in allowedPermissions) {
-            THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionPermission");
+        for (WKWebExtensionPermission permission in allowedPermissions) {
+            THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a WKWebExtensionPermission");
             THROW_UNLESS(neededPermissions.contains(permission), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
         }
 
@@ -1417,7 +1420,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 {
     ASSERT(!permission.isEmpty());
 
-    if (tab && permission == String(_WKWebExtensionPermissionTabs)) {
+    if (tab && permission == String(WKWebExtensionPermissionTabs)) {
         if (tab->extensionHasTemporaryPermission())
             return PermissionState::GrantedExplicitly;
     }
@@ -1555,10 +1558,10 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
             return cacheResultAndReturn(PermissionState::RequestedImplicitly);
     }
 
-    if (hasPermission(_WKWebExtensionPermissionWebNavigation, tab, options))
+    if (hasPermission(WKWebExtensionPermissionWebNavigation, tab, options))
         return cacheResultAndReturn(PermissionState::RequestedImplicitly);
 
-    if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(_WKWebExtensionPermissionTabs, tab, options))
+    if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(WKWebExtensionPermissionTabs, tab, options))
         return PermissionState::RequestedImplicitly;
 
     if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
@@ -1644,7 +1647,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
             return PermissionState::RequestedImplicitly;
     }
 
-    if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(_WKWebExtensionPermissionTabs, tab, options))
+    if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(WKWebExtensionPermissionTabs, tab, options))
         return PermissionState::RequestedImplicitly;
 
     if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
@@ -1761,7 +1764,7 @@ void WebExtensionContext::removePage(WebPageProxy& page)
     disconnectPortsForPage(page);
 }
 
-Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWindow *delegate) const
+Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(WKWebExtensionWindow *delegate) const
 {
     ASSERT(delegate);
 
@@ -1829,7 +1832,7 @@ void WebExtensionContext::forgetWindow(WebExtensionWindowIdentifier identifier) 
     m_windowMap.remove(identifier);
 }
 
-Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate) const
+Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(WKWebExtensionTab *delegate) const
 {
     ASSERT(delegate);
 
@@ -2376,7 +2379,7 @@ void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier
     RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
-    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(targetURL, tab.get())) {
+    if (tab && hasPermission(WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(targetURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
         wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
@@ -2416,7 +2419,7 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, W
     }
 
     // Dispatch webNavigation events.
-    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+    if (tab && hasPermission(WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
         constexpr auto contentEventType = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
 
@@ -2432,7 +2435,7 @@ void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, W
     RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
-    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+    if (tab && hasPermission(WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
         wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
@@ -2445,7 +2448,7 @@ void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, Web
     RefPtr tab = getTab(pageID);
 
     // Dispatch webNavigation events.
-    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+    if (tab && hasPermission(WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
         constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
         wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [=, this, protectedThis = Ref { *this }] {
             sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
@@ -2460,7 +2463,7 @@ bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* ta
     if (!tab)
         return false;
 
-    if (!hasPermission(_WKWebExtensionPermissionWebRequest, tab))
+    if (!hasPermission(WKWebExtensionPermissionWebRequest, tab))
         return false;
 
     if (!tab->extensionHasPermission())
@@ -2621,6 +2624,46 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
 
     fireActionClickedEventIfNeeded(tab);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+WebExtensionSidebar& WebExtensionContext::defaultSidebar()
+{
+    if (!m_defaultSidebar)
+        m_defaultSidebar = WebExtensionSidebar::create(*this, WebExtensionSidebar::IsDefault::Yes);
+
+    return *m_defaultSidebar;
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionWindow const& window)
+{
+    if (auto *windowAction = m_sidebarWindowMap.get(window))
+        return *windowAction;
+
+    return Ref { defaultSidebar() };
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionTab const& tab)
+{
+    if (auto *tabAction = m_sidebarTabMap.get(tab))
+        return *tabAction;
+
+    return Ref { defaultSidebar() };
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)
+{
+    return m_sidebarWindowMap.ensure(window, [&] {
+        return WebExtensionSidebar::create(*this, window);
+    }).iterator->value;
+}
+
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionTab& tab)
+{
+    return m_sidebarTabMap.ensure(tab, [&] {
+        return WebExtensionSidebar::create(*this, tab);
+    }).iterator->value;
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
 {
@@ -2831,7 +2874,7 @@ void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const Contex
 
     // Don't show context menu items unless the extension has permission, or can be granted permission
     // with an activeTab user gesture if the user interacts with one of the menu items.
-    if (!hasPermission(frameInfo.request.url(), tab.get()) && (!tab || !frameInfo.isMainFrame || !hasPermission(_WKWebExtensionPermissionActiveTab)))
+    if (!hasPermission(frameInfo.request.url(), tab.get()) && (!tab || !frameInfo.isMainFrame || !hasPermission(WKWebExtensionPermissionActiveTab)))
         return;
 
     if (!hitTestData.absoluteImageURL.isEmpty()) {
@@ -2895,7 +2938,7 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
     tab.setActiveUserGesture(true);
 
     // Nothing else to do if the extension does not have the activeTab permission.
-    if (!hasPermission(_WKWebExtensionPermissionActiveTab))
+    if (!hasPermission(WKWebExtensionPermissionActiveTab))
         return;
 
     if (!tab.shouldGrantTabPermissionsOnUserGesture())
@@ -3111,8 +3154,8 @@ NSArray *WebExtensionContext::corsDisablingPatterns()
 
     // Include manifest optional permission origins here, these should be dynamically added when the are granted
     // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
-    // FIXME: <rdar://problem/61837474> Web Extensions: Need the ability to update corsDisablingPatterns on WKWebView
-    auto optionalPermissionMatchPatterns = m_extension->allRequestedMatchPatterns();
+    // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
+    auto optionalPermissionMatchPatterns = m_extension->optionalPermissionMatchPatterns();
     for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
         [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
 
@@ -3141,16 +3184,16 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 
     if (purpose == WebViewPurpose::Tab) {
-        configuration._webExtensionController = extensionController()->wrapper();
+        configuration.webExtensionController = extensionController()->wrapper();
         configuration._weakWebExtensionController = nil;
     } else {
         // Use the weak property to avoid a reference cycle while an extension web view is owned by the context.
         configuration._weakWebExtensionController = extensionController()->wrapper();
-        configuration._webExtensionController = nil;
+        configuration.webExtensionController = nil;
     }
 
     auto *preferences = configuration.preferences;
-    preferences._javaScriptCanAccessClipboard = hasPermission(_WKWebExtensionPermissionClipboardWrite);
+    preferences._javaScriptCanAccessClipboard = hasPermission(WKWebExtensionPermissionClipboardWrite);
 
     if (purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector) {
         // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
@@ -4379,7 +4422,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
 
 void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
+    if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
         completionHandler(false);
         return;
     }
@@ -4466,7 +4509,7 @@ bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTa
 {
     incrementActionCountForTab(tab, 1);
 
-    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(url, &tab)))
+    if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(url, &tab)))
         return false;
 
     m_matchedRules.append({
@@ -4518,7 +4561,7 @@ size_t WebExtensionContext::quoataForStorageType(WebExtensionDataType storageTyp
 {
     switch (storageType) {
     case WebExtensionDataType::Local:
-        return hasPermission(_WKWebExtensionPermissionUnlimitedStorage) ? webExtensionUnlimitedStorageQuotaBytes : webExtensionStorageAreaLocalQuotaBytes;
+        return hasPermission(WKWebExtensionPermissionUnlimitedStorage) ? webExtensionUnlimitedStorageQuotaBytes : webExtensionStorageAreaLocalQuotaBytes;
     case WebExtensionDataType::Session:
         return webExtensionStorageAreaSessionQuotaBytes;
     case WebExtensionDataType::Sync:

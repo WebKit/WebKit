@@ -2074,7 +2074,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         if (first.textUnderlinePosition != second.textUnderlinePosition)
             changingProperties.m_properties.set(CSSPropertyTextUnderlinePosition);
         if (first.rubyPosition != second.rubyPosition)
-            changingProperties.m_properties.set(CSSPropertyWebkitRubyPosition);
+            changingProperties.m_properties.set(CSSPropertyRubyPosition);
         if (first.rubyAlign != second.rubyAlign)
             changingProperties.m_properties.set(CSSPropertyRubyAlign);
         if (first.strokeColor != second.strokeColor)

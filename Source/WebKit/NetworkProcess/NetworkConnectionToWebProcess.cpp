@@ -410,6 +410,15 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
         return false;
     }
 
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
+        MESSAGE_CHECK_WITH_RETURN_VALUE(m_networkProcess->builtInNotificationsEnabled(), false);
+        if (auto* networkSession = this->networkSession())
+            return networkSession->notificationManager().didReceiveSyncMessage(connection, decoder, reply);
+        return false;
+    }
+#endif
+
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
         return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);

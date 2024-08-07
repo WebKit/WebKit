@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const LineLayoutResult& lineLayoutResult)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, LineLayoutResult& lineLayoutResult)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineLayoutResult(lineLayoutResult)
 {
@@ -632,23 +632,22 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
     }
 }
 
-void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
+InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineBoxLogicalHeight, InlineLevelBox& rootInlineBox) const
 {
-    auto lineBoxLogicalHeight = LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox);
-
     auto& rootStyle = this->rootStyle();
     auto textBoxTrim = blockLayoutState().textBoxTrim();
     auto shouldTrimBlockStartOfLineBox = isFirstLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::Start) && rootStyle.textBoxEdge().over != TextBoxEdgeType::Leading;
     auto shouldTrimBlockEndOfLineBox = isLastLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::End) && rootStyle.textBoxEdge().under != TextBoxEdgeType::Leading;
+    if (!shouldTrimBlockStartOfLineBox && !shouldTrimBlockEndOfLineBox)
+        return lineBoxLogicalHeight;
 
     if (shouldTrimBlockEndOfLineBox) {
-        auto textBoxEdgeUnderHeight = [&] {
-            auto& rootInlineBox = lineBox.rootInlineBox();
+        auto textBoxEdgeUnderForRootInlineBox = [&] {
             switch (rootStyle.textBoxEdge().under) {
             case TextBoxEdgeType::Text:
-                return rootInlineBox.layoutBounds().descent - rootInlineBox.descent();
+                return 0.f;
             case TextBoxEdgeType::Alphabetic:
-                return rootInlineBox.layoutBounds().descent;
+                return rootInlineBox.descent();
             case TextBoxEdgeType::CJKIdeographic:
             case TextBoxEdgeType::CJKIdeographicInk:
                 ASSERT_NOT_IMPLEMENTED_YET();
@@ -659,18 +658,18 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
                 return 0.f;
             }
         }();
-        lineBoxLogicalHeight -= std::max(0.f, textBoxEdgeUnderHeight);
+        auto needToTrimThisMuch = std::max(0.f, (lineBoxLogicalHeight - rootInlineBox.logicalBottom()) + textBoxEdgeUnderForRootInlineBox);
+        lineBoxLogicalHeight -= needToTrimThisMuch;
     }
     if (shouldTrimBlockStartOfLineBox) {
-        auto& rootInlineBox = lineBox.rootInlineBox();
-        auto textBoxEdgeOverHeight = [&] {
+        auto textBoxEdgeOverForRootInlineBox = [&] {
             switch (rootStyle.textBoxEdge().over) {
             case TextBoxEdgeType::Text:
-                return rootInlineBox.layoutBounds().ascent - rootInlineBox.ascent();
+                return 0.f;
             case TextBoxEdgeType::CapHeight:
-                return rootInlineBox.layoutBounds().ascent - rootInlineBox.primarymetricsOfPrimaryFont().capHeight().value_or(0);
+                return rootInlineBox.ascent() - rootInlineBox.primarymetricsOfPrimaryFont().capHeight().value_or(0);
             case TextBoxEdgeType::ExHeight:
-                return rootInlineBox.layoutBounds().ascent - rootInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0);
+                return rootInlineBox.ascent() - rootInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0);
             case TextBoxEdgeType::CJKIdeographic:
             case TextBoxEdgeType::CJKIdeographicInk:
                 ASSERT_NOT_IMPLEMENTED_YET();
@@ -680,13 +679,19 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
                 ASSERT_NOT_REACHED();
                 return 0.f;
             }
-        }();
-        lineBoxLogicalHeight -= std::max(0.f, textBoxEdgeOverHeight);
+        };
+        auto needToTrimThisMuch = std::max(0.f, lineLayoutResult().lineGeometry.initialLetterClearGap.value_or(0_lu) + rootInlineBox.logicalTop() + textBoxEdgeOverForRootInlineBox());
+        lineBoxLogicalHeight -= needToTrimThisMuch;
 
-        rootInlineBox.setLogicalTop(rootInlineBox.logicalTop() - textBoxEdgeOverHeight);
-        for (auto& nonRootInlineLevelBox : lineBox.nonRootInlineLevelBoxes())
-            nonRootInlineLevelBox.setLogicalTop(nonRootInlineLevelBox.logicalTop() - textBoxEdgeOverHeight);
+        rootInlineBox.setLogicalTop(rootInlineBox.logicalTop() - needToTrimThisMuch);
+        m_lineLayoutResult.firstLineStartTrim = needToTrimThisMuch;
     }
+    return lineBoxLogicalHeight;
+}
+
+void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
+{
+    auto lineBoxLogicalHeight = applyTextBoxTrimIfNeeded(LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox), lineBox.rootInlineBox());
     lineBox.setLogicalRect({ lineLayoutResult().lineGeometry.logicalTopLeft, lineLayoutResult().lineGeometry.logicalWidth, lineBoxLogicalHeight });
 }
 

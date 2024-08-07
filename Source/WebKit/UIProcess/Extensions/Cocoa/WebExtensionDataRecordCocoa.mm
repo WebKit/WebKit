@@ -32,7 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "_WKWebExtensionDataRecordInternal.h"
+#import "WKWebExtensionDataRecordInternal.h"
 
 namespace WebKit {
 
@@ -48,13 +48,13 @@ void WebExtensionDataRecord::addError(NSString *debugDescription, WebExtensionDa
 
     switch (type) {
     case WebExtensionDataType::Local:
-        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorLocalStorageFailed, debugDescription)];
+        [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorLocalStorageFailed, debugDescription)];
         break;
     case WebExtensionDataType::Session:
-        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorSessionStorageFailed, debugDescription)];
+        [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorSessionStorageFailed, debugDescription)];
         break;
     case WebExtensionDataType::Sync:
-        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorSyncStorageFailed, debugDescription)];
+        [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorSyncStorageFailed, debugDescription)];
         break;
     default:
         ASSERT_NOT_REACHED();

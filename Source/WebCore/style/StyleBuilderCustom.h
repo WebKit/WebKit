@@ -118,7 +118,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
@@ -163,10 +162,6 @@ public:
 
 private:
     static void resetUsedZoom(BuilderState&);
-
-    static Length mmLength(double mm);
-    static Length inchLength(double inch);
-    static bool getPageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height);
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(BuilderState&, CSSValue&);
@@ -231,87 +226,6 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
     }
 }
 
-inline Length BuilderCustom::mmLength(double mm)
-{
-    return CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM).get().computeLength<Length>({ });
-}
-
-inline Length BuilderCustom::inchLength(double inch)
-{
-    return CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN).get().computeLength<Length>({ });
-}
-
-bool BuilderCustom::getPageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
-{
-    static NeverDestroyed<Length> a5Width(mmLength(148));
-    static NeverDestroyed<Length> a5Height(mmLength(210));
-    static NeverDestroyed<Length> a4Width(mmLength(210));
-    static NeverDestroyed<Length> a4Height(mmLength(297));
-    static NeverDestroyed<Length> a3Width(mmLength(297));
-    static NeverDestroyed<Length> a3Height(mmLength(420));
-    static NeverDestroyed<Length> b5Width(mmLength(176));
-    static NeverDestroyed<Length> b5Height(mmLength(250));
-    static NeverDestroyed<Length> b4Width(mmLength(250));
-    static NeverDestroyed<Length> b4Height(mmLength(353));
-    static NeverDestroyed<Length> letterWidth(inchLength(8.5));
-    static NeverDestroyed<Length> letterHeight(inchLength(11));
-    static NeverDestroyed<Length> legalWidth(inchLength(8.5));
-    static NeverDestroyed<Length> legalHeight(inchLength(14));
-    static NeverDestroyed<Length> ledgerWidth(inchLength(11));
-    static NeverDestroyed<Length> ledgerHeight(inchLength(17));
-
-    switch (pageSizeName.valueID()) {
-    case CSSValueA5:
-        width = a5Width;
-        height = a5Height;
-        break;
-    case CSSValueA4:
-        width = a4Width;
-        height = a4Height;
-        break;
-    case CSSValueA3:
-        width = a3Width;
-        height = a3Height;
-        break;
-    case CSSValueB5:
-        width = b5Width;
-        height = b5Height;
-        break;
-    case CSSValueB4:
-        width = b4Width;
-        height = b4Height;
-        break;
-    case CSSValueLetter:
-        width = letterWidth;
-        height = letterHeight;
-        break;
-    case CSSValueLegal:
-        width = legalWidth;
-        height = legalHeight;
-        break;
-    case CSSValueLedger:
-        width = ledgerWidth;
-        height = ledgerHeight;
-        break;
-    default:
-        return false;
-    }
-
-    if (pageOrientation) {
-        switch (pageOrientation->valueID()) {
-        case CSSValueLandscape:
-            std::swap(width, height);
-            break;
-        case CSSValuePortrait:
-            // Nothing to do.
-            break;
-        default:
-            return false;
-        }
-    }
-    return true;
-}
-
 inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
 {
     builderState.style().setVerticalAlignLength(forwardInheritedValue(builderState.parentStyle().verticalAlignLength()));
@@ -325,90 +239,6 @@ inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, C
         builderState.style().setVerticalAlign(fromCSSValueID<VerticalAlign>(primitiveValue.valueID()));
     else
         builderState.style().setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
-}
-
-inline void BuilderCustom::applyInheritSize(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyInitialSize(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().resetPageSizeType();
-
-    auto* valueList = dynamicDowncast<CSSValueList>(value);
-    if (!valueList)
-        return;
-
-    Length width;
-    Length height;
-    PageSizeType pageSizeType = PAGE_SIZE_AUTO;
-
-    switch (valueList->length()) {
-    case 2: {
-        auto firstValue = valueList->itemWithoutBoundsCheck(0);
-        auto secondValue = valueList->itemWithoutBoundsCheck(1);
-        // <length>{2} | <page-size> <orientation>
-        auto* firstPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*firstValue);
-        auto* secondPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*secondValue);
-        if (!firstPrimitiveValue || !secondPrimitiveValue)
-            return;
-        if (firstPrimitiveValue->isLength()) {
-            // <length>{2}
-            if (!secondPrimitiveValue->isLength())
-                return;
-            CSSToLengthConversionData conversionData = builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-            width = firstPrimitiveValue->computeLength<Length>(conversionData);
-            height = secondPrimitiveValue->computeLength<Length>(conversionData);
-        } else {
-            // <page-size> <orientation>
-            // The value order is guaranteed. See CSSParser::parseSizeParameter.
-            if (!getPageSizeFromName(*firstPrimitiveValue, secondPrimitiveValue, width, height))
-                return;
-        }
-        pageSizeType = PAGE_SIZE_RESOLVED;
-        break;
-    }
-    case 1: {
-        auto value = valueList->itemWithoutBoundsCheck(0);
-        // <length> | auto | <page-size> | [ portrait | landscape]
-        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value);
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->isLength()) {
-            // <length>
-            pageSizeType = PAGE_SIZE_RESOLVED;
-            width = height = primitiveValue->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-        } else {
-            switch (primitiveValue->valueID()) {
-            case 0:
-                return;
-            case CSSValueAuto:
-                pageSizeType = PAGE_SIZE_AUTO;
-                break;
-            case CSSValuePortrait:
-                pageSizeType = PAGE_SIZE_AUTO_PORTRAIT;
-                break;
-            case CSSValueLandscape:
-                pageSizeType = PAGE_SIZE_AUTO_LANDSCAPE;
-                break;
-            default:
-                // <page-size>
-                pageSizeType = PAGE_SIZE_RESOLVED;
-                if (!getPageSizeFromName(*primitiveValue, nullptr, width, height))
-                    return;
-            }
-        }
-        break;
-    }
-    default:
-        return;
-    }
-    builderState.style().setPageSizeType(pageSizeType);
-    builderState.style().setPageSize({ WTFMove(width), WTFMove(height) });
 }
 
 inline void BuilderCustom::applyInheritTextIndent(BuilderState& builderState)
@@ -871,7 +701,7 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
         if (shadowValue.color)
             color = builderState.colorFromPrimitiveValue(*shadowValue.color);
 
-        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color);
+        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, shadowValue.isWebkitBoxShadow, color);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else
@@ -908,21 +738,6 @@ inline void BuilderCustom::applyInheritBoxShadow(BuilderState& builderState)
 inline void BuilderCustom::applyValueBoxShadow(BuilderState& builderState, CSSValue& value)
 {
     applyTextOrBoxShadowValue<CSSPropertyBoxShadow>(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialWebkitBoxShadow(BuilderState& builderState)
-{
-    applyInitialBoxShadow(builderState);
-}
-
-inline void BuilderCustom::applyInheritWebkitBoxShadow(BuilderState& builderState)
-{
-    applyInheritBoxShadow(builderState);
-}
-
-inline void BuilderCustom::applyValueWebkitBoxShadow(BuilderState& builderState, CSSValue& value)
-{
-    applyTextOrBoxShadowValue<CSSPropertyWebkitBoxShadow>(builderState, value);
 }
 
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)

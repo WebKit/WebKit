@@ -53,27 +53,46 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& v
     return ts;
 }
 
-struct TextAutospace {
-    enum class TextAutospaceType : bool {
-        Auto = 0,
-        NoAutospace // equivalent to None in text-spacing shorthand
+class TextAutospace {
+public:
+    enum class Type: uint8_t {
+        Auto = 1 << 0,
+        IdeographAlpha = 1 << 1,
+        IdeographNumeric = 1 << 2,
+        Normal = 1 << 3
     };
 
-    bool isAuto() const { return m_autoSpace == TextAutospaceType::Auto; }
-    bool isNoAutospace() const { return m_autoSpace == TextAutospaceType::NoAutospace; }
+    using Options = OptionSet<Type>;
+
+    TextAutospace() = default;
+    TextAutospace(Options options)
+        : m_options(options)
+        { }
+
+    bool isAuto() const { return m_options.contains(Type::Auto); }
+    bool isNoAutospace() const { return m_options.isEmpty(); }
+    bool isNormal() const { return m_options.contains(Type::Normal); }
+    bool hasIdeographAlpha() const { return m_options.contains(Type::IdeographAlpha); }
+    bool hasIdeographNumeric() const { return m_options.contains(Type::IdeographNumeric); }
+    Options options() { return m_options; }
     friend bool operator==(const TextAutospace&, const TextAutospace&) = default;
-    TextAutospaceType m_autoSpace { TextAutospaceType::NoAutospace };
+private:
+    Options m_options { };
 };
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& value)
 {
     // FIXME: add remaining values;
-    switch (value.m_autoSpace) {
-    case TextAutospace::TextAutospaceType::Auto:
+    if (value.isAuto())
         return ts << "auto";
-    case TextAutospace::TextAutospaceType::NoAutospace:
+    if (value.isNoAutospace())
         return ts << "no-autospace";
-    }
+    if (value.isNormal())
+        return ts << "normal";
+    if (value.hasIdeographAlpha())
+        ts << "ideograph-alpha";
+    if (value.hasIdeographNumeric())
+        ts << "ideograph-numeric";
     return ts;
 }
 } // namespace WebCore

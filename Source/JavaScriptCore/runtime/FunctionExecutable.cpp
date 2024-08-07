@@ -128,12 +128,12 @@ void FunctionExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visit
 DEFINE_VISIT_OUTPUT_CONSTRAINTS(FunctionExecutable);
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
-    const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 
+    const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures,
     JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
-            name, globalObject, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
+            name, globalObject, source, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition);
     if (!unlinkedExecutable)
         return nullptr;
 

@@ -61,7 +61,6 @@ public:
     RefPtr<PixelBuffer> readCompositedResults() final;
 
 
-    void setContextVisibility(bool) override;
     void prepareForDisplay() override;
 
     // GraphicsContextGLANGLE overrides

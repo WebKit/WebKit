@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/anonymous-flex-grid-item-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-each-line-hanging-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-length-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-length-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-min-max-content-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-percentage-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-percentage-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-tab-positions-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-text-align-end-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-indent/reference/text-indent-with-absolute-pos-child-ref.html

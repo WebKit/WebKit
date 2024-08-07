@@ -65,23 +65,9 @@ size_t BufferMemoryHandle::fastMappedBytes()
     return MAX_ARRAY_BUFFER_SIZE + fastMappedRedzoneBytes();
 }
 
-ASCIILiteral BufferMemoryResult::toString(Kind kind)
-{
-    switch (kind) {
-    case Success:
-        return "Success"_s;
-    case SuccessAndNotifyMemoryPressure:
-        return "SuccessAndNotifyMemoryPressure"_s;
-    case SyncTryToReclaimMemory:
-        return "SyncTryToReclaimMemory"_s;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
 void BufferMemoryResult::dump(PrintStream& out) const
 {
-    out.print("{basePtr = ", RawPointer(basePtr), ", kind = ", toString(kind), "}");
+    out.print("{basePtr = ", RawPointer(basePtr), ", kind = ", kind, "}");
 }
 
 BufferMemoryResult BufferMemoryManager::tryAllocateFastMemory()
@@ -186,7 +172,7 @@ BufferMemoryResult::Kind BufferMemoryManager::tryAllocatePhysicalBytes(size_t by
         return BufferMemoryResult::Success;
     }();
 
-    dataLogLnIf(Options::logWasmMemory(), "Allocated physical: ", bytes, ", ", BufferMemoryResult::toString(result), "; state: ", *this);
+    dataLogLnIf(Options::logWasmMemory(), "Allocated physical: ", bytes, ", ", result, "; state: ", *this);
 
     return result;
 }

@@ -46,6 +46,7 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CAIRO)
@@ -161,6 +162,7 @@ void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 
 bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+    TraceScope traceScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     SetForScope protector(m_isFlushingLayerChanges, true);
 
     bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();

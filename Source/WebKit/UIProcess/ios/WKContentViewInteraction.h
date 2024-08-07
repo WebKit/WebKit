@@ -345,6 +345,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizerForDoubleClick;
     RetainPtr<UITapGestureRecognizer> _twoFingerDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _twoFingerSingleTapGestureRecognizer;
+    RetainPtr<WKScrollViewTrackingTapGestureRecognizer> _keyboardDismissalGestureRecognizer;
     RetainPtr<WKInspectorNodeSearchGestureRecognizer> _inspectorNodeSearchGestureRecognizer;
 
     RetainPtr<WKTouchActionGestureRecognizer> _touchActionGestureRecognizer;
@@ -393,7 +394,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     WebKit::FrameInfoData _frameInfoForFileUploadPanel;
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
     RetainPtr<WKShareSheet> _shareSheet;
 #endif
 #if HAVE(CONTACTSUI)
@@ -617,7 +618,7 @@ struct ImageAnalysisContextMenuActionData {
 #if HAVE(CONTACTSUI)
     , WKContactPickerDelegate
 #endif
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
     , WKShareSheetDelegate
 #endif
 #if ENABLE(DRAG_SUPPORT)

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
- * Copyright (C) 2013, 2016, 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,6 +203,12 @@ private:
     unsigned m_encodedLength;
 };
 
+enum class Alphabet : uint8_t { Base64, Base64URL };
+enum class LastChunkHandling : uint8_t { Loose, Strict, StopBeforePartial };
+enum class FromBase64ShouldThrowError: bool { Yes, No };
+WTF_EXPORT_PRIVATE std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView, std::span<uint8_t>, Alphabet, LastChunkHandling);
+WTF_EXPORT_PRIVATE size_t maxLengthFromBase64(StringView);
+
 } // namespace WTF
 
 using WTF::Base64EncodeOption;
@@ -216,3 +222,5 @@ using WTF::base64URLEncodeToString;
 using WTF::base64URLEncodeToVector;
 using WTF::base64URLEncoded;
 using WTF::isBase64OrBase64URLCharacter;
+using WTF::fromBase64;
+using WTF::maxLengthFromBase64;

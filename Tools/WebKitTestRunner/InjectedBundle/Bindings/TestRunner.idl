@@ -340,7 +340,7 @@ interface TestRunner {
     undefined setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
-    boolean statisticsNotifyObserver();
+    Promise<undefined> statisticsNotifyObserver();
     Promise<undefined> statisticsProcessStatisticsAndDataRecords();
     undefined statisticsUpdateCookieBlocking(object completionHandler);
     undefined setStatisticsTimeAdvanceForTesting(double value);
@@ -461,4 +461,6 @@ interface TestRunner {
 
     undefined getAndClearReportedWindowProxyAccessDomains(object callback);
     Promise<undefined> flushConsoleLogs();
+
+    Promise<undefined> setTopContentInset(double contentInset);
 };

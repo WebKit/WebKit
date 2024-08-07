@@ -66,43 +66,26 @@ namespace {
     };
 } // namespace
 
-static void expectScriptValueIsString(WKSerializedScriptValueRef serializedScriptValue, const char* expectedValue)
+static void expectScriptValueIsString(WKTypeRef value, const char* expectedValue)
 {
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    
-    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsString(scriptContext, scriptValue));
-    
-    auto scriptString = adopt(JSValueToStringCopy(scriptContext, scriptValue, 0));
-    EXPECT_TRUE(JSStringIsEqualToUTF8CString(scriptString.get(), expectedValue));
-    
-    JSGlobalContextRelease(scriptContext);
+    EXPECT_EQ(WKStringGetTypeID(), WKGetTypeID(value));
+    EXPECT_TRUE(WKStringIsEqualToUTF8CString((WKStringRef)value, expectedValue));
 }
 
-static void expectScriptValueIsBoolean(WKSerializedScriptValueRef serializedScriptValue, bool expectedValue)
+static void expectScriptValueIsBoolean(WKTypeRef value, bool expectedValue)
 {
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    
-    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsBoolean(scriptContext, scriptValue));
-    EXPECT_EQ(JSValueToBoolean(scriptContext, scriptValue), expectedValue);
-    
-    JSGlobalContextRelease(scriptContext);
+    EXPECT_EQ(WKBooleanGetTypeID(), WKGetTypeID(value));
+    EXPECT_EQ(WKBooleanGetValue((WKBooleanRef)value), expectedValue);
 }
 
-static void expectScriptValueIsUndefined(WKSerializedScriptValueRef serializedScriptValue)
+static void expectScriptValueIsUndefined(WKTypeRef value)
 {
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    
-    JSValueRef scriptValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
-    EXPECT_TRUE(JSValueIsUndefined(scriptContext, scriptValue));
-    
-    JSGlobalContextRelease(scriptContext);
+    EXPECT_FALSE(value);
 }
 
-typedef void (^RunJavaScriptBlock)(WKSerializedScriptValueRef, WKErrorRef);
+typedef void (^RunJavaScriptBlock)(WKTypeRef, WKErrorRef);
 
-static void callRunJavaScriptBlockAndRelease(WKSerializedScriptValueRef resultValue, WKErrorRef error, void* context)
+static void callRunJavaScriptBlockAndRelease(WKTypeRef resultValue, WKErrorRef error, void* context)
 {
     auto block = (RunJavaScriptBlock)context;
     block(resultValue, error);
@@ -111,7 +94,7 @@ static void callRunJavaScriptBlockAndRelease(WKSerializedScriptValueRef resultVa
 
 static void runJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, RunJavaScriptBlock block)
 {
-    WKPageRunJavaScriptInMainFrame(pageRef, scriptRef, Block_copy(block), callRunJavaScriptBlockAndRelease);
+    WKPageEvaluateJavaScriptInMainFrame(pageRef, scriptRef, Block_copy(block), callRunJavaScriptBlockAndRelease);
 }
 
 TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
@@ -124,8 +107,8 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
     [wkView.get().configuration.userContentController _addUserStyleSheet:sheet.get()];
     auto backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsString(serializedScriptValue, greenInRGB);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKTypeRef value, WKErrorRef error) {
+            expectScriptValueIsString(value, greenInRGB);
             testFinished = true;
         });
     }]);
@@ -143,8 +126,8 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
     auto wkView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsString(serializedScriptValue, greenInRGB);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKTypeRef result, WKErrorRef error) {
+            expectScriptValueIsString(result, greenInRGB);
             testFinished = true;
         });
     }]);
@@ -167,8 +150,8 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
     [wkView.get().configuration.userContentController _addUserStyleSheet:sheet.get()];
     auto backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsString(serializedScriptValue, redInRGB);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], backgroundColorQuery.get(), ^(WKTypeRef result, WKErrorRef error) {
+            expectScriptValueIsString(result, redInRGB);
             testFinished = true;
         });
     }]);
@@ -190,8 +173,8 @@ TEST_F(WebKit2UserContentTest, AddUserScriptBeforeCreatingView)
     [wkView.get().configuration.userContentController addUserScript:script.get()];
     auto userScriptTestPropertyString = adoptWK(WKStringCreateWithUTF8CString(userScriptTestProperty));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsBoolean(serializedScriptValue, true);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKTypeRef result, WKErrorRef error) {
+            expectScriptValueIsBoolean(result, true);
             testFinished = true;
         });
     }]);
@@ -209,8 +192,8 @@ TEST_F(WebKit2UserContentTest, AddUserScriptAfterCreatingView)
     auto wkView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto userScriptTestPropertyString = adoptWK(WKStringCreateWithUTF8CString(userScriptTestProperty));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsBoolean(serializedScriptValue, true);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKTypeRef result, WKErrorRef error) {
+            expectScriptValueIsBoolean(result, true);
             testFinished = true;
         });
     }]);
@@ -233,8 +216,8 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserScripts)
     [wkView.get().configuration.userContentController addUserScript:script.get()];
     auto userScriptTestPropertyString = adoptWK(WKStringCreateWithUTF8CString(userScriptTestProperty));
     auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
-        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
-            expectScriptValueIsUndefined(serializedScriptValue);
+        runJavaScriptInMainFrame([wkView _pageRefForTransitionToWKWebView], userScriptTestPropertyString.get(), ^(WKTypeRef value, WKErrorRef error) {
+            expectScriptValueIsUndefined(value);
             testFinished = true;
         });
     }]);

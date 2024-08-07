@@ -1794,13 +1794,13 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
         return false;
     LayoutRect backgroundRect;
     switch (style().backgroundClip()) {
-    case FillBox::Border:
+    case FillBox::BorderBox:
         backgroundRect = borderBoxRect();
         break;
-    case FillBox::Padding:
+    case FillBox::PaddingBox:
         backgroundRect = paddingBoxRect();
         break;
-    case FillBox::Content:
+    case FillBox::ContentBox:
         backgroundRect = contentBoxRect();
         break;
     default:
@@ -1890,7 +1890,7 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOff
 bool RenderBox::backgroundHasOpaqueTopLayer() const
 {
     auto& fillLayer = style().backgroundLayers();
-    if (fillLayer.clip() != FillBox::Border)
+    if (fillLayer.clip() != FillBox::BorderBox)
         return false;
 
     // Clipped with local scrolling

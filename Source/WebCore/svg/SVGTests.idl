@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  */
 
 // https://svgwg.org/svg2-draft/types.html#InterfaceSVGTests
+
 interface mixin SVGTests {
     [SameObject] readonly attribute SVGStringList requiredExtensions;
     [SameObject] readonly attribute SVGStringList systemLanguage;
@@ -33,5 +34,4 @@ interface mixin SVGTests {
     // As of SVG2, the following are no longer part of this interface.
 
     [SameObject] readonly attribute SVGStringList requiredFeatures;
-    boolean hasExtension(DOMString extension);
 };

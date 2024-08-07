@@ -189,7 +189,7 @@ public:
     WebProcessPool& processPool() const;
     Ref<WebProcessPool> protectedProcessPool() const;
 
-    const std::optional<SharedPreferencesForWebProcess>& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     std::optional<SharedPreferencesForWebProcess> updateSharedPreferencesForWebProcess(const WebPreferencesStore&);
     void didSyncSharedPreferencesForWebProcessWithNetworkProcess(uint64_t syncedPreferencesVersion);
 #if ENABLE(GPU_PROCESS)
@@ -347,11 +347,6 @@ public:
 #if PLATFORM(COCOA)
     Vector<String> mediaMIMETypes() const;
     void cacheMediaMIMETypes(const Vector<String>&);
-#endif
-
-#if PLATFORM(MAC)
-    void requestHighPerformanceGPU();
-    void releaseHighPerformanceGPU();
 #endif
 
 #if HAVE(DISPLAY_LINK)
@@ -784,7 +779,7 @@ private:
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
     mutable String m_environmentIdentifier;
-    mutable std::optional<SharedPreferencesForWebProcess> m_sharedPreferencesForWebProcess;
+    mutable SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     uint64_t m_sharedPreferencesVersionInNetworkProcess { 0 };
 #if ENABLE(GPU_PROCESS)
     uint64_t m_sharedPreferencesVersionInGPUProcess { 0 };

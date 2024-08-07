@@ -71,34 +71,34 @@
                 return;
             }
             try {
-                eventSender.mouseMoveTo(20, 190);
-                eventSender.mouseDown();
+                await eventSender.asyncMouseMoveTo(20, 190);
+                await eventSender.asyncMouseDown();
 
                 // Pause and move to trigger relayouts.
-                eventSender.mouseMoveTo(40, 190);
+                await eventSender.asyncMouseMoveTo(40, 190);
                 await UIHelper.delayFor(1);
-                eventSender.mouseMoveTo(50, 190);
+                await eventSender.asyncMouseMoveTo(50, 190);
                 await UIHelper.delayFor(1);
 
-                eventSender.mouseMoveTo(80, 190);
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(80, 190);
+                await eventSender.asyncMouseUp();
 
                 await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
                 expectTrue(horizontalContainer.scrollLeft == 250, "dragging the horizontal scrollbar thumb snapped");
                 expectTrue(sawZero === false, "relayouts should not have snapped back");
 
                 sawZero = false;
-                eventSender.mouseMoveTo(190, 220);
-                eventSender.mouseDown();
+                await eventSender.asyncMouseMoveTo(190, 220);
+                await eventSender.asyncMouseDown();
 
                 // Pause and move to trigger relayouts.
-                eventSender.mouseMoveTo(190, 250);
+                await eventSender.asyncMouseMoveTo(190, 250);
                 await UIHelper.delayFor(1);
-                eventSender.mouseMoveTo(190, 255);
+                await eventSender.asyncMouseMoveTo(190, 255);
                 await UIHelper.delayFor(1);
 
-                eventSender.mouseMoveTo(190, 270);
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(190, 270);
+                await eventSender.asyncMouseUp();
                 await UIHelper.waitForTargetScrollAnimationToSettle(verticalContainer);
                 expectTrue(verticalContainer.scrollTop == 180, "dragging the vertical scrollbar thumb snapped");
                 expectTrue(sawZero === false, "relayouts should not have snapped back");

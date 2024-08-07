@@ -336,7 +336,6 @@ struct WebPageCreationParameters {
 #if USE(GBM)
     Vector<DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
-    bool useExplicitSync { false };
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)

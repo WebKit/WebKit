@@ -318,7 +318,7 @@ public:
     };
     static Statistics& statistics();    
 
-    void terminateAllWebContentProcesses();
+    void terminateAllWebContentProcesses(ProcessTerminationReason);
     void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();

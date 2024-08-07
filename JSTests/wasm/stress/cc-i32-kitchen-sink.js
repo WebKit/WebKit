@@ -1,5 +1,3 @@
-//@ skip
-//@ requireOptions("--useJITCage=0") # temporary workaround for rdar://127308350
 //@ requireOptions("--useInterpretedJSEntryWrappers=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
@@ -63,7 +61,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
     const { f0, f1, f2, f3 } = instance.exports
 
-    for (let i = 0; i < 10000000; ++i) {
+    for (let i = 0; i < 10000; ++i) {
         assert.eq(f0(1, 2, 3, 4, 5, 6, 7, 8), 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
         assert.eq(f0(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
         assert.eq(f0(1, 2, 3, 4, 5), 1 + 2 + 3 + 4 + 5)

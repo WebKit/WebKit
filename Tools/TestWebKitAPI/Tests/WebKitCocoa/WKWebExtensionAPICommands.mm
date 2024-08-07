@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
-#import <WebKit/_WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionCommand.h>
 
 #if USE(APPKIT)
 #import <Carbon/Carbon.h>
@@ -126,8 +126,8 @@ TEST(WKWebExtensionAPICommands, CommandEvent)
 
 TEST(WKWebExtensionAPICommands, CommandForEvent)
 {
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ }]);
-    auto context = adoptNS([[_WKWebExtensionContext alloc] initForExtension:extension.get()]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ }]);
+    auto context = adoptNS([[WKWebExtensionContext alloc] initForExtension:extension.get()]);
 
     auto *keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"Ω" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:kVK_ANSI_Z];
@@ -339,10 +339,10 @@ TEST(WKWebExtensionAPICommands, PerformCommandAndPermissionsRequest)
         @"browser.test.yield('Perform Command')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+    manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
         EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"webNavigation"]]);
         callback(requestedPermissions, nil);

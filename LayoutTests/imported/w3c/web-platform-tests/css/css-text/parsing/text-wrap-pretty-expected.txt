@@ -1,0 +1,16 @@
+
+PASS e.style['text-wrap'] = "pretty" should set the property value
+PASS e.style['text-wrap'] = "wrap pretty" should set the property value
+PASS e.style['text-wrap'] = "pretty wrap" should set the property value
+PASS e.style['text-wrap'] = "stable wrap" should set the property value
+PASS e.style['text-wrap'] = "nowrap pretty" should set the property value
+PASS e.style['text-wrap'] = "pretty nowrap" should set the property value
+PASS e.style['text-wrap-style'] = "pretty" should set the property value
+PASS Property text-wrap value 'pretty'
+PASS Property text-wrap value 'wrap pretty'
+PASS Property text-wrap value 'pretty wrap'
+PASS Property text-wrap value 'stable wrap'
+PASS Property text-wrap value 'nowrap pretty'
+PASS Property text-wrap value 'pretty nowrap'
+PASS Property text-wrap-style value 'pretty'
+

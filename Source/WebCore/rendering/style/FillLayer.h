@@ -164,8 +164,8 @@ public:
     void cullEmptyLayers();
 
     static FillAttachment initialFillAttachment(FillLayerType) { return FillAttachment::ScrollBackground; }
-    static FillBox initialFillClip(FillLayerType) { return FillBox::Border; }
-    static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }
+    static FillBox initialFillClip(FillLayerType) { return FillBox::BorderBox; }
+    static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::PaddingBox : FillBox::BorderBox; }
     static FillRepeatXY initialFillRepeat(FillLayerType) { return { FillRepeat::Repeat, FillRepeat::Repeat }; }
     static CompositeOperator initialFillComposite(FillLayerType) { return CompositeOperator::SourceOver; }
     static BlendMode initialFillBlendMode(FillLayerType) { return BlendMode::Normal; }

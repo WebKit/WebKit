@@ -107,7 +107,7 @@ end
 # After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterRegularCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -121,7 +121,7 @@ end
 
 macro dispatchAfterTailCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -135,7 +135,7 @@ end
 
 macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -144,7 +144,7 @@ macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName,
 end
 
 macro cCall2(function)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath function, a0, a1
     elsif ARMv7
         call function
@@ -154,7 +154,7 @@ macro cCall2(function)
 end
 
 macro cCall2Void(function)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPathVoid function, a0, a1
     else
         cCall2(function)
@@ -162,7 +162,7 @@ macro cCall2Void(function)
 end
 
 macro cCall3(function)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath3 function, a0, a1, a2
     elsif ARMv7
         call function
@@ -172,7 +172,7 @@ macro cCall3(function)
 end
 
 macro cCall4(function)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath4 function, a0, a1, a2, a3
     elsif ARMv7
         call function
@@ -243,7 +243,7 @@ macro doVMEntry(makeCall)
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
         move entry, t4
         move vm, t5
@@ -370,7 +370,7 @@ _llint_throw_stack_overflow_error_from_vm_entry:
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
     addp CallerFrameAndPCSize, sp
     checkStackPointerAlignment(temp1, 0xbad0dc02)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallJSFunction entry
     else
         call entry
@@ -383,7 +383,7 @@ end
 macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     move entry, temp1
     storep cfr, [sp]
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         loadp ProtoCallFrame::globalObject[protoCallFrame], a0
         move sp, a1
         storep lr, PtrSize[sp]
@@ -723,7 +723,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     lshiftp 3, t3
     subp cfr, t3, t5
     loadp CodeBlock::m_vm[t1], t0
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         bpbeq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
     else
         bpbeq VM::m_softStackLimit[t0], t5, .stackHeightOK
@@ -2369,13 +2369,8 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
         storep 0, address
     end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    if X86_64_WIN or C_LOOP_WIN
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-        loadp [t5], t5
-    else
-        leap _g_config, t5
-        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-    end
+    leap _g_config, t5
+    loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
     jmp .dispatch
 end
         
@@ -2459,13 +2454,8 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
                 storep 0, address
             end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            if X86_64_WIN or C_LOOP_WIN
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-                loadp [t5], t5
-            else
-                leap _g_config, t5
-                loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-            end
+            leap _g_config, t5
+            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
             jmp .dispatch
         .dontUpdateSP:
             jmp _llint_throw_from_slow_path_trampoline
@@ -2617,7 +2607,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     move cfr, a1
 
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallNative executableOffsetToFunction[a2]
     else
         call executableOffsetToFunction[a2]
@@ -2654,7 +2644,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     move cfr, a1
 
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallNative offsetOfFunction[a2]
     else
         call offsetOfFunction[a2]

@@ -25,6 +25,10 @@ PASS Property text-transform has initial value none
 PASS Property text-transform inherits
 PASS Property text-wrap has initial value wrap
 PASS Property text-wrap inherits
+PASS Property text-wrap-mode has initial value wrap
+PASS Property text-wrap-mode inherits
+PASS Property text-wrap-style has initial value auto
+PASS Property text-wrap-style inherits
 PASS Property white-space has initial value normal
 PASS Property white-space inherits
 PASS Property white-space-collapse has initial value collapse

@@ -41,6 +41,7 @@ public:
     virtual ~ScrollingTreeFrameScrollingNodeRemoteIOS();
 
     WKBaseScrollView *scrollView() const;
+    String scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;
 
 private:
     ScrollingTreeFrameScrollingNodeRemoteIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);

@@ -379,26 +379,40 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		1C122B19296A4B6900814381 /* PBXContainerItemProxy */ = {
+		72C802702C5D9FEB00D7143C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FACD528FC70C000FFE212;
+			remoteInfo = dav1d;
+		};
+		72C802722C5D9FEB00D7143C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5428FC7CEC00FFE212;
+			remoteInfo = bitdepth_8;
+		};
+		72C802742C5D9FEB00D7143C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C4FAE5D28FC7CF500FFE212;
+			remoteInfo = bitdepth_16;
+		};
+		72C802762C5D9FEB00D7143C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 444A6F112AEB1D1C005FE121;
+			remoteInfo = dav1d_fuzzer;
+		};
+		72C802782C5DA20200D7143C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1C4FAE8E28FC83DC00FFE212;
-			remoteInfo = libavif;
-		};
-		1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
-			remoteInfo = libavif;
-		};
-		44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 44F97F252B2C19420018D785;
-			remoteInfo = avif_decode_fuzzer;
+			remoteGlobalIDString = 1C4FACD428FC70C000FFE212;
+			remoteInfo = dav1d;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -514,7 +528,6 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		1C4876D71F8D7F4E00CCEEBD /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
-		1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libavif.xcodeproj; path = libavif/libavif.xcodeproj; sourceTree = "<group>"; };
 		1C5C57B52757151D003B540D /* TextCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodec.cpp; sourceTree = "<group>"; };
 		1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUserDefined.cpp; sourceTree = "<group>"; };
 		1C5C57B82757151F003B540D /* TextCodecICU.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextCodecICU.h; sourceTree = "<group>"; };
@@ -617,6 +630,7 @@
 		5CF869EC29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSKeyedUnarchiverSPI.h; sourceTree = "<group>"; };
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
 		71B1141F26823ACD004D6701 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
+		726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dav1d.xcodeproj; path = dav1d/dav1d.xcodeproj; sourceTree = "<group>"; };
 		72BA2A872951462500678507 /* NSTextFieldCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSTextFieldCellSPI.h; sourceTree = "<group>"; };
 		72C9483A2959517C006ECB96 /* NSSearchFieldCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSSearchFieldCellSPI.h; sourceTree = "<group>"; };
 		7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
@@ -1055,18 +1069,9 @@
 		1C2D0DF2296A448200BE33A3 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */,
+				726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */,
 			);
 			path = ThirdParty;
-			sourceTree = "<group>";
-		};
-		1C2D0DF4296A44CC00BE33A3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1C2D0DF8296A44CC00BE33A3 /* libavif.a */,
-				44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		1C4876DE1F8D831300CCEEBD /* cocoa */ = {
@@ -1191,6 +1196,17 @@
 				44B1A8652A7C339200DC80A6 /* UserInterfaceIdiom.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		726FBD4D2C5D9CF800B3F5FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72C802712C5D9FEB00D7143C /* libdav1d.a */,
+				72C802732C5D9FEB00D7143C /* libdav1d_bitdepth_8.a */,
+				72C802752C5D9FEB00D7143C /* libdav1d_bitdepth_16.a */,
+				72C802772C5D9FEB00D7143C /* dav1d_fuzzer */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		7B47F2A528587D6100E793C8 /* cg */ = {
@@ -1578,7 +1594,7 @@
 				DD20DD0627BC7F290093D175 /* PBXBuildRule */,
 			);
 			dependencies = (
-				1C122B1A296A4B6900814381 /* PBXTargetDependency */,
+				72C802792C5DA20200D7143C /* PBXTargetDependency */,
 			);
 			name = PAL;
 			productName = PAL;
@@ -1618,8 +1634,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 1C2D0DF4296A44CC00BE33A3 /* Products */;
-					ProjectRef = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+					ProductGroup = 726FBD4D2C5D9CF800B3F5FF /* Products */;
+					ProjectRef = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1630,18 +1646,32 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1C2D0DF8296A44CC00BE33A3 /* libavif.a */ = {
+		72C802712C5D9FEB00D7143C /* libdav1d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libavif.a;
-			remoteRef = 1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */;
+			path = libdav1d.a;
+			remoteRef = 72C802702C5D9FEB00D7143C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */ = {
+		72C802732C5D9FEB00D7143C /* libdav1d_bitdepth_8.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_8.a;
+			remoteRef = 72C802722C5D9FEB00D7143C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		72C802752C5D9FEB00D7143C /* libdav1d_bitdepth_16.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdav1d_bitdepth_16.a;
+			remoteRef = 72C802742C5D9FEB00D7143C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		72C802772C5D9FEB00D7143C /* dav1d_fuzzer */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = avif_decode_fuzzer;
-			remoteRef = 44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */;
+			path = dav1d_fuzzer;
+			remoteRef = 72C802762C5D9FEB00D7143C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1739,10 +1769,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1C122B1A296A4B6900814381 /* PBXTargetDependency */ = {
+		72C802792C5DA20200D7143C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = libavif;
-			targetProxy = 1C122B19296A4B6900814381 /* PBXContainerItemProxy */;
+			name = dav1d;
+			targetProxy = 72C802782C5DA20200D7143C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,11 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionContextPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
-#import "_WKWebExtensionContextPrivate.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>

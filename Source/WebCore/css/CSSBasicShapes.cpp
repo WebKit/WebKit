@@ -541,8 +541,8 @@ Ref<CSSShapeValue> CSSShapeValue::create(WindRule windRule, Ref<CSSValuePair>&& 
     return adoptRef(*new CSSShapeValue(windRule, WTFMove(fromCoordinates), WTFMove(shapeSegments)));
 }
 
-CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeCommands)
-    : CSSValueContainingVector(ShapeClass, CommaSeparator, WTFMove(shapeCommands))
+CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
+    : CSSValueContainingVector(ShapeClass, CommaSeparator, WTFMove(shapeSegments))
     , m_fromCoordinates(WTFMove(fromCoordinates))
     , m_windRule(windRule)
 {
@@ -550,14 +550,28 @@ CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordina
 
 String CSSShapeValue::customCSSText() const
 {
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return ""_s;
+    StringBuilder builder;
+    builder.append("shape("_s);
+
+    if (windRule() == WindRule::EvenOdd)
+        builder.append("evenodd "_s);
+
+    builder.append("from "_s, m_fromCoordinates->cssText(), ", "_s);
+    serializeItems(builder);
+
+    builder.append(')');
+    return builder.toString();
 }
 
-bool CSSShapeValue::equals(const CSSShapeValue&) const
+bool CSSShapeValue::equals(const CSSShapeValue& other) const
 {
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return false;
+    if (windRule() != other.windRule())
+        return false;
+
+    if (!compareCSSValue(m_fromCoordinates, other.m_fromCoordinates))
+        return false;
+
+    return itemsEqual(other);
 }
 
 } // namespace WebCore

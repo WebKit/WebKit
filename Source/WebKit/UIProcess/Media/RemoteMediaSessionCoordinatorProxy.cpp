@@ -71,7 +71,7 @@ RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
 
 const SharedPreferencesForWebProcess& RemoteMediaSessionCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
-    return *m_webPageProxy.legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return m_webPageProxy.legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandler&& completionHandler)

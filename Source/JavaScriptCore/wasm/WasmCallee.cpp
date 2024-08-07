@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InPlaceInterpreter.h"
+#include "JSToWasm.h"
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "LLIntThunks.h"
@@ -38,21 +39,21 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC::Wasm {
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Callee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointInterpreterCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSEntrypointJITCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmToJSCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSToWasmICCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OptimizingJITCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OSREntryCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(OMGCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BBQCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IPIntCallee);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LLIntCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Callee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointInterpreterCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointJITCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OptimizingJITCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OMGCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OSREntryCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BBQCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPIntCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LLIntCallee);
 
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Private)
@@ -381,7 +382,7 @@ void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastIn
 IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& isInlined) const
 {
     isInlined = false;
-    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0}, [&] (const auto& a, const auto& b) {
+    auto iter = std::lower_bound(codeOrigins.begin(), codeOrigins.end(), WasmCodeOrigin { 0, csi, 0, 0 }, [&](const auto& a, const auto& b) {
         return b.lastInlineCSI - a.lastInlineCSI;
     });
     if (!iter || iter == codeOrigins.end())
@@ -413,22 +414,45 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypointInterpreterCalleeMetadata>&& metadata, LLIntCallee* callee)
+JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
     : JSEntrypointCallee(Wasm::CompilationMode::JSEntrypointInterpreterMode)
-    , TrailingArray<JSEntrypointInterpreterCallee, JSEntrypointInterpreterCalleeMetadata>(metadata.size(), metadata.begin(), metadata.end())
-    , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
+    , frameSize(frameSize)
+    , typeIndex(typeIndex)
 {
-    if (Options::useJIT())
-        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLIntToWasmEntryPtrTag>();
-    else
-        wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
-
+#if ENABLE(JIT)
+    if (Options::useJIT()) {
+#else
+    if (false) {
+#endif
+        if (usesSIMD)
+            wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
+        else
+            wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
+    } else {
+        if (usesSIMD)
+            wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
+        else
+            wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
+    }
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
 {
+    const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     if (m_replacementCallee)
         return m_replacementCallee->entrypoint();
+    if (Options::useWasmSIMD() && (wasmCallingConvention().callInformationFor(typeDefinition).argumentsOrResultsIncludeV128)) {
+#if ENABLE(JIT)
+        if (Options::useJIT())
+            return createJSToWasmJITInterpreterCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+#endif
+        return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
+    }
+
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return createJSToWasmJITInterpreter()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+#endif
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }
 
@@ -450,6 +474,7 @@ RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
 #endif
         calleeSaveRegisters.construct(WTFMove(registers));
     });
+    ASSERT(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(calleeSaveRegisters->sizeOfAreaInBytes()) == SpillStackSpaceAligned);
     return &calleeSaveRegisters.get();
 }
 
@@ -469,6 +494,6 @@ void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unli
 
 #endif
 
-} } // namespace JSC::Wasm
+} // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

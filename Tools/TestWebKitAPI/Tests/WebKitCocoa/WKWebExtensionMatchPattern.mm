@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,28 +29,28 @@
 
 #import "TestCocoa.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
+#import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 
 namespace TestWebKitAPI {
 
-static _WKWebExtensionMatchPattern *toPattern(NSString *string)
+static WKWebExtensionMatchPattern *toPattern(NSString *string)
 {
-    return [_WKWebExtensionMatchPattern matchPatternWithString:string];
+    return [WKWebExtensionMatchPattern matchPatternWithString:string];
 }
 
-static _WKWebExtensionMatchPattern *toPatternAlloc(NSString *string, NSError **error = nullptr)
+static WKWebExtensionMatchPattern *toPatternAlloc(NSString *string, NSError **error = nullptr)
 {
-    return [[_WKWebExtensionMatchPattern alloc] initWithString:string error:error];
+    return [[WKWebExtensionMatchPattern alloc] initWithString:string error:error];
 }
 
-static _WKWebExtensionMatchPattern *toPattern(NSString *scheme, NSString *host, NSString *path)
+static WKWebExtensionMatchPattern *toPattern(NSString *scheme, NSString *host, NSString *path)
 {
-    return [_WKWebExtensionMatchPattern matchPatternWithScheme:scheme host:host path:path];
+    return [WKWebExtensionMatchPattern matchPatternWithScheme:scheme host:host path:path];
 }
 
-static _WKWebExtensionMatchPattern *toPatternAlloc(NSString *scheme, NSString *host, NSString *path, NSError **error = nullptr)
+static WKWebExtensionMatchPattern *toPatternAlloc(NSString *scheme, NSString *host, NSString *path, NSError **error = nullptr)
 {
-    return [[_WKWebExtensionMatchPattern alloc] initWithScheme:scheme host:host path:path error:error];
+    return [[WKWebExtensionMatchPattern alloc] initWithScheme:scheme host:host path:path error:error];
 }
 
 TEST(WKWebExtensionMatchPattern, PatternValidity)
@@ -211,19 +211,19 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesPattern)
     EXPECT_FALSE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"https://*.example.com/*") options:0]);
     EXPECT_FALSE([toPattern(@"https://*.example.com/*") matchesPattern:toPattern(@"http://*.example.com/*") options:0]);
     EXPECT_FALSE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"*://*.example.com/*") options:0]);
-    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"https://*.example.com/*") options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
-    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesPattern:toPattern(@"http://*.example.com/*") options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
-    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"*://*.example.com/*") options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"https://*.example.com/*") options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesPattern:toPattern(@"http://*.example.com/*") options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"*://*.example.com/*") options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
 
     // Matches ignoring path.
     EXPECT_FALSE([toPattern(@"https://*.example.com/foo*bar") matchesPattern:toPattern(@"https://www.example.com/baz") options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/foo*bar") matchesPattern:toPattern(@"http://www.example.com/test") options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/test*") matchesPattern:toPattern(@"*://*.example.com/bar") options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/*bar") matchesPattern:toPattern(@"*://example.com/baz") options:0]);
-    EXPECT_TRUE([toPattern(@"https://*.example.com/foo*bar") matchesPattern:toPattern(@"https://www.example.com/baz") options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/foo*bar") matchesPattern:toPattern(@"http://www.example.com/test") options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/test*") matchesPattern:toPattern(@"*://*.example.com/bar") options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*bar") matchesPattern:toPattern(@"*://example.com/baz") options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"https://*.example.com/foo*bar") matchesPattern:toPattern(@"https://www.example.com/baz") options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/foo*bar") matchesPattern:toPattern(@"http://www.example.com/test") options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/test*") matchesPattern:toPattern(@"*://*.example.com/bar") options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*bar") matchesPattern:toPattern(@"*://example.com/baz") options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
 
     // Matches any URL that uses the http scheme and is on the host 127.0.0.1.
     EXPECT_TRUE([toPattern(@"http://127.0.0.1/*") matchesPattern:toPattern(@"http://127.0.0.1/")]);
@@ -278,18 +278,18 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesPattern)
     EXPECT_FALSE([toPattern(@"http://*/*") matchesPattern:toPattern(@"*://*/foo*") options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"https://*/*") options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"http://*/*") options:0]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"*://*/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_FALSE([toPattern(@"ftp://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"*://*.en.wikipedia.org/*") matchesPattern:toPattern(@"*://*.wikipedia.org/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"https://*.en.wikipedia.org/*") matchesPattern:toPattern(@"*://*.wikipedia.org/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"*://*.en.wikipedia.org/*") matchesPattern:toPattern(@"https://*.wikipedia.org/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"https://*/*") matchesPattern:toPattern(@"*://*.example.com/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"http://*/*") matchesPattern:toPattern(@"*://*.example.com/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"http://*/*") matchesPattern:toPattern(@"*://*/foo*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"https://*/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"http://*/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"*://*/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_FALSE([toPattern(@"ftp://*.example.com/*") matchesPattern:toPattern(@"<all_urls>") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.en.wikipedia.org/*") matchesPattern:toPattern(@"*://*.wikipedia.org/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"https://*.en.wikipedia.org/*") matchesPattern:toPattern(@"*://*.wikipedia.org/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.en.wikipedia.org/*") matchesPattern:toPattern(@"https://*.wikipedia.org/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"https://*/*") matchesPattern:toPattern(@"*://*.example.com/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"http://*/*") matchesPattern:toPattern(@"*://*.example.com/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"http://*/*") matchesPattern:toPattern(@"*://*/foo*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"https://*/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*") matchesPattern:toPattern(@"http://*/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
 
     // Matches with regex special characters in pattern.
     EXPECT_TRUE([toPattern(@"*://*/foo?bar*") matchesPattern:toPattern(@"*://*/foo?bar") options:0]);
@@ -301,11 +301,11 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesPattern)
 
     // Matches a URL that is less permissive.
     EXPECT_FALSE([toPattern(@"https://www.apple.com/foo/bar/baz/*") matchesPattern:toPattern(@"*://www.apple.com/foo/*")]);
-    EXPECT_TRUE([toPattern(@"https://www.apple.com/foo/bar/baz/*") matchesPattern:toPattern(@"*://www.apple.com/foo/*") options:_WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
+    EXPECT_TRUE([toPattern(@"https://www.apple.com/foo/bar/baz/*") matchesPattern:toPattern(@"*://www.apple.com/foo/*") options:WKWebExtensionMatchPatternOptionsMatchBidirectionally]);
 
     // Connivence methods
-    EXPECT_NS_EQUAL([_WKWebExtensionMatchPattern allURLsMatchPattern].string, @"<all_urls>");
-    EXPECT_NS_EQUAL([_WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern].string, @"*://*/*");
+    EXPECT_NS_EQUAL([WKWebExtensionMatchPattern allURLsMatchPattern].string, @"<all_urls>");
+    EXPECT_NS_EQUAL([WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern].string, @"*://*/*");
 }
 
 TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
@@ -343,19 +343,19 @@ TEST(WKWebExtensionMatchPattern, MatchPatternMatchesURL)
     EXPECT_FALSE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://example.com/"] options:0]);
     EXPECT_FALSE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"http://example.com/"] options:0]);
     EXPECT_FALSE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"ftp://example.com/"] options:0]);
-    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://example.com/"] options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
-    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"http://example.com/"] options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
-    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"ftp://example.com/"] options:_WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://example.com/"] options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"http://example.com/"] options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
+    EXPECT_TRUE([toPattern(@"http://*.example.com/*") matchesURL:[NSURL URLWithString:@"ftp://example.com/"] options:WKWebExtensionMatchPatternOptionsIgnoreSchemes]);
 
     // Matches ignoring path.
     EXPECT_FALSE([toPattern(@"https://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"https://www.example.com/baz"] options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"http://www.example.com/test"] options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/test*") matchesURL:[NSURL URLWithString:@"https://www.example.com/bar"] options:0]);
     EXPECT_FALSE([toPattern(@"*://*.example.com/*bar") matchesURL:[NSURL URLWithString:@"http://example.com/baz"] options:0]);
-    EXPECT_TRUE([toPattern(@"https://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"https://www.example.com/baz"] options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"http://www.example.com/test"] options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/test*") matchesURL:[NSURL URLWithString:@"https://www.example.com/bar"] options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
-    EXPECT_TRUE([toPattern(@"*://*.example.com/*bar") matchesURL:[NSURL URLWithString:@"http://example.com/baz"] options:_WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"https://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"https://www.example.com/baz"] options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/foo*bar") matchesURL:[NSURL URLWithString:@"http://www.example.com/test"] options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/test*") matchesURL:[NSURL URLWithString:@"https://www.example.com/bar"] options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
+    EXPECT_TRUE([toPattern(@"*://*.example.com/*bar") matchesURL:[NSURL URLWithString:@"http://example.com/baz"] options:WKWebExtensionMatchPatternOptionsIgnorePaths]);
 
     // Matches host.
     EXPECT_TRUE([toPattern(@"https://*.example.com/*") matchesURL:[NSURL URLWithString:@"https://example.com/"] options:0]);
@@ -442,11 +442,11 @@ TEST(WKWebExtensionMatchPattern, PatternCacheAndEquality)
     // All these patterns should come from the cache and have pointer equality.
     EXPECT_EQ(toPattern(@"<all_urls>"), toPattern(@"<all_urls>"));
     EXPECT_EQ(toPattern(@"<all_urls>"), toPatternAlloc(@"<all_urls>"));
-    EXPECT_EQ(toPattern(@"<all_urls>"), [_WKWebExtensionMatchPattern allURLsMatchPattern]);
+    EXPECT_EQ(toPattern(@"<all_urls>"), [WKWebExtensionMatchPattern allURLsMatchPattern]);
     EXPECT_EQ(toPatternAlloc(@"<all_urls>"), toPatternAlloc(@"<all_urls>"));
     EXPECT_EQ(toPattern(@"*://*/*"), toPattern(@"*://*/*"));
     EXPECT_EQ(toPattern(@"*://*/*"), toPatternAlloc(@"*://*/*"));
-    EXPECT_EQ(toPattern(@"*://*/*"), [_WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern]);
+    EXPECT_EQ(toPattern(@"*://*/*"), [WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern]);
     EXPECT_EQ(toPatternAlloc(@"*://*/*"), toPatternAlloc(@"*://*/*"));
     EXPECT_EQ(toPattern(@"*", @"*", @"/*"), toPattern(@"*", @"*", @"/*"));
     EXPECT_EQ(toPattern(@"*", @"*", @"/*"), toPatternAlloc(@"*", @"*", @"/*"));
@@ -457,11 +457,11 @@ TEST(WKWebExtensionMatchPattern, PatternCacheAndEquality)
     // All these patterns should be equal.
     EXPECT_NS_EQUAL(toPattern(@"<all_urls>"), toPattern(@"<all_urls>"));
     EXPECT_NS_EQUAL(toPattern(@"<all_urls>"), toPatternAlloc(@"<all_urls>"));
-    EXPECT_NS_EQUAL(toPattern(@"<all_urls>"), [_WKWebExtensionMatchPattern allURLsMatchPattern]);
+    EXPECT_NS_EQUAL(toPattern(@"<all_urls>"), [WKWebExtensionMatchPattern allURLsMatchPattern]);
     EXPECT_NS_EQUAL(toPatternAlloc(@"<all_urls>"), toPatternAlloc(@"<all_urls>"));
     EXPECT_NS_EQUAL(toPattern(@"*://*/*"), toPattern(@"*://*/*"));
     EXPECT_NS_EQUAL(toPattern(@"*://*/*"), toPatternAlloc(@"*://*/*"));
-    EXPECT_NS_EQUAL(toPattern(@"*://*/*"), [_WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern]);
+    EXPECT_NS_EQUAL(toPattern(@"*://*/*"), [WKWebExtensionMatchPattern allHostsAndSchemesMatchPattern]);
     EXPECT_NS_EQUAL(toPatternAlloc(@"*://*/*"), toPatternAlloc(@"*://*/*"));
     EXPECT_NS_EQUAL(toPattern(@"*", @"*", @"/*"), toPattern(@"*", @"*", @"/*"));
     EXPECT_NS_EQUAL(toPattern(@"*", @"*", @"/*"), toPatternAlloc(@"*", @"*", @"/*"));
@@ -566,7 +566,7 @@ TEST(WKWebExtensionMatchPattern, CustomURLScheme)
         EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
     }
 
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"foo"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"foo"];
 
     {
         NSError *error;
@@ -580,7 +580,7 @@ TEST(WKWebExtensionMatchPattern, CustomURLScheme)
         EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
     }
 
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"bar"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"bar"];
 
     {
         NSError *error;

@@ -17,6 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-computed-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-negative-value-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-negative-value-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-percent-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-percent-001.html

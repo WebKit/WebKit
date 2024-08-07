@@ -103,7 +103,7 @@ enum class ContinueUnsafeLoad : bool;
 class IconLoadingDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class ViewSnapshot;
 class WebPageProxy;
 class UIDelegate;
@@ -118,12 +118,12 @@ class ViewGestureController;
 
 @class WKContentView;
 @class WKPasswordView;
-@class WKSafeBrowsingWarning;
 @class WKScrollView;
 @class WKTextExtractionItem;
 @class WKTextExtractionRequest;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
+@class _WKWarningView;
 
 #if ENABLE(WRITING_TOOLS)
 @class WTTextSuggestion;
@@ -236,7 +236,7 @@ struct PerWebProcessState {
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
     WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
 
-    RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
+    RetainPtr<_WKWarningView> _warningView;
 
     std::optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
 
@@ -374,6 +374,7 @@ struct PerWebProcessState {
 #endif
 
     BOOL _didAccessBackForwardList;
+    BOOL _dontResetTransientActivationAfterRunJavaScript;
 
 #if ENABLE(PAGE_LOAD_OBSERVER)
     RetainPtr<NSString> _pendingPageLoadObserverHost;
@@ -433,9 +434,12 @@ struct PerWebProcessState {
 
 - (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput;
 
-- (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
-- (void)_clearSafeBrowsingWarning;
-- (void)_clearSafeBrowsingWarningIfForMainFrameNavigation;
+- (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (void)_showBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (void)_clearWarningView;
+- (void)_clearBrowsingWarning;
+- (void)_clearWarningViewIfForMainFrameNavigation;
+- (void)_clearBrowsingWarningIfForMainFrameNavigation;
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
 

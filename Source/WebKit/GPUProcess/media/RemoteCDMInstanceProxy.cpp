@@ -93,7 +93,19 @@ void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificat
 
 void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
 {
-    m_instance->setStorageDirectory(directory);
+    if (!m_cdm)
+        return;
+
+    auto* factory = m_cdm->factory();
+    if (!factory)
+        return;
+
+    auto mediaKeysStorageDirectory = factory->mediaKeysStorageDirectory();
+    if (mediaKeysStorageDirectory.isEmpty())
+        return;
+
+    if (directory.startsWith(mediaKeysStorageDirectory))
+        m_instance->setStorageDirectory(directory);
 }
 
 void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&& completion)

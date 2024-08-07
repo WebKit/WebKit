@@ -132,6 +132,9 @@ public:
     bool allowPrivacyProxy() const { return m_data.allowPrivacyProxy; }
     void setAllowPrivacyProxy(bool allow) { m_data.allowPrivacyProxy = allow; }
 
+    WebCore::HTTPSByDefaultMode httpsByDefaultMode() const { return m_data.httpsByDefaultMode; }
+    void setHTTPSByDefault(WebCore::HTTPSByDefaultMode mode) { m_data.httpsByDefaultMode = mode; }
+
     const Vector<Vector<HashSet<WTF::String>>>& visibilityAdjustmentSelectors() const { return m_data.visibilityAdjustmentSelectors; }
     void setVisibilityAdjustmentSelectors(Vector<Vector<HashSet<WTF::String>>>&& selectors) { m_data.visibilityAdjustmentSelectors = WTFMove(selectors); }
 

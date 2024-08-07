@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/AtomStringHash.h>
@@ -171,11 +172,8 @@ static HashMap<AtomString, Vector<String>>& availableLocales()
 
 bool canHyphenate(const AtomString& localeIdentifier)
 {
-    if (localeIdentifier.isNull())
-        return false;
-    if (availableLocales().contains(localeIdentifier))
-        return true;
-    return availableLocales().contains(localeIdentifier.convertToASCIILowercase());
+    AtomString lowercaseLocaleIdentifier = localeIdentifier.isNull() ? AtomString(defaultLanguage()).convertToASCIILowercase() : localeIdentifier.convertToASCIILowercase();
+    return availableLocales().contains(lowercaseLocaleIdentifier);
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -288,7 +286,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    AtomString lowercaseLocaleIdentifier = localeIdentifier.convertToASCIILowercase();
+    AtomString lowercaseLocaleIdentifier = localeIdentifier.isNull() ? AtomString(defaultLanguage()).convertToASCIILowercase() : localeIdentifier.convertToASCIILowercase();
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKWebExtensionWindowCreationOptions.h>
 
-#import <Foundation/Foundation.h>
-
-#import <WebKit/_WKWebExtensionWindow.h>
-
-@protocol _WKWebExtensionTab;
-
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
-
-/*!
- @abstract A `_WKWebExtensionWindowCreationOptions` object encapsulates new window creation options for an extension.
- @discussion This class holds the various options that influence the behavior and initial state of a newly created window.
- The app retains the discretion to disregard any or all of these options, or even opt not to create a new window.
- */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(_WKWebExtension.WindowCreationOptions)
-@interface _WKWebExtensionWindowCreationOptions : NSObject
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-
-/*! @abstract Indicates the window type for the new window. */
-@property (nonatomic, readonly) _WKWebExtensionWindowType windowType;
-
-/*! @abstract Indicates the window state for the new window. */
-@property (nonatomic, readonly) _WKWebExtensionWindowState windowState;
-
-/*!
- @abstract Indicates the frame where the new window should be positioned on the main screen.
- @discussion This frame should override the app's default window position and size.
- Individual components (e.g., `origin.x`, `size.width`) will be `NaN` if not specified.
- */
-@property (nonatomic, readonly) CGRect frame;
-
-/*!
- @abstract Indicates a list of URLs that the new window should initially load as new tabs.
- @discussion If the array is empty, and `tabs` is empty, the app's default "start page" should appear in a new tab.
- @seealso tabs
- */
-@property (nonatomic, readonly, copy) NSArray<NSURL *> *tabURLs;
-
-/*!
- @abstract Indicates a list of existing tabs that should be moved to the new window.
- @discussion If the array is empty, and `tabURLs` is empty, the app's default "start page" should appear in a new tab.
- @seealso URLs
- */
-@property (nonatomic, readonly, copy) NSArray<id <_WKWebExtensionTab>> *tabs;
-
-/*! @abstract Indicates whether the new window should be focused. */
-@property (nonatomic, readonly, getter=isFocused) BOOL focused;
-
-/*!
- @abstract Indicates whether the new window should use private browsing.
- @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
- use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
- website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
- */
-@property (nonatomic, readonly) BOOL usePrivateBrowsing;
-
+WK_EXTERN
+@interface _WKWebExtensionWindowCreationOptions : WKWebExtensionWindowCreationOptions
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+#define _WKWebExtensionWindowCreationOptions WKWebExtensionWindowCreationOptions

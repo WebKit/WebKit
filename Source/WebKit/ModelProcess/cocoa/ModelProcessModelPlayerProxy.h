@@ -128,6 +128,7 @@ private:
     REPtr<RESceneRef> m_scene;
 
     WebCore::Color m_backgroundColor;
+    simd_float3 m_originalBoundingBoxCenter { simd_make_float3(0, 0, 0) };
     simd_float3 m_originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
     float m_pitch { 0 };
     float m_yaw { 0 };

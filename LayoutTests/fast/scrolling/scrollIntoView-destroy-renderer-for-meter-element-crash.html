@@ -1,0 +1,29 @@
+<style>
+    :root {
+        offset-path: path('M 0 -1 0 0 Z');
+    }
+    * {
+        background-position: inherit;
+        border-image-source: url(data:image/gif;base64);
+        contain: size;
+        grid-template-columns: 0vw;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function jsfuzzer() {
+        try { /* */ var00209 = document.createElement("object"); } catch (e) { }
+        try { document.alinkColor = String.fromCharCode(93, 98); } catch (e) { }
+        try { /* */ var00261 = htmlvar00015.insertAdjacentElement("afterEnd", var00209); } catch (e) { }
+        try { htmlvar00022.scrollIntoView(); } catch (e) { }
+        try { var00209.data = String.fromCharCode(63, 109) } catch (e) { }
+    }
+</script>
+PASS if no crash.
+<body onload=jsfuzzer()>
+    <table frame="border">
+        <colgroup id="htmlvar00015" char="i"></colgroup>
+        <meter id="htmlvar00022" accept="audio/*"></meter>
+    </table>
+</body>

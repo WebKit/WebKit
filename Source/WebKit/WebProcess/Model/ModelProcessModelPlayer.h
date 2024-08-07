@@ -59,7 +59,7 @@ private:
 
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
-    void didFinishLoading();
+    void didFinishLoading(const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
     void didUpdateEntityTransform(const WebCore::TransformationMatrix&);
 
     // WebCore::ModelPlayer overrides.

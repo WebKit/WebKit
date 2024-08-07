@@ -59,13 +59,14 @@ public:
         String pointerType { mousePointerEventType() };
         bool isPrimary { false };
         Vector<Ref<PointerEvent>> coalescedEvents;
+        Vector<Ref<PointerEvent>> predictedEvents;
     };
 
     enum class IsPrimary : bool { No, Yes };
 
     static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
+        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::No));
     }
 
     static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
@@ -75,7 +76,8 @@ public:
         initializer.pointerId = pointerId;
         initializer.isPrimary = isPrimary;
         initializer.pointerType = pointerType;
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
+        initializer.composed = true;
+        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::Yes));
     }
 
     static Ref<PointerEvent> createForBindings()
@@ -89,9 +91,9 @@ public:
     static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, CanBubble, IsCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta = { });
-    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble, IsCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta = { });
+    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
 #endif
 
     virtual ~PointerEvent();
@@ -108,6 +110,8 @@ public:
     bool isPrimary() const { return m_isPrimary; }
 
     Vector<Ref<PointerEvent>> getCoalescedEvents() const;
+
+    Vector<Ref<PointerEvent>> getPredictedEvents() const;
 
     void receivedTarget() final;
 
@@ -144,11 +148,11 @@ private:
     }
 
     PointerEvent();
-    PointerEvent(const AtomString&, Init&&);
+    PointerEvent(const AtomString&, Init&&, IsTrusted);
     PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
-    PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
 #endif
 
     PointerID m_pointerId { mousePointerID };
@@ -162,6 +166,7 @@ private:
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
     Vector<Ref<PointerEvent>> m_coalescedEvents;
+    Vector<Ref<PointerEvent>> m_predictedEvents;
 };
 
 inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)

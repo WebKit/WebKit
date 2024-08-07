@@ -212,6 +212,7 @@ public:
 
 #if USE(EXTENSIONKIT)
     std::optional<ExtensionProcess> extensionProcess() const;
+    LaunchGrant* launchGrant() const;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -276,6 +277,15 @@ protected:
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
     static RefPtr<WebCore::SharedBuffer> fetchAudioComponentServerRegistrations();
 #endif
+
+    struct InitializationActivityAndGrant {
+        UniqueRef<ProcessThrottler::ForegroundActivity> foregroundActivity;
+#if USE(EXTENSIONKIT)
+        RefPtr<LaunchGrant> launchGrant;
+#endif
+    };
+
+    InitializationActivityAndGrant initializationActivityAndGrant();
 
 private:
     virtual void connectionWillOpen(IPC::Connection&);

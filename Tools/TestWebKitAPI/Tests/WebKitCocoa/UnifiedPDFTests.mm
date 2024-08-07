@@ -42,7 +42,7 @@ namespace TestWebKitAPI {
 
 static bool shouldEnableUnifiedPDFForTesting()
 {
-#if ENABLE(UNIFIED_PDF_AS_PREVIEW)
+#if ENABLE(UNIFIED_PDF_BY_DEFAULT) || ENABLE(UNIFIED_PDF_AS_PREVIEW)
     return true;
 #else
     return false;

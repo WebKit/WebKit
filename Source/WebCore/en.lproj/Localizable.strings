@@ -1501,6 +1501,9 @@
 /* prompt string in authentication panel */
 "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
 
+/* Not Secure Connection warning page title */
+"This Connection Is Not Secure" = "This Connection Is Not Secure";
+
 /* WKErrorDuplicateCredential description */
 "This credential is already present" = "This credential is already present";
 
@@ -1512,6 +1515,9 @@
 
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
+
+/* Not Secure Connection warning text */
+"This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
 
 /* Malware warning */
 "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";

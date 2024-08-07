@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKShareSheet.h>
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
 
 #import "PickerDismissalReason.h"
 #import "WKWebViewInternal.h"
@@ -524,4 +524,4 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 @end
 
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#endif // HAVE(SHARE_SHEET_UI)

@@ -1642,8 +1642,6 @@ public:
 
     virtual void reshape(int width, int height) = 0;
 
-    virtual void setContextVisibility(bool) = 0;
-
     WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const DestinationColorSpace&);
 
     virtual void prepareForDisplay() = 0;
@@ -1731,7 +1729,7 @@ private:
     GraphicsContextGLAttributes m_attrs;
 };
 
-WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher* = nullptr);
+WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
 
 template<typename Object, void(GraphicsContextGL::*destroyFunc)(Object)>
 class GCGLOwned {

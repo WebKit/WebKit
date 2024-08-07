@@ -1,10 +1,9 @@
 
 PASS Property text-spacing-trim value 'auto'
+FAIL Property text-spacing-trim value 'normal' assert_true: 'normal' is a supported value for text-spacing-trim. expected true got false
 PASS Property text-spacing-trim value 'space-all'
-FAIL Property text-spacing-trim value 'trim-auto' assert_true: 'trim-auto' is a supported value for text-spacing-trim. expected true got false
+FAIL Property text-spacing-trim value 'trim-both' assert_true: 'trim-both' is a supported value for text-spacing-trim. expected true got false
 FAIL Property text-spacing-trim value 'trim-all' assert_true: 'trim-all' is a supported value for text-spacing-trim. expected true got false
-FAIL Property text-spacing-trim value 'allow-end' assert_true: 'allow-end' is a supported value for text-spacing-trim. expected true got false
+FAIL Property text-spacing-trim value 'trim-start' assert_true: 'trim-start' is a supported value for text-spacing-trim. expected true got false
 FAIL Property text-spacing-trim value 'space-first' assert_true: 'space-first' is a supported value for text-spacing-trim. expected true got false
-FAIL Property text-spacing-trim value 'allow-end space-first' assert_true: 'allow-end space-first' is a supported value for text-spacing-trim. expected true got false
-FAIL Property text-spacing-trim value 'space-first allow-end' assert_true: 'space-first allow-end' is a supported value for text-spacing-trim. expected true got false
 

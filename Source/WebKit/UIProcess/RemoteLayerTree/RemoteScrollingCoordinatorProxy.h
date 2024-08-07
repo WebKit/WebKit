@@ -123,6 +123,8 @@ public:
     bool hasScrollableMainFrame() const;
     bool hasScrollableOrZoomedMainFrame() const;
 
+    WebCore::ScrollbarWidth mainFrameScrollbarWidth() const;
+
     WebCore::OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
     WebCore::OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
 

@@ -286,8 +286,6 @@ private:
     WebCore::DelegatedScrollingMode scrollingMode() const;
     bool isFullMainFramePlugin() const;
 
-    OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
-
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
     void updateScrollbars() override;
     void willAttachScrollingNode() final;
@@ -486,12 +484,12 @@ private:
     // Only use this if some other function has ensured that the correct page is visible.
     void scrollToPointInContentsSpace(WebCore::FloatPoint);
 
+    OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
+
     // ScrollableArea
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
-
-    std::optional<PDFLayoutRow> visibleRow() const;
 
     WebCore::FloatSize centeringOffset() const;
 
@@ -520,8 +518,6 @@ private:
 
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
     void setNeedsRepaintInDocumentRect(RepaintRequirements, const WebCore::FloatRect&, std::optional<PDFLayoutRow>);
-    // FIXME: <https://webkit.org/b/276981> Maybe this is not needed?
-    void setNeedsRepaintInDocumentRects(RepaintRequirements, const Vector<WebCore::FloatRect>&);
 
     // "Up" is inside-out.
     template <typename T>
@@ -534,9 +530,6 @@ private:
     // Painting coordinates are a "branch" off the linear CoordinateSpace list, but only different from "Contents" for variable-page-sized PDFs in discrete mode.
     WebCore::FloatRect convertFromContentsToPainting(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
     WebCore::FloatRect convertFromPaintingToContents(const WebCore::FloatRect&, std::optional<PDFDocumentLayout::PageIndex> = { }) const;
-
-    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
-    std::optional<PDFDocumentLayout::PageIndex> pageIndexForDocumentPoint(const WebCore::FloatPoint&) const;
 
     PDFDocumentLayout::PageIndex indexForCurrentPageInView() const;
 

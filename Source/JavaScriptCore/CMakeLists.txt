@@ -268,33 +268,21 @@ list(APPEND JavaScriptCore_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
 )
 
-if (WIN32)
-    if (WTF_CPU_X86_64)
-        set(OFFLINE_ASM_BACKEND "X86_64_WIN")
-    endif ()
+if (WTF_CPU_X86_64)
+    set(OFFLINE_ASM_BACKEND "X86_64")
+elseif (WTF_CPU_ARM64)
+    set(OFFLINE_ASM_BACKEND "ARM64")
+elseif (ARM_THUMB2_DETECTED)
+    set(OFFLINE_ASM_BACKEND "ARMv7")
+elseif (WTF_CPU_RISCV64)
+    set(OFFLINE_ASM_BACKEND "RISCV64")
+endif ()
 
-    if (NOT ENABLE_JIT)
-        if (ENABLE_C_LOOP)
-            set(OFFLINE_ASM_BACKEND "C_LOOP_WIN")
-        endif ()
+if (NOT ENABLE_JIT)
+    if (ENABLE_C_LOOP)
+        set(OFFLINE_ASM_BACKEND "C_LOOP")
     endif ()
-else ()
-    if (WTF_CPU_X86_64)
-        set(OFFLINE_ASM_BACKEND "X86_64")
-    elseif(WTF_CPU_ARM64)
-        set(OFFLINE_ASM_BACKEND "ARM64")
-    elseif(ARM_THUMB2_DETECTED)
-        set(OFFLINE_ASM_BACKEND "ARMv7")
-    elseif (WTF_CPU_RISCV64)
-        set(OFFLINE_ASM_BACKEND "RISCV64")
-    endif()
-
-    if(NOT ENABLE_JIT)
-        if(ENABLE_C_LOOP)
-            set(OFFLINE_ASM_BACKEND "C_LOOP")
-        endif()
-    endif()
-endif()
+endif ()
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
@@ -443,6 +431,10 @@ set(LLIntOutput LLIntAssembly.h)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(OFFLINE_ASM_ARGS --binary-format=ELF)
 endif()
+
+if (MSVC AND NOT ENABLE_C_LOOP)
+    set(OFFLINE_ASM_ARGS --platform=Windows)
+endif ()
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
@@ -1016,6 +1008,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ExceptionScope.h
     runtime/ExecutableBase.h
     runtime/ExecutableBaseInlines.h
+    runtime/Float16Array.h
     runtime/Float32Array.h
     runtime/Float64Array.h
     runtime/Forward.h

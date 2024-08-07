@@ -63,7 +63,7 @@ JSObject* constructFunction(JSGlobalObject*, const ArgList&, const Identifier& f
 JSObject* constructFunction(JSGlobalObject*, CallFrame*, const ArgList&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 
 JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
-    JSGlobalObject*, String&& program, const Identifier&, const SourceOrigin&,
+    JSGlobalObject*, String&& program, LexicallyScopedFeatures, const Identifier&, const SourceOrigin&,
     const String&, SourceTaintedOrigin, const WTF::TextPosition&, int overrideLineNumber = -1,
     std::optional<int> functionConstructorParametersEndPosition = std::nullopt,
     FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());

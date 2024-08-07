@@ -83,7 +83,7 @@ private:
     void didReceiveModelProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
-    void initializeModelProcess(ModelProcessCreationParameters&&);
+    void initializeModelProcess(ModelProcessCreationParameters&&, CompletionHandler<void()>&&);
     void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void addSession(PAL::SessionID);
     void removeSession(PAL::SessionID);

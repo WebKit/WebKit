@@ -87,7 +87,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPage& page, NSString *expre
         }
 
         Ref serializedValue = API::SerializedScriptValue::createFromWireBytes(result.value().value());
-        id scriptResult = API::SerializedScriptValue::deserialize(serializedValue->internalRepresentation(), nullptr);
+        id scriptResult = API::SerializedScriptValue::deserialize(serializedValue->internalRepresentation());
 
         // If no error occurred, element 0 will contain the result of evaluating the expression, and element 1 will be undefined.
         callback->call(@[ scriptResult ?: undefinedValue, undefinedValue ]);

@@ -163,6 +163,9 @@ PASS resize: "both" onto "horizontal"
 PASS ruby-align (type: discrete) has testAccumulation function
 PASS ruby-align: "center" onto "start"
 PASS ruby-align: "start" onto "center"
+PASS ruby-position (type: discrete) has testAccumulation function
+PASS ruby-position: "over" onto "under"
+PASS ruby-position: "under" onto "over"
 PASS scroll-snap-align (type: discrete) has testAccumulation function
 PASS scroll-snap-align: "start" onto "none"
 PASS scroll-snap-align: "none" onto "start"
@@ -246,7 +249,7 @@ PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"
 PASS text-autospace (type: discrete) has testAccumulation function
 PASS text-autospace: "no-autospace" onto "normal"
-FAIL text-autospace: "normal" onto "no-autospace" assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+PASS text-autospace: "normal" onto "no-autospace"
 PASS text-box-edge (type: discrete) has testAccumulation function
 PASS text-box-edge: "text" onto "leading"
 PASS text-box-edge: "leading" onto "text"

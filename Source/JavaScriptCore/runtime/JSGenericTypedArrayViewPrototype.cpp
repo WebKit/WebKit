@@ -48,8 +48,8 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     if (UNLIKELY(!jsString))
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a string"_s);
 
-    auto alphabet = Alphabet::Base64;
-    auto lastChunkHandling = LastChunkHandling::Loose;
+    auto alphabet = WTF::Alphabet::Base64;
+    auto lastChunkHandling = WTF::LastChunkHandling::Loose;
 
     JSValue optionsValue = callFrame->argument(1);
     if (!optionsValue.isUndefined()) {
@@ -67,7 +67,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
             StringView alphabetStringView = alphabetString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (alphabetStringView == "base64url"_s)
-                alphabet = Alphabet::Base64URL;
+                alphabet = WTF::Alphabet::Base64URL;
             else if (alphabetStringView != "base64"_s)
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
         }
@@ -82,9 +82,9 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
             StringView lastChunkHandlingStringView = lastChunkHandlingString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
             if (lastChunkHandlingStringView == "strict"_s)
-                lastChunkHandling = LastChunkHandling::Strict;
+                lastChunkHandling = WTF::LastChunkHandling::Strict;
             else if (lastChunkHandlingStringView == "stop-before-partial"_s)
-                lastChunkHandling = LastChunkHandling::StopBeforePartial;
+                lastChunkHandling = WTF::LastChunkHandling::StopBeforePartial;
             else if (lastChunkHandlingStringView != "loose"_s)
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
         }
@@ -97,20 +97,14 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     StringView view = jsString->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto [shouldThrowError, readLength, writeData] = fromBase64(view, uint8Array->length(), alphabet, lastChunkHandling);
-
+    auto [shouldThrowError, readLength, writeLength] = fromBase64(view, std::span { uint8Array->typedVector(), uint8Array->length() }, alphabet, lastChunkHandling);
     ASSERT(readLength <= view.length());
-    ASSERT(writeData.size() <= uint8Array->length());
-
-    if (writeData.size() > 0)
-        memmove(uint8Array->typedVector(), writeData.data(), writeData.size());
-
-    if (shouldThrowError == FromBase64ShouldThrowError::Yes)
+    if (UNLIKELY(shouldThrowError == WTF::FromBase64ShouldThrowError::Yes))
         return JSValue::encode(throwSyntaxError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a valid base64 string"_s));
 
     JSObject* resultObject = constructEmptyObject(globalObject);
     resultObject->putDirect(vm, vm.propertyNames->read, jsNumber(readLength));
-    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(writeData.size()));
+    resultObject->putDirect(vm, vm.propertyNames->written, jsNumber(writeLength));
 
     return JSValue::encode(resultObject);
 }

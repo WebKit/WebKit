@@ -49,26 +49,13 @@ def isX64
     case $activeBackend
     when "X86_64"
         true
-    when "X86_64_WIN"
-        true
     else
         raise "bad value for $activeBackend: #{$activeBackend}"
     end
 end
 
 def isWin
-    case $activeBackend
-    when "X86_64"
-        false
-    when "X86_64_WIN"
-        true
-    else
-        raise "bad value for $activeBackend: #{$activeBackend}"
-    end
-end
-
-def isMSVC
-    $options.has_key?(:assembler) && $options[:assembler] == "MASM"
+    $options.has_key?(:platform) && $options[:platform] == "Windows"
 end
 
 def register(name)
@@ -511,9 +498,6 @@ class Sequence
         }
         
         return newList
-    end
-    def getModifiedListX86_64_WIN
-        getModifiedListX86_64
     end
 end
 
@@ -1057,11 +1041,6 @@ class Instruction
 
     def lowerX86_64
         raise unless $activeBackend == "X86_64"
-        lowerX86Common
-    end
-
-    def lowerX86_64_WIN
-        raise unless $activeBackend == "X86_64_WIN"
         lowerX86Common
     end
 

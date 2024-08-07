@@ -2856,10 +2856,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "tee_local"_s);
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local "_s, index, "_s, the number of locals is "_s, m_locals.size());
         WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), m_locals[index]), "set_local to type "_s, value.type(), " expected "_s, m_locals[index]);
-        WASM_TRY_ADD_TO_CONTEXT(setLocal(index, value));
-
         ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(getLocal(index, result));
+        WASM_TRY_ADD_TO_CONTEXT(teeLocal(index, value, result));
         m_expressionStack.constructAndAppend(m_locals[index], result);
         return { };
     }

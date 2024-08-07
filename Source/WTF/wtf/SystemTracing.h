@@ -149,6 +149,7 @@ enum TracePointCode {
     SyntheticMomentumEnd,
     SyntheticMomentumEvent,
     RemoteLayerTreeScheduleRenderingUpdate,
+    DisplayLinkUpdate,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,
@@ -167,6 +168,18 @@ enum TracePointCode {
     GPUProcessRange = 16000,
     WakeUpAndApplyDisplayListStart,
     WakeUpAndApplyDisplayListEnd,
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    GTKWPEPortRange = 20000,
+
+    WaitForCompositionCompletionStart,
+    WaitForCompositionCompletionEnd,
+    FrameCompositionStart,
+    FrameCompositionEnd,
+    LayerFlushStart,
+    LayerFlushEnd,
+#endif
+
 };
 
 #ifdef __cplusplus

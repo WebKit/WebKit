@@ -246,4 +246,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     SetStorageSiteValidationEnabled(PAL::SessionID sessionID, bool enabled)
     SetPersistedDomains(PAL::SessionID sessionsID, HashSet<WebCore::RegistrableDomain> domains)
+
+    GetAppBadgeForTesting(PAL::SessionID sessionID) -> (std::optional<uint64_t> badge)
 }

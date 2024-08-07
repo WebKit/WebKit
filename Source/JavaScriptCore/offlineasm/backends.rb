@@ -37,13 +37,11 @@ end
 BACKENDS =
     [
      "X86_64",
-     "X86_64_WIN",
      "ARMv7",
      "ARM64",
      "ARM64E",
      "RISCV64",
-     "C_LOOP",
-     "C_LOOP_WIN"
+     "C_LOOP"
     ]
 
 # Keep the set of working backends separate from the set of backends that might be
@@ -54,13 +52,11 @@ BACKENDS =
 WORKING_BACKENDS =
     [
      "X86_64",
-     "X86_64_WIN",
      "ARMv7",
      "ARM64",
      "ARM64E",
      "RISCV64",
-     "C_LOOP",
-     "C_LOOP_WIN"
+     "C_LOOP"
     ]
 
 BACKEND_PATTERN = Regexp.new('\\A(' + BACKENDS.join(')|(') + ')\\Z')

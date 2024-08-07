@@ -53,7 +53,8 @@ public:
     PlaybackSessionModel* playbackSessionModel() const;
 
     bool isInWindowFullscreenActive() const;
-    void toggleInWindowFullscreen();
+    void enterInWindowFullscreen();
+    void exitInWindowFullscreen();
 
     // PlaybackSessionModelClient
     void durationChanged(double) final;

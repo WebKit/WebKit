@@ -1578,6 +1578,14 @@ void WebPageProxy::insertionPointColorDidChange()
     legacyMainFrameProcess().send(Messages::WebPage::SetInsertionPointColor(protectedPageClient()->insertionPointColor()), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionHandler<void(bool)>&& completion)
+{
+    if (!hasRunningProcess())
+        return completion(false);
+
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::ShouldDismissKeyboardAfterTapAtPoint(point), WTFMove(completion), webPageIDInMainFrameProcess());
+}
+
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {
     if (auto contentViewBackgroundColor = protectedPageClient()->contentViewBackgroundColor(); contentViewBackgroundColor.isValid())

@@ -208,8 +208,6 @@ rect: style.getPropertyValue(word-spacing) : 0px
 rect: style.getPropertyValue(writing-mode) : horizontal-tb
 rect: style.getPropertyValue(z-index) : auto
 rect: style.getPropertyValue(zoom) : 1
-rect: style.getPropertyValue(-webkit-background-clip) : border-box
-rect: style.getPropertyValue(-webkit-background-origin) : padding-box
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 rect: style.getPropertyValue(-webkit-box-align) : stretch
@@ -222,7 +220,6 @@ rect: style.getPropertyValue(-webkit-box-ordinal-group) : 1
 rect: style.getPropertyValue(-webkit-box-orient) : horizontal
 rect: style.getPropertyValue(-webkit-box-pack) : start
 rect: style.getPropertyValue(-webkit-box-reflect) : none
-rect: style.getPropertyValue(-webkit-box-shadow) : none
 rect: style.getPropertyValue(-webkit-column-axis) : auto
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -234,8 +231,6 @@ rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyValue(-webkit-line-grid) : none
 rect: style.getPropertyValue(-webkit-line-snap) : none
 rect: style.getPropertyValue(-webkit-locale) : auto
-rect: style.getPropertyValue(-webkit-mask-clip) : border-box
-rect: style.getPropertyValue(-webkit-mask-composite) : source-over
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)
@@ -455,8 +450,6 @@ g: style.getPropertyValue(word-spacing) : 0px
 g: style.getPropertyValue(writing-mode) : horizontal-tb
 g: style.getPropertyValue(z-index) : auto
 g: style.getPropertyValue(zoom) : 1
-g: style.getPropertyValue(-webkit-background-clip) : border-box
-g: style.getPropertyValue(-webkit-background-origin) : padding-box
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 g: style.getPropertyValue(-webkit-box-align) : stretch
@@ -469,7 +462,6 @@ g: style.getPropertyValue(-webkit-box-ordinal-group) : 1
 g: style.getPropertyValue(-webkit-box-orient) : horizontal
 g: style.getPropertyValue(-webkit-box-pack) : start
 g: style.getPropertyValue(-webkit-box-reflect) : none
-g: style.getPropertyValue(-webkit-box-shadow) : none
 g: style.getPropertyValue(-webkit-column-axis) : auto
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
@@ -481,8 +473,6 @@ g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyValue(-webkit-line-grid) : none
 g: style.getPropertyValue(-webkit-line-snap) : none
 g: style.getPropertyValue(-webkit-locale) : auto
-g: style.getPropertyValue(-webkit-mask-clip) : border-box
-g: style.getPropertyValue(-webkit-mask-composite) : source-over
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyValue(-webkit-text-fill-color) : rgb(0, 0, 0)

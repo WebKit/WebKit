@@ -30,6 +30,7 @@
 
 #include "CachedResourceLoader.h"
 #include "DOMMatrixReadOnly.h"
+#include "DOMPointReadOnly.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -37,6 +38,7 @@
 #include "ElementInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerCA.h"
 #include "HTMLModelElementCamera.h"
@@ -78,6 +80,8 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
     , m_readyPromise { makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve) }
 #if ENABLE(MODEL_PROCESS)
     , m_entityTransform(DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No))
+    , m_boundingBoxCenter(DOMPointReadOnly::create({ }))
+    , m_boundingBoxExtents(DOMPointReadOnly::create({ }))
 #endif
 {
 }
@@ -158,6 +162,8 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
 #if ENABLE(MODEL_PROCESS)
     m_entityTransform = DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No);
+    m_boundingBoxCenter = DOMPointReadOnly::create({ });
+    m_boundingBoxExtents = DOMPointReadOnly::create({ });
 #endif
 
     if (!m_readyPromise->isFulfilled())
@@ -294,6 +300,8 @@ void HTMLModelElement::createModelPlayer()
     ASSERT(document().page());
 #if ENABLE(MODEL_PROCESS)
     m_entityTransform = DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No);
+    m_boundingBoxCenter = DOMPointReadOnly::create({ });
+    m_boundingBoxExtents = DOMPointReadOnly::create({ });
 #endif
     m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
     if (!m_modelPlayer) {
@@ -416,6 +424,22 @@ ExceptionOr<void> HTMLModelElement::setEntityTransform(const DOMMatrixReadOnly& 
 void HTMLModelElement::didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix& transform)
 {
     m_entityTransform = DOMMatrixReadOnly::create(transform, DOMMatrixReadOnly::Is2D::No);
+}
+
+const DOMPointReadOnly& HTMLModelElement::boundingBoxCenter() const
+{
+    return m_boundingBoxCenter;
+}
+
+const DOMPointReadOnly& HTMLModelElement::boundingBoxExtents() const
+{
+    return m_boundingBoxExtents;
+}
+
+void HTMLModelElement::didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D& center, const FloatPoint3D& extents)
+{
+    m_boundingBoxCenter = DOMPointReadOnly::fromFloatPoint(center);
+    m_boundingBoxExtents = DOMPointReadOnly::fromFloatPoint(extents);
 }
 #endif // ENABLE(MODEL_PROCESS)
 

@@ -3,5 +3,39 @@ PointerEvent: Dispatch custom event
 Test Description: This test checks if PointerEvent constructor works properly.
 
 
-FAIL PointerEvent: Constructor test event.getPredictedEvents is not a function. (In 'event.getPredictedEvents()', 'event.getPredictedEvents' is undefined)
+PASS PointerEvent: Constructor test
+FAIL getCoalescedEvents in event assert_equals: expected false but got true
+PASS getPredictedEvents().length
+PASS event.target
+PASS event.currentTarget
+PASS event.eventPhase
+PASS event.clientX
+PASS event.pointerType
+PASS getPredictedEvents()[0].clientX
+PASS getPredictedEvents()[1].clientX
+PASS getPredictedEvents()[0].pointerId
+PASS getPredictedEvents()[0].pointerType
+PASS getPredictedEvents()[0].isPrimary
+PASS getPredictedEvents()[0].getPredictedEvents().length
+PASS getPredictedEvents()[0].target
+PASS getPredictedEvents()[0].currentTarget
+PASS getPredictedEvents()[0].eventPhase
+PASS getPredictedEvents()[0].cancelable
+PASS getPredictedEvents()[0].bubbles
+PASS getPredictedEvents()[0].offsetX
+PASS getPredictedEvents()[0].offsetY
+PASS getPredictedEvents()[1].pointerId
+PASS getPredictedEvents()[1].pointerType
+PASS getPredictedEvents()[1].isPrimary
+PASS getPredictedEvents()[1].getPredictedEvents().length
+PASS getPredictedEvents()[1].target
+PASS getPredictedEvents()[1].currentTarget
+PASS getPredictedEvents()[1].eventPhase
+PASS getPredictedEvents()[1].cancelable
+PASS getPredictedEvents()[1].bubbles
+PASS getPredictedEvents()[1].offsetX
+PASS getPredictedEvents()[1].offsetY
+PASS default event.pointerType
+PASS default getPredictedEvents().length
+PASS type event.pointerType
 

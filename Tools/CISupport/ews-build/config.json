@@ -82,8 +82,8 @@
     { "name": "ews124", "platform": "ios-simulator-17" },
     { "name": "ews125", "platform": "ios-simulator-17" },
     { "name": "ews126", "platform": "ios-simulator-17" },
-    { "name": "ews127", "platform": "mac-monterey" },
-    { "name": "ews128", "platform": "mac-monterey" },
+    { "name": "ews127", "platform": "mac-ventura" },
+    { "name": "ews128", "platform": "mac-ventura" },
     { "name": "ews130", "platform": "*" },
     { "name": "ews131", "platform": "ios-17" },
     { "name": "ews132", "platform": "*" },
@@ -171,11 +171,11 @@
     { "name": "ews228", "platform": "visionos-simulator-1" },
     { "name": "ews229", "platform": "visionos-simulator-1" },
     { "name": "ews230", "platform": "visionos-simulator-1" },
-    { "name": "webkit-cq-01", "platform": "mac-monterey" },
-    { "name": "webkit-cq-02", "platform": "mac-monterey" },
-    { "name": "webkit-cq-03", "platform": "mac-monterey" },
-    { "name": "webkit-cq-04", "platform": "mac-monterey" },
-    { "name": "webkit-cq-05", "platform": "mac-monterey" }
+    { "name": "webkit-cq-01", "platform": "mac-ventura" },
+    { "name": "webkit-cq-02", "platform": "mac-ventura" },
+    { "name": "webkit-cq-03", "platform": "mac-ventura" },
+    { "name": "webkit-cq-04", "platform": "mac-ventura" },
+    { "name": "webkit-cq-05", "platform": "mac-ventura" }
   ],
   "builders": [
     {
@@ -355,7 +355,7 @@
     },
     {
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
-      "factory": "JSCBuildAndTestsFactory", "platform": "mac-monterey",
+      "factory": "JSCBuildAndTestsFactory", "platform": "mac-ventura",
       "configuration": "release", "runTests": "true",
       "workernames": ["ews127", "ews128"]
     },
@@ -426,19 +426,19 @@
     },
     {
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
-      "factory": "CommitQueueFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "factory": "CommitQueueFactory", "platform": "mac-ventura",
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
-      "factory": "MergeQueueFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "factory": "MergeQueueFactory", "platform": "mac-ventura",
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
     },
     {
       "name": "Unsafe-Merge-Queue", "shortname": "unsafe-merge", "icon": "buildAndTest",
-      "factory": "UnsafeMergeQueueFactory", "platform": "mac-monterey",
+      "factory": "UnsafeMergeQueueFactory", "platform": "mac-ventura",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
     },

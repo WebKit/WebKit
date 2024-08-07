@@ -482,7 +482,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
         Schema.Entry("parser-grammar-unused", allowed_types=[str]),
         Schema.Entry("parser-grammar-unused-reason", allowed_types=[str]),
-        Schema.Entry("related-property", allowed_types=[str]),
+        Schema.Entry("cascade-alias", allowed_types=[str]),
         Schema.Entry("separator", allowed_types=[str]),
         Schema.Entry("setter", allowed_types=[str]),
         Schema.Entry("settings-flag", allowed_types=[str]),
@@ -492,7 +492,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
         Schema.Entry("svg", allowed_types=[bool], default_value=False),
-        Schema.Entry("synonym", allowed_types=[str]),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("url", allowed_types=[str]),
         Schema.Entry("visited-link-color-support", allowed_types=[bool], default_value=False),
@@ -572,13 +571,11 @@ class StylePropertyCodeGenProperties:
             if json_value.get("longhands") is not None:
                 raise Exception(f"{key_path} is a shorthand, but has sink priority.")
 
-        if json_value.get("related-property"):
-            if json_value.get("related-property") == name:
-                raise Exception(f"{key_path} can't have itself as a related property.")
+        if json_value.get("cascade-alias"):
+            if json_value.get("cascade-alias") == name:
+                raise Exception(f"{key_path} can't have itself as a cascade alias property.")
             if json_value.get("longhands"):
-                raise Exception(f"{key_path} can't have both a related property and be a shorthand.")
-            if json_value.get("high-priority", False):
-                raise Exception(f"{key_path} can't have both a related property and be high priority.")
+                raise Exception(f"{key_path} can't be both a cascade alias and a shorthand.")
 
         if json_value.get("parser-grammar"):
             for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
@@ -622,11 +619,6 @@ class StylePropertyCodeGenProperties:
                     return True
         return False
 
-    @property
-    def is_deferred(self):
-        return self.related_property or self.logical_property_group
-
-
 class StyleProperty:
     schema = Schema(
         Schema.Entry("animatable", allowed_types=[bool], default_value=False),
@@ -640,7 +632,6 @@ class StyleProperty:
     def __init__(self, **dictionary):
         StyleProperty.schema.set_attributes_from_dictionary(dictionary, instance=self)
         self.property_name = self.codegen_properties.property_name
-        self.synonymous_properties = []
 
     def __str__(self):
         return self.name
@@ -685,36 +676,20 @@ class StyleProperty:
 
         return StyleProperty(**json_value)
 
-    def perform_fixups_for_synonyms(self, all_properties):
-        # If 'synonym' was specified, replace the name with references to the Property object, and vice-versa a back-reference on that Property object back to this.
-        if self.codegen_properties.synonym:
-            if self.codegen_properties.synonym not in all_properties.all_by_name:
-                raise Exception(f"Property {self.name} has an unknown synonym: {self.codegen_properties.synonym}.")
-
-            original = all_properties.all_by_name[self.codegen_properties.synonym]
-            original.synonymous_properties.append(self)
-
-            self.codegen_properties.synonym = original
-
     def perform_fixups_for_longhands(self, all_properties):
         # If 'longhands' was specified, replace the names with references to the Property objects.
         if self.codegen_properties.longhands:
             self.codegen_properties.longhands = [all_properties.all_by_name[longhand.value] for longhand in self.codegen_properties.longhands]
 
-    def perform_fixups_for_related_properties(self, all_properties):
-        # If 'related-property' was specified, validate the relationship and replace the name with a reference to the Property object.
-        if self.codegen_properties.related_property:
-            if self.codegen_properties.related_property not in all_properties.all_by_name:
-                raise Exception(f"Property {self.name} has an unknown related property: {self.codegen_properties.related_property}.")
+    def perform_fixups_for_cascade_alias_properties(self, all_properties):
+        if self.codegen_properties.cascade_alias:
+            if self.codegen_properties.cascade_alias not in all_properties.all_by_name:
+                raise Exception(f"Property {self.name} is a cascade alias for an unknown property: {self.codegen_properties.cascade_alias}.")
 
-            related_property = all_properties.all_by_name[self.codegen_properties.related_property]
-            if type(related_property.codegen_properties.related_property) is str:
-                if related_property.codegen_properties.related_property != self.name:
-                    raise Exception(f"Property {self.name} has {related_property.name} as a related property, but it's not reciprocal.")
-            else:
-                if related_property.codegen_properties.related_property.name != self.name:
-                    raise Exception(f"Property {self.name} has {related_property.name} as a related property, but it's not reciprocal.")
-            self.codegen_properties.related_property = related_property
+            if not self.codegen_properties.skip_builder:
+                raise Exception(f"Property {self.name} is a cascade alias and should also set skip-builder.")
+
+            self.codegen_properties.cascade_alias = all_properties.all_by_name[self.codegen_properties.cascade_alias]
 
     def perform_fixups_for_logical_property_groups(self, all_properties):
         if self.codegen_properties.logical_property_group:
@@ -740,9 +715,8 @@ class StyleProperty:
             all_properties.logical_property_groups[group_name][logic][resolver] = self
 
     def perform_fixups(self, all_properties):
-        self.perform_fixups_for_synonyms(all_properties)
         self.perform_fixups_for_longhands(all_properties)
-        self.perform_fixups_for_related_properties(all_properties)
+        self.perform_fixups_for_cascade_alias_properties(all_properties)
         self.perform_fixups_for_logical_property_groups(all_properties)
 
     @property
@@ -789,7 +763,7 @@ class StyleProperty:
         if not self.codegen_properties.computable:
             return True
 
-        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical:
+        if self.codegen_properties.skip_builder and not self.codegen_properties.is_logical and not self.codegen_properties.cascade_alias:
             return True
 
         if self.codegen_properties.longhands is not None:
@@ -955,12 +929,12 @@ class StyleProperties:
         if not a_is_high_priority and b_is_high_priority:
             return 1
 
-        # Sort deferred longhands to the back, before shorthands.
-        a_is_deferred = a.codegen_properties.is_deferred
-        b_is_deferred = b.codegen_properties.is_deferred
-        if a_is_deferred and not b_is_deferred:
+        # Sort logical longhands to the back, before shorthands.
+        a_is_in_logical_property_group = a.codegen_properties.logical_property_group
+        b_is_in_logical_property_group = b.codegen_properties.logical_property_group
+        if a_is_in_logical_property_group and not b_is_in_logical_property_group:
             return 1
-        if not a_is_deferred and b_is_deferred:
+        if not a_is_in_logical_property_group and b_is_in_logical_property_group:
             return -1
 
         # Sort sunken names at the end of their priority bucket.
@@ -1024,7 +998,7 @@ class DescriptorCodeGenProperties:
         self.top_priority = None
         self.high_priority = None
         self.sink_priority = None
-        self.is_deferred = None
+        self.logical_property_group = None
 
     def __str__(self):
         return f"DescriptorCodeGenProperties {vars(self)}"
@@ -2840,10 +2814,10 @@ class GenerateCSSPropertyNames:
 
             self.generation_context.generate_property_id_switch_function(
                 to=writer,
-                signature="CSSPropertyID relatedProperty(CSSPropertyID id)",
-                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.related_property),
-                mapping=lambda p: f"return {p.codegen_properties.related_property.id};",
-                default="return CSSPropertyID::CSSPropertyInvalid;"
+                signature="CSSPropertyID cascadeAliasProperty(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.cascade_alias),
+                mapping=lambda p: f"return {p.codegen_properties.cascade_alias.id};",
+                default="return id;"
             )
 
             self.generation_context.generate_property_id_switch_function(
@@ -2961,8 +2935,8 @@ class GenerateCSSPropertyNames:
             last_high_priority_property = None
             first_low_priority_property = None
             last_low_priority_property = None
-            first_deferred_property = None
-            last_deferred_property = None
+            first_logical_group_property = None
+            last_logical_group_property = None
 
             for property in self.properties_and_descriptors.all_unique:
                 if property.codegen_properties.longhands:
@@ -2977,14 +2951,14 @@ class GenerateCSSPropertyNames:
                     if not first_high_priority_property:
                         first_high_priority_property = property
                     last_high_priority_property = property
-                elif not property.codegen_properties.is_deferred:
+                elif not property.codegen_properties.logical_property_group:
                     if not first_low_priority_property:
                         first_low_priority_property = property
                     last_low_priority_property = property
                 else:
-                    if not first_deferred_property:
-                        first_deferred_property = property
-                    last_deferred_property = property
+                    if not first_logical_group_property:
+                        first_logical_group_property = property
+                    last_logical_group_property = property
 
                 to.write(f"{property.id_without_scope} = {count},")
 
@@ -3005,8 +2979,8 @@ class GenerateCSSPropertyNames:
         to.write(f"constexpr auto lastHighPriorityProperty = {last_high_priority_property.id};")
         to.write(f"constexpr auto firstLowPriorityProperty = {first_low_priority_property.id};")
         to.write(f"constexpr auto lastLowPriorityProperty = {last_low_priority_property.id};")
-        to.write(f"constexpr auto firstDeferredProperty = {first_deferred_property.id};")
-        to.write(f"constexpr auto lastDeferredProperty = {last_deferred_property.id};")
+        to.write(f"constexpr auto firstLogicalGroupProperty = {first_logical_group_property.id};")
+        to.write(f"constexpr auto lastLogicalGroupProperty = {last_logical_group_property.id};")
         to.write(f"constexpr auto firstShorthandProperty = {first_shorthand_property.id};")
         to.write(f"constexpr auto lastShorthandProperty = {last_shorthand_property.id};")
         to.write(f"constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;")
@@ -3048,7 +3022,7 @@ class GenerateCSSPropertyNames:
             const AtomString& nameString(CSSPropertyID);
             String nameForIDL(CSSPropertyID);
 
-            CSSPropertyID relatedProperty(CSSPropertyID);
+            CSSPropertyID cascadeAliasProperty(CSSPropertyID);
 
             template<CSSPropertyID first, CSSPropertyID last> struct CSSPropertiesRange {
                 struct Iterator {
@@ -3062,7 +3036,7 @@ class GenerateCSSPropertyNames:
                 static constexpr uint16_t size() { return last - first + 1; }
             };
             using AllCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastShorthandProperty>;
-            using AllLonghandCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastDeferredProperty>;
+            using AllLonghandCSSPropertiesRange = CSSPropertiesRange<static_cast<CSSPropertyID>(firstCSSProperty), lastLogicalGroupProperty>;
             constexpr AllCSSPropertiesRange allCSSProperties() { return { }; }
             constexpr AllLonghandCSSPropertiesRange allLonghandCSSProperties() { return { }; }
 
@@ -3605,8 +3579,6 @@ class GenerateStyleBuilderGenerated:
                     continue
                 if property.codegen_properties.skip_builder:
                     continue
-                if property.codegen_properties.synonym:
-                    continue
 
                 if property.codegen_properties.is_logical:
                     raise Exception(f"Property '{property.name}' is logical but doesn't have skip-builder.")
@@ -3643,14 +3615,8 @@ class GenerateStyleBuilderGenerated:
                     with to.indent():
                         to.write(f"break;")
                     continue
-                
-                if property.codegen_properties.synonym:
-                    continue
 
                 to.write(f"case {property.id}:")
-
-                for synonymous_property in property.synonymous_properties:
-                    to.write(f"case {synonymous_property.id}:")
 
                 with to.indent():
                     if property.codegen_properties.longhands:

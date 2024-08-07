@@ -66,7 +66,6 @@
 #import "WKPrintingView.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
-#import "WKSafeBrowsingWarning.h"
 #import "WKTextAnimationManager.h"
 #import "WKTextInputWindowController.h"
 #import "WKTextPlaceholder.h"
@@ -83,6 +82,7 @@
 #import "_WKDragActionsInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
+#import "_WKWarningView.h"
 #import "_WKWebViewTextInputNotifications.h"
 #import <Carbon/Carbon.h>
 #import <WebCore/AXObjectCache.h>
@@ -1540,7 +1540,7 @@ void WebViewImpl::takeFocus(WebCore::FocusDirection direction)
         [webView.window selectKeyViewPrecedingView:webView];
 }
 
-void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void WebViewImpl::showWarningView(const BrowsingWarning& warning, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
@@ -1550,7 +1550,7 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
 
     m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.ShowedWarning"_s, "Safari"_s, showedWarningDictionary, WebCore::ShouldSample::No);
 
-    m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_warningView = adoptNS([[_WKWarningView alloc] initWithFrame:[m_view bounds] browsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         completionHandler(WTFMove(result));
         if (!weakThis)
             return;
@@ -1558,7 +1558,7 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
             [] (ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == ContinueUnsafeLoad::Yes; },
             [] (const URL&) { return true; }
         );
-        bool forMainFrameNavigation = [weakThis->m_safeBrowsingWarning forMainFrameNavigation];
+        bool forMainFrameNavigation = [weakThis->m_warningView forMainFrameNavigation];
 
         WebCore::DiagnosticLoggingClient::ValueDictionary dictionary;
         dictionary.set("source"_s, "service"_s);
@@ -1581,24 +1581,24 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
         dictionary.set("action"_s, "go back"_s);
         weakThis->m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.PerformedAction"_s, "Safari"_s, dictionary, WebCore::ShouldSample::No);
 
-        if (!navigatesFrame && weakThis->m_safeBrowsingWarning && !forMainFrameNavigation) {
+        if (!navigatesFrame && weakThis->m_warningView && !forMainFrameNavigation) {
             weakThis->m_page->goBack();
             return;
         }
-        [std::exchange(weakThis->m_safeBrowsingWarning, nullptr) removeFromSuperview];
+        [std::exchange(weakThis->m_warningView, nullptr) removeFromSuperview];
     }]);
-    [m_view addSubview:m_safeBrowsingWarning.get()];
+    [m_view addSubview:m_warningView.get()];
 }
 
-void WebViewImpl::clearSafeBrowsingWarning()
+void WebViewImpl::clearWarningView()
 {
-    [std::exchange(m_safeBrowsingWarning, nullptr) removeFromSuperview];
+    [std::exchange(m_warningView, nullptr) removeFromSuperview];
 }
 
-void WebViewImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+void WebViewImpl::clearWarningViewIfForMainFrameNavigation()
 {
-    if ([m_safeBrowsingWarning forMainFrameNavigation])
-        clearSafeBrowsingWarning();
+    if ([m_warningView forMainFrameNavigation])
+        clearWarningView();
 }
 
 bool WebViewImpl::isFocused() const
@@ -1676,7 +1676,7 @@ void WebViewImpl::renewGState()
 void WebViewImpl::setFrameSize(CGSize)
 {
     [m_layoutStrategy didChangeFrameSize];
-    [m_safeBrowsingWarning setFrame:[m_view bounds]];
+    [m_warningView setFrame:[m_view bounds]];
 }
 
 void WebViewImpl::disableFrameSizeUpdates()
@@ -3667,8 +3667,8 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
 
         id child = nil;
-        if (m_safeBrowsingWarning)
-            child = m_safeBrowsingWarning.get();
+        if (m_warningView)
+            child = m_warningView.get();
         else if (m_remoteAccessibilityChild)
             child = m_remoteAccessibilityChild.get();
 
@@ -4504,15 +4504,24 @@ void WebViewImpl::hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse res
     m_domPasteMenuDelegate = nil;
 }
 
-static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
 {
-    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
-    if (captureAtNominalResolution)
-        options |= kCGSWindowCaptureNominalResolution;
-    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+    // FIXME <https://webkit.org/b/277572>: CGSHWCaptureWindowList is currently bugged where
+    // the kCGSCaptureIgnoreGlobalClipShape option has no effect and the resulting screenshot
+    // still contains the window's rounded corners. There are WPT tests relying on comparing
+    // WebDriver's screenshots that cannot tolerate this inconsistency, especially due to
+    // CGSHWCaptureWindowList not always succeeding. So for WebDriver only, we bypass that bug
+    // and always use deprecated CGWindowListCreateImage instead.
 
-    if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
-        return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
+    if (forceSoftwareCapturing == ForceSoftwareCapturingViewportSnapshot::No) {
+        CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+        if (captureAtNominalResolution)
+            options |= kCGSWindowCaptureNominalResolution;
+        RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+
+        if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
+            return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
+    }
 
     // Fall back to the non-hardware capture path if we didn't get a snapshot
     // (which usually happens if the window is fully off-screen).
@@ -4526,20 +4535,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
 {
+    return takeViewSnapshot(ForceSoftwareCapturingViewportSnapshot::No);
+}
+
+RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot(ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
+{
     NSWindow *window = [m_view window];
 
     CGSWindowID windowID = (CGSWindowID)window.windowNumber;
     if (!windowID || !window.isVisible)
         return nullptr;
 
-    RetainPtr<CGImageRef> windowSnapshotImage = takeWindowSnapshot(windowID, false);
+    RetainPtr<CGImageRef> windowSnapshotImage = takeWindowSnapshot(windowID, false, forceSoftwareCapturing);
     if (!windowSnapshotImage)
         return nullptr;
 
     // Work around <rdar://problem/17084993>; re-request the snapshot at kCGWindowImageNominalResolution if it was captured at the wrong scale.
     CGFloat desiredSnapshotWidth = window.frame.size.width * window.screen.backingScaleFactor;
     if (CGImageGetWidth(windowSnapshotImage.get()) != desiredSnapshotWidth)
-        windowSnapshotImage = takeWindowSnapshot(windowID, true);
+        windowSnapshotImage = takeWindowSnapshot(windowID, true, forceSoftwareCapturing);
 
     if (!windowSnapshotImage)
         return nullptr;
@@ -5616,7 +5630,7 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event)
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event)
 {
-    if (m_safeBrowsingWarning)
+    if (m_warningView)
         return;
 
     nativeMouseEventHandler(event);
@@ -6206,10 +6220,16 @@ bool WebViewImpl::isInWindowFullscreenActive() const
     return false;
 }
 
-void WebViewImpl::toggleInWindowFullscreen()
+void WebViewImpl::enterInWindowFullscreen()
 {
     if (RefPtr interface = protectedPlaybackSessionInterface())
-        return interface->toggleInWindowFullscreen();
+        return interface->enterInWindowFullscreen();
+}
+
+void WebViewImpl::exitInWindowFullscreen()
+{
+    if (RefPtr interface = protectedPlaybackSessionInterface())
+        return interface->exitInWindowFullscreen();
 }
 
 void WebViewImpl::updateMediaPlaybackControlsManager()

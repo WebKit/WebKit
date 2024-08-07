@@ -2640,6 +2640,17 @@ bool DocumentLoader::fingerprintingProtectionsEnabled() const
     return m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
+void DocumentLoader::setHTTPSByDefaultMode(HTTPSByDefaultMode mode)
+{
+    if (mode == HTTPSByDefaultMode::Disabled) {
+        if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnly))
+            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeAndFailClosed;
+        else if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSFirst))
+            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeWithHTTPFallback;
+    } else
+        m_httpsByDefaultMode = mode;
+}
+
 Ref<CachedResourceLoader> DocumentLoader::protectedCachedResourceLoader() const
 {
     return m_cachedResourceLoader;

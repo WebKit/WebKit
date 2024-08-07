@@ -111,7 +111,6 @@ struct TZoneHeap : public TZoneHeapBase<LibPasBmallocHeapType> {
         return tzoneAllocate(provideHeap());
     }
 
-    \
     void* allocate(size_t differentSize)
     {
         return tzoneAllocate(provideHeap(differentSize));
@@ -137,6 +136,11 @@ struct CompactTZoneHeap : public TZoneHeapBase<LibPasBmallocHeapType> {
     void* allocate()
     {
         return tzoneAllocateCompact(provideHeap());
+    }
+
+    void* allocate(size_t differentSize)
+    {
+        return tzoneAllocateCompact(provideHeap(differentSize));
     }
 
     void* tryAllocate()

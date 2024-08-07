@@ -415,7 +415,7 @@ public:
     void installStatisticsDidScanDataRecordsCallback(JSContextRef, JSValueRef callback);
     void statisticsDidModifyDataRecordsCallback();
     void statisticsDidScanDataRecordsCallback();
-    bool statisticsNotifyObserver();
+    void statisticsNotifyObserver(JSContextRef, JSValueRef completionHandler);
     void statisticsProcessStatisticsAndDataRecords(JSContextRef, JSValueRef completionHandler);
     void statisticsUpdateCookieBlocking(JSContextRef, JSValueRef completionHandler);
     void setStatisticsDebugMode(JSContextRef, bool value, JSValueRef completionHandler);
@@ -562,6 +562,8 @@ public:
     void generateTestReport(JSContextRef, JSStringRef message, JSStringRef group);
 
     void getAndClearReportedWindowProxyAccessDomains(JSContextRef, JSValueRef);
+
+    void setTopContentInset(JSContextRef, double, JSValueRef);
 
 private:
     TestRunner();

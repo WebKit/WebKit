@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -362,6 +362,14 @@ void ContentFilter::deliverStoredResourceData()
         deliverResourceData(*buffer.buffer, buffer.encodedDataLength);
     m_buffers.clear();
 }
+
+#if HAVE(AUDIT_TOKEN)
+void ContentFilter::setHostProcessAuditToken(const std::optional<audit_token_t>& token)
+{
+    for (auto& contentFilter : m_contentFilters)
+        contentFilter->setHostProcessAuditToken(token);
+}
+#endif
 
 } // namespace WebCore
 

@@ -20,7 +20,7 @@
         });
     }
 
-    function runTest() {
+    async function runTest() {
         switch (document.location.hash) {
             case "":
                 if (window.testRunner && window.internals) {
@@ -40,7 +40,7 @@
                 document.body.appendChild(scriptElement);
                 break;
             case "#step2":
-                testRunner.statisticsNotifyObserver();
+                await testRunner.statisticsNotifyObserver();
                 break;
         }
     }

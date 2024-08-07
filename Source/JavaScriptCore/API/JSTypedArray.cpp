@@ -115,8 +115,9 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
+    constexpr JSTypedArrayType kJSTypedArrayTypeFloat16Array = static_cast<JSTypedArrayType>(kJSTypedArrayTypeBigUint64Array + 1);
     bool isResizableOrGrowableShared = buffer->isResizableOrGrowableShared();
-    switch (type) {
+    switch (static_cast<int>(type)) {
 #define JSC_TYPED_ARRAY_FACTORY(type) case kJSTypedArrayType##type##Array: { \
         return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared), WTFMove(buffer), offset, length.value()); \
     }
@@ -124,6 +125,7 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
 #undef JSC_TYPED_ARRAY_CHECK
     case kJSTypedArrayTypeArrayBuffer:
     case kJSTypedArrayTypeNone:
+    default:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return nullptr;

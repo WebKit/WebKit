@@ -55,17 +55,19 @@ enum class CoordinateAffinity : uint8_t {
 };
 
 class BasicShape : public RefCounted<BasicShape> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~BasicShape() = default;
 
-    enum class Type {
+    enum class Type : uint8_t {
         Polygon,
         Path,
         Circle,
         Ellipse,
         Inset,
         Rect,
-        Xywh
+        Xywh,
+        Shape
     };
 
     virtual Ref<BasicShape> clone() const = 0;
@@ -131,7 +133,9 @@ public:
     enum class Type : uint8_t {
         Value,
         ClosestSide,
-        FarthestSide
+        FarthestSide,
+        ClosestCorner,
+        FarthestCorner
     };
 
     BasicShapeRadius() = default;
@@ -195,11 +199,14 @@ public:
 
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
+
     const BasicShapeRadius& radius() const { return m_radius; }
-    float floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint) const;
+
+    float floatValueForRadiusInBox(FloatSize boxSize, FloatPoint center) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }
+
     void setRadius(BasicShapeRadius radius) { m_radius = WTFMove(radius); }
 
 private:
@@ -234,7 +241,8 @@ public:
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radiusX() const { return m_radiusX; }
     const BasicShapeRadius& radiusY() const { return m_radiusY; }
-    float floatValueForRadiusInBox(const BasicShapeRadius&, float center, float boxWidthOrHeight) const;
+
+    FloatSize floatSizeForRadiusInBox(FloatSize boxSize, FloatPoint center) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }
@@ -495,6 +503,7 @@ private:
     LengthSize m_bottomLeftRadius;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, CoordinateAffinity);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeRadius&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeCenterCoordinate&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShape&);

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -182,6 +183,8 @@ void DisplayLink::notifyObserversDisplayDidRefresh()
     ASSERT(!RunLoop::isMain());
 
     Locker locker { m_clientsLock };
+
+    tracePoint(DisplayLinkUpdate);
 
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
         std::optional<FramesPerSecond> observersMaxFramesPerSecond;

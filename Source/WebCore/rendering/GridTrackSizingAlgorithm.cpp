@@ -292,23 +292,23 @@ void GridTrackSizingAlgorithm::sizeTrackToFitSingleSpanMasonryGroup(const GridSp
     }
 }
 
-void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& span, RenderBox& gridItem, GridTrack& track)
+void GridTrackSizingAlgorithm::sizeTrackToFitNonSpanningItem(const GridSpan& span, RenderBox& gridItem, GridTrack& track, GridLayoutState& gridLayoutState)
 {
     unsigned trackPosition = span.startLine();
     const auto& trackSize = tracks(m_direction)[trackPosition].cachedTrackSize();
 
     if (trackSize.hasMinContentMinTrackBreadth()) {
-        track.setBaseSize(std::max(track.baseSize(), m_strategy->minContentForGridItem(gridItem)));
+        track.setBaseSize(std::max(track.baseSize(), m_strategy->minContentForGridItem(gridItem, gridLayoutState)));
     } else if (trackSize.hasMaxContentMinTrackBreadth()) {
-        track.setBaseSize(std::max(track.baseSize(), m_strategy->maxContentForGridItem(gridItem)));
+        track.setBaseSize(std::max(track.baseSize(), m_strategy->maxContentForGridItem(gridItem, gridLayoutState)));
     } else if (trackSize.hasAutoMinTrackBreadth()) {
-        track.setBaseSize(std::max(track.baseSize(), m_strategy->minSizeForGridItem(gridItem)));
+        track.setBaseSize(std::max(track.baseSize(), m_strategy->minSizeForGridItem(gridItem, gridLayoutState)));
     }
 
     if (trackSize.hasMinContentMaxTrackBreadth()) {
-        track.setGrowthLimit(std::max(track.growthLimit(), m_strategy->minContentForGridItem(gridItem)));
+        track.setGrowthLimit(std::max(track.growthLimit(), m_strategy->minContentForGridItem(gridItem, gridLayoutState)));
     } else if (trackSize.hasMaxContentOrAutoMaxTrackBreadth()) {
-        LayoutUnit growthLimit = m_strategy->maxContentForGridItem(gridItem);
+        LayoutUnit growthLimit = m_strategy->maxContentForGridItem(gridItem, gridLayoutState);
         if (trackSize.isFitContent())
             growthLimit = std::min(growthLimit, valueForLength(trackSize.fitContentTrackBreadth().length(), availableSpace().value_or(0)));
         track.setGrowthLimit(std::max(track.growthLimit(), growthLimit));
@@ -355,17 +355,17 @@ enum class TrackSizeRestriction : uint8_t {
     ForbidInfinity,
 };
 
-LayoutUnit GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, RenderBox& gridItem) const
+LayoutUnit GridTrackSizingAlgorithm::itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
-        return m_strategy->minSizeForGridItem(gridItem);
+        return m_strategy->minSizeForGridItem(gridItem, gridLayoutState);
     case TrackSizeComputationPhase::ResolveContentBasedMinimums:
     case TrackSizeComputationPhase::ResolveIntrinsicMaximums:
-        return m_strategy->minContentForGridItem(gridItem);
+        return m_strategy->minContentForGridItem(gridItem, gridLayoutState);
     case TrackSizeComputationPhase::ResolveMaxContentMinimums:
     case TrackSizeComputationPhase::ResolveMaxContentMaximums:
-        return m_strategy->maxContentForGridItem(gridItem);
+        return m_strategy->maxContentForGridItem(gridItem, gridLayoutState);
     case TrackSizeComputationPhase::MaximizeTracks:
         ASSERT_NOT_REACHED();
         return 0;
@@ -478,7 +478,7 @@ static void markAsInfinitelyGrowableForTrackSizeComputationPhase(TrackSizeComput
 }
 
 template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase>
-void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan)
+void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState& gridLayoutState)
 {
     Vector<GridTrack>& allTracks = tracks(m_direction);
     for (const auto& trackIndex : m_contentSizedTracksIndex) {
@@ -516,7 +516,7 @@ void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const Gri
 
         spanningTracksSize += m_renderGrid->guttersSize(m_direction, itemSpan.startLine(), itemSpan.integerSpan(), availableSpace());
 
-        LayoutUnit extraSpace = itemSizeForTrackSizeComputationPhase(phase, gridItemWithSpan.gridItem()) - spanningTracksSize;
+        LayoutUnit extraSpace = itemSizeForTrackSizeComputationPhase(phase, gridItemWithSpan.gridItem(), gridLayoutState) - spanningTracksSize;
         extraSpace = std::max<LayoutUnit>(extraSpace, 0);
         auto& tracksToGrowBeyondGrowthLimits = growBeyondGrowthLimitsTracks.isEmpty() ? filteredTracks : growBeyondGrowthLimitsTracks;
         distributeSpaceToTracks<variant, phase>(filteredTracks, &tracksToGrowBeyondGrowthLimits, extraSpace);
@@ -530,13 +530,13 @@ void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const Gri
 }
 
 template <TrackSizeComputationVariant variant>
-void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan)
+void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState& gridLayoutState)
 {
-    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveIntrinsicMinimums>(gridItemsWithSpan);
-    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveContentBasedMinimums>(gridItemsWithSpan);
-    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveMaxContentMinimums>(gridItemsWithSpan);
-    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveIntrinsicMaximums>(gridItemsWithSpan);
-    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveMaxContentMaximums>(gridItemsWithSpan);
+    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveIntrinsicMinimums>(gridItemsWithSpan, gridLayoutState);
+    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveContentBasedMinimums>(gridItemsWithSpan, gridLayoutState);
+    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveMaxContentMinimums>(gridItemsWithSpan, gridLayoutState);
+    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveIntrinsicMaximums>(gridItemsWithSpan, gridLayoutState);
+    increaseSizesToAccommodateSpanningItems<variant, TrackSizeComputationPhase::ResolveMaxContentMaximums>(gridItemsWithSpan, gridLayoutState);
 }
 
 template <TrackSizeComputationVariant variant>
@@ -852,7 +852,7 @@ void GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes()
 }
 
 // GridTrackSizingAlgorithmStrategy.
-LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox& gridItem) const
+LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemBlockDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForRows);
     // If |gridItem| has a relative logical height, we shouldn't let it override its intrinsic height, which is
@@ -866,12 +866,10 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemBlockDirection, std::nullopt);
         gridItem.setNeedsLayout(MarkOnlyThis);
 
-        if (auto* gridLayoutState = m_algorithm.m_gridLayoutState.get()) {
-            auto& itemsLayoutRequirements = gridLayoutState->itemsLayoutRequirements();
+        auto& itemsLayoutRequirements = gridLayoutState.itemsLayoutRequirements();
 
-            if (renderGrid()->canSetColumnAxisStretchRequirementForItem(gridItem))
-                itemsLayoutRequirements.add(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
-        }
+        if (renderGrid()->canSetColumnAxisStretchRequirementForItem(gridItem))
+            itemsLayoutRequirements.add(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
     }
 
     // We need to clear the stretched content size to properly compute logical height during layout.
@@ -882,7 +880,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
     return gridItem.logicalHeight() + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemBlockDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
 }
 
-LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForGridItem(RenderBox& gridItem) const
+LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemInlineDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForColumns);
     if (direction() == gridItemInlineDirection) {
@@ -904,10 +902,10 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForGridItem(RenderBox& gr
         if (shouldClearOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection))
             gridItem.setPreferredLogicalWidthsDirty(true);
     }
-    return logicalHeightForGridItem(gridItem);
+    return logicalHeightForGridItem(gridItem, gridLayoutState);
 }
 
-LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentForGridItem(RenderBox& gridItem) const
+LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemInlineDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForColumns);
     if (direction() == gridItemInlineDirection) {
@@ -922,10 +920,10 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentForGridItem(RenderBox& gr
 
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection))
         gridItem.setNeedsLayout(MarkOnlyThis);
-    return logicalHeightForGridItem(gridItem);
+    return logicalHeightForGridItem(gridItem, gridLayoutState);
 }
 
-LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForGridItem(RenderBox& gridItem) const
+LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemInlineDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForColumns);
     bool isRowAxis = direction() == gridItemInlineDirection;
@@ -933,14 +931,14 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForGridItem(RenderBox& gridI
         return { };
     const Length& gridItemSize = isRowAxis ? gridItem.style().logicalWidth() : gridItem.style().logicalHeight();
     if (!gridItemSize.isAuto() && !gridItemSize.isPercentOrCalculated())
-        return minContentForGridItem(gridItem);
+        return minContentForGridItem(gridItem, gridLayoutState);
 
     const Length& gridItemMinSize = isRowAxis ? gridItem.style().logicalMinWidth() : gridItem.style().logicalMinHeight();
     bool overflowIsVisible = isRowAxis ? gridItem.effectiveOverflowInlineDirection() == Overflow::Visible : gridItem.effectiveOverflowBlockDirection() == Overflow::Visible;
     LayoutUnit baselineShim = m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
 
     if (gridItemMinSize.isAuto() && overflowIsVisible) {
-        auto minSize = minContentForGridItem(gridItem);
+        auto minSize = minContentForGridItem(gridItem, gridLayoutState);
         const GridSpan& span = m_algorithm.m_renderGrid->gridSpanForGridItem(gridItem, direction());
 
         LayoutUnit maxBreadth;
@@ -1123,13 +1121,13 @@ public:
 private:
     void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const override;
     void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) override;
-    double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace) const override;
+    double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace, GridLayoutState&) const override;
     bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
     LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
     bool isComputingSizeContainment() const override { return renderGrid()->shouldApplySizeContainment(); }
     bool isComputingInlineSizeContainment() const override { return renderGrid()->shouldApplyInlineSizeContainment(); }
     bool isComputingSizeOrInlineSizeContainment() const override { return renderGrid()->shouldApplySizeOrInlineSizeContainment(); }
-    void accumulateFlexFraction(double& flexFraction, GridIterator&, GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet) const;
+    void accumulateFlexFraction(double& flexFraction, GridIterator&, GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet, GridLayoutState&) const;
 };
 
 void IndefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& gridItem, bool overrideSizeHasChanged) const
@@ -1153,14 +1151,14 @@ static inline double normalizedFlexFraction(const GridTrack& track)
     return track.baseSize() / std::max<double>(1, flexFactor);
 }
 
-void IndefiniteSizeStrategy::accumulateFlexFraction(double& flexFraction, GridIterator& iterator, GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet) const
+void IndefiniteSizeStrategy::accumulateFlexFraction(double& flexFraction, GridIterator& iterator, GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet, GridLayoutState& gridLayoutState) const
 {
     while (auto* gridItem = iterator.nextGridItem()) {
         if (CheckedPtr inner = dynamicDowncast<RenderGrid>(gridItem); inner && inner->isSubgridInParentDirection(iterator.direction())) {
             const RenderGrid& subgrid = *inner;
             GridSpan span = downcast<RenderGrid>(subgrid.parent())->gridSpanForGridItem(subgrid, iterator.direction());
             GridIterator subgridIterator = GridIterator::createForSubgrid(*inner, iterator, span);
-            accumulateFlexFraction(flexFraction, subgridIterator, outermostDirection, itemsSet);
+            accumulateFlexFraction(flexFraction, subgridIterator, outermostDirection, itemsSet, gridLayoutState);
             continue;
         }
         // Do not include already processed items.
@@ -1170,12 +1168,12 @@ void IndefiniteSizeStrategy::accumulateFlexFraction(double& flexFraction, GridIt
         GridSpan span = m_algorithm.renderGrid()->gridSpanForGridItem(*gridItem, outermostDirection);
 
         // Removing gutters from the max-content contribution of the item, so they are not taken into account in FindFrUnitSize().
-        LayoutUnit leftOverSpace = maxContentForGridItem(*gridItem) - renderGrid()->guttersSize(outermostDirection, span.startLine(), span.integerSpan(), availableSpace());
+        LayoutUnit leftOverSpace = maxContentForGridItem(*gridItem, gridLayoutState) - renderGrid()->guttersSize(outermostDirection, span.startLine(), span.integerSpan(), availableSpace());
         flexFraction = std::max(flexFraction, findFrUnitSize(span, leftOverSpace));
     }
 }
 
-double IndefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection direction, std::optional<LayoutUnit> freeSpace) const
+double IndefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection direction, std::optional<LayoutUnit> freeSpace, GridLayoutState& gridLayoutState) const
 {
     UNUSED_PARAM(freeSpace);
     auto allTracks = m_algorithm.tracks(direction);
@@ -1197,7 +1195,7 @@ double IndefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>& flexibleSi
     SingleThreadWeakHashSet<RenderBox> itemsSet;
     for (const auto& trackIndex : flexibleSizedTracksIndex) {
         GridIterator iterator(grid, direction, trackIndex);
-        accumulateFlexFraction(flexFraction, iterator, direction, itemsSet);
+        accumulateFlexFraction(flexFraction, iterator, direction, itemsSet, gridLayoutState);
     }
 
     return flexFraction;
@@ -1238,10 +1236,10 @@ public:
 private:
     void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const override;
     void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) override;
-    double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace) const override;
+    double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace, GridLayoutState&) const override;
     bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
     LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
-    LayoutUnit minContentForGridItem(RenderBox&) const override;
+    LayoutUnit minContentForGridItem(RenderBox&, GridLayoutState&) const override;
     LayoutUnit minLogicalSizeForGridItem(RenderBox&, const Length& gridItemMinSize, std::optional<LayoutUnit> availableSize) const override;
     bool isComputingSizeContainment() const override { return false; }
     bool isComputingInlineSizeContainment() const override { return false; }
@@ -1295,7 +1293,7 @@ void DefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& gridIt
     gridItem.layoutIfNeeded();
 }
 
-double DefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>&, GridTrackSizingDirection direction, std::optional<LayoutUnit> freeSpace) const
+double DefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>&, GridTrackSizingDirection direction, std::optional<LayoutUnit> freeSpace, GridLayoutState&) const
 {
     GridSpan allTracksSpan = GridSpan::translatedDefiniteGridSpan(0, m_algorithm.tracks(direction).size());
     ASSERT(freeSpace);
@@ -1307,12 +1305,12 @@ LayoutUnit DefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
     return m_algorithm.freeSpace(direction()).value();
 }
 
-LayoutUnit DefiniteSizeStrategy::minContentForGridItem(RenderBox& gridItem) const
+LayoutUnit DefiniteSizeStrategy::minContentForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemInlineDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForColumns);
     if (direction() == gridItemInlineDirection && gridItem.needsLayout() && shouldClearOverridingContainingBlockContentSizeForGridItem(gridItem, GridTrackSizingDirection::ForColumns))
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemInlineDirection, LayoutUnit());
-    return GridTrackSizingAlgorithmStrategy::minContentForGridItem(gridItem);
+    return GridTrackSizingAlgorithmStrategy::minContentForGridItem(gridItem, gridLayoutState);
 }
 
 bool DefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const
@@ -1443,7 +1441,7 @@ bool GridTrackSizingAlgorithm::shouldExcludeGridItemForMasonryTrackSizing(const 
     return shouldExcludeGridItemForMasonryTrackSizing;
 }
 
-void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track, unsigned trackIndex, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp)
+void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track, unsigned trackIndex, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp, GridLayoutState& gridLayoutState)
 {
     auto accumulateIntrinsicSizes = [&](RenderBox* gridItem) {
         bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
@@ -1457,7 +1455,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
 
             GridIterator subgridIterator = GridIterator::createForSubgrid(*inner, iterator, subgridSpan);
 
-            accumulateIntrinsicSizesForTrack(track, trackIndex, subgridIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, accumulatedMbpWithSubgrid);
+            accumulateIntrinsicSizesForTrack(track, trackIndex, subgridIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, accumulatedMbpWithSubgrid, gridLayoutState);
             return;
         }
 
@@ -1467,7 +1465,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         if (spanningItemCrossesFlexibleSizedTracks(span))
             itemsCrossingFlexibleTracks.append(GridItemWithSpan(*gridItem, span));
         else if (span.integerSpan() == 1)
-            sizeTrackToFitNonSpanningItem(span, *gridItem, track);
+            sizeTrackToFitNonSpanningItem(span, *gridItem, track, gridLayoutState);
         else
             itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, span));
     };
@@ -1476,7 +1474,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         accumulateIntrinsicSizes(gridItem.get());
 }
 
-void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack& track, unsigned trackIndex, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, MasonryIndefiniteItems& masonryIndefiniteItems, LayoutUnit currentAccumulatedMbp)
+void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack& track, unsigned trackIndex, GridIterator& iterator, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, MasonryIndefiniteItems& masonryIndefiniteItems, LayoutUnit currentAccumulatedMbp, GridLayoutState& gridLayoutState)
 {
     auto accumulateIntrinsicSizes = [&](RenderBox* gridItem) {
         bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
@@ -1524,7 +1522,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack
                 }
             }
 
-            accumulateIntrinsicSizesForTrackMasonry(track, trackIndex, subgridIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, subgridMasonryIndefiniteItems, accumulatedMbpWithSubgrid);
+            accumulateIntrinsicSizesForTrackMasonry(track, trackIndex, subgridIterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, subgridMasonryIndefiniteItems, accumulatedMbpWithSubgrid, gridLayoutState);
             return;
         }
 
@@ -1534,7 +1532,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack
         if (spanningItemCrossesFlexibleSizedTracks(span))
             itemsCrossingFlexibleTracks.append(GridItemWithSpan(*gridItem, span));
         else if (span.integerSpan() == 1)
-            sizeTrackToFitNonSpanningItem(span, *gridItem, track);
+            sizeTrackToFitNonSpanningItem(span, *gridItem, track, gridLayoutState);
         else
             itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, span));
     };
@@ -1562,7 +1560,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrackMasonry(GridTrack
 }
 
 
-void GridTrackSizingAlgorithm::computeIndefiniteItemsForMasonry(MasonryIndefiniteItems& masonryIndefiniteItems) const
+void GridTrackSizingAlgorithm::computeIndefiniteItemsForMasonry(MasonryIndefiniteItems& masonryIndefiniteItems, GridLayoutState& gridLayoutState) const
 {
     for (auto trackIndex : m_contentSizedTracksIndex) {
         GridIterator iterator(m_grid, m_direction, trackIndex);
@@ -1572,9 +1570,9 @@ void GridTrackSizingAlgorithm::computeIndefiniteItemsForMasonry(MasonryIndefinit
                 bool isSubgrid = gridItem->isRenderGrid() && downcast<RenderGrid>(gridItem.get())->isSubgridInParentDirection(iterator.direction());
 
                 if (spanLength == 1 && !isSubgrid) {
-                    auto minContentForGridItem = m_strategy->minContentForGridItem(*gridItem);
-                    auto maxContentForGridItem = m_strategy->maxContentForGridItem(*gridItem);
-                    auto minSizeForGridItem = m_strategy->minSizeForGridItem(*gridItem);
+                    auto minContentForGridItem = m_strategy->minContentForGridItem(*gridItem, gridLayoutState);
+                    auto maxContentForGridItem = m_strategy->maxContentForGridItem(*gridItem, gridLayoutState);
+                    auto minSizeForGridItem = m_strategy->minSizeForGridItem(*gridItem, gridLayoutState);
 
                     masonryIndefiniteItems.largestMinContentSizeForSingleTrackItems = std::max(masonryIndefiniteItems.largestMinContentSizeForSingleTrackItems, minContentForGridItem);
                     masonryIndefiniteItems.largestMaxContentSizeForSingleTrackItems = std::max(masonryIndefiniteItems.largestMaxContentSizeForSingleTrackItems, maxContentForGridItem);
@@ -1598,7 +1596,7 @@ void GridTrackSizingAlgorithm::handleInfinityGrowthLimit()
     }
 }
 
-void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes()
+void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes(GridLayoutState& gridLayoutState)
 {
     if (m_strategy->isComputingSizeContainment()) {
         handleInfinityGrowthLimit();
@@ -1615,7 +1613,7 @@ void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes()
             GridIterator iterator(m_grid, m_direction, trackIndex);
             GridTrack& track = allTracks[trackIndex];
 
-            accumulateIntrinsicSizesForTrack(track, trackIndex, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, 0_lu);
+            accumulateIntrinsicSizesForTrack(track, trackIndex, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, 0_lu, gridLayoutState);
         }
         std::sort(itemsSortedByIncreasingSpan.begin(), itemsSortedByIncreasingSpan.end());
     }
@@ -1624,15 +1622,15 @@ void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes()
     auto end = itemsSortedByIncreasingSpan.end();
     while (it != end) {
         GridItemsSpanGroupRange spanGroupRange = { it, std::upper_bound(it, end, *it) };
-        increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::NotCrossingFlexibleTracks>(spanGroupRange);
+        increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::NotCrossingFlexibleTracks>(spanGroupRange, gridLayoutState);
         it = spanGroupRange.rangeEnd;
     }
     GridItemsSpanGroupRange tracksGroupRange = { itemsCrossingFlexibleTracks.begin(), itemsCrossingFlexibleTracks.end() };
-    increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::CrossingFlexibleTracks>(tracksGroupRange);
+    increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::CrossingFlexibleTracks>(tracksGroupRange, gridLayoutState);
     handleInfinityGrowthLimit();
 }
 
-void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizesMasonry()
+void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizesMasonry(GridLayoutState& gridLayoutState)
 {
     if (m_strategy->isComputingSizeContainment()) {
         handleInfinityGrowthLimit();
@@ -1646,13 +1644,13 @@ void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizesMasonry()
     MasonryIndefiniteItems masonryIndefiniteItems;
 
     if (m_grid.hasGridItems()) {
-        computeIndefiniteItemsForMasonry(masonryIndefiniteItems);
+        computeIndefiniteItemsForMasonry(masonryIndefiniteItems, gridLayoutState);
 
         for (auto trackIndex : m_contentSizedTracksIndex) {
             GridIterator iterator(m_grid, m_direction, trackIndex);
             GridTrack& track = allTracks[trackIndex];
 
-            accumulateIntrinsicSizesForTrackMasonry(track, trackIndex, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, masonryIndefiniteItems, 0_lu);
+            accumulateIntrinsicSizesForTrackMasonry(track, trackIndex, iterator, itemsSortedByIncreasingSpan, itemsCrossingFlexibleTracks, itemsSet, masonryIndefiniteItems, 0_lu, gridLayoutState);
         }
         std::sort(itemsSortedByIncreasingSpan.begin(), itemsSortedByIncreasingSpan.end());
     }
@@ -1661,20 +1659,20 @@ void GridTrackSizingAlgorithm::resolveIntrinsicTrackSizesMasonry()
     auto end = itemsSortedByIncreasingSpan.end();
     while (it != end) {
         GridItemsSpanGroupRange spanGroupRange = { it, std::upper_bound(it, end, *it) };
-        increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::NotCrossingFlexibleTracks>(spanGroupRange);
+        increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::NotCrossingFlexibleTracks>(spanGroupRange, gridLayoutState);
         it = spanGroupRange.rangeEnd;
     }
     GridItemsSpanGroupRange tracksGroupRange = { itemsCrossingFlexibleTracks.begin(), itemsCrossingFlexibleTracks.end() };
-    increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::CrossingFlexibleTracks>(tracksGroupRange);
+    increaseSizesToAccommodateSpanningItems<TrackSizeComputationVariant::CrossingFlexibleTracks>(tracksGroupRange, gridLayoutState);
     handleInfinityGrowthLimit();
 }
 
-void GridTrackSizingAlgorithm::stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace)
+void GridTrackSizingAlgorithm::stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace, GridLayoutState& gridLayoutState)
 {
     if (m_flexibleSizedTracksIndex.isEmpty())
         return;
 
-    double flexFraction = m_strategy->findUsedFlexFraction(m_flexibleSizedTracksIndex, m_direction, freeSpace);
+    double flexFraction = m_strategy->findUsedFlexFraction(m_flexibleSizedTracksIndex, m_direction, freeSpace, gridLayoutState);
 
     LayoutUnit totalGrowth;
     Vector<LayoutUnit> increments;
@@ -1755,13 +1753,11 @@ bool GridTrackSizingAlgorithm::isValidTransition() const
 
 // GridTrackSizingAlgorithm API.
 
-void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState& gridLayoutState)
+void GridTrackSizingAlgorithm::setup(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace)
 {
     ASSERT(m_needsSetup);
     m_direction = direction;
     setAvailableSpace(direction, availableSpace ? std::max(0_lu, *availableSpace) : availableSpace);
-
-    m_gridLayoutState = &gridLayoutState;
 
     m_sizingOperation = sizingOperation;
     switch (m_sizingOperation) {
@@ -1877,9 +1873,10 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     return true;
 }
 
-void GridTrackSizingAlgorithm::run()
+void GridTrackSizingAlgorithm::run(GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace, GridLayoutState& gridLayoutState)
 {
-    ASSERT(wasSetup());
+    setup(direction, numTracks, sizingOperation, availableSpace);
+
     StateMachine stateMachine(*this);
 
     if (m_renderGrid->isMasonry(m_direction))
@@ -1894,7 +1891,7 @@ void GridTrackSizingAlgorithm::run()
 
     // Step 2.
     if (!m_contentSizedTracksIndex.isEmpty())
-        (!m_renderGrid->isMasonry()) ? resolveIntrinsicTrackSizes() : resolveIntrinsicTrackSizesMasonry();
+        (!m_renderGrid->isMasonry()) ? resolveIntrinsicTrackSizes(gridLayoutState) : resolveIntrinsicTrackSizesMasonry(gridLayoutState);
 
     // This is not exactly a step of the track sizing algorithm, but we use the track sizes computed
     // up to this moment (before maximization) to calculate the grid container intrinsic sizes.
@@ -1911,7 +1908,7 @@ void GridTrackSizingAlgorithm::run()
     m_strategy->maximizeTracks(tracks(m_direction), m_direction == GridTrackSizingDirection::ForColumns ? m_freeSpaceColumns : m_freeSpaceRows);
 
     // Step 4.
-    stretchFlexibleTracks(initialFreeSpace);
+    stretchFlexibleTracks(initialFreeSpace, gridLayoutState);
 
     // Step 5.
     stretchAutoTracks();

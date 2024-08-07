@@ -890,6 +890,8 @@ public:
 
     PartialResult WARN_UNUSED_RETURN setLocal(uint32_t localIndex, Value value);
 
+    PartialResult WARN_UNUSED_RETURN teeLocal(uint32_t localIndex, Value, Value& result);
+
     // Globals
 
     Value topValue(TypeKind type);

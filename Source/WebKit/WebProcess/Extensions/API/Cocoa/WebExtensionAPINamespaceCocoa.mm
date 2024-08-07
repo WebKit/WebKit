@@ -33,8 +33,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebExtensionPermission.h"
 #import "WebExtensionControllerProxy.h"
-#import <WebKit/_WKWebExtensionPermission.h>
 
 namespace WebKit {
 

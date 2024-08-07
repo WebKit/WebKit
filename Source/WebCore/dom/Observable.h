@@ -60,6 +60,8 @@ public:
 
     Ref<Observable> take(ScriptExecutionContext&, uint64_t);
 
+    Ref<Observable> drop(ScriptExecutionContext&, uint64_t);
+
 private:
     Ref<SubscriberCallback> m_subscriberCallback;
 };

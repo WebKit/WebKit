@@ -615,8 +615,6 @@ public:
     void setHeaderHeight(float);
     void setFooterHeight(float);
 
-    void setTopContentInset(float);
-
 #if ENABLE(FULLSCREEN_API)
     void webkitWillEnterFullScreenForElement(Element&);
     void webkitDidEnterFullScreenForElement(Element&);

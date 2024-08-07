@@ -1,0 +1,17 @@
+
+PASS Test setup
+PASS size: 640px 480px
+PASS size: 8.5in 11in
+PASS size: 3in 10in
+PASS size: auto
+PASS size: a5
+PASS size: a4
+PASS size: a3
+PASS size: b5
+PASS size: b4
+PASS size: jis-b5
+PASS size: jis-b4
+PASS size: landscape
+FAIL size: letter assert_equals: for rule 12 expected "letter;" but got "letter portrait;"
+PASS size: legal landscape
+

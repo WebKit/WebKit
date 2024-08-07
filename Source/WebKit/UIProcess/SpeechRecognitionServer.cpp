@@ -54,7 +54,7 @@ SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, Speec
 
 const SharedPreferencesForWebProcess& SpeechRecognitionServer::sharedPreferencesForWebProcess() const
 {
-    return *m_process->sharedPreferencesForWebProcess();
+    return m_process->sharedPreferencesForWebProcess();
 }
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)

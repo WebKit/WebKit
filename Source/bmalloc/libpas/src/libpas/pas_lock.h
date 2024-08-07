@@ -118,14 +118,32 @@ PAS_END_EXTERN_C;
 #elif PAS_OS(DARWIN) /* !PAS_USE_SPINLOCKS */
 
 #if defined(__has_include) && __has_include(<os/lock_private.h>) && (defined(LIBPAS) || defined(PAS_BMALLOC)) && (!defined(OS_UNFAIR_LOCK_INLINE) || OS_UNFAIR_LOCK_INLINE)
+#define PAS_USE_ULOCK_SPI 1
+#define PAS_USE_ULOCK_FLAGS_API 0
 #ifndef OS_UNFAIR_LOCK_INLINE
 #define OS_UNFAIR_LOCK_INLINE 1
 #endif
 #include <os/lock_private.h>
 #else
+#define PAS_USE_ULOCK_SPI 0
 #include <os/lock.h>
 
-#define os_unfair_lock_lock_inline os_unfair_lock_lock
+#define OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION 0x00010000
+#define OS_UNFAIR_LOCK_ADAPTIVE_SPIN 0x00040000
+
+#if (PAS_PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000) \
+    || (PAS_PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PAS_PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PAS_PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PAS_PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 110000) \
+    || (PAS_PLATFORM(VISION) && __VISION_OS_VERSION_MAX_ALLOWED >= 20000)
+/* After this version, OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION etc. are public API */
+#define PAS_USE_ULOCK_FLAGS_API 1
+#else
+#define PAS_USE_ULOCK_FLAGS_API 0
+#endif
+
+#define os_unfair_lock_lock_with_options_inline os_unfair_lock_lock_with_options
 #define os_unfair_lock_trylock_inline os_unfair_lock_trylock
 #define os_unfair_lock_unlock_inline os_unfair_lock_unlock
 #endif
@@ -156,7 +174,15 @@ static inline void pas_lock_lock(pas_lock* lock)
     if (PAS_LOCK_VERBOSE)
         pas_log("Thread %p Locking lock %p\n", pthread_self(), lock);
     pas_race_test_will_lock(lock);
-    os_unfair_lock_lock_inline(&lock->lock);
+#if PAS_USE_ULOCK_SPI
+    const os_unfair_lock_options_t options = (os_unfair_lock_options_t)(OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION | OS_UNFAIR_LOCK_ADAPTIVE_SPIN);
+    os_unfair_lock_lock_with_options_inline(&lock->lock, options);
+#elif PAS_USE_ULOCK_FLAGS_API
+    const os_unfair_lock_flags_t options = (os_unfair_lock_flags_t)(OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION | OS_UNFAIR_LOCK_ADAPTIVE_SPIN);
+    os_unfair_lock_lock_with_flags(&lock->lock, options);
+#else
+    os_unfair_lock_lock(&lock->lock);
+#endif
     pas_race_test_did_lock(lock);
 }
 

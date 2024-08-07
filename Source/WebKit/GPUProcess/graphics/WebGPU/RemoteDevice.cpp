@@ -205,6 +205,22 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     auto remoteExternalTexture = RemoteExternalTexture::create(*externalTexture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteExternalTexture);
 }
+
+void RemoteDevice::updateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
+{
+    auto* externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier);
+    if (!externalTexture)
+        return;
+
+    externalTexture->destroy();
+    if (auto connection = m_gpuConnectionToWebProcess.get()) {
+        connection->performWithMediaPlayerOnMainThread(mediaPlayerIdentifier, [&] (auto& player) mutable {
+            auto videoFrame = player.videoFrameForCurrentTime();
+            RetainPtr<CVPixelBufferRef> pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+            externalTexture->updateExternalTexture(pixelBuffer.get());
+        });
+    }
+}
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
 void RemoteDevice::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor, WebGPUIdentifier identifier)

@@ -1,0 +1,4 @@
+SS
+
+PASS Selection.toString() for 'ß' with text-transform: uppercase
+

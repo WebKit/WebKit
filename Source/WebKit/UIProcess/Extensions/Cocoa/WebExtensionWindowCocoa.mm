@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,16 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WKWebExtensionTab.h"
+#import "WKWebExtensionWindow.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
-#import "_WKWebExtensionTab.h"
-#import "_WKWebExtensionWindow.h"
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
-WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, _WKWebExtensionWindow* delegate)
+WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, WKWebExtensionWindow* delegate)
     : m_extensionContext(context)
     , m_delegate(delegate)
     , m_respondsToTabs([delegate respondsToSelector:@selector(tabsForWebExtensionContext:)])
@@ -211,25 +211,25 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab(SkipValidation skipValidat
     return result;
 }
 
-_WKWebExtensionWindowType toAPI(WebExtensionWindow::Type type)
+WKWebExtensionWindowType toAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
-        return _WKWebExtensionWindowTypeNormal;
+        return WKWebExtensionWindowTypeNormal;
     case WebExtensionWindow::Type::Popup:
-        return _WKWebExtensionWindowTypePopup;
+        return WKWebExtensionWindowTypePopup;
     }
 
     ASSERT_NOT_REACHED();
-    return _WKWebExtensionWindowTypeNormal;
+    return WKWebExtensionWindowTypeNormal;
 }
 
-static inline WebExtensionWindow::Type toImpl(_WKWebExtensionWindowType type)
+static inline WebExtensionWindow::Type toImpl(WKWebExtensionWindowType type)
 {
     switch (type) {
-    case _WKWebExtensionWindowTypeNormal:
+    case WKWebExtensionWindowTypeNormal:
         return WebExtensionWindow::Type::Normal;
-    case _WKWebExtensionWindowTypePopup:
+    case WKWebExtensionWindowTypePopup:
         return WebExtensionWindow::Type::Popup;
     }
 
@@ -245,16 +245,16 @@ WebExtensionWindow::Type WebExtensionWindow::type() const
     return toImpl([m_delegate windowTypeForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-static inline WebExtensionWindow::State toImpl(_WKWebExtensionWindowState state)
+static inline WebExtensionWindow::State toImpl(WKWebExtensionWindowState state)
 {
     switch (state) {
-    case _WKWebExtensionWindowStateNormal:
+    case WKWebExtensionWindowStateNormal:
         return WebExtensionWindow::State::Normal;
-    case _WKWebExtensionWindowStateMinimized:
+    case WKWebExtensionWindowStateMinimized:
         return WebExtensionWindow::State::Minimized;
-    case _WKWebExtensionWindowStateMaximized:
+    case WKWebExtensionWindowStateMaximized:
         return WebExtensionWindow::State::Maximized;
-    case _WKWebExtensionWindowStateFullscreen:
+    case WKWebExtensionWindowStateFullscreen:
         return WebExtensionWindow::State::Fullscreen;
     }
 
@@ -270,21 +270,21 @@ WebExtensionWindow::State WebExtensionWindow::state() const
     return toImpl([m_delegate windowStateForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-_WKWebExtensionWindowState toAPI(WebExtensionWindow::State state)
+WKWebExtensionWindowState toAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:
-        return _WKWebExtensionWindowStateNormal;
+        return WKWebExtensionWindowStateNormal;
     case WebExtensionWindow::State::Minimized:
-        return _WKWebExtensionWindowStateMinimized;
+        return WKWebExtensionWindowStateMinimized;
     case WebExtensionWindow::State::Maximized:
-        return _WKWebExtensionWindowStateMaximized;
+        return WKWebExtensionWindowStateMaximized;
     case WebExtensionWindow::State::Fullscreen:
-        return _WKWebExtensionWindowStateFullscreen;
+        return WKWebExtensionWindowStateFullscreen;
     }
 
     ASSERT_NOT_REACHED();
-    return _WKWebExtensionWindowStateNormal;
+    return WKWebExtensionWindowStateNormal;
 }
 
 void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

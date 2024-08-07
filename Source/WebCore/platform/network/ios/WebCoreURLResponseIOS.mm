@@ -40,7 +40,7 @@ namespace WebCore {
 
 static inline bool shouldPreferTextPlainMIMEType(const String& mimeType, const String& proposedMIMEType)
 {
-    return ("text/plain"_s == mimeType) && ((proposedMIMEType == "text/xml"_s) || (proposedMIMEType == "application/xml"_s) || (proposedMIMEType == "image/svg+xml"_s));
+    return ("text/plain"_s == mimeType) && ((proposedMIMEType == "text/xml"_s) || (proposedMIMEType == "application/xhtml+xml"_s) || (proposedMIMEType == "application/xml"_s) || (proposedMIMEType == "image/svg+xml"_s));
 }
 
 void adjustMIMETypeIfNecessary(CFURLResponseRef response, IsMainResourceLoad isMainResourceLoad, IsNoSniffSet isNoSniffSet)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,11 +111,11 @@ TEST(WKWebExtensionAPIExtension, GetURL)
     ]);
 
     auto *manifest = @{ @"manifest_version": @2, @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -198,10 +198,10 @@ TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromPopup)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         // Do nothing so the popup web view will stay loaded.
     };
 
@@ -353,7 +353,7 @@ TEST(WKWebExtensionAPIExtension, GetViewsForMultipleTabs)
         @"test.js": testScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -392,10 +392,10 @@ TEST(WKWebExtensionAPIExtension, GetViewsForPopup)
         @"popup.js": popupScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         // Do nothing so the popup web view will stay loaded.
     };
 
@@ -432,11 +432,11 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContext)
         @"  browser.test.yield('Content Script is Not Incognito')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     manager.get().context.hasAccessInPrivateBrowsing = YES;
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
@@ -474,11 +474,11 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContextWithoutPrivateAccess)
         @"  browser.test.yield('Content Script is Not Incognito')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *urlRequest = server.requestWithLocalhost();
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -506,7 +506,7 @@ TEST(WKWebExtensionAPIExtension, IsAllowedIncognitoAccess)
         @"browser.test.yield(allowed ? 'Allowed Incognito Access' : 'Not Allowed Incognito Access')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     manager.get().context.hasAccessInPrivateBrowsing = YES;
@@ -523,7 +523,7 @@ TEST(WKWebExtensionAPIExtension, IsAllowedIncognitoAccessWithoutPrivateAccess)
         @"browser.test.yield(allowed ? 'Allowed Incognito Access' : 'Not Allowed Incognito Access')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager loadAndRun];
@@ -538,7 +538,7 @@ TEST(WKWebExtensionAPIExtension, IsAllowedFileSchemeAccess)
         @"browser.test.yield(allowed ? 'Allowed File Access' : 'Not Allowed File Access')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager loadAndRun];

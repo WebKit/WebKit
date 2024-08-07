@@ -2802,7 +2802,7 @@ public:
         return isBinaryUseKind(useKind, useKind);
     }
 
-    bool isReflexiveBinaryUseKind(UseKind left, UseKind right)
+    bool isSymmetricBinaryUseKind(UseKind left, UseKind right)
     {
         return isBinaryUseKind(left, right) || isBinaryUseKind(right, left);
     }
@@ -3084,6 +3084,11 @@ public:
         return isUint32ArraySpeculation(prediction());
     }
     
+    bool shouldSpeculateFloat16Array()
+    {
+        return isFloat16ArraySpeculation(prediction());
+    }
+
     bool shouldSpeculateFloat32Array()
     {
         return isFloat32ArraySpeculation(prediction());

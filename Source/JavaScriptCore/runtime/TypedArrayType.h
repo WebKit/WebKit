@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSType.h"
+#include <wtf/Float16.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -41,6 +42,7 @@ struct ClassInfo;
     macro(Uint16) \
     macro(Int32) \
     macro(Uint32) \
+    macro(Float16) \
     macro(Float32) \
     macro(Float64) \
     macro(BigInt64) \
@@ -99,6 +101,8 @@ inline constexpr TypedArrayType typedArrayType(JSType type)
         return TypeInt32;
     case Uint32ArrayType:
         return TypeUint32;
+    case Float16ArrayType:
+        return TypeFloat16;
     case Float32ArrayType:
         return TypeFloat32;
     case Float64ArrayType:
@@ -153,6 +157,7 @@ inline constexpr unsigned logElementSize(TypedArrayType type)
         return 0;
     case TypeInt16:
     case TypeUint16:
+    case TypeFloat16:
         return 1;
     case TypeInt32:
     case TypeUint32:
@@ -219,6 +224,7 @@ inline bool isInt(TypedArrayType type)
 inline bool isFloat(TypedArrayType type)
 {
     switch (type) {
+    case TypeFloat16:
     case TypeFloat32:
     case TypeFloat64:
         return true;
@@ -244,6 +250,7 @@ inline bool isSigned(TypedArrayType type)
     case TypeInt8:
     case TypeInt16:
     case TypeInt32:
+    case TypeFloat16:
     case TypeFloat32:
     case TypeFloat64:
     case TypeBigInt64:
@@ -270,6 +277,7 @@ inline constexpr TypedArrayContentType contentType(JSType type)
     case Uint8ArrayType:
     case Uint16ArrayType:
     case Uint32ArrayType:
+    case Float16ArrayType:
     case Float32ArrayType:
     case Float64ArrayType:
     case Uint8ClampedArrayType:
@@ -291,6 +299,7 @@ inline constexpr TypedArrayContentType contentType(TypedArrayType type)
     case TypeUint8:
     case TypeUint16:
     case TypeUint32:
+    case TypeFloat16:
     case TypeFloat32:
     case TypeFloat64:
     case TypeUint8Clamped:
@@ -313,6 +322,7 @@ inline constexpr bool isSomeUint8(TypedArrayType type)
     case TypeInt32:
     case TypeUint16:
     case TypeUint32:
+    case TypeFloat16:
     case TypeFloat32:
     case TypeFloat64:
     case TypeBigInt64:

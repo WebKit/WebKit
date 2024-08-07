@@ -3,10 +3,10 @@
         testRunner.dumpAsText(false);
         testRunner.waitUntilDone();
     }
-    function testDone()
+    async function testDone()
     {
         if (window.eventSender) {
-            eventSender.mouseDown();
+            await eventSender.asyncMouseDown();
         }
         if (window.testRunner) {
             testRunner.notifyDone();

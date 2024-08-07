@@ -88,11 +88,8 @@ class Git(SCM):
 
     @classmethod
     def clone(cls, url, directory, executive=None):
-        try:
-            executive = executive or Executive()
-            return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], ignore_errors=True)
-        except OSError:
-            return False
+        executive = executive or Executive()
+        return executive.run_command([cls.executable_name, 'clone', '-v', url, directory])
 
     def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root

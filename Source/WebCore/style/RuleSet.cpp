@@ -33,6 +33,7 @@
 #include "CSSKeyframesRule.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSViewTransitionRule.h"
 #include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
 #include "HTMLNames.h"
@@ -343,6 +344,16 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 void RuleSet::addPageRule(StyleRulePage& rule)
 {
     m_pageRules.append(&rule);
+}
+
+void RuleSet::setViewTransitionRule(StyleRuleViewTransition& rule)
+{
+    m_viewTransitionRule = &rule;
+}
+
+RefPtr<StyleRuleViewTransition> RuleSet::viewTransitionRule() const
+{
+    return m_viewTransitionRule;
 }
 
 template<typename Function>

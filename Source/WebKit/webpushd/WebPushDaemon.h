@@ -99,9 +99,10 @@ public:
 
     void getPushPermissionState(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
-
-    void enableMockUserNotificationCenterForTesting(PushClientConnection&);
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+    void setAppBadge(PushClientConnection&, WebCore::SecurityOriginData&&, std::optional<uint64_t>);
+    void getAppBadgeForTesting(PushClientConnection&, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
 private:
     WebPushDaemon();

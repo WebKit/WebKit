@@ -278,6 +278,56 @@ RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect& box, const Float
     return RectEdges<double>(top, right, bottom, left);
 }
 
+float distanceToClosestSide(FloatPoint p, FloatSize size)
+{
+    float widthDelta = std::abs(size.width() - p.x());
+    float heightDelta = std::abs(size.height() - p.y());
+
+    return min4(std::abs(p.x()), widthDelta, std::abs(p.y()), heightDelta);
+}
+
+float distanceToFarthestSide(FloatPoint p, FloatSize size)
+{
+    float widthDelta = std::abs(size.width() - p.x());
+    float heightDelta = std::abs(size.height() - p.y());
+
+    return max4(std::abs(p.x()), widthDelta, std::abs(p.y()), heightDelta);
+}
+
+float distanceToClosestCorner(FloatPoint p, FloatSize size)
+{
+    FloatPoint topLeft;
+    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+
+    FloatPoint topRight(size.width(), 0);
+    float topRightDistance = FloatSize(p - topRight).diagonalLength();
+
+    FloatPoint bottomLeft(0, size.height());
+    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+
+    FloatPoint bottomRight(size.width(), size.height());
+    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+
+    return min4(topLeftDistance, topRightDistance, bottomLeftDistance, bottomRightDistance);
+}
+
+float distanceToFarthestCorner(FloatPoint p, FloatSize size)
+{
+    FloatPoint topLeft;
+    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+
+    FloatPoint topRight(size.width(), 0);
+    float topRightDistance = FloatSize(p - topRight).diagonalLength();
+
+    FloatPoint bottomLeft(0, size.height());
+    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+
+    FloatPoint bottomRight(size.width(), size.height());
+    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+
+    return max4(topLeftDistance, topRightDistance, bottomLeftDistance, bottomRightDistance);
+}
+
 std::array<FloatPoint, 4> verticesForBox(const FloatRect& box, const FloatPoint position)
 {
     return { FloatPoint(-position.x(), -position.y()),

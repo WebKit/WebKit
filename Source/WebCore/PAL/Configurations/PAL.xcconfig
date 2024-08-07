@@ -24,22 +24,11 @@
 #include "../../Configurations/FeatureDefines.xcconfig"
 #include "../../../../Configurations/Version.xcconfig"
 
-// FIXME: remove the interop setting here when rdar://124492036 is resolved.
-WK_HAVE_SWIFT_CPP_INTEROP = HAVE_SWIFT_CPP_INTEROP=0;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx15*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14*] = ;
+WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx13*] = HAVE_SWIFT_CPP_INTEROP=0;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14.0*] = HAVE_SWIFT_CPP_INTEROP=0;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14.1*] = HAVE_SWIFT_CPP_INTEROP=0;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14.2*] = HAVE_SWIFT_CPP_INTEROP=0;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14.3*] = HAVE_SWIFT_CPP_INTEROP=0;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=iphoneos17*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=iphonesimulator17*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=appletvos17*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=appletvsimulator17*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=watchos10*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=watchsimulator10*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=xros1*] = ;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=xrsimulator1*] = ;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited) $(WK_HAVE_SWIFT_CPP_INTEROP);
 
@@ -70,19 +59,13 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = $(inherited) *.tiff *Cursor.png;
 
 SKIP_INSTALL = $(WK_NOT_$(FORCE_TOOL_INSTALL));
 
-USE_LIBAVIF = $(USE_LIBAVIF_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-USE_LIBAVIF_110000 = YES;
-USE_LIBAVIF_120000 = YES;
-
 USE_LIBDAV1D[sdk=iphone*] = YES;
 USE_LIBDAV1D[sdk=xr*] = YES;
 USE_LIBDAV1D[sdk=macos*] = $(USE_LIBDAV1D_$(ENABLE_WEB_RTC)$(WK_MACOS_1300));
 USE_LIBDAV1D_ENABLE_WEB_RTC_MACOS_SINCE_1300 = YES;
 
-OTHER_LIBTOOLFLAGS = $(AVIF_LIBTOOLFLAGS_$(USE_LIBAVIF)) $(DAV1D_LIBTOOLFLAGS_$(USE_LIBDAV1D));
-AVIF_LIBTOOLFLAGS_YES = $(BUILT_PRODUCTS_DIR)/libavif.a;
+OTHER_LIBTOOLFLAGS = $(DAV1D_LIBTOOLFLAGS_$(USE_LIBDAV1D));
 DAV1D_LIBTOOLFLAGS_YES = $(BUILT_PRODUCTS_DIR)/libdav1d.a;
-
 
 SWIFT_OBJC_INTERFACE_HEADER_NAME = PALSwift-Generated.h;
 SWIFT_VERSION = 5.0;
@@ -105,22 +88,11 @@ OTHER_SWIFT_FLAGS_IOS_SINCE_17 = -Xcc -std=c++20 -I $(SRCROOT)/pal -I $(SRCROOT)
 OTHER_SWIFT_FLAGS_WATCHOS_SINCE_10 = -Xcc -std=c++20 -I $(SRCROOT)/pal -I $(SRCROOT)/PAL/pal;
 OTHER_SWIFT_FLAGS_TVOS_SINCE_17 = -Xcc -std=c++20 -I $(SRCROOT)/pal -I $(SRCROOT)/PAL/pal;
 
-// FIXME: remove the interop setting here when rdar://124492036 is resolved.
-EXCLUDED_SOURCE_FILE_NAMES = CryptoKitShim.swift UnsafeOverlays.swift;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx14*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx15*] = ;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx13*] = CryptoKitShim.swift UnsafeOverlays.swift;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx14.0*] = CryptoKitShim.swift UnsafeOverlays.swift;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx14.1*] = CryptoKitShim.swift UnsafeOverlays.swift;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx14.2*] = CryptoKitShim.swift UnsafeOverlays.swift;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx14.3*] = CryptoKitShim.swift UnsafeOverlays.swift;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos17*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator17*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos17*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator17*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=watchos10*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=watchsimulator10*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=xros1*] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator1*] = ;
 
 // Only for watchsimulator. Other platforms don't trigger Swift module builds for i386.
 EXCLUDED_ARCHS = $(EXCLUDED_ARCHS_$(WK_PLATFORM_NAME));

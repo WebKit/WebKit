@@ -218,9 +218,9 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
-    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->beginResponsivenessChecks();
+    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->beginResponsivenessChecks();
     });
 }
 
@@ -311,8 +311,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    if (auto sharedPreferences = webProcessProxy.sharedPreferencesForWebProcess())
-        parameters.sharedPreferencesForWebProcess = *sharedPreferences;
+    parameters.sharedPreferencesForWebProcess = webProcessProxy.sharedPreferencesForWebProcess();
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");

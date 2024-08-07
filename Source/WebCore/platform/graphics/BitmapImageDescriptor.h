@@ -93,7 +93,7 @@ private:
     MetadataType imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (ImageDecoder::*functor)() const) const;
 
     template<typename MetadataType>
-    MetadataType primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag, MetadataType (ImageFrame::*functor)() const) const;
+    MetadataType primaryImageFrameMetadata(MetadataType& cachedValue, CachedFlag, MetadataType (ImageFrame::*functor)() const, const std::optional<SubsamplingLevel>& = std::nullopt) const;
 
     template<typename MetadataType>
     MetadataType primaryNativeImageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag, MetadataType (NativeImage::*functor)() const) const;

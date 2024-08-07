@@ -260,7 +260,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
-    bool useExplicitSync;
 #endif
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)

@@ -99,7 +99,7 @@ end
 # After calling, calling bytecode is claiming input registers are not used.
 macro dispatchAfterRegularCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadPC()
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -112,7 +112,7 @@ end
 
 macro dispatchAfterTailCall(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadPC()
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -125,7 +125,7 @@ end
 
 macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
     loadPC()
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         # On non C_LOOP builds, CSR restore takes care of this.
         loadp CodeBlock[cfr], PB
         loadp CodeBlock::m_instructionsRawPointer[PB], PB
@@ -135,9 +135,9 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath function, a0, a1
-    elsif X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64
         call function
     else
         error
@@ -145,7 +145,7 @@ macro cCall2(function)
 end
 
 macro cCall2Void(function)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPathVoid function, a0, a1
     else
         cCall2(function)
@@ -154,9 +154,9 @@ end
 
 macro cCall3(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath3 function, a0, a1, a2
-    elsif X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64
         call function
     else
         error
@@ -166,9 +166,9 @@ end
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallSlowPath4 function, a0, a1, a2, a3
-    elsif X86_64 or X86_64_WIN or ARM64 or ARM64E or RISCV64
+    elsif X86_64 or ARM64 or ARM64E or RISCV64
         call function
     else
         error
@@ -207,7 +207,7 @@ macro doVMEntry(makeCall)
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
     # before we start copying the args from the protoCallFrame below.
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         bpaeq t3, VM::m_cloopStackLimit[vm], .stackHeightOK
         move entry, t4
         move vm, t5
@@ -339,7 +339,7 @@ _llint_throw_stack_overflow_error_from_vm_entry:
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
 _llint_call_javascript:
     addp CallerFrameAndPCSize, sp
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallJSFunction entry
     elsif ARM64E
         move entry, t5
@@ -364,7 +364,7 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     storep cfr, [sp]
     loadp ProtoCallFrame::globalObject[protoCallFrame], a0
     move sp, a1
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         storep lr, 8[sp]
         cloopCallNative temp1
     else
@@ -503,7 +503,7 @@ else
 end
 
 macro cage(basePtr, mask, ptr, scratch)
-    if GIGACAGE_ENABLED and not (C_LOOP or C_LOOP_WIN)
+    if GIGACAGE_ENABLED and not C_LOOP
         loadp basePtr, scratch
         btpz scratch, .done
         andp mask, ptr
@@ -513,7 +513,7 @@ macro cage(basePtr, mask, ptr, scratch)
 end
 
 macro cagePrimitive(basePtr, mask, ptr, scratch)
-    if GIGACAGE_ENABLED and not (C_LOOP or C_LOOP_WIN)
+    if GIGACAGE_ENABLED and not C_LOOP
         loadb GigacageConfig + Gigacage::Config::disablingPrimitiveGigacageIsForbidden, scratch
         btbnz scratch, .doCaging
 
@@ -693,13 +693,8 @@ macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
         lshiftp (constexpr StructureID::encodeShiftAmount), structureIDThenStructure
     elsif ADDRESS64
         andq (constexpr StructureID::structureIDMask), structureIDThenStructure
-        if X86_64_WIN or C_LOOP_WIN
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
-            loadp [scratch], scratch
-        else
-            leap _g_config, scratch
-            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap[scratch], scratch
-        end
+        leap _g_config, scratch
+        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap[scratch], scratch
         addp scratch, structureIDThenStructure
     end
 end
@@ -731,7 +726,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     lshiftp 3, t3
     subp cfr, t3, t5
     loadp CodeBlock::m_vm[t1], t0
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         bpbeq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
     else
         bpbeq VM::m_softStackLimit[t0], t5, .stackHeightOK
@@ -1253,7 +1248,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
     end)
 end
 
-if X86_64 or X86_64_WIN
+if X86_64
     binaryOpCustomStore(div, OpDiv,
         macro (lhs, rhs, slow, index)
             # Assume t3 is scratchable.
@@ -1311,7 +1306,7 @@ binaryOp(sub, OpSub,
     macro (lhs, rhs, slow) bsubio rhs, lhs, slow end,
     macro (lhs, rhs) subd rhs, lhs end)
 
-if X86_64 or X86_64_WIN
+if X86_64
     llintOpWithReturn(op_mod, OpMod, macro (size, get, dispatch, return)
         get(m_rhs, t0)
         get(m_lhs, t2)
@@ -2531,13 +2526,8 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
         storep 0, address
     end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    if X86_64_WIN or C_LOOP_WIN
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-        loadp [t5], t5
-    else
-        leap _g_config, t5
-        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-    end
+    leap _g_config, t5
+    loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
     jmp .dispatch
 end
 
@@ -2620,13 +2610,8 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
                 storep 0, address
             end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            if X86_64_WIN or C_LOOP_WIN
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
-                loadp [t5], t5
-            else
-                leap _g_config, t5
-                loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
-            end
+            leap _g_config, t5
+            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
             jmp .dispatch
         .dontUpdateSP:
             jmp _llint_throw_from_slow_path_trampoline
@@ -2774,12 +2759,12 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadp JSFunction::m_scope[a0], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
-    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
+    if ARM64 or ARM64E or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a1
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallNative executableOffsetToFunction[a2]
     else
         call executableOffsetToFunction[a2], HostFunctionPtrTag
@@ -2806,12 +2791,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     loadp InternalFunction::m_globalObject[a2], a0
     loadp JSGlobalObject::m_vm[a0], a1
     storep cfr, VM::topCallFrame[a1]
-    if ARM64 or ARM64E or C_LOOP or C_LOOP_WIN
+    if ARM64 or ARM64E or C_LOOP
         storep lr, ReturnPC[cfr]
     end
     move cfr, a1
     checkStackPointerAlignment(t3, 0xdead0001)
-    if C_LOOP or C_LOOP_WIN
+    if C_LOOP
         cloopCallNative offsetOfFunction[a2]
     else
         call offsetOfFunction[a2], HostFunctionPtrTag

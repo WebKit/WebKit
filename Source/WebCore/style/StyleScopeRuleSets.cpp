@@ -30,6 +30,7 @@
 #include "StyleScopeRuleSets.h"
 
 #include "CSSStyleSheet.h"
+#include "CSSViewTransitionRule.h"
 #include "CascadeLevel.h"
 #include "DocumentInlines.h"
 #include "ExtensionStyleSheets.h"
@@ -210,6 +211,17 @@ bool ScopeRuleSets::hasScopeRules() const
         return true;
 
     return false;
+}
+
+RefPtr<StyleRuleViewTransition> ScopeRuleSets::viewTransitionRule() const
+{
+    if (auto viewTransitionRule = m_authorStyle->viewTransitionRule())
+        return viewTransitionRule;
+    if (m_userStyle && m_userStyle->viewTransitionRule())
+        return m_userStyle->viewTransitionRule();
+    if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->viewTransitionRule())
+        return m_userAgentMediaQueryStyle->viewTransitionRule();
+    return nullptr;
 }
 
 std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator)

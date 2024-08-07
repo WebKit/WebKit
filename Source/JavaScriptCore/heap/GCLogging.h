@@ -40,7 +40,6 @@ public:
         Verbose
     };
 
-    static ASCIILiteral levelAsString(Level);
     static void dumpObjectGraph(Heap*);
 };
 

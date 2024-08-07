@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUBindGroup.h"
+#include "WebGPUExternalTexture.h"
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
@@ -58,6 +59,7 @@ private:
     WGPUBindGroup backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
+    void updateExternalTextures(const ExternalTexture&) final;
 
     WebGPUPtr<WGPUBindGroup> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

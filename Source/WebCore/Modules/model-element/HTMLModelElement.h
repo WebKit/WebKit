@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class DOMMatrixReadOnly;
+class DOMPointReadOnly;
 class Event;
 class LayoutSize;
 class Model;
@@ -90,6 +91,9 @@ public:
 #if ENABLE(MODEL_PROCESS)
     const DOMMatrixReadOnly& entityTransform() const;
     ExceptionOr<void> setEntityTransform(const DOMMatrixReadOnly&);
+
+    const DOMPointReadOnly& boundingBoxCenter() const;
+    const DOMPointReadOnly& boundingBoxExtents() const;
 #endif
 
     void enterFullscreen();
@@ -170,6 +174,7 @@ private:
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
 #if ENABLE(MODEL_PROCESS)
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
+    void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
 #endif
     PlatformLayerIdentifier platformLayerID() final;
 
@@ -196,6 +201,8 @@ private:
     RefPtr<ModelPlayer> m_modelPlayer;
 #if ENABLE(MODEL_PROCESS)
     Ref<DOMMatrixReadOnly> m_entityTransform;
+    Ref<DOMPointReadOnly> m_boundingBoxCenter;
+    Ref<DOMPointReadOnly> m_boundingBoxExtents;
 #endif
 };
 

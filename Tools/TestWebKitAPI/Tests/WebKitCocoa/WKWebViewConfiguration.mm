@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,8 @@
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-#import <WebKit/_WKWebExtensionController.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
+#import <WebKit/WKWebExtensionController.h>
+#import <WebKit/WKWebExtensionMatchPattern.h>
 #endif
 
 @interface SubclassWebViewConfiguration : WKWebViewConfiguration {
@@ -249,12 +249,12 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
     EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    auto extensionController = adoptNS([[_WKWebExtensionController alloc] init]);
-    [configuration _setWebExtensionController:extensionController.get()];
+    auto extensionController = adoptNS([[WKWebExtensionController alloc] init]);
+    [configuration setWebExtensionController:extensionController.get()];
 
     EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"webkit-extension"]);
 
-    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
 
     EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"webkit-extension", @"test-scheme", nil]));
 #endif

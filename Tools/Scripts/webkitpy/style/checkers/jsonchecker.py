@@ -372,6 +372,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
         keys_and_validators = {
             'aliases': self.validate_array,
             'auto-functions': self.validate_boolean,
+            'cascade-alias': self.validate_string,
             'color-property': self.validate_boolean,
             'comment': self.validate_string,
             'computable': self.validate_boolean,
@@ -414,7 +415,6 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'skip-builder': self.validate_boolean,
             'skip-codegen': self.validate_boolean,
             'skip-parser': self.validate_boolean,
-            'synonym': self.validate_string,
             'svg': self.validate_boolean,
             'visited-link-color-support': self.validate_boolean,
         }

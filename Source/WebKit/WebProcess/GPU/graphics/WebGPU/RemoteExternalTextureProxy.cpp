@@ -64,6 +64,11 @@ void RemoteExternalTextureProxy::undestroy()
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteExternalTextureProxy::updateExternalTexture(CVPixelBufferRef)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

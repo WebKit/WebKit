@@ -96,8 +96,8 @@ TEST(WebKit, LoadAndDecodeImage)
     EXPECT_EQ(result2->get().size.width, 215);
 
     auto result3 = imageOrError("/not_image"_s);
-    EXPECT_WK_STREQ(result3.error().get().domain, "WebKitErrorDomain");
-    EXPECT_EQ(result3.error().get().code, 300);
+    EXPECT_WK_STREQ(result3.error().get().domain, NSURLErrorDomain);
+    EXPECT_EQ(result3.error().get().code, NSURLErrorCannotDecodeContentData);
 
     auto result4 = imageOrError("/test_png"_s, CGSizeMake(100, 100));
     EXPECT_EQ(result4->get().size.height, 80);

@@ -166,7 +166,7 @@ wasmOp(i32_div_s, WasmI32DivS, macro (ctx)
     bieq dividend, constexpr INT32_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that dividend is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
@@ -196,7 +196,7 @@ wasmOp(i32_div_u, WasmI32DivU, macro (ctx)
 
     btiz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xori r_rdx, r_rdx
         udivi divisor
     elsif ARM64 or ARM64E or RISCV64
@@ -227,7 +227,7 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
     jmp .return
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cdqi
@@ -259,7 +259,7 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
 
     btiz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xori r_rdx, r_rdx
         udivi divisor
     elsif ARM64 or ARM64E
@@ -314,7 +314,7 @@ wasmOp(i64_div_s, WasmI64DivS, macro (ctx)
     bqeq dividend, constexpr INT64_MIN, .throwIntegerOverflow
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and divisor is not rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692 
         cqoq
@@ -343,7 +343,7 @@ wasmOp(i64_div_u, WasmI64DivU, macro (ctx)
 
     btqz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xorq r_rdx, r_rdx
         udivq divisor
     elsif ARM64 or ARM64E or RISCV64
@@ -374,7 +374,7 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
     jmp .return
 
 .safe:
-    if X86_64 or X86_64_WIN
+    if X86_64
         # FIXME: Add a way to static_assert that t0 is rax and r_rdx is rdx
         # https://bugs.webkit.org/show_bug.cgi?id=203692
         cqoq
@@ -406,7 +406,7 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
 
     btqz divisor, .throwDivisionByZero
 
-    if X86_64 or X86_64_WIN
+    if X86_64
         xorq r_rdx, r_rdx
         udivq divisor
     elsif ARM64 or ARM64E
@@ -951,7 +951,7 @@ end
 macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, fnq)
     wasmAtomicBinaryRMWOps(lowerCaseOpcode, upperCaseOpcode,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadb mem, t0GPR
             .loop:
@@ -968,7 +968,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadh mem, t0GPR
             .loop:
@@ -985,7 +985,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadi mem, t0GPR
             .loop:
@@ -1002,7 +1002,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
             end
         end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR)
-            if X86_64 or X86_64_WIN
+            if X86_64
                 move t0GPR, t5GPR
                 loadq mem, t0GPR
             .loop:
@@ -1020,7 +1020,7 @@ macro wasmAtomicBinaryRMWOpsWithWeakCAS(lowerCaseOpcode, upperCaseOpcode, fni, f
         end)
 end
 
-if X86_64 or X86_64_WIN
+if X86_64
     wasmAtomicBinaryRMWOps(_add, Add,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddb t0GPR, mem end,
         macro(t0GPR, mem, t2GPR, t5GPR, t1GPR) atomicxchgaddh t0GPR, mem end,
@@ -1199,12 +1199,12 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
     end)
 end
 
-if X86_64 or X86_64_WIN or ARM64E or ARM64 or RISCV64
+if X86_64 or ARM64E or ARM64 or RISCV64
 # t0GPR => expected, t2GPR => value, mem => memory reference
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasb t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1225,7 +1225,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xffff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcash t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1246,7 +1246,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
         andq 0xffffffff, t0GPR
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasi t0GPR, t2GPR, mem
             jmp .done
         .done:
@@ -1266,7 +1266,7 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         end
     end,
     macro(t0GPR, t2GPR, mem, t5GPR, t1GPR)
-        if X86_64 or X86_64_WIN or ARM64E
+        if X86_64 or ARM64E
             atomicweakcasq t0GPR, t2GPR, mem
         else
         .loop:

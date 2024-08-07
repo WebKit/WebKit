@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +32,22 @@
 #include "BasicShapeConversion.h"
 
 #include "BasicShapes.h"
+#include "BasicShapesShape.h"
+#include "BasicShapesShapeSegmentConversion.h"
 #include "CSSBasicShapes.h"
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSShapeSegmentValue.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CalculationValue.h"
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGPathByteStream.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 
@@ -64,6 +70,10 @@ static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& styl
         return CSSPrimitiveValue::create(CSSValueClosestSide);
     case BasicShapeRadius::Type::FarthestSide:
         return CSSPrimitiveValue::create(CSSValueFarthestSide);
+    case BasicShapeRadius::Type::ClosestCorner:
+        return CSSPrimitiveValue::create(CSSValueClosestCorner);
+    case BasicShapeRadius::Type::FarthestCorner:
+        return CSSPrimitiveValue::create(CSSValueFarthestCorner);
     }
 
     ASSERT_NOT_REACHED();
@@ -93,6 +103,9 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     };
     auto createPair = [&](const LengthSize& size) {
         return CSSValuePair::create(createValue(size.width), createValue(size.height));
+    };
+    auto createCoordinatePair = [&](const LengthPoint& point) {
+        return CSSValuePair::createNoncoalescing(createValue(point.x()), createValue(point.y()));
     };
     auto createReflectedSumValue = [&](const Length& a, const Length& b) {
         auto reflected = convertTo100PercentMinusLengthSum(a, b);
@@ -160,6 +173,18 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             createPair(rect.topLeftRadius()), createPair(rect.topRightRadius()),
             createPair(rect.bottomRightRadius()), createPair(rect.bottomLeftRadius()));
     }
+    case BasicShape::Type::Shape: {
+        auto& shape = uncheckedDowncast<BasicShapeShape>(basicShape);
+
+        CSSValueListBuilder segments;
+
+        for (auto& segment : shape.segments()) {
+            Ref value = toCSSShapeSegmentValue(style, segment);
+            segments.append(WTFMove(value));
+        }
+
+        return CSSShapeValue::create(shape.windRule(), createCoordinatePair(shape.startPoint()), WTFMove(segments));
+    }
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -180,6 +205,15 @@ static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversio
         return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 
     return { convertToLength(conversionData, value->protectedFirst()), convertToLength(conversionData, value->protectedSecond()) };
+}
+
+static LengthPoint convertToLengthPoint(const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
+    if (!pairValue)
+        return { };
+
+    return { convertToLength(conversionData, pairValue->first()), convertToLength(conversionData, pairValue->second()) };
 }
 
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, const CSSValue* value)
@@ -230,6 +264,10 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionDa
             return BasicShapeRadius(BasicShapeRadius::Type::ClosestSide);
         case CSSValueFarthestSide:
             return BasicShapeRadius(BasicShapeRadius::Type::FarthestSide);
+        case CSSValueClosestCorner:
+            return BasicShapeRadius(BasicShapeRadius::Type::ClosestCorner);
+        case CSSValueFarthestCorner:
+            return BasicShapeRadius(BasicShapeRadius::Type::FarthestCorner);
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -239,9 +277,11 @@ static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionDa
     return BasicShapeRadius(convertToLength(conversionData, *radius));
 }
 
-Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionData, const CSSValue& value, float zoom)
+Ref<BasicShape> basicShapeForValue(const CSSValue& value, const Style::BuilderState& builderState, std::optional<float> zoom)
 {
-    if (auto* circleValue = dynamicDowncast<CSSCircleValue>(value)) {
+    auto& conversionData = builderState.cssToLengthConversionData();
+
+    if (RefPtr circleValue = dynamicDowncast<CSSCircleValue>(value)) {
         auto circle = BasicShapeCircle::create();
         circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue->protectedRadius().get()));
         circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue->protectedCenterX().get()));
@@ -249,7 +289,8 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         circle->setPositionWasOmitted(!circleValue->centerX() && !circleValue->centerY());
         return circle;
     }
-    if (auto* ellipseValue = dynamicDowncast<CSSEllipseValue>(value)) {
+
+    if (RefPtr ellipseValue = dynamicDowncast<CSSEllipseValue>(value)) {
         auto ellipse = BasicShapeEllipse::create();
         ellipse->setRadiusX(cssValueToBasicShapeRadius(conversionData, ellipseValue->protectedRadiusX().get()));
         ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue->protectedRadiusY().get()));
@@ -258,14 +299,16 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         ellipse->setPositionWasOmitted(!ellipseValue->centerX() && !ellipseValue->centerY());
         return ellipse;
     }
-    if (auto* polygonValue = dynamicDowncast<CSSPolygonValue>(value)) {
+
+    if (RefPtr polygonValue = dynamicDowncast<CSSPolygonValue>(value)) {
         auto polygon = BasicShapePolygon::create();
         polygon->setWindRule(polygonValue->windRule());
         for (unsigned i = 0; i < polygonValue->size(); i += 2)
             polygon->appendPoint(convertToLength(conversionData, *polygonValue->protectedItem(i)), convertToLength(conversionData, *polygonValue->protectedItem(i + 1)));
         return polygon;
     }
-    if (auto* rectValue = dynamicDowncast<CSSInsetShapeValue>(value)) {
+
+    if (RefPtr rectValue = dynamicDowncast<CSSInsetShapeValue>(value)) {
         auto rect = BasicShapeInset::create();
         rect->setTop(convertToLength(conversionData, rectValue->protectedTop()));
         rect->setRight(convertToLength(conversionData, rectValue->protectedRight()));
@@ -277,7 +320,8 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
-    if (auto* rectValue = dynamicDowncast<CSSXywhValue>(value)) {
+
+    if (RefPtr rectValue = dynamicDowncast<CSSXywhValue>(value)) {
         auto rect = BasicShapeXywh::create();
         rect->setInsetX(convertToLength(conversionData, rectValue->protectedInsetX().get()));
         rect->setInsetY(convertToLength(conversionData, rectValue->protectedInsetY().get()));
@@ -290,7 +334,8 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
-    if (auto* rectValue = dynamicDowncast<CSSRectShapeValue>(value)) {
+
+    if (RefPtr rectValue = dynamicDowncast<CSSRectShapeValue>(value)) {
         auto rect = BasicShapeRect::create();
         rect->setTop(convertToLengthOrAuto(conversionData, rectValue->protectedTop()));
         rect->setRight(convertToLengthOrAuto(conversionData, rectValue->protectedRight()));
@@ -304,18 +349,38 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         return rect;
     }
 
-    if (auto* pathValue = dynamicDowncast<CSSPathValue>(value))
-        return basicShapePathForValue(*pathValue, zoom);
+    if (RefPtr pathValue = dynamicDowncast<CSSPathValue>(value))
+        return basicShapePathForValue(*pathValue, builderState, zoom);
+
+    if (RefPtr shapeValue = dynamicDowncast<CSSShapeValue>(value))
+        return basicShapeShapeForValue(*shapeValue, builderState);
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue& value, float zoom)
+Ref<BasicShapePath> basicShapePathForValue(const CSSPathValue& value, const Style::BuilderState& builderState, std::optional<float> zoom)
 {
     auto path = BasicShapePath::create(value.pathData().copy());
     path->setWindRule(value.windRule());
-    path->setZoom(zoom);
+    path->setZoom(zoom.value_or(builderState.style().usedZoom()));
     return path;
+}
+
+Ref<BasicShapeShape> basicShapeShapeForValue(const CSSShapeValue& shapeValue, const Style::BuilderState& builderState)
+{
+    Vector<BasicShapeShape::ShapeSegment> segments;
+    segments.reserveInitialCapacity(shapeValue.length());
+
+    for (auto& segment : shapeValue) {
+        RefPtr shapeSegment = dynamicDowncast<CSSShapeSegmentValue>(segment);
+        if (!shapeSegment) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        segments.append(fromCSSShapeSegmentValue(*shapeSegment, builderState));
+    }
+
+    return BasicShapeShape::create(shapeValue.windRule(), convertToLengthPoint(builderState.cssToLengthConversionData(), shapeValue.protectedFromCoordinates().get()), WTFMove(segments));
 }
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)

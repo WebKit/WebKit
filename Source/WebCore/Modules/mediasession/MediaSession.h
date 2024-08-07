@@ -91,7 +91,7 @@ public:
     MediaSessionPlaybackState playbackState() const { return m_playbackState; };
     void setPlaybackState(MediaSessionPlaybackState);
 
-    void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
+    ExceptionOr<void> setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
 
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
@@ -130,6 +130,7 @@ public:
     const Logger& logger() const { return *m_logger.get(); }
 #endif
 
+    bool hasObserver(MediaSessionObserver&) const;
     void addObserver(MediaSessionObserver&);
     void removeObserver(MediaSessionObserver&);
 

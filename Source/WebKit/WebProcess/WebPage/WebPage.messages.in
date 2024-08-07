@@ -38,7 +38,9 @@ messages -> WebPage LegacyReceiver {
 #if PLATFORM(COCOA)
     SetTopContentInsetFenced(float contentInset, MachSendRight machSendRight)
 #endif
+#if !PLATFORM(COCOA)
     SetTopContentInset(float contentInset)
+#endif
 
     SetUnderlayColor(WebCore::Color color)
     SetUnderPageBackgroundColorOverride(WebCore::Color underPageBackgroundColorOverride)
@@ -768,6 +770,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
 
     RequestTextExtraction(std::optional<WebCore::FloatRect> collectionRectInRootView) -> (struct WebCore::TextExtraction::Item item)
+
+#if PLATFORM(IOS_FAMILY)
+    ShouldDismissKeyboardAfterTapAtPoint(WebCore::FloatPoint point) -> (bool shouldDismiss)
+#endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     SetMediaEnvironment(String mediaEnvironment)

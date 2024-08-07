@@ -294,6 +294,9 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
         if (!videoElement->get())
             return nullptr;
         HTMLVideoElement& v = *videoElement->get();
+        if (m_previouslyImportedExternalTexture.first.get() == &v)
+            return m_previouslyImportedExternalTexture.second.get();
+
         auto it = m_videoElementToExternalTextureMap.find(v);
         if (it != m_videoElementToExternalTextureMap.end())
             return it->value.get();
@@ -341,7 +344,7 @@ private:
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
@@ -350,7 +353,10 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         auto& videoElement = externalTextureDescriptor.source;
 #endif
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
-        return externalTexture.releaseNonNull();
+        if (auto optionalMediaIdentifier = externalTextureDescriptor.mediaIdentifier()) {
+            m_backing->updateExternalTexture(externalTexture->backing(), *optionalMediaIdentifier);
+            return externalTexture.releaseNonNull();
+        }
     }
 #endif
     RefPtr texture = m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking());
@@ -365,6 +371,8 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
 #endif
         WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
+        m_previouslyImportedExternalTexture.first = *videoElement;
+        m_previouslyImportedExternalTexture.second = externalTexture.ptr();
         videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, scriptExecutionContext()));
         queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [protectedThis = Ref { *this }, videoElementPtr, externalTextureRef = externalTexture]() {
             if (!videoElementPtr)
@@ -416,10 +424,28 @@ ExceptionOr<Ref<GPUPipelineLayout>> GPUDevice::createPipelineLayout(const GPUPip
 
 ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(const GPUBindGroupDescriptor& bindGroupDescriptor)
 {
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    bool hasExternalTexture = false;
+    auto* externalTexture = bindGroupDescriptor.externalTextureMatches(m_lastCreatedExternalTextureBindGroup.first, hasExternalTexture);
+    if (externalTexture && (*externalTexture).get()) {
+        m_lastCreatedExternalTextureBindGroup.second->updateExternalTextures(*(*externalTexture).get());
+        RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second.get();
+        return bindGroup.releaseNonNull();
+    }
+#endif
+
     RefPtr group = m_backing->createBindGroup(bindGroupDescriptor.convertToBacking());
     if (!group)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBindGroup: Unable to make bind group."_s };
-    return GPUBindGroup::create(group.releaseNonNull());
+    auto result = GPUBindGroup::create(group.releaseNonNull());
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    if (hasExternalTexture) {
+        m_lastCreatedExternalTextureBindGroup.first = bindGroupDescriptor.entries;
+        m_lastCreatedExternalTextureBindGroup.second = result.ptr();
+    }
+#endif
+
+    return result;
 }
 
 ExceptionOr<Ref<GPUShaderModule>> GPUDevice::createShaderModule(const GPUShaderModuleDescriptor& shaderModuleDescriptor)

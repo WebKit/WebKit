@@ -238,6 +238,7 @@ private:
             case PutByValAlias: {
                 switch (m_node->arrayMode().modeForPut().type()) {
                 case Array::Generic:
+                case Array::Float16Array:
                 case Array::BigInt64Array:
                 case Array::BigUint64Array: {
                     Edge child1 = m_graph.varArgChild(m_node, 0);

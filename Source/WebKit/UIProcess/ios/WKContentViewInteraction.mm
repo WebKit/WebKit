@@ -1133,6 +1133,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_doubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
     [_singleTapGestureRecognizer requireGestureRecognizerToFail:_doubleTapGestureRecognizer.get()];
+    [_keyboardDismissalGestureRecognizer requireGestureRecognizerToFail:_doubleTapGestureRecognizer.get()];
 }
 
 - (void)_createAndConfigureHighlightLongPressGestureRecognizer
@@ -1368,6 +1369,13 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     // FIXME: This should be called when we get notified that loading has completed.
     [self setUpTextSelectionAssistant];
 
+    _keyboardDismissalGestureRecognizer = adoptNS([[WKScrollViewTrackingTapGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardDismissalGestureRecognized:)]);
+    [_keyboardDismissalGestureRecognizer setNumberOfTapsRequired:1];
+    [_keyboardDismissalGestureRecognizer setDelegate:self];
+    [_keyboardDismissalGestureRecognizer setName:@"Keyboard dismissal tap gesture"];
+    [_keyboardDismissalGestureRecognizer setEnabled:_page->preferences().keyboardDismissalGestureEnabled()];
+    [self addGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
+
 #if HAVE(UI_PASTE_CONFIGURATION)
     self.pasteConfiguration = adoptNS([[UIPasteConfiguration alloc] initWithAcceptableTypeIdentifiers:[&] {
         if (_page->preferences().attachmentElementEnabled())
@@ -1493,6 +1501,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_lookupGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
+
+    [_keyboardDismissalGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
 
     [_singleTapGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setGestureIdentifiedTarget:nil action:nil];
@@ -1632,6 +1643,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self removeGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
     [self removeGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
     [self removeGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
+    [self removeGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -1657,6 +1669,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self addGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
     [self addGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
+    [self addGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
 }
 
 - (void)_didChangeLinkPreviewAvailability
@@ -2916,6 +2929,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+    if (gestureRecognizer == _keyboardDismissalGestureRecognizer || otherGestureRecognizer == _keyboardDismissalGestureRecognizer)
+        return YES;
+
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
         if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), gesture))
             return YES;
@@ -3245,11 +3261,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     CGPoint point = [gestureRecognizer locationInView:self];
 
-    if (gestureRecognizer == _singleTapGestureRecognizer) {
+    auto shouldAcknowledgeTap = [&](WKScrollViewTrackingTapGestureRecognizer *tapGesture) -> BOOL {
         if ([self _shouldToggleSelectionCommandsAfterTapAt:point])
             return NO;
-        auto scrollView = [_singleTapGestureRecognizer lastTouchedScrollView];
+        auto scrollView = tapGesture.lastTouchedScrollView;
         return ![self _isPanningScrollViewOrAncestor:scrollView] && ![self _isInterruptingDecelerationForScrollViewOrAncestor:scrollView];
+    };
+
+    if (gestureRecognizer == _singleTapGestureRecognizer)
+        return shouldAcknowledgeTap(_singleTapGestureRecognizer.get());
+
+    if (gestureRecognizer == _keyboardDismissalGestureRecognizer) {
+        return self._hasFocusedElement
+            && !self.hasHiddenContentEditable
+            && !CGRectContainsPoint(self.selectionClipRect, point)
+            && shouldAcknowledgeTap(_keyboardDismissalGestureRecognizer.get());
     }
 
     if (gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick) {
@@ -3663,6 +3689,26 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     if (!_isTapHighlightIDValid)
         [self _fadeTapHighlightViewIfNeeded];
+}
+
+- (void)_keyboardDismissalGestureRecognized:(UITapGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(gestureRecognizer == _keyboardDismissalGestureRecognizer);
+
+    if (!self._hasFocusedElement)
+        return;
+
+    _page->shouldDismissKeyboardAfterTapAtPoint([gestureRecognizer locationInView:self], [weakSelf = WeakObjCPtr<WKContentView>(self), element = _focusedElementInformation.elementContext](bool shouldDismiss) {
+        if (!shouldDismiss)
+            return;
+
+        RetainPtr strongSelf = weakSelf.get();
+        if (![strongSelf _hasFocusedElement] || !strongSelf->_focusedElementInformation.elementContext.isSameElement(element))
+            return;
+
+        RELEASE_LOG(ViewGestures, "Dismissing keyboard after tap (%p, pageProxyID=%llu)", strongSelf.get(), strongSelf->_page->identifier().toUInt64());
+        [strongSelf _elementDidBlur];
+    });
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
@@ -9102,7 +9148,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
     if (_shareSheet)
         [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
 
@@ -9119,10 +9165,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #endif
     
     [_shareSheet presentWithParameters:data inRect:rect completionHandler:WTFMove(completionHandler)];
-#endif
+#endif // HAVE(SHARE_SHEET_UI)
 }
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#if HAVE(SHARE_SHEET_UI)
+
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
     ASSERT(_shareSheet == shareSheet);
@@ -9140,7 +9187,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         [uiDelegate _webView:self.webView willShareActivityItems:activityItems];
 }
 
-#endif
+#endif // HAVE(SHARE_SHEET_UI)
 
 - (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
 {
@@ -9790,6 +9837,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         // if it has already failed; otherwise, we will incorrectly defer other gestures in the web view, such as scroll view pinching.
         return NO;
     }
+
+    if (gestureRecognizer == _keyboardDismissalGestureRecognizer)
+        return NO;
 
     auto webView = _webView.getAutoreleased();
     auto view = gestureRecognizer.view;

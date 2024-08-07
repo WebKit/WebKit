@@ -101,6 +101,7 @@ namespace JSC {
     macro(Uint8ClampedArray) \
     macro(Uint16Array) \
     macro(Uint32Array) \
+    macro(Float16Array) \
     macro(Float32Array) \
     macro(Float64Array) \
     macro(BigInt64Array) \

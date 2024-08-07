@@ -471,7 +471,7 @@ void Queue::clearTextureIfNeeded(const WGPUImageCopyTexture& destination, NSUInt
     }
 
     ensureBlitCommandEncoder();
-    CommandEncoder::clearTextureIfNeeded(destination, slice, device->device(), m_blitCommandEncoder);
+    CommandEncoder::clearTextureIfNeeded(destination, slice, *device, m_blitCommandEncoder);
 }
 
 bool Queue::writeWillCompletelyClear(WGPUTextureDimension textureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers)
@@ -907,7 +907,7 @@ void Queue::clearTextureViewIfNeeded(TextureView& textureView)
                 continue;
 
             ensureBlitCommandEncoder();
-            CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, devicePtr->device(), m_blitCommandEncoder);
+            CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, m_blitCommandEncoder);
         }
     }
     finalizeBlitCommandEncoder();

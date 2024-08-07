@@ -224,7 +224,7 @@ bool EditCommandComposition::areRootEditabledElementsConnected()
     return true;
 }
 
-void EditCommandComposition::unapply()
+void EditCommandComposition::unapply(AddToUndoStack addToUndoStack)
 {
     RefPtr document = protectedDocument();
     ASSERT(document);
@@ -251,12 +251,15 @@ void EditCommandComposition::unapply()
 #endif
 
     auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
-    if (!document->editor().willUnapplyEditing(*this))
+    if (addToUndoStack == AddToUndoStack::Yes && !document->editor().willUnapplyEditing(*this))
         return;
 
     size_t size = m_commands.size();
     for (size_t i = size; i; --i)
         m_commands[i - 1]->doUnapply();
+
+    if (addToUndoStack == AddToUndoStack::No)
+        return;
 
     document->editor().unappliedEditing(*this);
 
@@ -264,6 +267,11 @@ void EditCommandComposition::unapply()
         m_replacedText.postTextStateChangeNotificationForUnapply(document->existingAXObjectCache());
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(document->selection().isNone() || document->selection().isConnectedToDocument());
+}
+
+void EditCommandComposition::unapply()
+{
+    this->unapply(AddToUndoStack::Yes);
 }
 
 void EditCommandComposition::reapply()
@@ -288,8 +296,10 @@ void EditCommandComposition::reapply()
     if (!document->editor().willReapplyEditing(*this))
         return;
 
-    for (auto& command : m_commands)
+    for (size_t i = 0; i < m_commands.size(); ++i) {
+        RefPtr command = m_commands[i].get();
         command->doReapply();
+    }
 
     document->editor().reappliedEditing(*this);
 
@@ -326,8 +336,10 @@ void EditCommandComposition::setRangeDeletedByUnapply(const VisiblePositionIndex
 #ifndef NDEBUG
 void EditCommandComposition::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
-    for (auto& command : m_commands)
+    for (size_t i = 0; i < m_commands.size(); ++i) {
+        RefPtr command = m_commands[i].get();
         command->getNodesInCommand(nodes);
+    }
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/UUID.h>
 
+OBJC_CLASS WKWebExtensionControllerConfiguration;
 OBJC_CLASS WKWebViewConfiguration;
-OBJC_CLASS _WKWebExtensionControllerConfiguration;
 
 namespace WebKit {
 
@@ -74,7 +74,7 @@ public:
     bool operator==(const WebExtensionControllerConfiguration&) const;
 
 #ifdef __OBJC__
-    _WKWebExtensionControllerConfiguration *wrapper() const { return (_WKWebExtensionControllerConfiguration *)API::ObjectImpl<API::Object::Type::WebExtensionControllerConfiguration>::wrapper(); }
+    WKWebExtensionControllerConfiguration *wrapper() const { return (WKWebExtensionControllerConfiguration *)API::ObjectImpl<API::Object::Type::WebExtensionControllerConfiguration>::wrapper(); }
 #endif
 
 private:

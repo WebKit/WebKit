@@ -31,6 +31,7 @@
 #include "RemoteCommandListener.h"
 #include "Timer.h"
 #include <wtf/AggregateLogger.h>
+#include <wtf/CancellableTask.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -83,7 +84,7 @@ public:
     WEBCORE_EXPORT static void setMediaCapabilityGrantsEnabled(bool);
 #endif
 
-    virtual ~PlatformMediaSessionManager() = default;
+    virtual ~PlatformMediaSessionManager();
 
     virtual void scheduleSessionStatusUpdate() { }
 
@@ -227,6 +228,7 @@ protected:
     std::optional<bool> supportsSpatialAudioPlayback() { return m_supportsSpatialAudioPlayback; }
 
     void nowPlayingMetadataChanged(const NowPlayingMetadata&);
+    void enqueueTaskOnMainThread(Function<void()>&&);
 
 private:
     friend class Internals;
@@ -260,6 +262,7 @@ private:
     bool m_hasScheduledSessionStateUpdate { false };
 
     WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
+    TaskCancellationGroup m_taskGroup;
 
 #if ENABLE(WEBM_FORMAT_READER)
     static bool m_webMFormatReaderEnabled;

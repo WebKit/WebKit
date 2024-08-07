@@ -27,6 +27,7 @@
  */
 
 #include "config.h"
+
 #include "AccessibilityObject.h"
 
 #include "AXLogger.h"
@@ -1612,7 +1613,18 @@ std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const Cha
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
     VisiblePosition startPosition = startOfLine(visiblePosition);
-    VisiblePosition endPosition = nextLineEndPosition(startPosition);
+    VisiblePosition endPosition = endOfLine(visiblePosition);
+
+    if (endPosition.isNull() || endPosition < startPosition) {
+        // When endOfLine fails to return a plausible result, try nextLineEndPosition, which is more robust, but ensure it doesn't return a result from a subsequent line.
+        VisiblePosition nextLineEnd = nextLineEndPosition(startPosition);
+        while (!nextLineEnd.isNull() && nextLineEnd > startPosition && !inSameLine(nextLineEnd, startPosition))
+            nextLineEnd = nextLineEnd.previous();
+
+        if (!nextLineEnd.isNull())
+            endPosition = nextLineEnd;
+    }
+
     return { startPosition, endPosition };
 }
 
@@ -2090,22 +2102,16 @@ void AccessibilityObject::clearChildren()
     m_childrenInitialized = false;
 }
 
-AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
+AccessibilityObject* AccessibilityObject::anchorElementForNode(Node& node)
 {
-    RenderObject* obj = node->renderer();
-    if (!obj)
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
         return nullptr;
 
-    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(*obj);
-    Element* anchor = axObj->anchorElement();
-    if (!anchor)
-        return nullptr;
-    
-    RenderObject* anchorRenderer = anchor->renderer();
-    if (!anchorRenderer)
-        return nullptr;
-    
-    return anchorRenderer->document().axObjectCache()->getOrCreate(*anchorRenderer);
+    WeakPtr cache = renderer->document().axObjectCache();
+    RefPtr axObject = cache ? cache->getOrCreate(renderer.get()) : nullptr;
+    auto* anchor = axObject ? axObject->anchorElement() : nullptr;
+    return anchor ? cache->getOrCreate(anchor->renderer()) : nullptr;
 }
 
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)

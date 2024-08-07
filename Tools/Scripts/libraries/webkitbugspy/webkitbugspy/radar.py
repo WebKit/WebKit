@@ -555,7 +555,7 @@ class Tracker(GenericTracker):
         self, title, description,
         project=None, component=None, version=None,
         classification=None, reproducible=None,
-        assign=True,
+        assign=True, keywords=None,
     ):
         if not title:
             raise ValueError('Must define title to create bug')

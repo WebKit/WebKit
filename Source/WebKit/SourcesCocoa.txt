@@ -283,9 +283,9 @@ UIProcess/API/Cocoa/_WKFrameTreeNode.mm
 UIProcess/API/Cocoa/_WKGeolocationPosition.mm
 UIProcess/API/Cocoa/_WKInspector.mm
 UIProcess/API/Cocoa/_WKInspectorConfiguration.mm
-UIProcess/API/Cocoa/_WKInspectorTesting.mm
 UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.mm
 UIProcess/API/Cocoa/_WKInspectorExtension.mm
+UIProcess/API/Cocoa/_WKInspectorTesting.mm
 UIProcess/API/Cocoa/_WKInspectorWindow.mm
 UIProcess/API/Cocoa/_WKInternalDebugFeature.mm
 UIProcess/API/Cocoa/_WKLinkIconParameters.mm
@@ -312,6 +312,7 @@ UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
+UIProcess/API/Cocoa/_WKWebExtension.mm
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm
@@ -392,6 +393,7 @@ UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm
 
 UIProcess/Cocoa/AutomationClient.mm
 UIProcess/Cocoa/AutomationSessionClient.mm
+UIProcess/Cocoa/BrowsingWarningCocoa.mm
 UIProcess/Cocoa/CoreTelephonyUtilities.mm
 UIProcess/Cocoa/DiagnosticLoggingClient.mm
 UIProcess/Cocoa/DownloadProxyMapCocoa.mm
@@ -413,7 +415,6 @@ UIProcess/Cocoa/PlatformXRCoordinator.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/ProcessAssertionCocoa.mm
 UIProcess/Cocoa/ResourceLoadDelegate.mm
-UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
 UIProcess/Cocoa/TextCheckingController.mm
@@ -520,6 +521,7 @@ UIProcess/ios/WKMouseInteraction.mm
 UIProcess/ios/WKPasswordView.mm
 UIProcess/ios/WKPDFView.mm
 UIProcess/ios/WKScrollView.mm
+UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm
 UIProcess/ios/WKStylusDeviceObserver.mm
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm
 UIProcess/ios/WKSyntheticTapGestureRecognizer.mm
@@ -539,7 +541,6 @@ UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/DisplayLinkMac.cpp
-UIProcess/mac/HighPerformanceGPUManager.mm
 UIProcess/mac/LegacySessionStateCoding.cpp
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp
@@ -730,7 +731,6 @@ WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
 WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
-WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp
 WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
 
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp

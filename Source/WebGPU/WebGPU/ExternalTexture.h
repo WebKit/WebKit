@@ -31,6 +31,8 @@
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
+using CVPixelBufferRef = struct __CVBuffer*;
+
 struct WGPUExternalTextureImpl {
 };
 
@@ -61,6 +63,7 @@ public:
     bool isDestroyed() const;
 
     bool isValid() const;
+    void update(CVPixelBufferRef);
 
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);

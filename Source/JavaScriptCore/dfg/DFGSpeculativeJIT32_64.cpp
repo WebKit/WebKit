@@ -2122,6 +2122,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = node->arrayMode().typedArrayType();
@@ -2482,6 +2483,10 @@ void SpeculativeJIT::compile(Node* node)
 
     case ArithFRound:
         compileArithFRound(node);
+        break;
+
+    case ArithF16Round:
+        compileArithF16Round(node);
         break;
 
     case ArithRandom:
@@ -4979,6 +4984,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
     case Array::Uint8ClampedArray:
     case Array::Uint16Array:
     case Array::Uint32Array:
+    case Array::Float16Array:
     case Array::Float32Array:
     case Array::Float64Array: {
         TypedArrayType type = arrayMode.typedArrayType();

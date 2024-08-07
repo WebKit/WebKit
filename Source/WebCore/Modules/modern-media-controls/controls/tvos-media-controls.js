@@ -56,6 +56,8 @@ class TVOSMediaControls extends MediaControls
         this.bottomControlsBar.addChild(this.timeControl);
         this._bottomControlsBarContainer = this.bottomControlsBar.addChild(new ButtonsContainer);
 
+        this.metadataContainer = new MetadataContainer();
+
         this.showsStartButton = false;
 
         for (let clickEvent of ["click", "mousedown", "mouseup", "pointerdown", "pointerup"]) {
@@ -106,7 +108,7 @@ class TVOSMediaControls extends MediaControls
         this.topRightControlsBar.visible = this._topRightControlsBarContainer.children.some(button => button.visible);
         this.bottomControlsBar.visible = true;
 
-        this.children = [this.topLeftControlsBar, this.topRightControlsBar, this.bottomControlsBar];
+        this.children = [this.topLeftControlsBar, this.topRightControlsBar, this.bottomControlsBar, this.metadataContainer];
     }
 
     // Private

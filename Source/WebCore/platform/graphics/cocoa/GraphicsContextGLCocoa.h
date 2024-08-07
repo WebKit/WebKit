@@ -32,10 +32,6 @@
 #include "ProcessIdentity.h"
 #include <array>
 
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include <memory>
 #endif
@@ -112,15 +108,10 @@ public:
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
-    void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
     void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>) override;
-
-#if PLATFORM(MAC)
-    void updateContextOnDisplayReconfiguration();
-#endif
 
     // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
     void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);
@@ -161,10 +152,6 @@ protected:
     DestinationColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
-#endif
-#if PLATFORM(MAC)
-    bool m_switchesGPUOnDisplayReconfiguration { false };
-    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;

@@ -16,6 +16,7 @@ $8: {} (read-only)
 $9: {} (read-only)
 $_: {} (read-write)
 $`: {} (read-only)
+escape: {function escape() { [native code] }} (read-write)
 input: {} (read-write)
 lastMatch: {} (read-only)
 lastParen: {} (read-only)
@@ -42,6 +43,7 @@ $8: {8}
 $9: {9}
 $_: {<1234567890>}
 $`: {<}
+escape: {function escape() { [native code] }}
 input: {<1234567890>}
 lastMatch: {1234567890}
 lastParen: {0}
@@ -74,6 +76,7 @@ $8: {8}
 $9: {9}
 $_: {0}
 $`: {<}
+escape: {function escape() { [native code] }}
 input: {0}
 lastMatch: {1234567890}
 lastParen: {0}
@@ -101,6 +104,7 @@ $8: {8}
 $9: {9}
 $_: {<1234567890>}
 $`: {<}
+escape: {function escape() { [native code] }}
 input: {<1234567890>}
 lastMatch: {1234567890}
 lastParen: {0}
@@ -128,6 +132,7 @@ $8: {8}
 $9: {9}
 $_: {<1234567890>}
 $`: {<}
+escape: {function escape() { [native code] }}
 input: {<1234567890>}
 lastMatch: {1234567890}
 lastParen: {0}

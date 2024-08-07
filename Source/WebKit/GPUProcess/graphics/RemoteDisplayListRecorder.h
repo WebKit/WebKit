@@ -38,6 +38,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+#if !LOG_DISABLED
+#include "Logging.h"
+#include <wtf/text/TextStream.h>
+#endif
+
 namespace WebKit {
 
 class RemoteRenderingBackend;
@@ -154,6 +159,7 @@ private:
         // FIXME: In the future, we should consider buffering up batches of display list items before
         // applying them instead of applying them immediately, so that we can apply clipping and occlusion
         // optimizations to skip over parts of a display list, if possible.
+        LOG_WITH_STREAM(DisplayLists, stream << "handleItem " << item);
         item.apply(drawingContext(), std::forward<AdditionalArgs>(args)...);
     }
 

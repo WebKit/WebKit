@@ -123,6 +123,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-101-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-101.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-002-expected.html
@@ -217,3 +219,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-107.html

@@ -40,6 +40,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotificationData.h>
 #import <WebCore/NotificationPayload.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <span>
@@ -86,6 +87,11 @@ WebPushDaemon::WebPushDaemon()
 void WebPushDaemon::startMockPushService()
 {
     m_usingMockPushService = true;
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
+#endif
+
     auto messageHandler = [this](const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message) {
         handleIncomingPush(identifier, WTFMove(message));
     };
@@ -633,12 +639,6 @@ static NSString *platformNotificationSourceForDisplay(PushClientConnection& conn
 #endif
 }
 
-void WebPushDaemon::enableMockUserNotificationCenterForTesting(PushClientConnection& connection)
-{
-    RELEASE_ASSERT(connection.hostAppCodeSigningIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-    m_userNotificationCenterClass = [_WKMockUserNotificationCenter class];
-}
-
 void WebPushDaemon::showNotification(PushClientConnection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources> resources, CompletionHandler<void()>&& completionHandler)
 {
     RetainPtr content = adoptNS([[UNMutableNotificationContent alloc] init]);
@@ -791,6 +791,63 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
     });
 
     [center requestAuthorizationWithOptions:options completionHandler:blockPtr.get()];
+}
+
+void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::SecurityOriginData&& badgeOriginData, std::optional<uint64_t> appBadge)
+{
+    URL appPageURL;
+
+#if PLATFORM(IOS)
+    auto webClipIdentifier = connection.pushPartitionString();
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
+    appPageURL = [webClip pageURL];
+#elif PLATFORM(MAC)
+    // FIXME: Establish the app page URL for Mac apps here
+#endif
+
+    if (!appPageURL.isEmpty()) {
+        auto badgeOrigin = badgeOriginData.securityOrigin();
+        auto appOrigin = WebCore::SecurityOrigin::create(appPageURL);
+        if (!badgeOrigin->isSameSiteAs(appOrigin.get()))
+            return;
+    }
+
+#if PLATFORM(IOS)
+    RetainPtr state = adoptNS([[UISApplicationState alloc] initWithBundleIdentifier:platformNotificationCenterBundleIdentifier(connection).get()]);
+    state.get().badgeValue = appBadge ? [NSNumber numberWithUnsignedLongLong:*appBadge] : nil;
+#elif PLATFORM(MAC)
+    String bundleIdentifier = connection.pushPartitionString().isEmpty() ? connection.hostAppCodeSigningIdentifier() : connection.pushPartitionString();
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc]  initWithBundleIdentifier:(NSString *)bundleIdentifier]);
+    if (!center)
+        return;
+
+    UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+    content.badge = appBadge ? [NSNumber numberWithLongLong:*appBadge] : nil;
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:NSUUID.UUID.UUIDString content:content trigger:nil];
+    [center addNotificationRequest:request withCompletionHandler:^(NSError *error) {
+        if (error)
+            WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Error attempting to set badge count for web app %s", connection.pushPartitionString().utf8().data());
+    }];
+#endif // PLATFORM(MAC)
+}
+
+void WebPushDaemon::getAppBadgeForTesting(PushClientConnection& connection, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+#if PLATFORM(IOS)
+    UNUSED_PARAM(connection);
+    completionHandler(std::nullopt);
+#else
+    RELEASE_ASSERT(m_userNotificationCenterClass == _WKMockUserNotificationCenter.class);
+
+    String bundleIdentifier = connection.pushPartitionString().isEmpty() ? connection.hostAppCodeSigningIdentifier() : connection.pushPartitionString();
+    RetainPtr center = adoptNS([[_WKMockUserNotificationCenter alloc] initWithBundleIdentifier:(NSString *)bundleIdentifier]);
+    NSNumber *centerBadge = [center getAppBadgeForTesting];
+
+    if (centerBadge)
+        completionHandler([centerBadge unsignedLongLongValue]);
+    else
+        completionHandler(std::nullopt);
+#endif
 }
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)

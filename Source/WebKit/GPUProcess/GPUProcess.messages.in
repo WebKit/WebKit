@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUProcess LegacyReceiver {
-    InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
+    InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters) -> ()
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
     SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
@@ -54,7 +54,6 @@ messages -> GPUProcess LegacyReceiver {
     SetUseSCContentSharingPicker(bool use)
 #endif
 #if PLATFORM(MAC)
-    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 

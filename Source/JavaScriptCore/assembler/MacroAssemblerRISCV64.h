@@ -118,6 +118,7 @@ public:
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return true; }
+    static bool supportsFloat16() { return false; }
 
     enum RelationalCondition {
         Equal = Assembler::ConditionEQ,
@@ -1239,6 +1240,8 @@ public:
 
     void transfer32(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load32(src, temp.data());
         store32(temp.data(), dest);
@@ -1246,13 +1249,27 @@ public:
 
     void transfer64(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load64(src, temp.data());
         store64(temp.data(), dest);
     }
 
+    void transferFloat(Address src, Address dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(Address src, Address dest)
+    {
+        transfer64(src, dest);
+    }
+
     void transferVector(Address src, Address dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }
@@ -1264,6 +1281,8 @@ public:
 
     void transfer32(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load32(src, temp.data());
         store32(temp.data(), dest);
@@ -1271,13 +1290,27 @@ public:
 
     void transfer64(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         auto temp = temps<Data>();
         load64(src, temp.data());
         store64(temp.data(), dest);
     }
 
+    void transferFloat(BaseIndex src, BaseIndex dest)
+    {
+        transfer32(src, dest);
+    }
+
+    void transferDouble(BaseIndex src, BaseIndex dest)
+    {
+        transfer64(src, dest);
+    }
+
     void transferVector(BaseIndex src, BaseIndex dest)
     {
+        if (src == dest)
+            return;
         loadVector(src, fpTempRegister);
         storeVector(fpTempRegister, dest);
     }
@@ -4685,6 +4718,82 @@ private:
         }
 
         end.link(this);
+    }
+
+    void convertDoubleToFloat16(FPRegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void convertFloat16ToDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(Address address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(BaseIndex address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void loadFloat16(TrustedImmPtr address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveZeroToFloat16(FPRegisterID reg)
+    {
+        UNUSED_PARAM(reg);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void move16ToFloat16(RegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void move16ToFloat16(TrustedImm32 imm, FPRegisterID dest)
+    {
+        UNUSED_PARAM(imm);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveFloat16To16(FPRegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void storeFloat16(FPRegisterID src, Address address)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(address);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void storeFloat16(FPRegisterID src, BaseIndex address)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(address);
+        UNREACHABLE_FOR_PLATFORM();
     }
 };
 

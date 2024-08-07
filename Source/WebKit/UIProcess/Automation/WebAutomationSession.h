@@ -83,6 +83,8 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebProcessPool;
 
+enum class ForceSoftwareCapturingViewportSnapshot : bool;
+
 class AutomationCommandError {
 public:
     Inspector::Protocol::Automation::ErrorMessage type;

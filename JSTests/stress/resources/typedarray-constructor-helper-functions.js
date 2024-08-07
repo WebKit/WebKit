@@ -2,7 +2,7 @@ load("./standalone-pre.js", "caller relative");
 
 "use strict";
 
-var typedArrays = ["Int8Array", "Uint8Array", "Uint8ClampedArray", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array"];
+var typedArrays = ["Int8Array", "Uint8Array", "Uint8ClampedArray", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float16Array", "Float32Array", "Float64Array"];
 
 function forEachTypedArray(constructors, testFunction, name, args) {
     for (let i = 0; i < constructors.length; ++i) {

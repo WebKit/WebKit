@@ -143,6 +143,7 @@ class JSGlobalObject;
     v(Uint16Array, nullptr) \
     v(Int32Array, nullptr) \
     v(Uint32Array, nullptr) \
+    v(Float16Array, nullptr) \
     v(Float32Array, nullptr) \
     v(Float64Array, nullptr) \
     v(BigInt64Array, nullptr) \

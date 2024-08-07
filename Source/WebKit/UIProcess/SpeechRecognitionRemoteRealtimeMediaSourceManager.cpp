@@ -98,7 +98,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::Real
 
 const SharedPreferencesForWebProcess& SpeechRecognitionRemoteRealtimeMediaSourceManager::sharedPreferencesForWebProcess() const
 {
-    return *m_process->sharedPreferencesForWebProcess();
+    return m_process->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

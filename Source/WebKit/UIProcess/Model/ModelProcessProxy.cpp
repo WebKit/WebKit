@@ -87,7 +87,7 @@ ModelProcessProxy::ModelProcessProxy()
     parameters.parentPID = getCurrentProcessID();
 
     // Initialize the model process.
-    send(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), 0);
+    sendWithAsyncReply(Messages::ModelProcess::InitializeModelProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] () { }, 0);
 
     updateProcessAssertion();
 }
@@ -140,6 +140,8 @@ void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::NavigationSwap:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
+    case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
         ASSERT_NOT_REACHED();
         break;
     }

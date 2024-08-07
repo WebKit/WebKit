@@ -41,6 +41,7 @@ MAKE_S_INFO(Uint8Array);
 MAKE_S_INFO(Uint8ClampedArray);
 MAKE_S_INFO(Uint16Array);
 MAKE_S_INFO(Uint32Array);
+MAKE_S_INFO(Float16Array);
 MAKE_S_INFO(Float32Array);
 MAKE_S_INFO(Float64Array);
 MAKE_S_INFO(BigInt64Array);

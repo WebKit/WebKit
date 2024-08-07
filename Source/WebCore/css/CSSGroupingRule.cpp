@@ -168,8 +168,6 @@ RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(St
         if (rules[i].ptr() == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
             rules[i] = styleRuleWithNesting;
-            if (auto* styleSheet = parentStyleSheet())
-                styleSheet->contents().setHasNestingRules();
             return styleRuleWithNesting;
         }        
     }

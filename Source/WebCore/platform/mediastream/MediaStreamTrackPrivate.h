@@ -66,6 +66,7 @@ public:
     virtual void trackConfigurationChanged(MediaStreamTrackPrivate&) { };
     virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
     virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
+    virtual void dataFlowStarted(MediaStreamTrackPrivate&) { };
 };
 
 class MediaStreamTrackPrivate final
@@ -95,6 +96,8 @@ public:
     void startProducingData();
     void stopProducingData();
     bool isProducingData() const { return m_isProducingData; }
+
+    void dataFlowStarted();
 
     bool muted() const { return m_isMuted; }
     void setMuted(bool);

@@ -489,9 +489,9 @@ TextStream& operator<<(TextStream& ts, FillAttachment attachment)
 TextStream& operator<<(TextStream& ts, FillBox fill)
 {
     switch (fill) {
-    case FillBox::Border: ts << "border"; break;
-    case FillBox::Padding: ts << "padding"; break;
-    case FillBox::Content: ts << "content"; break;
+    case FillBox::BorderBox: ts << "border-box"; break;
+    case FillBox::PaddingBox: ts << "padding-box"; break;
+    case FillBox::ContentBox: ts << "content-box"; break;
     case FillBox::Text: ts << "text"; break;
     case FillBox::NoClip: ts << "no-clip"; break;
     }
@@ -935,8 +935,8 @@ TextStream& operator<<(TextStream& ts, Resize resize)
 TextStream& operator<<(TextStream& ts, RubyPosition position)
 {
     switch (position) {
-    case RubyPosition::Before: ts << "before"; break;
-    case RubyPosition::After: ts << "after"; break;
+    case RubyPosition::Over: ts << "over"; break;
+    case RubyPosition::Under: ts << "under"; break;
     case RubyPosition::InterCharacter: ts << "inter-character"; break;
     }
     return ts;

@@ -321,7 +321,7 @@ const struct wl_callback_listener frameListener = {
     }
 };
 
-static void bufferReleased(WPEBuffer* buffer)
+static void dmaBufBufferReleased(WPEBuffer* buffer)
 {
     wpe_view_buffer_released(wpe_buffer_get_view(buffer), buffer);
     if (auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer)))
@@ -334,12 +334,12 @@ const struct zwp_linux_buffer_release_v1_listener bufferReleaseListener = {
     {
         auto* buffer = WPE_BUFFER(userData);
         wpe_buffer_dma_buf_set_release_fence(WPE_BUFFER_DMA_BUF(buffer), fence);
-        bufferReleased(buffer);
+        dmaBufBufferReleased(buffer);
     },
     // immediate_release
     [](void* userData, struct zwp_linux_buffer_release_v1*)
     {
-        bufferReleased(WPE_BUFFER(userData));
+        dmaBufBufferReleased(WPE_BUFFER(userData));
     }
 };
 
@@ -357,14 +357,16 @@ static gboolean wpeViewWaylandRenderBuffer(WPEView* view, WPEBuffer* buffer, con
     auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
     wl_surface_attach(wlSurface, wlBuffer, 0, 0);
 
-    auto* surfaceSync = wpeToplevelWaylandGetSurfaceSync(WPE_TOPLEVEL_WAYLAND(wpe_view_get_toplevel(view)));
-    auto renderingFence = UnixFileDescriptor { wpe_buffer_dma_buf_take_rendering_fence(WPE_BUFFER_DMA_BUF(buffer)), UnixFileDescriptor::Adopt };
-    if (renderingFence) {
-        zwp_linux_surface_synchronization_v1_set_acquire_fence(surfaceSync, renderingFence.value());
+    if (WPE_IS_BUFFER_DMA_BUF(buffer)) {
+        auto renderingFence = UnixFileDescriptor { wpe_buffer_dma_buf_take_rendering_fence(WPE_BUFFER_DMA_BUF(buffer)), UnixFileDescriptor::Adopt };
+        if (renderingFence) {
+            auto* surfaceSync = wpeToplevelWaylandGetSurfaceSync(WPE_TOPLEVEL_WAYLAND(wpe_view_get_toplevel(view)));
+            zwp_linux_surface_synchronization_v1_set_acquire_fence(surfaceSync, renderingFence.value());
 
-        auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer));
-        dmaBufBuffer->release = zwp_linux_surface_synchronization_v1_get_release(surfaceSync);
-        zwp_linux_buffer_release_v1_add_listener(dmaBufBuffer->release, &bufferReleaseListener, buffer);
+            auto* dmaBufBuffer = static_cast<DMABufBuffer*>(wpe_buffer_get_user_data(buffer));
+            dmaBufBuffer->release = zwp_linux_surface_synchronization_v1_get_release(surfaceSync);
+            zwp_linux_buffer_release_v1_add_listener(dmaBufBuffer->release, &bufferReleaseListener, buffer);
+        }
     }
 
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));

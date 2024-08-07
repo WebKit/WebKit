@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Exception.h"
 #include "ExceptionCode.h"
+#include "InternalObserverDrop.h"
 #include "InternalObserverFilter.h"
 #include "InternalObserverFromScript.h"
 #include "InternalObserverMap.h"
@@ -111,6 +112,11 @@ Ref<Observable> Observable::filter(ScriptExecutionContext& context, PredicateCal
 Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amount)
 {
     return create(createSubscriberCallbackTake(context, *this, amount));
+}
+
+Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amount)
+{
+    return create(createSubscriberCallbackDrop(context, *this, amount));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

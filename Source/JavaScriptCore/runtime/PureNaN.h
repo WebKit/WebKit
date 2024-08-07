@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <bit>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
@@ -62,34 +63,29 @@ namespace JSC {
 // test. We say that a NaN is "impure" if attempting to tag it would result in a value
 // that would look like something other than a double.
 
-// Returns some kind of pure NaN.
-inline double pureNaN()
-{
-    // Be sure that we return exactly the kind of NaN that is safe. We engineer the bits
-    // ourselves to ensure that it's !isImpureNaN(). FWIW, this is what
-    // numeric_limits<double>::quiet_NaN() returns on Mac/X86_64. But AFAICT there is
-    // no guarantee that quiet_NaN would return a pureNaN on all platforms. For example,
-    // the docs appear to imply that quiet_NaN could even return a double with the
-    // signaling bit set on hardware that doesn't do signaling. That would probably
-    // never happen, but it's healthy to be paranoid.
-    return bitwise_cast<double>(0x7ff8000000000000ll);
-}
+// Some kind of pure NaN.
+// Be sure that we define exactly the kind of NaN that is safe. We engineer the bits
+// ourselves to ensure that it's !isImpureNaN(). FWIW, this is what
+// numeric_limits<double>::quiet_NaN() returns on Mac/X86_64. But AFAICT there is
+// no guarantee that quiet_NaN would return a pureNaN on all platforms. For example,
+// the docs appear to imply that quiet_NaN could even return a double with the
+// signaling bit set on hardware that doesn't do signaling. That would probably
+// never happen, but it's healthy to be paranoid.
+static constexpr double PNaN { std::bit_cast<double>(0x7ff8000000000000ll) };
 
-#define PNaN (pureNaN())
-
-inline bool isImpureNaN(double value)
+inline constexpr bool isImpureNaN(double value)
 {
     // Tests if the double value would break JSVALUE64 encoding, which is the most
     // aggressive kind of encoding that we currently use.
-    return bitwise_cast<uint64_t>(value) >= 0xfffe000000000000llu;
+    return std::bit_cast<uint64_t>(value) >= 0xfffe000000000000llu;
 }
 
 // If the given value is NaN then return a NaN that is known to be pure.
-inline double purifyNaN(double value)
+inline constexpr double purifyNaN(double value)
 {
     if (value != value)
         return PNaN;
     return value;
-}   
+}
 
 } // namespace JSC

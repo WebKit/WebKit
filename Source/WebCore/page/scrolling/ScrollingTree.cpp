@@ -670,6 +670,13 @@ OverscrollBehavior ScrollingTree::mainFrameHorizontalOverscrollBehavior() const
     return m_rootNode ? m_rootNode->horizontalOverscrollBehavior() : OverscrollBehavior::Auto;
 }
 
+
+ScrollbarWidth ScrollingTree::mainFrameScrollbarWidth() const
+{
+    Locker locker { m_treeLock };
+    return m_rootNode ? m_rootNode->scrollbarWidthStyle() : ScrollbarWidth::Auto;
+}
+
 OverscrollBehavior ScrollingTree::mainFrameVerticalOverscrollBehavior() const
 {
     Locker locker { m_treeLock };

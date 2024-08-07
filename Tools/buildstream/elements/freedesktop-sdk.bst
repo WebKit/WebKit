@@ -13,11 +13,15 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.24.4.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.24.6.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch
   path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
+- kind: patch
+  path: patches/fdo-0010-gst-plugins-bad-webrtcbin-create-and-associate-trans.patch
+- kind: patch
+  path: patches/fdo-0011-gst-plugins-bad-webrtcbin-connect-transportreceivebi.patch
 config:
   options:
     target_arch: '%{arch}'

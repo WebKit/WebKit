@@ -196,7 +196,9 @@ public:
     virtual void reportExternalMemoryVisited(size_t) = 0;
 #endif
 
-    virtual void dump(PrintStream&) const = 0;
+    // This can't be pure virtual as it breaks our Dumpable concept.
+    // FIXME: Make this virtual after we stop suppporting the Montery Clang.
+    virtual void dump(PrintStream&) const { }
 
     RootMarkReason rootMarkReason() const { return m_rootMarkReason; }
     void setRootMarkReason(RootMarkReason reason) { m_rootMarkReason = reason; }

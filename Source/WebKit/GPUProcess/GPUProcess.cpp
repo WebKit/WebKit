@@ -228,8 +228,10 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 
-void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
+void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
+
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
@@ -533,14 +535,6 @@ void GPUProcess::cancelGetDisplayMediaPrompt()
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)
 
-#if PLATFORM(MAC)
-void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
-{
-    for (auto& connection : m_webProcessConnections.values())
-        connection->displayConfigurationChanged(displayID, flags);
-}
-#endif
-
 void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameters&& parameters)
 {
     ASSERT(!m_sessions.contains(sessionID));
@@ -551,7 +545,7 @@ void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameter
 
     m_sessions.add(sessionID, GPUSession {
         WTFMove(parameters.mediaCacheDirectory)
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
         , WTFMove(parameters.mediaKeysStorageDirectory)
 #endif
     });
@@ -569,7 +563,7 @@ const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
     return m_sessions.find(sessionID)->value.mediaCacheDirectory;
 }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
 {
     ASSERT(m_sessions.contains(sessionID));

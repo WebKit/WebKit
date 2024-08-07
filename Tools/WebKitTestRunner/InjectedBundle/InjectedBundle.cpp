@@ -38,9 +38,10 @@
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WebKit2_C.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/Vector.h>
 
 namespace WTR {
 
@@ -695,9 +696,11 @@ void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
 }
 
-bool InjectedBundle::statisticsNotifyObserver()
+void InjectedBundle::statisticsNotifyObserver(CompletionHandler<void()>&& completionHandler)
 {
-    return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle.get());
+    return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle.get(), completionHandler.leak(), [] (void* context) {
+        WTF::adopt(static_cast<CompletionHandler<void()>::Impl*>(context))();
+    });
 }
 
 WKRetainPtr<WKStringRef> InjectedBundle::lastAddedBackgroundFetchIdentifier() const

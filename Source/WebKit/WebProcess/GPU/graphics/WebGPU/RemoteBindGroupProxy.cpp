@@ -52,6 +52,12 @@ void RemoteBindGroupProxy::setLabelInternal(const String& label)
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteBindGroupProxy::updateExternalTextures(const WebCore::WebGPU::ExternalTexture& externalTexture)
+{
+    auto sendResult = send(Messages::RemoteBindGroup::UpdateExternalTextures(m_convertToBackingContext->convertToBacking(externalTexture)));
+    UNUSED_VARIABLE(sendResult);
+}
+
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

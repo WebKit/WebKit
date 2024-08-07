@@ -1287,6 +1287,8 @@ public:
     void updateStringForFind(const String&);
 
     bool canShowWhileLocked() const { return m_page && m_page->canShowWhileLocked(); }
+
+    void shouldDismissKeyboardAfterTapAtPoint(WebCore::FloatPoint, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -1761,7 +1763,6 @@ public:
 #if USE(GBM)
     const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
 #endif
-    bool useExplicitSync() const { return m_useExplicitSync; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -1808,6 +1809,8 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     void showContextMenuFromFrame(const WebCore::FrameIdentifier&, const ContextMenuContextData&, const UserData&);
 #endif
+
+    void setTopContentInset(float);
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -2006,7 +2009,6 @@ private:
 #if PLATFORM(COCOA)
     void setTopContentInsetFenced(float, const WTF::MachSendRight&);
 #endif
-    void setTopContentInset(float);
 
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
@@ -2786,7 +2788,6 @@ private:
 #if USE(GBM)
     Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
 #endif
-    bool m_useExplicitSync { false };
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)

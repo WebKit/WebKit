@@ -175,7 +175,7 @@ static rtc::AdapterType interfaceAdapterType(const char* interfaceName)
         return rtc::ADAPTER_TYPE_LOOPBACK;
     }
 #else
-    return rtc::GetAdapterTypeFromName({ name.utf8().data(), name.utf8().length() });
+    return rtc::GetAdapterTypeFromName(interfaceName);
 #endif
 }
 

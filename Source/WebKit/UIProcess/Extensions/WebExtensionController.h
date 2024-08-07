@@ -50,12 +50,12 @@
 
 OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
-OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_CLASS _WKWebExtensionControllerHelper;
-OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
+OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
+OBJC_PROTOCOL(WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
-#import "_WKWebExtensionController.h"
+#import "WKWebExtensionController.h"
 #endif
 
 namespace API {
@@ -178,8 +178,8 @@ public:
     void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };
 
 #ifdef __OBJC__
-    _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
-    _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
+    WKWebExtensionController *wrapper() const { return (WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
+    WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
 #endif
 
 private:

@@ -150,7 +150,7 @@ template<> inline LineClampValue fromCSSValue(const CSSValue& value)
     if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
         return LineClampValue(primitiveValue.value<int>(), LineClamp::Percentage);
 
-    ASSERT_NOT_REACHED();
+    ASSERT(primitiveValue.valueID() == CSSValueNone);
     return LineClampValue();
 }
 
@@ -449,11 +449,11 @@ template<> constexpr FillAttachment fromCSSValueID(CSSValueID valueID)
 constexpr CSSValueID toCSSValueID(FillBox e)
 {
     switch (e) {
-    case FillBox::Border:
+    case FillBox::BorderBox:
         return CSSValueBorderBox;
-    case FillBox::Padding:
+    case FillBox::PaddingBox:
         return CSSValuePaddingBox;
-    case FillBox::Content:
+    case FillBox::ContentBox:
         return CSSValueContentBox;
     case FillBox::Text:
         return CSSValueText;
@@ -469,13 +469,13 @@ template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
     switch (valueID) {
     case CSSValueBorder:
     case CSSValueBorderBox:
-        return FillBox::Border;
+        return FillBox::BorderBox;
     case CSSValuePadding:
     case CSSValuePaddingBox:
-        return FillBox::Padding;
+        return FillBox::PaddingBox;
     case CSSValueContent:
     case CSSValueContentBox:
-        return FillBox::Content;
+        return FillBox::ContentBox;
     case CSSValueText:
     case CSSValueWebkitText:
         return FillBox::Text;
@@ -485,7 +485,7 @@ template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return FillBox::Border;
+    return FillBox::BorderBox;
 }
 
 #define TYPE FillRepeat
@@ -1526,11 +1526,37 @@ template<> constexpr TextCombine fromCSSValueID(CSSValueID valueID)
     return TextCombine::None;
 }
 
-#define TYPE RubyPosition
-#define FOR_EACH(CASE) CASE(Before) CASE(After) CASE(InterCharacter)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
+constexpr CSSValueID toCSSValueID(RubyPosition e)
+{
+    switch (e) {
+    case RubyPosition::Over:
+        return CSSValueOver;
+    case RubyPosition::Under:
+        return CSSValueUnder;
+    case RubyPosition::InterCharacter:
+        return CSSValueInterCharacter;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueInvalid;
+}
+
+template<> constexpr RubyPosition fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueOver:
+    case CSSValueBefore: // -webkit-ruby-position only
+        return RubyPosition::Over;
+    case CSSValueUnder:
+    case CSSValueAfter: // -webkit-ruby-position only
+        return RubyPosition::Under;
+    case CSSValueInterCharacter:
+        return RubyPosition::InterCharacter;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return RubyPosition::Over;
+}
 
 #define TYPE RubyAlign
 #define FOR_EACH(CASE) CASE(Start) CASE(Center) CASE(SpaceBetween) CASE(SpaceAround)

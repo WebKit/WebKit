@@ -10,13 +10,14 @@
 <script>
     var numberOfClicks = 0;
 
-    function runTest() {
+    async function runTest() {
         if (!window.eventSender)
             return;
-        if (window.internals)
-            window.internals.setTopContentInset(100);
-        if (window.testRunner)
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            await testRunner.setTopContentInset(100);
             testRunner.dumpAsText();
+        }
 
         eventSender.mouseMoveTo(15, 115);
         eventSender.mouseDown();
@@ -27,6 +28,9 @@
             result.innerHTML = "Pass!";
         else
             result.innerHTML = "Fail.";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     function clicked() {

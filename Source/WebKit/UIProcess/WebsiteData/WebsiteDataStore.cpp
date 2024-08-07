@@ -2546,6 +2546,15 @@ void WebsiteDataStore::setOriginQuotaRatioEnabledForTesting(bool enabled, Comple
     networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SetOriginQuotaRatioEnabledForTesting(m_sessionID, enabled), WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    RefPtr networkProcess = networkProcessIfExists();
+    if (!networkProcess)
+        return completionHandler(std::nullopt);
+
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::GetAppBadgeForTesting(m_sessionID), WTFMove(completionHandler));
+}
+
 void WebsiteDataStore::updateServiceWorkerInspectability()
 {
     if (!m_pages.computeSize())

@@ -48,8 +48,6 @@
 
 #include <mutex>
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 namespace WebConfig {
 
 alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
@@ -60,19 +58,8 @@ alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Sl
 static_assert(Gigacage::startSlotOfGigacageConfig == WebConfig::reservedSlotsForExecutableAllocator + WebConfig::additionalReservedSlots);
 #endif
 
-#else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
 namespace WTF {
 
-Config g_wtfConfig;
-
-} // namespace WTF
-
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
-
-namespace WTF {
-
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 void setPermissionsOfConfigPage()
 {
 #if PLATFORM(COCOA)
@@ -96,7 +83,6 @@ void setPermissionsOfConfigPage()
     });
 #endif // PLATFORM(COCOA)
 }
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 void Config::initialize()
 {
@@ -152,7 +138,6 @@ void Config::permanentlyFreeze()
 
     int result = 0;
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 #if PLATFORM(COCOA)
     enum {
         DontUpdateMaximumPermission = false,
@@ -164,14 +149,9 @@ void Config::permanentlyFreeze()
 #elif OS(LINUX)
     result = mprotect(&WebConfig::g_config, ConfigSizeToProtect, PROT_READ);
 #elif OS(WINDOWS)
-    // FIXME: Implement equivalent, maybe with VirtualProtect.
+    // FIXME: Implement equivalent for Windows, maybe with VirtualProtect.
     // Also need to fix WebKitTestRunner.
-
-    // Note: the Windows port also currently does not support a unified Config
-    // record, which is needed for the current form of the freezing feature to
-    // work. See comments in PlatformEnable.h for UNIFIED_AND_FREEZABLE_CONFIG_RECORD.
 #endif
-#endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
     RELEASE_ASSERT(!result);
     RELEASE_ASSERT(g_wtfConfig.isPermanentlyFrozen);

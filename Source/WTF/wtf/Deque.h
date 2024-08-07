@@ -116,6 +116,10 @@ public:
 
     template<typename Predicate> iterator findIf(const Predicate&);
     template<typename Predicate> const_iterator findIf(const Predicate&) const;
+    template<typename Predicate> bool containsIf(const Predicate& predicate) const
+    {
+        return findIf(predicate) != end();
+    }
 
 private:
     friend class DequeIteratorBase<T, inlineCapacity>;

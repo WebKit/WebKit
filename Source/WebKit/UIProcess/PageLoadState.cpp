@@ -96,7 +96,7 @@ void PageLoadState::commitChanges()
     bool canGoBackChanged = m_committedState.canGoBack != m_uncommittedState.canGoBack;
     bool canGoForwardChanged = m_committedState.canGoForward != m_uncommittedState.canGoForward;
     bool titleChanged = m_committedState.title != m_uncommittedState.title
-        || m_committedState.titleFromSafeBrowsingWarning != m_uncommittedState.titleFromSafeBrowsingWarning;
+        || m_committedState.titleFromBrowsingWarning != m_uncommittedState.titleFromBrowsingWarning;
     bool isLoadingChanged = isLoading(m_committedState) != isLoading(m_uncommittedState);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
@@ -174,7 +174,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_lastUnreachableURL = String();
 
     m_uncommittedState.title = String();
-    m_uncommittedState.titleFromSafeBrowsingWarning = { };
+    m_uncommittedState.titleFromBrowsingWarning = { };
 
     m_uncommittedState.estimatedProgress = 0;
     m_uncommittedState.networkRequestsInProgress = false;
@@ -347,7 +347,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.origin = origin;
 
     m_uncommittedState.title = String();
-    m_uncommittedState.titleFromSafeBrowsingWarning = { };
+    m_uncommittedState.titleFromBrowsingWarning = { };
 }
 
 void PageLoadState::didFinishLoad(const Transaction::Token& token)
@@ -392,8 +392,8 @@ void PageLoadState::setUnreachableURL(const Transaction::Token& token, const Str
 
 const String& PageLoadState::title() const
 {
-    if (!m_committedState.titleFromSafeBrowsingWarning.isNull())
-        return m_committedState.titleFromSafeBrowsingWarning;
+    if (!m_committedState.titleFromBrowsingWarning.isNull())
+        return m_committedState.titleFromBrowsingWarning;
 
     return m_committedState.title;
 }
@@ -404,10 +404,10 @@ void PageLoadState::setTitle(const Transaction::Token& token, const String& titl
     m_uncommittedState.title = title;
 }
 
-void PageLoadState::setTitleFromSafeBrowsingWarning(const Transaction::Token& token, const String& title)
+void PageLoadState::setTitleFromBrowsingWarning(const Transaction::Token& token, const String& title)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    m_uncommittedState.titleFromSafeBrowsingWarning = title;
+    m_uncommittedState.titleFromBrowsingWarning = title;
 }
 
 bool PageLoadState::canGoBack() const

@@ -1194,3 +1194,8 @@ bool TestRunner::isSecureEventInputEnabled() const
 }
 
 #endif // PLATFORM(MAC)
+
+void TestRunner::setTopContentInset(double contentInset)
+{
+    [[mainFrame webView] _setTopContentInsetForTesting:contentInset];
+}

@@ -212,7 +212,7 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 
     // Initialize the GPU process.
-    send(Messages::GPUProcess::InitializeGPUProcess(WTFMove(parameters)), 0);
+    sendWithAsyncReply(Messages::GPUProcess::InitializeGPUProcess(WTFMove(parameters)), [initializationActivityAndGrant = initializationActivityAndGrant()] { });
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS) && ENABLE(AUDIO_COMPONENT_SERVER_REGISTRATIONS_IN_GPU_PROCESS)
     auto registrations = fetchAudioComponentServerRegistrations();
@@ -527,6 +527,8 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::NavigationSwap:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
+    case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
+    case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -679,7 +681,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
             parameters.mediaCacheDirectorySandboxExtensionHandle = WTFMove(*handle);
     }
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     parameters.mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
     if (!parameters.mediaKeysStorageDirectory.isEmpty()) {
@@ -755,11 +757,6 @@ void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdent
 #endif
 
 #if PLATFORM(MAC)
-void GPUProcessProxy::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
-{
-    send(Messages::GPUProcess::DisplayConfigurationChanged { displayID, flags }, 0);
-}
-
 void GPUProcessProxy::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
     send(Messages::GPUProcess::SetScreenProperties { properties }, 0);

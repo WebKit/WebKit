@@ -71,7 +71,7 @@ OBJC_CLASS WKImageAnalysisOverlayViewDelegate;
 OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
-OBJC_CLASS WKSafeBrowsingWarning;
+OBJC_CLASS _WKWarningView;
 OBJC_CLASS WKShareSheet;
 OBJC_CLASS WKTextAnimationManager;
 OBJC_CLASS WKViewLayoutStrategy;
@@ -178,7 +178,7 @@ class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;
 class MediaSessionCoordinatorProxyPrivate;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class ViewGestureController;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -190,6 +190,7 @@ class WebProcessProxy;
 struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
+enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class UndoOrRedo : bool;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
@@ -281,9 +282,9 @@ public:
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
 
-    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
-    void clearSafeBrowsingWarning();
-    void clearSafeBrowsingWarningIfForMainFrameNavigation();
+    void showWarningView(const BrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
+    void clearWarningView();
+    void clearWarningViewIfForMainFrameNavigation();
 
     WKLayoutMode layoutMode() const;
     void setLayoutMode(WKLayoutMode);
@@ -535,13 +536,14 @@ public:
     NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
 
     RefPtr<ViewSnapshot> takeViewSnapshot();
+    RefPtr<ViewSnapshot> takeViewSnapshot(ForceSoftwareCapturingViewportSnapshot);
     void saveBackForwardSnapshotForCurrentItem();
     void saveBackForwardSnapshotForItem(WebBackForwardListItem&);
 
     void insertTextPlaceholderWithSize(CGSize, void(^completionHandler)(NSTextPlaceholder *));
     void removeTextPlaceholder(NSTextPlaceholder *, bool willInsertText, void(^completionHandler)());
 
-    WKSafeBrowsingWarning *safeBrowsingWarning() { return m_safeBrowsingWarning.get(); }
+    _WKWarningView *warningView() { return m_warningView.get(); }
 
     ViewGestureController* gestureController() { return m_gestureController.get(); }
     ViewGestureController& ensureGestureController();
@@ -667,7 +669,8 @@ public:
     bool isPictureInPictureActive();
     void togglePictureInPicture();
     bool isInWindowFullscreenActive() const;
-    void toggleInWindowFullscreen();
+    void enterInWindowFullscreen();
+    void exitInWindowFullscreen();
     void updateMediaPlaybackControlsManager();
 
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
@@ -973,7 +976,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool m_isHandlingAcceptedCandidate { false };
     bool m_editableElementIsFocused { false };
     bool m_isTextInsertionReplacingSoftSpace { false };
-    RetainPtr<WKSafeBrowsingWarning> m_safeBrowsingWarning;
+    RetainPtr<_WKWarningView> m_warningView;
     
 #if ENABLE(DRAG_SUPPORT)
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };

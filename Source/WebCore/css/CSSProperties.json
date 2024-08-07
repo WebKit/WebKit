@@ -148,23 +148,15 @@
         "Whether the property needs to be applied at the end of its priority bucket",
         "in CSS cascading order.",
         "",
-        "* related-property:",
-        "Indicates another property which shares a computed style with the current one.",
-        "Typically used for the prefixed or unprefixed version of the same property, e.g.",
-        "-webkit-box-shadow has box-shadow as the related property, and vice versa.",
-        "Properties with this flag can't be high-priority, they are deferred to be applied",
-        "after low-priority ones, and they are specially handled to apply in parse order.",
-        "So if a declaration block contains both properties, they will be applied in the",
-        "specified order, not alphabetically within their priority bucket as usual.",
-        "",
         "* aliases:",
         "An array of the alternative names for this property. Aliases are folded at",
         "parse time and don't have their own CSSPropertyID.",
         "",
-        "* synonym:",
+        "* cascade-alias:",
         "An alternative name for this property that gets its own CSSPropertyID.",
         "This allows parsing code to handle differences in allowed values.",
-        "Style builder code is shared with the original property.",
+        "In terms of cascade they behave like the same property.",
+        "Must also set skip-builder.",
         "",
         "* enable-if:",
         "Indicates that code should only be generated for this property/value if the",
@@ -1193,10 +1185,13 @@
             "inherited": true,
             "values": [
                 "auto",
-                "no-autospace"
+                "normal",
+                "no-autospace",
+                "ideograph-alpha",
+                "ideograph-numeric"
             ],
             "codegen-properties": {
-                "settings-flag": "cssTextSpacingEnabled",
+                "settings-flag": "cssTextAutospaceEnabled",
                 "font-property": true,
                 "high-priority": true,
                 "sink-priority": true,
@@ -1302,6 +1297,27 @@
                 "url": "https://msdn.microsoft.com/en-us/library/ms531189(v=vs.85).aspx"
             }
         },
+        "ruby-position": {
+            "inherited": true,
+            "values": [
+                "over",
+                "under",
+                "inter-character",
+                {
+                    "value": "alternate",
+                    "status": "unimplemented"
+                }
+            ],
+            "codegen-properties": {
+                "top-priority": true,
+                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-ruby",
+                "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
+            }
+        },
         "-webkit-ruby-position": {
             "inherited": true,
             "values": [
@@ -1313,22 +1329,13 @@
                     "value": "after",
                     "status": "deprecated"
                 },
-                "inter-character",
-                {
-                    "value": "over",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "under",
-                    "status": "unimplemented"
-                }
+                "inter-character"
             ],
             "codegen-properties": {
-                "top-priority": true,
-                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
-                "parser-grammar": "<<values>>"
+                "cascade-alias": "ruby-position",
+                "parser-grammar": "<<values>>",
+                "skip-builder": true
             },
-            "status": "experimental",
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
@@ -1659,7 +1666,6 @@
                 }
             ],
             "codegen-properties": {
-                "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "separator": " ",
@@ -1695,7 +1701,6 @@
         },
         "background-origin": {
             "codegen-properties": {
-                "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true,
                 "separator": " ",
@@ -2951,7 +2956,6 @@
                 "inset"
             ],
             "codegen-properties": {
-                "related-property": "-webkit-box-shadow",
                 "custom": "All",
                 "parser-function": "consumeBoxShadow",
                 "parser-function-requires-context": true,
@@ -4407,7 +4411,6 @@
         },
         "mask-clip": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-clip>#"
@@ -4419,7 +4422,6 @@
         },
         "mask-composite": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-composite>#"
@@ -4445,7 +4447,6 @@
         },
         "mask-mode": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
                 "fill-layer-property": true,
                 "parser-grammar": "<single-mask-mode>#"
@@ -5548,20 +5549,6 @@
                 "url": "https://www.w3.org/TR/SVG11/painting.html#ShapeRenderingProperty"
             }
         },
-        "size": {
-            "codegen-properties": {
-                "computable": false,
-                "custom": "All",
-                "parser-function": "consumeSize",
-                "parser-function-requires-context-mode": true,
-                "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
-                "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
-            },
-            "specification": {
-                "category": "css-page",
-                "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
-            }
-        },
         "stop-color": {
             "codegen-properties": {
                 "svg": true,
@@ -6612,17 +6599,15 @@
         },
         "-webkit-background-clip": {
             "codegen-properties": {
-                "related-property": "background-clip",
-                "name-for-methods": "Clip",
-                "fill-layer-property": true,
+                "cascade-alias": "background-clip",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-background-clip>#"
             }
         },
         "-webkit-background-origin": {
             "codegen-properties": {
-                "related-property": "background-origin",
-                "name-for-methods": "Origin",
-                "fill-layer-property": true,
+                "cascade-alias": "background-origin",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-background-origin>#"
             }
         },
@@ -6802,8 +6787,8 @@
         },
         "-webkit-box-shadow": {
             "codegen-properties": {
-                "related-property": "box-shadow",
-                "custom": "All",
+                "cascade-alias": "box-shadow",
+                "skip-builder": true,
                 "parser-function": "consumeWebkitBoxShadow",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <shadow>#",
@@ -7413,8 +7398,8 @@
         },
         "-webkit-backdrop-filter": {
             "codegen-properties": {
-                "related-property": "backdrop-filter",
-                "conditional-converter": "FilterOperations",
+                "cascade-alias": "backdrop-filter",
+                "skip-builder": true,
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
@@ -7431,7 +7416,6 @@
         },
         "backdrop-filter": {
             "codegen-properties": {
-                "related-property": "-webkit-backdrop-filter",
                 "conditional-converter": "FilterOperations",
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
@@ -7871,7 +7855,7 @@
         },
         "-webkit-line-clamp": {
             "codegen-properties": {
-                "parser-grammar": "<percentage [0,inf]> | <integer [1,inf]>"
+                "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"
             },
             "status": "non-standard"
         },
@@ -8000,9 +7984,8 @@
         },
         "-webkit-mask-clip": {
             "codegen-properties": {
-                "related-property": "mask-clip",
-                "name-for-methods": "Clip",
-                "fill-layer-property": true,
+                "cascade-alias": "mask-clip",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-mask-clip>#"
             },
             "status": {
@@ -8015,9 +7998,8 @@
         },
         "-webkit-mask-composite": {
             "codegen-properties": {
-                "related-property": "mask-composite",
-                "name-for-methods": "Composite",
-                "fill-layer-property": true,
+                "cascade-alias": "mask-composite",
+                "skip-builder": true,
                 "parser-grammar": "<single-webkit-mask-composite>#"
             },
             "status": {
@@ -8030,10 +8012,10 @@
         },
         "-webkit-mask-source-type": {
             "codegen-properties": {
-                "related-property": "mask-mode",
-                "synonym": "mask-mode",
+                "cascade-alias": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'",
-                "parser-grammar": "<single-webkit-mask-source-type>#"
+                "parser-grammar": "<single-webkit-mask-source-type>#",
+                "skip-builder": true
             },
             "status": "non-standard",
             "specification": {
@@ -8201,7 +8183,8 @@
                 "horizontal"
             ],
             "codegen-properties": {
-                "related-property": "text-combine-upright",
+                "cascade-alias": "text-combine-upright",
+                "skip-builder": true,
                 "aliases": [
                     "-epub-text-combine"
                 ],
@@ -8219,7 +8202,6 @@
                 "all"
             ],
             "codegen-properties": {
-                "related-property": "-webkit-text-combine",
                 "name-for-methods": "TextCombine",
                 "parser-grammar": "<<values>>"
             },
@@ -9924,6 +9906,20 @@
                 }
             }
         },
+        "@page": {
+            "size": {
+                "codegen-properties": {
+                    "parser-function": "consumeSize",
+                    "parser-function-requires-context-mode": true,
+                    "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
+                    "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
+                },
+                "specification": {
+                    "category": "css-page",
+                    "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
+                }
+            }
+        },
         "@property": {
             "syntax": {
                 "codegen-properties": {
@@ -9951,6 +9947,23 @@
                     "category": "css-properties-and-values",
                     "url": "https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor"
                 }
+            }
+        },
+        "@view-transition": {
+            "navigation": {
+                "values": [
+                    "none",
+                    "auto"
+                ],
+                "codegen-properties": {
+                    "settings-flag": "crossDocumentViewTransitionsEnabled",
+                    "parser-grammar": "<<values>>",
+                    "parser-exported": true
+                },
+                 "specification": {
+                     "category": "css-view-transitions",
+                     "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
+                 }
             }
         }
     },
@@ -10735,9 +10748,8 @@
             }
         },
         "<page-size>": {
-            "grammar": "A5 | A4 | A3 | B5 | B4 | letter | legal | ledger",
+            "grammar": "A5 | A4 | A3 | B5 | B4 | jis-B5 | jis-B4 | letter | legal | ledger",
             "exported": true,
-            "comment": "FIXME: missing JIS-B5 and JIS-B4",
             "specification": {
                 "category": "css-page",
                 "url": "https://www.w3.org/TR/css-page-3/#typedef-page-size-page-size"

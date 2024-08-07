@@ -135,7 +135,9 @@
     RetainPtr<NSString> _suggestedFilename;
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
+#if HAVE(SHARE_SHEET_UI)
     RetainPtr<WKShareSheet> _shareSheet;
+#endif
     BOOL _isShowingPasswordView;
 #if HAVE(UIFINDINTERACTION)
     RetainPtr<id<UITextSearchAggregator>> _searchAggregator;
@@ -145,10 +147,12 @@
 
 - (void)dealloc
 {
+#if HAVE(SHARE_SHEET_UI)
     if (_shareSheet) {
         [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ProcessExited];
         _shareSheet = nil;
     }
+#endif
     [_actionSheetAssistant cleanupSheet];
     [[_hostViewController view] removeFromSuperview];
     [_pageNumberIndicator removeFromSuperview];
@@ -670,14 +674,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebCore::ShareDataWithParsedURL shareData;
     shareData.url = { url };
     shareData.originator = WebCore::ShareDataOriginator::User;
-    
+
+#if HAVE(SHARE_SHEET_UI)
     [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:webView]);
     [_shareSheet setDelegate:self];
     [_shareSheet presentWithParameters:shareData inRect: { [[_hostViewController view] convertRect:boundingRect toView:webView] } completionHandler:[] (bool success) { }];
+#endif
 }
 
+#if HAVE(SHARE_SHEET_UI)
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
     ASSERT(_shareSheet == shareSheet);
@@ -685,6 +692,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_shareSheet setDelegate:nil];
     _shareSheet = nil;
 }
+#endif
 
 #if HAVE(APP_LINKS)
 - (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element

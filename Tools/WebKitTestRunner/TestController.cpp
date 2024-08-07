@@ -2174,6 +2174,9 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials"))
         return TestController::singleton().removeAllSessionCredentials(WTFMove(completionHandler));
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetTopContentInset"))
+        return WKPageSetTopContentInsetForTesting(TestController::singleton().mainWebView()->page(), static_cast<float>(doubleValue(messageBody)), completionHandler.leak(), adoptAndCallCompletionHandler);
+
     ASSERT_NOT_REACHED();
 }
 

@@ -365,8 +365,8 @@ WK_EXPORT void WKPreferencesSetMediaCaptureRequiresSecureConnection(WKPreference
 WK_EXPORT bool WKPreferencesGetMediaCaptureRequiresSecureConnection(WKPreferencesRef);
 
 // Defaults to 1 minute on iOS, 10 minutes elsewhere
-WK_EXPORT void WKPreferencesSetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef, double);
-WK_EXPORT double WKPreferencesGetInactiveMediaCaptureSteamRepromptIntervalInMinutes(WKPreferencesRef);
+WK_EXPORT void WKPreferencesSetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef, double);
+WK_EXPORT double WKPreferencesGetInactiveMediaCaptureStreamRepromptIntervalInMinutes(WKPreferencesRef);
 
 // Defaults to false
 WK_EXPORT void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef, bool flag);

@@ -161,8 +161,7 @@ RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, Re
 RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
     assertIsCurrent(m_dispatcher);
-
-    return WebCore::createWebProcessGraphicsContextGL(attributes, &m_dispatcher);
+    return WebCore::createWebProcessGraphicsContextGL(attributes);
 }
 #endif
 

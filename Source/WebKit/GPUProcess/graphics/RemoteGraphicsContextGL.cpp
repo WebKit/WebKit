@@ -119,17 +119,6 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
     });
 }
 
-#if PLATFORM(MAC)
-void RemoteGraphicsContextGL::displayWasReconfigured()
-{
-    assertIsMainRunLoop();
-    workQueue().dispatch([protectedThis = Ref { *this }] {
-        assertIsCurrent(protectedThis->workQueue());
-        protectedThis->m_context->updateContextOnDisplayReconfiguration();
-    });
-}
-#endif
-
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());

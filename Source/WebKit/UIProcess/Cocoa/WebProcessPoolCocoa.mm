@@ -1165,16 +1165,13 @@ void WebProcessPool::screenPropertiesChanged()
 void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& screenProperties, WebCore::PlatformDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 {
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-    sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(displayID, flags));
 
     if (auto* displayLink = displayLinks().existingDisplayLinkForDisplay(displayID))
         displayLink->displayPropertiesChanged();
 
 #if ENABLE(GPU_PROCESS)
-    if (auto gpuProcess = this->gpuProcess()) {
+    if (auto gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
-        gpuProcess->displayConfigurationChanged(displayID, flags);
-    }
 #endif
 }
 

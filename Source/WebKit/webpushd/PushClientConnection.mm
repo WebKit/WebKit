@@ -293,6 +293,22 @@ void PushClientConnection::cancelNotification(const WTF::UUID& notificationID)
 #endif
 }
 
+void PushClientConnection::setAppBadge(WebCore::SecurityOriginData&& origin, std::optional<uint64_t> badge)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().setAppBadge(*this, WTFMove(origin), badge);
+#endif
+}
+
+void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+    WebPushDaemon::singleton().getAppBadgeForTesting(*this, WTFMove(completionHandler));
+#else
+    completionHandler(std::nullopt);
+#endif
+}
+
 #if PLATFORM(IOS)
 String PushClientConnection::associatedWebClipTitle() const
 {
@@ -301,16 +317,6 @@ String PushClientConnection::associatedWebClipTitle() const
     return m_associatedWebClip.get().title;
 }
 #endif // PLATFORM(IOS)
-
-void PushClientConnection::enableMockUserNotificationCenterForTesting(CompletionHandler<void()>&& completionHandler)
-{
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().enableMockUserNotificationCenterForTesting(*this);
-    completionHandler();
-#else
-    completionHandler();
-#endif
-}
 
 } // namespace WebPushD
 

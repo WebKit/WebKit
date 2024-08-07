@@ -80,10 +80,6 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 
 webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Pass ]
 
-# webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass ]
-
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 
 ### you should probably use the platform/ios/TestExpectations file, NOT this one.

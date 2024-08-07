@@ -9,11 +9,12 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+line-clamp
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/append-whitespace-only-node-crash-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-001.html
@@ -311,6 +312,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-002-expected.html
@@ -321,6 +324,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/full-width-leading-spaces-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-001.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-002.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-003.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/hanging-whitespace-003.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/line-edge-white-space-collapse-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/line-edge-white-space-collapse-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/line-edge-white-space-collapse-002-expected.html
@@ -505,6 +514,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-002-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-004-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-align-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-align-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-dynamic-001-expected.html
@@ -519,11 +535,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-narrow-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-overflow-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-overflow-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-overflow-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-overflow-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-right-to-left.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-text-indent-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-text-indent-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-top-to-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-nowrap-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-nowrap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-nowrap-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002-expected.html

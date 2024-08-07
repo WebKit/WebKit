@@ -34,6 +34,11 @@ WKMutableDictionaryRef WKMutableDictionaryCreate()
     return const_cast<WKMutableDictionaryRef>(WebKit::toAPI(&API::Dictionary::create().leakRef()));
 }
 
+WKMutableDictionaryRef WKMutableDictionaryCreateWithCapacity(size_t capacity)
+{
+    return const_cast<WKMutableDictionaryRef>(WebKit::toAPI(&API::Dictionary::createWithCapacity(capacity).leakRef()));
+}
+
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
     return WebKit::toImpl(dictionaryRef)->set(WebKit::toImpl(keyRef)->string(), WebKit::toImpl(itemRef));

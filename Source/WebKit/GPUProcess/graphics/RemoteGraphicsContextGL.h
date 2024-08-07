@@ -91,9 +91,6 @@ public:
     void stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection);
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
-#if PLATFORM(MAC)
-    void displayWasReconfigured();
-#endif
 
 protected:
     RemoteGraphicsContextGL(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);

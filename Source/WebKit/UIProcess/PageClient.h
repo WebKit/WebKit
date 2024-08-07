@@ -177,6 +177,7 @@ using SessionID = WTF::UUID;
 namespace WebKit {
 
 enum class UndoOrRedo : bool;
+enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class TapHandlingResult : uint8_t;
 
 class ContextMenuContextData;
@@ -187,7 +188,7 @@ class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class RemoteLayerTreeNode;
 class RemoteLayerTreeTransaction;
-class SafeBrowsingWarning;
+class BrowsingWarning;
 class UserData;
 class ViewSnapshot;
 class WebBackForwardListItem;
@@ -325,9 +326,9 @@ public:
 
     virtual void topContentInsetDidChange() { }
 
-    virtual void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
-    virtual void clearSafeBrowsingWarning() { }
-    virtual void clearSafeBrowsingWarningIfForMainFrameNavigation() { }
+    virtual void showBrowsingWarning(const BrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler) { completionHandler(ContinueUnsafeLoad::Yes); }
+    virtual void clearBrowsingWarning() { }
+    virtual void clearBrowsingWarningIfForMainFrameNavigation() { }
     
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
@@ -375,6 +376,10 @@ public:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&) = 0;
+#endif
+
+#if PLATFORM(MAC)
+    virtual RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&, ForceSoftwareCapturingViewportSnapshot) = 0;
 #endif
 
 #if USE(APPKIT)
@@ -636,7 +641,7 @@ public:
     virtual void drawPageBorderForPrinting(WebCore::FloatSize&& size) { }
     virtual bool scrollingUpdatesDisabledForTesting() { return false; }
 
-    virtual bool hasSafeBrowsingWarning() const { return false; }
+    virtual bool hasBrowsingWarning() const { return false; }
 
     virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
 

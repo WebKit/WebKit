@@ -78,7 +78,7 @@ FillLayer::FillLayer(FillLayerType type)
     , m_backgroundYOriginSet(false)
     , m_backgroundXOrigin(static_cast<unsigned>(Edge::Left))
     , m_backgroundYOrigin(static_cast<unsigned>(Edge::Top))
-    , m_compositeSet(type == FillLayerType::Mask)
+    , m_compositeSet(false)
     , m_blendModeSet(false)
     , m_maskModeSet(false)
     , m_type(static_cast<unsigned>(type))
@@ -312,12 +312,12 @@ void FillLayer::cullEmptyLayers()
 
 static inline FillBox clipMax(FillBox clipA, FillBox clipB)
 {
-    if (clipA == FillBox::Border || clipB == FillBox::Border)
-        return FillBox::Border;
-    if (clipA == FillBox::Padding || clipB == FillBox::Padding)
-        return FillBox::Padding;
-    if (clipA == FillBox::Content || clipB == FillBox::Content)
-        return FillBox::Content;
+    if (clipA == FillBox::BorderBox || clipB == FillBox::BorderBox)
+        return FillBox::BorderBox;
+    if (clipA == FillBox::PaddingBox || clipB == FillBox::PaddingBox)
+        return FillBox::PaddingBox;
+    if (clipA == FillBox::ContentBox || clipB == FillBox::ContentBox)
+        return FillBox::ContentBox;
     return FillBox::NoClip;
 }
 

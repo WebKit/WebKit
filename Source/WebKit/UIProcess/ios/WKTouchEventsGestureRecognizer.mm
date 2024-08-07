@@ -139,6 +139,7 @@ static double approximateWallTime(NSTimeInterval timestamp)
     _lastTouchEvent.inJavaScriptGesture = false;
     _lastTouchEvent.isPotentialTap = false;
     _lastTouchEvent.coalescedEvents = { };
+    _lastTouchEvent.predictedEvents = { };
     _lastTouchesBeganTime = 0;
     _lastTouchesBeganLocation = std::nullopt;
 }
@@ -228,7 +229,7 @@ static unsigned nextTouchIdentifier()
     }
 }
 
-- (WebKit::WKTouchEvent)_coalescedTouchEventForTouch:(UITouch *)touch
+- (WebKit::WKTouchEvent)_touchEventForTouch:(UITouch *)touch
 {
     auto locationInWindow = [touch locationInView:nil];
     auto locationInViewport = [[self view] convertPoint:locationInWindow fromView:nil];
@@ -261,7 +262,7 @@ static unsigned nextTouchIdentifier()
     return event;
 }
 
-- (void)_recordTouches:(NSSet<UITouch *> *)touches type:(WebKit::WKTouchEventType)type coalescedTouches:(NSArray<UITouch *> *)coalescedTouches
+- (void)_recordTouches:(NSSet<UITouch *> *)touches type:(WebKit::WKTouchEventType)type coalescedTouches:(NSArray<UITouch *> *)coalescedTouches predictedTouches:(NSArray<UITouch *> *)predictedTouches
 {
     _lastTouchEvent.type = type;
     _lastTouchEvent.inJavaScriptGesture = false;
@@ -284,10 +285,14 @@ static unsigned nextTouchIdentifier()
     _lastTouchEvent.timestamp = approximateWallTime(touches.anyObject.timestamp);
 
     _lastTouchEvent.coalescedEvents = { };
+    _lastTouchEvent.predictedEvents = { };
 
     if (type == WebKit::WKTouchEventType::Change) {
         for (UITouch *coalescedTouch in coalescedTouches)
-            _lastTouchEvent.coalescedEvents.append([self _coalescedTouchEventForTouch:coalescedTouch]);
+            _lastTouchEvent.coalescedEvents.append([self _touchEventForTouch:coalescedTouch]);
+
+        for (UITouch *predictedTouch in predictedTouches)
+            _lastTouchEvent.predictedEvents.append([self _touchEventForTouch:predictedTouch]);
     }
 
     NSUInteger touchIndex = 0;
@@ -460,7 +465,7 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
     if (lastExpectedWKEventTypeForTouches(touches) != type)
         return;
 
-    [self _recordTouches:touches type:type coalescedTouches:[event coalescedTouchesForTouch:touches.anyObject]];
+    [self _recordTouches:touches type:type coalescedTouches:[event coalescedTouchesForTouch:touches.anyObject] predictedTouches:[event predictedTouchesForTouch:touches.anyObject]];
 
     [self performAction];
 

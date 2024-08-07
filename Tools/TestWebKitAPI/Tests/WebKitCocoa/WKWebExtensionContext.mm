@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,11 @@
 
 #import "TestCocoa.h"
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKWebExtensionCommand.h>
-#import <WebKit/_WKWebExtensionContextPrivate.h>
-#import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionPrivate.h>
+#import <WebKit/WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionMatchPatternPrivate.h>
+#import <WebKit/WKWebExtensionPermission.h>
+#import <WebKit/WKWebExtensionPrivate.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -47,84 +47,84 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     // Only Requested states should be reported with out any granting / denying.
 
     NSMutableDictionary *testManifestDictionary = [@{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0", @"permissions": @[ ] } mutableCopy];
-    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    WKWebExtension *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    WKWebExtensionContext *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusUnknown);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     testManifestDictionary[@"permissions"] = @[ @"tabs", @"https://*.example.com/*" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusUnknown);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     testManifestDictionary[@"permissions"] = @[ @"tabs", @"<all_urls>" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     testManifestDictionary[@"permissions"] = @[ @"tabs", @"*://*/*" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
@@ -133,21 +133,21 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
     testManifestDictionary[@"manifest_version"] = @3;
     testManifestDictionary[@"permissions"] = @[ ];
     testManifestDictionary[@"host_permissions"] = @[ ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusUnknown);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
@@ -155,63 +155,63 @@ TEST(WKWebExtensionContext, DefaultPermissionChecks)
 
     testManifestDictionary[@"permissions"] = @[ @"tabs" ];
     testManifestDictionary[@"host_permissions"] = @[ @"https://*.example.com/*" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusUnknown);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     testManifestDictionary[@"host_permissions"] = @[ @"<all_urls>" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     testManifestDictionary[@"host_permissions"] = @[ @"*://*/*" ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], _WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://unknown.com/"]], WKWebExtensionContextPermissionStatusRequestedImplicitly);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
@@ -224,52 +224,52 @@ TEST(WKWebExtensionContext, PermissionGranting)
     testManifestDictionary[@"permissions"] = @[ @"tabs", @"https://*.example.com/*" ];
 
     // Test defaults.
-    _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    WKWebExtension *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    WKWebExtensionContext *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionCookies]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionCookies]);
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE(testContext.hasAccessToAllHosts);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://webkit.org/"]]);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionTabs], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForPermission:_WKWebExtensionPermissionCookies], _WKWebExtensionContextPermissionStatusUnknown);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionTabs], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForPermission:WKWebExtensionPermissionCookies], WKWebExtensionContextPermissionStatusUnknown);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusUnknown);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     // Grant a specific permission.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionTabs];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionTabs];
 
-    EXPECT_TRUE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_TRUE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.grantedPermissions.count, 1ul);
 
     // Grant a specific URL.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
 
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
 
     // Deny a specific URL.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
 
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 1ul);
 
     // Deny a specific permission.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:_WKWebExtensionPermissionTabs];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionTabs];
 
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 1ul);
 
     // Reset all permissions.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forURL:[NSURL URLWithString:@"https://example.com/"]];
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forPermission:_WKWebExtensionPermissionTabs];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forURL:[NSURL URLWithString:@"https://example.com/"]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forPermission:WKWebExtensionPermissionTabs];
 
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
@@ -277,28 +277,28 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     // Grant the all URLs match pattern.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:_WKWebExtensionMatchPattern.allURLsMatchPattern];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:WKWebExtensionMatchPattern.allURLsMatchPattern];
 
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
 
     // Reset a specific URL (should do nothing).
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusUnknown forURL:[NSURL URLWithString:@"https://example.com/"]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forURL:[NSURL URLWithString:@"https://example.com/"]];
 
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
 
     // Deny a specific URL (should do nothing).
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forURL:[NSURL URLWithString:@"https://example.com/"]];
 
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 1ul);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusDeniedExplicitly);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusDeniedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://webkit.org/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
 
     // Reset all match patterns.
     testContext.grantedPermissionMatchPatterns = @{ };
@@ -308,36 +308,36 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     // Mass grant with the permission setter.
-    testContext.grantedPermissions = @{ _WKWebExtensionPermissionTabs: NSDate.distantFuture };
+    testContext.grantedPermissions = @{ WKWebExtensionPermissionTabs: NSDate.distantFuture };
 
-    EXPECT_TRUE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_TRUE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.grantedPermissions.count, 1ul);
 
     // Mass deny with the permission setter.
-    testContext.deniedPermissions = @{ _WKWebExtensionPermissionTabs: NSDate.distantFuture };
+    testContext.deniedPermissions = @{ WKWebExtensionPermissionTabs: NSDate.distantFuture };
 
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.deniedPermissions.count, 1ul);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
 
     // Mass grant with the permission setter again.
-    testContext.grantedPermissions = @{ _WKWebExtensionPermissionTabs: NSDate.distantFuture };
+    testContext.grantedPermissions = @{ WKWebExtensionPermissionTabs: NSDate.distantFuture };
 
-    EXPECT_TRUE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_TRUE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.grantedPermissions.count, 1ul);
     EXPECT_EQ(testContext.deniedPermissions.count, 0ul);
 
     // Mass grant with the match pattern setter.
-    testContext.grantedPermissionMatchPatterns = @{ _WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
+    testContext.grantedPermissionMatchPatterns = @{ WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
 
     EXPECT_TRUE(testContext.hasAccessToAllURLs);
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     // Mass deny with the match pattern setter.
-    testContext.deniedPermissionMatchPatterns = @{ _WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
+    testContext.deniedPermissionMatchPatterns = @{ WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
 
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
@@ -345,11 +345,11 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
 
     // Mass grant with the match pattern setter again.
-    testContext.grantedPermissionMatchPatterns = @{ _WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
+    testContext.grantedPermissionMatchPatterns = @{ WKWebExtensionMatchPattern.allURLsMatchPattern: NSDate.distantFuture };
 
     EXPECT_TRUE(testContext.hasAccessToAllURLs);
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
@@ -365,11 +365,11 @@ TEST(WKWebExtensionContext, PermissionGranting)
     EXPECT_EQ(testContext.deniedPermissionMatchPatterns.count, 0ul);
 
     // Test granting a match pattern that expire in 2 seconds.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:_WKWebExtensionMatchPattern.allURLsMatchPattern expirationDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:WKWebExtensionMatchPattern.allURLsMatchPattern expirationDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 
     EXPECT_TRUE(testContext.hasAccessToAllURLs);
     EXPECT_TRUE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusGrantedImplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusGrantedImplicitly);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 1ul);
 
     // Sleep until after the match pattern expires.
@@ -377,19 +377,19 @@ TEST(WKWebExtensionContext, PermissionGranting)
 
     EXPECT_FALSE(testContext.hasAccessToAllURLs);
     EXPECT_FALSE([testContext hasAccessToURL:[NSURL URLWithString:@"https://example.com/"]]);
-    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], _WKWebExtensionContextPermissionStatusRequestedExplicitly);
+    EXPECT_EQ([testContext permissionStatusForURL:[NSURL URLWithString:@"https://example.com/"]], WKWebExtensionContextPermissionStatusRequestedExplicitly);
     EXPECT_EQ(testContext.grantedPermissionMatchPatterns.count, 0ul);
 
     // Test granting a permission that expire in 2 seconds.
-    [testContext setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionTabs expirationDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    [testContext setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionTabs expirationDate:[NSDate dateWithTimeIntervalSinceNow:2]];
 
-    EXPECT_TRUE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_TRUE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.grantedPermissions.count, 1ul);
 
     // Sleep until after the permission expires.
     sleep(3);
 
-    EXPECT_FALSE([testContext hasPermission:_WKWebExtensionPermissionTabs]);
+    EXPECT_FALSE([testContext hasPermission:WKWebExtensionPermissionTabs]);
     EXPECT_EQ(testContext.grantedPermissions.count, 0ul);
 }
 
@@ -398,8 +398,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     NSMutableDictionary *testManifestDictionary = [@{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0" } mutableCopy];
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*/" ] } ];
-    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     auto *webkitURL = [NSURL URLWithString:@"https://webkit.org/"];
     auto *exampleURL = [NSURL URLWithString:@"https://example.com/"];
@@ -410,8 +410,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*/" ], @"exclude_matches": @[ @"*://*.example.com/" ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -419,8 +419,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js", @1, @"" ], @"css": @[ @NO, @"test.css", @"" ], @"matches": @[ @"*://*.example.com/" ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -428,8 +428,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"MAIN" } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -437,8 +437,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"css": @[ @NO, @"test.css", @"" ], @"css_origin": @"user", @"matches": @[ @"*://*.example.com/" ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -446,8 +446,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"css": @[ @NO, @"test.css", @"" ], @"css_origin": @"author", @"matches": @[ @"*://*.example.com/" ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -457,8 +457,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     // Invalid cases
 
     testManifestDictionary[@"content_scripts"] = @[ ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_FALSE(testContext.hasInjectedContent);
@@ -466,8 +466,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @{ @"invalid": @YES };
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_FALSE(testContext.hasInjectedContent);
@@ -475,8 +475,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_FALSE(testContext.hasInjectedContent);
@@ -484,8 +484,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"run_at": @"invalid" } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -493,8 +493,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"INVALID" } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -502,8 +502,8 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"css": @[ @NO, @"test.css", @"" ], @"css_origin": @"bad", @"matches": @[ @"*://*.example.com/" ] } ];
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_TRUE(testContext.hasInjectedContent);
@@ -521,8 +521,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         @"options_page": @"options.html"
     };
 
-    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     auto *expectedOptionsURL = [NSURL URLWithString:@"options.html" relativeToURL:testContext.baseURL].absoluteURL;
     EXPECT_NS_EQUAL(testContext.optionsPageURL, expectedOptionsURL);
 
@@ -534,8 +534,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         @"options_page": @123
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.optionsPageURL);
 
     testManifestDictionary = @{
@@ -548,8 +548,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     expectedOptionsURL = [NSURL URLWithString:@"options.html" relativeToURL:testContext.baseURL].absoluteURL;
     EXPECT_NS_EQUAL(testContext.optionsPageURL, expectedOptionsURL);
 
@@ -563,8 +563,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.optionsPageURL);
 
     testManifestDictionary = @{
@@ -575,8 +575,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         @"options_page": @""
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.optionsPageURL);
 
     testManifestDictionary = @{
@@ -587,8 +587,8 @@ TEST(WKWebExtensionContext, OptionsPageURLParsing)
         @"options_ui": @{ }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.optionsPageURL);
 }
 
@@ -604,8 +604,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     auto *expectedURL = [NSURL URLWithString:@"newtab.html" relativeToURL:testContext.baseURL].absoluteURL;
     EXPECT_NS_EQUAL(testContext.overrideNewTabPageURL, expectedURL);
 
@@ -619,8 +619,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 
     testManifestDictionary = @{
@@ -633,8 +633,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 
     testManifestDictionary = @{
@@ -645,8 +645,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         @"browser_url_overrides": @{ }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 
     testManifestDictionary = @{
@@ -659,8 +659,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     expectedURL = [NSURL URLWithString:@"newtab.html" relativeToURL:testContext.baseURL].absoluteURL;
     EXPECT_NS_EQUAL(testContext.overrideNewTabPageURL, expectedURL);
 
@@ -674,8 +674,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 
     testManifestDictionary = @{
@@ -686,8 +686,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         @"chrome_url_overrides": @{ }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 
     testManifestDictionary = @{
@@ -700,8 +700,8 @@ TEST(WKWebExtensionContext, URLOverridesParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NULL(testContext.overrideNewTabPageURL);
 }
 
@@ -751,15 +751,15 @@ TEST(WKWebExtensionContext, CommandsParsing)
         }
     };
 
-    auto *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    auto *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    auto *testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NS_EQUAL(testContext.webExtension.errors, @[ ]);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 6lu);
 
-    _WKWebExtensionCommand *testCommand = nil;
+    WKWebExtensionCommand *testCommand = nil;
 
-    for (_WKWebExtensionCommand *command in testContext.commands) {
+    for (WKWebExtensionCommand *command in testContext.commands) {
         if ([command.identifier isEqualToString:@"toggle-feature"]) {
             testCommand = command;
 
@@ -876,8 +876,8 @@ TEST(WKWebExtensionContext, CommandsParsing)
         @"commands": @{ }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_NS_EQUAL(testContext.webExtension.errors, @[ ]);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 0lu);
@@ -896,8 +896,8 @@ TEST(WKWebExtensionContext, CommandsParsing)
         }
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 0lu);
@@ -912,8 +912,8 @@ TEST(WKWebExtensionContext, CommandsParsing)
         ]
     };
 
-    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
     EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 0lu);

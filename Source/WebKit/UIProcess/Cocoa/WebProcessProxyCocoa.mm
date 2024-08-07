@@ -30,7 +30,6 @@
 #import "CodeSigning.h"
 #import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
-#import "HighPerformanceGPUManager.h"
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferReference.h"
@@ -117,20 +116,6 @@ Vector<String> WebProcessProxy::mediaMIMETypes() const
 {
     return mediaTypeCache();
 }
-
-#if PLATFORM(MAC)
-void WebProcessProxy::requestHighPerformanceGPU()
-{
-    LOG(WebGL, "WebProcessProxy::requestHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(*this);
-}
-
-void WebProcessProxy::releaseHighPerformanceGPU()
-{
-    LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
-}
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 bool WebProcessProxy::shouldEnableRemoteInspector()

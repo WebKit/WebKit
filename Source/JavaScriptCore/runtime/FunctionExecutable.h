@@ -55,7 +55,7 @@ public:
         return executable;
     }
     static FunctionExecutable* fromGlobalCode(
-        const Identifier& name, JSGlobalObject*, const SourceCode&, 
+        const Identifier& name, JSGlobalObject*, const SourceCode&, LexicallyScopedFeatures,
         JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition);
 
     static void destroy(JSCell*);

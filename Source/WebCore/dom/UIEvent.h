@@ -44,9 +44,9 @@ public:
     {
         return adoptRef(*new UIEvent(EventInterfaceType::UIEvent));
     }
-    static Ref<UIEvent> create(const AtomString& type, const UIEventInit& initializer, IsTrusted = IsTrusted::No)
+    static Ref<UIEvent> create(const AtomString& type, const UIEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, initializer));
+        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, initializer, isTrusted));
     }
     virtual ~UIEvent();
 

@@ -155,7 +155,7 @@ public:
     ComposedTreeIterator at(const Node& child) { return ComposedTreeIterator(m_parent, const_cast<Node&>(child)); }
     
 private:
-    ContainerNode& m_parent;
+    CheckedRef<ContainerNode> m_parent;
 };
 
 class ComposedTreeChildAdapter {
@@ -183,7 +183,7 @@ public:
     Iterator at(const Node& child) { return Iterator(m_parent, const_cast<Node&>(child)); }
 
 private:
-    ContainerNode& m_parent;
+    CheckedRef<ContainerNode> m_parent;
 };
 
 // FIXME: We should have const versions too.

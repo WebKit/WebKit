@@ -140,6 +140,13 @@ static TypedArrayType toTypedArrayType(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayUint32Store:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
         return TypeUint32;
+    case AccessCase::IndexedTypedArrayFloat16Load:
+    case AccessCase::IndexedTypedArrayFloat16Store:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
+        return TypeFloat16;
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat32InHit:
@@ -169,6 +176,7 @@ static bool forResizableTypedArray(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -178,6 +186,7 @@ static bool forResizableTypedArray(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -187,6 +196,7 @@ static bool forResizableTypedArray(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
         return true;
@@ -291,24 +301,30 @@ static bool needsScratchFPR(AccessCase::AccessType type)
     case AccessCase::IndexedNoIndexingInMiss:
     // Indexed TypedArray InHit does not need FPR since it does not load a value.
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
         return false;
     case AccessCase::IndexedDoubleLoad:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedDoubleInHit:
@@ -353,6 +369,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -362,6 +379,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedInt32Store:
@@ -375,6 +393,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -384,6 +403,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedStringLoad:
@@ -421,6 +441,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -430,6 +451,7 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
@@ -497,6 +519,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -506,6 +529,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedInt32Store:
@@ -519,6 +543,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -528,6 +553,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedStringLoad:
@@ -544,6 +570,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -553,6 +580,7 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
@@ -624,6 +652,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -633,6 +662,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedInt32Store:
@@ -646,6 +676,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -655,6 +686,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedStringLoad:
@@ -671,6 +703,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -680,6 +713,7 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
@@ -751,6 +785,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -760,6 +795,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedInt32Store:
@@ -773,6 +809,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -782,6 +819,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedStringLoad:
@@ -798,6 +836,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -807,6 +846,7 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
@@ -872,6 +912,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -881,6 +922,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedInt32Store:
@@ -894,6 +936,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -903,6 +946,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedStringLoad:
@@ -919,6 +963,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -928,6 +973,7 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:
@@ -2032,6 +2078,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -2041,6 +2088,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedTypedArrayInt8InHit:
@@ -2050,6 +2098,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -2059,6 +2108,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit: {
         ASSERT(!accessCase.viaGlobalProxy());
@@ -2152,6 +2202,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
                 ASSERT(isFloat(type));
                 RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
                 switch (elementSize(type)) {
+                case 2:
+                    jit.loadFloat16(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo), m_scratchFPR);
+                    jit.convertFloat16ToDouble(m_scratchFPR, m_scratchFPR);
+                    break;
                 case 4:
                     jit.loadFloat(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour), m_scratchFPR);
                     jit.convertFloatToDouble(m_scratchFPR, m_scratchFPR);
@@ -2527,6 +2581,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -2536,6 +2591,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store: {
         ASSERT(!accessCase.viaGlobalProxy());
@@ -2640,6 +2696,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             ASSERT(isFloat(type));
             RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
             switch (elementSize(type)) {
+            case 2:
+                jit.convertDoubleToFloat16(m_scratchFPR, m_scratchFPR);
+                jit.storeFloat16(m_scratchFPR, CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo));
+                break;
             case 4:
                 jit.convertDoubleToFloat(m_scratchFPR, m_scratchFPR);
                 jit.storeFloat(m_scratchFPR, CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour));
@@ -3725,6 +3785,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -3734,6 +3795,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedStringLoad:
@@ -3749,6 +3811,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTypedArrayUint16Store:
     case AccessCase::IndexedTypedArrayInt32Store:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat16Store:
     case AccessCase::IndexedTypedArrayFloat32Store:
     case AccessCase::IndexedTypedArrayFloat64Store:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
@@ -3758,6 +3821,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedResizableTypedArrayUint16Store:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
     case AccessCase::IndexedInt32InHit:
@@ -3773,6 +3837,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat16InHit:
     case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayInt8InHit:
@@ -3782,6 +3847,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedResizableTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64InHit:
     case AccessCase::IndexedStringInHit:

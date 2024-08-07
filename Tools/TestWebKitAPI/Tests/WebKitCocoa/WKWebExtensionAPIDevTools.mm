@@ -77,7 +77,7 @@ TEST(WKWebExtensionAPIDevTools, Basics)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -136,7 +136,7 @@ TEST(WKWebExtensionAPIDevTools, CreatePanel)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -202,10 +202,10 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowEval)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost().URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost().URL];
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager.get().defaultTab.webView._inspector show];
@@ -231,7 +231,7 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReload)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -266,7 +266,7 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowReloadIgnoringCache)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -305,7 +305,7 @@ TEST(WKWebExtensionAPIDevTools, NetworkNavigatedEvent)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -315,7 +315,7 @@ TEST(WKWebExtensionAPIDevTools, NetworkNavigatedEvent)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Next Page");
 
-    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.request().URL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.request().URL];
     [manager.get().defaultTab.webView loadRequest:server.request()];
 
     [manager run];
@@ -349,7 +349,7 @@ TEST(WKWebExtensionAPIDevTools, PanelsThemeName)
     // Force light mode for the app, so the switch to dark will trigger the event.
     NSApp.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     auto *webView = manager.get().defaultTab.webView;
@@ -393,7 +393,7 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingToBackground)
         @"devtools.js": devToolsScript
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -440,7 +440,7 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -494,7 +494,7 @@ TEST(WKWebExtensionAPIDevTools, MessagePassingFromPanelToDevToolsBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -544,7 +544,7 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingToBackground)
         @"devtools.js": devToolsScript,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -596,7 +596,7 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
@@ -656,7 +656,7 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToDevToolsBackground)
         @"icon.svg": iconSVG,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];

@@ -140,7 +140,7 @@ bool ActiveDOMObject::isAllowedToRunScript() const
 
 void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&& function)
 {
-    auto* context = scriptExecutionContext();
+    RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext();
     if (!context)
         return;
     context->eventLoop().queueTask(source, WTFMove(function));

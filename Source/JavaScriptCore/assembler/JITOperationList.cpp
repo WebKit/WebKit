@@ -112,6 +112,7 @@ LLINT_DECLARE_ROUTINE_VALIDATE(llint_program_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_module_program_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue);
+LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_simd_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_function_prologue_simd);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_throw_during_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_handle_uncaught_exception);
@@ -119,6 +120,7 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
+LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
@@ -167,6 +169,7 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(llint_module_program_prologue)
             LLINT_ROUTINE(wasm_function_prologue_trampoline)
             LLINT_ROUTINE(wasm_function_prologue)
+            LLINT_ROUTINE(wasm_function_prologue_simd_trampoline)
             LLINT_ROUTINE(wasm_function_prologue_simd)
             LLINT_ROUTINE(llint_throw_during_call_trampoline)
             LLINT_ROUTINE(llint_handle_uncaught_exception)
@@ -175,6 +178,7 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(normal_osr_exit_trampoline)
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
+            LLINT_ROUTINE(js_to_wasm_wrapper_entry_crash_for_simd_parameters)
 
             LLINT_OP(op_catch)
             LLINT_OP(wasm_catch)

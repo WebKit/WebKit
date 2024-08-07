@@ -57,6 +57,7 @@
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
@@ -212,18 +213,32 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     CSSPropertyParser parser(range, context, &parsedProperties);
 
     bool parseSuccess;
-    if (ruleType == StyleRuleType::FontFace)
-        parseSuccess = parser.parseFontFaceDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::FontPaletteValues)
-        parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::CounterStyle)
+    switch (ruleType) {
+    case StyleRuleType::CounterStyle:
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID);
-    else if (ruleType == StyleRuleType::Keyframe)
+        break;
+    case StyleRuleType::FontFace:
+        parseSuccess = parser.parseFontFaceDescriptor(propertyID);
+        break;
+    case StyleRuleType::FontPaletteValues:
+        parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
+        break;
+    case StyleRuleType::Keyframe:
         parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
-    else if (ruleType == StyleRuleType::Property)
+        break;
+    case StyleRuleType::Page:
+        parseSuccess = parser.parsePageDescriptor(propertyID, important);
+        break;
+    case StyleRuleType::Property:
         parseSuccess = parser.parsePropertyDescriptor(propertyID);
-    else
+        break;
+    case StyleRuleType::ViewTransition:
+        parseSuccess = parser.parseViewTransitionDescriptor(propertyID);
+        break;
+    default:
         parseSuccess = parser.parseValueStart(propertyID, important);
+        break;
+    }
 
     if (!parseSuccess)
         parsedProperties.shrink(parsedPropertiesSize);
@@ -388,6 +403,8 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             return consumeImage(range, m_context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage });
         case CSSCustomPropertySyntax::Type::URL:
             return consumeURL(range);
+        case CSSCustomPropertySyntax::Type::String:
+            return consumeString(range);
         case CSSCustomPropertySyntax::Type::TransformFunction:
             return consumeTransformFunction(m_range, m_context);
         case CSSCustomPropertySyntax::Type::TransformList:
@@ -492,7 +509,8 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         }
         case CSSCustomPropertySyntax::Type::CustomIdent:
             return { downcast<CSSPrimitiveValue>(value).stringValue() };
-
+        case CSSCustomPropertySyntax::Type::String:
+            return { serializeString(downcast<CSSPrimitiveValue>(value).stringValue()) };
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
             if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))
@@ -535,6 +553,18 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
     ASSERT(m_context.propertySettings.cssCounterStyleAtRulesEnabled);
 
     RefPtr parsedValue = CSSPropertyParsing::parseCounterStyleDescriptor(m_range, property, m_context);
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    return true;
+}
+
+bool CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property)
+{
+    ASSERT(m_context.propertySettings.crossDocumentViewTransitionsEnabled);
+
+    RefPtr parsedValue = CSSPropertyParsing::parseViewTransitionDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
         return false;
 
@@ -602,6 +632,23 @@ bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID property)
 {
     RefPtr parsedValue = CSSPropertyParsing::parseFontPaletteValuesDescriptor(m_range, property, m_context);
     if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    return true;
+}
+
+bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, bool important)
+{
+    // Does not apply in @page per-spec.
+    if (property == CSSPropertyPage)
+        return false;
+
+    RefPtr parsedValue = CSSPropertyParsing::parsePageDescriptor(m_range, property, m_context);
+    if (!parsedValue)
+        return parseValueStart(property, important);
+
+    if (!m_range.atEnd())
         return false;
 
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);

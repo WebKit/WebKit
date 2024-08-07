@@ -165,6 +165,11 @@ static WGPUColorSpace convertToWGPUColorSpace(const PredefinedColorSpace& colorS
     }
 }
 
+void DeviceImpl::updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 RefPtr<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();

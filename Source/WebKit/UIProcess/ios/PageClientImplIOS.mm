@@ -575,22 +575,22 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
     [contentView() layer].opacity = makeBlank ? 0 : 1;
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
+void PageClientImpl::showBrowsingWarning(const BrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (auto webView = this->webView())
-        [webView _showSafeBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];
+        [webView _showBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];
     else
         completionHandler(ContinueUnsafeLoad::No);
 }
 
-void PageClientImpl::clearSafeBrowsingWarning()
+void PageClientImpl::clearBrowsingWarning()
 {
-    [webView() _clearSafeBrowsingWarning];
+    [webView() _clearBrowsingWarning];
 }
 
-void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+void PageClientImpl::clearBrowsingWarningIfForMainFrameNavigation()
 {
-    [webView() _clearSafeBrowsingWarningIfForMainFrameNavigation];
+    [webView() _clearBrowsingWarningIfForMainFrameNavigation];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()

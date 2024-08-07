@@ -91,7 +91,7 @@ public:
     GPUConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
 
     const String& mediaCacheDirectory(PAL::SessionID) const;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     const String& mediaKeysStorageDirectory(PAL::SessionID) const;
 #endif
 
@@ -152,7 +152,7 @@ private:
     void didReceiveGPUProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
-    void initializeGPUProcess(GPUProcessCreationParameters&&);
+    void initializeGPUProcess(GPUProcessCreationParameters&&, CompletionHandler<void()>&&);
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
@@ -183,7 +183,6 @@ private:
     void cancelGetDisplayMediaPrompt();
 #endif
 #if PLATFORM(MAC)
-    void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     void setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();
 #endif
@@ -235,7 +234,7 @@ private:
 
     struct GPUSession {
         String mediaCacheDirectory;
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
         String mediaKeysStorageDirectory;
 #endif
     };

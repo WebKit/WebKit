@@ -1,0 +1,19 @@
+<style>
+  div {
+   color: red;
+  }
+</style>
+<div id=om></div>
+
+<script>
+var stylesheet = document.styleSheets.item(0);
+var rule = stylesheet.cssRules.item(0);
+rule.insertRule("foo { }");
+rule.insertRule("bar { }");
+rule = stylesheet.cssRules.item(0);
+rule.insertRule("baz { }");
+var s = rule.style;
+s.color = "green";
+om.textContent = rule.cssText;
+</script>
+

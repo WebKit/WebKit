@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hanging-punctuation-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hanging-punctuation-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/hyphenate-character-computed.html
@@ -66,7 +67,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-transform-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-transform-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-transform-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-mode-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-mode-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-mode-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-pretty.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-style-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-style-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-style-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/text-wrap-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-collapse-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/parsing/white-space-collapse-invalid.html

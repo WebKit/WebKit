@@ -10,7 +10,7 @@ PASS Single popover=hint ancestor with fullscreen
 PASS Single popover=hint ancestor with fullscreen, top layer element *is* a popover
 PASS Nested auto/hint ancestors with dialog
 PASS Nested auto/hint ancestors with dialog, top layer element *is* a popover
-FAIL Nested auto/hint ancestors with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Nested auto/hint ancestors with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Fullscreen request aborted by a fullscreen request for another element."
 PASS Nested auto/hint ancestors with fullscreen, top layer element *is* a popover
 FAIL Nested auto/hint ancestors, target is auto with dialog assert_equals: Incorrect behavior expected false but got true
 PASS Nested auto/hint ancestors, target is auto with dialog, top layer element *is* a popover
@@ -18,7 +18,7 @@ FAIL Nested auto/hint ancestors, target is auto with fullscreen assert_equals: I
 PASS Nested auto/hint ancestors, target is auto with fullscreen, top layer element *is* a popover
 FAIL Unrelated hint, target=hint with dialog assert_equals: Incorrect behavior expected true but got false
 PASS Unrelated hint, target=hint with dialog, top layer element *is* a popover
-FAIL Unrelated hint, target=hint with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Unrelated hint, target=hint with fullscreen promise_test: Unhandled rejection with value: object "TypeError: Fullscreen request aborted by a fullscreen request for another element."
 PASS Unrelated hint, target=hint with fullscreen, top layer element *is* a popover
 FAIL Unrelated hint, target=auto with dialog assert_equals: Incorrect behavior expected false but got true
 PASS Unrelated hint, target=auto with dialog, top layer element *is* a popover

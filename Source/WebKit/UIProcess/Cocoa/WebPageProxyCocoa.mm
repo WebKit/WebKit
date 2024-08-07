@@ -30,6 +30,7 @@
 #import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "AppleMediaServicesUISPI.h"
+#import "BrowsingWarning.h"
 #import "CocoaImage.h"
 #import "Connection.h"
 #import "CoreTelephonyUtilities.h"
@@ -42,7 +43,6 @@
 #import "QuickLookThumbnailLoader.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "SafeBrowsingSPI.h"
-#import "SafeBrowsingWarning.h"
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
 #import "VideoPresentationManagerProxy.h"
@@ -228,7 +228,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
 
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
-                    listener->didReceiveSafeBrowsingResults(SafeBrowsingWarning::create(url, forMainFrameNavigation, lookupResult));
+                    listener->didReceiveSafeBrowsingResults(BrowsingWarning::create(url, forMainFrameNavigation, BrowsingWarning::SafeBrowsingWarningData { lookupResult }));
                     return;
                 }
             }

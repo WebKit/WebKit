@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Forward.h>
 
 OBJC_CLASS NSError;
-OBJC_CLASS _WKWebExtensionMessagePort;
+OBJC_CLASS WKWebExtensionMessagePort;
 
 namespace WebKit {
 
@@ -74,7 +74,7 @@ public:
     void receiveMessage(id message, Error);
 
 #ifdef __OBJC__
-    _WKWebExtensionMessagePort *wrapper() const { return (_WKWebExtensionMessagePort *)API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>::wrapper(); }
+    WKWebExtensionMessagePort *wrapper() const { return (WKWebExtensionMessagePort *)API::ObjectImpl<API::Object::Type::WebExtensionMessagePort>::wrapper(); }
 #endif
 
 private:

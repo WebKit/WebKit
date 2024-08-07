@@ -419,6 +419,13 @@ void MediaStreamTrackPrivate::stopProducingData()
     m_sourceObserver->stop();
 }
 
+void MediaStreamTrackPrivate::dataFlowStarted()
+{
+    forEachObserver([this](auto& observer) {
+        observer.dataFlowStarted(*this);
+    });
+}
+
 void MediaStreamTrackPrivate::setIsInBackground(bool value)
 {
     ASSERT(isMainThread());

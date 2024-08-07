@@ -592,6 +592,7 @@ private:
                 else
                     changed |= mergePrediction(SpecAnyIntAsDouble);
                 break;
+            case Array::Float16Array:
             case Array::Float32Array:
             case Array::Float64Array:
                 if (node->op() == GetByVal && arrayMode.isOutOfBounds())
@@ -1176,6 +1177,7 @@ private:
         case ArithPow:
         case ArithSqrt:
         case ArithFRound:
+        case ArithF16Round:
         case ArithUnary: {
             setPrediction(SpecBytecodeDouble);
             break;

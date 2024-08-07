@@ -161,9 +161,7 @@
 #if PLATFORM(MAC)
 #import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
-#import "WebSwitchingGPUClient.h"
 #import <Security/SecStaticCode.h>
-#import <WebCore/DisplayConfigurationMonitor.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
@@ -903,7 +901,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     auto retval = CGSSetDenyWindowServerConnections(true);
     RELEASE_ASSERT(retval == kCGErrorSuccess);
 
-    SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
@@ -1191,10 +1188,6 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
 
-void WebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)
-{
-    DisplayConfigurationMonitor::singleton().dispatchDisplayWasReconfigured(flags);
-}
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
