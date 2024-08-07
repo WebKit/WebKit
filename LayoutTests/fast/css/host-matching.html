@@ -1,0 +1,148 @@
+<!doctype html>
+<div id="host1"> </div>
+<div id="host2"> </div>
+<div id="host3"> </div>
+<div id="host4"> </div>
+<div id="host5"> </div>
+<div id="host6"> </div>
+<div id="host7"> </div>
+<div><div id="host8"> </div></div>
+<script>
+  host1.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      .nested {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(:host) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host2.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      .nested {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(foo,:host) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host3.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :not(:host) .nested {
+        background-color: red;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host4.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      .nested {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(:is(:host)) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host5.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      div {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(:host(div)) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host6.innerHTML = `
+    <style>
+      .nested {
+        background-color: red;
+      }
+      :is(:host, #host6) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host7.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      div {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(:host, :host) .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+
+  host8.attachShadow({mode: "open"}).innerHTML = `
+    <style>
+      .nested {
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+      :is(div) .nested {
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        margin: 10px;
+      }
+    </style>
+    <div class="nested"></div>
+  `;
+</script>

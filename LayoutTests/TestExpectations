@@ -7416,14 +7416,6 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.
 # webkit.org/b/229520 CSS @scope unimplemented
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 
-# :is(:host) https://bugs.webkit.org/show_bug.cgi?id=264628
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-005.html [ ImageOnlyFailure ]
-
 webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
 
 # CloseWatcher related timeouts

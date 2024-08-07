@@ -323,12 +323,20 @@ void ElementRuleCollector::matchHostPseudoClassRules(CascadeLevel level)
     if (!shadowRules)
         return;
 
-    auto& shadowHostRules = shadowRules->hostPseudoClassRules();
-    if (shadowHostRules.isEmpty())
-        return;
+    auto collect = [&] (const auto& rules) {
+        if (rules.isEmpty())
+            return;
 
-    MatchRequest hostMatchRequest { *shadowRules, ScopeOrdinal::Shadow };
-    collectMatchingRulesForList(&shadowHostRules, hostMatchRequest);
+        MatchRequest hostMatchRequest { *shadowRules, ScopeOrdinal::Shadow };
+        collectMatchingRulesForList(&rules, hostMatchRequest);
+    };
+
+    if (shadowRules->hasHostPseudoClassRulesInUniversalBucket()) {
+        if (auto* universalRules = shadowRules->universalRules())
+            collect(*universalRules);
+    }
+
+    collect(shadowRules->hostPseudoClassRules());
 }
 
 void ElementRuleCollector::matchSlottedPseudoElementRules(CascadeLevel level)

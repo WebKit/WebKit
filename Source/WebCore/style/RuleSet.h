@@ -115,6 +115,7 @@ public:
     bool hasAttributeRules() const { return !m_attributeLocalNameRules.isEmpty(); }
     bool hasUserAgentPartRules() const { return !m_userAgentPartRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
+    bool hasHostPseudoClassRulesInUniversalBucket() const { return m_hasHostPseudoClassRulesInUniversalBucket; }
 
     static constexpr auto cascadeLayerPriorityForPresentationalHints = std::numeric_limits<CascadeLayerPriority>::min();
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
@@ -227,6 +228,7 @@ private:
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };
+    bool m_hasHostPseudoClassRulesInUniversalBucket { false };
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::attributeRules(const AtomString& key, bool isHTMLName) const
