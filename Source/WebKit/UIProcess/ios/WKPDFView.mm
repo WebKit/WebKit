@@ -109,6 +109,10 @@
 
 #endif // HAVE(UIFINDINTERACTION)
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+static void* kvoContext = &kvoContext;
+#endif
+
 @interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate
 #if HAVE(UIFINDINTERACTION)
     , UITextSearching
@@ -162,6 +166,11 @@
     _searchAggregator = nil;
     _searchString = nil;
 #endif
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    [[_webView _wkScrollView] removeObserver:self forKeyPath:@"contentSize" context:kvoContext];
+#endif
+
     [super dealloc];
 }
 
@@ -198,6 +207,10 @@
 
     _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView._scrollViewInternal]);
     _webView = webView;
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    [[_webView _wkScrollView] addObserver:self forKeyPath:@"contentSize" options:NSKeyValueObservingOptionNew context:kvoContext];
+#endif
 
     [self updateBackgroundColor];
 
@@ -507,6 +520,22 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 {
     return self.isBackground;
 }
+
+#pragma mark KVO
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void*)context
+{
+    if (context != kvoContext) {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        return;
+    }
+
+    ASSERT(object == [_webView _wkScrollView]);
+
+    [_webView _updateOverlayRegionsForCustomContentView];
+}
+#endif
 
 #pragma mark PDFHostViewControllerDelegate
 
