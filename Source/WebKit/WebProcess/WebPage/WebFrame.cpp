@@ -415,12 +415,17 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
     m_provisionalFrame = localFrame.ptr();
     localFrame->init();
 
+    remoteFrame->setIsProvisional(true);
+    localFrame->setIsProvisional(true);
+
     if (parameters.layerHostingContextIdentifier)
         setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
 }
 
 void WebFrame::destroyProvisionalFrame()
 {
+    if (auto* remoteFrame = coreRemoteFrame())
+        remoteFrame->setIsProvisional(false);
     if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
         if (auto* client = toWebLocalFrameLoaderClient(frame->loader().client()))
             client->takeFrameInvalidator().release();
@@ -479,6 +484,8 @@ void WebFrame::commitProvisionalFrame()
 
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+
+    localFrame->setIsProvisional(false);
 }
 
 void WebFrame::removeFromTree()

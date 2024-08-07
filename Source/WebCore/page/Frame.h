@@ -119,6 +119,9 @@ public:
     WEBCORE_EXPORT void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&&);
     WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
 
+    void setIsProvisional(bool isProvisional) { m_isProvisional = isProvisional; }
+    bool isProvisional() const { return m_isProvisional; }
+
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
     void resetWindowProxy();
@@ -142,6 +145,7 @@ private:
     WeakHashSet<Frame> m_openedFrames;
     mutable UniqueRef<HistoryController> m_history;
     std::optional<OwnerPermissionsPolicyData> m_ownerPermisssionsPolicyOverride;
+    bool m_isProvisional { false };
 };
 
 } // namespace WebCore

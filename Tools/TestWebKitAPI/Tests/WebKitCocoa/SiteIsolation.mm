@@ -3010,6 +3010,27 @@ TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
 }
 
+TEST(SiteIsolation, NavigateNestedRootFramesSameOriginBackForward)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://nested.com/nest'></iframe>"_s } },
+        { "/nest"_s, { "<iframe src='https://a.com/a'></iframe>"_s } },
+        { "/a"_s, { "<script> alert('a'); </script>"_s } },
+        { "/b"_s, { "<script> alert('b'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
+
+    RetainPtr childFrame = [[[webView firstChildFrame] childFrames] firstObject];
+    [webView evaluateJavaScript:@"location.href = 'https://a.com/b'" inFrame:[childFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+    [webView goBack];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
+    [webView goForward];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+}
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"audio-fingerprinting" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL];

@@ -692,8 +692,11 @@ void HistoryController::setProvisionalItem(RefPtr<HistoryItem>&& item)
 void HistoryController::initializeItem(HistoryItem& item)
 {
     RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr());
-    if (!frame)
+    if (!frame) {
+        if (!m_frame->isProvisional())
+            item.setFrameID(m_frame->frameID());
         return;
+    }
     RefPtr documentLoader = frame->loader().documentLoader();
     ASSERT(documentLoader);
 
@@ -809,9 +812,10 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
 void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
     if (!itemsAreClones(item, fromItem)) {
-        if (RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr()))
+        if (RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr())) {
             frame->checkedLoader()->loadItem(item, fromItem, type, shouldTreatAsContinuingLoad);
-        return;
+            return;
+        }
     }
 
     // Just iterate over the rest, looking for frames to navigate.
