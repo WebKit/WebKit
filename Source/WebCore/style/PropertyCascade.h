@@ -124,7 +124,7 @@ private:
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.
     // 2. Normal longhand properties (high priority ones followed by low priority ones).
-    // 3. Logical longhand properties.
+    // 3. Longhand properties in a logical property group.
     // 4. Shorthand properties.
     //
     // 'm_properties' is used for both normal and logical longhands, so it has size 'lastLogicalGroupProperty + 1'.

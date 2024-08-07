@@ -123,15 +123,16 @@ void Builder::applyNonHighPriorityProperties()
     ASSERT(!m_state.fontDirty());
 
     applyProperties(firstLowPriorityProperty, lastLowPriorityProperty);
-    applyDeferredProperties();
+    applyLogicalGroupProperties();
     // Any referenced custom properties are already resolved. This will resolve the remaining ones.
     applyCustomProperties();
 
     ASSERT(!m_state.fontDirty());
 }
 
-void Builder::applyDeferredProperties()
+void Builder::applyLogicalGroupProperties()
 {
+    // Properties in a logical property group are applied in author specified order which is maintained separately for them.
     for (auto id : m_cascade.logicalGroupPropertyIDs())
         applyCascadeProperty(m_cascade.logicalGroupProperty(id));
 }
