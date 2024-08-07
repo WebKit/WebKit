@@ -2468,17 +2468,14 @@ TEST(WKWebExtensionAPITabs, CSSAuthorOrigin)
 
 TEST(WKWebExtensionAPITabs, UnsupportedMV3APIs)
 {
-    // Manifest v3 deprecates executeScript(), insertCSS() and removeCSS(), so they should be an undefined property.
+    // Manifest v3 deprecates these APIs, so they should be an undefined property.
 
     static auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertEq(typeof browser.tabs.insertCSS, 'undefined')",
         @"browser.test.assertEq(browser.tabs.insertCSS, undefined)",
-
-        @"browser.test.assertEq(typeof browser.tabs.removeCSS, 'undefined')",
         @"browser.test.assertEq(browser.tabs.removeCSS, undefined)",
-
-        @"browser.test.assertEq(typeof browser.tabs.executeScript, 'undefined')",
         @"browser.test.assertEq(browser.tabs.executeScript, undefined)",
+
+        @"browser.test.assertEq(browser.tabs.getSelected, undefined)",
 
         @"browser.test.notifyPass()"
     ]);
