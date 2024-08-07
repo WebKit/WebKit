@@ -45,6 +45,20 @@
 #include <cfloat>
 #include <wtf/StdLibExtras.h>
 
+#if defined(__cpp_lib_bit_cast) && __cpp_lib_bit_cast >= 201806L
+using std::bit_cast;
+#else
+template <
+    typename Dest, typename Source,
+    typename std::enable_if<sizeof(Dest) == sizeof(Source) &&
+                                std::is_trivially_copyable<Source>::value &&
+                                std::is_trivially_copyable<Dest>::value,
+                            int>::type = 0>
+inline constexpr Dest bit_cast(const Source &source) {
+  return __builtin_bit_cast(Dest, source);
+}
+#endif
+
 namespace WTF {
 
 /*
@@ -57,7 +71,7 @@ namespace WTF {
 constexpr float convertFloat16ToFloat32(uint16_t h)
 {
 #if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
-    return static_cast<float>(std::bit_cast<_Float16>(h));
+    return static_cast<float>(bit_cast<_Float16>(h));
 #else
 
     /*
@@ -117,7 +131,7 @@ constexpr float convertFloat16ToFloat32(uint16_t h)
      */
     const uint32_t exp_offset = UINT32_C(0xE0) << 23;
     const float exp_scale = 0x1.0p-112f; // 0x7800000
-    const float normalized_value = std::bit_cast<float>((two_w >> 4) + exp_offset) * exp_scale;
+    const float normalized_value = bit_cast<float>((two_w >> 4) + exp_offset) * exp_scale;
 
     /*
      * Convert denormalized half-precision inputs into single-precision results (always normalized).
@@ -149,7 +163,7 @@ constexpr float convertFloat16ToFloat32(uint16_t h)
      */
     const uint32_t magic_mask = UINT32_C(126) << 23;
     const float magic_bias = 0.5f;
-    const float denormalized_value = std::bit_cast<float>((two_w >> 17) | magic_mask) - magic_bias;
+    const float denormalized_value = bit_cast<float>((two_w >> 17) | magic_mask) - magic_bias;
 
     /*
      * - Choose either results of conversion of input as a normalized number, or as a denormalized number, depending on the
@@ -159,8 +173,8 @@ constexpr float convertFloat16ToFloat32(uint16_t h)
      */
     const uint32_t denormalized_cutoff = UINT32_C(1) << 27;
     const uint32_t result = sign |
-        (two_w < denormalized_cutoff ? std::bit_cast<uint32_t>(denormalized_value) : std::bit_cast<uint32_t>(normalized_value));
-    return std::bit_cast<float>(result);
+        (two_w < denormalized_cutoff ? bit_cast<uint32_t>(denormalized_value) : bit_cast<uint32_t>(normalized_value));
+    return bit_cast<float>(result);
 #endif
 }
 
@@ -179,14 +193,14 @@ constexpr double convertFloat16ToFloat64(uint16_t h)
 constexpr uint16_t convertFloat32ToFloat16(float f)
 {
 #if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
-    return std::bit_cast<uint16_t>(static_cast<_Float16>(f));
+    return bit_cast<uint16_t>(static_cast<_Float16>(f));
 #else
     const float scale_to_inf = 0x1.0p+112f; // 0x77800000
     const float scale_to_zero = 0x1.0p-110f; // 0x08800000
     const float saturated_f = __builtin_fabsf(f) * scale_to_inf;
     float base = saturated_f * scale_to_zero;
 
-    const uint32_t w = std::bit_cast<uint32_t>(f);
+    const uint32_t w = bit_cast<uint32_t>(f);
     const uint32_t shl1_w = w + w;
     const uint32_t sign = w & UINT32_C(0x80000000);
     uint32_t bias = shl1_w & UINT32_C(0xFF000000);
@@ -194,8 +208,8 @@ constexpr uint16_t convertFloat32ToFloat16(float f)
         bias = UINT32_C(0x71000000);
     }
 
-    base = std::bit_cast<float>((bias >> 1) + UINT32_C(0x07800000)) + base;
-    const uint32_t bits = std::bit_cast<uint32_t>(base);
+    base = bit_cast<float>((bias >> 1) + UINT32_C(0x07800000)) + base;
+    const uint32_t bits = bit_cast<uint32_t>(base);
     const uint32_t exp_bits = (bits >> 13) & UINT32_C(0x00007C00);
     const uint32_t mantissa_bits = bits & UINT32_C(0x00000FFF);
     const uint32_t nonsign = exp_bits + mantissa_bits;
@@ -207,7 +221,7 @@ constexpr uint16_t convertFloat32ToFloat16(float f)
 constexpr uint16_t convertFloat64ToFloat16(double value)
 {
 #if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
-    return std::bit_cast<uint16_t>(static_cast<_Float16>(value));
+    return bit_cast<uint16_t>(static_cast<_Float16>(value));
 #else
     // uint64_t constants prefixed with kFP64 are bit patterns of doubles.
     // uint64_t constants prefixed with kFP16 are bit patterns of doubles encoding
@@ -240,7 +254,7 @@ constexpr uint16_t convertFloat64ToFloat16(double value)
     // addition being round-to-nearest-even.
     constexpr uint64_t kFP64To16DenormalMagic = (kFP16MinExponent + (kFP64MantissaBits - kFP16MantissaBits)) << kFP64MantissaBits;
 
-    uint64_t in = std::bit_cast<uint64_t>(value);
+    uint64_t in = bit_cast<uint64_t>(value);
     uint16_t out = 0;
 
     // Take the absolute value of the input.
@@ -258,9 +272,9 @@ constexpr uint16_t convertFloat64ToFloat16(double value)
             // Result is a denormal or zero. Use the magic value and FP addition to
             // align 10 mantissa bits at the bottom of the float. Depends on FP
             // addition being round-to-nearest-even.
-            double temp = std::bit_cast<double>(in) +
-            std::bit_cast<double>(kFP64To16DenormalMagic);
-            out = std::bit_cast<uint64_t>(temp) - kFP64To16DenormalMagic;
+            double temp = bit_cast<double>(in) +
+            bit_cast<double>(kFP64To16DenormalMagic);
+            out = bit_cast<uint64_t>(temp) - kFP64To16DenormalMagic;
         } else {
             // Result is not a denormal.
 
@@ -295,8 +309,8 @@ public:
     {
     }
 
-    static constexpr Float16 min() { return Float16 { std::bit_cast<_Float16>(static_cast<uint16_t>(0xfbff)) }; }
-    static constexpr Float16 max() { return Float16 { std::bit_cast<_Float16>(static_cast<uint16_t>(0x7bff)) }; }
+    static constexpr Float16 min() { return Float16 { bit_cast<_Float16>(static_cast<uint16_t>(0xfbff)) }; }
+    static constexpr Float16 max() { return Float16 { bit_cast<_Float16>(static_cast<uint16_t>(0x7bff)) }; }
 
     constexpr operator double() const
     {
