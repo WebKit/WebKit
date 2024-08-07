@@ -103,7 +103,7 @@ void InsertLineBreakCommand::doApply()
             insertNodeBefore(nodeToInsert->cloneNode(false), *nodeToInsert);
         
         VisiblePosition endingPosition(positionBeforeNode(nodeToInsert.get()));
-        setEndingSelection(VisibleSelection(endingPosition, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(endingPosition, endingSelection().directionality()));
     } else if (position.deprecatedEditingOffset() <= caretMinOffset(*position.deprecatedNode())) {
         insertNodeAt(*nodeToInsert, position);
         
@@ -111,12 +111,12 @@ void InsertLineBreakCommand::doApply()
         if (!isStartOfParagraph(positionBeforeNode(nodeToInsert.get())))
             insertNodeBefore(nodeToInsert->cloneNode(false), *nodeToInsert);
         
-        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), Affinity::Downstream, endingSelection().directionality()));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
     } else if (position.deprecatedEditingOffset() >= caretMaxOffset(*position.deprecatedNode()) || !is<Text>(*position.deprecatedNode())) {
         insertNodeAt(*nodeToInsert, position);
-        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), Affinity::Downstream, endingSelection().directionality()));
     } else if (RefPtr textNode = dynamicDowncast<Text>(*position.deprecatedNode())) {
         // Split a text node
         splitTextNode(*textNode, position.deprecatedEditingOffset());
@@ -140,7 +140,7 @@ void InsertLineBreakCommand::doApply()
             }
         }
         
-        setEndingSelection(VisibleSelection(endingPosition, Affinity::Downstream, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(endingPosition, Affinity::Downstream, endingSelection().directionality()));
     }
 
     // Handle the case where there is a typing style.

@@ -166,9 +166,9 @@ void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position&
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
 
-    bool wasBaseFirst = startingSelection().isBaseFirst() || !startingSelection().isDirectional();
+    bool wasBaseFirst = startingSelection().isBaseFirst() || startingSelection().directionality() != Directionality::Strong;
     setEndingSelection(VisibleSelection(VisiblePosition(wasBaseFirst ? newStart : newEnd), VisiblePosition(wasBaseFirst ? newEnd : newStart),
-        endingSelection().isDirectional()));
+        endingSelection().directionality()));
     m_start = newStart;
     m_end = newEnd;
 }

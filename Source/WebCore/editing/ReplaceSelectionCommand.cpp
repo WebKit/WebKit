@@ -1683,9 +1683,9 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         m_visibleSelectionForInsertedText = VisibleSelection(start, end);
 
     if (m_selectReplacement)
-        setEndingSelection(VisibleSelection(start, end, VisibleSelection::defaultAffinity, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(start, end, VisibleSelection::defaultAffinity, endingSelection().directionality()));
     else
-        setEndingSelection(VisibleSelection(end, VisibleSelection::defaultAffinity, endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(end, VisibleSelection::defaultAffinity, endingSelection().directionality()));
 }
 
 void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, Position& positionOnlyToBeUpdated)

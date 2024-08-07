@@ -312,7 +312,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
         auto start = selection.start();
         if (start.isNull() || event->target() != enclosingTextFormControl(start)) {
             if (auto range = target->selection())
-                return { *range, Affinity::Downstream, selection.isDirectional() };
+                return { *range, Affinity::Downstream, selection.directionality() };
         }
     }
     return selection;
