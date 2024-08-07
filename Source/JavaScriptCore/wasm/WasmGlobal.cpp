@@ -117,7 +117,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
-                throwTypeError(globalObject, throwScope, "Funcref must be an exported wasm function"_s);
+                throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
                 return;
             }
 
@@ -125,7 +125,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 Wasm::TypeIndex paramIndex = m_type.index;
                 Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                 if (paramIndex != argIndex) {
-                    throwTypeError(globalObject, throwScope, "Argument function did not match the reference type"_s);
+                    throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
                     return;
                 }
             }
@@ -135,7 +135,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             if (!Wasm::TypeInformation::castReference(internref, m_type.isNullable(), m_type.index)) {
                 // FIXME: provide a better error message here
                 // https://bugs.webkit.org/show_bug.cgi?id=247746
-                throwTypeError(globalObject, throwScope, "Argument value did not match reference type"_s);
+                throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, internref);

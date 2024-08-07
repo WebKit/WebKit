@@ -159,7 +159,7 @@ function testStructJS() {
       m.exports.g.value = 42;
     },
     TypeError,
-    "Argument value did not match reference type"
+    "Argument value did not match the reference type"
   )
 }
 

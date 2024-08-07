@@ -88,12 +88,12 @@ async function testRefTypeParamCheck() {
     assert.throws(
       () => instance2.exports.f(null),
       TypeError,
-      "Funcref must be an exported wasm function"
+      "Argument value did not match the reference type"
     );
     assert.throws(
       () => instance2.exports.f(instance1.exports.f),
       TypeError,
-      "Argument function did not match the reference type"
+      "Argument value did not match the reference type"
     );
     instance3.exports.f(null);
   }
@@ -125,7 +125,7 @@ async function testRefGlobalCheck() {
   assert.throws(
     () => (instance1.exports.g.value = null),
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
 
   /*
@@ -141,12 +141,12 @@ async function testRefGlobalCheck() {
   assert.throws(
     () => (instance2.exports.g.value = null),
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
   assert.throws(
     () => (instance2.exports.g.value = providerInstance.exports.f),
     TypeError,
-    "Argument function did not match the reference type"
+    "Argument value did not match the reference type"
   );
 
   /*
@@ -238,7 +238,7 @@ async function testExternFuncrefNonNullCheck() {
     assert.throws(
       () => instance2.exports.f(null),
       TypeError,
-      "Funcref must be an exported wasm function"
+      "Argument value did not match the reference type"
     );
   }
 }
@@ -322,7 +322,7 @@ async function testWasmJSGlobals() {
   assert.throws(
     () => wasmGlobalFuncref.value = console.log,
     TypeError,
-    "Funcref must be an exported wasm function"
+    "Argument value did not match the reference type"
   );
 
   const wasmGlobalExtern = new WebAssembly.Global({value:'externref', mutable:true});
