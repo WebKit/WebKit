@@ -1778,6 +1778,7 @@ function RegExpBenchmark() {
   }
 
   function run() {
+    let expectedSum = 1666156;
     for (var i = 0; i < 5; i++) {
       var sum = 0;
       sum += runBlock0();
@@ -1792,7 +1793,7 @@ function RegExpBenchmark() {
       sum += runBlock9();
       sum += runBlock10();
       sum += runBlock11();
-      if (sum != 1666109) throw new Error("Wrong checksum."); 
+      if (sum != expectedSum) throw new Error("Wrong checksum. Found " + sum + " but expected " + expectedSum);
     }
   }
 

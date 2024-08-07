@@ -332,10 +332,14 @@ class Driver {
                     return Realm.eval(realm, s);
                 };
                 globalObject.readFile = read;
+            } else if (isSpiderMonkey) {
+                globalObject = newGlobal();
+                globalObject.loadString = globalObject.evaluate;
+                globalObject.readFile = globalObject.readRelativeToScript;
             } else
                 globalObject = runString("");
 
-            globalObject.console = {log:globalObject.print}
+            globalObject.console = { log: globalObject.print, warn: (e) => { print("Warn: " + e); /*$vm.abort();*/ } }
             globalObject.self = globalObject;
             globalObject.top = {
                 currentResolve,
@@ -606,13 +610,16 @@ class Benchmark {
 
                     Math.random = () => {
                         // Robert Jenkins' 32 bit integer hash function.
-                        seed = ((seed + 0x7ed55d16) + (seed << 12))  & 0xffffffff;
-                        seed = ((seed ^ 0xc761c23c) ^ (seed >>> 19)) & 0xffffffff;
-                        seed = ((seed + 0x165667b1) + (seed << 5))   & 0xffffffff;
-                        seed = ((seed + 0xd3a2646c) ^ (seed << 9))   & 0xffffffff;
-                        seed = ((seed + 0xfd7046c5) + (seed << 3))   & 0xffffffff;
-                        seed = ((seed ^ 0xb55a4f09) ^ (seed >>> 16)) & 0xffffffff;
-                        return (seed & 0xfffffff) / 0x10000000;
+                        seed = ((seed + 0x7ed55d16) + (seed << 12))  & 0xffff_ffff;
+                        seed = ((seed ^ 0xc761c23c) ^ (seed >>> 19)) & 0xffff_ffff;
+                        seed = ((seed + 0x165667b1) + (seed << 5))   & 0xffff_ffff;
+                        seed = ((seed + 0xd3a2646c) ^ (seed << 9))   & 0xffff_ffff;
+                        seed = ((seed + 0xfd7046c5) + (seed << 3))   & 0xffff_ffff;
+                        seed = ((seed ^ 0xb55a4f09) ^ (seed >>> 16)) & 0xffff_ffff;
+                        // Note that Math.random should return a value that is
+                        // greater than or equal to 0 and less than 1. Here, we
+                        // cast to uint32 first then divided by 2^32 for double.
+                        return (seed >>> 0) / 0x1_0000_0000;
                     };
 
                     Math.random.__resetSeed = () => {
@@ -667,6 +674,7 @@ class Benchmark {
             magicFrame = JetStream.runCode(code);
         } catch(e) {
             console.log("Error in runCode: ", e);
+            console.log(e.stack)
             throw e;
         }
         let results = await promise;
@@ -1140,7 +1148,7 @@ class WasmBenchmark extends Benchmark {
             `;
         } else {
             str += `
-            Module[key] = read(path, "binary");
+            Module[key] = new Int8Array(read(path, "binary"));
             if (andThen == doRun) {
                 globalObject.read = (...args) => {
                     console.log("should not be inside read: ", ...args);
@@ -1156,7 +1164,7 @@ class WasmBenchmark extends Benchmark {
                     andThen();
                 } catch(e) {
                     console.log("error running wasm:", e);
-                    console.log(e.stack)
+                    console.log(e.stack);
                     throw e;
                 }
             })
@@ -1243,6 +1251,7 @@ const BigIntNobleGroup = Symbol.for("BigIntNoble");
 const BigIntMiscGroup = Symbol.for("BigIntMisc");
 const ProxyGroup = Symbol.for("ProxyGroup");
 const ClassFieldsGroup = Symbol.for("ClassFieldsGroup");
+const GeneratorsGroup = Symbol.for("GeneratorsGroup");
 const WasmGroup = Symbol.for("Wasm");
 const WorkerTestsGroup = Symbol.for("WorkerTests");
 const WSLGroup = Symbol.for("WSL");
@@ -1530,16 +1539,6 @@ let testPlans = [
     },
     // Simple
     {
-        name: "async-fs",
-        files: [
-            "./simple/file-system.js"
-        ],
-        iterations: 40,
-        worstCaseCount: 3,
-        benchmarkClass: AsyncBenchmark,
-        testGroup: SimpleGroup
-    },
-    {
         name: "float-mm.c",
         files: [
             "./simple/float-mm.c.js"
@@ -1554,6 +1553,22 @@ let testPlans = [
             "./simple/hash-map.js"
         ],
         testGroup: SimpleGroup
+    },
+    {
+        name: "doxbee-promise",
+        files: [
+            "./simple/doxbee-promise.js",
+        ],
+        benchmarkClass: AsyncBenchmark,
+        testGroup: SimpleGroup,
+    },
+    {
+        name: "doxbee-async",
+        files: [
+            "./simple/doxbee-async.js",
+        ],
+        benchmarkClass: AsyncBenchmark,
+        testGroup: SimpleGroup,
     },
     // SeaMonster
     {
@@ -1681,6 +1696,9 @@ let testPlans = [
             "./proxy/mobx-bundle.js",
             "./proxy/mobx-benchmark.js",
         ],
+        iterations: defaultIterationCount * 3,
+        worstCaseCount: defaultWorstCaseCount * 3,
+        benchmarkClass: AsyncBenchmark,
         testGroup: ProxyGroup,
     },
     {
@@ -1690,8 +1708,7 @@ let testPlans = [
             "./proxy/vue-bundle.js",
             "./proxy/vue-benchmark.js",
         ],
-        iterations: 20,
-        worstCaseCount: 2,
+        benchmarkClass: AsyncBenchmark,
         testGroup: ProxyGroup,
     },
     // Class fields
@@ -1708,6 +1725,42 @@ let testPlans = [
             "./class-fields/raytrace-private-class-fields.js",
         ],
         testGroup: ClassFieldsGroup,
+    },
+    // Generators
+    {
+        name: "async-fs",
+        files: [
+            "./generators/async-file-system.js",
+        ],
+        iterations: 80,
+        worstCaseCount: 6,
+        deterministicRandom: true,
+        benchmarkClass: AsyncBenchmark,
+        testGroup: GeneratorsGroup,
+    },
+    {
+        name: "sync-fs",
+        files: [
+            "./generators/sync-file-system.js",
+        ],
+        iterations: 80,
+        worstCaseCount: 6,
+        deterministicRandom: true,
+        testGroup: GeneratorsGroup,
+    },
+    {
+        name: "lazy-collections",
+        files: [
+            "./generators/lazy-collections.js",
+        ],
+        testGroup: GeneratorsGroup,
+    },
+    {
+        name: "js-tokens",
+        files: [
+            "./generators/js-tokens.js",
+        ],
+        testGroup: GeneratorsGroup,
     },
     // Wasm
     {
@@ -1761,6 +1814,74 @@ let testPlans = [
         ],
         preload: {
             wasmBinary: "./wasm/richards.wasm"
+        },
+        benchmarkClass: WasmBenchmark,
+        testGroup: WasmGroup
+    },
+    {
+        name: "tfjs-wasm",
+        files: [
+            "./wasm/tfjs-model-helpers.js",
+            "./wasm/tfjs-model-mobilenet-v3.js",
+            "./wasm/tfjs-model-mobilenet-v1.js",
+            "./wasm/tfjs-model-coco-ssd.js",
+            "./wasm/tfjs-model-use.js",
+            "./wasm/tfjs-model-use-vocab.js",
+            "./wasm/tfjs-bundle.js",
+            "./wasm/tfjs.js",
+            "./wasm/tfjs-benchmark.js"
+        ],
+        preload: {
+            tfjsBackendWasmBlob: "./wasm/tfjs-backend-wasm.wasm",
+        },
+        benchmarkClass: WasmBenchmark,
+        async: true,
+        deterministicRandom: true,
+        testGroup: WasmGroup
+    },
+    {
+        name: "tfjs-wasm-simd",
+        files: [
+            "./wasm/tfjs-model-helpers.js",
+            "./wasm/tfjs-model-mobilenet-v3.js",
+            "./wasm/tfjs-model-mobilenet-v1.js",
+            "./wasm/tfjs-model-coco-ssd.js",
+            "./wasm/tfjs-model-use.js",
+            "./wasm/tfjs-model-use-vocab.js",
+            "./wasm/tfjs-bundle.js",
+            "./wasm/tfjs.js",
+            "./wasm/tfjs-benchmark.js"
+        ],
+        preload: {
+            tfjsBackendWasmSimdBlob: "./wasm/tfjs-backend-wasm-simd.wasm",
+        },
+        benchmarkClass: WasmBenchmark,
+        async: true,
+        deterministicRandom: true,
+        testGroup: WasmGroup
+    },
+    {
+        name: "argon2-wasm",
+        files: [
+            "./wasm/argon2-bundle.js",
+            "./wasm/argon2.js",
+            "./wasm/argon2-benchmark.js"
+        ],
+        preload: {
+            argon2WasmBlob: "./wasm/argon2.wasm",
+        },
+        benchmarkClass: WasmBenchmark,
+        testGroup: WasmGroup
+    },
+    {
+        name: "argon2-wasm-simd",
+        files: [
+            "./wasm/argon2-bundle.js",
+            "./wasm/argon2.js",
+            "./wasm/argon2-benchmark.js"
+        ],
+        preload: {
+            argon2WasmSimdBlob: "./wasm/argon2-simd.wasm",
         },
         benchmarkClass: WasmBenchmark,
         testGroup: WasmGroup
@@ -1822,6 +1943,22 @@ let testPlans = [
         files: ["./WSL/Node.js" ,"./WSL/Type.js" ,"./WSL/ReferenceType.js" ,"./WSL/Value.js" ,"./WSL/Expression.js" ,"./WSL/Rewriter.js" ,"./WSL/Visitor.js" ,"./WSL/CreateLiteral.js" ,"./WSL/CreateLiteralType.js" ,"./WSL/PropertyAccessExpression.js" ,"./WSL/AddressSpace.js" ,"./WSL/AnonymousVariable.js" ,"./WSL/ArrayRefType.js" ,"./WSL/ArrayType.js" ,"./WSL/Assignment.js" ,"./WSL/AutoWrapper.js" ,"./WSL/Block.js" ,"./WSL/BoolLiteral.js" ,"./WSL/Break.js" ,"./WSL/CallExpression.js" ,"./WSL/CallFunction.js" ,"./WSL/Check.js" ,"./WSL/CheckLiteralTypes.js" ,"./WSL/CheckLoops.js" ,"./WSL/CheckRecursiveTypes.js" ,"./WSL/CheckRecursion.js" ,"./WSL/CheckReturns.js" ,"./WSL/CheckUnreachableCode.js" ,"./WSL/CheckWrapped.js" ,"./WSL/Checker.js" ,"./WSL/CloneProgram.js" ,"./WSL/CommaExpression.js" ,"./WSL/ConstexprFolder.js" ,"./WSL/ConstexprTypeParameter.js" ,"./WSL/Continue.js" ,"./WSL/ConvertPtrToArrayRefExpression.js" ,"./WSL/DereferenceExpression.js" ,"./WSL/DoWhileLoop.js" ,"./WSL/DotExpression.js" ,"./WSL/DoubleLiteral.js" ,"./WSL/DoubleLiteralType.js" ,"./WSL/EArrayRef.js" ,"./WSL/EBuffer.js" ,"./WSL/EBufferBuilder.js" ,"./WSL/EPtr.js" ,"./WSL/EnumLiteral.js" ,"./WSL/EnumMember.js" ,"./WSL/EnumType.js" ,"./WSL/EvaluationCommon.js" ,"./WSL/Evaluator.js" ,"./WSL/ExpressionFinder.js" ,"./WSL/ExternalOrigin.js" ,"./WSL/Field.js" ,"./WSL/FindHighZombies.js" ,"./WSL/FlattenProtocolExtends.js" ,"./WSL/FlattenedStructOffsetGatherer.js" ,"./WSL/FloatLiteral.js" ,"./WSL/FloatLiteralType.js" ,"./WSL/FoldConstexprs.js" ,"./WSL/ForLoop.js" ,"./WSL/Func.js" ,"./WSL/FuncDef.js" ,"./WSL/FuncInstantiator.js" ,"./WSL/FuncParameter.js" ,"./WSL/FunctionLikeBlock.js" ,"./WSL/HighZombieFinder.js" ,"./WSL/IdentityExpression.js" ,"./WSL/IfStatement.js" ,"./WSL/IndexExpression.js" ,"./WSL/InferTypesForCall.js" ,"./WSL/Inline.js" ,"./WSL/Inliner.js" ,"./WSL/InstantiateImmediates.js" ,"./WSL/IntLiteral.js" ,"./WSL/IntLiteralType.js" ,"./WSL/Intrinsics.js" ,"./WSL/LateChecker.js" ,"./WSL/Lexer.js" ,"./WSL/LexerToken.js" ,"./WSL/LiteralTypeChecker.js" ,"./WSL/LogicalExpression.js" ,"./WSL/LogicalNot.js" ,"./WSL/LoopChecker.js" ,"./WSL/MakeArrayRefExpression.js" ,"./WSL/MakePtrExpression.js" ,"./WSL/NameContext.js" ,"./WSL/NameFinder.js" ,"./WSL/NameResolver.js" ,"./WSL/NativeFunc.js" ,"./WSL/NativeFuncInstance.js" ,"./WSL/NativeType.js" ,"./WSL/NativeTypeInstance.js" ,"./WSL/NormalUsePropertyResolver.js" ,"./WSL/NullLiteral.js" ,"./WSL/NullType.js" ,"./WSL/OriginKind.js" ,"./WSL/OverloadResolutionFailure.js" ,"./WSL/Parse.js" ,"./WSL/Prepare.js" ,"./WSL/Program.js" ,"./WSL/ProgramWithUnnecessaryThingsRemoved.js" ,"./WSL/PropertyResolver.js" ,"./WSL/Protocol.js" ,"./WSL/ProtocolDecl.js" ,"./WSL/ProtocolFuncDecl.js" ,"./WSL/ProtocolRef.js" ,"./WSL/PtrType.js" ,"./WSL/ReadModifyWriteExpression.js" ,"./WSL/RecursionChecker.js" ,"./WSL/RecursiveTypeChecker.js" ,"./WSL/ResolveNames.js" ,"./WSL/ResolveOverloadImpl.js" ,"./WSL/ResolveProperties.js" ,"./WSL/ResolveTypeDefs.js" ,"./WSL/Return.js" ,"./WSL/ReturnChecker.js" ,"./WSL/ReturnException.js" ,"./WSL/StandardLibrary.js" ,"./WSL/StatementCloner.js" ,"./WSL/StructLayoutBuilder.js" ,"./WSL/StructType.js" ,"./WSL/Substitution.js" ,"./WSL/SwitchCase.js" ,"./WSL/SwitchStatement.js" ,"./WSL/SynthesizeEnumFunctions.js" ,"./WSL/SynthesizeStructAccessors.js" ,"./WSL/TrapStatement.js" ,"./WSL/TypeDef.js" ,"./WSL/TypeDefResolver.js" ,"./WSL/TypeOrVariableRef.js" ,"./WSL/TypeParameterRewriter.js" ,"./WSL/TypeRef.js" ,"./WSL/TypeVariable.js" ,"./WSL/TypeVariableTracker.js" ,"./WSL/TypedValue.js" ,"./WSL/UintLiteral.js" ,"./WSL/UintLiteralType.js" ,"./WSL/UnificationContext.js" ,"./WSL/UnreachableCodeChecker.js" ,"./WSL/VariableDecl.js" ,"./WSL/VariableRef.js" ,"./WSL/VisitingSet.js" ,"./WSL/WSyntaxError.js" ,"./WSL/WTrapError.js" ,"./WSL/WTypeError.js" ,"./WSL/WhileLoop.js" ,"./WSL/WrapChecker.js", "./WSL/Test.js"],
         benchmarkClass: WSLBenchmark,
         testGroup: WSLGroup
+    },
+    // 8bitbench
+    {
+        name: "8bitbench-wasm",
+        files: [
+            "./8bitbench/lib/fast-text-encoding-1.0.3/text.js",
+            "./8bitbench/rust/pkg/emu_bench.js",
+            "./8bitbench/js3harness.js"
+        ],
+        preload: {
+            wasmBinary: "./8bitbench/rust/pkg/emu_bench_bg.wasm.release",
+            romBinary: "./8bitbench/assets/program.bin"
+        },
+        async: true,
+        benchmarkClass: WasmBenchmark,
+        testGroup: WasmGroup
     }
 ];
 
@@ -1965,6 +2102,7 @@ let runBigIntNoble = true;
 let runBigIntMisc = true;
 let runProxy = true;
 let runClassFields = true;
+let runGenerators = true;
 let runSimple = true;
 let runCDJS = true;
 let runWorkerTests = !!isInBrowser;
@@ -1985,6 +2123,7 @@ if (false) {
     runBigIntMisc = false;
     runProxy = false;
     runClassFields = false;
+    runGenerators = false;
     runSimple = false;
     runCDJS = false;
     runWorkerTests = false;
@@ -2033,6 +2172,9 @@ if (typeof testList !== "undefined") {
 
     if (runClassFields)
         addTestsByGroup(ClassFieldsGroup);
+
+    if (runGenerators)
+        addTestsByGroup(GeneratorsGroup);
 
     if (runWasm)
         addTestsByGroup(WasmGroup);
