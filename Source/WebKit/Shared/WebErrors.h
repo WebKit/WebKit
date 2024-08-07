@@ -58,6 +58,8 @@ WebCore::ResourceError downloadCancelledByUserError(const WebCore::ResourceRespo
 WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&, const WTF::String&);
 #endif
 
+WebCore::ResourceError decodeError(const URL&);
+
 #if PLATFORM(GTK)
 WebCore::ResourceError invalidPageRangeToPrint(const URL&);
 #endif
