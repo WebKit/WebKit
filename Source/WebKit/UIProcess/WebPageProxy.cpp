@@ -3391,19 +3391,56 @@ void WebPageProxy::dragExited(DragData& dragData)
     performDragControllerAction(DragControllerAction::Exited, dragData);
 }
 
-void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
-{
 #if PLATFORM(COCOA)
-    grantAccessToCurrentPasteboardData(dragStorageName);
+void WebPageProxy::propagateDragAndDrop(IPC::Connection& connection, FrameIdentifier frameID, RemoteUserInputEventData remoteUserInputEventData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto& currentOperation = internals().currentDragOperationData;
+    if (!currentOperation) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
+    MESSAGE_CHECK_BASE(!currentOperation->lastFrameID ||  currentOperation->lastFrameID == frameID, &connection);
+    currentOperation->lastFrameID = remoteUserInputEventData.targetFrameID;
+
+    RefPtr targetFrame = WebFrameProxy::webFrame(remoteUserInputEventData.targetFrameID);
+    sendWithAsyncReplyToProcessContainingFrame(remoteUserInputEventData.targetFrameID, Messages::WebPage::PerformDragOperation(remoteUserInputEventData.targetFrameID, currentOperation->dragData), [completionHandler = WTFMove(completionHandler)](bool handled) mutable {
+        completionHandler(handled);
+    });
+}
+
+void WebPageProxy::fetchSandboxExtensionsForDragAction(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&)>&& completionHandler)
+{
+    auto& currentOperation = internals().currentDragOperationData;
+    if (!currentOperation) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ }, { });
+        return;
+    }
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ }, { });
+        return;
+    }
+    MESSAGE_CHECK_BASE(!currentOperation->lastFrameID ||  currentOperation->lastFrameID == frameID, &connection);
+    grantAccessToCurrentPasteboardData(currentOperation->dragStorageName, frameID);
+    completionHandler(WTFMove(currentOperation->sandboxExtensionHandle), WTFMove(currentOperation->sandboxExtensionsForUpload));
+}
 #endif
 
+void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload, const std::optional<WebCore::FrameIdentifier>& frameID)
+{
 #if PLATFORM(GTK)
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
 #else
     if (!hasRunningProcess())
         return;
-
-    sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
+    if (!frameID)
+        internals().currentDragOperationData = { dragData, dragStorageName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload), std::nullopt };
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragOperation(frameID, internals().currentDragOperationData->dragData), [this, protectedThis = Ref { *this }, frameID] (bool handled) mutable {
+        if (!frameID)
+            internals().currentDragOperationData = std::nullopt;
         protectedPageClient()->didPerformDragOperation(handled);
     });
 #endif

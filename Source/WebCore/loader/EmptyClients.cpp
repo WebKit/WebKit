@@ -54,6 +54,7 @@
 #include "EmptyBadgeClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FormState.h"
+#include "FrameIdentifier.h"
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
 #include "HistoryItem.h"
@@ -240,6 +241,7 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
 
 class EmptyDragClient final : public DragClient {
     void willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
+    void willPerformDragDestinationAction(DragDestinationAction, const DragData&, FrameIdentifier, CompletionHandler<void()>&& completionHandler) final { completionHandler(); }
     void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
     OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint&) final { return { }; }
     void startDrag(DragItem, DataTransfer&, Frame&) final { }

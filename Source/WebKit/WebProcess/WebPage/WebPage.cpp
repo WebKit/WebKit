@@ -5340,8 +5340,10 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
         return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::nullopt);
 
     case DragControllerAction::PerformDragOperation: {
-        m_page->dragController().performDragOperation(WTFMove(dragData));
-        return completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::nullopt);
+        m_page->dragController().performDragOperation(WTFMove(dragData), *localMainFrame, [completionHandler = WTFMove(completionHandler)] (bool) mutable {
+            completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::nullopt);
+        });
+        return;
     }
     }
     ASSERT_NOT_REACHED();
@@ -5355,12 +5357,14 @@ void WebPage::performDragControllerAction(std::optional<FrameIdentifier> frameID
     auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
     if (!frame) {
         ASSERT_NOT_REACHED();
+        completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::nullopt);
         return;
     }
 
     RefPtr localFrame = frame->coreLocalFrame();
     if (!localFrame) {
         ASSERT_NOT_REACHED();
+        completionHandler(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }, std::nullopt);
         return;
     }
 
@@ -5382,24 +5386,30 @@ void WebPage::performDragControllerAction(std::optional<FrameIdentifier> frameID
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::performDragOperation(WebCore::DragData&& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsHandleArray, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::performDragOperation(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DragData&& dragData, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_pendingDropSandboxExtension);
 
-    m_pendingDropSandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
-    for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
-        if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
-            m_pendingDropExtensionsForFileUpload.append(extension);
+    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
+
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
     }
 
-    bool handled = m_page->dragController().performDragOperation(WTFMove(dragData));
+    RefPtr localFrame = frame->coreLocalFrame();
+    if (!localFrame) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
 
-    // If we started loading a local file, the sandbox extension tracker would have adopted this
-    // pending drop sandbox extension. If not, we'll play it safe and clear it.
-    m_pendingDropSandboxExtension = nullptr;
-
-    m_pendingDropExtensionsForFileUpload.clear();
-    completionHandler(handled);
+    m_page->dragController().performDragOperation(WTFMove(dragData), *localFrame, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool handled) mutable {
+        if (!weakThis)
+            return;
+        completionHandler(handled);
+    });
 }
 #endif
 
@@ -5441,6 +5451,20 @@ void WebPage::mayPerformUploadDragDestinationAction()
         m_pendingDropExtensionsForFileUpload[i]->consumePermanently();
     m_pendingDropExtensionsForFileUpload.clear();
 }
+
+#if PLATFORM(COCOA)
+void WebPage::fetchSandboxExtensionsForDragAction(FrameIdentifier frameID, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::FetchSandboxExtensionsForDragAction(frameID), [this, completionHandler = WTFMove(completionHandler)] (SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsHandleArray) mutable {
+        m_pendingDropSandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+        for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
+            if (auto extension = SandboxExtension::create(WTFMove(sandboxExtensionsHandleArray[i])))
+                m_pendingDropExtensionsForFileUpload.append(extension);
+        }
+        completionHandler();
+    });
+}
+#endif
 
 void WebPage::didStartDrag()
 {

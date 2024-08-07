@@ -55,7 +55,7 @@ struct DragState;
 struct PromisedAttachmentInfo;
 struct RemoteUserInputEventData;
 
-class DragController {
+class DragController : public CanMakeSingleThreadWeakPtr<DragController> {
     WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
 public:
     DragController(Page&, std::unique_ptr<DragClient>&&);
@@ -65,7 +65,7 @@ public:
 
     WEBCORE_EXPORT std::variant<std::optional<DragOperation>, RemoteUserInputEventData> dragEnteredOrUpdated(LocalFrame&, DragData&&);
     WEBCORE_EXPORT void dragExited(LocalFrame&, DragData&&);
-    WEBCORE_EXPORT bool performDragOperation(DragData&&);
+    WEBCORE_EXPORT void performDragOperation(DragData&&, LocalFrame&, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT void dragCancelled();
 
     bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
@@ -106,6 +106,8 @@ public:
     static const int DragIconRightInset;
     static const int DragIconBottomInset;
     static const float DragImageAlpha;
+    DragClient& client() const { return *m_client; }
+
 
 private:
     void updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const;
@@ -139,8 +141,6 @@ private:
         return true;
 #endif
     }
-
-    DragClient& client() const { return *m_client; }
 
     bool tryToUpdateDroppedImagePlaceholders(const DragData&);
     void removeAllDroppedImagePlaceholders();

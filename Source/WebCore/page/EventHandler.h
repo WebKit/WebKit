@@ -133,7 +133,7 @@ enum class ImmediateActionStage : uint8_t {
     ActionCompleted
 };
 
-class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
+class EventHandler final : public CanMakeCheckedPtr<EventHandler>, public CanMakeWeakPtr<EventHandler> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventHandler);
 public:
@@ -180,7 +180,7 @@ public:
     };
     DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, OptionSet<DragOperation>, bool draggingFiles);
     void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
-    bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
+    void performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles, const HitTestResult&, CompletionHandler<void(bool)>&&);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
     static Element* draggedElement();
     static RefPtr<Element> protectedDraggedElement();
