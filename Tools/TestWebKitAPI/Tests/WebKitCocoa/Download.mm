@@ -50,6 +50,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -2891,6 +2892,70 @@ TEST(WKDownload, DecideAfterRedirectLegacyDownloadSPI)
     Util::run(&didFinishDownload);
     checkFileContents(expectedDownloadFile, "hi"_s);
     EXPECT_TRUE(receivedInitialNavigationAction);
+}
+
+TEST(WKDownload, OriginatingFrameAndUserGesture)
+{
+    HTTPServer server { {
+        { "/example"_s, { "<a id='link' href='https://example.com/download'>test</a><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<a id='link' href='https://example.com/download'>test</a>"_s } },
+        { "/download"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy };
+
+    auto configuration = server.httpsProxyConfiguration();
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]];
+    [webView loadRequest:request];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> mainFrame;
+    __block RetainPtr<WKFrameInfo> childFrame;
+    [webView _frames:^(_WKFrameTreeNode *main) {
+        mainFrame = main.info;
+        childFrame = main.childFrames.firstObject.info;
+    }];
+    while (!childFrame)
+        Util::spinRunLoop();
+
+    __block bool checkedDownload { false };
+    __block BOOL userGesture { YES };
+    __block RetainPtr<WKFrameInfo> originatingFrame { mainFrame };
+
+    navigationDelegate.get().navigationActionDidBecomeDownload = ^(WKNavigationAction *, WKDownload *download) {
+        EXPECT_EQ(download.isUserInitiated, userGesture);
+        EXPECT_WK_STREQ(download.originatingFrame.securityOrigin.host, originatingFrame.get().securityOrigin.host);
+        checkedDownload = true;
+    };
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyDownload);
+    };
+
+    void(^check)(void) = ^{
+        checkedDownload = false;
+        [webView _evaluateJavaScript:@"document.getElementById('link').click()" withSourceURL:nil inFrame:originatingFrame.get() inContentWorld:WKContentWorld.pageWorld withUserGesture:userGesture completionHandler:nil];
+        Util::run(&checkedDownload);
+    };
+
+    check();
+    userGesture = NO;
+    check();
+    originatingFrame = childFrame;
+    check();
+    userGesture = YES;
+    check();
+
+    auto emptyWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    checkedDownload = false;
+    [emptyWebView startDownloadUsingRequest:request completionHandler:^(WKDownload *download) {
+        EXPECT_WK_STREQ(download.originatingFrame.securityOrigin.host, "");
+        EXPECT_WK_STREQ(download.originatingFrame.request.URL.absoluteString, "");
+        EXPECT_TRUE(download.isUserInitiated);
+        checkedDownload = true;
+    }];
+    Util::run(&checkedDownload);
 }
 
 }

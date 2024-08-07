@@ -30,6 +30,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
 #import "WKDownloadDelegate.h"
+#import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKWebViewInternal.h"
@@ -201,6 +202,16 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 {
     auto page = _download->originatingPage();
     return page ? page->cocoaView().autorelease() : nil;
+}
+
+- (BOOL)isUserInitiated
+{
+    return _download->wasUserInitiated();
+}
+
+- (WKFrameInfo *)originatingFrame
+{
+    return WebKit::wrapper(_download->frameInfo());
 }
 
 - (id <WKDownloadDelegate>)delegate
