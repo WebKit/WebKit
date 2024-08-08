@@ -3754,6 +3754,19 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall-
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 
+# TestOnlyIPC support needs investigated.
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
+
 # Flaky tests detected both on GTK and WPE on May2023
 webkit.org/b/257624 animations/background-position.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 fast/mediastream/RTCSessionDescription.html [ Crash Pass ]
