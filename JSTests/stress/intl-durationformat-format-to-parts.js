@@ -1,5 +1,4 @@
 //@ requireOptions("--useIntlDurationFormat=1")
-//@ skip if $hostOS != "darwin" # We are testing Intl features based on Darwin's ICU. The other port owners can extend it by testing it in their platforms and removing this condition.
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
