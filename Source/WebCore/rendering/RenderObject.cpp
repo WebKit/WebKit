@@ -1845,7 +1845,7 @@ void RenderObject::willBeDestroyed()
 void RenderObject::insertedIntoTree()
 {
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
-    if (!isFloating() && parent()->childrenInline())
+    if (!isFloating() && parent()->isSVGRenderer() && parent()->childrenInline())
         checkedParent()->dirtyLinesFromChangedChild(*this);
 }
 
