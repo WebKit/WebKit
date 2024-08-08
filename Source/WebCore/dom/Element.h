@@ -818,6 +818,9 @@ public:
     bool hasCustomState(const AtomString& state) const;
     CustomStateSet& ensureCustomStateSet();
 
+    bool hasDirectionAuto() const;
+    std::optional<TextDirection> directionalityIfDirIsAuto() const;
+
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 
@@ -845,6 +848,9 @@ protected:
 
     void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
+
+    void updateTextDirectionalityAfterInputTypeChange();
+    void updateEffectiveDirectionalityOfDirAuto();
 
 private:
     LocalFrame* documentFrameWithNonNullView() const;
@@ -943,6 +949,17 @@ private:
 #if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
+
+    void dirAttributeChanged(const AtomString&);
+    void updateEffectiveDirectionality(std::optional<TextDirection>);
+    void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
+    void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
+
+    struct TextDirectionWithStrongDirectionalityNode {
+        TextDirection direction;
+        RefPtr<Node> strongDirectionalityNode;
+    };
+    TextDirectionWithStrongDirectionalityNode computeDirectionalityFromText() const;
 
     bool hasEffectiveLangState() const;
     void updateEffectiveLangState();

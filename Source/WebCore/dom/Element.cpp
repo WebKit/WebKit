@@ -66,6 +66,7 @@
 #include "FullscreenOptions.h"
 #include "GetAnimationsOptions.h"
 #include "GetHTMLOptions.h"
+#include "HTMLBDIElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDialogElement.h"
@@ -2245,6 +2246,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     case AttributeNames::accesskeyAttr:
         protectedDocument()->invalidateAccessKeyCache();
         break;
+    case AttributeNames::dirAttr:
+        dirAttributeChanged(newValue);
+        return;
     case AttributeNames::XML::langAttr:
     case AttributeNames::langAttr: {
         if (name == HTMLNames::langAttr)
@@ -2709,6 +2713,232 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
     updateEffectiveLangState();
 }
 
+enum class TextDirectionDirective {
+    Invalid,
+    LTR,
+    RTL,
+    Auto,
+};
+
+static inline TextDirectionDirective parseTextDirection(const AtomString& value)
+{
+    if (equalLettersIgnoringASCIICase(value, "ltr"_s))
+        return TextDirectionDirective::LTR;
+    if (equalLettersIgnoringASCIICase(value, "rtl"_s))
+        return TextDirectionDirective::RTL;
+    if (equalLettersIgnoringASCIICase(value, "auto"_s))
+        return TextDirectionDirective::Auto;
+    return TextDirectionDirective::Invalid;
+}
+
+static bool isValidDirValue(const AtomString& value)
+{
+    return parseTextDirection(value) != TextDirectionDirective::Invalid;
+}
+
+static bool elementAffectsDirectionality(const Element& element)
+{
+    return is<HTMLBDIElement>(element) || isValidDirValue(element.attributeWithoutSynchronization(dirAttr));
+}
+
+static bool elementAffectsDirectionality(const Node& node)
+{
+    auto* element = dynamicDowncast<Element>(node);
+    return element && elementAffectsDirectionality(*element);
+}
+
+static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)
+{
+    firstNode->setSelfOrPrecedingNodesAffectDirAuto(flag);
+
+    RefPtr node = firstNode->firstChild();
+
+    while (node) {
+        if (elementAffectsDirectionality(*node)) {
+            if (node == lastNode)
+                return;
+            node = NodeTraversal::nextSkippingChildren(*node, firstNode);
+            continue;
+        }
+        node->setSelfOrPrecedingNodesAffectDirAuto(flag);
+        if (node == lastNode)
+            return;
+        node = NodeTraversal::next(*node, firstNode);
+    }
+}
+
+bool Element::hasDirectionAuto() const
+{
+    const AtomString& direction = attributeWithoutSynchronization(dirAttr);
+    return (hasTagName(bdiTag) && !isValidDirValue(direction)) || equalLettersIgnoringASCIICase(direction, "auto"_s);
+}
+
+std::optional<TextDirection> Element::directionalityIfDirIsAuto() const
+{
+    if (!(selfOrPrecedingNodesAffectDirAuto() && hasDirectionAuto()))
+        return std::nullopt;
+    return computeDirectionalityFromText().direction;
+}
+
+void Element::dirAttributeChanged(const AtomString& value)
+{
+    RefPtr parent = parentOrShadowHostElement();
+    bool isValid = true;
+
+    protectedDocument()->setIsDirAttributeDirty();
+
+    auto direction = parseTextDirection(value);
+    switch (direction) {
+    case TextDirectionDirective::Invalid:
+        isValid = false;
+        if (selfOrPrecedingNodesAffectDirAuto() && (!parent || !parent->selfOrPrecedingNodesAffectDirAuto()) && !is<HTMLBDIElement>(*this))
+            setHasDirAutoFlagRecursively(this, false);
+        if (auto* input = dynamicDowncast<HTMLInputElement>(*this); parent && parent->usesEffectiveTextDirection() && !(input && input->isTelephoneField()))
+            updateEffectiveDirectionality(parent->effectiveTextDirection());
+        else
+            updateEffectiveDirectionality(std::nullopt);
+        break;
+    case TextDirectionDirective::LTR:
+        if (selfOrPrecedingNodesAffectDirAuto())
+            setHasDirAutoFlagRecursively(this, false);
+        updateEffectiveDirectionality(TextDirection::LTR);
+        break;
+    case TextDirectionDirective::RTL:
+        if (selfOrPrecedingNodesAffectDirAuto())
+            setHasDirAutoFlagRecursively(this, false);
+        updateEffectiveDirectionality(TextDirection::RTL);
+        break;
+    case TextDirectionDirective::Auto:
+        setUsesEffectiveTextDirection(true);
+        updateEffectiveDirectionalityOfDirAuto();
+        break;
+    }
+
+    if (parent && parent->selfOrPrecedingNodesAffectDirAuto()) {
+        if (isValid && direction != TextDirectionDirective::Auto)
+            setHasDirAutoFlagRecursively(this, false);
+        parent->adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
+    }
+}
+
+void Element::updateEffectiveDirectionality(std::optional<TextDirection> direction)
+{
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Dir, Style::PseudoClassChangeInvalidation::AnyValue);
+    auto effectiveDirection = direction.value_or(TextDirection::LTR);
+    setUsesEffectiveTextDirection(!!direction);
+    if (direction)
+        setEffectiveTextDirection(effectiveDirection);
+    auto updateEffectiveTextDirectionOfShadowRoot = [&](Element& element) {
+        if (RefPtr shadowRootOfElement = element.shadowRoot()) {
+            for (Ref element : childrenOfType<Element>(*shadowRootOfElement))
+                element->updateEffectiveDirectionality(direction);
+        }
+    };
+    updateEffectiveTextDirectionOfShadowRoot(*this);
+    for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
+        Ref element = *it;
+        if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) {
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        updateEffectiveTextDirectionOfShadowRoot(element);
+        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClass::Dir, Style::PseudoClassChangeInvalidation::AnyValue);
+        element->setUsesEffectiveTextDirection(!!direction);
+        if (direction)
+            element->setEffectiveTextDirection(effectiveDirection);
+        it.traverseNext();
+    }
+}
+
+void Element::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type changeType)
+{
+    // FIXME: This function looks suspicious.
+
+    if (!selfOrPrecedingNodesAffectDirAuto())
+        return;
+
+    RefPtr<Node> oldMarkedNode;
+    if (beforeChange)
+        oldMarkedNode = changeType == ChildChange::Type::ElementInserted ? ElementTraversal::nextSibling(*beforeChange) : beforeChange->nextSibling();
+
+    while (oldMarkedNode && elementAffectsDirectionality(*oldMarkedNode))
+        oldMarkedNode = oldMarkedNode->nextSibling();
+    if (oldMarkedNode)
+        setHasDirAutoFlagRecursively(oldMarkedNode.get(), false);
+
+    for (Ref elementToAdjust : lineageOfType<HTMLElement>(*this)) {
+        if (elementAffectsDirectionality(elementToAdjust)) {
+            ASSERT(elementToAdjust->hasDirectionAuto());
+            elementToAdjust->updateEffectiveDirectionalityOfDirAuto();
+            return;
+        }
+    }
+}
+
+void Element::updateTextDirectionalityAfterInputTypeChange()
+{
+    dirAttributeChanged(attributeWithoutSynchronization(dirAttr));
+}
+
+void Element::updateEffectiveDirectionalityOfDirAuto()
+{
+    auto result = computeDirectionalityFromText();
+    setHasDirAutoFlagRecursively(this, true, result.strongDirectionalityNode.get());
+    updateEffectiveDirectionality(result.direction);
+    if (renderer() && renderer()->style().direction() != result.direction)
+        invalidateStyleForSubtree();
+}
+
+auto Element::computeDirectionalityFromText() const -> TextDirectionWithStrongDirectionalityNode
+{
+    if (RefPtr textControl = dynamicDowncast<HTMLTextFormControlElement>(const_cast<Element*>(this))) {
+        if (textControl->dirAutoUsesValue()) {
+            auto direction = textControl->value().defaultWritingDirection();
+            if (!direction)
+                return { TextDirection::LTR, nullptr };
+            return { *direction == U_LEFT_TO_RIGHT ? TextDirection::LTR : TextDirection::RTL, WTFMove(textControl) };
+        }
+    }
+
+    RefPtr node = firstChild();
+    while (node) {
+        // Skip bdi, script, style and text form controls.
+        auto* element = dynamicDowncast<Element>(*node);
+        if (node->hasTagName(bdiTag) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
+            || (element && element->isTextField())) {
+            node = NodeTraversal::nextSkippingChildren(*node, this);
+            continue;
+        }
+
+        // Skip elements with valid dir attribute
+        if (element) {
+            if (isValidDirValue(element->attributeWithoutSynchronization(dirAttr))) {
+                node = NodeTraversal::nextSkippingChildren(*element, this);
+                continue;
+            }
+        }
+
+        if (node->isTextNode()) {
+            if (auto direction = node->textContent(true).defaultWritingDirection())
+                return { *direction == U_LEFT_TO_RIGHT ? TextDirection::LTR : TextDirection::RTL, node };
+        }
+        node = NodeTraversal::next(*node, this);
+    }
+    return { TextDirection::LTR, nullptr };
+}
+
+void Element::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element*)
+{
+    ASSERT(selfOrPrecedingNodesAffectDirAuto());
+    for (Ref element : lineageOfType<Element>(*this)) {
+        if (elementAffectsDirectionality(element)) {
+            ASSERT(element->hasDirectionAuto());
+            element->updateEffectiveDirectionalityOfDirAuto();
+            break;
+        }
+    }
+}
+
 void Element::updateEffectiveLangStateFromParent()
 {
     ASSERT(!hasLanguageAttribute());
@@ -2845,6 +3075,14 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     } else if (!hasLanguageAttribute())
         updateEffectiveLangStateFromParent();
 
+    if (RefPtr parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->usesEffectiveTextDirection())) {
+        auto* input = dynamicDowncast<HTMLInputElement>(*this);
+        if (!elementAffectsDirectionality(*this) && !(input && input->isTelephoneField())) {
+            setUsesEffectiveTextDirection(true);
+            setEffectiveTextDirection(parent->effectiveTextDirection());
+        }
+    }
+
     return InsertedIntoAncestorResult::Done;
 }
 
@@ -2949,6 +3187,11 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     Styleable::fromElement(*this).elementWasRemoved();
 
     document().userActionElements().clearAllForElement(*this);
+
+    if (UNLIKELY(usesEffectiveTextDirection()) && !isValidDirValue(attributeWithoutSynchronization(dirAttr))) {
+        if (auto* parent = parentOrShadowHostElement(); !(parent && parent->usesEffectiveTextDirection()))
+            setUsesEffectiveTextDirection(false);
+    }
 }
 
 PopoverData* Element::popoverData() const
@@ -3276,6 +3519,9 @@ void Element::childrenChanged(const ChildChange& change)
             break;
         }
     }
+
+    if (UNLIKELY(document().isDirAttributeDirty()))
+        adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
 }
 
 void Element::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue)

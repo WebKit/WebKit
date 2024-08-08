@@ -100,10 +100,6 @@ public:
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
 
-    bool hasDirectionAuto() const;
-
-    std::optional<TextDirection> directionalityIfDirIsAuto() const;
-
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
@@ -195,10 +191,6 @@ protected:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
-    void childrenChanged(const ChildChange&) override;
-    void updateTextDirectionalityAfterInputTypeChange();
-    void updateEffectiveDirectionalityOfDirAuto();
-
     virtual void effectiveSpellcheckAttributeChanged(bool);
 
     using EventHandlerNameMap = HashMap<AtomString, AtomString>;
@@ -208,17 +200,6 @@ private:
     String nodeName() const final;
 
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
-
-    void dirAttributeChanged(const AtomString&);
-    void updateEffectiveDirectionality(std::optional<TextDirection>);
-    void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
-    void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
-
-    struct TextDirectionWithStrongDirectionalityNode {
-        TextDirection direction;
-        RefPtr<Node> strongDirectionalityNode;
-    };
-    TextDirectionWithStrongDirectionalityNode computeDirectionalityFromText() const;
 
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };
