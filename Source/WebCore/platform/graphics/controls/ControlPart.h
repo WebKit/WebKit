@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "ControlFactory.h"
 #include "PlatformControl.h"
 #include "StyleAppearance.h"
 #include <wtf/RefCounted.h>
@@ -43,7 +44,7 @@ public:
     StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
-    void setControlFactory(ControlFactory* controlFactory) { m_controlFactory = controlFactory; }
+    void setControlFactory(ControlFactory& controlFactory) { m_controlFactory = &controlFactory; }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);
@@ -58,7 +59,7 @@ protected:
     const StyleAppearance m_type;
 
     mutable std::unique_ptr<PlatformControl> m_platformControl;
-    ControlFactory* m_controlFactory { nullptr };
+    RefPtr<ControlFactory> m_controlFactory;
 };
 
 } // namespace WebCore

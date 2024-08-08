@@ -2449,6 +2449,7 @@ platform/graphics/controls/ApplePayButtonPart.cpp
 platform/graphics/controls/ControlFactory.cpp
 platform/graphics/controls/ControlPart.cpp
 platform/graphics/controls/ControlStyle.cpp
+platform/graphics/controls/EmptyControlFactory.cpp
 platform/graphics/controls/MeterPart.cpp
 platform/graphics/controls/ProgressBarPart.cpp
 platform/graphics/controls/SliderTrackPart.cpp

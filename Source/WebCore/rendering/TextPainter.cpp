@@ -23,6 +23,7 @@
 #include "config.h"
 #include "TextPainter.h"
 
+#include "ControlFactory.h"
 #include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
 #include "FilterOperations.h"
@@ -121,7 +122,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else {
         // Replaying back a whole cached glyph run to the GraphicsContext.
-        m_context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), textOrigin);
+        m_context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), ControlFactory::shared(), textOrigin);
     }
     m_glyphDisplayList = nullptr;
 }
