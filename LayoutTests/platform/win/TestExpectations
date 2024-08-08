@@ -860,9 +860,6 @@ webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-redirect
 
 http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ] # Timeout
 
-http/tests/performance/performance-resource-timing-cross-origin-media.html [ Skip ] # Timeout
-http/tests/performance/performance-resource-timing-cross-origin-media-with-cors.html [ Skip ] # Timeout
-
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ] # Failure
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Skip ] # Failure
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ] # Failure
