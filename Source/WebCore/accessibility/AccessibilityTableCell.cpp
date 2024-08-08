@@ -107,10 +107,10 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     // The RenderTableCell's table() object might be anonymous sometimes. We should handle it gracefully
     // by finding the right table.
     if (!tableFromRenderTree->node()) {
-        for (auto* ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+        for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
             // If this is a non-anonymous table object, but not an accessibility table, we should stop because
             // we don't want to choose another ancestor table as this cell's table.
-            if (auto* ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor)) {
+            if (auto* ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor.get())) {
                 if (ancestorTable->isExposable())
                     return ancestorTable;
                 if (ancestorTable->node())
@@ -262,7 +262,7 @@ bool AccessibilityTableCell::supportsExpandedTextValue() const
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders()
 {
-    auto* parent = parentTable();
+    RefPtr parent = parentTable();
     if (!parent)
         return { };
 
@@ -276,12 +276,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
     auto colRange = columnIndexRange();
 
     for (unsigned row = 0; row < rowRange.first; row++) {
-        auto* tableCell = parent->cellForColumnAndRow(colRange.first, row);
+        RefPtr tableCell = parent->cellForColumnAndRow(colRange.first, row);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
 
         ASSERT(is<AccessibilityObject>(tableCell));
-        if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell))
+        if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell.get()))
             headers.append(tableCell);
         else if (tableCell->isColumnHeader())
             headers.append(tableCell);
@@ -293,7 +293,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 {
     AccessibilityChildrenVector headers;
-    AccessibilityTable* parent = parentTable();
+    RefPtr parent = parentTable();
     if (!parent)
         return headers;
 
@@ -301,11 +301,11 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
     auto colRange = columnIndexRange();
 
     for (unsigned column = 0; column < colRange.first; column++) {
-        auto* tableCell = parent->cellForColumnAndRow(column, rowRange.first);
+        RefPtr tableCell = parent->cellForColumnAndRow(column, rowRange.first);
         if (!tableCell || tableCell == this || headers.contains(tableCell))
             continue;
 
-        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
+        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell.get()))
             headers.append(tableCell);
         else if (tableCell->isRowHeader())
             headers.append(tableCell);
@@ -338,7 +338,7 @@ AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 
 void AccessibilityTableCell::ensureIndexesUpToDate() const
 {
-    if (auto* parentTable = this->parentTable())
+    if (RefPtr parentTable = this->parentTable())
         parentTable->ensureCellIndexesUpToDate();
 }
 
@@ -436,7 +436,7 @@ int AccessibilityTableCell::axRowIndex() const
     if (int value = getIntegralAttribute(aria_rowindexAttr); value >= 1)
         return value;
 
-    if (AccessibilityTableRow* parentRow = this->parentRow())
+    if (RefPtr parentRow = this->parentRow())
         return parentRow->axRowIndex();
 
     return -1;
