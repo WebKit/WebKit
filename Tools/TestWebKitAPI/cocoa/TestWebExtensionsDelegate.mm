@@ -51,6 +51,7 @@
     return nil;
 }
 
+#if PLATFORM(MAC)
 - (void)webExtensionController:(_WKWebExtensionController *)controller openNewWindowWithOptions:(_WKWebExtensionWindowCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<_WKWebExtensionWindow> newWindow, NSError *error))completionHandler
 {
     if (_openNewWindow)
@@ -58,6 +59,7 @@
 
     completionHandler(nil, nil);
 }
+#endif
 
 - (void)webExtensionController:(_WKWebExtensionController *)controller openNewTabWithOptions:(_WKWebExtensionTabCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<_WKWebExtensionTab> newTab, NSError *error))completionHandler
 {

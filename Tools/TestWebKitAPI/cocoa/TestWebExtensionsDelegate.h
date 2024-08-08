@@ -40,6 +40,7 @@
 #import <WebKit/_WKWebExtensionTab.h>
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
 #import <WebKit/_WKWebExtensionWindow.h>
+#import <WebKit/_WKWebExtensionWindowCreationOptions.h>
 
 @interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
 

@@ -146,6 +146,8 @@ inline NSString *constructJSArrayOfStrings(NSArray *elements) { return [NSString
 
 NSData *makePNGData(CGSize, SEL colorSelector);
 
+void runScriptWithUserGesture(const String&, WKWebView *);
+
 #endif
 
 RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *, _WKWebExtensionControllerConfiguration * = nil);

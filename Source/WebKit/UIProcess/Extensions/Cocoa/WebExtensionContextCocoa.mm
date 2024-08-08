@@ -50,6 +50,7 @@
 #import "WKWebViewInternal.h"
 #import "WKWebpagePreferencesPrivate.h"
 #import "WKWebsiteDataStorePrivate.h"
+#import "WKWindowFeaturesPrivate.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionConstants.h"
@@ -1979,6 +1980,27 @@ void WebExtensionContext::forgetTab(WebExtensionTabIdentifier identifier) const
         return;
 
     [m_tabDelegateToIdentifierMap removeObjectForKey:tab->delegate()];
+}
+
+bool WebExtensionContext::canOpenNewWindow() const
+{
+    ASSERT(isLoaded());
+
+    return [extensionController()->delegate() respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)];
+}
+
+void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionWindow>)>&& completionHandler)
+{
+    ASSERT(isLoaded());
+
+    windowsCreate(parameters, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](Expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) mutable {
+        if (!result || !result.value()) {
+            completionHandler(nullptr);
+            return;
+        }
+
+        completionHandler(getWindow(result.value()->identifier.value()));
+    });
 }
 
 void WebExtensionContext::openNewTab(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>)>&& completionHandler)
