@@ -47,8 +47,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 {
     static NSString * const apiName = @"windows.create()";
 
-    auto delegate = extensionController()->delegate();
-    if (![delegate respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)]) {
+    if (!canOpenNewWindow()) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
@@ -101,7 +100,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     creationOptions.tabURLs = [urls copy];
     creationOptions.tabs = [tabs copy];
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
+    [extensionController()->delegate() webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

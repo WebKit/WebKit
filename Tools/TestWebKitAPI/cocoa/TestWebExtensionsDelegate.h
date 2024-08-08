@@ -46,7 +46,10 @@
 @property (nonatomic, copy) NSArray<id <WKWebExtensionWindow>> *(^openWindows)(WKWebExtensionContext *);
 @property (nonatomic, copy) id <WKWebExtensionWindow> (^focusedWindow)(WKWebExtensionContext *);
 
+#if PLATFORM(MAC)
 @property (nonatomic, copy) void (^openNewWindow)(WKWebExtensionWindowCreationOptions *, WKWebExtensionContext *, void (^)(id<WKWebExtensionWindow>, NSError *));
+#endif
+
 @property (nonatomic, copy) void (^openNewTab)(WKWebExtensionTabCreationOptions *, WKWebExtensionContext *, void (^)(id<WKWebExtensionTab>, NSError *));
 @property (nonatomic, copy) void (^openOptionsPage)(WKWebExtensionContext *, void (^)(NSError *));
 
