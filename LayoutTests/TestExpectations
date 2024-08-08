@@ -8041,6 +8041,7 @@ imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ Im
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
 
 # -- Anchor Positioning -- #
+
 # Anchor positioning is not yet implemented...
 
 # general failures
@@ -8080,9 +8081,9 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-update-006
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-update-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-vlr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-vrl.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-abs-inline-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-inline-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-scroll-adjust.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-abs-inline-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-inline-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-try-switch-from-fixed-anchor.html [ ImageOnlyFailure ]
@@ -8131,7 +8132,11 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-htb.ht
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Failure ]
-# minus wincairo
+
+# mac-wk1 AND wincairo failures
+imported/w3c/web-platform-tests/css/css-anchor-position/popover-anchor-backdrop-transition.html [ Failure ]
+
+# wpe-wk2 AND gtk-wk2 failures
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Failure ]
 
 # -- End: Anchor Positioning -- #

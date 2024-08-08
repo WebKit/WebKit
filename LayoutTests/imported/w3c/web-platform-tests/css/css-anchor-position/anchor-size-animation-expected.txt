@@ -1,0 +1,3 @@
+
+FAIL Animation with anchor-size() assert_equals: expected 150 but got 50
+

@@ -1,0 +1,22 @@
+
+FAIL Property position-try-fallbacks value 'none' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-block' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-inline' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-start' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-block, flip-inline' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--foo, --bar' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-start flip-inline flip-block' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'flip-start --flop' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--flop flip-start' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'left top' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'top left' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'start start' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'left, right' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--foo, left' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--foo, left, --bar' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--foo, flip-start, left' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value '--foo flip-start, left' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks value 'left, --bar flip-start' assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks has initial value none assert_true: position-try-fallbacks doesn't seem to be supported in the computed style expected true got false
+FAIL Property position-try-fallbacks does not inherit assert_true: expected true got false
+

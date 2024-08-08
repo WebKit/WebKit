@@ -33,14 +33,14 @@ body {
   height: 100px;
   background: green;
   position-anchor: --a;
-  top: anchor(--a top);
-  left: anchor(--a right);
-  position-try-options: --pf;
+  top: anchor(top);
+  left: anchor(right);
+  position-try-fallbacks: --pf;
 }
 
 @position-try --pf {
   left: auto;
-  right: anchor(--a left);
+  right: anchor(left);
 }
 </style>
 

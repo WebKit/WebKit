@@ -16,8 +16,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/anchor-scope-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/anchor-scope-parsing.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-options-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-options-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-fallbacks-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-fallbacks-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-order-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-order-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/parsing/position-try-parsing.html
