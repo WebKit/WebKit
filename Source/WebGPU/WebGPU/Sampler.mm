@@ -276,9 +276,15 @@ id<MTLSamplerState> Sampler::samplerState() const
         return samplerState;
 
     id<MTLDevice> device = m_device->device();
+    if (!device)
+        return nil;
     if (cachedSamplerStates.count >= device.maxArgumentBufferSamplerCount) {
+        if (!lastAccessedKeys.count)
+            return nil;
+
         SamplerIdentifier* key = [lastAccessedKeys objectAtIndex:0];
-        [cachedSamplerStates removeObjectForKey:key];
+        if (key)
+            [cachedSamplerStates removeObjectForKey:key];
         [lastAccessedKeys removeObjectAtIndex:0];
         ASSERT(cachedSamplerStates.count < device.maxArgumentBufferSamplerCount);
     }
