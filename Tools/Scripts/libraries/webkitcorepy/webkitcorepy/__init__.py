@@ -64,6 +64,8 @@ else:
 
 if sys.version_info >= (3, 12):
     AutoInstall.register(Package('setuptools', Version(68, 1, 2)))
+elif sys.version_info >= (3, 9):
+    AutoInstall.register(Package('setuptools', Version(61, 3, 1)))
 elif sys.version_info >= (3, 0):
     AutoInstall.register(Package('setuptools', Version(56, 0, 0)))
 else:
