@@ -163,6 +163,7 @@ private:
     bool isInWindowFullscreenActive() const final { return m_isInWindowFullscreenActive; }
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return m_supportsLinearMediaPlayer; }
+    bool isSpatial() const final { return m_isSpatial; }
 #endif
 
     WebCore::AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
@@ -210,6 +211,7 @@ private:
     WebCore::AudioSessionSoundStageSize m_soundStageSize { 0 };
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_supportsLinearMediaPlayer { false };
+    bool m_isSpatial { false };
 #endif
 
 #if !RELEASE_LOG_DISABLED

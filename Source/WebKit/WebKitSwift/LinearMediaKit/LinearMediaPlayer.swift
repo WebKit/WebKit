@@ -107,6 +107,7 @@ enum LinearMediaPlayerErrors: Error {
     var allowPip = true
     var allowFullScreenFromInline = true
     var isLiveStream = false
+    var isSpatial = true
     var recommendedViewingRatio: NSNumber?
     var fullscreenSceneBehaviors: WKSLinearMediaFullscreenBehaviors = []
     var startTime: Double = .nan

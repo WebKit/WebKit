@@ -141,6 +141,7 @@ public:
     virtual void setSoundStageSize(AudioSessionSoundStageSize) = 0;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     virtual bool supportsLinearMediaPlayer() const { return false; }
+    virtual bool isSpatial() const { return false; }
 #endif
 
 #if !RELEASE_LOG_DISABLED

@@ -104,6 +104,10 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBuffe
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferRenderSynchronizer, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVStreamDataParser, PAL_EXPORT)
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT_AND_AVAILABILITY(PAL, AVFoundation, AVAssetPlaybackAssistant, PAL_EXPORT, API_AVAILABLE(macos(13.0), ios(16.0), tvos(16.0), watchos(9.0), visionos(1.0)))
+#endif
+
 #if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVFoundation, AVAudioSession, PAL_EXPORT)
 #endif
@@ -296,5 +300,9 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBu
 #endif
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
+
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionStereoVideo, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionStereoMultiviewVideo, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionSpatialVideo, NSString *, PAL_EXPORT)
 
 #endif // USE(AVFOUNDATION)

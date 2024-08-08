@@ -474,6 +474,8 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final;
 #endif
+    VideoPlaybackConfiguration videoPlaybackConfiguration() const final { return m_cachedState.videoConfiguration; }
+    void videoPlaybackConfigurationChanged(const VideoPlaybackConfiguration&);
 
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
