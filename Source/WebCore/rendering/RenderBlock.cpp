@@ -325,6 +325,17 @@ RenderBlock::~RenderBlock()
     // Do not add any more code here. Add it to willBeDestroyed() instead.
 }
 
+// Note that this is not called for RenderBlockFlows.
+void RenderBlock::willBeDestroyed()
+{
+    if (!renderTreeBeingDestroyed()) {
+        if (parent())
+            parent()->dirtyLinesFromChangedChild(*this);
+    }
+
+    RenderBox::willBeDestroyed();
+}
+
 void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     bool hadTransform = oldStyle.hasTransformRelatedProperty();
