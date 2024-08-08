@@ -129,9 +129,6 @@ public:
     CheckedRef<const LocalFrameViewLayoutContext> checkedLayoutContext() const;
     CheckedRef<LocalFrameViewLayoutContext> checkedLayoutContext();
 
-    bool hasPendingUpdateLayerPositions() const;
-    void flushUpdateLayerPositions();
-
     WEBCORE_EXPORT bool didFirstLayout() const;
 
     WEBCORE_EXPORT bool needsLayout() const;
@@ -282,7 +279,6 @@ public:
     void cancelScheduledScrolls();
     void scrollToFocusedElementImmediatelyIfNeeded();
     void updateLayerPositionsAfterScrolling() final;
-    void updateLayerPositionsAfterOverflowScroll(RenderLayer&);
     void updateCompositingLayersAfterScrolling() final;
     static WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject&, bool insideFixed, const ScrollRectToVisibleOptions&);
 
@@ -730,33 +726,6 @@ public:
 
     FrameIdentifier rootFrameID() const final;
 
-#if ASSERT_ENABLED
-    struct AutoPreventLayerAccess {
-        AutoPreventLayerAccess(LocalFrameView& view)
-            : frameView(view)
-            , oldPreventLayerAccess(view.layerAccessPrevented())
-        {
-            view.setLayerAcessPrevented(true);
-        }
-
-        ~AutoPreventLayerAccess()
-        {
-            frameView->setLayerAcessPrevented(oldPreventLayerAccess);
-        }
-
-    private:
-        CheckedPtr<LocalFrameView> frameView;
-        bool oldPreventLayerAccess { false };
-    };
-
-    void setLayerAcessPrevented(bool prevented) { m_layerAccessPrevented = prevented; }
-    bool layerAccessPrevented() const { return m_layerAccessPrevented; }
-#else
-    struct AutoPreventLayerAccess {
-        AutoPreventLayerAccess(LocalFrameView&) { }
-    };
-#endif
-
 private:
     explicit LocalFrameView(LocalFrame&);
 
@@ -921,7 +890,7 @@ private:
     RenderElement* viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
-    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout, bool canDeferUpdateLayerPositions);
+    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout);
 
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
@@ -1025,26 +994,6 @@ private:
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
     std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
 
-    struct UpdateLayerPositions {
-        bool merge(const UpdateLayerPositions& other)
-        {
-            // FIXME: If one is an ancestor of the other we can also probably combine them.
-            if (layoutRoot != other.layoutRoot)
-                return false;
-
-            needsFullRepaint |= other.needsFullRepaint;
-            if (!other.didRunSimplifiedLayout)
-                didRunSimplifiedLayout = false;
-            return true;
-        }
-
-        SingleThreadWeakPtr<RenderElement> layoutRoot;
-        RenderElement::LayoutIdentifier layoutIdentifier : 12 { 0 };
-        bool needsFullRepaint { false };
-        bool didRunSimplifiedLayout { true };
-    };
-    std::optional<UpdateLayerPositions> m_pendingUpdateLayerPositions;
-
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
     static const unsigned visualCharacterThreshold = 200;
@@ -1103,9 +1052,6 @@ private:
     bool m_inUpdateEmbeddedObjects { false };
     bool m_scheduledToScrollToAnchor { false };
     bool m_updateCompositingLayersIsPending { false };
-#if ASSERT_ENABLED
-    bool m_layerAccessPrevented { false };
-#endif
 };
 
 inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
