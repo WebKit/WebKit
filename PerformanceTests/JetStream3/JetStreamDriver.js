@@ -27,23 +27,13 @@
 
 const measureTotalTimeAsSubtest = false; // Once we move to preloading all resources, it would be good to turn this on.
 
-if (typeof RAMification === "undefined")
-    var RAMification = false;
-
-if (typeof testIterationCount === "undefined")
-    var testIterationCount = undefined;
-
-if (typeof testIterationCountMap === "undefined")
-    var testIterationCountMap = new Map;
-
-if (typeof testWorstCaseCountMap === "undefined")
-    var testWorstCaseCountMap = new Map;
-
-if (typeof dumpJSONResults === "undefined")
-    var dumpJSONResults = false;
-
-if (typeof customTestList === "undefined")
-    var customTestList = [];
+globalThis.performance ??= Date;
+globalThis.RAMification ??= false;
+globalThis.testIterationCount ??= undefined;
+globalThis.testIterationCountMap ??= new Map();
+globalThis.testWorstCaseCountMap ??= new Map();
+globalThis.dumpJSONResults ??= false;
+globalThis.customTestList ??= [];
 
 let shouldReport = false;
 if (typeof(URLSearchParams) !== "undefined") {
@@ -249,7 +239,7 @@ class Driver {
 
         await updateUI();
 
-        let start = Date.now();
+        let start = performance.now();
         for (let benchmark of this.benchmarks) {
             benchmark.updateUIBeforeRun();
 
@@ -275,7 +265,7 @@ class Driver {
             }
         }
 
-        let totalTime = Date.now() - start;
+        let totalTime = performance.now() - start;
         if (measureTotalTimeAsSubtest) {
             if (isInBrowser)
                 document.getElementById("benchmark-total-time-score").innerHTML = uiFriendlyNumber(totalTime);
@@ -346,6 +336,8 @@ class Driver {
                 currentResolve,
                 currentReject
             };
+
+            globalObject.performance ??= performance;
             for (let script of scripts)
                 globalObject.loadString(script);
 
@@ -397,7 +389,7 @@ class Driver {
         for (let f = 0; f < 5; f++)
             text += `<div class="benchmark fill"></div>`;
 
-        let timestamp = Date.now();
+        let timestamp = performance.now();
         document.getElementById('jetstreams').style.backgroundImage = `url('jetstreams.svg?${timestamp}')`;
         let resultsTable = document.getElementById("results");
         resultsTable.innerHTML = text;
@@ -552,9 +544,9 @@ class Benchmark {
                     __benchmark.prepareForNextIteration();
 
                 ${this.preiterationCode}
-                let start = Date.now();
+                let start = performance.now();
                 __benchmark.runIteration();
-                let end = Date.now();
+                let end = performance.now();
 
                 results.push(Math.max(1, end - start));
             }
@@ -601,7 +593,7 @@ class Benchmark {
                 assert(false, "Should not reach here in CLI");
         };
 
-        addScript(`const isInBrowser = ${isInBrowser}; let performance = {now: Date.now.bind(Date)};`);
+        addScript(`const isInBrowser = ${isInBrowser};`);
 
         if (!!this.plan.deterministicRandom) {
             addScript(`
@@ -981,9 +973,9 @@ class AsyncBenchmark extends DefaultBenchmark {
             let results = [];
             for (let i = 0; i < ${this.iterations}; i++) {
                 ${this.preiterationCode}
-                let start = Date.now();
+                let start = performance.now();
                 await __benchmark.runIteration();
-                let end = Date.now();
+                let end = performance.now();
                 results.push(Math.max(1, end - start));
             }
             if (__benchmark.validate)
@@ -1016,15 +1008,15 @@ class WSLBenchmark extends Benchmark {
             let benchmark = new Benchmark();
             let results = [];
             {
-                let start = Date.now();
+                let start = performance.now();
                 benchmark.buildStdlib();
-                results.push(Date.now() - start);
+                results.push(performance.now() - start);
             }
 
             {
-                let start = Date.now();
+                let start = performance.now();
                 benchmark.run();
-                results.push(Date.now() - start);
+                results.push(performance.now() - start);
             }
 
             top.currentResolve(results);
@@ -1096,7 +1088,7 @@ class WasmBenchmark extends Benchmark {
 
             let globalObject = this;
 
-            globalObject.benchmarkTime = Date.now.bind(Date);
+            globalObject.benchmarkTime = performance.now.bind(performance);
 
             globalObject.reportCompileTime = (t) => {
                 if (compileTime !== null)
