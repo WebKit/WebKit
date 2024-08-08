@@ -56,6 +56,8 @@ public:
         long tiltX { 0 };
         long tiltY { 0 };
         long twist { 0 };
+        double altitudeAngle { piOverTwoDouble };
+        double azimuthAngle { 0 };
         String pointerType { mousePointerEventType() };
         bool isPrimary { false };
         Vector<Ref<PointerEvent>> coalescedEvents;
@@ -106,6 +108,8 @@ public:
     long tiltX() const { return m_tiltX; }
     long tiltY() const { return m_tiltY; }
     long twist() const { return m_twist; }
+    double altitudeAngle() const { return m_altitudeAngle; }
+    double azimuthAngle() const { return m_azimuthAngle; }
     String pointerType() const { return m_pointerType; }
     bool isPrimary() const { return m_isPrimary; }
 
@@ -163,6 +167,8 @@ private:
     long m_tiltX { 0 };
     long m_tiltY { 0 };
     long m_twist { 0 };
+    double m_altitudeAngle { piOverTwoDouble };
+    double m_azimuthAngle { 0 };
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
     Vector<Ref<PointerEvent>> m_coalescedEvents;

@@ -464,6 +464,22 @@ AlternateWebMPlayerEnabled:
       default: true
     WebCore:
       default: true
+      
+AltitudeAngleEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "altitudeAngle PointerEvent Property"
+  humanReadableDescription: "Enable the `altitudeAngle` property of the PointerEvents API"
+  defaultValue:
+    WebKitLegacy:
+     default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
+      default: false
 
 AlwaysAllowLocalWebarchive:
   type: bool
@@ -747,6 +763,22 @@ AuxclickEventEnabled:
       default: true
     WebCore:
       default: true
+
+AzimuthAngleEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "azimuthAngle PointerEvent Property"
+  humanReadableDescription: "Enable the `azimuthAngle` property of the PointerEvents API"
+  defaultValue:
+    WebKitLegacy:
+     default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
+      default: false
 
 BackgroundFetchAPIEnabled:
   type: bool
