@@ -45,11 +45,11 @@ public:
         return vm.moduleNamespaceObjectSpace<mode>();
     }
 
-    static JSModuleNamespaceObject* create(JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
+    static JSModuleNamespaceObject* create(JSGlobalObject* globalObject, Structure* structure, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions, bool shouldPreventExtensions = true)
     {
         VM& vm = getVM(globalObject);
         JSModuleNamespaceObject* object = new (NotNull, allocateCell<JSModuleNamespaceObject>(vm)) JSModuleNamespaceObject(vm, structure);
-        object->finishCreation(globalObject, moduleRecord, WTFMove(resolutions));
+        object->finishCreation(globalObject, moduleRecord, WTFMove(resolutions), shouldPreventExtensions);
         return object;
     }
 
@@ -75,7 +75,7 @@ public:
 
 private:
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*);
-    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&);
+    JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&, bool shouldPreventExtensions);
     DECLARE_VISIT_CHILDREN;
     bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
 

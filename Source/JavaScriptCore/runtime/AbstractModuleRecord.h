@@ -141,7 +141,7 @@ public:
 
     AbstractModuleRecord* hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName);
 
-    JSModuleNamespaceObject* getModuleNamespace(JSGlobalObject*);
+    JSModuleNamespaceObject* getModuleNamespace(JSGlobalObject*, bool shouldPreventExtensions = true);
     
     JSModuleEnvironment* moduleEnvironment()
     {

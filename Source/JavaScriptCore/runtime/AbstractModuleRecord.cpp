@@ -747,7 +747,7 @@ static void getExportedNames(JSGlobalObject* globalObject, AbstractModuleRecord*
     }
 }
 
-JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject* globalObject)
+JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject* globalObject, bool shouldPreventExtensions)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -783,9 +783,9 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
         }
     }
 
-    auto* moduleNamespaceObject = JSModuleNamespaceObject::create(globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions));
+    JSModuleNamespaceObject* moduleNamespaceObject = JSModuleNamespaceObject::create(globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions), shouldPreventExtensions);
     RETURN_IF_EXCEPTION(scope, nullptr);
-
+ 
     // Materialize *namespace* slot with module namespace object unless the module environment is not yet materialized, in which case we'll do it in setModuleEnvironment
     if (m_moduleEnvironment) {
         bool putResult = false;
