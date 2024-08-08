@@ -90,6 +90,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t dataSegmentsCount() const { return numberOfDataSegments.value_or(0); }
 
     const TableInformation& table(unsigned index) const { return tables[index]; }
+    const GlobalInformation& global(unsigned index) const { return globals[index]; }
 
     void initializeFunctionTrackers() const
     {
