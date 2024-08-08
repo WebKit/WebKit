@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[EnabledBy=WebGPUEnabled]
 messages -> RemoteBuffer NotRefCounted Stream {
     void GetMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size) -> (std::optional<Vector<uint8_t>> data) Synchronous
     void MapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size) -> (bool success)

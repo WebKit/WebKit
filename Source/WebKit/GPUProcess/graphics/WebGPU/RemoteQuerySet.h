@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <wtf/Ref.h>
@@ -50,19 +51,21 @@ class ObjectHeap;
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteQuerySet> create(WebCore::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySet> create(WebCore::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTFMove(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteQuerySet();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQuerySet(WebCore::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteQuerySet(WebCore::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteQuerySet(const RemoteQuerySet&) = delete;
     RemoteQuerySet(RemoteQuerySet&&) = delete;
@@ -81,6 +84,7 @@ private:
     Ref<WebCore::WebGPU::QuerySet> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
+    WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };
 

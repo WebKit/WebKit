@@ -36,10 +36,11 @@
 
 namespace WebKit {
 
-RemoteQueue::RemoteQueue(WebCore::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteQueue::RemoteQueue(WebCore::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(queue)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_gpu(gpu)
     , m_identifier(identifier)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteQueue::messageReceiverName(), m_identifier.toUInt64());

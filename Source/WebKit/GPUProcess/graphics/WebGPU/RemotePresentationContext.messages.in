@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[EnabledBy=WebGPUEnabled]
 messages -> RemotePresentationContext NotRefCounted Stream {
     void Configure(WebKit::WebGPU::CanvasConfiguration configuration)
     void Unconfigure()

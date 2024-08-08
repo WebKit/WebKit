@@ -89,12 +89,14 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDevice(gpuConnectionToWebProcess, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
+        return adoptRef(*new RemoteDevice(gpuConnectionToWebProcess, gpu, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
 
     ~RemoteDevice();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
@@ -103,7 +105,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(GPUConnectionToWebProcess&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(GPUConnectionToWebProcess&, RemoteGPU&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -161,6 +163,7 @@ private:
 #endif
 #endif
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    WeakRef<RemoteGPU> m_gpu;
 };
 
 } // namespace WebKit

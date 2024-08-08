@@ -35,10 +35,11 @@
 
 namespace WebKit {
 
-RemoteRenderBundle::RemoteRenderBundle(WebCore::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteRenderBundle::RemoteRenderBundle(WebCore::WebGPU::RenderBundle& renderBundle, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(renderBundle)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_gpu(gpu)
     , m_identifier(identifier)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundle::messageReceiverName(), m_identifier.toUInt64());

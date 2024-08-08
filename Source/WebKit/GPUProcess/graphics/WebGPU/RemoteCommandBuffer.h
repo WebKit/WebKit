@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <wtf/Ref.h>
@@ -50,19 +51,21 @@ class ObjectHeap;
 class RemoteCommandBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteCommandBuffer> create(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandBuffer> create(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTFMove(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteCommandBuffer();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteCommandBuffer(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer(RemoteCommandBuffer&&) = delete;
@@ -79,6 +82,7 @@ private:
     Ref<WebCore::WebGPU::CommandBuffer> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
+    WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };
 

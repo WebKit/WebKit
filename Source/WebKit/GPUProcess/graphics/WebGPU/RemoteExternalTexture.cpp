@@ -35,10 +35,11 @@
 
 namespace WebKit {
 
-RemoteExternalTexture::RemoteExternalTexture(WebCore::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteExternalTexture::RemoteExternalTexture(WebCore::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(externalTexture)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_gpu(gpu)
     , m_identifier(identifier)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteExternalTexture::messageReceiverName(), m_identifier.toUInt64());

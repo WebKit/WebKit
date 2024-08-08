@@ -29,6 +29,7 @@
 
 #include "RemoteGPURequestAdapterResponse.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -80,6 +81,8 @@ public:
         return result;
     }
 
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+
     virtual ~RemoteGPU();
 
     void stopListeningForIPC();
@@ -119,6 +122,7 @@ private:
     void isValid(WebGPUIdentifier, CompletionHandler<void(bool, bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());

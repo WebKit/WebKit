@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[EnabledBy=WebGPUEnabled]
 messages -> RemoteRenderBundleEncoder NotRefCounted Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)

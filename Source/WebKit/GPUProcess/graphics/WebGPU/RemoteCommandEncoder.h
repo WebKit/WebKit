@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
@@ -59,19 +60,21 @@ struct RenderPassDescriptor;
 class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteCommandEncoder> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoder> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteCommandEncoder(gpuConnectionToWebProcess, commandEncoder, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteCommandEncoder(gpuConnectionToWebProcess, gpu, commandEncoder, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteCommandEncoder();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandEncoder(GPUConnectionToWebProcess&, WebCore::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteCommandEncoder(GPUConnectionToWebProcess&, RemoteGPU&, WebCore::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteCommandEncoder(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder(RemoteCommandEncoder&&) = delete;
@@ -135,6 +138,7 @@ private:
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    WeakRef<RemoteGPU> m_gpu;
 };
 
 } // namespace WebKit

@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[EnabledBy=WebGPUEnabled]
 messages -> RemoteDevice NotRefCounted Stream {
     void Destroy()
     void Destruct()

@@ -50,12 +50,13 @@
 
 namespace WebKit {
 
-RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
+    , m_gpu(gpu)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -174,7 +175,7 @@ void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& des
 
     auto renderBundle = m_backing->finish(*convertedDescriptor);
     MESSAGE_CHECK(renderBundle);
-    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
     m_objectHeap->addObject(identifier, remoteRenderBundle);
 }
 

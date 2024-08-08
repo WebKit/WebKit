@@ -56,8 +56,8 @@ RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::Compos
     : m_backing(compositorIntegration)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
-    , m_identifier(identifier)
     , m_gpu(gpu)
+    , m_identifier(identifier)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
