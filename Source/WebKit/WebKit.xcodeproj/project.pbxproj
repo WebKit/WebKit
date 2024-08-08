@@ -2542,6 +2542,7 @@
 		F454C1302BA3AFFD00871551 /* APITargetedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F454C12D2BA3AFFD00871551 /* APITargetedElementInfo.h */; };
 		F4648E92296E81FA00744170 /* WebPrivacyHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F4648E90296E81F500744170 /* WebPrivacyHelpers.h */; };
 		F4660BC225DEF08100E86598 /* PasteboardAccessIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */; };
+		F468770B2C6402650068A20C /* CocoaWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = F468770A2C6402650068A20C /* CocoaWindow.h */; };
 		F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */; };
 		F48570A32644BEC500C05F71 /* Timeout.h in Headers */ = {isa = PBXBuildFile; fileRef = F48570A22644BEC400C05F71 /* Timeout.h */; };
 		F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */ = {isa = PBXBuildFile; fileRef = F48C81E32AE0BA6E00073850 /* CoreIPCData.h */; };
@@ -8222,6 +8223,7 @@
 		F4648E90296E81F500744170 /* WebPrivacyHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPrivacyHelpers.h; sourceTree = "<group>"; };
 		F4648E91296E81F500744170 /* WebPrivacyHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPrivacyHelpers.mm; sourceTree = "<group>"; };
 		F4660BC125DEF08100E86598 /* PasteboardAccessIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardAccessIntent.h; sourceTree = "<group>"; };
+		F468770A2C6402650068A20C /* CocoaWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaWindow.h; sourceTree = "<group>"; };
 		F476894628D2B5CD00073641 /* LayerTreeContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LayerTreeContext.serialization.in; sourceTree = "<group>"; };
 		F47AA6C92B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKWebView+TextExtraction.swift"; path = "TextExtraction/WKWebView+TextExtraction.swift"; sourceTree = "<group>"; };
 		F48570A22644BEC400C05F71 /* Timeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timeout.h; sourceTree = "<group>"; };
@@ -12148,6 +12150,7 @@
 				1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */,
 				4482734624528F6000A95493 /* CocoaImage.h */,
 				F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */,
+				F468770A2C6402650068A20C /* CocoaWindow.h */,
 				A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */,
 				A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */,
 				A141DF532B07069700E80B2D /* ExtensionCapabilityGrant.mm */,
@@ -16280,6 +16283,7 @@
 				57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */,
 				1C62747D288B4C3E00CED3A2 /* CocoaHelpers.h in Headers */,
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
+				F468770B2C6402650068A20C /* CocoaWindow.h in Headers */,
 				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
 				F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */,
 				37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */,

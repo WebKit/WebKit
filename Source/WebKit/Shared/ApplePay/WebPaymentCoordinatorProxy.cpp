@@ -268,6 +268,11 @@ void WebPaymentCoordinatorProxy::presenterDidSelectShippingContact(PaymentAuthor
     send(Messages::WebPaymentCoordinator::DidSelectShippingContact(shippingContact));
 }
 
+CocoaWindow* WebPaymentCoordinatorProxy::presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const
+{
+    return m_client.paymentCoordinatorPresentingWindow(*this);
+}
+
 void WebPaymentCoordinatorProxy::presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod& paymentMethod)
 {
     ASSERT(m_state == State::Active);

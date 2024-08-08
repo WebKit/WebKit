@@ -43,7 +43,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
 #import "PageClient.h"
-#import "PaymentAuthorizationViewController.h"
+#import "PaymentAuthorizationController.h"
 #import "PrintInfo.h"
 #import "ProvisionalPageProxy.h"
 #import "RemoteLayerTreeHost.h"
@@ -1294,7 +1294,7 @@ void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const St
 
 std::unique_ptr<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, PKPaymentRequest *paymentRequest)
 {
-    return makeUnique<PaymentAuthorizationViewController>(paymentCoordinatorProxy, paymentRequest);
+    return makeUnique<PaymentAuthorizationController>(paymentCoordinatorProxy, paymentRequest);
 }
 
 UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)

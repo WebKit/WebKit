@@ -65,6 +65,10 @@
 #include "IPCTester.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "CocoaWindow.h"
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -446,7 +450,8 @@ private:
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
-#endif
+    CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
+#endif // ENABLE(APPLE_PAY_REMOTE_UI)
 
     Ref<IPC::Connection> m_connection;
     Ref<NetworkProcess> m_networkProcess;

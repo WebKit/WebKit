@@ -66,6 +66,11 @@ void NetworkConnectionToWebProcess::getPaymentCoordinatorEmbeddingUserAgent(WebP
     networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetPaymentCoordinatorEmbeddingUserAgent { webPageProxyIdentifier }, WTFMove(completionHandler));
 }
 
+CocoaWindow *NetworkConnectionToWebProcess::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
+{
+    return nil;
+}
+
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))

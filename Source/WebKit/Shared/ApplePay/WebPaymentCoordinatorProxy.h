@@ -39,6 +39,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
+#if PLATFORM(COCOA)
+#include "CocoaWindow.h"
+#endif
+
 OBJC_CLASS PKPaymentSetupViewController;
 OBJC_CLASS UIViewController;
 
@@ -69,7 +73,6 @@ struct ApplePayShippingMethodUpdate;
 }
 
 OBJC_CLASS NSObject;
-OBJC_CLASS NSWindow;
 OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
@@ -106,9 +109,7 @@ public:
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
         virtual std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
-#if PLATFORM(MAC)
-        virtual NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) = 0;
-#endif
+        virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
     };
 
@@ -137,6 +138,7 @@ private:
     void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) final;
 #endif
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
+    CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const final;
 
     // Message handlers
     void canMakePayments(CompletionHandler<void(bool)>&&);

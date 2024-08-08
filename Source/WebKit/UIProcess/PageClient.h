@@ -57,6 +57,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
+#include "CocoaWindow.h"
 #include "WKBrowserEngineDefinitions.h"
 #include "WKFoundation.h"
 
@@ -519,7 +520,6 @@ public:
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
 
     virtual void startWindowDrag() = 0;
-    virtual NSWindow *platformWindow() = 0;
     virtual void setShouldSuppressFirstResponderChanges(bool) = 0;
 
     virtual NSView *inspectorAttachmentView() = 0;
@@ -537,6 +537,8 @@ public:
     virtual void layerTreeCommitComplete() = 0;
 
     virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
+
+    virtual CocoaWindow *platformWindow() const = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

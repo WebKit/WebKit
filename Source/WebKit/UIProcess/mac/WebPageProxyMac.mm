@@ -594,15 +594,6 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
     return protectedPageClient()->remoteObjectRegistry();
 }
 
-#if ENABLE(APPLE_PAY)
-
-NSWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&)
-{
-    return page.platformWindow();
-}
-
-#endif
-
 #if ENABLE(CONTEXT_MENUS)
 
 NSMenu *WebPageProxy::activeContextMenu() const

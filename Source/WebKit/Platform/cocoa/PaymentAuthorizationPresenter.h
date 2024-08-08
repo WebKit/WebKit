@@ -27,6 +27,7 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
+#include "CocoaWindow.h"
 #include <WebCore/ApplePaySessionPaymentRequest.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -77,6 +78,7 @@ public:
         virtual void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) = 0;
 #endif
         virtual void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) = 0;
+        virtual CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const = 0;
     };
 
     virtual ~PaymentAuthorizationPresenter() = default;
