@@ -72,6 +72,7 @@ namespace
 #include "libANGLE/renderer/vulkan/shaders/gen/EtcToBc.comp.00000001.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ExportStencil.frag.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/FullScreenTri.vert.00000000.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/GenerateFragmentShadingRate.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000001.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000002.inc"
@@ -253,6 +254,10 @@ constexpr CompressedShaderBlob kExportStencil_frag_shaders[] = {
 };
 constexpr CompressedShaderBlob kFullScreenTri_vert_shaders[] = {
     {kFullScreenTri_vert_00000000, sizeof(kFullScreenTri_vert_00000000)},
+};
+constexpr CompressedShaderBlob kGenerateFragmentShadingRate_comp_shaders[] = {
+    {kGenerateFragmentShadingRate_comp_00000000,
+     sizeof(kGenerateFragmentShadingRate_comp_00000000)},
 };
 constexpr CompressedShaderBlob kGenerateMipmap_comp_shaders[] = {
     {kGenerateMipmap_comp_00000000, sizeof(kGenerateMipmap_comp_00000000)},
@@ -458,6 +463,10 @@ void ShaderLibrary::destroy(VkDevice device)
     {
         shader.get().destroy(device);
     }
+    for (RefCounted<ShaderModule> &shader : mGenerateFragmentShadingRate_comp_shaders)
+    {
+        shader.get().destroy(device);
+    }
     for (RefCounted<ShaderModule> &shader : mGenerateMipmap_comp_shaders)
     {
         shader.get().destroy(device);
@@ -571,6 +580,16 @@ angle::Result ShaderLibrary::getFullScreenTri_vert(Context *context,
 {
     return GetShader(context, mFullScreenTri_vert_shaders, kFullScreenTri_vert_shaders,
                      ArraySize(kFullScreenTri_vert_shaders), shaderFlags, shaderOut);
+}
+
+angle::Result ShaderLibrary::getGenerateFragmentShadingRate_comp(
+    Context *context,
+    uint32_t shaderFlags,
+    RefCounted<ShaderModule> **shaderOut)
+{
+    return GetShader(context, mGenerateFragmentShadingRate_comp_shaders,
+                     kGenerateFragmentShadingRate_comp_shaders,
+                     ArraySize(kGenerateFragmentShadingRate_comp_shaders), shaderFlags, shaderOut);
 }
 
 angle::Result ShaderLibrary::getGenerateMipmap_comp(Context *context,

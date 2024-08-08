@@ -372,7 +372,9 @@ angle::Result TextureWgpu::setImageImpl(const gl::Context *context,
                                         const uint8_t *pixels)
 {
     ContextWgpu *contextWgpu           = GetImplAs<ContextWgpu>(context);
-    const webgpu::Format &webgpuFormat = contextWgpu->getFormat(internalFormat);
+    const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(internalFormat, type);
+    const webgpu::Format &webgpuFormat =
+        contextWgpu->getFormat(internalFormatInfo.sizedInternalFormat);
     ANGLE_TRY(redefineLevel(context, webgpuFormat, index, size));
     return setSubImageImpl(context, webgpuFormat, type, index, gl::Box(gl::kOffsetZero, size),
                            unpack, pixels);
@@ -386,22 +388,32 @@ angle::Result TextureWgpu::setSubImageImpl(const gl::Context *context,
                                            const gl::PixelUnpackState &unpack,
                                            const uint8_t *pixels)
 {
-
     ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
 
-    gl::InternalFormat internalFormatInfo = webgpuFormat.getInternalFormatInfo(type);
+    if (!webgpuFormat.valid())
+    {
+        UNIMPLEMENTED();
+        return angle::Result::Continue;
+    }
+
+    const gl::InternalFormat &inputInternalFormatInfo = webgpuFormat.getInternalFormatInfo(type);
     gl::Extents glExtents                 = gl::Extents(area.width, area.height, area.depth);
-    GLuint inputRowPitch                  = 0;
-    GLuint inputDepthPitch                = 0;
-    uint32_t outputRowPitch = roundUp(internalFormatInfo.pixelBytes * glExtents.width, (GLuint)256);
-    uint32_t outputDepthPitch = outputRowPitch * glExtents.height;
-    uint32_t allocationSize   = outputDepthPitch * glExtents.depth;
-    ANGLE_CHECK_GL_MATH(contextWgpu,
-                        internalFormatInfo.computeRowPitch(type, glExtents.width, unpack.alignment,
-                                                           unpack.rowLength, &inputRowPitch));
-    ANGLE_CHECK_GL_MATH(contextWgpu,
-                        internalFormatInfo.computeDepthPitch(glExtents.height, unpack.imageHeight,
-                                                             inputRowPitch, &inputDepthPitch));
+
+    GLuint inputRowPitch = 0;
+    ANGLE_CHECK_GL_MATH(contextWgpu, inputInternalFormatInfo.computeRowPitch(
+                                         type, glExtents.width, unpack.alignment, unpack.rowLength,
+                                         &inputRowPitch));
+
+    GLuint inputDepthPitch = 0;
+    ANGLE_CHECK_GL_MATH(
+        contextWgpu, inputInternalFormatInfo.computeDepthPitch(glExtents.height, unpack.imageHeight,
+                                                               inputRowPitch, &inputDepthPitch));
+
+    const angle::Format &actualFormat = webgpuFormat.getActualImageFormat();
+    uint32_t outputRowPitch           = roundUp(actualFormat.pixelBytes * glExtents.width,
+                                                static_cast<uint32_t>(webgpu::kTextureRowSizeAlignment));
+    uint32_t outputDepthPitch         = outputRowPitch * glExtents.height;
+    uint32_t allocationSize           = outputDepthPitch * glExtents.depth;
 
     ANGLE_TRY(mImage->stageTextureUpload(contextWgpu, webgpuFormat, type, glExtents, inputRowPitch,
                                          inputDepthPitch, outputRowPitch, outputDepthPitch,

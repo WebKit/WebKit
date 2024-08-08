@@ -74,29 +74,113 @@ gl::DrawBufferMask ClearValuesArray::getColorMask() const
     return gl::DrawBufferMask(mEnabled.bits() & kUnpackedColorBuffersMask);
 }
 
-void EnsureCapsInitialized(const wgpu::Device &device, gl::Caps *nativeCaps)
+void GenerateCaps(const wgpu::Device &device,
+                  gl::Caps *glCaps,
+                  gl::TextureCapsMap *glTextureCapsMap,
+                  gl::Extensions *glExtensions,
+                  gl::Limitations *glLimitations,
+                  egl::Caps *eglCaps,
+                  egl::DisplayExtensions *eglExtensions,
+                  gl::Version *maxSupportedESVersion)
 {
     wgpu::SupportedLimits limitsWgpu = {};
     device.GetLimits(&limitsWgpu);
 
-    nativeCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
-    nativeCaps->max3DTextureSize      = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension3D);
-    nativeCaps->max2DTextureSize      = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
-    nativeCaps->maxArrayTextureLayers = rx::LimitToInt(limitsWgpu.limits.maxTextureArrayLayers);
-    nativeCaps->maxCubeMapTextureSize = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
-    nativeCaps->maxRenderbufferSize   = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
+    // OpenGL ES extensions
+    glExtensions->blendEquationAdvancedKHR      = true;
+    glExtensions->blendFuncExtendedEXT          = true;
+    glExtensions->copyCompressedTextureCHROMIUM = true;
+    glExtensions->copyTextureCHROMIUM           = true;
+    glExtensions->debugMarkerEXT                = true;
+    glExtensions->drawBuffersIndexedOES         = true;
+    glExtensions->fenceNV                       = true;
+    glExtensions->framebufferBlitANGLE          = true;
+    glExtensions->framebufferBlitNV             = true;
+    glExtensions->instancedArraysANGLE          = true;
+    glExtensions->instancedArraysEXT            = true;
+    glExtensions->mapBufferRangeEXT             = true;
+    glExtensions->mapbufferOES                  = true;
+    glExtensions->pixelBufferObjectNV           = true;
+    glExtensions->textureRectangleANGLE         = true;
+    glExtensions->textureUsageANGLE             = true;
+    glExtensions->translatedShaderSourceANGLE   = true;
+    glExtensions->vertexArrayObjectOES          = true;
 
-    nativeCaps->maxDrawBuffers       = rx::LimitToInt(limitsWgpu.limits.maxColorAttachments);
-    nativeCaps->maxFramebufferWidth  = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
-    nativeCaps->maxFramebufferHeight = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
-    nativeCaps->maxColorAttachments  = rx::LimitToInt(limitsWgpu.limits.maxColorAttachments);
+    glExtensions->textureStorageEXT               = true;
+    glExtensions->rgb8Rgba8OES                    = true;
+    glExtensions->textureCompressionDxt1EXT       = true;
+    glExtensions->textureCompressionDxt3ANGLE     = true;
+    glExtensions->textureCompressionDxt5ANGLE     = true;
+    glExtensions->textureCompressionS3tcSrgbEXT   = true;
+    glExtensions->textureCompressionAstcHdrKHR    = true;
+    glExtensions->textureCompressionAstcLdrKHR    = true;
+    glExtensions->textureCompressionAstcOES       = true;
+    glExtensions->compressedETC1RGB8TextureOES    = true;
+    glExtensions->compressedETC1RGB8SubTextureEXT = true;
+    glExtensions->lossyEtcDecodeANGLE             = true;
+    glExtensions->geometryShaderEXT               = true;
+    glExtensions->geometryShaderOES               = true;
+    glExtensions->multiDrawIndirectEXT            = true;
 
-    nativeCaps->maxVertexAttribStride =
-        rx::LimitToInt(limitsWgpu.limits.maxVertexBufferArrayStride);
+    glExtensions->EGLImageOES                 = true;
+    glExtensions->EGLImageExternalOES         = true;
+    glExtensions->EGLImageExternalEssl3OES    = true;
+    glExtensions->EGLImageArrayEXT            = true;
+    glExtensions->EGLStreamConsumerExternalNV = true;
 
-    nativeCaps->maxVertexAttributes = rx::LimitToInt(limitsWgpu.limits.maxVertexAttributes);
+    // OpenGL ES caps
+    *glCaps                       = GenerateMinimumCaps(gl::Version(3, 1), *glExtensions);
+    glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
+    glCaps->max3DTextureSize      = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension3D);
+    glCaps->max2DTextureSize      = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
+    glCaps->maxArrayTextureLayers = rx::LimitToInt(limitsWgpu.limits.maxTextureArrayLayers);
+    glCaps->maxCubeMapTextureSize = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
+    glCaps->maxRenderbufferSize   = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
 
-    nativeCaps->maxTextureBufferSize = rx::LimitToInt(limitsWgpu.limits.maxBufferSize);
+    glCaps->maxDrawBuffers       = rx::LimitToInt(limitsWgpu.limits.maxColorAttachments);
+    glCaps->maxFramebufferWidth  = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
+    glCaps->maxFramebufferHeight = rx::LimitToInt(limitsWgpu.limits.maxTextureDimension2D);
+    glCaps->maxColorAttachments  = rx::LimitToInt(limitsWgpu.limits.maxColorAttachments);
+
+    glCaps->maxVertexAttribStride = rx::LimitToInt(limitsWgpu.limits.maxVertexBufferArrayStride);
+
+    glCaps->maxVertexAttributes = rx::LimitToInt(limitsWgpu.limits.maxVertexAttributes);
+
+    glCaps->maxTextureBufferSize = rx::LimitToInt(limitsWgpu.limits.maxBufferSize);
+
+    // Max version
+    *maxSupportedESVersion = gl::Version(3, 2);
+
+    // OpenGL ES texture caps
+    InitMinimumTextureCapsMap(*maxSupportedESVersion, *glExtensions, glTextureCapsMap);
+
+    // EGL caps
+    eglCaps->textureNPOT = true;
+
+    // EGL extensions
+    eglExtensions->createContextRobustness            = true;
+    eglExtensions->postSubBuffer                      = true;
+    eglExtensions->createContext                      = true;
+    eglExtensions->image                              = true;
+    eglExtensions->imageBase                          = true;
+    eglExtensions->glTexture2DImage                   = true;
+    eglExtensions->glTextureCubemapImage              = true;
+    eglExtensions->glTexture3DImage                   = true;
+    eglExtensions->glRenderbufferImage                = true;
+    eglExtensions->getAllProcAddresses                = true;
+    eglExtensions->noConfigContext                    = true;
+    eglExtensions->directComposition                  = true;
+    eglExtensions->createContextNoError               = true;
+    eglExtensions->createContextWebGLCompatibility    = true;
+    eglExtensions->createContextBindGeneratesResource = true;
+    eglExtensions->swapBuffersWithDamage              = true;
+    eglExtensions->pixelFormatFloat                   = true;
+    eglExtensions->surfacelessContext                 = true;
+    eglExtensions->displayTextureShareGroup           = true;
+    eglExtensions->displaySemaphoreShareGroup         = true;
+    eglExtensions->createContextClientArrays          = true;
+    eglExtensions->programCacheControlANGLE           = true;
+    eglExtensions->robustResourceInitializationANGLE  = true;
 }
 
 bool IsStripPrimitiveTopology(wgpu::PrimitiveTopology topology)

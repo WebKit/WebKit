@@ -199,6 +199,18 @@ class UtilsVk : angle::NonCopyable
         bool unresolveStencil;
     };
 
+    struct GenerateFragmentShadingRateParameters
+    {
+        uint32_t textureWidth;
+        uint32_t textureHeight;
+        uint32_t attachmentWidth;
+        uint32_t attachmentHeight;
+        uint32_t attachmentBlockWidth;
+        uint32_t attachmentBlockHeight;
+        uint32_t numFocalPoints;
+        gl::FocalPoint focalPoints[gl::IMPLEMENTATION_MAX_FOCAL_POINTS];
+    };
+
     // Based on the maximum number of levels in GenerateMipmap.comp.
     static constexpr uint32_t kGenerateMipmapMaxLevels = 6;
     static uint32_t GetGenerateMipmapMaxLevels(ContextVk *contextVk);
@@ -312,6 +324,13 @@ class UtilsVk : angle::NonCopyable
                               vk::ImageHelper *dst,
                               const vk::ImageView *dstView,
                               const OverlayDrawParameters &params);
+
+    // Fragment shading rate utility
+    angle::Result generateFragmentShadingRate(
+        ContextVk *contextVk,
+        vk::ImageHelper *shadingRateAttachmentImageHelper,
+        vk::ImageViewHelper *shadingRateAttachmentImageViewHelper,
+        const GenerateFragmentShadingRateParameters &shadingRateParameters);
 
   private:
     ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
@@ -516,6 +535,7 @@ class UtilsVk : angle::NonCopyable
         GenerateMipmap,
         TransCodeEtcToBc,
         CopyImageToBuffer,
+        GenerateFragmentShadingRate,
 
         InvalidEnum,
         EnumCount = InvalidEnum,
@@ -602,6 +622,8 @@ class UtilsVk : angle::NonCopyable
 
     angle::Result ensureSamplersInitialized(ContextVk *context);
 
+    angle::Result ensureGenerateFragmentShadingRateResourcesInitialized(ContextVk *contextVk);
+
     angle::Result startRenderPass(ContextVk *contextVk,
                                   vk::ImageHelper *image,
                                   const vk::ImageView *imageView,
@@ -686,6 +708,8 @@ class UtilsVk : angle::NonCopyable
     // combinations.
     std::unordered_map<uint32_t, vk::RefCounted<vk::ShaderModule>> mUnresolveFragShaders;
     std::unordered_map<uint32_t, GraphicsShaderProgramAndPipelines> mUnresolve;
+
+    ComputeShaderProgramAndPipelines mGenerateFragmentShadingRateAttachment;
 
     vk::Sampler mPointSampler;
     vk::Sampler mLinearSampler;
