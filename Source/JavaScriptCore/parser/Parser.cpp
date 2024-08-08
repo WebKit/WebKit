@@ -827,7 +827,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVariableDecla
     bool scratchBool;
     TreeExpression variableDecls = parseVariableDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3, VarDeclarationContext, declarationType, exportType, scratchBool);
     propagateError();
-    failIfFalse(autoSemiColon(), "Expected ';' after variable declaration");
+    failIfFalse(autoSemiColon(), "Expected ';', ',' or '=' after variable declaration");
     
     return context.createDeclarationStatement(location, variableDecls, start, end);
 }
