@@ -35,6 +35,11 @@ GStreamerQuirkBroadcom::GStreamerQuirkBroadcom()
 {
     GST_DEBUG_CATEGORY_INIT(webkit_broadcom_quirks_debug, "webkitquirksbroadcom", 0, "WebKit Broadcom Quirks");
     m_disallowedWebAudioDecoders = { "brcmaudfilter"_s };
+
+    if (auto ac3parse = adoptGRef(gst_registry_lookup_feature(gst_registry_get(), "ac3parse"))) {
+        GST_DEBUG("Down-ranking ac3parse to prevent packet loss on AC3 encrypted content after seeks.");
+        gst_plugin_feature_set_rank(ac3parse.get(), 0);
+    }
 }
 
 void GStreamerQuirkBroadcom::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
