@@ -39,23 +39,6 @@
 
 namespace TestWebKitAPI {
 
-static void runScriptWithUserGesture(const String& script, WKWebView *backgroundWebView)
-{
-    ASSERT(backgroundWebView);
-
-    bool callbackComplete = false;
-    RetainPtr<id> evalResult;
-    [backgroundWebView callAsyncJavaScript:script arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
-        evalResult = result;
-        callbackComplete = true;
-        EXPECT_TRUE(!error);
-        if (error)
-            NSLog(@"Encountered error: %@ while evaluating script: %@", error, static_cast<NSString *>(script));
-    }];
-
-    TestWebKitAPI::Util::run(&callbackComplete);
-}
-
 TEST(WKWebExtensionAPIPermissions, Errors)
 {
     auto *manifest = @{
@@ -202,7 +185,7 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -249,7 +232,7 @@ TEST(WKWebExtensionAPIPermissions, DenyPermissionsRequest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -297,7 +280,7 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsDenyMatchPatternsRequest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -347,7 +330,7 @@ TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -397,7 +380,7 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -447,7 +430,7 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -495,7 +478,7 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomeMatchPatterns)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -691,7 +674,7 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
 
-    runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
+    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
 
     [manager run];
 
