@@ -1280,6 +1280,39 @@ private:
                 break;
             }
 
+            case Construct: {
+                Edge calleeNode = m_graph.child(node, 0);
+                Edge newTargetNode = m_graph.child(node, 1);
+                JSValue calleeValue = m_state.forNode(calleeNode).m_value;
+                JSValue newTargetValue = m_state.forNode(newTargetNode).m_value;
+                if (calleeValue && newTargetValue) {
+                    auto* callee = jsDynamicCast<JSObject*>(calleeValue);
+                    auto* newTarget = jsDynamicCast<JSFunction*>(newTargetValue);
+                    if (callee && newTarget) {
+                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                        if (callee->globalObject() == globalObject) {
+                            if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
+                                if (FunctionRareData* rareData = newTarget->rareData()) {
+                                    if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                                        Structure* structure = rareData->internalFunctionAllocationStructure();
+                                        if (structure && structure->classInfoForCells() == JSFinalObject::info() && structure->hasMonoProto()) {
+                                            m_graph.freeze(rareData);
+                                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                            m_graph.freeze(globalObject);
+                                            m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                                            node->convertToNewObject(m_graph.registerStructure(structure));
+                                            changed = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
             case PhantomNewObject:
             case PhantomNewFunction:
             case PhantomNewGeneratorFunction:
