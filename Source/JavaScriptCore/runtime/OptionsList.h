@@ -602,7 +602,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useTrustedTypes, false, Normal, "Enable trusted types eval protection feature."_s) \
     v(Bool, useUint8ArrayBase64Methods, true, Normal, "Expose methods for converting Uint8Array to/from base64 and hex."_s) \
     v(Bool, useWasmTypedFunctionReferences, true, Normal, "Allow function types from the wasm typed function references spec."_s) \
-    v(Bool, useWasmGC, false, Normal, "Allow gc types from the wasm gc proposal."_s) \
+    v(Bool, useWasmGC, true, Normal, "Allow gc types from the wasm gc proposal."_s) \
     v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
     v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
