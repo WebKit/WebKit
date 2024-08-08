@@ -610,6 +610,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage info:elementInfo assistant:self]];
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    if ([elementInfo isSpatialImage])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeViewSpatial info:elementInfo assistant:self]];
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     BOOL enableCopySubjectItem = [_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [_delegate actionSheetAssistantShouldIncludeCopySubjectAction:self];
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self disabled:!enableCopySubjectItem]];
@@ -1048,6 +1054,11 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
     case _WKElementActionTypeSaveImage:
         [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::SaveImage];
         break;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    case _WKElementActionTypeViewSpatial:
+        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::ViewSpatial];
+        break;
+#endif
     case _WKElementActionTypeShare:
         if (URL(element.imageURL).protocolIsData() && element.image && [delegate respondsToSelector:@selector(actionSheetAssistant:shareElementWithImage:rect:)])
             [delegate actionSheetAssistant:self shareElementWithImage:element.image rect:element.boundingRect];

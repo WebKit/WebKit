@@ -64,6 +64,9 @@ struct WebKit::InteractionInformationAtPosition {
     bool shouldNotUseIBeamInEditableContent;
     bool isImageOverlayText;
     bool isVerticalWritingMode;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatialImage;
+#endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;

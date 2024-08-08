@@ -54,6 +54,9 @@
     BOOL _animatedImage;
     BOOL _isImage;
     BOOL _isUsingAlternateURLForImage;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    BOOL _isSpatialImage;
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -90,6 +93,9 @@
     _canShowAnimationControls = information.canShowAnimationControls;
     _isImage = information.isImage;
     _isUsingAlternateURLForImage = isUsingAlternateURLForImage;
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    _isSpatialImage = information.isSpatialImage;
+#endif
     _userInfo = userInfo;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     _animationsUnderElement = information.animationsAtPoint;
@@ -199,6 +205,13 @@
 {
     return _isUsingAlternateURLForImage;
 }
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+- (BOOL)isSpatialImage
+{
+    return _isSpatialImage;
+}
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)isAnimating

@@ -248,6 +248,15 @@ bool BitmapImageDescriptor::shouldUseQuickLookForFullscreen() const
 }
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+bool BitmapImageDescriptor::isSpatial() const
+{
+    if (RefPtr decoder = m_source.decoderIfExists())
+        return decoder->isSpatial();
+    return false;
+}
+#endif
+
 void BitmapImageDescriptor::dump(TextStream& ts) const
 {
     ts.dumpProperty("size", size());

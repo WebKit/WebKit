@@ -3148,6 +3148,9 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.isAnimating = image.isAnimating();
     RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
     info.elementContainsImageOverlay = htmlElement && ImageOverlay::hasOverlay(*htmlElement);
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    info.isSpatialImage = image.isSpatial();
+#endif
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
@@ -3612,6 +3615,10 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
             return;
         send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(*handle), authorizationToken));
     }
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    else if (static_cast<SheetAction>(action) == SheetAction::ViewSpatial)
+        element->webkitRequestFullscreen();
+#endif
 
     handleAnimationActions(*element, action);
 }
