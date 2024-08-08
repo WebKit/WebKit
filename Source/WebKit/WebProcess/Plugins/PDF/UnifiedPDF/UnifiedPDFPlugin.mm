@@ -358,6 +358,10 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
+    std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride;
+    if (isLocked() && !m_documentLayout.pageCount())
+        shouldUpdateAutoSizeScaleOverride = ShouldUpdateAutoSizeScale::Yes;
+
     if (![m_pdfDocument unlockWithPassword:password]) {
 #if PLATFORM(MAC)
         m_passwordField->resetField();
@@ -371,7 +375,7 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
     m_passwordField = nullptr;
 #endif
 
-    updateLayout(AdjustScaleAfterLayout::Yes);
+    updateLayout(AdjustScaleAfterLayout::Yes, shouldUpdateAutoSizeScaleOverride);
 
 #if ENABLE(PDF_HUD)
     updateHUDVisibility();
@@ -1168,10 +1172,10 @@ IntRect UnifiedPDFPlugin::availableContentsRect() const
     return availableRect;
 }
 
-void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
+void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride)
 {
     auto layoutSize = availableContentsRect().size();
-    auto autoSizeMode = m_didLayoutWithValidDocument ? m_shouldUpdateAutoSizeScale : ShouldUpdateAutoSizeScale::Yes;
+    auto autoSizeMode = shouldUpdateAutoSizeScaleOverride.value_or(m_didLayoutWithValidDocument ? m_shouldUpdateAutoSizeScale : ShouldUpdateAutoSizeScale::Yes);
 
     auto anchoringInfo = m_presentationController->pdfPositionForCurrentView(shouldAdjustScale == AdjustScaleAfterLayout::Yes || autoSizeMode == ShouldUpdateAutoSizeScale::Yes);
 

@@ -169,6 +169,8 @@ bool PDFPresentationController::pluginShouldCachePagePreviews() const
 
 PDFDocumentLayout::PageIndex PDFPresentationController::nearestPageIndexForDocumentPoint(const FloatPoint& point) const
 {
+    if (m_plugin->isLocked())
+        return 0;
     return m_plugin->documentLayout().nearestPageIndexForDocumentPoint(point, visibleRow());
 }
 
