@@ -679,6 +679,7 @@ class Tracker(GenericTracker):
                 )
                 if response == 'No':
                     raise ValueError('Radar is tracking a different bug')
+                user_to_cc = True  # Ensure that the user override is respected even if 'InRadar' is applied
 
         did_modify_cc = False
         if user_to_cc or keyword_to_add:
