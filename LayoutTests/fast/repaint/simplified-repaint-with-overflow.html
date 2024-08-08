@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .relative_container {
+            position: relative;
+            width: 500px;
+            height: 20px;
+            outline: 1px solid orange;
+            padding: 10px;
+        }
+
+        .absolute_container {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            outline: 1px solid blue;
+        }
+
+        .growing {
+            margin-bottom: 0px;
+        }
+
+        body.changed .growing {
+            margin-bottom: 100px;
+        }
+
+        .sibling {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background-color: green;
+        }
+    </style>
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            document.body.classList.add('changed');
+        }
+        
+        window.addEventListener('load', () => {
+            runRepaintTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class=relative_container>
+        <div class=absolute_container>
+          <div class=growing></div>
+          <div class=sibling></div>
+        </div>
+    </div>
+</body>
+</html>

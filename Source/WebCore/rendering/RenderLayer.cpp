@@ -1057,7 +1057,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
                 return true;
             if (!renderer().didVisitDuringLastLayout())
                 return false;
-            if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow() && renderBox->hasTransformRelatedProperty()) {
+            if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow()) {
                 // Disable optimization for subtree when dealing with overflow as RenderLayer is not sized to enclose overflow.
                 // FIXME: This should check if transform related property has changed.
                 canUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No;
