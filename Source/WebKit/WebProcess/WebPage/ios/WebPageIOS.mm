@@ -4734,15 +4734,15 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
         if (!view->hasViewportConstrainedObjects())
             return false;
 
-        Vector<Ref<Element>> largeViewportConstrainedElements;
+        HashSet<Ref<Element>> largeViewportConstrainedElements;
         for (auto& renderer : *view->viewportConstrainedObjects()) {
             RefPtr element = renderer.element();
             if (!element)
                 continue;
 
             auto bounds = renderer.absoluteBoundingBoxRect();
-            if (intersection(viewportRect, bounds).area() > 0.9 * viewportRect.area())
-                largeViewportConstrainedElements.append(element.releaseNonNull());
+            if (intersection(viewportRect, bounds).height() > 0.9 * viewportRect.height())
+                largeViewportConstrainedElements.add(element.releaseNonNull());
         }
 
         if (largeViewportConstrainedElements.isEmpty())
@@ -4753,9 +4753,23 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
             return false;
 
         auto& hitTestedNodes = hitTestResult.listBasedTestResult();
-        return std::ranges::any_of(largeViewportConstrainedElements, [&hitTestedNodes](auto& element) {
-            return hitTestedNodes.contains(element);
-        });
+        HashSet<Ref<Element>> elementsOutsideOfAnyLargeViewportConstrainedContainers;
+        for (auto& node : hitTestedNodes) {
+            RefPtr firstParentOrSelf = dynamicDowncast<Element>(node) ?: node->parentElementInComposedTree();
+            Vector<Ref<Element>> ancestorsForHitTestedNode;
+            for (RefPtr parent = firstParentOrSelf; parent; parent = parent->parentElementInComposedTree()) {
+                if (largeViewportConstrainedElements.contains(*parent))
+                    return true;
+
+                if (elementsOutsideOfAnyLargeViewportConstrainedContainers.contains(*parent))
+                    break;
+
+                ancestorsForHitTestedNode.append(*parent);
+            }
+            for (auto& ancestor : ancestorsForHitTestedNode)
+                elementsOutsideOfAnyLargeViewportConstrainedContainers.add(ancestor);
+        }
+        return false;
     }();
 
     if (hitTestedToLargeViewportConstrainedElement) {
