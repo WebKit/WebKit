@@ -109,8 +109,8 @@ void RenderInline::willBeDestroyed()
                 for (auto* box = firstLineBox(); box; box = box->nextLineBox())
                     box->removeFromParent();
             }
-        } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
-            parent->dirtyLinesFromChangedChild(*this);
+        } else if (parent())
+            parent()->dirtyLinesFromChangedChild(*this);
     }
 
     m_lineBoxes.deleteLineBoxes();
