@@ -147,6 +147,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if HAVE(STATIC_FONT_REGISTRY)
     Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles;
 #endif
+#if HAVE(HOSTED_CORE_ANIMATION)
+    MachSendRight acceleratedCompositingPort;
+#endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
 #endif

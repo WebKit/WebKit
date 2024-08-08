@@ -1347,6 +1347,13 @@ bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession:
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
+#if HAVE(HOSTED_CORE_ANIMATION)
+WTF::MachSendRight WebPageProxy::createMachSendRightForRemoteLayerServer()
+{
+    return MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

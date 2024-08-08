@@ -201,8 +201,9 @@ public:
 
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
 
-#if PLATFORM(COCOA)
+#if HAVE(HOSTED_CORE_ANIMATION)
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
+    void setCompositingRenderServerPort(WTF::MachSendRight&& port) { m_compositingRenderServerPort = WTFMove(port); }
 #endif
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
@@ -666,7 +667,7 @@ private:
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
 
-#if PLATFORM(COCOA)
+#if HAVE(HOSTED_CORE_ANIMATION)
     WTF::MachSendRight m_compositingRenderServerPort;
 #endif
 

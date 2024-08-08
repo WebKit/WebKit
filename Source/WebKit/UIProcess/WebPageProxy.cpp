@@ -10584,8 +10584,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         auto handle = SandboxExtension::createHandleForMachLookup("com.apple.CARenderServer"_s, std::nullopt);
         if (handle)
             parameters.renderServerMachExtensionHandle = WTFMove(*handle);
+#if HAVE(HOSTED_CORE_ANIMATION)
+        parameters.acceleratedCompositingPort = createMachSendRightForRemoteLayerServer();
+#endif // HAVE(HOSTED_CORE_ANIMATION)
     }
-#endif
+#endif // PLATFORM(MAC)
 
 #if HAVE(STATIC_FONT_REGISTRY)
     if (preferences().shouldAllowUserInstalledFonts()) {

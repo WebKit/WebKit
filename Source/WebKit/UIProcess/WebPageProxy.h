@@ -3096,6 +3096,10 @@ private:
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
 
+#if HAVE(HOSTED_CORE_ANIMATION)
+    static WTF::MachSendRight createMachSendRightForRemoteLayerServer();
+#endif
+
     class ProcessActivityState {
     public:
         explicit ProcessActivityState(WebPageProxy&);

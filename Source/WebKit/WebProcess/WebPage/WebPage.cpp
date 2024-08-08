@@ -788,6 +788,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
+#if HAVE(HOSTED_CORE_ANIMATION)
+    if (parameters.acceleratedCompositingPort)
+        WebProcess::singleton().setCompositingRenderServerPort(WTFMove(parameters.acceleratedCompositingPort));
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     pageConfiguration.canShowWhileLocked = parameters.canShowWhileLocked;
 #endif
