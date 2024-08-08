@@ -327,6 +327,7 @@ platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
+platform/cocoa/WebNSAttributedStringExtras.mm
 platform/gamepad/cocoa/GameControllerGamepad.mm
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
 platform/gamepad/mac/Dualshock3HIDGamepad.cpp
@@ -620,7 +621,6 @@ platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebCoreNSFontManagerExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
-platform/mac/WebNSAttributedStringExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp

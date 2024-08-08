@@ -226,6 +226,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ThemeCocoa.mm
     platform/cocoa/VideoToolboxSoftLink.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
+    platform/cocoa/WebNSAttributedStringExtras.mm
 
     platform/gamepad/cocoa/GameControllerSoftLink.mm
 
@@ -385,7 +386,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreFullScreenWindow.mm
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
-    platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WidgetMac.mm
 
     platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
