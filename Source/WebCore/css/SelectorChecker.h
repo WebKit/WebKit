@@ -96,6 +96,7 @@ public:
         Style::Relations styleRelations;
         PseudoIdSet pseudoIDSet;
         bool matchedInsideScope { false };
+        bool disallowHasPseudoClass { false };
     };
 
     bool match(const CSSSelector&, const Element&, CheckingContext&) const;

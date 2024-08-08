@@ -1300,6 +1300,12 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 
 bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, const Element& element, const CSSSelector& hasSelector) const
 {
+    // :has() should never be nested with another :has()
+    // This is generally discarded at parsing time, but
+    // with Nesting some selector can become "contextually invalid".
+    if (checkingContext.disallowHasPseudoClass)
+        return false;
+
     auto matchElement = Style::computeHasPseudoClassMatchElement(hasSelector);
 
     auto canMatch = [&] {
@@ -1366,6 +1372,7 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
     hasCheckingContext.scope = checkingContext.scope;
     hasCheckingContext.hasScope = &element;
+    hasCheckingContext.disallowHasPseudoClass = true;
 
     bool matchedInsideScope = false;
 

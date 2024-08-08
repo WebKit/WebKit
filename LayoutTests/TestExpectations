@@ -7973,7 +7973,6 @@ imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002.html [ Image
 http/tests/site-isolation/touch-events [ Skip ]
 
 # CSS syntax
-imported/w3c/web-platform-tests/css/css-nesting/has-nesting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scoping/scoped-reference-animation-002.html [ ImageOnlyFailure ]
 
 # CSS Ruby
