@@ -300,6 +300,7 @@ public:
 
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
+    void willBeDestroyed() override;
 
     void layout() override;
 
