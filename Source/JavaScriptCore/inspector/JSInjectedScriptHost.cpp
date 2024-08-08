@@ -43,6 +43,7 @@
 #include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSFinalizationRegistry.h"
 #include "JSInjectedScriptHostPrototype.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -409,6 +410,59 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         auto* target = weakRef->deref(vm);
         array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_s, target ? target : jsUndefined()));
         RETURN_IF_EXCEPTION(scope, JSValue());
+        return array;
+    }
+
+    if (JSFinalizationRegistry* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(globalObject, nullptr, 2);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "cleanupCallback"_s, finalizationRegistry->callback()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
+        Vector<JSFinalizationRegistry::LiveRegistration> liveRegistrations;
+        Vector<JSFinalizationRegistry::DeadRegistration> deadRegistrations;
+        {
+            Locker locker { finalizationRegistry->cellLock() };
+
+            liveRegistrations = finalizationRegistry->liveRegistrations(locker);
+            deadRegistrations = finalizationRegistry->deadRegistrations(locker);
+        }
+
+        unsigned liveIndex = 0;
+        JSArray* liveArray = constructEmptyArray(globalObject, nullptr, liveRegistrations.size());
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
+        for (auto&& liveRegistration : WTFMove(liveRegistrations)) {
+            JSObject* registrationObject = constructEmptyObject(globalObject);
+            registrationObject->putDirect(vm, Identifier::fromString(vm, "target"_s), liveRegistration.target);
+            registrationObject->putDirect(vm, Identifier::fromString(vm, "heldValue"_s), liveRegistration.heldValue);
+            if (liveRegistration.unregisterToken)
+                registrationObject->putDirect(vm, Identifier::fromString(vm, "unregisterToken"_s), liveRegistration.unregisterToken);
+            liveArray->putDirectIndex(globalObject, liveIndex++, registrationObject);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+        }
+
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "live"_s, liveArray));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
+        unsigned deadIndex = 0;
+        JSArray* deadArray = constructEmptyArray(globalObject, nullptr, deadRegistrations.size());
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
+        for (auto&& deadRegistration : WTFMove(deadRegistrations)) {
+            JSObject* registrationObject = constructEmptyObject(globalObject);
+            registrationObject->putDirect(vm, Identifier::fromString(vm, "heldValue"_s), deadRegistration.heldValue);
+            if (deadRegistration.unregisterToken)
+                registrationObject->putDirect(vm, Identifier::fromString(vm, "unregisterToken"_s), deadRegistration.unregisterToken);
+            deadArray->putDirectIndex(globalObject, deadIndex++, registrationObject);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+        }
+
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "dead"_s, deadArray));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
         return array;
     }
 
