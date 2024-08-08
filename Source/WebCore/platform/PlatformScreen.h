@@ -62,7 +62,7 @@ class Widget;
 
 using PlatformDisplayID = uint32_t;
 
-using PlatformGPUID = uint64_t; // On MAC, MACCATALYST, global IOKit registryID that can identify a GPU across process boundaries.
+using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
 
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);

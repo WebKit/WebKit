@@ -43,7 +43,7 @@ enum class GraphicsContextGLSimulatedCreationFailure : uint8_t {
     FailPlatformContextCreation
 };
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
 using PlatformGPUID = uint64_t;
 #endif
 
@@ -56,7 +56,7 @@ struct GraphicsContextGLAttributes {
     bool preserveDrawingBuffer { false };
     GraphicsContextGLPowerPreference powerPreference { GraphicsContextGLPowerPreference::Default };
     bool isWebGL2 { false };
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC)
     PlatformGPUID windowGPUID { 0 };
 #endif
 #if ENABLE(WEBXR)
