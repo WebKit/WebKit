@@ -2087,6 +2087,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenID4VPRequest.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenID4VPRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpusEncoderConfig.cpp
@@ -2243,10 +2245,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionErrorCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionErrorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPositionOptions.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredefinedColorSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredefinedColorSpace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPredicateCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSProcessingInstruction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSProcessingInstruction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSProgressEvent.cpp

@@ -377,6 +377,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/identity/IdentityCredentialProtocol.idl
     Modules/identity/IdentityRequestProvider.idl
     Modules/identity/Navigator+Identity.idl
+    Modules/identity/OpenID4VPRequest.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl

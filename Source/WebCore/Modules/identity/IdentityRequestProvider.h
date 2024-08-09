@@ -26,14 +26,13 @@
 #pragma once
 
 #include "IdentityCredentialProtocol.h"
-#include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/Strong.h>
+#include "OpenID4VPRequest.h"
 
 namespace WebCore {
 
 struct IdentityRequestProvider {
     IdentityCredentialProtocol protocol;
-    JSC::Strong<JSC::JSObject> request;
+    OpenID4VPRequest request;
 };
 
 } // namespace WebCore

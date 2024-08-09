@@ -509,6 +509,7 @@ $(PROJECT_DIR)/Modules/identity/DigitalCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/identity/IdentityCredentialProtocol.idl
 $(PROJECT_DIR)/Modules/identity/IdentityRequestProvider.idl
 $(PROJECT_DIR)/Modules/identity/Navigator+Identity.idl
+$(PROJECT_DIR)/Modules/identity/OpenID4VPRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorWithValue.idl
