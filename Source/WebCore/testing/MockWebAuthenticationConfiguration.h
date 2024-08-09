@@ -90,6 +90,8 @@ struct MockWebAuthenticationConfiguration {
         bool expectCancel { false };
         bool supportClientPin { false };
         bool supportInternalUV { false };
+        long maxCredentialCountInList { 1 };
+        long maxCredentialIdLength { 64 };
     };
 
     struct NfcConfiguration {

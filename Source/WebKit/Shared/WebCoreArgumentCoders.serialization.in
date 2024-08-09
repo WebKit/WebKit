@@ -6047,6 +6047,8 @@ header: <WebCore/ISOVTTCue.h>
     bool expectCancel;
     bool supportClientPin;
     bool supportInternalUV;
+    long maxCredentialCountInList;
+    long maxCredentialIdLength;
 };
 
 [Nested] enum class WebCore::MockWebAuthenticationConfiguration::NfcError : uint8_t {

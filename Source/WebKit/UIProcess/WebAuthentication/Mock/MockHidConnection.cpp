@@ -225,6 +225,8 @@ void MockHidConnection::feedReports()
             if (m_configuration.hid->supportInternalUV)
                 options.setUserVerificationAvailability(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
             infoResponse.setOptions(WTFMove(options));
+            infoResponse.setMaxCredentialCountInList(m_configuration.hid->maxCredentialCountInList);
+            infoResponse.setMaxCredentialIDLength(m_configuration.hid->maxCredentialIdLength);
             infoData = encodeAsCBOR(infoResponse);
         }
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
