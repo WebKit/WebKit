@@ -427,6 +427,59 @@ private:
                 break;
             }
 
+#if USE(JSVALUE64)
+            case TruncFloatToUInt64: {
+                if (!isX86())
+                    break;
+
+                // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+                // the numbers would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+                // so we can pool them if needed.
+                Value* signBitConstant = m_insertionSet.insert<ConstFloatValue>(m_index, m_origin, static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+                PatchpointValue* patchpoint = m_insertionSet.insert<PatchpointValue>(m_index, Int64, m_origin);
+                patchpoint->append(m_value->child(0), ValueRep::SomeRegister);
+                patchpoint->append(signBitConstant, ValueRep::SomeRegister);
+                patchpoint->numFPScratchRegisters = 1;
+                patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+                patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+                    FPRReg scratch = params.fpScratch(0);
+                    FPRReg constant = params[2].fpr();
+                    jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+                });
+                patchpoint->effects = Effects::none();
+                m_value->replaceWithIdentity(patchpoint);
+                break;
+            }
+#endif
+
+#if USE(JSVALUE64)
+            case TruncDoubleToUInt64: {
+                if (!isX86())
+                    break;
+
+                // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+                // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+                // so we can pool them if needed.
+                Value* signBitConstant = m_insertionSet.insert<ConstDoubleValue>(m_index, m_origin, static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+                PatchpointValue* patchpoint = m_insertionSet.insert<PatchpointValue>(m_index, Int64, m_origin);
+                patchpoint->append(m_value->child(0), ValueRep::SomeRegister);
+                patchpoint->append(signBitConstant, ValueRep::SomeRegister);
+                patchpoint->numFPScratchRegisters = 1;
+                patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+                patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+                    FPRReg scratch = params.fpScratch(0);
+                    FPRReg constant = params[2].fpr();
+                    jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+                });
+                patchpoint->effects = Effects::none();
+                m_value->replaceWithIdentity(patchpoint);
+                m_changed = true;
+                break;
+            }
+#endif
+
             case VectorPopcnt: {
                 if (!isX86())
                     break;

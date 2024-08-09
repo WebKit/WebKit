@@ -665,6 +665,30 @@ ConvertFloatToDouble U:F:32, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
+TruncateDoubleToInt32 U:F:64, ZD:G:32
+    Tmp, Tmp
+
+TruncateDoubleToUint32 U:F:64, D:G:32
+    Tmp, Tmp
+
+64: TruncateDoubleToInt64 U:F:64, D:G:64
+    Tmp, Tmp
+
+arm64: TruncateDoubleToUint64 U:F:64, ZD:G:64
+    Tmp, Tmp
+
+TruncateFloatToInt32 U:F:32, ZD:G:32
+    Tmp, Tmp
+
+TruncateFloatToUint32 U:F:32, D:G:32
+    Tmp, Tmp
+
+64: TruncateFloatToInt64 U:F:32, D:G:64
+    Tmp, Tmp
+
+arm64: TruncateFloatToUint64 U:F:32, ZD:G:64
+    Tmp, Tmp
+
 # Note that Move operates over the full register size, which is either 32-bit or 64-bit depending on
 # the platform. I'm not entirely sure that this is a good thing; it might be better to just have a
 # Move64 instruction. OTOH, our MacroAssemblers already have this notion of "move()" that basically

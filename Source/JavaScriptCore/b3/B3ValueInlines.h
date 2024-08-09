@@ -86,6 +86,14 @@ namespace JSC { namespace B3 {
     case DoubleToFloat: \
     case IToF: \
     case BitwiseCast: \
+    case TruncDoubleToInt32: \
+    case TruncDoubleToUInt32: \
+    case TruncDoubleToInt64: \
+    case TruncDoubleToUInt64: \
+    case TruncFloatToInt32: \
+    case TruncFloatToUInt32: \
+    case TruncFloatToInt64: \
+    case TruncFloatToUInt64: \
     case Branch: \
     case Depend: \
     case Add: \

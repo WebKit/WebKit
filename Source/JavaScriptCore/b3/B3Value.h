@@ -434,6 +434,14 @@ protected:
         case DoubleToFloat:
         case IToF:
         case BitwiseCast:
+        case TruncDoubleToInt32:
+        case TruncDoubleToUInt32:
+        case TruncDoubleToInt64:
+        case TruncDoubleToUInt64:
+        case TruncFloatToInt32:
+        case TruncFloatToUInt32:
+        case TruncFloatToInt64:
+        case TruncFloatToUInt64:
         case Branch:
         case Depend:
         case Load8Z:
@@ -683,6 +691,14 @@ private:
         case DoubleToFloat:
         case IToF:
         case BitwiseCast:
+        case TruncDoubleToInt32:
+        case TruncDoubleToUInt32:
+        case TruncDoubleToInt64:
+        case TruncDoubleToUInt64:
+        case TruncFloatToInt32:
+        case TruncFloatToUInt32:
+        case TruncFloatToInt64:
+        case TruncFloatToUInt64:
         case Branch:
         case Depend:
         case VectorExtractLane:

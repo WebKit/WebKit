@@ -128,6 +128,17 @@ enum Opcode : uint8_t {
     ZExt32,
     // Does a bitwise truncation of Int64->Int32 and Double->Float:
     Trunc,
+
+    // Trunc Float/Double to Int32/Int64/UInt32/UInt64
+    TruncDoubleToInt32,
+    TruncDoubleToUInt32,
+    TruncDoubleToInt64,
+    TruncDoubleToUInt64,
+    TruncFloatToInt32,
+    TruncFloatToUInt32,
+    TruncFloatToInt64,
+    TruncFloatToUInt64,
+
     // On JSVALUE32_64 platforms only: gets the high 32-bits of an Int64.
     TruncHigh,
     // On JSVALUE32_64 platforms only: puts together an Int32 from two Int32s.

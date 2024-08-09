@@ -213,6 +213,30 @@ void printInternal(PrintStream& out, Opcode opcode)
     case BitwiseCast:
         out.print("BitwiseCast");
         return;
+    case TruncDoubleToInt32:
+        out.print("TruncDoubleToInt32");
+        return;
+    case TruncDoubleToUInt32:
+        out.print("TruncDoubleToUInt32");
+        return;
+    case TruncDoubleToInt64:
+        out.print("TruncDoubleToInt64");
+        return;
+    case TruncDoubleToUInt64:
+        out.print("TruncDoubleToUInt64");
+        return;
+    case TruncFloatToInt32:
+        out.print("TruncFloatToInt32");
+        return;
+    case TruncFloatToUInt32:
+        out.print("TruncFloatToUInt32");
+        return;
+    case TruncFloatToInt64:
+        out.print("TruncFloatToInt64");
+        return;
+    case TruncFloatToUInt64:
+        out.print("TruncFloatToUInt64");
+        return;
     case SExt8:
         out.print("SExt8");
         return;

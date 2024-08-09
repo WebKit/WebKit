@@ -329,6 +329,24 @@ public:
                 VALIDATE(value->child(0)->type().isInt(), ("At ", *value));
                 VALIDATE(value->type() == Double, ("At ", *value));
                 break;
+            case TruncDoubleToInt32:
+            case TruncDoubleToUInt32:
+            case TruncFloatToInt32:
+            case TruncFloatToUInt32:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type().isFloat(), ("At ", *value));
+                VALIDATE(value->type().isInt(), ("At ", *value));
+                break;
+            case TruncDoubleToInt64:
+            case TruncDoubleToUInt64:
+            case TruncFloatToInt64:
+            case TruncFloatToUInt64:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type().isFloat(), ("At ", *value));
+                VALIDATE(value->type().isInt(), ("At ", *value));
+                break;
             case IToF:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));

@@ -3859,6 +3859,31 @@ private:
             return;
         }
 
+        case TruncDoubleToInt32:
+            appendUnOp<Air::Oops, Air::Oops, Air::TruncateDoubleToInt32, Air::Oops>(m_value->child(0));
+            return;
+        case TruncDoubleToUInt32:
+            appendUnOp<Air::Oops, Air::Oops, Air::TruncateDoubleToUint32, Air::Oops>(m_value->child(0));
+            return;
+        case TruncDoubleToInt64:
+            appendUnOp<Air::Oops, Air::Oops, Air::TruncateDoubleToInt64, Air::Oops>(m_value->child(0));
+            return;
+        case TruncDoubleToUInt64:
+            appendUnOp<Air::Oops, Air::Oops, Air::TruncateDoubleToUint64, Air::Oops>(m_value->child(0));
+            return;
+        case TruncFloatToInt32:
+            appendUnOp<Air::Oops, Air::Oops, Air::Oops, Air::TruncateFloatToInt32>(m_value->child(0));
+            return;
+        case TruncFloatToUInt32:
+            appendUnOp<Air::Oops, Air::Oops, Air::Oops, Air::TruncateFloatToUint32>(m_value->child(0));
+            return;
+        case TruncFloatToInt64:
+            appendUnOp<Air::Oops, Air::Oops, Air::Oops, Air::TruncateFloatToInt64>(m_value->child(0));
+            return;
+        case TruncFloatToUInt64:
+            appendUnOp<Air::Oops, Air::Oops, Air::Oops, Air::TruncateFloatToUint64>(m_value->child(0));
+            return;
+
         case Store: {
             // Pre-Index Canonical Form:
             //     address = Add(base, Offset)              --->    Move %base %address
