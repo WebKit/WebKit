@@ -72,6 +72,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "MixedContentChecker.h"
+#include "NavigationNavigationType.h"
 #include "NavigationRequester.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
@@ -2490,6 +2491,31 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
         return m_shouldOpenExternalURLsPolicy;
 
     return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+}
+
+// https://www.w3.org/TR/css-view-transitions-2/#navigation-can-trigger-a-cross-document-view-transition
+bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument)
+{
+    // FIXME: Consider adding implementation-defined navigation experience step.
+
+    if (!oldDocument.resolveViewTransitionRule())
+        return false;
+
+    if (!m_triggeringAction.navigationAPIType() || *m_triggeringAction.navigationAPIType() == NavigationNavigationType::Reload)
+        return false;
+
+    Ref newOrigin = SecurityOrigin::create(documentURL());
+    if (!newOrigin->isSameOriginAs(oldDocument.securityOrigin()))
+        return false;
+
+    // FIXME: If newDocument was created via cross-origin redirects, then return false.
+
+    if (*m_triggeringAction.navigationAPIType() == NavigationNavigationType::Traverse)
+        return true;
+
+    // FIXME: If isBrowserUINavigation is true, then return false.
+
+    return true;
 }
 
 void DocumentLoader::becomeMainResourceClient()

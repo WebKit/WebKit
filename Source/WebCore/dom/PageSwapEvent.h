@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,31 @@
 
 #pragma once
 
-#include "NavigationHistoryEntry.h"
-#include "ScriptWrappable.h"
+#include "Event.h"
+#include "NavigationActivation.h"
+#include "ViewTransition.h"
 
 namespace WebCore {
 
-class NavigationHistoryEntry;
-enum class NavigationNavigationType : uint8_t;
-
-class NavigationActivation final : public RefCounted<NavigationActivation>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(NavigationActivation);
+class PageSwapEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(PageSwapEvent);
 public:
-    static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
-    {
-        return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
-    }
+    struct Init : EventInit {
+        RefPtr<NavigationActivation> activation;
+        RefPtr<ViewTransition> viewTransition;
+    };
 
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry* from() const { return m_fromEntry.get(); };
-    const NavigationHistoryEntry& entry() const { return m_entry; };
+    static Ref<PageSwapEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    ~PageSwapEvent();
+
+    const RefPtr<NavigationActivation>& activation() const { return m_activation; }
+    const RefPtr<ViewTransition>& viewTransition() const { return m_viewTransition; }
 
 private:
-    explicit NavigationActivation(NavigationNavigationType, Ref<NavigationHistoryEntry>&&, RefPtr<NavigationHistoryEntry>&& fromEntry);
+    PageSwapEvent(const AtomString& type, Init&&, IsTrusted);
 
-    NavigationNavigationType m_navigationType;
-    Ref<NavigationHistoryEntry> m_entry;
-    RefPtr<NavigationHistoryEntry> m_fromEntry;
+    RefPtr<NavigationActivation> m_activation;
+    RefPtr<ViewTransition> m_viewTransition;
 };
 
 } // namespace WebCore

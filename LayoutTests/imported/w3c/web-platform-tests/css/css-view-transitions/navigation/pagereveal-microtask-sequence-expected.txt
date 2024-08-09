@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT
+FAIL
   View transition promise reactions in incoming page should resolve before
   the rendering continues (rAF, style/layout etc)
- Test timed out
+ assert_array_equals: expected property 1 to be "updateCallbackDone" but got "ready" (expected array ["pagereveal", "updateCallbackDone", "ready", "rAF", "rAF-microtask", "finished"] got ["pagereveal", "ready", "updateCallbackDone", "rAF", "rAF-microtask", "finished"])
 

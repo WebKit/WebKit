@@ -40,6 +40,8 @@ MutationEvent
 MutationEvents interfaceName=MutationEvent
 NavigateEvent
 NavigationCurrentEntryChangeEvent
+PageRevealEvent
+PageSwapEvent
 PageTransitionEvent
 PopStateEvent
 ProgressEvent

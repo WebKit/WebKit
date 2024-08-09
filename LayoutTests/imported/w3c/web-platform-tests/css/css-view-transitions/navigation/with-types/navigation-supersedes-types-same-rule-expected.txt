@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View transitions: types together with navigation:none doesn't apply Test timed out
+PASS View transitions: types together with navigation:none doesn't apply
 

@@ -245,35 +245,37 @@ enum class FinalizeRenderingUpdateFlags : uint8_t {
 };
 
 enum class RenderingUpdateStep : uint32_t {
-    Resize                          = 1 << 0,
-    Scroll                          = 1 << 1,
-    MediaQueryEvaluation            = 1 << 2,
-    Animations                      = 1 << 3,
-    Fullscreen                      = 1 << 4,
-    AnimationFrameCallbacks         = 1 << 5,
-    UpdateContentRelevancy          = 1 << 6,
-    PerformPendingViewTransitions   = 1 << 7,
-    IntersectionObservations        = 1 << 8,
-    ResizeObservations              = 1 << 9,
-    Images                          = 1 << 10,
-    WheelEventMonitorCallbacks      = 1 << 11,
-    CursorUpdate                    = 1 << 12,
-    EventRegionUpdate               = 1 << 13,
-    LayerFlush                      = 1 << 14,
+    Reveal                          = 1 << 0,
+    Resize                          = 1 << 1,
+    Scroll                          = 1 << 2,
+    MediaQueryEvaluation            = 1 << 3,
+    Animations                      = 1 << 4,
+    Fullscreen                      = 1 << 5,
+    AnimationFrameCallbacks         = 1 << 6,
+    UpdateContentRelevancy          = 1 << 7,
+    PerformPendingViewTransitions   = 1 << 8,
+    IntersectionObservations        = 1 << 9,
+    ResizeObservations              = 1 << 10,
+    Images                          = 1 << 11,
+    WheelEventMonitorCallbacks      = 1 << 12,
+    CursorUpdate                    = 1 << 13,
+    EventRegionUpdate               = 1 << 14,
+    LayerFlush                      = 1 << 15,
 #if ENABLE(ASYNC_SCROLLING)
-    ScrollingTreeUpdate             = 1 << 15,
+    ScrollingTreeUpdate             = 1 << 16,
 #endif
-    FlushAutofocusCandidates        = 1 << 16,
-    VideoFrameCallbacks             = 1 << 17,
-    PrepareCanvasesForDisplayOrFlush = 1 << 18,
-    CaretAnimation                  = 1 << 19,
-    FocusFixup                      = 1 << 20,
-    UpdateValidationMessagePositions= 1 << 21,
+    FlushAutofocusCandidates        = 1 << 17,
+    VideoFrameCallbacks             = 1 << 18,
+    PrepareCanvasesForDisplayOrFlush = 1 << 19,
+    CaretAnimation                  = 1 << 20,
+    FocusFixup                      = 1 << 21,
+    UpdateValidationMessagePositions= 1 << 22,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    AccessibilityRegionUpdate       = 1 << 22,
+    AccessibilityRegionUpdate       = 1 << 23,
 #endif
-    RestoreScrollPositionAndViewState = 1 << 23,
-    AdjustVisibility                  = 1 << 24,
+    RestoreScrollPositionAndViewState = 1 << 24,
+    AdjustVisibility                  = 1 << 25,
+
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -284,6 +286,7 @@ enum class LinkDecorationFilteringTrigger : uint8_t {
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
+    RenderingUpdateStep::Reveal,
     RenderingUpdateStep::FlushAutofocusCandidates,
     RenderingUpdateStep::Resize,
     RenderingUpdateStep::Scroll,

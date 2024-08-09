@@ -676,6 +676,9 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
 
     RefAllowingPartiallyDestroyed<LocalFrame> frame = m_frame.get();
 
+    if (neededClear)
+        frame->document()->transferViewTransitionParams(*newDocument);
+
     if (neededClear && frame->document()->backForwardCacheState() != Document::InBackForwardCache) {
         Ref document { *frame->document() };
         document->cancelParsing();
@@ -2390,6 +2393,13 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
     m_client->setCopiesOnScroll();
     m_frame->checkedHistory()->updateForCommit();
+
+    if (RefPtr document = m_frame->document()) {
+        bool canTriggerCrossDocumentViewTransition = false;
+        if (m_provisionalDocumentLoader)
+            canTriggerCrossDocumentViewTransition = m_provisionalDocumentLoader->navigationCanTriggerCrossDocumentViewTransition(*document);
+        document->dispatchPageswapEvent(canTriggerCrossDocumentViewTransition);
+    }
 
     // The call to closeURL() invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,

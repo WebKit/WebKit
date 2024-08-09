@@ -2429,6 +2429,7 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.htm
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
 
 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+[ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 
 webkit.org/b/273308 http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 

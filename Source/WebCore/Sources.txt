@@ -1218,6 +1218,8 @@ dom/NodeList.cpp
 dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
 dom/Observable.cpp
+dom/PageRevealEvent.cpp
+dom/PageSwapEvent.cpp
 dom/PageTransitionEvent.cpp
 dom/PendingScript.cpp
 dom/PointerEvent.cpp
@@ -4082,6 +4084,8 @@ JSOscillatorType.cpp
 JSOverSampleType.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
+JSPageRevealEvent.cpp
+JSPageSwapEvent.cpp
 JSPageTransitionEvent.cpp
 JSPaintRenderingContext2D.cpp
 JSPaintWorkletGlobalScope.cpp

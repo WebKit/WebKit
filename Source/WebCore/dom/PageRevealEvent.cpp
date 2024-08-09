@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "NavigationHistoryEntry.h"
-#include "ScriptWrappable.h"
+#include "config.h"
+#include "PageRevealEvent.h"
 
 namespace WebCore {
 
-class NavigationHistoryEntry;
-enum class NavigationNavigationType : uint8_t;
+WTF_MAKE_ISO_ALLOCATED_IMPL(PageRevealEvent);
 
-class NavigationActivation final : public RefCounted<NavigationActivation>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(NavigationActivation);
-public:
-    static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
-    {
-        return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
-    }
+Ref<PageRevealEvent> PageRevealEvent::create(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
+{
+    return adoptRef(*new PageRevealEvent(type, WTFMove(eventInitDict), isTrusted));
+}
 
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry* from() const { return m_fromEntry.get(); };
-    const NavigationHistoryEntry& entry() const { return m_entry; };
+PageRevealEvent::PageRevealEvent(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
+    : Event(EventInterfaceType::PageRevealEvent, type, eventInitDict, isTrusted)
+    , m_viewTransition(WTFMove(eventInitDict.viewTransition))
+{ }
 
-private:
-    explicit NavigationActivation(NavigationNavigationType, Ref<NavigationHistoryEntry>&&, RefPtr<NavigationHistoryEntry>&& fromEntry);
-
-    NavigationNavigationType m_navigationType;
-    Ref<NavigationHistoryEntry> m_entry;
-    RefPtr<NavigationHistoryEntry> m_fromEntry;
-};
+PageRevealEvent::~PageRevealEvent() = default;
 
 } // namespace WebCore

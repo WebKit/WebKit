@@ -176,6 +176,8 @@
     "orientationchange": { },
     "pagehide": { },
     "pageshow": { },
+    "pagereveal": { },
+    "pageswap": { },
     "paste": { },
     "pause": { },
     "payerdetailchange": { },

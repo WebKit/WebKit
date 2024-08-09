@@ -277,6 +277,7 @@ struct IntersectionObserverData;
 struct OwnerPermissionsPolicyData;
 struct QuerySelectorAllResults;
 struct SecurityPolicyViolationEventInit;
+struct ViewTransitionParams;
 
 #if ENABLE(TOUCH_EVENTS)
 struct EventTrackingRegions;
@@ -948,6 +949,8 @@ public:
     void clearAutofocusCandidates();
     void flushAutofocusCandidates();
 
+    void reveal();
+
     void hoveredElementDidDetach(Element&);
     void elementInActiveChainDidDetach(Element&);
 
@@ -1375,6 +1378,8 @@ public:
     void queueTaskToDispatchEventOnWindow(TaskSource, Ref<Event>&&);
     void dispatchPageshowEvent(PageshowEventPersistence);
     void dispatchPagehideEvent(PageshowEventPersistence);
+    void dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition);
+    void transferViewTransitionParams(Document&);
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
@@ -2373,6 +2378,8 @@ private:
 
     String m_cachedDOMCookies;
 
+    std::unique_ptr<ViewTransitionParams> m_inboundViewTransitionParams;
+
     Markable<WallTime> m_overrideLastModified;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
@@ -2628,6 +2635,8 @@ private:
 
     bool m_scheduledDeferredAXObjectCacheUpdate { false };
     bool m_wasRemovedLastRefCalled { false };
+
+    bool m_hasBeenRevealed { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

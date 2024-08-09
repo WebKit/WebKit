@@ -66,17 +66,50 @@ static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
     : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
+    , m_shouldCallUpdateCallback(true)
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
     , m_finished(createPromiseAndWrapper(document))
 {
 }
 
+ViewTransition::ViewTransition(Document& document)
+    : ActiveDOMObject(document)
+    , m_ready(createPromiseAndWrapper(document))
+    , m_updateCallbackDone(createPromiseAndWrapper(document))
+    , m_finished(createPromiseAndWrapper(document))
+{
+}
+
+
 ViewTransition::~ViewTransition() = default;
 
-Ref<ViewTransition> ViewTransition::create(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+Ref<ViewTransition> ViewTransition::createSamePage(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
 {
     Ref viewTransition = adoptRef(*new ViewTransition(document, WTFMove(updateCallback)));
+    viewTransition->suspendIfNeeded();
+    return viewTransition;
+}
+
+Ref<ViewTransition> ViewTransition::createInbound(Document& document, std::unique_ptr<ViewTransitionParams> params)
+{
+    Ref viewTransition = adoptRef(*new ViewTransition(document));
+    viewTransition->suspendIfNeeded();
+
+    viewTransition->m_namedElements.swap(params->namedElements);
+    viewTransition->m_initialLargeViewportSize = params->initialLargeViewportSize;
+    viewTransition->m_initialPageZoom = params->initialPageZoom;
+
+    document.setActiveViewTransition(viewTransition.ptr());
+
+    viewTransition->startInbound();
+
+    return viewTransition;
+}
+
+Ref<ViewTransition> ViewTransition::createOutbound(Document& document)
+{
+    Ref viewTransition = adoptRef(*new ViewTransition(document));
     viewTransition->suspendIfNeeded();
     return viewTransition;
 }
@@ -151,6 +184,20 @@ void ViewTransition::skipTransition()
         skipViewTransition(Exception { ExceptionCode::AbortError, "Skipping view transition because skipTransition() was called."_s });
 }
 
+void ViewTransition::startInbound()
+{
+    if (!document())
+        return;
+
+    ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);
+
+    if (m_phase != ViewTransitionPhase::Done)
+        m_phase = ViewTransitionPhase::UpdateCallbackCalled;
+
+    m_updateCallbackDone.second->resolve();
+    activateViewTransition();
+}
+
 // https://drafts.csswg.org/css-view-transitions/#call-dom-update-callback-algorithm
 void ViewTransition::callUpdateCallback()
 {
@@ -161,6 +208,12 @@ void ViewTransition::callUpdateCallback()
 
     Ref document = *this->document();
     RefPtr<DOMPromise> callbackPromise;
+    if (!m_shouldCallUpdateCallback) {
+        if (m_phase != ViewTransitionPhase::Done)
+            m_phase = ViewTransitionPhase::UpdateCallbackCalled;
+        return;
+    }
+
     if (!m_updateCallback) {
         auto promiseAndWrapper = createPromiseAndWrapper(document);
         promiseAndWrapper.second->resolve();
@@ -803,6 +856,16 @@ bool ViewTransition::documentElementIsCaptured() const
         return false;
 
     return renderer->capturedInViewTransition();
+}
+
+UniqueRef<ViewTransitionParams> ViewTransition::takeViewTransitionParams()
+{
+    auto params = makeUniqueRef<ViewTransitionParams>();
+    params->namedElements.swap(m_namedElements);
+    params->initialLargeViewportSize = m_initialLargeViewportSize;
+    params->initialPageZoom = m_initialPageZoom;
+
+    return params;
 }
 
 }

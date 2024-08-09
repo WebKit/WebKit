@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-pagerevealevent-interface
 
-#include "NavigationHistoryEntry.h"
-#include "ScriptWrappable.h"
+[
+    Exposed=Window
+] interface PageRevealEvent : Event {
+    constructor([AtomString] DOMString type, optional PageRevealEventInit eventInitDict = {});
 
-namespace WebCore {
-
-class NavigationHistoryEntry;
-enum class NavigationNavigationType : uint8_t;
-
-class NavigationActivation final : public RefCounted<NavigationActivation>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(NavigationActivation);
-public:
-    static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
-    {
-        return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
-    }
-
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry* from() const { return m_fromEntry.get(); };
-    const NavigationHistoryEntry& entry() const { return m_entry; };
-
-private:
-    explicit NavigationActivation(NavigationNavigationType, Ref<NavigationHistoryEntry>&&, RefPtr<NavigationHistoryEntry>&& fromEntry);
-
-    NavigationNavigationType m_navigationType;
-    Ref<NavigationHistoryEntry> m_entry;
-    RefPtr<NavigationHistoryEntry> m_fromEntry;
+    readonly attribute ViewTransition? viewTransition;
 };
 
-} // namespace WebCore
+dictionary PageRevealEventInit : EventInit {
+  ViewTransition? viewTransition = null;
+};

@@ -514,6 +514,8 @@ public:
 
     bool isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
+    bool navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument);
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 

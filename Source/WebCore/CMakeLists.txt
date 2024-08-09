@@ -1126,6 +1126,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/NonDocumentTypeChildNode.idl
     dom/NonElementParentNode.idl
     dom/Observable.idl
+    dom/PageRevealEvent.idl
+    dom/PageSwapEvent.idl
     dom/PageTransitionEvent.idl
     dom/ParentNode.idl
     dom/PointerEvent.idl
