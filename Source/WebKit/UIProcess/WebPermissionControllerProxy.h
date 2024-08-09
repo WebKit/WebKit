@@ -40,12 +40,15 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebProcessProxy;
+struct SharedPreferencesForWebProcess;
 
 class WebPermissionControllerProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebPermissionControllerProxy(WebProcessProxy&);
     ~WebPermissionControllerProxy();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

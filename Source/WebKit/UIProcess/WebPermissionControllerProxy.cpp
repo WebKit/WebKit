@@ -52,6 +52,11 @@ WebPermissionControllerProxy::~WebPermissionControllerProxy()
     m_process.removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
 }
 
+const SharedPreferencesForWebProcess& WebPermissionControllerProxy::sharedPreferencesForWebProcess() const
+{
+    return m_process.sharedPreferencesForWebProcess();
+}
+
 void WebPermissionControllerProxy::query(const WebCore::ClientOrigin& clientOrigin, const WebCore::PermissionDescriptor& descriptor, std::optional<WebPageProxyIdentifier> identifier, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
     auto webPageProxy = identifier ? m_process.webPage(identifier.value()) : mostReasonableWebPageProxy(clientOrigin.topOrigin, source);

@@ -5309,6 +5309,7 @@ PermissionsAPIEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 PhotoPickerPrefersOriginalImageFormat:
   type: bool
