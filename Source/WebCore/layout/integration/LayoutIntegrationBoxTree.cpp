@@ -431,9 +431,9 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         auto addSpacing = [&](auto& streamToUse) {
             size_t printedCharacters = 0;
             if (isDamaged)
-                streamToUse << "---------- -+";
+                streamToUse << "            -+";
             else
-                streamToUse << "---------- --";
+                streamToUse << "            --";
             while (++printedCharacters <= depth * 2)
                 streamToUse << " ";
 
