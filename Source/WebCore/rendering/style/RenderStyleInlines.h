@@ -812,7 +812,7 @@ inline bool RenderStyle::useTouchOverflowScrolling() const { return m_rareInheri
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-inline Length RenderStyle::initialSpecifiedLineHeight() { return { -100.0f, LengthType::Percent }; }
+inline Length RenderStyle::initialSpecifiedLineHeight() { return LengthType::Normal; }
 constexpr TextSizeAdjustment RenderStyle::initialTextSizeAdjust() { return { }; }
 inline TextSizeAdjustment RenderStyle::textSizeAdjust() const { return m_rareInheritedData->textSizeAdjust; }
 #endif
@@ -867,8 +867,7 @@ inline bool RenderStyle::hasInlineColumnAxis() const
 
 inline Length RenderStyle::initialLineHeight()
 {
-    // Returning -100% here means the line-height is not set.
-    return { -100.0f, LengthType::Percent };
+    return LengthType::Normal;
 }
 
 inline bool RenderStyle::isCollapsibleWhiteSpace(UChar character) const

@@ -2796,8 +2796,7 @@ float RenderStyle::computedLineHeight() const
 
 float RenderStyle::computeLineHeight(const Length& lineHeightLength) const
 {
-    // Negative value means the line height is not set. Use the font's built-in spacing.
-    if (lineHeightLength.isNegative())
+    if (lineHeightLength.isNormal())
         return metricsOfPrimaryFont().lineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())

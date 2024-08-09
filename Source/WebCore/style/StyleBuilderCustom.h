@@ -511,7 +511,7 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
     auto lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
 
     Length computedLineHeight;
-    if (lineHeight.isNegative())
+    if (lineHeight.isNormal())
         computedLineHeight = lineHeight;
     else {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);

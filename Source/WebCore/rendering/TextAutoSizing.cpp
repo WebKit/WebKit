@@ -160,7 +160,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
-        newParentStyle.setLineHeight(lineHeightLength.isNegative() ? Length(lineHeightLength) : Length(lineHeight, LengthType::Fixed));
+        newParentStyle.setLineHeight(lineHeightLength.isNormal() ? Length(lineHeightLength) : Length(lineHeight, LengthType::Fixed));
         newParentStyle.setSpecifiedLineHeight(Length { lineHeightLength });
         newParentStyle.setFontDescription(WTFMove(fontDescription));
         newParentStyle.fontCascade().update(&node->document().fontSelector());
