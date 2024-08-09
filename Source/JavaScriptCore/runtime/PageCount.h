@@ -37,14 +37,14 @@ namespace JSC {
 #if USE(LARGE_TYPED_ARRAYS)
 static_assert(sizeof(size_t) == sizeof(uint64_t));
 
-// #if USE(BUN_JSC_ADDITIONS)
-// // Allow up to 512 GB typed arrays in Bun
-// // `maxPageCount` below must fit inside a UINT_MAX
-// // The theoretical limit here is 47 bits, but making this number larger than necessary is a security risk
-// #define MAX_ARRAY_BUFFER_SIZE (1ull << 39)
-// #else
+#if USE(BUN_JSC_ADDITIONS)
+// Allow up to 512 GB typed arrays in Bun
+// `maxPageCount` below must fit inside a UINT_MAX
+// https://chromium-review.googlesource.com/c/v8/v8/+/4872536
+#define MAX_ARRAY_BUFFER_SIZE (1ull << 39)
+#else
 #define MAX_ARRAY_BUFFER_SIZE (1ull << 32)
-// #endif
+#endif
 #else
 static_assert(sizeof(size_t) == sizeof(uint32_t));
 // Because we are using a size_t to store the size in bytes of array buffers, we cannot support 4GB on 32-bit platforms.
