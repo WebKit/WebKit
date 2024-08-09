@@ -31,6 +31,7 @@
 #include "MessageFlags.h"
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace IPC {
 
@@ -46,6 +47,8 @@ static uint8_t* copyBuffer(std::span<const uint8_t> buffer)
     memcpy(bufferCopy, buffer.data(), bufferSize);
     return bufferCopy;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Decoder);
 
 std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Vector<Attachment>&& attachments)
 {

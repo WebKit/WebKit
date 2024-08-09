@@ -31,6 +31,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if USE(EXTENSIONKIT)
 #import "ExtensionKitSPI.h"
@@ -45,6 +46,8 @@ SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchyHostingTransactionCoo
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerHostingContext);
 
 std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const MachSendRight& serverPort)
 {

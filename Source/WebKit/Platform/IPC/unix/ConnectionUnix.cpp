@@ -39,6 +39,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
 
 #if USE(GLIB)
@@ -67,7 +68,7 @@ static const size_t messageMaxSize = 4096;
 static const size_t attachmentMaxAmount = 254;
 
 class AttachmentInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AttachmentInfo);
 public:
     AttachmentInfo()
     {

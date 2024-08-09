@@ -35,6 +35,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ namespace IPC {
 //
 // The StreamClientConnection trusts the StreamServerConnection.
 class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StreamClientConnection);
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     struct StreamConnectionPair {
