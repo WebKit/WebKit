@@ -1,3 +1,3 @@
 
-FAIL Anchored popover ::backdrop transitioning opacity with @starting-style assert_equals: expected "0" but got ""
+PASS Anchored popover ::backdrop transitioning opacity with @starting-style
 

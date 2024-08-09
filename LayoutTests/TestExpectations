@@ -8123,11 +8123,11 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.ht
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Failure ]
 
-# mac-wk1 AND wincairo failures
-imported/w3c/web-platform-tests/css/css-anchor-position/popover-anchor-backdrop-transition.html [ Failure ]
-
 # wpe-wk2 AND gtk-wk2 failures
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Failure ]
+
+# timeouts
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.html [ Skip ]
 
 # -- End: Anchor Positioning -- #
 

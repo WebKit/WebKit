@@ -1,5 +1,5 @@
 
-FAIL #target1 is scroll-adjusted in x axis only assert_equals: expected 50 but got 0
-FAIL #target2 is scroll-adjusted in y axis only assert_equals: expected 150 but got 0
-FAIL #target3 is scroll-adjusted in neither axis assert_equals: expected 150 but got 0
+FAIL #target1 is scroll-adjusted in x axis only assert_equals: expected 0 but got 50
+FAIL #target2 is scroll-adjusted in y axis only assert_equals: expected 200 but got 250
+PASS #target3 is scroll-adjusted in neither axis
 
