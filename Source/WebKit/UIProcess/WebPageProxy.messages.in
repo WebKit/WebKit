@@ -367,8 +367,8 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-    BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
-    CancelTextRecognitionForVideoInElementFullScreen()
+    [EnabledBy=TextRecognitionInVideosEnabled] BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
+    [EnabledBy=TextRecognitionInVideosEnabled] CancelTextRecognitionForVideoInElementFullScreen()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
