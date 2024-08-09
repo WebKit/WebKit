@@ -357,20 +357,26 @@ enum WTFOSSignpostType {
 
 #define WTFEmitSignpost(pointer, name, ...) \
     do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->instantMark(std::span(_STRINGIFY(name)), " " __VA_ARGS__); \
+            annotator->instantMark(std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+        IGNORE_WARNINGS_END \
     } while (0)
 
 #define WTFBeginSignpost(pointer, name, ...) \
     do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->beginMark(pointer, std::span(_STRINGIFY(name)), " " __VA_ARGS__); \
+            annotator->beginMark(pointer, std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+        IGNORE_WARNINGS_END \
     } while (0)
 
 #define WTFEndSignpost(pointer, name, ...)  \
     do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->endMark(pointer, std::span(_STRINGIFY(name)), " " __VA_ARGS__); \
+            annotator->endMark(pointer, std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+        IGNORE_WARNINGS_END \
     } while (0)
 
 #define WTFEmitSignpostAlways(pointer, name, ...) WTFEmitSignpost((pointer), name, ##__VA_ARGS__)
@@ -379,8 +385,10 @@ enum WTFOSSignpostType {
 
 #define WTFEmitSignpostWithTimeDelta(pointer, name, timeDelta, ...) \
     do { \
+        IGNORE_WARNINGS_BEGIN("format-zero-length") \
         if (auto* annotator = SysprofAnnotator::singletonIfCreated()) \
-            annotator->mark((timeDelta), std::span(_STRINGIFY(name)), " " __VA_ARGS__); \
+            annotator->mark((timeDelta), std::span(_STRINGIFY(name)), "" __VA_ARGS__); \
+        IGNORE_WARNINGS_END \
     } while (0)
 
 #define WTFBeginSignpostWithTimeDelta(pointer, name, timeDelta, ...) WTFEmitSignpostWithTimeDelta((pointer), name, (timeDelta), ##__VA_ARGS__)

@@ -89,7 +89,7 @@ public:
         if (value) {
             int64_t startTime = std::get<0>(*value);
             const Vector<char>& description = std::get<1>(*value);
-            sysprof_collector_mark(startTime, SYSPROF_CAPTURE_CURRENT_TIME - startTime, m_processName, name.data(), description.data());
+            sysprof_collector_mark(startTime, SYSPROF_CAPTURE_CURRENT_TIME - startTime, m_processName, name.data(), description[0] ? description.data() : nullptr);
         } else {
             va_list args;
             va_start(args, description);
