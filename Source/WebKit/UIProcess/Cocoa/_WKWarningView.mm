@@ -64,7 +64,7 @@ using SizeType = CGSize;
 #endif
 
 enum class WarningItem : uint8_t {
-    SafeBrowsingBackground,
+    BrowsingWarningBackground,
     BoxBackground,
     ExclamationPoint,
     TitleText,
@@ -107,6 +107,7 @@ static WebCore::CocoaFont *fontOfSize(WarningTextSize size)
 static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
 {
     ASSERT([warning isKindOfClass:[_WKWarningView class]]);
+    _WKWarningView *warningView = (_WKWarningView *)warning;
 #if PLATFORM(MAC)
 
     auto colorNamed = [] (NSString *name) -> WebCore::CocoaColor * {
@@ -119,15 +120,31 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
     };
 
     switch (item) {
-    case WarningItem::SafeBrowsingBackground:
-        return colorNamed(@"WKSafeBrowsingWarningBackground");
+    case WarningItem::BrowsingWarningBackground:
+        return WTF::switchOn(warningView.warning->data(), [&colorNamed] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return colorNamed(@"WKSafeBrowsingWarningBackground");
+        }, [&colorNamed] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return colorNamed(@"WKHTTPSWarningBackground");
+        });
     case WarningItem::BoxBackground:
-        return [NSColor windowBackgroundColor];
+        return WTF::switchOn(warningView.warning->data(), [] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return [NSColor windowBackgroundColor];
+        }, [&colorNamed] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return colorNamed(@"WKHTTPSWarningBoxBackground");
+        });
     case WarningItem::TitleText:
     case WarningItem::ExclamationPoint:
-        return colorNamed(@"WKSafeBrowsingWarningTitle");
+        return WTF::switchOn(warningView.warning->data(), [&colorNamed] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return colorNamed(@"WKSafeBrowsingWarningTitle");
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return item == WarningItem::ExclamationPoint ? NSColor.redColor : colorNamed(@"WKHTTPSWarningTitle");
+        });
     case WarningItem::MessageText:
-        return colorNamed(@"WKSafeBrowsingWarningText");
+        return WTF::switchOn(warningView.warning->data(), [&colorNamed] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return colorNamed(@"WKSafeBrowsingWarningText");
+        }, [&colorNamed] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return colorNamed(@"WKHTTPSWarningText");
+        });
     case WarningItem::ShowDetailsButton:
     case WarningItem::GoBackButton:
     case WarningItem::ContinueButton:
@@ -136,23 +153,47 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
     }
 #else
     UIColor *red = [UIColor colorWithRed:0.998 green:0.239 blue:0.233 alpha:1.0];
+    UIColor *darkGray = [UIColor colorWithRed:0.118 green:0.118 blue:0.118 alpha:1.0];
+    UIColor *lighterGray = [UIColor colorWithRed:0.220 green:0.224 blue:0.231 alpha:1.0];
+    UIColor *mediumGray = [UIColor colorWithRed:0.729 green:0.733 blue:0.741 alpha:1.0];
     UIColor *white = [UIColor whiteColor];
+
     bool narrow = warning.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 
     switch (item) {
-    case WarningItem::SafeBrowsingBackground:
-        return red;
+    case WarningItem::BrowsingWarningBackground:
+        return WTF::switchOn(warningView.warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return red;
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return darkGray;
+        });
     case WarningItem::BoxBackground:
-        return narrow ? red : white;
+        return WTF::switchOn(warningView.warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return narrow ? red : white;
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return lighterGray;
+        });
     case WarningItem::TitleText:
     case WarningItem::ExclamationPoint:
-        return narrow ? white : red;
+        return WTF::switchOn(warningView.warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return narrow ? white : red;
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return !narrow && item == WarningItem::TitleText ? white : red;
+        });
     case WarningItem::MessageText:
     case WarningItem::ShowDetailsButton:
     case WarningItem::ContinueButton:
-        return narrow ? white : [UIColor darkTextColor];
+        return WTF::switchOn(warningView.warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return narrow ? white : [UIColor darkTextColor];
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return item == WarningItem::MessageText ? mediumGray : white;
+        });
     case WarningItem::GoBackButton:
-        return narrow ? white : warning.tintColor;
+        return WTF::switchOn(warningView.warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
+            return narrow ? white : warning.tintColor;
+        }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
+            return white;
+        });
     }
 #endif
     ASSERT_NOT_REACHED();
@@ -310,10 +351,10 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     };
     _warning = &warning;
 #if PLATFORM(MAC)
-    [self setWarningViewBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
+    [self setWarningViewBackgroundColor:colorForItem(WarningItem::BrowsingWarningBackground, self)];
     [self addContent];
 #else
-    [self setBackgroundColor:colorForItem(WarningItem::SafeBrowsingBackground, self)];
+    [self setBackgroundColor:colorForItem(WarningItem::BrowsingWarningBackground, self)];
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -340,9 +381,9 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
     }]).get());
 
-    auto primaryButton = WTF::switchOn(_warning->data(), [&] (WebKit::BrowsingWarning::SafeBrowsingWarningData) {
+    auto primaryButton = WTF::switchOn(_warning->data(), [&] (const WebKit::BrowsingWarning::SafeBrowsingWarningData&) {
         return makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
-    }, [&] (WebKit::BrowsingWarning::HTTPSNavigationFailureData) {
+    }, [&] (const WebKit::BrowsingWarning::HTTPSNavigationFailureData&) {
         return makeButton(WarningItem::ContinueButton, self, @selector(continueClicked));
     });
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
