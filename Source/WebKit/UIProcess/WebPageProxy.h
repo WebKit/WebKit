@@ -502,6 +502,7 @@ struct PrintInfo;
 struct ResourceLoadInfo;
 struct RemotePageParameters;
 struct SessionState;
+struct SharedPreferencesForWebProcess;
 struct TapIdentifierType;
 struct TextCheckerRequestType;
 struct TransactionIDType;
@@ -614,6 +615,8 @@ public:
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
     Ref<WebsiteDataStore> protectedWebsiteDataStore() const;
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess(IPC::Connection&) const;
 
     void addPreviouslyVisitedPath(const String&);
 
