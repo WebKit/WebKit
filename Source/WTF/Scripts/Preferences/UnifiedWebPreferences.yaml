@@ -3195,6 +3195,21 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
+IgnoreIframeEmbeddingProtectionsEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Ignore iframe Embedding Protections"
+  humanReadableDescription: "Ignores X-Frame-Options and CSP ancestors"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 IgnoreInvalidMessageWhenIPCTestingAPIEnabled:
   type: bool
   status: internal

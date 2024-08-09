@@ -4103,6 +4103,9 @@ void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)
 
 bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, ResourceLoaderIdentifier requestIdentifier)
 {
+    if (m_frame->settings().ignoreIframeEmbeddingProtectionsEnabled())
+        return false;
+
     RefPtr topFrame = dynamicDowncast<LocalFrame>(m_frame->tree().top());
     if (m_frame.ptr() == topFrame)
         return false;

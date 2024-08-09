@@ -685,6 +685,9 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
 {
     ASSERT(isMainResource());
 
+    if (connectionToWebProcess().sharedPreferencesForWebProcess().ignoreIframeEmbeddingProtectionsEnabled)
+        return false;
+
 #if USE(QUICK_LOOK)
     if (PreviewConverter::supportsMIMEType(response.mimeType()))
         return false;
