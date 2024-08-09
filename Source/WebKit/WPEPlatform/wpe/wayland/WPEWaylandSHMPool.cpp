@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,8 @@
 #endif
 
 namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandSHMPool);
 
 static UnixFileDescriptor createSharedMemory()
 {

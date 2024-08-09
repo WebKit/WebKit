@@ -28,10 +28,13 @@
 
 #include "WPEDRM.h"
 #include "WPEDRMCursorTheme.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Cursor);
 
 Cursor::Cursor(std::unique_ptr<Plane>&& plane, struct gbm_device* device, uint32_t cursorWidth, uint32_t cursorHeight)
     : m_plane(WTFMove(plane))

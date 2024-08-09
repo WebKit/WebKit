@@ -31,11 +31,14 @@
 #include "WPEViewDRMPrivate.h"
 #include <linux/input.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Seat);
 
 static struct libinput_interface s_libinputInterface = {
     // open_restricted

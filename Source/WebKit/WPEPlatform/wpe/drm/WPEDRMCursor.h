@@ -26,7 +26,7 @@
 #pragma once
 
 #include <gbm.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WPE {
@@ -38,7 +38,7 @@ class CursorTheme;
 class Plane;
 
 class Cursor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Cursor);
 public:
     Cursor(std::unique_ptr<Plane>&&, struct gbm_device*, uint32_t cursorWidth, uint32_t cursorHeight);
     ~Cursor();

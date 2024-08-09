@@ -36,6 +36,7 @@
 #import <notify.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
@@ -123,6 +124,8 @@ static void performAfterFirstUnlock(Function<void()>&& function)
 
 #endif
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushService);
+
 void PushService::create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(std::unique_ptr<PushService>&&)>&& creationHandler)
 {
     auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-init"));
@@ -209,7 +212,6 @@ static PushSubscriptionData makePushSubscriptionFromRecord(PushRecord&& record)
 }
 
 class PushServiceRequest {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PushServiceRequest() = default;
 
@@ -297,6 +299,7 @@ private:
 };
 
 class GetSubscriptionRequest : public PushServiceRequestImpl<std::optional<WebCore::PushSubscriptionData>> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GetSubscriptionRequest);
 public:
     GetSubscriptionRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, ResultHandler&&);
     virtual ~GetSubscriptionRequest() = default;
@@ -326,6 +329,7 @@ void GetSubscriptionRequest::startInternal()
 }
 
 class SubscribeRequest : public PushServiceRequestImpl<WebCore::PushSubscriptionData> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SubscribeRequest);
 public:
     SubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, const Vector<uint8_t>& vapidPublicKey, ResultHandler&&);
     virtual ~SubscribeRequest() = default;
@@ -429,6 +433,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
 }
 
 class UnsubscribeRequest : public PushServiceRequestImpl<bool> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UnsubscribeRequest);
 public:
     UnsubscribeRequest(PushService&, const PushSubscriptionSetIdentifier&, const String& scope, std::optional<PushSubscriptionIdentifier>, ResultHandler&&);
     virtual ~UnsubscribeRequest() = default;

@@ -39,8 +39,11 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebPushTool {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
 std::unique_ptr<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
 {

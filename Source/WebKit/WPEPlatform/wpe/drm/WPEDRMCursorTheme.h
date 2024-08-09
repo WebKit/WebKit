@@ -28,6 +28,7 @@
 #include <optional>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -38,7 +39,7 @@ class CursorTheme;
 namespace DRM {
 
 class CursorTheme {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CursorTheme);
 public:
     static std::unique_ptr<CursorTheme> create(const char* path, uint32_t size);
     static std::unique_ptr<CursorTheme> create();
