@@ -185,42 +185,129 @@ endif ()
 # TestWebCore definitions
 if (ENABLE_WEBCORE)
     set(TestWebCore_SOURCES
-        TestsController.cpp
+        TestController.cpp
         Utilities.cpp
 
-        Tests/WebCore/AffineTransform.cpp
-        Tests/WebCore/CSSParser.cpp
-        Tests/WebCore/CalculationValue.cpp
+        Tests/WebCore/cg/BifurcatedGraphicsContextCGTests.cpp
+        Tests/WebCore/cg/DisplayListCGTests.cpp
+        Tests/WebCore/cg/GraphicsContextCGTests.mm
+        Tests/WebCore/cocoa/AudioStreamDescriptionCocoaTests.mm
+        Tests/WebCore/cocoa/AVFoundationSoftLinkTests.mm
+        Tests/WebCore/cocoa/CoreCryptoSPI.h
+        Tests/WebCore/cocoa/CoreMediaUtilitiesTests.mm
+        Tests/WebCore/cocoa/DatabaseTrackerTests.mm
+        Tests/WebCore/cocoa/ImageRotationSessionVTTests.cpp
+        Tests/WebCore/cocoa/IOSurfaceTests.mm
+        Tests/WebCore/cocoa/PrivateClickMeasurementCocoaTests.mm
+        Tests/WebCore/cocoa/SerializedCryptoKeyWrapTests.mm
+        Tests/WebCore/cocoa/SharedBufferTests.mm
+        Tests/WebCore/cocoa/TestGraphicsContextGLCocoaTests.mm
+        Tests/WebCore/cocoa/TestUTIRegistryTests.cpp
+        Tests/WebCore/cocoa/TestUTIUtilitiesTests.cpp
+        Tests/WebCore/cocoa/WebCoreNSURLSessionTests.mm
+        Tests/WebCore/cocoa/XMLParsingTests.mm
+        Tests/WebCore/curl/CookiesTests.cpp
+        Tests/WebCore/curl/CurlMultipartHandleTests.cpp
+        Tests/WebCore/curl/OpenSSLHelperTests.cpp
+        Tests/WebCore/gstreamer/GstElementHarnessTests.cpp
+        Tests/WebCore/gstreamer/GstMappedBufferTests.cpp
+        Tests/WebCore/gstreamer/GStreamerTests.cpp
+        Tests/WebCore/ios/PreviewConverterTests.cpp
+        Tests/WebCore/win/BitmapImageTests.cpp
+        Tests/WebCore/win/DIBPixelDataTests.cpp
+        Tests/WebCore/win/LinkedFontsTests.cpp
+        Tests/WebCore/win/WebCoreBundleTests.cpp
+        Tests/WebCore/AbortableTaskQueueTests.cpp
+        Tests/WebCore/AffineTransformTests.cpp
+        Tests/WebCore/AnimationFrameRateTests.cpp
+        Tests/WebCore/ApduTests.cpp
+        Tests/WebCore/ApplicationManifestParserTests.cpp
+        Tests/WebCore/ASN1Utilities.cpp
+        Tests/WebCore/CalculationValueTests.cpp
+        Tests/WebCore/CARingBufferTests.cpp
+        Tests/WebCore/CBORReaderTests.cpp
+        Tests/WebCore/CBORValueTests.cpp
+        Tests/WebCore/CBORWriterTests.cpp
         Tests/WebCore/ColorTests.cpp
-        Tests/WebCore/ComplexTextController.cpp
-        Tests/WebCore/ContextMenuAction.cpp
-        Tests/WebCore/Decimal.cpp
-        Tests/WebCore/FileMonitor.cpp
+        Tests/WebCore/ComplexTextControllerTests.cpp
+        Tests/WebCore/ContentExtensionsTests.cpp
+        Tests/WebCore/ContextMenuActionTests.cpp
+        Tests/WebCore/Cookies.cpp
+        Tests/WebCore/CryptoDigestTests.cpp
+        Tests/WebCore/CSSParserTests.cpp
+        Tests/WebCore/CtapPinTests.cpp
+        Tests/WebCore/CtapRequestTests.cpp
+        Tests/WebCore/CtapResponseTests.cpp
+        Tests/WebCore/CurlMultipartHandleTests.cpp
+        Tests/WebCore/DecimalTests.cpp
+        Tests/WebCore/DFACombinerTests.cpp
+        Tests/WebCore/DFAMinimizerTests.cpp
+        Tests/WebCore/DisplayListRecorderTests.cpp
+        Tests/WebCore/DisplayListTests.cpp
+        Tests/WebCore/DNSTests.cpp
+        Tests/WebCore/DocumentOrderTests.cpp
+        Tests/WebCore/FidoHidMessageTests.cpp
+        Tests/WebCore/FidoTestDataTests.h
+        Tests/WebCore/FileMonitorTests.cpp
         Tests/WebCore/FloatPointTests.cpp
+        Tests/WebCore/FloatQuadTests.cpp
         Tests/WebCore/FloatRectTests.cpp
         Tests/WebCore/FloatSizeTests.cpp
-        Tests/WebCore/GridPosition.cpp
-        Tests/WebCore/HTMLParserIdioms.cpp
-        Tests/WebCore/HTTPParsers.cpp
+        Tests/WebCore/FontCascadeTests.cpp
+        Tests/WebCore/FontShadowTests.cpp
+        Tests/WebCore/GridPositionTests.cpp
+        Tests/WebCore/HTMLParserIdiomsTests.cpp
+        Tests/WebCore/HTTPHeaderFieldTests.cpp
+        Tests/WebCore/HTTPHeaderMapTests.cpp
+        Tests/WebCore/HTTPParsersTests.cpp
+        Tests/WebCore/HysteresisActivityTests.cpp
+        Tests/WebCore/ImageBufferTests.cpp
         Tests/WebCore/IntPointTests.cpp
         Tests/WebCore/IntRectTests.cpp
         Tests/WebCore/IntSizeTests.cpp
-        Tests/WebCore/KeyedCoding.cpp
+        Tests/WebCore/IPAddressTests.cpp
+        Tests/WebCore/ISOBoxTests.cpp
+        Tests/WebCore/KeyedCodingTests.cpp
         Tests/WebCore/LayoutUnitTests.cpp
-        Tests/WebCore/MIMESniffer.cpp
-        Tests/WebCore/MIMETypeRegistry.cpp
+        Tests/WebCore/LineBreakingTests.mm
+        Tests/WebCore/LoggingTests.cpp
+        Tests/WebCore/LoginStatusTests.cpp
+        Tests/WebCore/MarkedTextTests.cpp
+        Tests/WebCore/MIMESnifferTests.cpp
+        Tests/WebCore/MIMETypeRegistryTests.cpp
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
-        Tests/WebCore/ParsedContentRange.cpp
-        Tests/WebCore/PublicSuffix.cpp
-        Tests/WebCore/RenderStyleChange.cpp
-        Tests/WebCore/SecurityOrigin.cpp
-        Tests/WebCore/SharedBuffer.cpp
+        Tests/WebCore/OpenSSLHelperTests.cpp
+        Tests/WebCore/ParsedContentRangeTests.cpp
+        Tests/WebCore/ParsedContentTypeTests.cpp
+        Tests/WebCore/PlatformCAAnimationKeyPathTests.cpp
+        Tests/WebCore/PrivateClickMeasurementTests.cpp
+        Tests/WebCore/PublicSuffixTests.cpp
+        Tests/WebCore/PushDatabaseTests.cpp
+        Tests/WebCore/PushMessageCryptoTests.cpp
+        Tests/WebCore/RegistrableDomainTests.cpp
+        Tests/WebCore/RenderStyleChangeTests.cpp
+        Tests/WebCore/RoundedRectTestsTests.cpp
+        Tests/WebCore/RTCRtpSFrameTransformerTests.cpp
+        Tests/WebCore/SampleMapTests.cpp
+        Tests/WebCore/SecurityOriginTests.cpp
+        Tests/WebCore/SerializedScriptValueTests.cpp
+        Tests/WebCore/ServiceWorkerRoutinesTests.cpp
         Tests/WebCore/SharedBufferTest.cpp
-        Tests/WebCore/TimeRanges.cpp
-        Tests/WebCore/TransformationMatrix.cpp
-        Tests/WebCore/URLParserTextEncoding.cpp
+        Tests/WebCore/SharedBufferTests.cpp
+        Tests/WebCore/StringUtilitiesTests.mm
+        Tests/WebCore/StringWithDirectionTests.cpp
+        Tests/WebCore/STUNMessageParsingTest.cpp
+        Tests/WebCore/SVGImageCastsTests.cpp
+        Tests/WebCore/TextBoundariesTests.cpp
+        Tests/WebCore/TextCodecTests.cpp
+        Tests/WebCore/TimeRangesTests.cpp
+        Tests/WebCore/TransformationMatrixTests.cpp
+        Tests/WebCore/U2fCommandConstructorTests.cpp
+        Tests/WebCore/URLParserTextEncodingTests.cpp
+        Tests/WebCore/UserAgentQuirksTests.cpp
         Tests/WebCore/WritingModeTests.cpp
+        Tests/WebCore/YouTubePluginReplacementTests.cpp
     )
 
     set(TestWebCore_LIBRARIES

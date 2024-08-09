@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
