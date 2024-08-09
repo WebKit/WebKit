@@ -59,6 +59,7 @@
 #include "ElementChildIteratorInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FourCC.h"
 #include "FrameLoader.h"
 #include "FullscreenManager.h"
 #include "HTMLAudioElement.h"
@@ -9797,7 +9798,7 @@ void HTMLMediaElement::watchtimeTimerFired()
     // First log watchtime messages per-source-type:
     if (auto sourceType = this->sourceType()) {
         WebCore::DiagnosticLoggingClient::ValueDictionary sourceTypeDictionary;
-        sourceTypeDictionary.set(DiagnosticLoggingKeys::sourceTypeKey(), DiagnosticLoggingKeys::mediaElementSourceTypeDiagnosticLoggingKey(*sourceType));
+        sourceTypeDictionary.set(DiagnosticLoggingKeys::sourceTypeKey(), static_cast<uint64_t>(*sourceType));
         sourceTypeDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey(), "Media Watchtime Interval By Source Type"_s, sourceTypeDictionary, ShouldSample::Yes);
     }
@@ -9812,12 +9813,17 @@ void HTMLMediaElement::watchtimeTimerFired()
         if (!selectedVideoTrack)
             return;
 
-        auto videoCodec = selectedVideoTrack->configuration().codec();
-        if (videoCodec.isEmpty())
+        // Convert the codec string to a 4CC code representing the codec type, and log only the codec type
+        auto videoCodecString = selectedVideoTrack->configuration().codec();
+        if (videoCodecString.length() < 4)
+            return;
+
+        auto videoCodecType = FourCC::fromString(StringView(videoCodecString).substring(0, 4));
+        if (!videoCodecType)
             return;
 
         WebCore::DiagnosticLoggingClient::ValueDictionary videoCodecDictionary;
-        videoCodecDictionary.set(DiagnosticLoggingKeys::videoCodecKey(), videoCodec);
+        videoCodecDictionary.set(DiagnosticLoggingKeys::videoCodecKey(), static_cast<uint64_t>(videoCodecType->value));
         videoCodecDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey(), "Media Watchtime Interval By Video Codec"_s, videoCodecDictionary, ShouldSample::Yes);
     }();
@@ -9832,12 +9838,17 @@ void HTMLMediaElement::watchtimeTimerFired()
         if (!selectedAudioTrack)
             return;
 
-        auto audioCodec = selectedAudioTrack->configuration().codec();
-        if (audioCodec.isEmpty())
+        // Convert the codec string to a 4CC code representing the codec type, and log only the codec type
+        auto audioCodecString = selectedAudioTrack->configuration().codec();
+        if (audioCodecString.length() < 4)
+            return;
+
+        auto audioCodecType = FourCC::fromString(StringView(audioCodecString).substring(0, 4));
+        if (!audioCodecType)
             return;
 
         WebCore::DiagnosticLoggingClient::ValueDictionary audioCodecDictionary;
-        audioCodecDictionary.set(DiagnosticLoggingKeys::audioCodecKey(), audioCodec);
+        audioCodecDictionary.set(DiagnosticLoggingKeys::audioCodecKey(), static_cast<uint64_t>(audioCodecType->value));
         audioCodecDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey(), "Media Watchtime Interval By Audio Codec"_s, audioCodecDictionary, ShouldSample::Yes);
     }();
