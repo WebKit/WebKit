@@ -2501,7 +2501,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     }
 
     RenderLayer* parentLayer;
-    if (position == PositionType::Absolute || position == PositionType::Fixed) {
+    if (position == PositionType::Absolute) {
         // Do what enclosingAncestorForPosition() does, but check for ancestorLayer along the way.
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
