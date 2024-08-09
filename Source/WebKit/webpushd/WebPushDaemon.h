@@ -90,7 +90,6 @@ public:
     void removeAllPushSubscriptions(PushClientConnection&, CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
     void setPublicTokenForTesting(PushClientConnection&, const String& publicToken, CompletionHandler<void()>&&);
-    void didShowNotificationForTesting(PushClientConnection&, const URL& scopeURL, CompletionHandler<void()>&& replySender);
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
@@ -119,7 +118,7 @@ private:
     Seconds silentPushTimeout() const;
     void rescheduleSilentPushTimer();
     void silentPushTimerFired();
-    void didShowNotificationImpl(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
+    void didShowNotification(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;

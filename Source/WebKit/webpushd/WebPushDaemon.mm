@@ -444,7 +444,7 @@ void WebPushDaemon::silentPushTimerFired()
     rescheduleSilentPushTimer();
 }
 
-void WebPushDaemon::didShowNotificationImpl(const WebCore::PushSubscriptionSetIdentifier& identifier, const String& scope)
+void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdentifier& identifier, const String& scope)
 {
     auto now = MonotonicTime::now();
     bool removedFirst = false;
@@ -646,17 +646,6 @@ void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, c
     });
 }
 
-void WebPushDaemon::didShowNotificationForTesting(PushClientConnection& connection, const URL& scopeURL, CompletionHandler<void()>&& replySender)
-{
-    runAfterStartingPushService([this, identifier = connection.subscriptionSetIdentifier(), scope = scopeURL.string(), replySender = WTFMove(replySender)]() mutable {
-        if (!m_pushService)
-            return replySender();
-
-        didShowNotificationImpl(identifier, scope);
-        return replySender();
-    });
-}
-
 PushClientConnection* WebPushDaemon::toPushClientConnection(xpc_connection_t connection)
 {
     auto clientConnection = m_connectionMap.get(connection);
@@ -700,10 +689,14 @@ ALLOW_NONLITERAL_FORMAT_END
     if (!center)
         RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
 
-    auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
-        if (error)
-            RELEASE_LOG_ERROR(Push, "Failed to add notification request: %{private}@", error.description);
-        completionHandler();
+    auto blockPtr = makeBlockPtr([this, identifier = crossThreadCopy(connection.subscriptionSetIdentifier()), scope = crossThreadCopy(notificationData.serviceWorkerRegistrationURL.string()), completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+        WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(scope), error = RetainPtr { error }, completionHandler = WTFMove(completionHandler)] mutable {
+            if (error)
+                RELEASE_LOG_ERROR(Push, "Failed to add notification request: %{public}@", error.get());
+            else
+                didShowNotification(identifier, scope);
+            completionHandler();
+        });
     });
 
     [center addNotificationRequest:request withCompletionHandler:blockPtr.get()];
@@ -745,12 +738,13 @@ void WebPushDaemon::cancelNotification(PushClientConnection& connection, const W
 void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, const WebCore::SecurityOriginData& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
     auto identifier = connection.subscriptionSetIdentifier();
+
+#if PLATFORM(IOS)
     if (identifier.pushPartition.isEmpty()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
         return replySender(WebCore::PushPermissionState::Denied);
     }
 
-#if PLATFORM(IOS)
     const auto& webClipIdentifier = identifier.pushPartition;
     RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
@@ -786,12 +780,13 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
 void WebPushDaemon::requestPushPermission(PushClientConnection& connection, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& replySender)
 {
     auto identifier = connection.subscriptionSetIdentifier();
+
+#if PLATFORM(IOS)
     if (identifier.pushPartition.isEmpty()) {
         WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Denied push permission since no pushPartition specified");
         return replySender(false);
     }
 
-#if PLATFORM(IOS)
     const auto& webClipIdentifier = identifier.pushPartition;
     RetainPtr webClip = [UIWebClip webClipWithIdentifier:(NSString *)webClipIdentifier];
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });

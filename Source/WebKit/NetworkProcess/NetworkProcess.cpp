@@ -2523,6 +2523,18 @@ void NetworkProcess::clickBackgroundFetch(PAL::SessionID sessionID, const String
 }
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
+void NetworkProcess::getPendingPushMessage(PAL::SessionID sessionID, CompletionHandler<void(const std::optional<WebPushMessage>&)>&& callback)
+{
+    if (auto* session = networkSession(sessionID)) {
+        RELEASE_LOG(Push, "NetworkProcess getting pending push messages for session ID %" PRIu64, sessionID.toUInt64());
+        session->notificationManager().getPendingPushMessage(WTFMove(callback));
+        return;
+    }
+
+    RELEASE_LOG(Push, "NetworkProcess could not find session for ID %llu to get pending push messages", sessionID.toUInt64());
+    callback(std::nullopt);
+}
+
 void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
 {
     if (auto* session = networkSession(sessionID)) {
@@ -2558,7 +2570,8 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
         auto scope = pushMessage.registrationURL.string();
         bool isDeclarative = !!pushMessage.notificationPayload;
         session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.notificationPayload), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), scope = WTFMove(scope), callback = WTFMove(callback), isDeclarative](bool result, std::optional<WebCore::NotificationPayload>&& resultPayload) mutable {
-            if (!isDeclarative && !result) {
+            // When using built-in notifications, we expect clients to use getPendingPushMessage, which automatically tracks silent push counts within webpushd.
+            if (!DeprecatedGlobalSettings::builtInNotificationsEnabled() &&!isDeclarative && !result) {
                 if (auto* session = networkSession(sessionID)) {
                     session->notificationManager().incrementSilentPushCount(WTFMove(origin), [scope = WTFMove(scope), callback = WTFMove(callback), result](unsigned newSilentPushCount) mutable {
                         RELEASE_LOG_ERROR(Push, "Push message for scope %" SENSITIVE_LOG_STRING " not handled properly; new silent push count: %u", scope.utf8().data(), newSilentPushCount);
@@ -2577,6 +2590,11 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
 }
 
 #else
+
+void NetworkProcess::getPendingPushMessage(PAL::SessionID, CompletionHandler<void(const std::optional<WebPushMessage>&)>&& callback)
+{
+    callback({ });
+}
 
 void NetworkProcess::getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
 {

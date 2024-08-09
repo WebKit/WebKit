@@ -239,11 +239,6 @@ void PushClientConnection::setPublicTokenForTesting(const String& publicToken, C
     WebPushDaemon::singleton().setPublicTokenForTesting(*this, publicToken, WTFMove(replySender));
 }
 
-void PushClientConnection::didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&& replySender)
-{
-    WebPushDaemon::singleton().didShowNotificationForTesting(*this, WTFMove(scopeURL), WTFMove(replySender));
-}
-
 void PushClientConnection::getPushPermissionState(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& replySender)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)

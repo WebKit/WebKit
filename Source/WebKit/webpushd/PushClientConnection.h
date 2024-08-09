@@ -116,7 +116,6 @@ private:
     void requestPushPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
-    void didShowNotificationForTesting(URL&& scopeURL, CompletionHandler<void()>&&);
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);

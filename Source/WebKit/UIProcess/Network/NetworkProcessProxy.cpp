@@ -1805,6 +1805,11 @@ void NetworkProcessProxy::didExceedMemoryLimit()
 }
 #endif
 
+void NetworkProcessProxy::getPendingPushMessage(PAL::SessionID sessionID, CompletionHandler<void(const std::optional<WebPushMessage>&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::GetPendingPushMessage { sessionID }, WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::GetPendingPushMessages { sessionID }, WTFMove(completionHandler));
