@@ -11863,6 +11863,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid
 {
+    if (!uuid)
+        return;
+
     if (!_page->preferences().textAnimationsEnabled())
         return;
 
