@@ -2295,7 +2295,6 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/table-exposure-updates-dynamically.html [ Pass ]
 accessibility/accessibility-node-reparent.html [ Pass ]
-accessibility/animated-dropdown.html [ Pass ]
 accessibility/aria-braillelabel.html [ Pass ]
 accessibility/aria-brailleroledescription.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
