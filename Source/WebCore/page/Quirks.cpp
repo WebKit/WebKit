@@ -34,6 +34,7 @@
 #include "DocumentLoader.h"
 #include "DocumentStorageAccess.h"
 #include "ElementInlines.h"
+#include "ElementTargetingTypes.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
@@ -1927,5 +1928,15 @@ bool Quirks::shouldIgnoreTextAutoSizing() const
     return m_document->topDocument().url().host() == "news.ycombinator.com"_s;
 }
 #endif
+
+std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelectors(const URL& requestURL)
+{
+#if ENABLE(VISIBILITY_ADJUSTMENT_QUIRKS)
+    return defaultVisibilityAdjustmentSelectorsInternal(requestURL);
+#else
+    UNUSED_PARAM(requestURL);
+    return { };
+#endif
+}
 
 }

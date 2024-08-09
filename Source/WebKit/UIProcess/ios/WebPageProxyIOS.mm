@@ -1433,6 +1433,9 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
     }
 
+    if (auto selectors = Quirks::defaultVisibilityAdjustmentSelectors(request.url()))
+        policies.setVisibilityAdjustmentSelectors({ WTFMove(*selectors) });
+
     if (Quirks::needsIPhoneUserAgent(request.url())) {
         policies.setCustomUserAgent(makeStringByReplacingAll(standardUserAgentWithApplicationName(m_applicationNameForUserAgent), "iPad"_s, "iPhone"_s));
         policies.setCustomNavigatorPlatform("iPhone"_s);
