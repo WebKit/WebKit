@@ -68,9 +68,9 @@ if ARM64 or ARM64E
     emit "br x0"
 elsif X86_64
     lshiftq 8, t0
-    leap (_ipint_unreachable), t1
+    leap _ipint_unreachable, t1
     addq t1, t0
-    emit "jmp *(%eax)"
+    jmp t0
 else
     break
 end
@@ -107,8 +107,8 @@ macro pushVectorReg0()
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
     elsif X86_64
-        emit "sub $16, %esp"
-        emit "movdqu %xmm0, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm0, (%rsp)"
     else
         break
     end
@@ -118,8 +118,8 @@ macro pushVectorReg1()
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
     elsif X86_64
-        emit "sub $16, %esp"
-        emit "movdqu %xmm1, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm1, (%rsp)"
     else
         break
     end
@@ -129,8 +129,8 @@ macro pushVectorReg2()
     if ARM64 or ARM64E
         emit "str q2, [sp, #-16]!"
     elsif X86_64
-        emit "sub $16, %esp"
-        emit "movdqu %xmm2, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm2, (%rsp)"
     else
         break
     end
@@ -140,8 +140,8 @@ macro popVectorReg0()
     if ARM64 or ARM64E
         emit "ldr q0, [sp], #16"
     elsif X86_64
-        emit "movdqu (%esp), %xmm0"
-        emit "add $16, %esp"
+        emit "movdqu (%rsp), %xmm0"
+        emit "add $16, %rsp"
     else
         break
     end
@@ -151,8 +151,8 @@ macro popVectorReg1()
     if ARM64 or ARM64E
         emit "ldr q1, [sp], #16"
     elsif X86_64
-        emit "movdqu (%esp), %xmm1"
-        emit "add $16, %esp"
+        emit "movdqu (%rsp), %xmm1"
+        emit "add $16, %rsp"
     else
         break
     end
@@ -162,8 +162,8 @@ macro popVectorReg2()
     if ARM64 or ARM64E
         emit "ldr q2, [sp], #16"
     elsif X86_64
-        emit "movdqu (%esp), %xmm2"
-        emit "add $16, %esp"
+        emit "movdqu (%rsp), %xmm2"
+        emit "add $16, %rsp"
     else
         break
     end
@@ -174,8 +174,8 @@ macro pushFPR()
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
     elsif X86_64
-        emit "sub $16, %esp"
-        emit "movdqu %xmm0, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm0, (%rsp)"
     else
         break
     end
@@ -185,8 +185,8 @@ macro pushFPR1()
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
     elsif X86_64
-        emit "sub $16, %esp"
-        emit "movdqu %xmm1, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm1, (%rsp)"
     else
         break
     end
@@ -200,8 +200,8 @@ macro popFPR()
         # since we only work with f32 (s0) or f64 (d0)
         emit "ldr q0, [sp], #16"
     elsif X86_64
-        emit "movdqu (%esp), %xmm0"
-        emit "add $16, %esp"
+        emit "movdqu (%rsp), %xmm0"
+        emit "add $16, %rsp"
     else
         break
     end
@@ -211,8 +211,8 @@ macro popFPR1()
     if ARM64 or ARM64E
         emit "ldr q1, [sp], #16"
     elsif X86_64
-        emit "movdqu (%esp), %xmm1"
-        emit "add $16, %esp"
+        emit "movdqu (%rsp), %xmm1"
+        emit "add $16, %rsp"
     else
         break
     end
@@ -239,13 +239,14 @@ end
 # Entry
 
 # PM = location in argumINT bytecode
-# csr0 = tmp
-# csr1 = dst
+# csr0 = dst
+# csr1 = PM on x86, unused on arm
 # csr2 = src
 # csr3 = end
 # csr4 = for dispatch
+# r1 = tmp
 
-const argumINTDest = csr1
+const argumINTDest = csr0
 const argumINTSrc = csr2
     
 macro ipintEntry()
@@ -253,15 +254,15 @@ macro ipintEntry()
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E
-        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], r1, csr3
     else
-        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], r1
         loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
     end
-    addq csr3, csr0
-    mulq LocalSize, csr0
+    addq csr3, r1
+    mulq LocalSize, r1
     move sp, csr3
-    subq csr0, sp
+    subq r1, sp
     move sp, csr4
     loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
 
@@ -274,17 +275,19 @@ macro ipintEntry()
 end
 
 macro argumINTDispatch()
-    loadb [PM], csr0
+    loadb [PM], r1
+    # Checking the loaded argumINT opcode is <= argumINT_end (0x0d)
+    assert(macro(ok) bilteq r1, 0x0d, .ok end)
     addq 1, PM
-    lshiftq 6, csr0
+    lshiftq 6, r1
 if ARM64 or ARM64E
     pcrtoaddr _argumINT_begin, csr4
-    addq csr0, csr4
+    addq r1, csr4
     emit "br x23"
 elsif X86_64
-    leap (_argumINT_begin), csr4
-    addq csr0, csr4
-    emit "jmp *(%r13)"
+    leap _argumINT_begin, csr4
+    addq r1, csr4
+    jmp csr4
 else
     break
 end
@@ -411,9 +414,9 @@ elsif X86_64
     break
 .safe:
     lshiftq 6, r1
-    leap (_uint_begin), t0
+    leap _uint_begin, t0
     addq r1, t0
-    emit "jmp *(%rax)"
+    jmp t0
 end
 end
 
@@ -2798,9 +2801,9 @@ instructionLabel(_fc_block)
         emit "br x0"
     elsif X86_64
         lshifti 4, t0
-        leap (_ipint_i32_trunc_sat_f32_s), t1
+        leap _ipint_i32_trunc_sat_f32_s, t1
         addq t1, t0
-        emit "jmp *(%eax)"
+        jmp t0
     end
 
 .ipint_fc_nonexistent:
@@ -2816,9 +2819,9 @@ instructionLabel(_simd)
         emit "br x0"
     elsif X86_64
         lshifti 4, t0
-        leap (_ipint_simd_v128_load_mem), t1
+        leap _ipint_simd_v128_load_mem, t1
         addq t1, t0
-        emit "jmp *(%eax)"
+        jmp t0
     end
 
 instructionLabel(_atomic)
@@ -2831,9 +2834,9 @@ instructionLabel(_atomic)
         emit "br x0"
     elsif X86_64
         lshifti 4, t0
-        leap (_ipint_memory_atomic_notify), t1
+        leap _ipint_memory_atomic_notify, t1
         addq t1, t0
-        emit "jmp *(%eax)"
+        jmp t0
     end
 
 .ipint_atomic_nonexistent:
@@ -5049,6 +5052,8 @@ end
 
 macro mintArgDispatch()
     loadb [PM], ws0
+    # Checking the loaded mint opcode is <= mint_call (0x0f)
+    assert(macro(ok) bilteq ws0, 0x0f, .ok end)
     addq 1, PM
     andq 15, ws0
     lshiftq 6, ws0
@@ -5058,10 +5063,10 @@ if ARM64 or ARM64E
     # csr4 = x23
     emit "br x23"
 elsif X86_64
-    leap (_mint_begin), csr4
+    leap _mint_begin, csr4
     addq ws0, csr4
-    # csr4 = r13
-    emit "jmp *(%r13)"
+    # csr4 = r15
+    jmp csr4
 end
 end
 
@@ -5078,10 +5083,10 @@ if ARM64 or ARM64E
     # csr4 = x23
     emit "br x23"
 elsif X86_64
-    leap (_mint_begin_return), csr4
+    leap _mint_begin_return, csr4
     addq ws0, csr4
-    # csr4 = r13
-    emit "jmp *(%r13)"
+    # csr4 = r15
+    jmp csr4
 end
 end
 
@@ -5311,8 +5316,8 @@ mintAlign(_fr0)
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
     else
-        emit "sub $16, %esp"
-        emit "movdqu %xmm0, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm0, (%rsp)"
     end
     mintRetDispatch()
 
@@ -5320,8 +5325,8 @@ mintAlign(_fr1)
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
     else
-        emit "sub $16, %esp"
-        emit "movdqu %xmm1, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm1, (%rsp)"
     end
     mintRetDispatch()
 
@@ -5329,8 +5334,8 @@ mintAlign(_fr2)
     if ARM64 or ARM64E
         emit "str q2, [sp, #-16]!"
     else
-        emit "sub $16, %esp"
-        emit "movdqu %xmm2, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm2, (%rsp)"
     end
     mintRetDispatch()
 
@@ -5338,8 +5343,8 @@ mintAlign(_fr3)
     if ARM64 or ARM64E
         emit "str q3, [sp, #-16]!"
     else
-        emit "sub $16, %esp"
-        emit "movdqu %xmm3, (%esp)"
+        emit "sub $16, %rsp"
+        emit "movdqu %xmm3, (%rsp)"
     end
     mintRetDispatch()
 
@@ -5473,9 +5478,9 @@ argumINTAlign(_fa3)
     argumINTDispatch()
 
 argumINTAlign(_stack)
-    loadq [argumINTSrc], csr0
+    loadq [argumINTSrc], r1
     addq 8, argumINTSrc
-    storeq csr0, [argumINTDest]
+    storeq r1, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
