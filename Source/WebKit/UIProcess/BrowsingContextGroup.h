@@ -56,7 +56,7 @@ public:
 
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
-    void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
+    void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&) const;
 
     RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
 
