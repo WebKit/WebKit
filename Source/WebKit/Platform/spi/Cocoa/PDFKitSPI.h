@@ -97,6 +97,12 @@
 - (BOOL)isEmpty;
 @end
 
+#if HAVE(PDFDOCUMENT_ANNOTATIONS_FOR_FIELD_NAME)
+@interface PDFDocument (PDFDocumentPriv)
+- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
+@end
+#endif
+
 @interface PDFAction (PDFActionPriv)
 - (NSArray *)nextActions;
 @end
@@ -117,7 +123,6 @@
 #if ENABLE(UNIFIED_PDF)
 @interface PDFDocument (IPI)
 - (PDFDestination *)namedDestination:(NSString *)name;
-- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
 @end
 
 #if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)

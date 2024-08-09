@@ -2011,9 +2011,13 @@ RepaintRequirements UnifiedPDFPlugin::repaintRequirementsForAnnotation(PDFAnnota
 
 void UnifiedPDFPlugin::repaintAnnotationsForFormField(NSString *fieldName)
 {
+#if HAVE(PDFDOCUMENT_ANNOTATIONS_FOR_FIELD_NAME)
     RetainPtr annotations = [m_pdfDocument annotationsForFieldName:fieldName];
     for (PDFAnnotation *annotation in annotations.get())
         setNeedsRepaintForAnnotation(annotation, repaintRequirementsForAnnotation(annotation));
+#else
+    UNUSED_PARAM(fieldName);
+#endif
 }
 
 void UnifiedPDFPlugin::startTrackingAnnotation(RetainPtr<PDFAnnotation>&& annotation, WebEventType mouseEventType, WebMouseEventButton mouseEventButton)
