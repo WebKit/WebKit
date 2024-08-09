@@ -6272,16 +6272,6 @@ bool WebPage::isSpeaking() const
     return result;
 }
 
-void WebPage::speak(const String& string)
-{
-    send(Messages::WebPageProxy::Speak(string));
-}
-
-void WebPage::stopSpeaking()
-{
-    send(Messages::WebPageProxy::StopSpeaking());
-}
-
 #endif
 
 #if PLATFORM(MAC)

@@ -9254,6 +9254,20 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         ++m_pendingLearnOrIgnoreWordMessageCount;
         break;
 
+#if PLATFORM(COCOA)
+    case ContextMenuItemTagStartSpeaking:
+        getSelectionOrContentsAsString([weakThis = WeakPtr { *this }](const String& selectedText) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            protectedThis->speak(selectedText);
+        });
+        break;
+    case ContextMenuItemTagStopSpeaking:
+        stopSpeaking();
+        break;
+#endif
+
     case ContextMenuItemTagLookUpImage:
 #if ENABLE(IMAGE_ANALYSIS)
         handleContextMenuLookUpImage();

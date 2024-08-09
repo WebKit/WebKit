@@ -54,14 +54,12 @@ bool WebContextMenuClient::isSpeaking() const
     return m_page->isSpeaking();
 }
 
-void WebContextMenuClient::speak(const String& string)
+void WebContextMenuClient::speak(const String&)
 {
-    m_page->speak(string);
 }
 
 void WebContextMenuClient::stopSpeaking()
 {
-    m_page->stopSpeaking();
 }
 
 void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
