@@ -106,8 +106,8 @@ ENV MARCH_FLAG=${MARCH_FLAG}
 
 
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG " && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-c++-static-destructors" && \
+    export CFLAGS="${DEFAULT_CFLAGS} $CFLAGS $LTO_FLAG -ffile-prefix-map=/webkit/Source=src/bun.js/WebKit/Source  -ffile-prefix-map=/webkitbuild/=. " && \
+    export CXXFLAGS="${DEFAULT_CFLAGS} $CXXFLAGS $LTO_FLAG -fno-c++-static-destructors -ffile-prefix-map=/webkit/Source=src/bun.js/WebKit/Source -ffile-prefix-map=/webkitbuild/=. " && \
     export LDFLAGS="-fuse-ld=lld $LDFLAGS " && \
     cd /webkitbuild && \
     cmake \
