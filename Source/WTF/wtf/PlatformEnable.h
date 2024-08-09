@@ -557,6 +557,10 @@
 #define ENABLE_WEBXR_HANDS 0
 #endif
 
+#if !defined(ENABLE_WEBXR_LAYERS)
+#define ENABLE_WEBXR_LAYERS 0
+#endif
+
 #if !defined(ENABLE_WHEEL_EVENT_LATCHING)
 #define ENABLE_WHEEL_EVENT_LATCHING 0
 #endif
@@ -972,6 +976,10 @@
 
 #if ENABLE(WEBXR_HANDS) && !ENABLE(WEBXR)
 #error "ENABLE(WEBXR_HANDS) requires ENABLE(WEBXR)"
+#endif
+
+#if ENABLE(WEBXR_LAYERS) && !ENABLE(WEBXR)
+#error "ENABLE(WEBXR_LAYERS) requires ENABLE(WEBXR)"
 #endif
 
 #if !defined(ENABLE_WEBPROCESS_CACHE)

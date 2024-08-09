@@ -40,7 +40,7 @@ class ScriptExecutionContext;
 class WebXRLayer : public RefCounted<WebXRLayer>, public EventTarget, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRLayer);
 public:
-    ~WebXRLayer();
+    virtual ~WebXRLayer();
 
     using RefCounted<WebXRLayer>::ref;
     using RefCounted<WebXRLayer>::deref;

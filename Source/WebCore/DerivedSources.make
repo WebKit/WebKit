@@ -830,6 +830,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/WebXRPose.idl \
     $(WebCore)/Modules/webxr/WebXRReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRRenderState.idl \
+    $(WebCore)/Modules/webxr/WebXRRenderState+Layers.idl \
     $(WebCore)/Modules/webxr/WebXRRigidTransform.idl \
     $(WebCore)/Modules/webxr/WebXRSession+AR.idl \
     $(WebCore)/Modules/webxr/WebXRSession.idl \
@@ -839,7 +840,14 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/WebXRView.idl \
     $(WebCore)/Modules/webxr/WebXRViewport.idl \
     $(WebCore)/Modules/webxr/WebXRWebGLLayer.idl \
+    $(WebCore)/Modules/webxr/XRCompositionLayer.idl \
+    $(WebCore)/Modules/webxr/XRCubeLayer.idl \
+    $(WebCore)/Modules/webxr/XRCubeLayerInit.idl \
+    $(WebCore)/Modules/webxr/XRCylinderLayer.idl \
+    $(WebCore)/Modules/webxr/XRCylinderLayerInit.idl \
     $(WebCore)/Modules/webxr/XREnvironmentBlendMode.idl \
+    $(WebCore)/Modules/webxr/XREquirectLayer.idl \
+    $(WebCore)/Modules/webxr/XREquirectLayerInit.idl \
     $(WebCore)/Modules/webxr/XREye.idl \
     $(WebCore)/Modules/webxr/XRFrameRequestCallback.idl \
     $(WebCore)/Modules/webxr/XRHandJoint.idl \
@@ -847,15 +855,27 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/XRInputSourceEvent.idl \
     $(WebCore)/Modules/webxr/XRInputSourcesChangeEvent.idl \
     $(WebCore)/Modules/webxr/XRInteractionMode.idl \
+    $(WebCore)/Modules/webxr/XRLayerEvent.idl \
+    $(WebCore)/Modules/webxr/XRLayerInit.idl \
+    $(WebCore)/Modules/webxr/XRLayerLayout.idl \
+    $(WebCore)/Modules/webxr/XRLayerQuality.idl \
+    $(WebCore)/Modules/webxr/XRProjectionLayer.idl \
+    $(WebCore)/Modules/webxr/XRProjectionLayerInit.idl \
+    $(WebCore)/Modules/webxr/XRQuadLayer.idl \
+    $(WebCore)/Modules/webxr/XRQuadLayerInit.idl \
     $(WebCore)/Modules/webxr/XRReferenceSpaceEvent.idl \
     $(WebCore)/Modules/webxr/XRReferenceSpaceType.idl \
     $(WebCore)/Modules/webxr/XRRenderStateInit.idl \
     $(WebCore)/Modules/webxr/XRSessionEvent.idl \
     $(WebCore)/Modules/webxr/XRSessionInit.idl \
     $(WebCore)/Modules/webxr/XRSessionMode.idl \
+    $(WebCore)/Modules/webxr/XRSubImage.idl \
     $(WebCore)/Modules/webxr/XRTargetRayMode.idl \
+    $(WebCore)/Modules/webxr/XRTextureType.idl \
     $(WebCore)/Modules/webxr/XRVisibilityState.idl \
+    $(WebCore)/Modules/webxr/XRWebGLBinding.idl \
     $(WebCore)/Modules/webxr/XRWebGLLayerInit.idl \
+    $(WebCore)/Modules/webxr/XRWebGLSubImage.idl \
     $(WebCore)/accessibility/AccessibilityRole.idl \
     $(WebCore)/accessibility/AriaAttributes.idl \
     $(WebCore)/animation/Animatable.idl \

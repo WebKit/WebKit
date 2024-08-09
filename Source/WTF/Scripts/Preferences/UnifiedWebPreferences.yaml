@@ -8318,6 +8318,20 @@ WebXRHandInputModuleEnabled:
       default: true
     WebCore:
       default: true
+WebXRLayersAPIEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "WebXR Layers API"
+  humanReadableDescription: "Adds support for the WebXR Layers API"
+  condition: ENABLE(WEBXR_LAYERS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 WheelEventGesturesBecomeNonBlocking:
   type: bool

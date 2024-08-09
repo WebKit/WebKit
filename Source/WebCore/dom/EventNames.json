@@ -204,6 +204,7 @@
     "qualitychange": { },
     "ratechange": { },
     "readystatechange": { },
+    "redraw": { },
     "rejectionhandled": { },
     "release": { },
     "remove": { },

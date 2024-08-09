@@ -1698,6 +1698,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRLayer.idl
     Modules/webxr/WebXRPose.idl
     Modules/webxr/WebXRReferenceSpace.idl
+    Modules/webxr/WebXRRenderState+Layers.idl
     Modules/webxr/WebXRRenderState.idl
     Modules/webxr/WebXRRigidTransform.idl
     Modules/webxr/WebXRSession+AR.idl
@@ -1708,6 +1709,13 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRViewerPose.idl
     Modules/webxr/WebXRViewport.idl
     Modules/webxr/WebXRWebGLLayer.idl
+    Modules/webxr/XRCompositionLayer.idl
+    Modules/webxr/XRCubeLayer.idl
+    Modules/webxr/XRCubeLayerInit.idl
+    Modules/webxr/XRCylinderLayer.idl
+    Modules/webxr/XRCylinderLayerInit.idl
+    Modules/webxr/XREquirectLayer.idl
+    Modules/webxr/XREquirectLayerInit.idl
     Modules/webxr/XREnvironmentBlendMode.idl
     Modules/webxr/XREye.idl
     Modules/webxr/XRFrameRequestCallback.idl
@@ -1716,15 +1724,27 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/XRInputSourceEvent.idl
     Modules/webxr/XRInputSourcesChangeEvent.idl
     Modules/webxr/XRInteractionMode.idl
+    Modules/webxr/XRLayerEvent.idl
+    Modules/webxr/XRLayerInit.idl
+    Modules/webxr/XRLayerLayout.idl
+    Modules/webxr/XRLayerQuality.idl
+    Modules/webxr/XRProjectionLayer.idl
+    Modules/webxr/XRProjectionLayerInit.idl
+    Modules/webxr/XRQuadLayer.idl
+    Modules/webxr/XRQuadLayerInit.idl
     Modules/webxr/XRReferenceSpaceEvent.idl
     Modules/webxr/XRReferenceSpaceType.idl
     Modules/webxr/XRRenderStateInit.idl
     Modules/webxr/XRSessionEvent.idl
     Modules/webxr/XRSessionInit.idl
     Modules/webxr/XRSessionMode.idl
+    Modules/webxr/XRSubImage.idl
     Modules/webxr/XRTargetRayMode.idl
+    Modules/webxr/XRTextureType.idl
     Modules/webxr/XRVisibilityState.idl
+    Modules/webxr/XRWebGLBinding.idl
     Modules/webxr/XRWebGLLayerInit.idl
+    Modules/webxr/XRWebGLSubImage.idl
 )
 
 list(APPEND WebCore_NON_SVG_IDL_FILES
