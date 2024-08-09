@@ -1680,7 +1680,10 @@ ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, U* source, unsigned 
 
     if constexpr (std::is_same_v<T, U>) {
         if constexpr (fillMode == FillMode::Empty) {
-            gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+            if constexpr (std::is_same_v<T, double>)
+                memcpy(buffer + offset, source, sizeof(double) * sourceSize);
+            else
+                gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
             return;
         } else {
             for (unsigned i = 0; i < sourceSize; ++i) {
