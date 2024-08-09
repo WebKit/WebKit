@@ -249,14 +249,16 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
 
         scope.didChangeStyleSheetContents();
 
-        m_mutatedRules = true;
+        m_wasMutated = true;
     });
 }
 
 void CSSStyleSheet::didMutate()
 {
-    forEachStyleScope([](auto& scope) {
+    forEachStyleScope([&](auto& scope) {
         scope.didChangeStyleSheetContents();
+
+        m_wasMutated = true;
     });
 }
 
