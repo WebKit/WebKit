@@ -66,6 +66,11 @@ BoxGeometryUpdater::BoxGeometryUpdater(BoxTree& boxTree, Layout::LayoutState& la
 {
 }
 
+BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState)
+    : m_layoutState(layoutState)
+{
+}
+
 void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& listMarker, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
     updateLayoutBoxDimensions(listMarker, intrinsicWidthMode);
@@ -341,6 +346,9 @@ void BoxGeometryUpdater::setGeometriesForLayout()
         if (is<RenderText>(renderer))
             continue;
 
+        if (renderer.isFloating())
+            continue;
+
         if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer)) {
             updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
@@ -420,6 +428,16 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     createRootGeometryIfNeeded();
 
     return { { horizontalConstraints, contentBoxTop }, visualLeft };
+}
+
+void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& box)
+{
+    auto* renderer = dynamicDowncast<RenderBox>(box.rendererForIntegration());
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    updateLayoutBoxDimensions(*renderer);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const
