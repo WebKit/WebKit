@@ -88,7 +88,7 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
 {
     if (!frame() || !frame()->document())
         return printMargin;
-    if (!frame()->settings().pageAtRuleSupportEnabled())
+    if (!frame()->settings().pageAtRuleMarginDescriptorsEnabled())
         return printMargin;
     // FIXME Currently no pseudo class is supported.
     auto style = frame()->document()->styleScope().resolver().styleForPage(0);
