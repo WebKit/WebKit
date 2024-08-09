@@ -89,7 +89,7 @@ InstanceOfStatus InstanceOfStatus::computeForStubInfo(const ConcurrentJSLocker&,
         const AccessCase& access = list->at(listIndex);
         
         if (access.type() == AccessCase::InstanceOfMegamorphic)
-            return TakesSlowPath;
+            return Megamorphic;
         
         if (!access.conditionSet().structuresEnsureValidity())
             return TakesSlowPath;

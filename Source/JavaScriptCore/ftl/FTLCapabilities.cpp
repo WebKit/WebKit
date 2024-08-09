@@ -312,6 +312,7 @@ inline CapabilityLevel canCompile(Node* node)
     case HasStructureWithFlags:
     case OverridesHasInstance:
     case InstanceOf:
+    case InstanceOfMegamorphic:
     case InstanceOfCustom:
     case DoubleRep:
     case ValueRep:

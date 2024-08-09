@@ -3652,7 +3652,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case InstanceOf: {
+    case InstanceOf:
+    case InstanceOfMegamorphic: {
         compileInstanceOf(node);
         break;
     }

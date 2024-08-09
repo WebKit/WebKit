@@ -751,6 +751,7 @@ public:
 
     void compileInstanceOf(Node*);
     void compileInstanceOfCustom(Node*);
+    void compileInstanceOfMegamorphic(Node*);
     void compileOverridesHasInstance(Node*);
 
     void compileIsCellWithType(Node*);

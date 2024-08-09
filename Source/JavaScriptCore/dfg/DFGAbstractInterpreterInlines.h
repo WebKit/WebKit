@@ -4927,8 +4927,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case OverridesHasInstance:
         setNonCellTypeForNode(node, SpecBoolean);
         break;
-            
+
     case InstanceOf:
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+
+    case InstanceOfMegamorphic:
         clobberWorld();
         setNonCellTypeForNode(node, SpecBoolean);
         break;

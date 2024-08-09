@@ -5023,6 +5023,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case InstanceOfMegamorphic: {
+        compileInstanceOfMegamorphic(node);
+        break;
+    }
+
     case InstanceOfCustom: {
         compileInstanceOfCustom(node);
         break;
@@ -7729,6 +7734,44 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
 
     done.link(this);
     blessedBooleanResult(resultRegs.payloadGPR(), node);
+}
+
+void SpeculativeJIT::compileInstanceOfMegamorphic(Node* node)
+{
+    SpeculateCellOperand value(this, node->child1());
+    SpeculateCellOperand prototype(this, node->child2());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg valueGPR = value.gpr();
+    GPRReg prototypeGPR = prototype.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    JumpList slowCases;
+    JumpList done;
+
+    if (!m_state.forNode(node->child2()).isType(SpecObject))
+        slowCases.append(branchIfNotObject(prototypeGPR));
+
+    move(valueGPR, scratch1GPR);
+
+    CCallHelpers::Label loop(this);
+    emitLoadPrototype(vm(), scratch1GPR, JSValueRegs { scratch2GPR }, slowCases);
+    auto isInstance = branchPtr(Equal, scratch2GPR, prototypeGPR);
+    move(scratch2GPR, scratch1GPR);
+    branchIfCell(scratch1GPR).linkTo(loop, this);
+
+    moveFalseTo(scratch1GPR);
+    done.append(jump());
+
+    isInstance.link(this);
+    moveTrueTo(scratch1GPR);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationInstanceOfGeneric, scratch1GPR, LinkableConstant::globalObject(*this, node), valueGPR, prototypeGPR));
+
+    done.link(this);
+    blessedBooleanResult(scratch1GPR, node);
 }
 
 void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, CacheableIdentifier identifier, AccessType accessType)

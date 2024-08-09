@@ -6939,11 +6939,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_instanceof: {
             auto bytecode = currentInstruction->as<OpInstanceof>();
-            
-            InstanceOfStatus status = InstanceOfStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
-                m_currentIndex);
-            
+
+            InstanceOfStatus status = InstanceOfStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_currentIndex);
+
             Node* value = get(bytecode.m_value);
             Node* prototype = get(bytecode.m_prototype);
 
@@ -6978,8 +6976,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     NEXT_OPCODE(op_instanceof);
                 }
             }
-            
-            set(bytecode.m_dst, addToGraph(InstanceOf, value, prototype));
+
+            NodeType op = status.isMegamorphic() ? InstanceOfMegamorphic : InstanceOf;
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                op = InstanceOf;
+            set(bytecode.m_dst, addToGraph(op, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }
 
