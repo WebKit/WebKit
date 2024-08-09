@@ -2210,7 +2210,7 @@ layer at (0,0) size 785x7608
                 text run at (2,2) width 89: "Row 5, Cell 3"
 layer at (393,24) size 392x150
   RenderBlock (positioned) {TABLE} at (392,24) size 393x150
-    RenderTable at (0,0) size 355x153
+    RenderTable at (0,0) size 355x156
       RenderBlock {CAPTION} at (0,0) size 355x18
         RenderText {#text} at (54,0) size 241x18
           text run at (54,0) width 241: "Local links to specific testcase tables"
@@ -2219,47 +2219,47 @@ layer at (393,24) size 392x150
             text run at (294,0) width 6: ":"
       RenderTableCol {COLGROUP} at (0,0) size 0x0
       RenderTableCol {COLGROUP} at (0,0) size 0x0
-      RenderTableSection {THEAD} at (0,18) size 355x40
-        RenderTableRow {TR} at (0,2) size 355x17
-          RenderTableCell {TH} at (2,19) size 73x2 [r=0 c=0 rs=2 cs=2]
-          RenderTableCell {TH} at (76,2) size 277x17 [r=0 c=2 rs=1 cs=9]
-            RenderText {#text} at (120,1) size 35x15
+      RenderTableSection {THEAD} at (0,18) size 355x41
+        RenderTableRow {TR} at (0,2) size 355x18
+          RenderTableCell {TH} at (2,19) size 73x3 [r=0 c=0 rs=2 cs=2]
+          RenderTableCell {TH} at (76,2) size 277x18 [r=0 c=2 rs=1 cs=9]
+            RenderText {#text} at (120,1) size 35x16
               text run at (120,1) width 35: "Frame"
-        RenderTableRow {TR} at (0,21) size 355x17
-          RenderTableCell {TH} at (76,21) size 27x17 [r=1 c=2 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 24x15
+        RenderTableRow {TR} at (0,21) size 355x18
+          RenderTableCell {TH} at (76,21) size 27x18 [r=1 c=2 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 24x16
               text run at (1,1) width 24: "void"
-          RenderTableCell {TH} at (104,21) size 35x17 [r=1 c=3 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 32x15
+          RenderTableCell {TH} at (104,21) size 35x18 [r=1 c=3 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 32x16
               text run at (1,1) width 32: "above"
-          RenderTableCell {TH} at (140,21) size 35x17 [r=1 c=4 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 33x15
+          RenderTableCell {TH} at (140,21) size 35x18 [r=1 c=4 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 33x16
               text run at (1,1) width 33: "below"
-          RenderTableCell {TH} at (176,21) size 37x17 [r=1 c=5 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 34x15
+          RenderTableCell {TH} at (176,21) size 37x18 [r=1 c=5 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 34x16
               text run at (1,1) width 34: "hsides"
-          RenderTableCell {TH} at (214,21) size 36x17 [r=1 c=6 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 34x15
+          RenderTableCell {TH} at (214,21) size 36x18 [r=1 c=6 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 34x16
               text run at (1,1) width 34: "vsides"
-          RenderTableCell {TH} at (251,21) size 19x17 [r=1 c=7 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 16x15
+          RenderTableCell {TH} at (251,21) size 19x18 [r=1 c=7 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 16x16
               text run at (1,1) width 16: "lhs"
-          RenderTableCell {TH} at (271,21) size 19x17 [r=1 c=8 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 17x15
+          RenderTableCell {TH} at (271,21) size 19x18 [r=1 c=8 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 17x16
               text run at (1,1) width 17: "rhs"
-          RenderTableCell {TH} at (291,21) size 23x17 [r=1 c=9 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 20x15
+          RenderTableCell {TH} at (291,21) size 23x18 [r=1 c=9 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 20x16
               text run at (1,1) width 20: "box"
-          RenderTableCell {TH} at (315,21) size 38x17 [r=1 c=10 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 35x15
+          RenderTableCell {TH} at (315,21) size 38x18 [r=1 c=10 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 35x16
               text run at (1,1) width 35: "border"
-      RenderTableSection {TBODY} at (0,58) size 355x95
-        RenderTableRow {TR} at (0,0) size 355x17
-          RenderTableCell {TH} at (2,38) size 33x17 [r=0 c=0 rs=5 cs=1]
-            RenderText {#text} at (1,39) size 31x15
+      RenderTableSection {TBODY} at (0,58) size 355x98
+        RenderTableRow {TR} at (0,0) size 355x18
+          RenderTableCell {TH} at (2,38) size 33x18 [r=0 c=0 rs=5 cs=1]
+            RenderText {#text} at (1,39) size 31x16
               text run at (1,1) width 31: "Rules"
-          RenderTableCell {TH} at (36,0) size 39x17 [r=0 c=1 rs=1 cs=1]
-            RenderText {#text} at (11,1) size 27x15
+          RenderTableCell {TH} at (36,0) size 39x18 [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (11,1) size 27x16
               text run at (11,1) width 27: "none"
           RenderTableCell {TD} at (76,0) size 27x17 [bgcolor=#CCCCCC] [r=0 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
@@ -2297,9 +2297,9 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,19) size 355x17
-          RenderTableCell {TH} at (36,19) size 39x17 [r=1 c=1 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 37x15
+        RenderTableRow {TR} at (0,19) size 355x18
+          RenderTableCell {TH} at (36,19) size 39x18 [r=1 c=1 rs=1 cs=1]
+            RenderText {#text} at (1,1) size 37x16
               text run at (1,1) width 37: "groups"
           RenderTableCell {TD} at (76,19) size 27x17 [bgcolor=#CCCCCC] [r=1 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
@@ -2337,123 +2337,123 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,38) size 355x17
-          RenderTableCell {TH} at (36,38) size 39x17 [r=2 c=1 rs=1 cs=1]
-            RenderText {#text} at (11,1) size 27x15
+        RenderTableRow {TR} at (0,38) size 355x18
+          RenderTableCell {TH} at (36,38) size 39x18 [r=2 c=1 rs=1 cs=1]
+            RenderText {#text} at (11,1) size 27x16
               text run at (11,1) width 27: "rows"
-          RenderTableCell {TD} at (76,38) size 27x17 [bgcolor=#CCCCCC] [r=2 c=2 rs=1 cs=1]
+          RenderTableCell {TD} at (76,39) size 27x17 [bgcolor=#CCCCCC] [r=2 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
                 text run at (5,1) width 16: "Go"
-          RenderTableCell {TD} at (104,38) size 35x17 [bgcolor=#CCCCCC] [r=2 c=3 rs=1 cs=1]
+          RenderTableCell {TD} at (104,39) size 35x17 [bgcolor=#CCCCCC] [r=2 c=3 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (140,38) size 35x17 [bgcolor=#CCCCCC] [r=2 c=4 rs=1 cs=1]
+          RenderTableCell {TD} at (140,39) size 35x17 [bgcolor=#CCCCCC] [r=2 c=4 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (176,38) size 37x17 [bgcolor=#CCCCCC] [r=2 c=5 rs=1 cs=1]
+          RenderTableCell {TD} at (176,39) size 37x17 [bgcolor=#CCCCCC] [r=2 c=5 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (214,38) size 36x17 [bgcolor=#CCCCCC] [r=2 c=6 rs=1 cs=1]
+          RenderTableCell {TD} at (214,39) size 36x17 [bgcolor=#CCCCCC] [r=2 c=6 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (251,38) size 19x17 [bgcolor=#CCCCCC] [r=2 c=7 rs=1 cs=1]
+          RenderTableCell {TD} at (251,39) size 19x17 [bgcolor=#CCCCCC] [r=2 c=7 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (271,38) size 19x17 [bgcolor=#CCCCCC] [r=2 c=8 rs=1 cs=1]
+          RenderTableCell {TD} at (271,39) size 19x17 [bgcolor=#CCCCCC] [r=2 c=8 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (291,38) size 23x17 [bgcolor=#CCCCCC] [r=2 c=9 rs=1 cs=1]
+          RenderTableCell {TD} at (291,39) size 23x17 [bgcolor=#CCCCCC] [r=2 c=9 rs=1 cs=1]
             RenderInline {A} at (3,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (3,1) size 16x15
                 text run at (3,1) width 16: "Go"
-          RenderTableCell {TD} at (315,38) size 38x17 [bgcolor=#CCCCCC] [r=2 c=10 rs=1 cs=1]
+          RenderTableCell {TD} at (315,39) size 38x17 [bgcolor=#CCCCCC] [r=2 c=10 rs=1 cs=1]
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,57) size 355x17
-          RenderTableCell {TH} at (36,57) size 39x17 [r=3 c=1 rs=1 cs=1]
-            RenderText {#text} at (15,1) size 23x15
+        RenderTableRow {TR} at (0,57) size 355x19
+          RenderTableCell {TH} at (36,57) size 39x19 [r=3 c=1 rs=1 cs=1]
+            RenderText {#text} at (15,1) size 23x16
               text run at (15,1) width 23: "cols"
-          RenderTableCell {TD} at (76,57) size 27x17 [bgcolor=#CCCCCC] [r=3 c=2 rs=1 cs=1]
+          RenderTableCell {TD} at (76,58) size 27x17 [bgcolor=#CCCCCC] [r=3 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
                 text run at (5,1) width 16: "Go"
-          RenderTableCell {TD} at (104,57) size 35x17 [bgcolor=#CCCCCC] [r=3 c=3 rs=1 cs=1]
+          RenderTableCell {TD} at (104,58) size 35x17 [bgcolor=#CCCCCC] [r=3 c=3 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (140,57) size 35x17 [bgcolor=#CCCCCC] [r=3 c=4 rs=1 cs=1]
+          RenderTableCell {TD} at (140,58) size 35x17 [bgcolor=#CCCCCC] [r=3 c=4 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (176,57) size 37x17 [bgcolor=#CCCCCC] [r=3 c=5 rs=1 cs=1]
+          RenderTableCell {TD} at (176,58) size 37x17 [bgcolor=#CCCCCC] [r=3 c=5 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (214,57) size 36x17 [bgcolor=#CCCCCC] [r=3 c=6 rs=1 cs=1]
+          RenderTableCell {TD} at (214,58) size 36x17 [bgcolor=#CCCCCC] [r=3 c=6 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (251,57) size 19x17 [bgcolor=#CCCCCC] [r=3 c=7 rs=1 cs=1]
+          RenderTableCell {TD} at (251,58) size 19x17 [bgcolor=#CCCCCC] [r=3 c=7 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (271,57) size 19x17 [bgcolor=#CCCCCC] [r=3 c=8 rs=1 cs=1]
+          RenderTableCell {TD} at (271,58) size 19x17 [bgcolor=#CCCCCC] [r=3 c=8 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (291,57) size 23x17 [bgcolor=#CCCCCC] [r=3 c=9 rs=1 cs=1]
+          RenderTableCell {TD} at (291,58) size 23x17 [bgcolor=#CCCCCC] [r=3 c=9 rs=1 cs=1]
             RenderInline {A} at (3,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (3,1) size 16x15
                 text run at (3,1) width 16: "Go"
-          RenderTableCell {TD} at (315,57) size 38x17 [bgcolor=#CCCCCC] [r=3 c=10 rs=1 cs=1]
+          RenderTableCell {TD} at (315,58) size 38x17 [bgcolor=#CCCCCC] [r=3 c=10 rs=1 cs=1]
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,76) size 355x17
-          RenderTableCell {TH} at (36,76) size 39x17 [r=4 c=1 rs=1 cs=1]
-            RenderText {#text} at (23,1) size 15x15
+        RenderTableRow {TR} at (0,77) size 355x18
+          RenderTableCell {TH} at (36,77) size 39x18 [r=4 c=1 rs=1 cs=1]
+            RenderText {#text} at (23,1) size 15x16
               text run at (23,1) width 15: "all"
-          RenderTableCell {TD} at (76,76) size 27x17 [bgcolor=#CCCCCC] [r=4 c=2 rs=1 cs=1]
+          RenderTableCell {TD} at (76,77) size 27x17 [bgcolor=#CCCCCC] [r=4 c=2 rs=1 cs=1]
             RenderInline {A} at (5,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (5,1) size 16x15
                 text run at (5,1) width 16: "Go"
-          RenderTableCell {TD} at (104,76) size 35x17 [bgcolor=#CCCCCC] [r=4 c=3 rs=1 cs=1]
+          RenderTableCell {TD} at (104,77) size 35x17 [bgcolor=#CCCCCC] [r=4 c=3 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (140,76) size 35x17 [bgcolor=#CCCCCC] [r=4 c=4 rs=1 cs=1]
+          RenderTableCell {TD} at (140,77) size 35x17 [bgcolor=#CCCCCC] [r=4 c=4 rs=1 cs=1]
             RenderInline {A} at (9,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (9,1) size 16x15
                 text run at (9,1) width 16: "Go"
-          RenderTableCell {TD} at (176,76) size 37x17 [bgcolor=#CCCCCC] [r=4 c=5 rs=1 cs=1]
+          RenderTableCell {TD} at (176,77) size 37x17 [bgcolor=#CCCCCC] [r=4 c=5 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (214,76) size 36x17 [bgcolor=#CCCCCC] [r=4 c=6 rs=1 cs=1]
+          RenderTableCell {TD} at (214,77) size 36x17 [bgcolor=#CCCCCC] [r=4 c=6 rs=1 cs=1]
             RenderInline {A} at (10,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (10,1) size 16x15
                 text run at (10,1) width 16: "Go"
-          RenderTableCell {TD} at (251,76) size 19x17 [bgcolor=#CCCCCC] [r=4 c=7 rs=1 cs=1]
+          RenderTableCell {TD} at (251,77) size 19x17 [bgcolor=#CCCCCC] [r=4 c=7 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (271,76) size 19x17 [bgcolor=#CCCCCC] [r=4 c=8 rs=1 cs=1]
+          RenderTableCell {TD} at (271,77) size 19x17 [bgcolor=#CCCCCC] [r=4 c=8 rs=1 cs=1]
             RenderInline {A} at (1,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (1,1) size 16x15
                 text run at (1,1) width 16: "Go"
-          RenderTableCell {TD} at (291,76) size 23x17 [bgcolor=#CCCCCC] [r=4 c=9 rs=1 cs=1]
+          RenderTableCell {TD} at (291,77) size 23x17 [bgcolor=#CCCCCC] [r=4 c=9 rs=1 cs=1]
             RenderInline {A} at (3,1) size 16x15 [color=#0000EE]
               RenderText {#text} at (3,1) size 16x15
                 text run at (3,1) width 16: "Go"
-          RenderTableCell {TD} at (315,76) size 38x17 [bgcolor=#CCCCCC] [r=4 c=10 rs=1 cs=1]
+          RenderTableCell {TD} at (315,77) size 38x17 [bgcolor=#CCCCCC] [r=4 c=10 rs=1 cs=1]
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"

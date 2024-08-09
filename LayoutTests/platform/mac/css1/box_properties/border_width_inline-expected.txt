@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,110) size 784x104 [border: (25px solid #000000)]
         RenderText {#text} at (25,25) size 176x18
           text run at (25,25) width 176: "This element has a class of "
-        RenderInline {TT} at (200,27) size 25x15
-          RenderText {#text} at (200,27) size 25x15
+        RenderInline {TT} at (200,27) size 25x16
+          RenderText {#text} at (200,27) size 25x16
             text run at (200,27) width 25: "one"
         RenderText {#text} at (224,25) size 164x18
           text run at (224,25) width 9: ". "
@@ -26,8 +26,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (387,24) size 174x20 [border: (1px solid #000000)]
           RenderText {#text} at (388,25) size 149x18
             text run at (388,25) width 149: "inline element of class "
-          RenderInline {TT} at (536,27) size 24x15
-            RenderText {#text} at (536,27) size 24x15
+          RenderInline {TT} at (536,27) size 24x16
+            RenderText {#text} at (536,27) size 24x16
               text run at (536,27) width 24: "two"
         RenderText {#text} at (25,25) size 726x36
           text run at (560,25) width 191: ", which should result in a thin"
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (511,43) size 188x18
           RenderText {#text} at (511,43) size 149x18
             text run at (511,43) width 149: "inline element of class "
-          RenderInline {TT} at (659,45) size 40x15
-            RenderText {#text} at (659,45) size 40x15
+          RenderInline {TT} at (659,45) size 40x16
+            RenderText {#text} at (659,45) size 40x16
               text run at (659,45) width 40: "three"
         RenderText {#text} at (25,43) size 721x36
           text run at (698,43) width 48: ", which"
@@ -57,8 +57,8 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,4) size 762x104 [border: (25px solid #000000)]
                 RenderText {#text} at (25,25) size 176x18
                   text run at (25,25) width 176: "This element has a class of "
-                RenderInline {TT} at (200,27) size 25x15
-                  RenderText {#text} at (200,27) size 25x15
+                RenderInline {TT} at (200,27) size 25x16
+                  RenderText {#text} at (200,27) size 25x16
                     text run at (200,27) width 25: "one"
                 RenderText {#text} at (224,25) size 164x18
                   text run at (224,25) width 9: ". "
@@ -66,8 +66,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (387,24) size 174x20 [border: (1px solid #000000)]
                   RenderText {#text} at (388,25) size 149x18
                     text run at (388,25) width 149: "inline element of class "
-                  RenderInline {TT} at (536,27) size 24x15
-                    RenderText {#text} at (536,27) size 24x15
+                  RenderInline {TT} at (536,27) size 24x16
+                    RenderText {#text} at (536,27) size 24x16
                       text run at (536,27) width 24: "two"
                 RenderText {#text} at (25,25) size 697x36
                   text run at (560,25) width 162: ", which should result in a"
@@ -76,8 +76,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (540,43) size 187x18
                   RenderText {#text} at (540,43) size 148x18
                     text run at (540,43) width 148: "inline element of class "
-                  RenderInline {TT} at (687,45) size 40x15
-                    RenderText {#text} at (687,45) size 40x15
+                  RenderInline {TT} at (687,45) size 40x16
+                    RenderText {#text} at (687,45) size 40x16
                       text run at (687,45) width 40: "three"
                 RenderText {#text} at (25,43) size 706x36
                   text run at (726,43) width 5: ","

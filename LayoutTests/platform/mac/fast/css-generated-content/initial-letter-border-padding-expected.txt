@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x108
-        RenderBlock (floating) at (2,0) size 58x53 [color=#FF0000] [border: (2px solid #FF0000)]
-          RenderText at (3,-14) size 52x82
+        RenderBlock (floating) at (2,0) size 58x54 [color=#FF0000] [border: (2px solid #FF0000)]
+          RenderText at (3,-15) size 52x83
             text run at (3,-14) width 52: "A"
         RenderText {#text} at (0,18) size 386x90
           text run at (61,18) width 316: "n example of first-letter. This letter should span 3"
@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
           text run at (0,90) width 160: "baseline of the third line."
       RenderBlock {SPAN} at (0,124) size 784x108
         RenderBlock {DIV} at (368,0) size 400x108
-          RenderBlock (floating) at (340,0) size 58x53 [color=#FF0000] [border: (2px solid #FF0000)]
-            RenderText at (3,-14) size 52x82
+          RenderBlock (floating) at (340,0) size 58x54 [color=#FF0000] [border: (2px solid #FF0000)]
+            RenderText at (3,-15) size 52x83
               text run at (3,-14) width 52: "A"
           RenderText {#text} at (2,18) size 398x90
             text run at (2,18) width 337: "n RTL example of first-letter. This letter should span"

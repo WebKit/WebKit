@@ -39,8 +39,8 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 156x18
             text run at (0,0) width 156: "Same as above but with "
-          RenderInline {CODE} at (155,2) size 126x15
-            RenderText {#text} at (155,2) size 126x15
+          RenderInline {CODE} at (155,2) size 126x16
+            RenderText {#text} at (155,2) size 126x16
               text run at (155,2) width 126: "CELLSPACING=\"10\""
           RenderText {#text} at (280,0) size 6x18
             text run at (280,0) width 6: ":"

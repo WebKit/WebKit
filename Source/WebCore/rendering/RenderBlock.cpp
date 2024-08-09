@@ -2442,7 +2442,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
 
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
     const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
-    return LayoutUnit { fontMetrics.intAscent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.intHeight()) / 2 }.toInt();
+    return LayoutUnit { fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2 };
 }
 
 LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, LayoutUnit replacedHeight) const
@@ -2469,7 +2469,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
         if (child->isLegend() && child->isExcludedFromNormalLayout())
             continue;
         if (auto baseline = child->firstLineBaseline())
-            return LayoutUnit { floorToInt(child->logicalTop() + baseline.value()) };
+            return LayoutUnit { child->logicalTop() + baseline.value() };
     }
     return std::optional<LayoutUnit>();
 }
@@ -2486,7 +2486,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
         if (child->isLegend() && child->isExcludedFromNormalLayout())
             continue;
         if (auto baseline = child->lastLineBaseline())
-            return LayoutUnit { floorToInt(child->logicalTop() + baseline.value()) };
+            return LayoutUnit { child->logicalTop() + baseline.value() };
     } 
     return std::optional<LayoutUnit>();
 }
@@ -2505,14 +2505,14 @@ std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lin
             continue;
         haveNormalFlowChild = true;
         if (auto result = box->inlineBlockBaseline(lineDirection))
-            return LayoutUnit { (box->logicalTop() + result.value()).toInt() }; // Translate to our coordinate space.
+            return LayoutUnit { box->logicalTop() + result.value() }; // Translate to our coordinate space.
     }
 
     if (!haveNormalFlowChild && hasLineIfEmpty()) {
         auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
-        return LayoutUnit { LayoutUnit(fontMetrics.intAscent()
-            + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.intHeight()) / 2
-            + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
+        return LayoutUnit { fontMetrics.ascent()
+            + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+            + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight()) };
     }
 
     return std::optional<LayoutUnit>();

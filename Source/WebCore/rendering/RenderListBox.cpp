@@ -475,7 +475,7 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle& ele
     bool isHorizontalWritingMode = elementStyle.isHorizontalWritingMode();
 
     auto itemBoundingBoxLogicalWidth = isHorizontalWritingMode ? itemBoundingBox.width() : itemBoundingBox.height();
-    auto offset = LayoutSize(0, itemFont.metricsOfPrimaryFont().intAscent());
+    auto offset = LayoutSize(0.f, itemFont.metricsOfPrimaryFont().ascent());
     if (actualAlignment == TextAlignMode::Right || actualAlignment == TextAlignMode::WebKitRight) {
         float textWidth = itemFont.width(textRun);
         offset.setWidth(itemBoundingBoxLogicalWidth - textWidth - optionsSpacingInlineStart);
@@ -852,7 +852,7 @@ void RenderListBox::scrollTo(const ScrollPosition& position)
 
 LayoutUnit RenderListBox::itemLogicalHeight() const
 {
-    return style().metricsOfPrimaryFont().intHeight() + itemBlockSpacing;
+    return LayoutUnit::fromFloatCeil(style().metricsOfPrimaryFont().height()) + itemBlockSpacing;
 }
 
 int RenderListBox::verticalScrollbarWidth() const
@@ -952,7 +952,7 @@ void RenderListBox::setScrollTop(int newTop, const ScrollPositionChangeOptions&)
 
 int RenderListBox::logicalScrollTop() const
 {
-    int logicalTop = indexOffset() * itemLogicalHeight();
+    auto logicalTop = roundToInt(indexOffset() * itemLogicalHeight());
     if (style().isFlippedBlocksWritingMode())
         logicalTop *= -1;
     return logicalTop;

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x56
-        RenderBlock (anonymous) at (0,0) size 784x56
+      RenderBlock {FORM} at (0,0) size 784x57
+        RenderBlock (anonymous) at (0,0) size 784x57
           RenderBlock {INPUT} at (2,4) size 12x12
           RenderInline {B} at (16,0) size 76x18
             RenderText {#text} at (16,0) size 76x18
@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,19) size 0x18
           RenderText {#text} at (0,37) size 89x18
             text run at (0,37) width 89: "  Select File:  "
-          RenderFileUploadControl {INPUT} at (88,38) size 239x18 "no file selected"
+          RenderFileUploadControl {INPUT} at (88,38) size 239x19 "no file selected"
             RenderButton {INPUT} at (0,0) size 78x18 [color=#0000003F] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
               RenderBlock (anonymous) at (8,2) size 62x13
                 RenderText at (0,0) size 62x13

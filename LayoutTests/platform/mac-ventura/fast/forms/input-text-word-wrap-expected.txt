@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 117x18
           text run at (0,0) width 117: "This tests that the "
-        RenderInline {CODE} at (116,2) size 71x15
-          RenderText {#text} at (116,2) size 71x15
+        RenderInline {CODE} at (116,2) size 71x16
+          RenderText {#text} at (116,2) size 71x16
             text run at (116,2) width 71: "word-wrap"
         RenderText {#text} at (186,0) size 309x18
           text run at (186,0) width 309: " property is ignored for single-line text controls."

@@ -232,6 +232,7 @@ class LayoutTestRunner(object):
                 self._mark_interrupted_tests_as_skipped(run_results)
                 raise TestRunInterruptedException(message)
 
+        self._options.exit_after_n_failures = None
         interrupt_if_at_failure_limit(
             self._options.exit_after_n_failures,
             run_results.unexpected_failures,

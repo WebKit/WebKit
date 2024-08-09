@@ -84,7 +84,7 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, G
         if (baseline == noValidBaseline) {
             ASSERT(!gridItem.needsLayout());
             if (isVerticalAlignmentContext(alignmentAxis))
-                return isFlippedWritingMode(m_writingMode) ? gridItemMargin + gridItem.size().width().toInt() : gridItemMargin;
+                return isFlippedWritingMode(m_writingMode) ? gridItemMargin + gridItem.size().width() : gridItemMargin;
             return gridItemMargin + synthesizedBaseline(gridItem, parentStyle, LineDirectionMode::HorizontalLine, BaselineSynthesisEdge::BorderBox);
         }
     }

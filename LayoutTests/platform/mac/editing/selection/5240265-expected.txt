@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 62x13
               text run at (0,0) width 62: "Click on me"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,88) size 784x18
+      RenderBlock {DIV} at (0,87) size 784x19
         RenderText {#text} at (0,0) size 182x18
           text run at (0,0) width 182: "This text should be selected."
 selection start: position 0 of child 0 {#text} of child 4 {DIV} of body

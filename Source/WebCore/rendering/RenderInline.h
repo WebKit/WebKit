@@ -60,6 +60,7 @@ public:
     LayoutUnit innerPaddingBoxWidth() const;
     LayoutUnit innerPaddingBoxHeight() const;
 
+    LayoutUnit linesHeight() const;
     WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 

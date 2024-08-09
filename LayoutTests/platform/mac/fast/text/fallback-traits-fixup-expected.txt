@@ -16,16 +16,16 @@ layer at (0,0) size 800x600
         RenderText {#text} at (564,0) size 5x18
           text run at (564,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x42
-        RenderText {#text} at (0,18) size 98x18
+        RenderText {#text} at (0,18) size 98x19
           text run at (0,18) width 98: "A black circle: "
         RenderInline {SPAN} at (97,3) size 33x37
-          RenderText {#text} at (97,3) size 33x37
+          RenderText {#text} at (97,3) size 33x38
             text run at (97,3) width 33: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,92) size 784x42
-        RenderText {#text} at (0,18) size 140x18
+        RenderText {#text} at (0,18) size 140x19
           text run at (0,18) width 140: "Another black circle: "
         RenderInline {SPAN} at (139,3) size 33x37
-          RenderText {#text} at (139,3) size 33x37
+          RenderText {#text} at (139,3) size 33x38
             text run at (139,3) width 33: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0

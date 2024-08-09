@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
                             RenderBlock {DIV} at (0,0) size 141x13
                         RenderText {#text} at (0,0) size 0x0
                       RenderTableCell {TD} at (275,53) size 5x5 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-layer at (105,31) size 141x13
+layer at (105,31) size 141x13 backgroundClip at (105,31) size 141x12 clip at (105,31) size 141x12
   RenderBlock {DIV} at (3,3) size 141x13
 layer at (105,64) size 141x13
   RenderBlock {DIV} at (0,0) size 141x13

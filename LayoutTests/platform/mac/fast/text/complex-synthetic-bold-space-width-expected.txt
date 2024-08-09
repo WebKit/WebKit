@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 259x18
           text run at (0,0) width 259: "These lines should have the same width:"
-      RenderBlock {DIV} at (0,18) size 784x42
-        RenderText {#text} at (0,0) size 108x20
+      RenderBlock {DIV} at (0,18) size 784x43
+        RenderText {#text} at (0,0) size 108x21
           text run at (0,0) width 108: ". . . . . . . . a"
-        RenderBR {BR} at (107,0) size 1x20
-        RenderText {#text} at (0,21) size 108x20
-          text run at (0,21) width 108: ". . . . . . . . a\x{300}"
+        RenderBR {BR} at (107,0) size 1x21
+        RenderText {#text} at (0,22) size 108x21
+          text run at (0,22) width 108: ". . . . . . . . a\x{300}"

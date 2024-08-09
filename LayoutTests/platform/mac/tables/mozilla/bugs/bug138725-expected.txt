@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
                                       RenderText at (0,0) size 111x13
                                         text run at (0,0) width 111: "ApplyForThisPosition"
                                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (1,47) size 139x0
+              RenderBlock (anonymous) at (1,46) size 139x0
                 RenderInline {SPAN} at (0,0) size 0x0
                   RenderInline {SPAN} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0

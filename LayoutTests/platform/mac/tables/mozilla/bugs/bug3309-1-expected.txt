@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92
-        RenderBlock {CENTER} at (0,0) size 784x92
+      RenderBlock {DIV} at (0,0) size 784x93
+        RenderBlock {CENTER} at (0,0) size 784x93
           RenderTable {TABLE} at (78,0) size 628x38 [bgcolor=#000000]
             RenderTableSection {TBODY} at (0,0) size 628x38
               RenderTableRow {TR} at (0,5) size 628x28
@@ -18,11 +18,11 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (571,5) size 52x28 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (17,5) size 29x18
                     text run at (17,5) width 29: "4:53"
-          RenderBlock {DIV} at (0,38) size 784x54
+          RenderBlock {DIV} at (0,38) size 784x55
             RenderBR {BR} at (784,0) size 0x18
             RenderBR {BR} at (784,18) size 0x18
-            RenderInline {A} at (647,36) size 137x18 [color=#0000EE]
-              RenderInline {FONT} at (647,36) size 137x17 [color=#FFCC33]
-                RenderText {#text} at (647,36) size 137x17
+            RenderInline {A} at (647,36) size 137x19 [color=#0000EE]
+              RenderInline {FONT} at (647,36) size 137x19 [color=#FFCC33]
+                RenderText {#text} at (647,36) size 137x19
                   text run at (647,36) width 86: "Back to the "
                   text run at (732,36) width 52: "index..."

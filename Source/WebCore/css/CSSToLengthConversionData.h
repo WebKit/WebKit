@@ -73,7 +73,7 @@ public:
     Style::AnchorPositionedStateMap* anchorPositionedStateMap() const { return m_anchorPositionedStateMap; }
 
     const FontCascade& fontCascadeForFontUnits() const;
-    int computedLineHeightForFontUnits() const;
+    float computedLineHeightForFontUnits() const;
 
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;

@@ -22,4 +22,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,86) size 200x26 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 175x26
           text run at (0,0) width 175: "lllllllllllllllllllllllllllllllllllllllllllllllllllllll"
-          text run at (0,13) width 142: "onelongwrodwithnobreaks"
+          text run at (0,12) width 142: "onelongwrodwithnobreaks"
