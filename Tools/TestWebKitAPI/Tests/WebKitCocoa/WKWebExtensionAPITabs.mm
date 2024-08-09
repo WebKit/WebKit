@@ -578,6 +578,27 @@ TEST(WKWebExtensionAPITabs, GetCurrentFromOptionsPage)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, GetSelected)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const [selectedTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tab = await browser.tabs.getSelected()",
+
+        @"browser.test.assertDeepEq(tab, selectedTab, 'The selected tab should match the active tab in the current window')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPITabs, Query)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -782,6 +803,31 @@ TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
     EXPECT_EQ(windowOne.tabs.count, 2lu);
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, QueryWithCurrentWindow)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ windowId: browser.windows.WINDOW_ID_CURRENT })",
+        @"browser.test.assertEq(tabs.length, 2, 'Should return exactly two tabs for the current window')",
+
+        @"browser.test.assertEq(typeof tabs[0].id, 'number', 'The first tab should have a valid id')",
+        @"browser.test.assertEq(typeof tabs[0].windowId, 'number', 'The first tab should have a valid windowId')",
+
+        @"browser.test.assertEq(typeof tabs[1].id, 'number', 'The second tab should have a valid id')",
+        @"browser.test.assertEq(typeof tabs[1].windowId, 'number', 'The second tab should have a valid windowId')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
