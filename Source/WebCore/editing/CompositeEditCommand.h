@@ -68,9 +68,14 @@ private:
 
 class EditCommandComposition : public UndoStep {
 public:
+    enum class AddToUndoStack : bool {
+        No, Yes
+    };
+
     static Ref<EditCommandComposition> create(Document&, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
     void unapply() override;
+    void unapply(AddToUndoStack);
     void reapply() override;
     EditAction editingAction() const override { return m_editAction; }
     void append(SimpleEditCommand*);
