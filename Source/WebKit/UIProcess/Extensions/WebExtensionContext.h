@@ -263,6 +263,7 @@ public:
         Background,
         Inspector,
         Popup,
+        Sidebar,
         Tab,
     };
 
@@ -446,6 +447,8 @@ public:
     std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionTab&);
+    void openSidebarForTab(WebExtensionTab&, UserTriggered = UserTriggered::No);
+    void closeSidebarForTab(WebExtensionTab&, UserTriggered = UserTriggered::No);
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     const CommandsVector& commands();

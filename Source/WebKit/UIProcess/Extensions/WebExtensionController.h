@@ -155,6 +155,8 @@ public:
     template<typename T, typename RawValue>
     void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
 
+    bool isFeatureEnabled(const String& featureName) const;
+
 #if PLATFORM(MAC)
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
 #endif
