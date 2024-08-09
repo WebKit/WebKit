@@ -6182,6 +6182,12 @@ FrameIdentifier LocalFrameView::rootFrameID() const
     return m_frame->rootFrame().frameID();
 }
 
+void LocalFrameView::scrollbarWidthChanged(ScrollbarWidth width)
+{
+    scrollbarsController().scrollbarWidthChanged(width);
+    m_needsDeferredScrollbarsUpdate = true;
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

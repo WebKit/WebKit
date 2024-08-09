@@ -81,7 +81,7 @@ void RemoteScrollbarsController::mouseExitedScrollbar(WebCore::Scrollbar* scroll
 
 bool RemoteScrollbarsController::shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar* scrollbar)
 {
-    // Non-overlay scrollbars should always participate in hit testing.    
+    // Non-overlay scrollbars should always participate in hit testing.
     ASSERT(scrollbar->isOverlayScrollbar());
 
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
@@ -131,6 +131,8 @@ void RemoteScrollbarsController::scrollbarWidthChanged(WebCore::ScrollbarWidth w
 {
     if (auto scrollingCoordinator = m_coordinator.get())
         scrollingCoordinator->setScrollbarWidth(scrollableArea(), width);
+
+    updateScrollbarsThickness();
 }
 
 void RemoteScrollbarsController::updateScrollbarStyle()

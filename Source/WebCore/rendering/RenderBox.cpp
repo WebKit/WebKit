@@ -344,9 +344,14 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (auto* scrollableArea = layer()->scrollableArea())
             scrollableArea->scrollbarsController().scrollbarLayoutDirectionChanged(shouldPlaceVerticalScrollbarOnLeft() ? UserInterfaceLayoutDirection::RTL : UserInterfaceLayoutDirection::LTR);
     }
+
+    bool isDocElementRenderer = isDocumentElementRenderer();
+
     if (layer() && oldStyle && oldStyle->scrollbarWidth() != newStyle.scrollbarWidth()) {
-        if (auto* scrollableArea = layer()->scrollableArea())
-            scrollableArea->scrollbarsController().scrollbarWidthChanged(newStyle.scrollbarWidth());
+        if (isDocElementRenderer)
+            view().frameView().scrollbarWidthChanged(newStyle.scrollbarWidth());
+        else if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->scrollbarWidthChanged(newStyle.scrollbarWidth());
     }
 
 #if ENABLE(DARK_MODE_CSS)
@@ -366,7 +371,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 
     bool isBodyRenderer = isBody();
-    bool isDocElementRenderer = isDocumentElementRenderer();
 
     if (isDocElementRenderer || isBodyRenderer) {
 #if ENABLE(DARK_MODE_CSS)

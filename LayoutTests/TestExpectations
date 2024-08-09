@@ -7054,14 +7054,6 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-6.htm
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-7.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-8.html [ Skip ]
 
-# These tests rely on dynamic scrollbar styling which isn't implemented yet. webkit.org/b/211219
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-005.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-006.html [ Skip ]
-
 # Imported WPT css-tables which are crashing or fails.
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-auto.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-fixed.html [ ImageOnlyFailure ]

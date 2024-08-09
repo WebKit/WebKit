@@ -724,6 +724,8 @@ public:
 
     WEBCORE_EXPORT void scrollbarStyleDidChange();
 
+    void scrollbarWidthChanged(ScrollbarWidth) override;
+
     FrameIdentifier rootFrameID() const final;
 
 private:
