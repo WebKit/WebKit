@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/text/WTFString.h>
 
 OBJC_CLASS NSError;
@@ -35,7 +36,7 @@ OBJC_CLASS NSError;
 namespace WebKit {
 
 class CoreIPCError {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CoreIPCError);
 public:
     static bool hasValidUserInfo(const RetainPtr<CFDictionaryRef>&);
 

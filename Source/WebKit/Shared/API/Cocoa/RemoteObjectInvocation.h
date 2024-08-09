@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIDictionary.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -38,7 +39,7 @@ namespace WebKit {
 class RemoteObjectInvocation {
 public:
     struct ReplyInfo {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteObjectInvocation);
     public:
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)

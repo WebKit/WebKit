@@ -36,11 +36,14 @@
 #import <WebCore/Model.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TimingFunction.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeTransaction);
 
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&) = default;
 

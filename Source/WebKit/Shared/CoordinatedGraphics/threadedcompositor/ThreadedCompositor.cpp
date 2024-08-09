@@ -33,6 +33,7 @@
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -54,6 +55,8 @@ using namespace WebCore;
 #if !HAVE(DISPLAY_LINK)
 static constexpr unsigned c_defaultRefreshRate = 60000;
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadedCompositor);
 
 #if HAVE(DISPLAY_LINK)
 Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)

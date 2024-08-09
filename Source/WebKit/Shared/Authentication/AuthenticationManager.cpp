@@ -39,6 +39,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -48,6 +49,8 @@ static bool canCoalesceChallenge(const WebCore::AuthenticationChallenge& challen
     // Do not coalesce server trust evaluation requests because ProtectionSpace comparison does not evaluate server trust (e.g. certificate).
     return challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticationManager);
 
 ASCIILiteral AuthenticationManager::supplementName()
 {

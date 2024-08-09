@@ -30,6 +30,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -38,6 +39,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositingRunLoop);
 
 CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
     : m_runLoop(RunLoop::create("org.webkit.ThreadedCompositor"_s, ThreadType::Graphics))

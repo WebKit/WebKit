@@ -35,6 +35,7 @@
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -90,7 +91,7 @@ class WebPaymentCoordinatorProxy
     : public IPC::MessageReceiver
     , private IPC::MessageSender
     , public PaymentAuthorizationPresenter::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorProxy);
 public:
     struct Client {
         virtual ~Client() = default;

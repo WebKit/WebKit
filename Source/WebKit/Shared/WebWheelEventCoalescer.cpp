@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "NativeWebWheelEvent.h"
 #include "WebEventConversion.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -43,6 +44,8 @@ static TextStream& operator<<(TextStream& ts, const NativeWebWheelEvent& nativeW
     return ts;
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebWheelEventCoalescer);
 
 bool WebWheelEventCoalescer::canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
 {

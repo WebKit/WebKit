@@ -59,8 +59,8 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/FastMalloc.h>
 #import <wtf/Noncopyable.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -72,7 +72,7 @@ using namespace WebCore;
 namespace {
 
 class DelegatedContentsFenceFlusher final : public ThreadSafeImageBufferSetFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DelegatedContentsFenceFlusher);
     WTF_MAKE_NONCOPYABLE(DelegatedContentsFenceFlusher);
 public:
     static std::unique_ptr<DelegatedContentsFenceFlusher> create(Ref<PlatformCALayerDelegatedContentsFence> fence)
@@ -93,7 +93,11 @@ private:
     Ref<PlatformCALayerDelegatedContentsFence> m_fence;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DelegatedContentsFenceFlusher);
+
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerBackingStore);
 
 std::unique_ptr<RemoteLayerBackingStore> RemoteLayerBackingStore::createForLayer(PlatformCALayerRemote& layer)
 {
@@ -194,6 +198,8 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << displayListHandle();
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerBackingStoreProperties);
 
 void RemoteLayerBackingStoreProperties::dump(TextStream& ts) const
 {
