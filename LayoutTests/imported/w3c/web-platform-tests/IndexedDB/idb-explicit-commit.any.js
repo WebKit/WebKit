@@ -249,6 +249,7 @@ promise_test(async testCase => {
   db.close();
 }, 'Transactions that explicitly commit and have errors should abort.');
 
+
 promise_test(async testCase => {
   const db = await createDatabase(testCase, db => {
     createBooksStore(testCase, db);

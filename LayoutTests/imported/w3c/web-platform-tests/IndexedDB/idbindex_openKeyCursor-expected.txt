@@ -1,3 +1,0 @@
-
-PASS IDBIndex.openKeyCursor() - throw DataError when using a invalid key
-

@@ -1577,14 +1577,6 @@ webkit.org/b/181752 storage/indexeddb/modern/transaction-scheduler-6.html [ Skip
 webkit.org/b/181752 storage/indexeddb/odd-strings.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idbindex_batchGetAll.tentative.any.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbindex_batchGetAll.tentative.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll.tentative.any.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll.tentative.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.html [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker.html [ Failure ]
 
 # SVG tests that fail:
 svg/as-object/svg-embedded-in-html-in-iframe.html [ Failure ]
@@ -5842,8 +5834,6 @@ webkit.org/b/207771 http/wpt/service-workers/persistent-importScripts.html [ Pas
 webkit.org/b/207774 http/wpt/service-workers/third-party-cookie.html [ Pass Timeout ]
 
 webkit.org/b/207866 imported/w3c/IndexedDB-private-browsing [ Pass Timeout ]
-webkit.org/b/243682 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_putall.tentative.any.html [ Failure ]
-webkit.org/b/243682 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_putall.tentative.any.worker.html [ Failure ]
 
 # skip LFC regression tests on iOS for now.
 fast/layoutformattingcontext/ [ Skip ]

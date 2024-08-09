@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createIndex() - Operate out versionchange throw InvalidStateError
-
