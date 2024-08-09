@@ -28,6 +28,11 @@
 
 #if ENABLE(WKPDFVIEW)
 
+// FIXME (rdar://133488399): Move this to WebKit.xcconfig.
+#if PLATFORM(APPLETV)
+asm(".linker_option \"-framework\", \"PDFKit\"");
+#endif
+
 #import "APIUIClient.h"
 #import "FindClient.h"
 #import "PDFKitSPI.h"
