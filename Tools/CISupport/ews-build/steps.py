@@ -1931,7 +1931,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         pr_json = yield self.get_pr_json(pr_number, repository_url, retry=3)
 
         if pr_json:
-            # Only track acionable labels, since bug category labels may reveal information about security bugs
+            # Only track actionable labels, since bug category labels may reveal information about security bugs
             self.setProperty('github_labels', [
                 data.get('name')
                 for data in pr_json.get('labels', [])
@@ -2013,7 +2013,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
 
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
-    name = 'validate-commiter-and-reviewer'
+    name = 'validate-committer-and-reviewer'
     descriptionDone = ['Validated committer and reviewer']
     VALIDATORS_FOR = {
         # FIXME: Remove manual validators once bot is finished
@@ -2146,24 +2146,25 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return self.is_reviewer(candidate)
         reviewers = list(filter(filter_out_non_reviewer_validators, reviewers))
 
-        if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
-            reviewers = list(filter(self.is_reviewer, reviewers))
-        reviewers = set(reviewers)
-
-        if not reviewers:
-            # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
-            yield self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
-            self.descriptionDone = 'Validated committer, reviewer not found'
-            defer.returnValue(SUCCESS)
-            return
-
+        valid_reviewers = set()
+        invalid_reviewers = set()
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                rc = yield self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
-                defer.returnValue(rc)
-                return
-            yield self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
-        self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
+                invalid_reviewers.add(reviewer)
+                yield self._addToLog('stdio', f'{reviewer} is not a valid reviewer, ignoring their review.\n')
+            else:
+                valid_reviewers.add(reviewer)
+                yield self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
+
+        self.setProperty('valid_reviewers', [self.full_name_from_email(reviewer) for reviewer in valid_reviewers])
+        self.setProperty('invalid_reviewers', [self.full_name_from_email(reviewer) for reviewer in invalid_reviewers])
+
+        if not valid_reviewers:
+            # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
+            yield self._addToLog('stdio', f'Valid reviewer not found. Commit message will be checked for reviewer name in later steps\n')
+            self.descriptionDone = 'Validated committer, valid reviewer not found'
+            defer.returnValue(SUCCESS)
+            return
 
         defer.returnValue(SUCCESS)
 
@@ -6461,7 +6462,7 @@ class AddReviewerMixin(object):
         )
 
     def reviewers(self):
-        reviewers = self.getProperty('reviewers_full_names', [])
+        reviewers = self.getProperty('valid_reviewers', [])
         if len(reviewers) == 1:
             return reviewers[0]
         if reviewers:
@@ -6508,7 +6509,7 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         classification = self.getProperty('classification', [])
         if not isinstance(classification, list):
             classification = []
-        return self.getProperty('reviewers_full_names') and ['Cherry-pick'] != classification
+        return self.getProperty('valid_reviewers') and ['Cherry-pick'] != classification
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -6569,8 +6570,12 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
-        reviewers = self.getProperty('reviewers_full_names', None)
-        reviewer_error_msg = '' if reviewers else ' and no reviewer found'
+        valid_reviewers = self.getProperty('valid_reviewers', [])
+        invalid_reviewers = self.getProperty('invalid_reviewers', [])
+        reviewer_error_msg = '' if valid_reviewers else ' and no valid reviewer found'
+        invalid_msg = ' and {} are not reviewers' if len(invalid_reviewers) > 1 else ' and {} is not a reviewer'
+        if invalid_reviewers:
+            reviewer_error_msg = invalid_msg.format(', '.join(invalid_reviewers))
 
         self.commands = []
         commands = [

@@ -6531,7 +6531,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_success_pr(self):
@@ -6543,7 +6543,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_success_pr_duplicate(self):
@@ -6555,7 +6555,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_success_no_reviewer_patch(self):
@@ -6563,7 +6563,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'reviewer@apple.com')
         self.expectHidden(False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
         return self.runStep()
 
     def test_success_no_reviewer_pr(self):
@@ -6572,7 +6572,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-reviewer'])
         self.expectHidden(False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
         return self.runStep()
 
     def test_failure_load_contributors_patch(self):
@@ -6609,23 +6609,29 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expectOutcome(result=FAILURE, state_string='abc does not have committer permissions')
         return self.runStep()
 
-    def test_failure_invalid_reviewer_patch(self):
+    def test_success_invalid_reviewer_patch(self):
         self.setupStep(ValidateCommitterAndReviewer())
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'reviewer@apple.com')
         self.setProperty('reviewer', 'committer@webkit.org')
         self.expectHidden(False)
-        self.expectOutcome(result=FAILURE, state_string='committer@webkit.org does not have reviewer permissions')
-        return self.runStep()
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('valid_reviewers'), [])
+        self.assertEqual(self.getProperty('invalid_reviewers'), ['WebKit Committer'])
+        return rc
 
-    def test_failure_invalid_reviewer_pr(self):
+    def test_success_invalid_reviewer_pr(self):
         self.setupStep(ValidateCommitterAndReviewer())
         ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-commit-queue']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-reviewer'])
         self.expectHidden(False)
-        self.expectOutcome(result=FAILURE, state_string='webkit-commit-queue does not have reviewer permissions')
-        return self.runStep()
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('valid_reviewers'), [])
+        self.assertEqual(self.getProperty('invalid_reviewers'), ['WebKit Committer'])
+        return rc
 
     def test_load_contributors_from_disk(self):
         contributors = filter(lambda element: element.get('name') == 'Aakash Jain', Contributors().load_from_disk()[0])
@@ -6641,7 +6647,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_success_pr_validators_case(self):
@@ -6654,7 +6660,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_success_pr_validators_not_reviewer(self):
@@ -6665,9 +6671,9 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), None)
+        self.assertEqual(self.getProperty('valid_reviewers'), [])
         return rc
 
     def test_success_no_pr_validators(self):
@@ -6680,7 +6686,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        self.assertEqual(self.getProperty('valid_reviewers'), ['WebKit Reviewer'])
         return rc
 
     def test_failure_pr_validators(self):
@@ -7952,7 +7958,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('valid_reviewers', ['WebKit Reviewer', 'Other Reviewer'])
         self.setProperty('owners', ['webkit-commit-queue'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -7981,7 +7987,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('valid_reviewers', ['WebKit Reviewer', 'Other Reviewer'])
         self.setProperty('owners', ['webkit-commit-queue'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -8005,7 +8011,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', [])
+        self.setProperty('valid_reviewers', [])
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
@@ -8014,7 +8020,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('valid_reviewers', ['WebKit Reviewer', 'Other Reviewer'])
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('classification', ['Cherry-pick'])
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
@@ -8028,7 +8034,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         timeout=60,
                         command=['/bin/sh', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
+                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             + 0, ExpectShell(workdir='wkdir',
                              logEnviron=False,
                              timeout=60,
@@ -8063,7 +8069,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -8096,6 +8102,30 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
+    def test_success_with_invalid(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        self.setProperty('invalid_reviewers', ['Web Kit'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and Web Kit is not a reviewer' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+            + 0
+            + ExpectShell.log('stdio', stdout='    Reviewed by Myles C. Maxfield.\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
     def test_failure_oops(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
@@ -8104,14 +8134,30 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no reviewer found' || test $? -eq 1"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             + 1
-            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!) and no reviewer found\n'),
+            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!) and no valid reviewer found\n'),
         )
-        self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!) and no reviewer found')
+        self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!) and no valid reviewer found')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no reviewer found, blocking PR #1234')
+        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no valid reviewer found, blocking PR #1234')
         return rc
+
+    def test_unoffical_reviewers(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        self.setProperty('invalid_reviewers', ['Web Kit', 'Kit Web'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers' || test $? -eq 1"])
+            + 1
+            + ExpectShell.log('stdio', stdout='Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string="Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers")
+        return self.runStep()
 
     def test_failure_multiple(self):
         self.setupStep(ValidateCommitMessage())
