@@ -1025,12 +1025,6 @@ http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.h
 http/tests/workers/service/service-worker-resource-timing.https.html [ Skip ] # Timeout
 http/wpt/service-workers/navigation-timing.https.html [ Skip ] # Timeout
 
-# testRunner.setOpenPanelFiles doesn't work for http tests
-webkit.org/b/277772 http/tests/misc/form-submit-file-cross-site-redirect.html [ Skip ]
-webkit.org/b/277772 http/tests/misc/form-submit-file-cross-site.html [ Skip ]
-webkit.org/b/277772 http/wpt/service-workers/file-upload.html [ Skip ]
-webkit.org/b/277772 http/wpt/service-workers/form-data-upload.html [ Skip ]
-
 http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 
 # Needs site isolation drawing implementation

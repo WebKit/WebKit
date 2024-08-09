@@ -59,6 +59,11 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if OS(WINDOWS)
+#include <shlwapi.h>
+#include <wininet.h>
+#endif
+
 namespace WTR {
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -1798,6 +1803,25 @@ void TestRunner::setMockGamepadButtonValue(unsigned, unsigned, double)
 
 #endif // ENABLE(GAMEPAD)
 
+static WKRetainPtr<WKURLRef> makeOpenPanelURL(WKURLRef baseURL, char* filePath)
+{
+#if OS(WINDOWS)
+    if (!PathIsRelativeA(filePath)) {
+        char fileURI[INTERNET_MAX_PATH_LENGTH];
+        DWORD fileURILength = INTERNET_MAX_PATH_LENGTH;
+        UrlCreateFromPathA(filePath, fileURI, &fileURILength, 0);
+        return adoptWK(WKURLCreateWithUTF8CString(fileURI));
+    }
+#else
+    WKRetainPtr<WKURLRef> fileURL;
+    if (filePath[0] == '/') {
+        fileURL = adoptWK(WKURLCreateWithUTF8CString("file://"));
+        baseURL = fileURL.get();
+    }
+#endif
+    return adoptWK(WKURLCreateWithBaseURL(baseURL, filePath));
+}
+
 void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
 {
     if (!JSValueIsArray(context, filesValue))
@@ -1816,13 +1840,7 @@ void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
         auto fileBuffer = makeUniqueArray<char>(fileBufferSize);
         JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);
 
-        auto baseURL = m_testURL.get();
-
-        if (fileBuffer[0] == '/')
-            baseURL = WKURLCreateWithUTF8CString("file://");
-
-        WKArrayAppendItem(fileURLs.get(), adoptWK(WKURLCreateWithBaseURL(baseURL, fileBuffer.get())).get());
-
+        WKArrayAppendItem(fileURLs.get(), makeOpenPanelURL(m_testURL.get(), fileBuffer.get()).get());
     }
 
     postPageMessage("SetOpenPanelFileURLs", fileURLs);
