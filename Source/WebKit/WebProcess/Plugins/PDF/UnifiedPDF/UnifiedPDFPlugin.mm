@@ -2660,7 +2660,13 @@ static FloatRect computeMarqueeSelectionRect(const WebCore::FloatPoint& point1, 
 
 void UnifiedPDFPlugin::freezeCursorDuringSelectionDragIfNeeded(IsDraggingSelection isDraggingSelection, IsMarqueeSelection isMarqueeSelection)
 {
-    if (isDraggingSelection == IsDraggingSelection::Yes && !std::exchange(m_selectionTrackingData.cursorIsFrozenForSelectionDrag, true))
+    if (isDraggingSelection == IsDraggingSelection::No)
+        return;
+
+    if (!m_currentSelection || [m_currentSelection isEmpty])
+        return;
+
+    if (!std::exchange(m_selectionTrackingData.cursorIsFrozenForSelectionDrag, true))
         notifyCursorChanged(isMarqueeSelection == IsMarqueeSelection::Yes ? PlatformCursorType::Cross : PlatformCursorType::IBeam);
 }
 
