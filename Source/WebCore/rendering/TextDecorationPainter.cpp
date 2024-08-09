@@ -38,7 +38,7 @@
 namespace WebCore {
 
 /*
- * Draw one cubic Bezier curve and repeat the same pattern long the the decoration's axis.
+ * Draw one cubic Bezier curve and repeat the same pattern along the the decoration's axis.
  * The start point (p1), controlPoint1, controlPoint2 and end point (p2) of the Bezier curve
  * form a diamond shape:
  *
@@ -382,6 +382,12 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
 
 Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet<PaintBehavior> paintBehavior)
 {
+    if (paintBehavior.contains(PaintBehavior::ForceBlackText))
+        return Color::black;
+
+    if (paintBehavior.contains(PaintBehavior::ForceWhiteText))
+        return Color::white;
+
     return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor, paintBehavior);
 }
 
