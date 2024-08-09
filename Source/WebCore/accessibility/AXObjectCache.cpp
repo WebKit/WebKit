@@ -743,8 +743,11 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject& r
     if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
         return AccessibilityMenuList::create(*renderMenuList);
 
-    // standard tables
-    if ((is<RenderTable>(renderer) && !renderer.isAnonymous()) || isAccessibilityTable(node.get()))
+
+    // Some websites put display:table on tbody / thead / tfoot, resulting in a RenderTable being generated.
+    // We don't want to consider these tables (since they are typically wrapped by an actual <table> element),
+    // so only create an AccessibilityTable when !is<HTMLTableSectionElement>.
+    if ((is<RenderTable>(renderer) && !renderer.isAnonymous() && !is<HTMLTableSectionElement>(node.get())) || isAccessibilityTable(node.get()))
         return AccessibilityTable::create(renderer);
     if ((is<RenderTableRow>(renderer) && !renderer.isAnonymous()) || isAccessibilityTableRow(node.get()))
         return AccessibilityTableRow::create(renderer);
