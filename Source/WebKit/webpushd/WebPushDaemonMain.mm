@@ -46,6 +46,14 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/MakeString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPushDaemonMainAdditions.mm>)
+#import <WebKitAdditions/WebPushDaemonMainAdditions.mm>
+#endif
+
+#if !defined(WEB_PUSH_DAEMON_MAIN_ADDITIONS)
+#define WEB_PUSH_DAEMON_MAIN_ADDITIONS
+#endif
+
 using WebKit::Daemon::EncodedMessage;
 using WebPushD::WebPushDaemon;
 
@@ -110,8 +118,9 @@ int WebPushDaemonMain(int argc, char** argv)
 {
     @autoreleasepool {
         WTF::initializeMainThread();
-        
+
         auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-main"));
+        auto peerEntitlementName = entitlementName;
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
         _CFPrefsSetDirectModeEnabled(YES);
@@ -153,7 +162,9 @@ int WebPushDaemonMain(int argc, char** argv)
             }
         }
 
-        WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
+        WEB_PUSH_DAEMON_MAIN_ADDITIONS;
+
+        WebKit::startListeningForMachServiceConnections(machServiceName, peerEntitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
         if (useMockPushService)
             ::WebPushD::WebPushDaemon::singleton().startMockPushService();

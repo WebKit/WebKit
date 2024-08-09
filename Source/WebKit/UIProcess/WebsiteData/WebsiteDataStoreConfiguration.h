@@ -209,8 +209,6 @@ public:
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting() const { return m_allLoadsBlockedByDeviceManagementRestrictionsForTesting; }
     void setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(bool blocked) { m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = blocked; }
 
-    bool webPushDaemonUsesMockBundlesForTesting() const { return m_webPushDaemonUsesMockBundlesForTesting; }
-    void setWebPushDaemonUsesMockBundlesForTesting(bool usesMockBundles) { m_webPushDaemonUsesMockBundlesForTesting = usesMockBundles; }
     WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration() const;
 
     const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
@@ -309,7 +307,6 @@ private:
     URL m_httpsProxy;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
-    bool m_webPushDaemonUsesMockBundlesForTesting { false };
     bool m_allowsCellularAccess { true };
     bool m_legacyTLSEnabled { true };
     bool m_fastServerTrustEvaluationEnabled { false };

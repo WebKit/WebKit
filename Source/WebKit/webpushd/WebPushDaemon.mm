@@ -34,6 +34,7 @@
 #import "FrontBoardServicesSPI.h"
 #import "HandleMessage.h"
 #import "LaunchServicesSPI.h"
+#import "MessageNames.h"
 #import "UserNotificationsSPI.h"
 #import "_WKMockUserNotificationCenter.h"
 
@@ -218,14 +219,6 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
     }
 
-    auto xpcConnection = OSObjectPtr { xpc_dictionary_get_remote_connection(request) };
-    auto pushConnection = m_connectionMap.get(xpcConnection.get());
-    if (!pushConnection) {
-        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Could not find a PushClientConnection mapped to this xpc request");
-        tryCloseRequestConnection(request);
-        return;
-    }
-
     size_t dataSize { 0 };
     auto data = static_cast<const uint8_t*>(xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize));
     if (!data) {
@@ -236,7 +229,32 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
     auto decoder = IPC::Decoder::create({ data, dataSize }, { });
     if (!decoder) {
-        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to create decoder for xpc messasge");
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to create decoder for xpc message");
+        tryCloseRequestConnection(request);
+        return;
+    }
+
+    auto xpcConnection = OSObjectPtr { xpc_dictionary_get_remote_connection(request) };
+    if (!xpcConnection)
+        return;
+
+    if (m_pendingConnectionSet.contains(xpcConnection.get())) {
+        m_pendingConnectionSet.remove(xpcConnection.get());
+
+        RefPtr pushConnection = PushClientConnection::create(xpcConnection.get(), *decoder);
+        if (!pushConnection) {
+            RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Could not initialize PushClientConnection");
+            tryCloseRequestConnection(request);
+            return;
+        }
+
+        m_connectionMap.set(xpcConnection.get(), *pushConnection);
+        return;
+    }
+
+    auto pushConnection = m_connectionMap.get(xpcConnection.get());
+    if (!pushConnection) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Could not find a PushClientConnection mapped to this xpc request");
         tryCloseRequestConnection(request);
         return;
     }
@@ -255,13 +273,19 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
 void WebPushDaemon::connectionAdded(xpc_connection_t connection)
 {
+    RELEASE_ASSERT(!m_pendingConnectionSet.contains(connection));
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
-    m_connectionMap.set(connection, PushClientConnection::create(connection));
+
+    m_pendingConnectionSet.add(connection);
 }
 
 void WebPushDaemon::connectionRemoved(xpc_connection_t connection)
 {
-    RELEASE_ASSERT(m_connectionMap.contains(connection));
+    if (m_pendingConnectionSet.contains(connection)) {
+        m_pendingConnectionSet.remove(connection);
+        return;
+    }
+
     auto clientConnection = m_connectionMap.take(connection);
     clientConnection->connectionClosed();
 }
@@ -465,10 +489,6 @@ void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdenti
 
 void WebPushDaemon::getPendingPushMessage(PushClientConnection& connection, CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& replySender)
 {
-    auto hostAppCodeSigningIdentifier = connection.hostAppCodeSigningIdentifier();
-    if (hostAppCodeSigningIdentifier.isEmpty())
-        return replySender(std::nullopt);
-
     auto it = m_pushMessages.find(connection.subscriptionSetIdentifier());
     if (it == m_pushMessages.end()) {
         WEBPUSHDAEMON_RELEASE_LOG(Push, "No pending push message");
@@ -494,10 +514,6 @@ void WebPushDaemon::getPendingPushMessage(PushClientConnection& connection, Comp
 
 void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
 {
-    auto hostAppCodeSigningIdentifier = connection.hostAppCodeSigningIdentifier();
-    if (hostAppCodeSigningIdentifier.isEmpty())
-        return replySender({ });
-
     auto it = m_pushMessages.find(connection.subscriptionSetIdentifier());
     if (it == m_pushMessages.end()) {
         WEBPUSHDAEMON_RELEASE_LOG(Push, "No pending push messages");

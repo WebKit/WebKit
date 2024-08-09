@@ -318,7 +318,7 @@ RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* se
 
     if (!configuration)
         configuration = defaultWebPushDaemonConfiguration();
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration.value()));
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(configuration.value()));
 
     return WTFMove(connection);
 }
@@ -341,7 +341,7 @@ TEST(WebPushD, BasicCommunication)
 
     // Send a basic message and make sure its reply handler ran.
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(defaultWebPushDaemonConfiguration()));
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(defaultWebPushDaemonConfiguration()));
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
         done = true;
     });
@@ -716,7 +716,6 @@ public:
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
         }];
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
         dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
@@ -2280,7 +2279,6 @@ TEST(WebPushD, DeclarativeParsing)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());
 
@@ -2335,7 +2333,6 @@ TEST(WebPushD, DeclarativeWebPushHandling)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());

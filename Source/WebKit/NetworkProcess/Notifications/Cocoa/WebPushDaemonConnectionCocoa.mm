@@ -44,7 +44,7 @@ void Connection::newConnectionWasInitialized() const
     if (networkSession().sessionID().isEphemeral())
         return;
 
-    sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(m_configuration));
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)

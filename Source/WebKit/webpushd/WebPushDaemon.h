@@ -121,6 +121,7 @@ private:
     void didShowNotification(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
+    HashSet<xpc_connection_t> m_pendingConnectionSet;
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
 
     std::unique_ptr<PushService> m_pushService;
