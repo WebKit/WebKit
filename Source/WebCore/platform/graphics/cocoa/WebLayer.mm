@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
 #import <wtf/SetForScope.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "WKGraphics.h"
 #import "WAKWindow.h"
+#import "WKGraphics.h"
 #import "WebCoreThread.h"
 #endif
 
@@ -159,17 +159,17 @@
     CGPoint aPos = [self position];
 
     NSString* selfString = [NSString stringWithFormat:@"%@<%@ 0x%p> \"%@\" bounds(%.1f, %.1f, %.1f, %.1f) pos(%.1f, %.1f), sublayers=%lu masking=%d",
-            inPrefix,
-            [self class],
-            self,
-            [self name],
-            aBounds.origin.x, aBounds.origin.y, aBounds.size.width, aBounds.size.height, 
-            aPos.x, aPos.y,
-            static_cast<unsigned long>([[self sublayers] count]),
-            [self masksToBounds]];
-    
+        inPrefix,
+        [self class],
+        self,
+        [self name],
+        aBounds.origin.x, aBounds.origin.y, aBounds.size.width, aBounds.size.height,
+        aPos.x, aPos.y,
+        static_cast<unsigned long>([[self sublayers] count]),
+        [self masksToBounds]];
+
     NSMutableString* curDesc = [NSMutableString stringWithString:selfString];
-    
+
     if ([[self sublayers] count] > 0)
         [curDesc appendString:@"\n"];
 
@@ -180,7 +180,7 @@
     while ((curLayer = [sublayersEnum nextObject]))
         [curDesc appendString:[curLayer _descriptionWithPrefix:sublayerPrefix]];
 
-    if ([[self sublayers] count] == 0)
+    if (![[self sublayers] count])
         [curDesc appendString:@"\n"];
 
     if (CALayer *mask = [self mask]) {
@@ -196,6 +196,6 @@
     return [self _descriptionWithPrefix:@""];
 }
 
-@end  // implementation WebLayer(ExtendedDescription)
+@end // implementation WebLayer(ExtendedDescription)
 
 #endif // NDEBUG
