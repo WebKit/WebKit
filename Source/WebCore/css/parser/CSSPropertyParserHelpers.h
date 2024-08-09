@@ -184,6 +184,8 @@ RefPtr<CSSValue> consumeBorderImageWidth(CSSPropertyID, CSSParserTokenRange&);
 bool consumeBorderImageComponents(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
 RefPtr<CSSValue> consumeWebkitBorderImage(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID, CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeMasonryAutoFlow(CSSParserTokenRange&);

@@ -455,6 +455,8 @@ constexpr CSSValueID toCSSValueID(FillBox e)
         return CSSValuePaddingBox;
     case FillBox::ContentBox:
         return CSSValueContentBox;
+    case FillBox::BorderArea:
+        return CSSValueBorderArea;
     case FillBox::Text:
         return CSSValueText;
     case FillBox::NoClip:
@@ -476,6 +478,8 @@ template<> constexpr FillBox fromCSSValueID(CSSValueID valueID)
     case CSSValueContent:
     case CSSValueContentBox:
         return FillBox::ContentBox;
+    case CSSValueBorderArea:
+        return FillBox::BorderArea;
     case CSSValueText:
     case CSSValueWebkitText:
         return FillBox::Text;
