@@ -13866,7 +13866,7 @@ void WebPageProxy::requestCookieConsent(CompletionHandler<void(CookieConsentDeci
     m_uiClient->requestCookieConsent(WTFMove(completion));
 }
 
-#if ENABLE(VIDEO)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(MediaPlayerIdentifier identifier, FloatRect bounds)
 {
     if (!protectedPageClient()->isTextRecognitionInFullscreenVideoEnabled())
@@ -13903,7 +13903,7 @@ void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
     m_isPerformingTextRecognitionInElementFullScreen = false;
     protectedPageClient()->cancelTextRecognitionForVideoInElementFullscreen();
 }
-#endif
+#endif // #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
