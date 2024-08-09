@@ -49,19 +49,17 @@ except ImportError:
 
 version = Version(0, 7, 0)
 
-AutoInstall.register(Package('click', Version(7, 1, 2)))
-AutoInstall.register(Package('flask', Version(1, 1, 2)))
-AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
+AutoInstall.register(Package('blinker', Version(1, 8, 2)))
+AutoInstall.register(Package('click', Version(8, 1, 7)))
+AutoInstall.register(Package('flask', Version(2, 3, 3)))
+AutoInstall.register(Package('hiredis', Version(3, 0, 0), wheel=True))
 AutoInstall.register(Package('itsdangerous', Version(1, 1, 0)))
-AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
-if sys.version_info > (3, 10):
-    AutoInstall.register(Package('lupa', Version(2, 0)))
-else:
-    AutoInstall.register(Package('lupa', Version(1, 13)))
-AutoInstall.register(Package('markupsafe', Version(1, 1, 1)))
+AutoInstall.register(Package('markupsafe', Version(2, 1, 5), pypi_name='MarkupSafe', wheel=True))
+AutoInstall.register(Package('jinja2', Version(3, 1, 4), implicit_deps=['markupsafe']))
+AutoInstall.register(Package('lupa', Version(2, 2), wheel=True))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
-AutoInstall.register(Package('werkzeug', Version(1, 0, 1)))
+AutoInstall.register(Package('werkzeug', Version(3, 0, 3)))
 
 if sys.version_info > (3, 0):
     AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
