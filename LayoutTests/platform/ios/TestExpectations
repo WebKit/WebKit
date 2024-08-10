@@ -7440,3 +7440,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 
 # webkit.org/b/277763 [ iOS ] imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html is a flaky failure
 imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass Failure ]
+
+# webkit.org/b/277896 ([ iOS ] fast/forms/ios/time-picker-value-change.html is a flaky text failure (277896))
+fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
