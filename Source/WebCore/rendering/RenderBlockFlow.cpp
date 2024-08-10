@@ -3892,7 +3892,8 @@ static void setFullRepaintOnParentInlineBoxLayerIfNeeded(const RenderText& rende
     // no repaint happens unless content size changes (or full repaint bit is set on the layer)
     // and (#3) only works when the block container and the text content share the same layer.
     // Here we mark the parent inline box's layer dirty to trigger repaint at (#2).
-    ASSERT(renderer.needsLayout());
+    if (!renderer.needsLayout())
+        return;
     CheckedPtr parent = renderer.parent();
     if (!parent) {
         ASSERT_NOT_REACHED();
