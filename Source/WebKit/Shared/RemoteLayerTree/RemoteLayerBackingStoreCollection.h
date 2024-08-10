@@ -29,6 +29,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OptionSet.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
@@ -61,8 +62,8 @@ enum class BufferInSetType : uint8_t;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStoreCollection);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerBackingStoreCollection();

@@ -33,8 +33,8 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Atomics.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if !HAVE(DISPLAY_LINK)
@@ -48,8 +48,8 @@ class Damage;
 namespace WebKit {
 
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadedCompositor);
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class DamagePropagation : uint8_t {
         None,

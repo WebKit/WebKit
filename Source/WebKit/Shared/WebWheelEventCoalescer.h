@@ -27,12 +27,12 @@
 
 #include "NativeWebWheelEvent.h"
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebWheelEventCoalescer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebWheelEventCoalescer);
 public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
     bool shouldDispatchEvent(const NativeWebWheelEvent&);

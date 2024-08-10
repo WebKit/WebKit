@@ -27,6 +27,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemData.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -38,7 +39,7 @@ typedef struct _GAction GAction;
 namespace WebKit {
 
 class WebContextMenuItemGlib final : public WebContextMenuItemData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebContextMenuItemGlib);
 public:
     WebContextMenuItemGlib(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled = true, bool checked = false);
     WebContextMenuItemGlib(const WebContextMenuItemData&);
