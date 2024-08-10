@@ -148,6 +148,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSDOMWindowCustom.h"
 #include "JSLazyEventListener.h"
+#include "JSViewTransitionUpdateCallback.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
@@ -257,6 +258,7 @@
 #include "SleepDisabler.h"
 #include "SocketProvider.h"
 #include "SpeechRecognition.h"
+#include "StartViewTransitionOptions.h"
 #include "StaticNodeList.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
@@ -10776,18 +10778,35 @@ void Document::flushDeferredRenderingIsSuppressedForViewTransitionChanges()
     }
 }
 
-RefPtr<ViewTransition> Document::startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& updateCallback)
+RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions)
 {
     if (!globalObject())
         return nullptr;
 
-    Ref viewTransition = ViewTransition::createSamePage(*this, WTFMove(updateCallback));
+    RefPtr<ViewTransitionUpdateCallback> updateCallback = nullptr;
+    Vector<AtomString> activeTypes { };
+
+    if (callbackOptions) {
+        WTF::switchOn(*callbackOptions, [&](RefPtr<JSViewTransitionUpdateCallback>& callback) {
+            updateCallback = WTFMove(callback);
+        }, [&](StartViewTransitionOptions& options) {
+            updateCallback = WTFMove(options.update);
+
+            if (options.types) {
+                ASSERT(settings().viewTransitionTypesEnabled());
+                activeTypes = WTFMove(*options.types);
+            }
+        });
+    }
+
+    Ref viewTransition = ViewTransition::createSamePage(*this, WTFMove(updateCallback), WTFMove(activeTypes));
 
     if (RefPtr activeViewTransition = m_activeViewTransition)
         activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });
 
     setActiveViewTransition(WTFMove(viewTransition));
     scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
+
     return m_activeViewTransition;
 }
 

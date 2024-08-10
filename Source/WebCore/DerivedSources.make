@@ -1175,6 +1175,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ShadowRootMode.idl \
     $(WebCore)/dom/SlotAssignmentMode.idl \
     $(WebCore)/dom/Slotable.idl \
+    $(WebCore)/dom/StartViewTransitionOptions.idl \
     $(WebCore)/dom/StaticRange.idl \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Subscriber.idl \
@@ -1202,6 +1203,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/ValidityStateFlags.idl \
     $(WebCore)/dom/ViewTransition.idl \
+    $(WebCore)/dom/ViewTransitionTypeSet.idl \
+    $(WebCore)/dom/ViewTransition+Types.idl \
     $(WebCore)/dom/ViewTransitionUpdateCallback.idl \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/WheelEvent.idl \

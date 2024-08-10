@@ -1063,6 +1063,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/SimulatedClickOptions.h
     dom/SlotAssignmentMode.h
     dom/SpaceSplitString.h
+    dom/StartViewTransitionOptions.h
     dom/StaticRange.h
     dom/StyledElement.h
     dom/TaskSource.h
@@ -1090,6 +1091,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/UserTypingGestureIndicator.h
     dom/ValidityStateFlags.h
     dom/ViewTransition.h
+    dom/ViewTransitionTypeSet.h
     dom/VisibilityAdjustment.h
     dom/ViewTransitionUpdateCallback.h
     dom/ViewportArguments.h

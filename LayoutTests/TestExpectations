@@ -7551,7 +7551,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-m
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-late-mutation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-matches.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable-no-document-element-crashtest.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-removed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved-mutation.html [ Skip ]

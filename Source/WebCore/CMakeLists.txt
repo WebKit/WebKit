@@ -1148,6 +1148,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ShadowRootMode.idl
     dom/SlotAssignmentMode.idl
     dom/Slotable.idl
+    dom/StartViewTransitionOptions.idl
     dom/StaticRange.idl
     dom/StringCallback.idl
     dom/SubscribeOptions.idl
@@ -1177,7 +1178,9 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/UIEvent.idl
     dom/UIEventInit.idl
     dom/ValidityStateFlags.idl
+    dom/ViewTransition+Types.idl
     dom/ViewTransition.idl
+    dom/ViewTransitionTypeSet.idl
     dom/ViewTransitionUpdateCallback.idl
     dom/VisibilityState.idl
     dom/WheelEvent.idl

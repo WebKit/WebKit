@@ -1,3 +1,3 @@
 
-FAIL View transitions: types from rule are reflected in pagereveal and pageswap promise_test: Unhandled rejection with value: object "TypeError: Spread syntax requires ...iterable not be null or undefined"
+FAIL View transitions: types from rule are reflected in pagereveal and pageswap assert_array_equals: lengths differ, expected array ["check"] length 1, got [] length 0
 
