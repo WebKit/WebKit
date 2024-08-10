@@ -1848,7 +1848,6 @@ layout/integration/inline/LayoutIntegrationPagination.cpp
 layout/integration/inline/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
-layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutBoxGeometry.cpp
 layout/layouttree/LayoutElementBox.cpp
