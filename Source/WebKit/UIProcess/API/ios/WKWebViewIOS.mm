@@ -1246,7 +1246,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
 
         // Overlay regions are positioned relative to the viewport of the scrollview,
         // not the frame (external) nor the bounds (origin moves while scrolling).
-        CGRect rect = [overlayView.superview convertRect:overlayView.frame toView:scrollView.superview];
+        CGRect rect = [overlayView convertRect:node->eventRegion().region().bounds() toView:scrollView.superview];
         CGRect offsetRect = CGRectOffset(rect, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
         CGRect viewport = CGRectOffset(scrollView.frame, -scrollView.frame.origin.x, -scrollView.frame.origin.y);
         CGRect snappedRect = snapRectToScrollViewEdges(offsetRect, viewport);
