@@ -3883,6 +3883,26 @@ static bool hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const 
     return true;
 }
 
+static void setFullRepaintOnParentInlineBoxLayerIfNeeded(const RenderText& renderer)
+{
+    // Repaints (on self) are normally issued either during layout using LayoutRepainter inside ::layout() functions (#1)
+    // or after layout, while recursing the layer tree (#2).
+    // Additionally, repaint at the block level (#3) takes care of regular in-flow content.
+    // However in case of text content, we don't have (#1), (#2) is primarily a geometry diff type of repaint meaning
+    // no repaint happens unless content size changes (or full repaint bit is set on the layer)
+    // and (#3) only works when the block container and the text content share the same layer.
+    // Here we mark the parent inline box's layer dirty to trigger repaint at (#2).
+    ASSERT(renderer.needsLayout());
+    CheckedPtr parent = renderer.parent();
+    if (!parent) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (!parent->isInline() || !parent->hasLayer())
+        return;
+    downcast<RenderLayerModelObject>(*parent).checkedLayer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+}
+
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
     auto& layoutState = *view().frameView().layoutContext().layoutState();
@@ -3921,6 +3941,9 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
         if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty())
             continue;
+
+        if (auto* renderText = dynamicDowncast<RenderText>(renderer))
+            setFullRepaintOnParentInlineBoxLayerIfNeeded(*renderText);
 
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
         if (shouldRunInFlowLayout || renderer.isFloating())

@@ -314,11 +314,8 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
 void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& container, RenderObject&)
 {
     ASSERT(is<RenderInline>(container) || is<RenderBlockFlow>(container));
-    if (!container.isSVGRenderer()) {
-        if (container.isInline() && container.hasLayer())
-            container.checkedLayer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+    if (!container.isSVGRenderer())
         return;
-    }
 
     if (!container.parent() || (is<RenderBlockFlow>(container) && container.selfNeedsLayout()))
         return;
