@@ -32,6 +32,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class CaptureDevice;
@@ -40,7 +41,7 @@ class CaptureDevice;
 namespace WebKit {
 
 class SpeechRecognitionRealtimeMediaSourceManager final : public IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionRealtimeMediaSourceManager);
 public:
     explicit SpeechRecognitionRealtimeMediaSourceManager(Ref<IPC::Connection>&&);
     ~SpeechRecognitionRealtimeMediaSourceManager();

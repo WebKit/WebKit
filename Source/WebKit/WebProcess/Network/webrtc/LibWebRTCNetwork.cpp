@@ -31,8 +31,11 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCNetwork);
 
 LibWebRTCNetwork::~LibWebRTCNetwork()
 {

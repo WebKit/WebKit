@@ -30,8 +30,11 @@
 
 #include "RemoteBindGroupLayoutMessages.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBindGroupLayoutProxy);
 
 RemoteBindGroupLayoutProxy::RemoteBindGroupLayoutProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)

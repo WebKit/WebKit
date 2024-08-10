@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -47,7 +48,7 @@ class RemoteAudioSession final
     , public GPUProcessConnection::Client
     , IPC::MessageReceiver
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
     static UniqueRef<RemoteAudioSession> create();
     ~RemoteAudioSession();

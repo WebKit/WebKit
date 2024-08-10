@@ -32,8 +32,11 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WrappedCryptoKey.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCryptoClient);
 
 std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8_t>& key) const
 {

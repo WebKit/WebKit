@@ -30,8 +30,11 @@
 #include "WebPage.h"
 #include "WebPageInspectorTargetFrontendChannel.h"
 #include "WebPageProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorTargetController);
 
 WebPageInspectorTargetController::WebPageInspectorTargetController(WebPage& page)
     : m_page(page)

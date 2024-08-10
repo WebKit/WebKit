@@ -34,13 +34,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class MediaKeySystemPermissionRequestManager : private WebCore::MediaCanStartListener {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaKeySystemPermissionRequestManager);
 public:
     explicit MediaKeySystemPermissionRequestManager(WebPage&);
     ~MediaKeySystemPermissionRequestManager() = default;

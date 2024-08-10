@@ -31,10 +31,13 @@
 #include "WebPage.h"
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe-egl.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedSurfaceLibWPE);
 
 std::unique_ptr<AcceleratedSurfaceLibWPE> AcceleratedSurfaceLibWPE::create(WebPage& webPage, Client& client)
 {

@@ -30,13 +30,14 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPURenderBundle.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteRenderBundleProxy final : public WebCore::WebGPU::RenderBundle {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRenderBundleProxy);
 public:
     static Ref<RemoteRenderBundleProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

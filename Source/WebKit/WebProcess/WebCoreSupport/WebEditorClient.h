@@ -28,6 +28,7 @@
 #include "WebPage.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ namespace WebKit {
 class WebPage;
 
 class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebEditorClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEditorClient);
 public:
     WebEditorClient(WebPage* page)

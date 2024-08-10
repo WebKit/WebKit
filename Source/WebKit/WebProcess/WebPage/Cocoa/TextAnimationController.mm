@@ -40,6 +40,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/WritingToolsTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -50,6 +51,8 @@ static constexpr auto defaultTextAnimationControllerTextIteratorBehaviors = WebC
     WebCore::TextIteratorBehavior::EmitsObjectReplacementCharactersForAttachments
 #endif
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAnimationController);
 
 TextAnimationController::TextAnimationController(WebPage& webPage)
     : m_webPage(webPage)

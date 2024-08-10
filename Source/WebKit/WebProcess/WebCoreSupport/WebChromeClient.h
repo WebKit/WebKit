@@ -28,6 +28,7 @@
 
 #include <WebCore/ChromeClient.h>
 #include <WebCore/HTMLVideoElement.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class WebFrame;
 class WebPage;
 
 class WebChromeClient final : public WebCore::ChromeClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebChromeClient);
 public:
     WebChromeClient(WebPage&);
     ~WebChromeClient();

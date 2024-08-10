@@ -29,6 +29,7 @@
 
 #include "ModelProcessConnection.h"
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ModelPlayerClient;
@@ -42,7 +43,7 @@ class ModelProcessModelPlayer;
 class ModelProcessModelPlayerManager
     : public ModelProcessConnection::Client
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelProcessModelPlayerManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerManager);
 public:
     static Ref<ModelProcessModelPlayerManager> create();
     ~ModelProcessModelPlayerManager();

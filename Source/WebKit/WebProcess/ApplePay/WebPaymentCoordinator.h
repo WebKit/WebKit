@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ class NetworkProcessConnection;
 class WebPage;
 
 class WebPaymentCoordinator final : public WebCore::PaymentCoordinatorClient, private IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinator);
 public:
     friend class NetworkProcessConnection;
     explicit WebPaymentCoordinator(WebPage&);

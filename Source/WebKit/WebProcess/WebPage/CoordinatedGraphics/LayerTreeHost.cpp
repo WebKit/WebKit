@@ -44,6 +44,7 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ThreadedScrollingTree.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -51,6 +52,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerTreeHost);
 
 #if HAVE(DISPLAY_LINK)
 LayerTreeHost::LayerTreeHost(WebPage& webPage)

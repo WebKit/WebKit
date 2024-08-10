@@ -35,6 +35,7 @@
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class CAAudioStreamDescription;
@@ -47,7 +48,7 @@ class RemoteRealtimeVideoSource;
 class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaCaptureManager);
 public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();

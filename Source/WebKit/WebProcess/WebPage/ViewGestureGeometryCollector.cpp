@@ -43,6 +43,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SmartMagnificationControllerMessages.h"
@@ -56,6 +57,8 @@ using namespace WebCore;
 #if PLATFORM(IOS_FAMILY)
 static const double minimumScaleDifferenceForZooming = 0.3;
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewGestureGeometryCollector);
 
 ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)

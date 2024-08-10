@@ -31,6 +31,7 @@
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -56,7 +57,7 @@ private:
 };
 
 class RemoteVideoDecoder : public WebCore::VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoDecoder);
 public:
     RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&, uint16_t width, uint16_t height);
     ~RemoteVideoDecoder();
@@ -96,7 +97,7 @@ private:
 };
 
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoEncoder);
 public:
     RemoteVideoEncoder(LibWebRTCCodecs::Encoder&, Ref<RemoteVideoEncoderCallbacks>&&);
     ~RemoteVideoEncoder();
@@ -111,6 +112,8 @@ private:
     LibWebRTCCodecs::Encoder& m_internalEncoder;
     Ref<RemoteVideoEncoderCallbacks> m_callbacks;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoCodecFactory);
 
 RemoteVideoCodecFactory::RemoteVideoCodecFactory(WebProcess& process)
 {
@@ -198,6 +201,8 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
     });
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoDecoder);
+
 RemoteVideoDecoder::RemoteVideoDecoder(LibWebRTCCodecs::Decoder& decoder, Ref<RemoteVideoDecoderCallbacks>&& callbacks, uint16_t width, uint16_t height)
     : m_internalDecoder(decoder)
     , m_callbacks(WTFMove(callbacks))
@@ -266,6 +271,8 @@ void RemoteVideoDecoderCallbacks::notifyDecodingResult(RefPtr<WebCore::VideoFram
         protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { frame.releaseNonNull(), static_cast<int64_t>(timestamp), duration });
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoEncoder);
 
 RemoteVideoEncoder::RemoteVideoEncoder(LibWebRTCCodecs::Encoder& encoder, Ref<RemoteVideoEncoderCallbacks>&& callbacks)
     : m_internalEncoder(encoder)

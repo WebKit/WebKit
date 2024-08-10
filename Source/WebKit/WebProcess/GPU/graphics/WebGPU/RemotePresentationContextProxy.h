@@ -31,6 +31,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPUPresentationContext.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class NativeImage;
@@ -42,7 +43,7 @@ class ConvertToBackingContext;
 class RemoteTextureProxy;
 
 class RemotePresentationContextProxy final : public WebCore::WebGPU::PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemotePresentationContextProxy);
 public:
     static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

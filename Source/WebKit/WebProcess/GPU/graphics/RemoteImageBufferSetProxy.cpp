@@ -32,6 +32,7 @@
 #include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GPU_PROCESS)
 
@@ -40,7 +41,7 @@ using namespace WebCore;
 
 class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteImageBufferSetProxyFlushFence> {
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlushFence);
 public:
     static Ref<RemoteImageBufferSetProxyFlushFence> create(RenderingUpdateID renderingUpdateID)
     {
@@ -86,7 +87,7 @@ private:
 namespace {
 
 class RemoteImageBufferSetProxyFlusher final : public ThreadSafeImageBufferSetFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteImageBufferSetProxyFlusher);
 public:
     RemoteImageBufferSetProxyFlusher(RemoteImageBufferSetIdentifier identifier, Ref<RemoteImageBufferSetProxyFlushFence> flushState, unsigned generation)
         : m_identifier(identifier)

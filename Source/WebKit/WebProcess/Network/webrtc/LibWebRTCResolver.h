@@ -51,7 +51,7 @@ namespace WebKit {
 class LibWebRTCSocketFactory;
 
 class LibWebRTCResolver final : public LibWebRTCDnsResolverFactory::Resolver, private webrtc::AsyncDnsResolverResult, public CanMakeWeakPtr<LibWebRTCResolver>, public Identified<LibWebRTCResolverIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCResolver);
 public:
     LibWebRTCResolver() = default;
     ~LibWebRTCResolver();

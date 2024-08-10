@@ -69,7 +69,7 @@ struct ReplacedRangeAndString {
 };
 
 class TextAnimationController final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextAnimationController);
     WTF_MAKE_NONCOPYABLE(TextAnimationController);
 
 public:

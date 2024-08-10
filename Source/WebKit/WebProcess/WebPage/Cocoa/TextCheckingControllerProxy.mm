@@ -43,6 +43,7 @@
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
+#import <wtf/TZoneMallocInlines.h>
 
 // FIXME: Remove this after rdar://problem/48914153 is resolved.
 #if PLATFORM(MACCATALYST)
@@ -54,6 +55,8 @@ typedef NS_ENUM(NSInteger, NSSpellingState) {
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCheckingControllerProxy);
 
 TextCheckingControllerProxy::TextCheckingControllerProxy(WebPage& page)
     : m_page(page)

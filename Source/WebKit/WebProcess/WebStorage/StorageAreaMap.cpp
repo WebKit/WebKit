@@ -46,9 +46,12 @@
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageType.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageAreaMap);
 
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
     : m_namespace(storageNamespace)

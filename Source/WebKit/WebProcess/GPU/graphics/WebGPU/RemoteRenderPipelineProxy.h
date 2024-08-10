@@ -31,6 +31,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPURenderPipeline.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
@@ -38,7 +39,7 @@ class ConvertToBackingContext;
 class RemoteBindGroupLayoutProxy;
 
 class RemoteRenderPipelineProxy final : public WebCore::WebGPU::RenderPipeline {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRenderPipelineProxy);
 public:
     static Ref<RemoteRenderPipelineProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

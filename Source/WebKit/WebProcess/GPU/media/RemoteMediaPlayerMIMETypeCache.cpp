@@ -31,10 +31,13 @@
 #include "Logging.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaPlayerMIMETypeCache);
 
 RemoteMediaPlayerMIMETypeCache::RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager& manager, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier)
     : m_manager(manager)

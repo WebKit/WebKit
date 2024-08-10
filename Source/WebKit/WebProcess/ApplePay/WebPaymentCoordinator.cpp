@@ -43,9 +43,12 @@
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PaymentCoordinator.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinator);
 
 WebPaymentCoordinator::WebPaymentCoordinator(WebPage& webPage)
     : m_webPage(webPage)

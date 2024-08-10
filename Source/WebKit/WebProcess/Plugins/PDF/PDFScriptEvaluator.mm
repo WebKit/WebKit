@@ -31,6 +31,7 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -135,6 +136,8 @@ static void jsPDFDocFinalize(JSObjectRef object)
     PDFScriptEvaluator* evaluator = static_cast<PDFScriptEvaluator*>(JSObjectGetPrivate(object));
     evaluator->deref();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFScriptEvaluator);
 
 JSClassRef PDFScriptEvaluator::jsPDFDocClass()
 {

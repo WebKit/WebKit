@@ -29,6 +29,7 @@
 
 #include "SampleBufferDisplayLayer.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class SampleBufferDisplayLayerManager;
@@ -42,7 +43,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SampleBufferD
 namespace WebKit {
 
 class SampleBufferDisplayLayerManager : public CanMakeWeakPtr<SampleBufferDisplayLayerManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SampleBufferDisplayLayerManager);
 public:
     SampleBufferDisplayLayerManager() = default;
     ~SampleBufferDisplayLayerManager() = default;

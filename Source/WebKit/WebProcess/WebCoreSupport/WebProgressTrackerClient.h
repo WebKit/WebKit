@@ -27,6 +27,7 @@
 #define WebProgressTrackerClient_h
 
 #include <WebCore/ProgressTrackerClient.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -34,7 +35,7 @@ namespace WebKit {
 class WebPage;
 
 class WebProgressTrackerClient : public WebCore::ProgressTrackerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebProgressTrackerClient);
 public:
     explicit WebProgressTrackerClient(WebPage&);
     

@@ -42,6 +42,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MediaPlayerPrivateMediaStreamAVFObjC.h>
@@ -102,6 +103,8 @@ private:
     MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
     RemoteMediaPlayerManager& m_manager;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaPlayerManager);
 
 Ref<RemoteMediaPlayerManager> RemoteMediaPlayerManager::create()
 {

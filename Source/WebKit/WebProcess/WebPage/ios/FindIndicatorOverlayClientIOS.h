@@ -30,11 +30,12 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/PageOverlay.h>
 #import <WebCore/TextIndicator.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class FindIndicatorOverlayClientIOS : public WebCore::PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FindIndicatorOverlayClientIOS);
 public:
     FindIndicatorOverlayClientIOS(WebCore::LocalFrame& frame, WebCore::TextIndicator* textIndicator)
         : m_frame(frame)

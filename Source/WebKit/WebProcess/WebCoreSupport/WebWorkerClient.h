@@ -29,6 +29,7 @@
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WorkerClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class Page;
@@ -43,7 +44,7 @@ namespace WebKit {
 class WebPage;
 
 class WebWorkerClient : public WebCore::WorkerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebWorkerClient);
 public:
     ~WebWorkerClient();
     // Constructed on the main thread, and then transferred to the

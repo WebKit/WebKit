@@ -38,9 +38,12 @@
 #include <WebCore/LibWebRTCUtils.h>
 #include <WebCore/Page.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCNetworkManager);
 
 LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
 {

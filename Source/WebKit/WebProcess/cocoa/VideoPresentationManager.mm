@@ -60,6 +60,7 @@
 #import <mach/mach_port.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -87,6 +88,8 @@ static FloatRect inlineVideoFrame(HTMLVideoElement& element)
 }
 
 #pragma mark - VideoPresentationInterfaceContext
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceContext);
 
 VideoPresentationInterfaceContext::VideoPresentationInterfaceContext(VideoPresentationManager& manager, PlaybackSessionContextIdentifier contextId)
     : m_manager(manager)

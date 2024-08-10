@@ -47,6 +47,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/VectorCocoa.h>
 #include <wtf/text/WTFString.h>
@@ -56,6 +57,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDataDetectorOverlayController);
 
 PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlugin& plugin)
     : m_plugin(plugin)

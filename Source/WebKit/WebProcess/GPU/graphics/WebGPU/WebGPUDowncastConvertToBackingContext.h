@@ -28,11 +28,12 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DowncastConvertToBackingContext);
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {

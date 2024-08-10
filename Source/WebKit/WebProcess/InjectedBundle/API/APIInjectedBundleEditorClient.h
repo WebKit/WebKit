@@ -28,6 +28,7 @@
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ namespace API {
 namespace InjectedBundle {
 
 class EditorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EditorClient);
 public:
     virtual ~EditorClient() { }
 

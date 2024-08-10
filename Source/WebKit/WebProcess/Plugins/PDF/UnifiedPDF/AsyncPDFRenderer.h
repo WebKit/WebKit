@@ -35,6 +35,7 @@
 #include <WebCore/TiledBacking.h>
 #include <wtf/HashMap.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -93,7 +94,7 @@ using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
 
 class AsyncPDFRenderer final : public WebCore::TiledBackingClient,
     public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AsyncPDFRenderer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AsyncPDFRenderer);
     WTF_MAKE_NONCOPYABLE(AsyncPDFRenderer);
 public:
     static Ref<AsyncPDFRenderer> create(PDFPresentationController&);

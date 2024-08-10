@@ -35,6 +35,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaKeyStorageManager);
+
 void WebMediaKeyStorageManager::setWebsiteDataStore(const WebProcessDataStoreParameters& parameters)
 {
     m_mediaKeyStorageDirectory = parameters.mediaKeyStorageDirectory;
