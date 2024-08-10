@@ -85,6 +85,7 @@ public:
     }
 
     void advanceUntilNonWhitespace();
+    void advanceUntilNewlineOrNonWhitespace();
 
     unsigned length() const { return m_stringLength; }
     unsigned offset() const { return std::min(m_offset, m_stringLength); }

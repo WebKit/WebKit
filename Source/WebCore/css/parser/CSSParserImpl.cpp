@@ -376,7 +376,8 @@ bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleList ruleList
     while (!range.atEnd()) {
         RefPtr<StyleRuleBase> rule;
         switch (range.peek().type()) {
-        case WhitespaceToken:
+        case NonNewlineWhitespaceToken:
+        case NewlineToken:
             range.consumeWhitespace();
             continue;
         case AtKeywordToken:
@@ -840,7 +841,8 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
     Vector<FontFeatureValuesTag> tags;
     while (!range.atEnd()) {
         switch (range.peek().type()) {
-        case WhitespaceToken:
+        case NonNewlineWhitespaceToken:
+        case NewlineToken:
         case SemicolonToken:
             range.consume();
             break;
@@ -1430,7 +1432,8 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
             consumeUntilSemicolon();
         };
         switch (range.peek().type()) {
-        case WhitespaceToken:
+        case NonNewlineWhitespaceToken:
+        case NewlineToken:
         case SemicolonToken:
             range.consume();
             break;

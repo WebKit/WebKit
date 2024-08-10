@@ -25,10 +25,6 @@
 
 namespace WebCore {
 
-// FIXME: This should not start with "k".
-// FIXME: This is a shared tokenizer concept, not a SegmentedString concept, but this is the only common header for now.
-constexpr LChar kEndOfFileMarker = 0;
-
 class SegmentedString {
 public:
     SegmentedString() = default;

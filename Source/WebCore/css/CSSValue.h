@@ -69,7 +69,7 @@ public:
     unsigned refCount() const { return m_refCount / refCountIncrement; }
     bool hasAtLeastOneRef() const { return m_refCount; }
 
-    String cssText() const;
+    WEBCORE_EXPORT String cssText() const;
 
     bool isAnchorValue() const { return m_classType == AnchorClass; }
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }

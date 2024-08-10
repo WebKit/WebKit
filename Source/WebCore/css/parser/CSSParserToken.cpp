@@ -31,9 +31,7 @@
 #include "CSSParserToken.h"
 
 #include "CSSMarkup.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
-#include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -358,10 +356,10 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, BlockType blockType)
 {
 }
 
-CSSParserToken::CSSParserToken(unsigned whitespaceCount)
-    : m_type(WhitespaceToken)
+CSSParserToken::CSSParserToken(unsigned nonNewlineWhitespaceCount)
+    : m_type(NonNewlineWhitespaceToken)
     , m_blockType(NotBlock)
-    , m_whitespaceCount(whitespaceCount)
+    , m_whitespaceCount(nonNewlineWhitespaceCount)
 {
 }
 
@@ -532,6 +530,8 @@ bool CSSParserToken::hasStringBacking() const
     case LeftBraceToken:
     case LeftBracketToken:
     case LeftParenthesisToken:
+    case NewlineToken:
+    case NonNewlineWhitespaceToken:
     case PrefixMatchToken:
     case RightBraceToken:
     case RightBracketToken:
@@ -539,7 +539,6 @@ bool CSSParserToken::hasStringBacking() const
     case SemicolonToken:
     case SubstringMatchToken:
     case SuffixMatchToken:
-    case WhitespaceToken:
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -596,7 +595,7 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case NumberToken:
     case PercentageToken:
         return originalText() == other.originalText();
-    case WhitespaceToken:
+    case NonNewlineWhitespaceToken:
         return m_whitespaceCount == other.m_whitespaceCount;
     default:
         return true;
@@ -751,12 +750,15 @@ void CSSParserToken::serialize(StringBuilder& builder, const CSSParserToken* nex
     case BadUrlToken:
         builder.append("url(()"_s);
         break;
-    case WhitespaceToken: {
+    case NonNewlineWhitespaceToken: {
         auto count = mode == SerializationMode::CustomProperty ? m_whitespaceCount : 1;
         for (auto i = 0u; i < count; ++i)
             builder.append(' ');
         break;
     }
+    case NewlineToken:
+        builder.append(mode == SerializationMode::CustomProperty ? '\n' : ' ');
+        break;
     case ColonToken:
         builder.append(':');
         break;

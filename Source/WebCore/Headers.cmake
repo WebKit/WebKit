@@ -906,6 +906,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.h
     css/parser/CSSSelectorParser.h
     css/parser/CSSSelectorParserContext.h
+    css/parser/CSSTokenizer.h
+    css/parser/CSSTokenizerInputStream.h
     css/parser/MutableCSSSelector.h
 
     css/query/ContainerQuery.h

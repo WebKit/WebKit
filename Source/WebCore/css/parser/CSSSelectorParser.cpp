@@ -923,7 +923,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
 CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
 {
     auto fallbackResult = CSSSelector::Relation::Subselector;
-    while (range.peek().type() == WhitespaceToken) {
+    while (CSSTokenizer::isWhitespace(range.peek().type())) {
         range.consume();
         fallbackResult = CSSSelector::Relation::DescendantSpace;
     }

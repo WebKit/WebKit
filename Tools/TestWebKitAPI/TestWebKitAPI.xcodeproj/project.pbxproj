@@ -202,6 +202,7 @@
 		313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */; };
 		31727A5329F7518C00A7FB0F /* system-preview.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A4A29F7338C00A7FB0F /* system-preview.html */; };
 		31727A5429F7519400A7FB0F /* UnitBox.usdz in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A5229F733D300A7FB0F /* UnitBox.usdz */; };
+		318210CE2C59AEFF00C334B4 /* CSSTokenizerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318210CD2C59AEFF00C334B4 /* CSSTokenizerTests.cpp */; };
 		31903C912765077400363472 /* color-scheme.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31903C902764FE1400363472 /* color-scheme.html */; };
 		31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31B76E4423299BA3007FED2C /* system-preview-trigger.html */; };
 		31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31E9BDA0247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm */; };
@@ -2328,6 +2329,7 @@
 		313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SystemPreviewBlobNaming.html; sourceTree = "<group>"; };
 		31727A4A29F7338C00A7FB0F /* system-preview.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview.html"; sourceTree = "<group>"; };
 		31727A5229F733D300A7FB0F /* UnitBox.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = UnitBox.usdz; sourceTree = "<group>"; };
+		318210CD2C59AEFF00C334B4 /* CSSTokenizerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTokenizerTests.cpp; sourceTree = "<group>"; };
 		31903C902764FE1400363472 /* color-scheme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-scheme.html"; sourceTree = "<group>"; };
 		31B76E4223298E2B007FED2C /* SystemPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreview.mm; sourceTree = "<group>"; };
 		31B76E4423299BA3007FED2C /* system-preview-trigger.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview-trigger.html"; sourceTree = "<group>"; };
@@ -4492,6 +4494,7 @@
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
 				44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */,
 				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
+				318210CD2C59AEFF00C334B4 /* CSSTokenizerTests.cpp */,
 				5758597E23A2527A00C74572 /* CtapPinTest.cpp */,
 				572B403321769A88000AD43E /* CtapRequestTest.cpp */,
 				572B404321781B42000AD43E /* CtapResponseTest.cpp */,
@@ -6601,6 +6604,7 @@
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
 				7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,
+				318210CE2C59AEFF00C334B4 /* CSSTokenizerTests.cpp in Sources */,
 				5758597F23A2527A00C74572 /* CtapPinTest.cpp in Sources */,
 				572B403421769A88000AD43E /* CtapRequestTest.cpp in Sources */,
 				572B404421781B43000AD43E /* CtapResponseTest.cpp in Sources */,
