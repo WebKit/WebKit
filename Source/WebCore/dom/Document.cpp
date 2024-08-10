@@ -2575,15 +2575,20 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
+        // FIXME: Be smarter about invalidation for anchor positioning.
+        // This simply repeats the entire anchor-positioning process.
+        styleScope().clearAnchorPositioningState();
+
         Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
         auto styleUpdate = resolver.resolve();
 
         while (resolver.hasUnresolvedQueryContainers() || resolver.hasUnresolvedAnchorPositionedElements()) {
-            if (styleUpdate) {
+            if (styleUpdate || resolver.hasUnresolvedAnchorPositionedElements()) {
                 SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, resolver.hasUnresolvedQueryContainers());
                 SetForScope resolvingAnchorPositionedElementsScope(m_isResolvingAnchorPositionedElements, resolver.hasUnresolvedAnchorPositionedElements());
 
-                updateRenderTree(WTFMove(styleUpdate));
+                if (styleUpdate)
+                    updateRenderTree(WTFMove(styleUpdate));
 
                 if (frameView->layoutContext().needsLayout())
                     frameView->layoutContext().layout();

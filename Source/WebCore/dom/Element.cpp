@@ -2572,14 +2572,8 @@ void Element::invalidateForResumingQueryContainerResolution()
     markAncestorsForInvalidatedStyle();
 }
 
-void Element::invalidateAncestorsForAnchor()
-{
-    markAncestorsForInvalidatedStyle();
-}
-
 void Element::invalidateForResumingAnchorPositionedElementResolution()
 {
-    invalidateStyleInternal();
     markAncestorsForInvalidatedStyle();
 }
 

@@ -339,65 +339,183 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
     return Length(insetValue, LengthType::Fixed);
 }
 
-Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
+static std::optional<Length> findValueForInsetProperty(CSSPropertyID insetPropertyID, AnchorPositionedState& anchorPositionedState)
+{
+    for (auto& propertyAndValue : makeReversedRange(anchorPositionedState.insetPropertyResolvedValues)) {
+        if (propertyAndValue.first == insetPropertyID)
+            return propertyAndValue.second;
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+Length AnchorPositionEvaluator::resolvedAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
 {
     // FIXME: Determine when this if guard is true and what it means.
     if (!builderState.element())
         return Length(0, LengthType::Fixed);
-    Ref anchorPositionedElement = *builderState.element();
 
-    auto* anchorPositionedStateMap = builderState.cssToLengthConversionData().anchorPositionedStateMap();
-    if (!anchorPositionedStateMap)
+    // FIXME: Support pseudo-elements.
+    if (builderState.style().pseudoElementType() != PseudoId::None)
         return Length(0, LengthType::Fixed);
-    auto& anchorPositionedElementState = *anchorPositionedStateMap->ensure(anchorPositionedElement, [&] {
-        return WTF::makeUnique<AnchorPositionedElementState>();
+
+    // In-flow elements cannot be anchor-positioned.
+    // FIXME: Should attempt to resolve the fallback value.
+    if (!builderState.style().hasOutOfFlowPosition())
+        return Length(0, LengthType::Fixed);
+
+    // Ensure that a state entry exists for this anchor-positioned element.
+    Ref anchorPositionedElement = *builderState.element();
+    auto& anchorPositionedStates = anchorPositionedElement->document().styleScope().anchorPositionedStates();
+    auto& anchorPositionedState = *anchorPositionedStates.ensure(anchorPositionedElement, [&] {
+        return WTF::makeUnique<AnchorPositionedState>();
     }).iterator->value.get();
 
-    // If we are encountering this anchor() instance for the first time, then we need to collect
-    // all the relevant anchor-name strings that are referenced in this anchor function,
-    // including the references in the fallback value.
-    if (!anchorPositionedElementState.finishedCollectingAnchorNames)
-        anchorValue.collectAnchorNames(anchorPositionedElementState.anchorNames);
+    // Only record CSSValues once (the first time we attempt to style-resolve this anchor-positioned element).
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::HasCollectedCSSValues)
+        anchorPositionedState.insetPropertyCssValues.append({ builderState.cssPropertyID(), anchorValue });
 
-    // An anchor() instance will be ready to be resolved when all anchor-name strings
-    // have been mapped to an actual anchor element in the DOM tree. At that point, we
-    // should also have layout information for the anchor-positioned element alongside
-    // the anchors referenced by the anchor-positioned element. Until then, we cannot
-    // resolve this anchor() instance.
-    if (!anchorPositionedElementState.readyToBeResolved)
+    // Not yet resolved... return dummy value. FIXME: We should probably
+    // represent unresolved anchor() values with a new unique LengthType.
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::Resolved)
         return Length(0, LengthType::Fixed);
 
-    // Anchor value may now be resolved using layout information
-    anchorPositionedElementState.hasBeenResolved = true;
-    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
-    ASSERT(anchorPositionedRenderer);
+    auto resolvedLength = findValueForInsetProperty(builderState.cssPropertyID(), anchorPositionedState);
+    if (!resolvedLength.has_value()) {
+        // Resolved, but this was an invalid anchor function.
+        // FIXME: The corresponding inset property should behave as `unset`.
+        return Length(0, LengthType::Fixed);
+    }
 
+    return resolvedLength.value();
+}
+
+// Record all anchor-names referenced in this element's property declarations.
+static void collectAnchorNames(Ref<Element> anchorPositionedElement, AnchorPositionedState& anchorPositionedState)
+{
+    CheckedPtr style = anchorPositionedElement->renderStyle();
+    ASSERT(style);
+    if (!style->positionAnchor().isNull())
+        anchorPositionedState.anchorNames.add(style->positionAnchor());
+    for (auto& propertyAndValue : anchorPositionedState.insetPropertyCssValues)
+        propertyAndValue.second->collectAnchorNames(anchorPositionedState.anchorNames);
+}
+
+static RenderElement* penultimateContainingBlockChainElement(CheckedPtr<RenderElement> descendant, CheckedPtr<RenderElement> ancestor)
+{
+    auto* currentElement = descendant.get();
+    for (auto* nextElement = currentElement->containingBlock(); nextElement; nextElement = nextElement->containingBlock()) {
+        if (nextElement == ancestor)
+            return currentElement;
+        currentElement = nextElement;
+    }
+    return nullptr;
+}
+
+static bool firstChildPrecedesSecondChild(RenderObject* firstChild, RenderObject* secondChild, RenderBlock* containingBlock)
+{
+    auto positionedObjects = containingBlock->positionedObjects();
+    ASSERT(positionedObjects);
+    for (auto it = positionedObjects->begin(); it != positionedObjects->end(); ++it) {
+        auto child = it.get();
+        if (child == firstChild)
+            return true;
+        if (child == secondChild)
+            return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+// See: https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
+static bool isAcceptableAnchorElement(CheckedPtr<RenderElement> anchorElement, CheckedPtr<RenderElement> anchorPositionedElement)
+{
+    ASSERT(is<RenderBoxModelObject>(anchorElement));
+    CheckedPtr containingBlock = anchorPositionedElement->containingBlock();
+    ASSERT(containingBlock);
+    auto* penultimateElement = penultimateContainingBlockChainElement(anchorElement, containingBlock);
+    if (!penultimateElement)
+        return false;
+
+    if (!penultimateElement->isOutOfFlowPositioned())
+        return true;
+
+    if (!firstChildPrecedesSecondChild(penultimateElement, anchorPositionedElement.get(), containingBlock.get()))
+        return false;
+
+    // FIXME: Implement the rest of https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element.
+    return true;
+}
+
+static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, Ref<Element> anchorPositionedElement)
+{
+    auto& eligibleAnchorsForName = anchorPositionedElement->document().styleScope().eligibleAnchorsForName();
+    const auto& eligibleAnchors = eligibleAnchorsForName.get(anchorName);
+
+    // FIXME: These should iterate through the anchor targets in reverse DOM order.
+    for (auto anchor : makeReversedRange(eligibleAnchors)) {
+        if (isAcceptableAnchorElement(anchor->renderer(), anchorPositionedElement->renderer()))
+            return anchor.get();
+    }
+
+    return { };
+}
+
+// Find and record the appropriate anchor element for each anchor name.
+static void findAnchors(Ref<Element> anchorPositionedElement, AnchorPositionedState& anchorPositionedState)
+{
+    for (auto& anchorName : anchorPositionedState.anchorNames) {
+        auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositionedElement);
+        if (anchor.has_value())
+            anchorPositionedState.anchorElements.add(anchorName, anchor.value());
+    }
+}
+
+static void resolveAnchorValue(CSSPropertyID insetPropertyID, const CSSAnchorValue& anchorValue, CheckedRef<RenderElement> anchorPositionedRenderer, AnchorPositionedState& anchorPositionedState)
+{
     // Attempt to find the element associated with the target anchor
     String anchorString = anchorValue.anchorElementString();
     if (anchorString.isNull())
         anchorString = anchorPositionedRenderer->style().positionAnchor();
-    auto anchorElementIt = anchorPositionedElementState.anchorElements.find(anchorString);
-    if (anchorElementIt == anchorPositionedElementState.anchorElements.end()) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
-        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
-        return Length(0, LengthType::Fixed);
+    auto anchorElementIt = anchorPositionedState.anchorElements.find(anchorString);
+    if (anchorElementIt == anchorPositionedState.anchorElements.end()) {
+        // FIXME: Should attempt to resolve the fallback value.
+        anchorPositionedState.insetPropertyResolvedValues.append({ insetPropertyID, std::optional<Length> { } });
+        return;
     }
     CheckedPtr anchorRenderer = anchorElementIt->value->renderer();
     ASSERT(anchorRenderer);
 
-    // Confirm that the axis specified by the inset property matches the side provided in
-    // the anchor() call.
-    auto insetPropertyID = builderState.cssPropertyID();
-    auto& anchorPositionedElementStyle = anchorPositionedElement->renderer()->style();
-    if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), insetPropertyID, anchorPositionedElementStyle)) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
-        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
-        return Length(0, LengthType::Fixed);
+    // Confirm that the axis specified by the inset property matches the side provided in the anchor() call.
+    if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), insetPropertyID, anchorPositionedRenderer->style())) {
+        // FIXME: Should attempt to resolve the fallback value.
+        anchorPositionedState.insetPropertyResolvedValues.append({ insetPropertyID, std::optional<Length> { } });
+        return;
     }
 
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
-    return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+    auto insetValue = computeInsetValue(insetPropertyID, anchorBox, anchorPositionedRenderer, anchorValue);
+    anchorPositionedState.insetPropertyResolvedValues.append({ insetPropertyID, insetValue });
+}
+
+static void resolveAnchorValues(Ref<Element> anchorPositionedElement, AnchorPositionedState& anchorPositionedState)
+{
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorPositionedRenderer);
+    for (auto& propertyAndValue : anchorPositionedState.insetPropertyCssValues)
+        resolveAnchorValue(propertyAndValue.first, propertyAndValue.second, *anchorPositionedRenderer, anchorPositionedState);
+}
+
+// Resolve all anchor() values for this anchor-positioned element.
+void AnchorPositionEvaluator::resolveAnchorPositionedElement(Ref<Element> anchorPositionedElement, AnchorPositionedState& anchorPositionedState)
+{
+    collectAnchorNames(anchorPositionedElement, anchorPositionedState);
+    findAnchors(anchorPositionedElement, anchorPositionedState);
+    resolveAnchorValues(anchorPositionedElement, anchorPositionedState);
+    anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+    anchorPositionedElement->invalidateStyle();
 }
 
 } // namespace WebCore::Style

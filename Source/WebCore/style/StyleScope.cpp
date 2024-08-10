@@ -1024,5 +1024,29 @@ Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
     return host;
 }
 
+void Scope::clearAnchorPositioningState()
+{
+    if (m_anchorPositionedStates.isEmptyIgnoringNullReferences() && m_anchorElements.isEmptyIgnoringNullReferences())
+        return;
+
+    for (auto keyAndValue : m_anchorPositionedStates) {
+        keyAndValue.key.invalidateStyle();
+        if (auto renderer = keyAndValue.key.renderer())
+            renderer->setNeedsLayout();
+    }
+
+    for (auto& anchorElement : m_anchorElements) {
+        anchorElement.invalidateStyle();
+        if (auto renderer = anchorElement.renderer())
+            renderer->setNeedsLayout();
+    }
+
+    m_anchorPositionedStates.clear();
+    m_eligibleAnchorsForName.clear();
+    m_anchorElements.clear();
+    m_nextAnchorPositionedElementToResolve = nullptr;
+    m_shouldFindNextAnchorPositionedElementToResolve = false;
+}
+
 }
 }

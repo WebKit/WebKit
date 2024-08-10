@@ -25,8 +25,10 @@
 #pragma once
 
 #include "CSSAnchorValue.h"
+#include "CSSPropertyNames.h"
 #include "EventTarget.h"
 #include <memory>
+#include <wtf/HashMap.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -37,21 +39,29 @@ namespace Style {
 
 class BuilderState;
 
-struct AnchorPositionedElementState {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    HashMap<String, Ref<Element>> anchorElements;
-    HashSet<String> anchorNames;
-    bool finishedCollectingAnchorNames { false };
-    bool readyToBeResolved { false };
-    bool hasBeenResolved { false };
+enum class AnchorPositionResolutionStage {
+    Initial,
+    HasCollectedCSSValues,
+    Resolved,
 };
 
-using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPositionedElementState>, WeakPtrImplWithEventTargetData>;
+struct AnchorPositionedState {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    HashSet<String> anchorNames;
+    HashMap<String, Ref<Element>> anchorElements;
+    Vector<std::pair<CSSPropertyID, Ref<const CSSAnchorValue>>> insetPropertyCssValues;
+    Vector<std::pair<CSSPropertyID, std::optional<Length>>> insetPropertyResolvedValues;
+    AnchorPositionResolutionStage stage;
+};
+
+using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
+using EligibleAnchorsForName = HashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
 
 class AnchorPositionEvaluator {
 public:
-    static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
+    static Length resolvedAnchorValue(const BuilderState&, const CSSAnchorValue&);
+    static void resolveAnchorPositionedElement(Ref<Element> anchorPositionedElement, AnchorPositionedState&);
 };
 
 } // namespace Style

@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "LayoutSize.h"
 #include "StyleScopeOrdinal.h"
 #include "Timer.h"
@@ -159,6 +160,15 @@ public:
     const CSSCounterStyleRegistry& counterStyleRegistry() const { return m_counterStyleRegistry.get(); }
     CSSCounterStyleRegistry& counterStyleRegistry() { return m_counterStyleRegistry.get(); }
 
+    AnchorPositionedStates& anchorPositionedStates() { return m_anchorPositionedStates; }
+    EligibleAnchorsForName& eligibleAnchorsForName() { return m_eligibleAnchorsForName; }
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData>& anchorElements() { return m_anchorElements; }
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> nextAnchorPositionedElementToResolve() { return m_nextAnchorPositionedElementToResolve; }
+    void setNextAnchorPositionedElementToResolve(Element* e) { m_nextAnchorPositionedElementToResolve = e; }
+    bool shouldFindNextAnchorPositionedElementToResolve() { return m_shouldFindNextAnchorPositionedElementToResolve; }
+    void setShouldFindNextAnchorPositionedElementToResolve(bool b) { m_shouldFindNextAnchorPositionedElementToResolve = b; }
+    void clearAnchorPositioningState();
+
 private:
     Scope& documentScope();
     bool isForUserAgentShadowTree() const;
@@ -253,6 +263,12 @@ private:
 
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
+
+    AnchorPositionedStates m_anchorPositionedStates;
+    EligibleAnchorsForName m_eligibleAnchorsForName;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_anchorElements;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_nextAnchorPositionedElementToResolve;
+    bool m_shouldFindNextAnchorPositionedElementToResolve { false };
 };
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

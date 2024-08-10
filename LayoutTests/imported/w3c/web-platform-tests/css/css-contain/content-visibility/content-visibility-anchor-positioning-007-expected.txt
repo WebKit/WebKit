@@ -1,5 +1,5 @@
 --a1
 --a2OO
 
-FAIL CSS Content Visibility: auto not skipped due to being an indirect influence on anchoring assert_approx_equals: #positioned should be anchored because #anchor is on-screen. expected 44 +/- 1 but got -15.109375
+FAIL CSS Content Visibility: auto not skipped due to being an indirect influence on anchoring assert_approx_equals: #positioned should be anchored because #anchor is on-screen. expected 44 +/- 1 but got -14.109375
 

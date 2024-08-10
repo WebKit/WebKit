@@ -25,6 +25,7 @@
 #include "RenderBlock.h"
 
 #include "AXObjectCache.h"
+#include "AnchorPositionEvaluator.h"
 #include "DocumentInlines.h"
 #include "Editor.h"
 #include "Element.h"
@@ -74,6 +75,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
+#include "StyleScope.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -870,6 +872,15 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     if (isSkippedContentRoot()) {
         r.clearNeedsLayoutForSkippedContent();
         return;
+    }
+
+    if (document().styleScope().shouldFindNextAnchorPositionedElementToResolve()) {
+        if (auto anchorPositionedState = document().styleScope().anchorPositionedStates().get(*r.element())) {
+            if (anchorPositionedState->stage < Style::AnchorPositionResolutionStage::Resolved) {
+                document().styleScope().setNextAnchorPositionedElementToResolve(r.element());
+                document().styleScope().setShouldFindNextAnchorPositionedElementToResolve(false);
+            }
+        }
     }
 
     estimateFragmentRangeForBoxChild(r);
