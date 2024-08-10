@@ -731,7 +731,7 @@ void SubresourceLoader::updateReferrerPolicy(const String& referrerPolicyValue)
 
 void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    SUBRESOURCELOADER_RELEASE_LOG("didFinishLoading:");
+    LOG(ResourceLoading, "SubresourceLoader::didFinishLoading");
 
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get()) {

@@ -92,9 +92,9 @@
 #include <WebCore/ContentFilterUnblockHandler.h>
 #endif
 
-#define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
-#define LOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
-#define LOADER_RELEASE_LOG_FAULT(fmt, ...) RELEASE_LOG_FAULT(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
+#define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu32 ", webPageID=%" PRIu32 ", frameID=%" PRIu32 ", resourceID=%" PRIu32 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, clampTo<uint32_t>(m_parameters.webPageProxyID.toUInt64()), clampTo<uint32_t>(m_parameters.webPageID.toUInt64()), clampTo<uint32_t>(m_parameters.webFrameID.object().toUInt64()), clampTo<uint32_t>(m_parameters.identifier.toUInt64()), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
+#define LOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - [pageProxyID=%" PRIu32 ", webPageID=%" PRIu32 ", frameID=%" PRIu32 ", resourceID=%" PRIu32 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, clampTo<uint32_t>(m_parameters.webPageProxyID.toUInt64()), clampTo<uint32_t>(m_parameters.webPageID.toUInt64()), clampTo<uint32_t>(m_parameters.webFrameID.object().toUInt64()), clampTo<uint32_t>(m_parameters.identifier.toUInt64()), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
+#define LOADER_RELEASE_LOG_FAULT(fmt, ...) RELEASE_LOG_FAULT(Network, "%p - [pageProxyID=%" PRIu32 ", webPageID=%" PRIu32 ", frameID=%" PRIu32 ", resourceID=%" PRIu32 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, clampTo<uint32_t>(m_parameters.webPageProxyID.toUInt64()), clampTo<uint32_t>(m_parameters.webPageID.toUInt64()), clampTo<uint32_t>(m_parameters.webFrameID.object().toUInt64()), clampTo<uint32_t>(m_parameters.identifier.toUInt64()), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -326,7 +326,6 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 
 void NetworkResourceLoader::retrieveCacheEntryInternal(std::unique_ptr<NetworkCache::Entry>&& entry, WebCore::ResourceRequest&& request)
 {
-    LOADER_RELEASE_LOG("retrieveCacheEntryInternal:");
     if (entry->hasReachedPrevalentResourceAgeCap()) {
         LOADER_RELEASE_LOG("retrieveCacheEntryInternal: Revalidating cached entry because it reached the prevalent resource age cap");
         m_cacheEntryForMaxAgeCapValidation = WTFMove(entry);
@@ -641,7 +640,7 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     if (m_workerStart)
         send(Messages::WebResourceLoader::SetWorkerStart { m_workerStart }, coreIdentifier());
     bool willWaitForContinueDidReceiveResponse = true;
-    send(Messages::WebResourceLoader::DidReceiveResponse { m_response, m_privateRelayed, willWaitForContinueDidReceiveResponse, computeResponseMetrics(m_response) });
+    sendDidReceiveResponse(m_response, m_privateRelayed, willWaitForContinueDidReceiveResponse);
 }
 
 bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xFrameOptions, const URL& url)
@@ -991,7 +990,6 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
         // a main resource because the embedding client must decide whether to allow the load.
         bool willWaitForContinueDidReceiveResponse = isMainResource();
-        LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
         sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, privateRelayed, willWaitForContinueDidReceiveResponse);
 
         if (shouldSendResourceLoadMessages())
@@ -1016,14 +1014,14 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
 {
     auto browsingContextGroupSwitchDecision = m_connection->usesSingleWebProcess()? BrowsingContextGroupSwitchDecision::StayInGroup: toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
-        send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
+        sendDidReceiveResponse(response, privateRelayed, needsContinueDidReceiveResponseMessage);
         return;
     }
 
     auto loader = m_connection->takeNetworkResourceLoader(coreIdentifier());
     if (!loader) {
         LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup: Failed to find loader with identifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
-        send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
+        sendDidReceiveResponse(response, privateRelayed, needsContinueDidReceiveResponseMessage);
         return;
     }
 
@@ -1038,6 +1036,25 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
         if (session)
             session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
     });
+}
+
+void NetworkResourceLoader::sendDidReceiveResponse(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
+{
+    LOADER_RELEASE_LOG("sendDidReceiveResponse: (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
+    send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
+}
+
+void NetworkResourceLoader::sendDidFinishResourceLoad(const NetworkLoadMetrics& metrics)
+{
+    LOADER_RELEASE_LOG("sendDidFinishResourceLoad: (length=%zd)", m_numBytesReceived);
+    send(Messages::WebResourceLoader::DidFinishResourceLoad(metrics));
+}
+
+void NetworkResourceLoader::sendDidReceiveData(const FragmentedSharedBuffer& buffer, size_t length)
+{
+    if (!m_numBytesReceived)
+        LOADER_RELEASE_LOG("sendDidReceiveData:");
+    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(buffer), length));
 }
 
 void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer, uint64_t reportedEncodedDataLength)
@@ -1103,7 +1120,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
             m_contentFilter->stopFilteringMainResource();
         }
 #endif
-        send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
+        sendDidFinishResourceLoad(networkLoadMetrics);
     }
 
     tryStoreAsCacheEntry();
@@ -1339,7 +1356,7 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
 
     if (m_serviceWorkerFetchTask)
         networkLoadMetrics.fetchStart = m_serviceWorkerFetchTask->startTime();
-    send(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
+    sendDidFinishResourceLoad(networkLoadMetrics);
 
     cleanup(LoadResult::Success);
 }
@@ -1513,9 +1530,9 @@ void NetworkResourceLoader::bufferingTimerFired()
     auto sharedBuffer = m_bufferedData.takeAsContiguous();
     bool shouldFilter = m_contentFilter && !m_contentFilter->continueAfterDataReceived(sharedBuffer, m_bufferedDataEncodedDataLength);
     if (!shouldFilter)
-        send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(sharedBuffer.get()), m_bufferedDataEncodedDataLength));
+        sendDidReceiveData(sharedBuffer.get(), m_bufferedDataEncodedDataLength);
 #else
-    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(*m_bufferedData.get()), m_bufferedDataEncodedDataLength));
+    sendDidReceiveData(*m_bufferedData.get(), m_bufferedDataEncodedDataLength);
 #endif
     m_bufferedData.empty();
     m_bufferedDataEncodedDataLength = 0;
@@ -1530,7 +1547,7 @@ void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer, siz
         return;
 #endif
 
-    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(buffer), encodedDataLength));
+    sendDidReceiveData(buffer, encodedDataLength);
 }
 
 void NetworkResourceLoader::tryStoreAsCacheEntry()
@@ -1587,7 +1604,6 @@ void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse&
 
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
-    LOADER_RELEASE_LOG("didRetrieveCacheEntry:");
     auto response = entry->response();
 
 #if ENABLE(CONTENT_FILTERING)
@@ -1623,6 +1639,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
+        LOADER_RELEASE_LOG("didRetrieveCacheEntry: synchronous request");
         m_synchronousLoadData->response = WTFMove(response);
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->protectedBuffer().get(), { });
         cleanup(LoadResult::Success);
@@ -1630,7 +1647,6 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     }
 
     bool needsContinueDidReceiveResponseMessage = isMainResource();
-    LOADER_RELEASE_LOG("didRetrieveCacheEntry: Sending WebResourceLoader::DidReceiveResponse IPC (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
     sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, entry->privateRelayed(), needsContinueDidReceiveResponseMessage);
 
     if (needsContinueDidReceiveResponseMessage) {
@@ -1657,7 +1673,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
         }
         metrics.responseBodyBytesReceived = 0;
         metrics.responseBodyDecodedSize = 0;
-        send(Messages::WebResourceLoader::DidFinishResourceLoad(WTFMove(metrics)));
+        sendDidFinishResourceLoad(metrics);
     };
 
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
@@ -1969,8 +1985,6 @@ void NetworkResourceLoader::setWorkerStart(MonotonicTime value)
 
 void NetworkResourceLoader::startWithServiceWorker()
 {
-    LOADER_RELEASE_LOG("startWithServiceWorker:");
-
     auto newRequest = ResourceRequest { originalRequest() };
 #if ENABLE(CONTENT_FILTERING)
     if (!startContentFiltering(newRequest))
@@ -2085,7 +2099,7 @@ void NetworkResourceLoader::serviceWorkerDidFinish()
 
 void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer, size_t encodedDataLength)
 {
-    send(Messages::WebResourceLoader::DidReceiveData(IPC::SharedBufferReference(buffer), encodedDataLength));
+    sendDidReceiveData(buffer, encodedDataLength);
 }
 
 WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
