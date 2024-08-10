@@ -7462,3 +7462,6 @@ imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss
 
 # webkit.org/b/277905 [ iOS ] fast/scrolling/ios/scroll-anchoring-momentum-scroll.html is a flaky text failure
 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
+
+# webkit.org/b/277907 [ iOS ] fast/scrolling/ios/overscroll-behavior-on-body.html is a flaky text failure
+fast/scrolling/ios/overscroll-behavior-on-body.html [ Pass Failure ]
