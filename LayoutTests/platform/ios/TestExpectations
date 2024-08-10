@@ -7443,3 +7443,6 @@ imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass
 
 # webkit.org/b/277896 ([ iOS ] fast/forms/ios/time-picker-value-change.html is a flaky text failure (277896))
 fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
+
+# webkit.org/b/277897 (Regression: 282030@main? [ iOS 17 Release ] imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html is a flaky text failure (277897))
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html [ Pass Failure ]
