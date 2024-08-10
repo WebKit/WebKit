@@ -7469,3 +7469,6 @@ fast/scrolling/ios/overscroll-behavior-on-body.html [ Pass Failure ]
 # rdar://124971386 (css-box/margin-trim/computed-margin-values layout tests failing in recursive cases)
 imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-self-collapsing-nested.html [ Pass Failure ]
+
+# webkit.org/b/277908 [ iOS ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html is a flaky text failure
+imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Pass Failure ]
