@@ -7449,3 +7449,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-0
 
 # webkit.org/b/277898 [ iOS 17 ] imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html is a flaky text failure
 imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html [ Pass Failure ]
+
+# webkit.org/b/277901 Regression: (246931@main?) [ iOS ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html is a flaky failure
+imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
