@@ -2272,6 +2272,7 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg [ Image
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-shape-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/xml-lang-attribute.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
 
 [ Debug ] fast/loader/document-with-fragment-url-3.html [ Pass Timeout ]
 [ Debug ] fast/loader/document-with-fragment-url-4.html [ Pass Timeout ]

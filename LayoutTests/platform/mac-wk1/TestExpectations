@@ -2880,7 +2880,6 @@ imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientati
 # Implement render blocking: https://bugs.webkit.org/show_bug.cgi?id=268743
 imported/w3c/web-platform-tests/html/dom/render-blocking/ [ Skip ]
 
-imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-001.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002.svg [ Skip ]
