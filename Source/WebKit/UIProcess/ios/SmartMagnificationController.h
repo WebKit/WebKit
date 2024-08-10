@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS UIScrollView;
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SmartMagnificationController : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SmartMagnificationController);
     WTF_MAKE_NONCOPYABLE(SmartMagnificationController);
 public:
     SmartMagnificationController(WKContentView *);

@@ -30,6 +30,7 @@
 #include "BubblewrapLauncher.h"
 #include <WebCore/PlatformDisplay.h>
 #include <gio/gunixinputstream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
@@ -38,6 +39,8 @@
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XDGDBusProxy);
 
 CString XDGDBusProxy::makeProxy(const char* baseDirectory, const char* proxyTemplate)
 {

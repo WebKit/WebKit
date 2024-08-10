@@ -29,6 +29,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ class WebBackForwardCache;
 class WebProcessProxy;
 
 class WebBackForwardCacheEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebBackForwardCacheEntry);
 public:
     WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, std::unique_ptr<SuspendedPageProxy>&&);
     ~WebBackForwardCacheEntry();

@@ -37,7 +37,7 @@ class WebFrameProxy;
 class WebProcessProxy;
 
 class ProvisionalFrameProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProvisionalFrameProxy);
 public:
     explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
 

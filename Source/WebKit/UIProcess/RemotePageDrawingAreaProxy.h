@@ -44,7 +44,7 @@ class DrawingAreaProxy;
 class WebProcessProxy;
 
 class RemotePageDrawingAreaProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageDrawingAreaProxy);
 public:
     RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
     ~RemotePageDrawingAreaProxy();

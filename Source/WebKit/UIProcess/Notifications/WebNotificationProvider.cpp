@@ -34,8 +34,11 @@
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNotificationProvider);
 
 WebNotificationProvider::WebNotificationProvider(const WKNotificationProviderBase* provider)
 {

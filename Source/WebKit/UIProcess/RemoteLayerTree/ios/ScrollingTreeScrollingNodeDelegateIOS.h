@@ -30,6 +30,7 @@
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNodeDelegate.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 @class CALayer;
@@ -60,7 +61,7 @@ class ScrollingTreeScrollingNode;
 namespace WebKit {
 
 class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate, public CanMakeWeakPtr<ScrollingTreeScrollingNodeDelegateIOS> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeScrollingNodeDelegateIOS);
 public:
     
     enum class AllowOverscrollToPreventScrollPropagation : bool { No, Yes };

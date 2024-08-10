@@ -38,7 +38,7 @@ template<> struct ClientTraits<WKPageFormClientBase> {
 namespace WebKit {
 
 class WebFormClient : public API::FormClient, API::Client<WKPageFormClientBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebFormClient);
 public:
     explicit WebFormClient(const WKPageFormClientBase*);
 

@@ -39,6 +39,7 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -112,7 +113,7 @@ private:
 #endif
 
 class IconCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IconCache);
 public:
     IconCache()
         : m_timer(RunLoop::main(), this, &IconCache::timerFired)
@@ -294,6 +295,8 @@ static IconCache& iconCache()
     static std::unique_ptr<IconCache> cache = makeUnique<IconCache>();
     return *cache;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationService);
 
 NotificationService& NotificationService::singleton()
 {

@@ -30,6 +30,7 @@
 #include "AuthenticationDecisionListener.h"
 #include "DownloadID.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ namespace API {
 class Data;
 
 class DownloadClient : public RefCounted<DownloadClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DownloadClient);
 public:
     virtual ~DownloadClient() { }
 

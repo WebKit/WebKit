@@ -28,6 +28,7 @@
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -35,7 +36,8 @@
 namespace WebKit {
 
 class XDGDBusProxy {
-    WTF_MAKE_NONCOPYABLE(XDGDBusProxy); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XDGDBusProxy);
+    WTF_MAKE_NONCOPYABLE(XDGDBusProxy);
 public:
     XDGDBusProxy() = default;
     ~XDGDBusProxy() = default;

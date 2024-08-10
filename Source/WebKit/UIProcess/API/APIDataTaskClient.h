@@ -28,6 +28,7 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class Credential;
@@ -41,7 +42,7 @@ namespace API {
 class Data;
 
 class DataTaskClient : public RefCounted<DataTaskClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataTaskClient);
 public:
     static Ref<DataTaskClient> create() { return adoptRef(*new DataTaskClient); }
     virtual ~DataTaskClient() { }

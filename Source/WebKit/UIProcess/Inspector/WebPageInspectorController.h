@@ -32,6 +32,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -46,8 +47,8 @@ class InspectorBrowserAgent;
 struct WebPageAgentContext;
 
 class WebPageInspectorController {
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorController);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorController);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebPageInspectorController(WebPageProxy&);
 

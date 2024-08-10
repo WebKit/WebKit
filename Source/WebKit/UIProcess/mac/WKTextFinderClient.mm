@@ -41,6 +41,7 @@
 #import <wtf/CheckedPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 // FIXME: Implement scrollFindMatchToVisible.
@@ -61,7 +62,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class TextFinderFindClient : public API::FindMatchesClient, public API::FindClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TextFinderFindClient);
 public:
     explicit TextFinderFindClient(WKTextFinderClient *textFinderClient)
         : m_textFinderClient(textFinderClient)

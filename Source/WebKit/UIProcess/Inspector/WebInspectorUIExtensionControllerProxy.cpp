@@ -36,8 +36,11 @@
 #include "WebInspectorUIExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorUIExtensionControllerProxy);
 
 WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage)
     : m_inspectorPage(inspectorPage)

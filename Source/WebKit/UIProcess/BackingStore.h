@@ -31,6 +31,7 @@
 #include <WebCore/PlatformImage.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO) || PLATFORM(GTK)
 #include <WebCore/RefPtrCairo.h>
@@ -56,7 +57,7 @@ using PlatformPaintContextPtr = SkCanvas*;
 #endif
 
 class BackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BackingStore);
     WTF_MAKE_NONCOPYABLE(BackingStore);
 public:
     BackingStore(const WebCore::IntSize&, float deviceScaleFactor);

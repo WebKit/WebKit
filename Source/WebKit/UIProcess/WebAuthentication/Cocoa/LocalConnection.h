@@ -30,6 +30,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,7 +50,7 @@ namespace WebKit {
 // that are not allowed in auto test environment such that some mocking
 // mechnism can override them.
 class LocalConnection {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LocalConnection);
     WTF_MAKE_NONCOPYABLE(LocalConnection);
 public:
     enum class UserVerification : uint8_t {

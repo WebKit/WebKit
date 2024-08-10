@@ -81,6 +81,7 @@
 #include <jsc/JSCContextPrivate.h>
 #include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -243,7 +244,7 @@ enum {
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 class PageLoadStateObserver final : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
 public:
     PageLoadStateObserver(WebKitWebView* webView)
         : m_webView(webView)

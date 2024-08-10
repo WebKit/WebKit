@@ -33,6 +33,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
@@ -56,7 +57,7 @@ class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;
 
 class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeNode);
 public:
     RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)

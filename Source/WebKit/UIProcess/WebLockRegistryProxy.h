@@ -30,6 +30,7 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockMode.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
@@ -47,7 +48,7 @@ class WebLockRegistryProxy;
 struct SharedPreferencesForWebProcess;
 
 class WebLockRegistryProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebLockRegistryProxy);
 public:
     explicit WebLockRegistryProxy(WebProcessProxy&);
     ~WebLockRegistryProxy();

@@ -29,8 +29,11 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelElementController);
 
 ModelElementController::ModelElementController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)

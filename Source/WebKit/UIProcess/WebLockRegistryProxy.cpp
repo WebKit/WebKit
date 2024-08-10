@@ -35,10 +35,13 @@
 #include <WebCore/WebLockIdentifier.h>
 #include <WebCore/WebLockManagerSnapshot.h>
 #include <WebCore/WebLockRegistry.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process.connection())
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLockRegistryProxy);
 
 WebLockRegistryProxy::WebLockRegistryProxy(WebProcessProxy& process)
     : m_process(process)

@@ -31,8 +31,11 @@
 #import "_WKLinkIconParametersInternal.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IconLoadingDelegate);
 
 IconLoadingDelegate::IconLoadingDelegate(WKWebView *webView)
     : m_webView(webView)
@@ -70,6 +73,8 @@ IconLoadingDelegate::IconLoadingClient::~IconLoadingClient()
 }
 
 typedef void (^IconLoadCompletionHandler)(NSData*);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(IconLoadingDelegateIconLoadingClient, IconLoadingDelegate::IconLoadingClient);
 
 void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
 {

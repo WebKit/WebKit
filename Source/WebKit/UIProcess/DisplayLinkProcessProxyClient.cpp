@@ -30,8 +30,11 @@
 
 #include "EventDispatcherMessages.h"
 #include "WebProcessMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLinkProcessProxyClient);
 
 void DisplayLinkProcessProxyClient::setConnection(RefPtr<IPC::Connection>&& connection)
 {

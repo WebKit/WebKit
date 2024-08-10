@@ -33,6 +33,7 @@
 #import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 #import "AppAttestInternalSoftLink.h"
@@ -55,6 +56,8 @@ static inline String bundleName()
 }
 #endif
 } // namespace
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalConnection);
 
 LocalConnection::~LocalConnection()
 {

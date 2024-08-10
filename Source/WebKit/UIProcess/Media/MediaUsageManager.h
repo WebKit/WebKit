@@ -27,11 +27,12 @@
 
 #include <WebCore/MediaUsageInfo.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MediaUsageManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaUsageManager);
 public:
     static std::unique_ptr<MediaUsageManager> create();
 

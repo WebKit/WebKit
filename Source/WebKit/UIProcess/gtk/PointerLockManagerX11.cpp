@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 
 #if USE(GTK4)
@@ -41,6 +42,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockManagerX11);
 
 PointerLockManagerX11::PointerLockManagerX11(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEventButton button, unsigned short buttons, OptionSet<WebEventModifier> modifiers)
     : PointerLockManager(webPage, position, globalPosition, button, buttons, modifiers)

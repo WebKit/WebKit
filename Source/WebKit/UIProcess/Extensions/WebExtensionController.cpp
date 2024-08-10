@@ -34,6 +34,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 

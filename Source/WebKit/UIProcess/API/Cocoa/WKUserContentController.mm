@@ -48,6 +48,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedScriptValue.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @implementation WKUserContentController
 
@@ -127,7 +128,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 }
 
 class ScriptMessageHandlerDelegate final : public WebKit::WebScriptMessageHandler::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScriptMessageHandlerDelegate);
 public:
     ScriptMessageHandlerDelegate(WKUserContentController *controller, id <WKScriptMessageHandler> handler, NSString *name)
         : m_controller(controller)

@@ -46,6 +46,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -56,7 +57,7 @@ static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkSc
 
 class RemoteLayerTreeDisplayLinkClient final : public DisplayLink::Client {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDisplayLinkClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeDisplayLinkClient);
 public:
     explicit RemoteLayerTreeDisplayLinkClient(WebPageProxyIdentifier pageID)
@@ -69,6 +70,8 @@ private:
 
     WebPageProxyIdentifier m_pageIdentifier;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDisplayLinkClient);
 
 // This is called off the main thread.
 void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplayID /* displayID */, WebCore::DisplayUpdate /* displayUpdate */, bool /* wantsFullSpeedUpdates */, bool /* anyObserverWantsCallback */)

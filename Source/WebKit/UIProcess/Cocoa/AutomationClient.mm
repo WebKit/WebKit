@@ -33,12 +33,15 @@
 #import "_WKAutomationSessionConfiguration.h"
 #import <JavaScriptCore/RemoteInspector.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/WTFString.h>
 
 using namespace Inspector;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AutomationClient);
 
 AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomationDelegate> delegate)
     : m_processPool(processPool)

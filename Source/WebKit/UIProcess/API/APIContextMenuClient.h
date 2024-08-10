@@ -34,6 +34,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS NSMenu;
 
@@ -49,7 +50,7 @@ class WebPageProxy;
 namespace API {
 
 class ContextMenuClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ContextMenuClient);
 public:
     virtual ~ContextMenuClient() { }
 

@@ -27,6 +27,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(GTK4)
 typedef struct _GdkClipboard GdkClipboard;
@@ -44,7 +45,8 @@ namespace WebKit {
 class WebFrameProxy;
 
 class Clipboard {
-    WTF_MAKE_NONCOPYABLE(Clipboard); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Clipboard);
+    WTF_MAKE_NONCOPYABLE(Clipboard);
 public:
     static Clipboard& get(const String& name);
 

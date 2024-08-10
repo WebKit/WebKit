@@ -38,6 +38,7 @@
 #include <wtf/Identified.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakRef.h>
 
@@ -74,7 +75,7 @@ struct UpdateInfo;
 #endif
 
 class DrawingAreaProxy : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<DrawingAreaIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DrawingAreaProxy);
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
 public:

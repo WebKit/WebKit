@@ -31,6 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 
@@ -39,7 +40,7 @@ OBJC_CLASS WKGroupSession;
 namespace WebKit {
 
 class GroupActivitiesSession : public RefCounted<GroupActivitiesSession> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GroupActivitiesSession);
 public:
     static Ref<GroupActivitiesSession> create(RetainPtr<WKGroupSession>&&);
     ~GroupActivitiesSession();

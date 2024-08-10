@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/InspectorTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ class WebPageProxy;
 // any target -> frontend messages will be routed to the WebPageProxy with a targetId.
 
 class InspectorTargetProxy final : public Inspector::InspectorTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorTargetProxy);
     WTF_MAKE_NONCOPYABLE(InspectorTargetProxy);
 public:
     static std::unique_ptr<InspectorTargetProxy> create(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);

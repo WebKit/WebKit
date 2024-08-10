@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MediaUsageManager.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_USAGE)
 
@@ -39,7 +40,9 @@ std::unique_ptr<MediaUsageManager> MediaUsageManager::create()
 }
 #endif
 
-void MediaUsageManager:: reset()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaUsageManager);
+
+void MediaUsageManager::reset()
 {
     notImplemented();
 }

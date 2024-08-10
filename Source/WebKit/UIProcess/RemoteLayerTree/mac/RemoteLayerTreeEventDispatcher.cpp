@@ -43,13 +43,14 @@
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 class RemoteLayerTreeEventDispatcherDisplayLinkClient final : public DisplayLink::Client {
 public:
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteLayerTreeEventDispatcherDisplayLinkClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeEventDispatcherDisplayLinkClient);
 public:
     explicit RemoteLayerTreeEventDispatcherDisplayLinkClient(RemoteLayerTreeEventDispatcher& eventDispatcher)
@@ -95,6 +96,8 @@ Ref<RemoteLayerTreeEventDispatcher> RemoteLayerTreeEventDispatcher::create(Remot
 }
 
 static constexpr Seconds wheelEventHysteresisDuration { 500_ms };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
 
 RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, PageIdentifier pageIdentifier)
     : m_scrollingCoordinator(WeakPtr { scrollingCoordinator })

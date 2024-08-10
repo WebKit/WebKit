@@ -24,12 +24,13 @@
  */
 
 #import "PageLoadState.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 
 class PageLoadStateObserver : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
 public:
     PageLoadStateObserver(id object, NSString *activeURLKey = @"activeURL")
         : m_object(object)

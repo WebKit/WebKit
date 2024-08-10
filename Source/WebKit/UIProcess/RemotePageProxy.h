@@ -76,7 +76,7 @@ struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
 class RemotePageProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();

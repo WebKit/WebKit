@@ -61,7 +61,7 @@ using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
 
 class WebExtensionRegisteredScript : public RefCounted<WebExtensionRegisteredScript> {
     WTF_MAKE_NONCOPYABLE(WebExtensionRegisteredScript);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionRegisteredScript);
 
 public:
     template<typename... Args>

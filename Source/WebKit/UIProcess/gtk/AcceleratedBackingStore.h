@@ -27,6 +27,7 @@
 
 #include "RendererBufferFormat.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct _cairo cairo_t;
 
@@ -45,7 +46,8 @@ class LayerTreeContext;
 class WebPageProxy;
 
 class AcceleratedBackingStore {
-    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStore); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStore);
+    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStore);
 public:
     static bool checkRequirements();
     static std::unique_ptr<AcceleratedBackingStore> create(WebPageProxy&);

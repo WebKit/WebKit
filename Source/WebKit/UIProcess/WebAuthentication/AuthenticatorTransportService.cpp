@@ -37,8 +37,11 @@
 #include "MockNfcService.h"
 #include "NfcService.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorTransportService);
 
 UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer)
 {

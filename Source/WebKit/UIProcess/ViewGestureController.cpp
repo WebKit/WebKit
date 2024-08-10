@@ -73,6 +73,8 @@ static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGest
     return viewGestureControllers.get();
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewGestureController);
+
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)

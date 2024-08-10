@@ -77,7 +77,7 @@ public:
 };
 
 class WebFullScreenManagerProxy : public IPC::MessageReceiver, public CanMakeCheckedPtr<WebFullScreenManagerProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebFullScreenManagerProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxy);
 public:
     WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);

@@ -24,6 +24,7 @@
 #include "WebKitWebContext.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -37,7 +38,7 @@ class WebNotification;
 class WebPageProxy;
 
 class WebKitNotificationProvider final : public NotificationService::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebKitNotificationProvider);
 public:
     WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
     ~WebKitNotificationProvider();

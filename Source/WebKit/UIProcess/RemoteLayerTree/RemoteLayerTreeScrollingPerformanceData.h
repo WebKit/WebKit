@@ -26,15 +26,16 @@
 #pragma once
 
 #import <WebCore/FloatRect.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
-#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxy;
 
 class RemoteLayerTreeScrollingPerformanceData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeScrollingPerformanceData);
 public:
     RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeScrollingPerformanceData();

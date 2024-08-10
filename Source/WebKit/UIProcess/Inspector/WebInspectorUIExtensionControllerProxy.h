@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -46,7 +47,7 @@ class WebPageProxy;
 class WebInspectorUIExtensionControllerProxy final
     : public RefCounted<WebInspectorUIExtensionControllerProxy>
     , public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorUIExtensionControllerProxy);
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionControllerProxy);
 public:
     static Ref<WebInspectorUIExtensionControllerProxy> create(WebPageProxy& inspectorPage);
