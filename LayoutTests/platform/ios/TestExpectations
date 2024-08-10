@@ -7465,3 +7465,7 @@ fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
 
 # webkit.org/b/277907 [ iOS ] fast/scrolling/ios/overscroll-behavior-on-body.html is a flaky text failure
 fast/scrolling/ios/overscroll-behavior-on-body.html [ Pass Failure ]
+
+# rdar://124971386 (css-box/margin-trim/computed-margin-values layout tests failing in recursive cases)
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-self-collapsing-nested.html [ Pass Failure ]
