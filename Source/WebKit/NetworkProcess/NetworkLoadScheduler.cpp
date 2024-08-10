@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "NetworkLoad.h"
 #include <WebCore/ResourceError.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
 
@@ -38,7 +39,7 @@ static constexpr size_t maximumActiveCountForLowPriority = 2;
 static constexpr size_t maximumTrackedHTTP1XOrigins = 128;
 
 class NetworkLoadScheduler::HostContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoadScheduler::HostContext);
 public:
     HostContext() = default;
     ~HostContext();
@@ -54,6 +55,8 @@ private:
     WeakHashSet<NetworkLoad> m_activeLoads;
     WeakListHashSet<NetworkLoad> m_pendingLoads;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NetworkLoadSchedulerHostContext, NetworkLoadScheduler::HostContext);
 
 void NetworkLoadScheduler::HostContext::schedule(NetworkLoad& load)
 {
@@ -114,6 +117,8 @@ NetworkLoadScheduler::HostContext::~HostContext()
     for (auto& load : m_pendingLoads)
         start(load);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadScheduler);
 
 NetworkLoadScheduler::NetworkLoadScheduler() = default;
 NetworkLoadScheduler::~NetworkLoadScheduler() = default;

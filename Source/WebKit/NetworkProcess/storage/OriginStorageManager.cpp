@@ -44,14 +44,17 @@
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/StorageEstimate.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 static constexpr auto originFileName = "origin"_s;
 enum class OriginStorageManager::StorageBucketMode : bool { BestEffort, Persistent };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginStorageManager);
+
 class OriginStorageManager::StorageBucket {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OriginStorageManager::StorageBucket);
 public:
     enum class StorageType : uint8_t {
         FileSystem,
@@ -123,6 +126,8 @@ private:
     std::unique_ptr<BackgroundFetchStoreManager> m_backgroundFetchManager;
     std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(OriginStorageManagerStorageBucket, OriginStorageManager::StorageBucket);
 
 OriginStorageManager::StorageBucket::StorageBucket(const String& rootPath, const String& identifier, const String& localStoragePath, const String& idbStoragePath, const String& cacheStoragePath, UnifiedOriginStorageLevel level)
     : m_rootPath(rootPath)

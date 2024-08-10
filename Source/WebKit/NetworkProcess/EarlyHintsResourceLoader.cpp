@@ -36,10 +36,13 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/StoredCredentialsPolicy.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EarlyHintsResourceLoader);
 
 EarlyHintsResourceLoader::EarlyHintsResourceLoader(NetworkResourceLoader& loader)
     : m_loader(&loader)

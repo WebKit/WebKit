@@ -47,6 +47,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -58,6 +59,8 @@ namespace WebKit {
 namespace NetworkCache {
 
 using namespace FileSystem;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(CacheRetrieveInfo, Cache::RetrieveInfo);
 
 static const AtomString& resourceType()
 {

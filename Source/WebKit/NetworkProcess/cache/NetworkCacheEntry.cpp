@@ -32,11 +32,14 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 namespace NetworkCache {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Entry);
 
 Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
     : m_key(key)

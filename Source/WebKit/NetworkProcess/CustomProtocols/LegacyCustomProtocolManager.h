@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -54,7 +55,7 @@ class NetworkProcess;
 struct NetworkProcessCreationParameters;
 
 class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyCustomProtocolManager);
     WTF_MAKE_NONCOPYABLE(LegacyCustomProtocolManager);
 public:
     explicit LegacyCustomProtocolManager(NetworkProcess&);

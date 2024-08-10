@@ -55,6 +55,7 @@
 #include <wtf/Scope.h>
 #include <wtf/StdSet.h>
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -347,6 +348,8 @@ static WeakHashSet<ResourceLoadStatisticsStore>& allStores()
     static NeverDestroyed<WeakHashSet<ResourceLoadStatisticsStore>> map;
     return map;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceLoadStatisticsStore);
 
 ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))

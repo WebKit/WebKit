@@ -58,6 +58,7 @@
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
@@ -140,6 +141,8 @@ static void deleteEmptyOriginDirectory(const String& directory)
     FileSystem::deleteEmptyDirectory(directory);
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkStorageManager);
 
 String NetworkStorageManager::persistedFilePath(const WebCore::ClientOrigin& origin)
 {

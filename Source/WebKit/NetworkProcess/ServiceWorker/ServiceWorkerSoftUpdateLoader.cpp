@@ -36,10 +36,13 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerScriptLoader.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerSoftUpdateLoader);
 
 ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))

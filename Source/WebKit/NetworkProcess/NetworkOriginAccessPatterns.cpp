@@ -28,8 +28,11 @@
 
 #include <wtf/Algorithms.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkOriginAccessPatterns);
 
 void NetworkOriginAccessPatterns::allowAccessTo(const WebCore::UserContentURLPattern& pattern)
 {

@@ -38,8 +38,11 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerOptions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServer);
 
 WebSharedWorkerServer::WebSharedWorkerServer(NetworkSession& session)
     : m_session(session)

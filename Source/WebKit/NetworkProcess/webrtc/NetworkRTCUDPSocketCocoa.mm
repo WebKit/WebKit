@@ -37,11 +37,14 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCUDPSocketCocoa);
 
 class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
 public:

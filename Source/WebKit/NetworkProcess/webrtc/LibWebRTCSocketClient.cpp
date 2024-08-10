@@ -36,8 +36,11 @@
 #include "NetworkRTCProvider.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSocketClient);
 
 LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, Type type, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)

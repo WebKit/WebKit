@@ -28,6 +28,7 @@
 #include "PrivateClickMeasurementClient.h"
 #include <pal/SessionID.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ class NetworkProcess;
 namespace PCM {
 
 class ClientImpl : public Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ClientImpl);
 public:
     ClientImpl(NetworkSession&, NetworkProcess&);
 

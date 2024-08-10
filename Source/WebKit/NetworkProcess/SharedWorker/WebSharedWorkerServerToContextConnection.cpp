@@ -40,6 +40,7 @@
 #include "WebSharedWorkerServer.h"
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -48,6 +49,8 @@ namespace WebKit {
 // We terminate the context connection after 5 seconds if it is no longer used by any SharedWorker objects,
 // as a performance optimization.
 constexpr Seconds idleTerminationDelay { 5_s };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerToContextConnection);
 
 WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess& connection, const WebCore::RegistrableDomain& registrableDomain, WebSharedWorkerServer& server)
     : m_connection(connection)

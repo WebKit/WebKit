@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -41,6 +42,8 @@ static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWo
     static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>> allWorkers;
     return allWorkers;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorker);
 
 WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
     : m_server(server)

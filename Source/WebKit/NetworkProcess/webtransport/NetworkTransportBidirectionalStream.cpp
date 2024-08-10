@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "NetworkTransportBidirectionalStream.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportBidirectionalStream);
 
 NetworkTransportBidirectionalStream::NetworkTransportBidirectionalStream(NetworkTransportSession& session)
     : NetworkTransportReceiveStream(session) { }

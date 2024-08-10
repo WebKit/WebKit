@@ -27,11 +27,12 @@
 
 #include <span>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class NetworkTransportSendStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSendStream);
 public:
     void sendBytes(std::span<const uint8_t>, bool withFin);
 };

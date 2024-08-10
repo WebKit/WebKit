@@ -31,11 +31,12 @@
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class LaunchServicesDatabaseObserver : public WebKit::XPCEndpoint, public NetworkProcessSupplement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LaunchServicesDatabaseObserver);
 public:
     LaunchServicesDatabaseObserver(NetworkProcess&);
     virtual ~LaunchServicesDatabaseObserver();

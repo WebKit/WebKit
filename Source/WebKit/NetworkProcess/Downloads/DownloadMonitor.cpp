@@ -28,6 +28,7 @@
 
 #include "Download.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #define DOWNLOAD_MONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - DownloadMonitor::" fmt, this, ##__VA_ARGS__)
 
@@ -65,6 +66,8 @@ DownloadMonitor::DownloadMonitor(Download& download)
     : m_download(download)
 {
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DownloadMonitor);
 
 double DownloadMonitor::measuredThroughputRate() const
 {

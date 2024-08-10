@@ -52,7 +52,7 @@ namespace WebKit {
 class NetworkLoad;
 
 class NetworkLoadScheduler : public CanMakeWeakPtr<NetworkLoadScheduler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoadScheduler);
 public:
     NetworkLoadScheduler();
     ~NetworkLoadScheduler();

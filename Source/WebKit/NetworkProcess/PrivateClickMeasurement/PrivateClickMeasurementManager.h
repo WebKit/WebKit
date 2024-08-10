@@ -33,6 +33,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,7 +49,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PrivateClickM
 namespace WebKit {
 
 class PrivateClickMeasurementManager : public PCM::ManagerInterface, public CanMakeWeakPtr<PrivateClickMeasurementManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PrivateClickMeasurementManager);
 public:
 
     explicit PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory);

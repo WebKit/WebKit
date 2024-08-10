@@ -32,6 +32,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/PageBlock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
@@ -46,6 +47,8 @@ static bool shouldUseFileMapping(uint64_t fileSize)
 {
     return fileSize >= pageSize();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchStoreManager);
 
 String BackgroundFetchStoreManager::createNewStorageIdentifier()
 {

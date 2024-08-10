@@ -29,12 +29,13 @@
 
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebKit::NetworkCache {
 
 class SubresourceInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SubresourceInfo);
 public:
     SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen)
         : m_key(WTFMove(key))
@@ -85,7 +86,8 @@ private:
 };
 
 struct SubresourceLoad {
-    WTF_MAKE_NONCOPYABLE(SubresourceLoad); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SubresourceLoad);
+    WTF_MAKE_NONCOPYABLE(SubresourceLoad);
 public:
     SubresourceLoad(const WebCore::ResourceRequest& request, const Key& key)
         : request(request)
@@ -97,7 +99,8 @@ public:
 };
 
 class SubresourcesEntry {
-    WTF_MAKE_NONCOPYABLE(SubresourcesEntry); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SubresourcesEntry);
+    WTF_MAKE_NONCOPYABLE(SubresourcesEntry);
 public:
     SubresourcesEntry(Key&&, const Vector<std::unique_ptr<SubresourceLoad>>&);
     explicit SubresourcesEntry(const Storage::Record&);

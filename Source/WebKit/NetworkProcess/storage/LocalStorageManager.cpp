@@ -31,6 +31,7 @@
 #include "StorageAreaRegistry.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -60,6 +61,8 @@ static String originToFileName(const WebCore::ClientOrigin& origin)
 {
     return makeString(origin.clientOrigin.databaseIdentifier(), ".localstorage"_s);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalStorageManager);
 
 Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageData(const String& path)
 {

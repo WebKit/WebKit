@@ -28,6 +28,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class CertificateInfo;
@@ -38,7 +39,7 @@ class ResourceResponse;
 namespace WebKit::PCM {
 
 class NetworkLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoader);
 public:
     using Callback = CompletionHandler<void(const String&, const RefPtr<JSON::Object>&)>;
     static void start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&&);

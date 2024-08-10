@@ -32,6 +32,7 @@
 #include <WebCore/ShareableResource.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class FragmentedSharedBuffer;
 namespace WebKit::NetworkCache {
 
 class Entry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Entry);
 public:
     Entry(const Key&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
     Entry(const Key&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders);

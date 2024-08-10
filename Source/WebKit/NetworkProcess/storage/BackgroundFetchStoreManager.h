@@ -28,6 +28,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,7 +48,7 @@ class WorkQueue;
 namespace WebKit {
 
 class BackgroundFetchStoreManager : public CanMakeWeakPtr<BackgroundFetchStoreManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchStoreManager);
 public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
     BackgroundFetchStoreManager(const String&, Ref<WTF::WorkQueue>&&, QuotaCheckFunction&&);

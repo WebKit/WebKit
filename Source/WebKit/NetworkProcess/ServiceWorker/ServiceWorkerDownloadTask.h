@@ -32,6 +32,7 @@
 #include <WebCore/FetchIdentifier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/FunctionDispatcher.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class FormDataReference;
@@ -46,7 +47,7 @@ class SandboxExtension;
 class WebSWServerToContextConnection;
 
 class ServiceWorkerDownloadTask : public NetworkDataTask, private FunctionDispatcher, private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerDownloadTask);
 public:
     static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, DownloadID downloadID)
     {

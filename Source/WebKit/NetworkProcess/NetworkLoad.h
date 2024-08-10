@@ -28,6 +28,7 @@
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -50,7 +51,7 @@ class NetworkLoadScheduler;
 class NetworkProcess;
 
 class NetworkLoad final : public NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoad);
 public:
     NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
     NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
