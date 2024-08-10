@@ -64,6 +64,7 @@ struct RemoteMediaPlayerState {
     bool hasAvailableVideoFrame { false };
     bool wirelessVideoPlaybackDisabled { false };
     bool didPassCORSAccessCheck { false };
+    WebCore::MediaPlayerEnums::VideoPlaybackConfiguration videoConfiguration;
 };
 
 } // namespace WebKit

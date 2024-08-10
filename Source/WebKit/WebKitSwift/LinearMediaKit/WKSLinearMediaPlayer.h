@@ -150,6 +150,7 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic) BOOL allowPip;
 @property (nonatomic) BOOL allowFullScreenFromInline;
 @property (nonatomic) BOOL isLiveStream;
+@property (nonatomic) BOOL isSpatial;
 @property (nonatomic, strong, nullable) NSNumber *recommendedViewingRatio;
 @property (nonatomic) WKSLinearMediaFullscreenBehaviors fullscreenSceneBehaviors;
 @property (nonatomic) double startTime;
