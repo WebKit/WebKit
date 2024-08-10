@@ -167,7 +167,7 @@ private:
     RefPtr<NavigationAPIMethodTracker> addUpcomingTrarveseAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, const String& key, JSC::JSValue info);
     void cleanupAPIMethodTracker(NavigationAPIMethodTracker*);
     void resolveFinishedPromise(NavigationAPIMethodTracker*);
-    void rejectFinishedPromise(NavigationAPIMethodTracker*, Exception&&, JSC::JSValue exceptionObject);
+    void rejectFinishedPromise(NavigationAPIMethodTracker*, const Exception&, JSC::JSValue exceptionObject);
     void abortOngoingNavigation(NavigateEvent&);
     void promoteUpcomingAPIMethodTracker(const String& destinationKey);
     void notifyCommittedToEntry(NavigationAPIMethodTracker*, NavigationHistoryEntry*, NavigationNavigationType);

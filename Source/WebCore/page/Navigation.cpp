@@ -438,7 +438,7 @@ void Navigation::resolveFinishedPromise(NavigationAPIMethodTracker* apiMethodTra
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
-void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker, Exception&& exception, JSC::JSValue exceptionObject)
+void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker, const Exception& exception, JSC::JSValue exceptionObject)
 {
     // finished is already marked as handled at this point so don't overwrite that.
     apiMethodTracker->finishedPromise->reject(exception, RejectAsHandled::Yes, exceptionObject);
@@ -605,10 +605,10 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject->vm(), domException }));
 
     if (m_ongoingAPIMethodTracker)
-        rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), WTFMove(exception), domException);
+        rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), exception, domException);
 
     if (m_transition) {
-        // FIXME: Reject navigation's transition's finished promise with error.
+        m_transition->rejectPromise(exception);
         m_transition = nullptr;
     }
 }
@@ -700,8 +700,11 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         RefPtr fromNavigationHistoryEntry = currentEntry();
         ASSERT(fromNavigationHistoryEntry);
 
-        // FIXME: Create finished promise
-        m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry);
+        {
+            auto& domGlobalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
+            JSC::JSLockHolder locker(domGlobalObject.vm());
+            m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry, DeferredPromise::create(domGlobalObject, DeferredPromise::Mode::RetainPromiseOnResolve).releaseNonNull());
+        }
 
         if (navigationType == NavigationNavigationType::Traverse)
             m_suppressNormalScrollRestorationDuringOngoingNavigation = true;
@@ -739,14 +742,18 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
             if (!failure) {
                 dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
-                // FIXME: 7. If navigation's transition is not null, then resolve navigation's transition's finished promise with undefined.
-                m_transition = nullptr;
+                if (RefPtr transition = std::exchange(m_transition, nullptr))
+                    transition->resolvePromise();
 
                 if (apiMethodTracker)
                     resolveFinishedPromise(apiMethodTracker.get());
             } else {
-                // FIXME: Fill in error information.
-                dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, { }, 0, 0, { }));
+                // FIXME: Fill in error information with exception from promise calls above.
+                auto exception = Exception(ExceptionCode::UnknownError);
+                dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), { }, 0, 0, { }));
+
+                if (RefPtr transition = std::exchange(m_transition, nullptr))
+                    transition->rejectPromise(exception);
             }
         } else {
             // FIXME: and the following failure steps given reason rejectionReason:
