@@ -802,16 +802,6 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     _configuration->setAllLoadsBlockedByDeviceManagementRestrictionsForTesting(blocked);
 }
 
-- (BOOL)webPushDaemonUsesMockBundlesForTesting
-{
-    return _configuration->webPushDaemonUsesMockBundlesForTesting();
-}
-
-- (void)setWebPushDaemonUsesMockBundlesForTesting:(BOOL)usesMockBundles
-{
-    _configuration->setWebPushDaemonUsesMockBundlesForTesting(usesMockBundles);
-}
-
 - (BOOL)resourceLoadStatisticsDebugModeEnabled
 {
     return _configuration->resourceLoadStatisticsDebugModeEnabled();

@@ -1707,14 +1707,21 @@ angle::Result FramebufferVk::ensureFragmentShadingRateImageAndViewInitialized(
 
     if (!mFragmentShadingRateImage.valid())
     {
+        VkImageUsageFlags imageUsageFlags =
+            VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR |
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        // Add storage usage iff we intend to generate data using compute shader
+        if (!contextVk->getFeatures().generateFragmentShadingRateAttchementWithCpu.enabled)
+        {
+            imageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+        }
+
         ANGLE_TRY(mFragmentShadingRateImage.init(
             contextVk, gl::TextureType::_2D,
             VkExtent3D{fragmentShadingRateAttachmentWidth, fragmentShadingRateAttachmentHeight, 1},
-            renderer->getFormat(angle::FormatID::R8_UINT), 1,
-            VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR |
-                VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-            gl::LevelIndex(0), 1, 1, false,
-            contextVk->getProtectionType() == vk::ProtectionType::Protected));
+            renderer->getFormat(angle::FormatID::R8_UINT), 1, imageUsageFlags, gl::LevelIndex(0), 1,
+            1, false, contextVk->getProtectionType() == vk::ProtectionType::Protected));
+
         ANGLE_TRY(contextVk->initImageAllocation(
             &mFragmentShadingRateImage, false, renderer->getMemoryProperties(),
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vk::MemoryAllocationType::TextureImage));
@@ -1729,7 +1736,6 @@ angle::Result FramebufferVk::ensureFragmentShadingRateImageAndViewInitialized(
 
 angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
     ContextVk *contextVk,
-    const bool isGainZero,
     const uint32_t fragmentShadingRateWidth,
     const uint32_t fragmentShadingRateHeight,
     const uint32_t fragmentShadingRateBlockWidth,
@@ -1752,79 +1758,77 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
     ANGLE_TRY(buffer->map(contextVk, &mappedBuffer));
     uint8_t val = 0;
     memset(mappedBuffer, 0, bufferSize);
-    if (!isGainZero)
+
+    // The spec requires min_pixel_density to be computed thusly -
+    //
+    // min_pixel_density=0.;
+    // for(int i=0;i<focalPointsPerLayer;++i)
+    // {
+    //     focal_point_density = 1./max((focalX[i]-px)^2*gainX[i]^2+
+    //                         (focalY[i]-py)^2*gainY[i]^2-foveaArea[i],1.);
+    //
+    //     min_pixel_density=max(min_pixel_density,focal_point_density);
+    // }
+    float minPixelDensity   = 0.0f;
+    float focalPointDensity = 0.0f;
+    for (uint32_t y = 0; y < fragmentShadingRateHeight; y++)
     {
-        // The spec requires min_pixel_density to be computed thusly -
-        //
-        // min_pixel_density=0.;
-        // for(int i=0;i<focalPointsPerLayer;++i)
-        // {
-        //     focal_point_density = 1./max((focalX[i]-px)^2*gainX[i]^2+
-        //                         (focalY[i]-py)^2*gainY[i]^2-foveaArea[i],1.);
-        //
-        //     min_pixel_density=max(min_pixel_density,focal_point_density);
-        // }
-        float minPixelDensity   = 0.0f;
-        float focalPointDensity = 0.0f;
-        for (uint32_t y = 0; y < fragmentShadingRateHeight; y++)
+        for (uint32_t x = 0; x < fragmentShadingRateWidth; x++)
         {
-            for (uint32_t x = 0; x < fragmentShadingRateWidth; x++)
+            minPixelDensity = 0.0f;
+            float px =
+                (static_cast<float>(x) * fragmentShadingRateBlockWidth / foveatedAttachmentWidth -
+                 0.5f) *
+                2.0f;
+            float py =
+                (static_cast<float>(y) * fragmentShadingRateBlockHeight / foveatedAttachmentHeight -
+                 0.5f) *
+                2.0f;
+            focalPointDensity = 0.0f;
+            for (const gl::FocalPoint &focalPoint : activeFocalPoints)
             {
-                minPixelDensity = 0.0f;
-                float px        = (static_cast<float>(x) * fragmentShadingRateBlockWidth /
-                                foveatedAttachmentWidth -
-                            0.5f) *
-                           2.0f;
-                float py = (static_cast<float>(y) * fragmentShadingRateBlockHeight /
-                                foveatedAttachmentHeight -
-                            0.5f) *
-                           2.0f;
-                focalPointDensity = 0.0f;
-                for (uint32_t point = 0; point < activeFocalPoints.size(); point++)
-                {
-                    float density =
-                        1.0f / std::max(std::pow(activeFocalPoints[point].focalX - px, 2.0f) *
-                                                std::pow(activeFocalPoints[point].gainX, 2.0f) +
-                                            std::pow(activeFocalPoints[point].focalY - py, 2.0f) *
-                                                std::pow(activeFocalPoints[point].gainY, 2.0f) -
-                                            activeFocalPoints[point].foveaArea,
-                                        1.0f);
+                float density = 1.0f / std::max(std::pow(focalPoint.focalX - px, 2.0f) *
+                                                        std::pow(focalPoint.gainX, 2.0f) +
+                                                    std::pow(focalPoint.focalY - py, 2.0f) *
+                                                        std::pow(focalPoint.gainY, 2.0f) -
+                                                    focalPoint.foveaArea,
+                                                1.0f);
 
-                    // When focal points are overlapping choose the highest quality of all
-                    if (density > focalPointDensity)
-                    {
-                        focalPointDensity = density;
-                    }
-                }
-                minPixelDensity = std::max(minPixelDensity, focalPointDensity);
-
-                // https://docs.vulkan.org/spec/latest/chapters/primsrast.html#primsrast-fragment-shading-rate-attachment
-                //
-                // w = 2^((texel/4) & 3)
-                // h = 2^(texel & 3)
-                // `texel` would then be => log2(w) << 2 | log2(h).
-                //
-                // 1) The supported shading rates are - 1x1, 1x2, 2x1, 2x2
-                // 2) log2(1) == 0, log2(2) == 1
-                if (minPixelDensity > 0.75f)
+                // When focal points are overlapping choose the highest quality of all
+                if (density > focalPointDensity)
                 {
-                    // Use shading rate 1x1
-                    val = 0;
+                    focalPointDensity = density;
                 }
-                else if (minPixelDensity > 0.5f)
-                {
-                    // Use shading rate 2x1
-                    val = (1 << 2);
-                }
-                else
-                {
-                    // Use shading rate 2x2
-                    val = (1 << 2) | 1;
-                }
-                mappedBuffer[y * fragmentShadingRateWidth + x] = val;
             }
+            minPixelDensity = std::max(minPixelDensity, focalPointDensity);
+
+            // https://docs.vulkan.org/spec/latest/chapters/primsrast.html#primsrast-fragment-shading-rate-attachment
+            //
+            // w = 2^((texel/4) & 3)
+            // h = 2^(texel & 3)
+            // `texel` would then be => log2(w) << 2 | log2(h).
+            //
+            // 1) The supported shading rates are - 1x1, 1x2, 2x1, 2x2
+            // 2) log2(1) == 0, log2(2) == 1
+            if (minPixelDensity > 0.75f)
+            {
+                // Use shading rate 1x1
+                val = 0;
+            }
+            else if (minPixelDensity > 0.5f)
+            {
+                // Use shading rate 2x1
+                val = (1 << 2);
+            }
+            else
+            {
+                // Use shading rate 2x2
+                val = (1 << 2) | 1;
+            }
+            mappedBuffer[y * fragmentShadingRateWidth + x] = val;
         }
     }
+
     ANGLE_TRY(buffer->flush(contextVk->getRenderer(), 0, buffer->getSize()));
     buffer->unmap(contextVk->getRenderer());
     // copy data from staging buffer to image
@@ -1847,6 +1851,38 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
     return angle::Result::Continue;
 }
 
+angle::Result FramebufferVk::generateFragmentShadingRateWithCompute(
+    ContextVk *contextVk,
+    const uint32_t fragmentShadingRateWidth,
+    const uint32_t fragmentShadingRateHeight,
+    const uint32_t fragmentShadingRateBlockWidth,
+    const uint32_t fragmentShadingRateBlockHeight,
+    const uint32_t foveatedAttachmentWidth,
+    const uint32_t foveatedAttachmentHeight,
+    const std::vector<gl::FocalPoint> &activeFocalPoints)
+{
+    ASSERT(activeFocalPoints.size() < gl::IMPLEMENTATION_MAX_FOCAL_POINTS);
+
+    UtilsVk::GenerateFragmentShadingRateParameters shadingRateParams;
+    shadingRateParams.textureWidth          = foveatedAttachmentWidth;
+    shadingRateParams.textureHeight         = foveatedAttachmentHeight;
+    shadingRateParams.attachmentBlockWidth  = fragmentShadingRateBlockWidth;
+    shadingRateParams.attachmentBlockHeight = fragmentShadingRateBlockHeight;
+    shadingRateParams.attachmentWidth       = fragmentShadingRateWidth;
+    shadingRateParams.attachmentHeight      = fragmentShadingRateHeight;
+    shadingRateParams.numFocalPoints        = 0;
+
+    for (const gl::FocalPoint &focalPoint : activeFocalPoints)
+    {
+        ASSERT(focalPoint.valid());
+        shadingRateParams.focalPoints[shadingRateParams.numFocalPoints] = focalPoint;
+        shadingRateParams.numFocalPoints++;
+    }
+
+    return contextVk->getUtils().generateFragmentShadingRate(
+        contextVk, &mFragmentShadingRateImage, &mFragmentShadingRateImageView, shadingRateParams);
+}
+
 angle::Result FramebufferVk::updateFragmentShadingRateAttachment(
     ContextVk *contextVk,
     const gl::FoveationState &foveationState,
@@ -1867,22 +1903,33 @@ angle::Result FramebufferVk::updateFragmentShadingRateAttachment(
                                                                fragmentShadingRateHeight));
     ASSERT(mFragmentShadingRateImage.valid());
 
-    bool isGainZero = true;
     std::vector<gl::FocalPoint> activeFocalPoints;
     for (uint32_t point = 0; point < gl::IMPLEMENTATION_MAX_FOCAL_POINTS; point++)
     {
         const gl::FocalPoint &focalPoint = foveationState.getFocalPoint(0, point);
-        if (focalPoint != gl::kInvalidFocalPoint)
+        if (focalPoint.valid())
         {
-            isGainZero = isGainZero && focalPoint.gainX == 0 && focalPoint.gainY == 0;
             activeFocalPoints.push_back(focalPoint);
         }
     }
+    ASSERT(activeFocalPoints.size() > 0);
 
-    return generateFragmentShadingRateWithCPU(
-        contextVk, isGainZero, fragmentShadingRateWidth, fragmentShadingRateHeight,
-        fragmentShadingRateBlockWidth, fragmentShadingRateBlockHeight, foveatedAttachmentWidth,
-        foveatedAttachmentHeight, activeFocalPoints);
+    if (contextVk->getFeatures().generateFragmentShadingRateAttchementWithCpu.enabled)
+    {
+        ANGLE_TRY(generateFragmentShadingRateWithCPU(
+            contextVk, fragmentShadingRateWidth, fragmentShadingRateHeight,
+            fragmentShadingRateBlockWidth, fragmentShadingRateBlockHeight, foveatedAttachmentWidth,
+            foveatedAttachmentHeight, activeFocalPoints));
+    }
+    else
+    {
+        ANGLE_TRY(generateFragmentShadingRateWithCompute(
+            contextVk, fragmentShadingRateWidth, fragmentShadingRateHeight,
+            fragmentShadingRateBlockWidth, fragmentShadingRateBlockHeight, foveatedAttachmentWidth,
+            foveatedAttachmentHeight, activeFocalPoints));
+    }
+
+    return angle::Result::Continue;
 }
 
 angle::Result FramebufferVk::updateFoveationState(ContextVk *contextVk,

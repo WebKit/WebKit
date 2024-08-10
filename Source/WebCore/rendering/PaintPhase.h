@@ -60,21 +60,22 @@ enum class PaintBehavior : uint32_t {
     SkipSelectionHighlight              = 1 << 1,
     ForceBlackText                      = 1 << 2,
     ForceWhiteText                      = 1 << 3,
-    RenderingSVGClipOrMask              = 1 << 4,
-    SkipRootBackground                  = 1 << 5,
-    RootBackgroundOnly                  = 1 << 6,
-    SelectionAndBackgroundsOnly         = 1 << 7,
-    ExcludeSelection                    = 1 << 8,
-    FlattenCompositingLayers            = 1 << 9, // Paint doesn't stop at compositing layer boundaries.
-    ForceSynchronousImageDecode         = 1 << 10, // Paint should always complete image decoding of painted images.
-    DefaultAsynchronousImageDecode      = 1 << 11, // Paint should always start asynchronous image decode of painted images, unless otherwise specified.
-    CompositedOverflowScrollContent     = 1 << 12,
-    AnnotateLinks                       = 1 << 13, // Collect all renderers with links to annotate their URLs (e.g. PDFs)
-    EventRegionIncludeForeground        = 1 << 14, // FIXME: Event region painting should use paint phases.
-    EventRegionIncludeBackground        = 1 << 15,
-    Snapshotting                        = 1 << 16, // Paint is updating external backing store and visits all content, including composited content and always completes image decoding of painted images. FIXME: Will be removed.
-    DontShowVisitedLinks                = 1 << 17,
-    ExcludeReplacedContent              = 1 << 18,
+    ForceBlackBorder                    = 1 << 4,
+    RenderingSVGClipOrMask              = 1 << 5,
+    SkipRootBackground                  = 1 << 6,
+    RootBackgroundOnly                  = 1 << 7,
+    SelectionAndBackgroundsOnly         = 1 << 8,
+    ExcludeSelection                    = 1 << 9,
+    FlattenCompositingLayers            = 1 << 10, // Paint doesn't stop at compositing layer boundaries.
+    ForceSynchronousImageDecode         = 1 << 11, // Paint should always complete image decoding of painted images.
+    DefaultAsynchronousImageDecode      = 1 << 12, // Paint should always start asynchronous image decode of painted images, unless otherwise specified.
+    CompositedOverflowScrollContent     = 1 << 13,
+    AnnotateLinks                       = 1 << 14, // Collect all renderers with links to annotate their URLs (e.g. PDFs)
+    EventRegionIncludeForeground        = 1 << 15, // FIXME: Event region painting should use paint phases.
+    EventRegionIncludeBackground        = 1 << 16,
+    Snapshotting                        = 1 << 17, // Paint is updating external backing store and visits all content, including composited content and always completes image decoding of painted images. FIXME: Will be removed.
+    DontShowVisitedLinks                = 1 << 18,
+    ExcludeReplacedContent              = 1 << 19,
 };
 
 } // namespace WebCore

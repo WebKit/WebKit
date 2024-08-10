@@ -1257,7 +1257,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
     }
 
-    [scrollView _updateOverlayRegionsBehavior:true];
+    [scrollView _updateOverlayRegionsBehavior:YES];
     [scrollView _updateOverlayRegionRects:overlayRegionRects];
 }
 
@@ -1282,7 +1282,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     if ([self _scrollViewCanHaveOverlayRegions:_scrollView.get()])
         overlayRegionScrollView = _scrollView.get();
     else
-        [_scrollView _updateOverlayRegionsBehavior:false];
+        [_scrollView _updateOverlayRegionsBehavior:NO];
 
     auto candidates = coordinatorProxy->overlayRegionScrollViewCandidates();
     std::sort(candidates.begin(), candidates.end(), [] (auto& first, auto& second) {
@@ -1293,7 +1293,7 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         if (!overlayRegionScrollView && [self _scrollViewCanHaveOverlayRegions:scrollView])
             overlayRegionScrollView = scrollView;
         else
-            [scrollView _updateOverlayRegionsBehavior:false];
+            [scrollView _updateOverlayRegionsBehavior:NO];
     }
 
     return overlayRegionScrollView;
@@ -1322,6 +1322,17 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
     configureScrollViewWithOverlayRegionsIDs(overlayRegionScrollView, layerTreeHost, overlayRegionsIDs);
 
     scrollingCoordinatorProxy->updateOverlayRegionLayerIDs(overlayRegionsIDs);
+}
+
+- (void)_updateOverlayRegionsForCustomContentView
+{
+    if (![self _scrollViewCanHaveOverlayRegions:_scrollView.get()]) {
+        [_scrollView _updateOverlayRegionsBehavior:NO];
+        return;
+    }
+
+    [_scrollView _updateOverlayRegionsBehavior:YES];
+    [_scrollView _updateOverlayRegionRects: { }];
 }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 

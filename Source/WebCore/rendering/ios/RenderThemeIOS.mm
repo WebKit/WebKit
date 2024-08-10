@@ -437,7 +437,7 @@ static void adjustSelectListButtonStyle(RenderStyle& style, const Element& eleme
     applyCommonButtonPaddingToStyle(style, element);
 
     // Enforce "line-height: normal".
-    style.setLineHeight(Length(-100.0, LengthType::Percent));
+    style.setLineHeight(Length(LengthType::Normal));
 }
     
 class RenderThemeMeasureTextClient : public MeasureTextClient {

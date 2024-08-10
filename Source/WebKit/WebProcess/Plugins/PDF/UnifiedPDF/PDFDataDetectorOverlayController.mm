@@ -134,6 +134,9 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
     if (!plugin)
         return false;
 
+    if (plugin->isLocked())
+        return false;
+
     RefPtr mainFrameView = plugin->mainFrameView();
     if (!mainFrameView)
         return false;

@@ -10,7 +10,7 @@ FAIL inset-inline-end: 1px is allowed in @position-try The string did not match 
 FAIL inset-block: 1px is allowed in @position-try The string did not match the expected pattern.
 FAIL inset-inline: 1px is allowed in @position-try The string did not match the expected pattern.
 FAIL inset: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-area: span-all is allowed in @position-try The string did not match the expected pattern.
+FAIL position-area: span-all is allowed in @position-try The string did not match the expected pattern.
 FAIL margin-top: 1px is allowed in @position-try The string did not match the expected pattern.
 FAIL margin-bottom: 1px is allowed in @position-try The string did not match the expected pattern.
 FAIL margin-left: 1px is allowed in @position-try The string did not match the expected pattern.

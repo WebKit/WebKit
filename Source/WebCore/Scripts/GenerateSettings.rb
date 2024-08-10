@@ -83,6 +83,7 @@ class Setting
   attr_accessor :status
   attr_accessor :category
   attr_accessor :defaultValues
+  attr_accessor :disableInLockdownMode
   attr_accessor :excludeFromInternalSettings
   attr_accessor :condition
   attr_accessor :onChange
@@ -97,6 +98,7 @@ class Setting
     @status = options["status"]
     @defaultValues = options["defaultValue"]["WebCore"]
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
+    @disableInLockdownMode = options["disableInLockdownMode"] || false
     @condition = options["condition"]
     @onChange = options["webcoreOnChange"]
     @getter = options["webcoreGetter"]

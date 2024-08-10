@@ -45,6 +45,7 @@ def bracket_if_needed(condition):
 def parse(file):
     receiver_enabled_by = None
     receiver_attributes = None
+    shared_preferences_needs_connection = False
     destination = None
     messages = []
     conditions = []
@@ -53,9 +54,19 @@ def parse(file):
     namespace = "WebKit"
     for line in file:
         line = line.strip()
-        match = re.search(r'\s*\[\s*EnabledBy\s*=\s*(?P<enabledby>.*?)\s*\]\s*', line)
+        match = re.search(r'\s*\[\s*(?P<extended_attributes>.*?)\s*\]\s*', line)
         if match and not destination:
-            receiver_enabled_by = match.group('enabledby').split(',')
+            extended_attributes = re.split(r'\s*,\s*', match.group('extended_attributes'))
+            for attribute in extended_attributes:
+                match = re.match(r'(?P<name>\w+)\s*=\s*(?P<value>.+)', attribute)
+                if match:
+                    if match.group('name') == 'EnabledBy':
+                        receiver_enabled_by = re.split(r'\s*&&\s*', match.group('value'))
+                        continue
+                elif attribute == 'SharedPreferencesNeedsConnection':
+                    shared_preferences_needs_connection = True
+                    continue
+                raise Exception("ERROR: Unknown extended attribute: '%s'" % attribute)
             continue
         match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
         if not match:
@@ -98,9 +109,9 @@ def parse(file):
                 match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
                 if match:
                     enabled_if = match.groups()[0]
-                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w,]+)))(?:, |$)?", options_string)
+                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&]+)))(?:, |$)?", options_string)
                 if match:
-                    enabled_by = map(lambda str: str.strip(), match.groups()[0].split(','))
+                    enabled_by = re.split(r'\s*&&\s*', match.groups()[0])
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -114,7 +125,7 @@ def parse(file):
                 reply_parameters = None
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, messages, combine_condition(master_condition), namespace)
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace)
 
 
 def parse_attributes_string(attributes_string):

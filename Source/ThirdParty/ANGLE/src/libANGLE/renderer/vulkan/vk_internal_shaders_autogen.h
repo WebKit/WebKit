@@ -135,6 +135,11 @@ namespace FullScreenTri_vert
 constexpr size_t kArrayLen = 0x00000001;
 }  // namespace FullScreenTri_vert
 
+namespace GenerateFragmentShadingRate_comp
+{
+constexpr size_t kArrayLen = 0x00000001;
+}  // namespace GenerateFragmentShadingRate_comp
+
 namespace GenerateMipmap_comp
 {
 enum MaxSupportedDest
@@ -256,6 +261,9 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getFullScreenTri_vert(Context *context,
                                         uint32_t shaderFlags,
                                         RefCounted<ShaderModule> **shaderOut);
+    angle::Result getGenerateFragmentShadingRate_comp(Context *context,
+                                                      uint32_t shaderFlags,
+                                                      RefCounted<ShaderModule> **shaderOut);
     angle::Result getGenerateMipmap_comp(Context *context,
                                          uint32_t shaderFlags,
                                          RefCounted<ShaderModule> **shaderOut);
@@ -292,6 +300,8 @@ class ShaderLibrary final : angle::NonCopyable
         mExportStencil_frag_shaders[InternalShader::ExportStencil_frag::kArrayLen];
     RefCounted<ShaderModule>
         mFullScreenTri_vert_shaders[InternalShader::FullScreenTri_vert::kArrayLen];
+    RefCounted<ShaderModule> mGenerateFragmentShadingRate_comp_shaders
+        [InternalShader::GenerateFragmentShadingRate_comp::kArrayLen];
     RefCounted<ShaderModule>
         mGenerateMipmap_comp_shaders[InternalShader::GenerateMipmap_comp::kArrayLen];
     RefCounted<ShaderModule> mImageClear_frag_shaders[InternalShader::ImageClear_frag::kArrayLen];

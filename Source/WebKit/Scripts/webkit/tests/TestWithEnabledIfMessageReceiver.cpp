@@ -40,7 +40,9 @@ namespace WebKit {
 
 void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (!sharedPreferencesForWebProcess().someFeature) {
+    auto& sharedPreferences = sharedPreferencesForWebProcess();
+    UNUSED_VARIABLE(sharedPreferences);
+    if (!sharedPreferences.someFeature) {
 #if ENABLE(IPC_TESTING_API)
         if (connection.ignoreInvalidMessageForTesting())
             return;

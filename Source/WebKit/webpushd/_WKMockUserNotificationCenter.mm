@@ -134,6 +134,13 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
     });
 }
 
+- (UNNotificationSettings *)notificationSettings
+{
+    RetainPtr settings = [UNMutableNotificationSettings emptySettings];
+    [settings setAuthorizationStatus:_hasPermission ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusNotDetermined];
+    return settings.get();
+}
+
 @end
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)

@@ -359,13 +359,13 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
         double value = duration[unit];
 
         StringBuilder skeletonBuilder;
-        skeletonBuilder.append("rounding-mode-half-up"_s);
 
         switch (unit) {
         // 3.j. If unit is "seconds", "milliseconds", or "microseconds", then
         case TemporalUnit::Second:
         case TemporalUnit::Millisecond:
         case TemporalUnit::Microsecond: {
+            skeletonBuilder.append("rounding-mode-down"_s);
             IntlDurationFormat::UnitStyle nextStyle = IntlDurationFormat::UnitStyle::Long;
             if (unit == TemporalUnit::Second)
                 nextStyle = durationFormat->units()[static_cast<unsigned>(TemporalUnit::Millisecond)].style();
@@ -398,8 +398,10 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             }
             break;
         }
-        default:
+        default: {
+            skeletonBuilder.append("rounding-mode-half-up"_s);
             break;
+        }
         }
 
         auto style = unitData.style();

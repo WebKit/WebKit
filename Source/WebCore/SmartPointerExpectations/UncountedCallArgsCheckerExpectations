@@ -1697,6 +1697,7 @@ platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/ShareableBitmapCG.mm
 platform/graphics/cocoa/CMUtilities.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp
+platform/graphics/cocoa/ImageAdapterCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 platform/graphics/cocoa/SourceBufferParserWebM.cpp
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
@@ -1704,6 +1705,7 @@ platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm
+platform/graphics/coretext/ComplexTextControllerCoreText.mm
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
@@ -1717,8 +1719,6 @@ platform/graphics/filters/software/FELightingSoftwareApplier.cpp
 platform/graphics/filters/software/FELightingSoftwareApplierInlines.h
 platform/graphics/filters/software/FELightingSoftwareParallelApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
-platform/graphics/mac/ComplexTextControllerCoreText.mm
-platform/graphics/mac/ImageAdapterMac.mm
 platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/opentype/OpenTypeMathData.cpp

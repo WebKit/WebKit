@@ -1327,14 +1327,12 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
         return AnchorPositionedElementAction::None;
 
     // Maintain the list of anchors (in tree order) used for anchor-positioned elements
-    if (m_canFindAnchorsForNextAnchorPositionedElement) {
-        if (!style->anchorNames().isEmpty()) {
-            for (auto& anchorName : style->anchorNames()) {
-                m_anchorElements.add(element);
-                m_anchorsForAnchorName.ensure(anchorName, [&] {
-                    return Vector<Ref<Element>> { };
-                }).iterator->value.append(element);
-            }
+    if (!style->anchorNames().isEmpty()) {
+        for (auto& anchorName : style->anchorNames()) {
+            m_anchorElements.add(element);
+            m_anchorsForAnchorName.ensure(anchorName, [&] {
+                return Vector<Ref<Element>> { };
+            }).iterator->value.append(element);
         }
     }
 

@@ -153,6 +153,7 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
     {"angle-null", GPUTestConfig::kAPIUnknown},
     {"angle-swiftshader", GPUTestConfig::kAPISwiftShader},
     {"angle-vulkan", GPUTestConfig::kAPIVulkan},
+    {"angle-webgpu", GPUTestConfig::kAPIWgpu},
     {"win32", GPUTestConfig::kAPIUnknown},
     {"x11", GPUTestConfig::kAPIUnknown},
 };

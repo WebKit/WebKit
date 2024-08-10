@@ -1600,3 +1600,10 @@ imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.
 imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html [ Pass Failure ]
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
+
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-006.html [ ImageOnlyFailure ]

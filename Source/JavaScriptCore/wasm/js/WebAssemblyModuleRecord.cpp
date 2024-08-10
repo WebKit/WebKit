@@ -282,7 +282,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                                 Wasm::TypeIndex paramIndex = global.type.index;
                                 Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                                 if (paramIndex != argIndex)
-                                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument function did not match the reference type"_s)));
+                                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
                             }
 
                             m_instance->setGlobal(import.kindIndex, value);
@@ -344,7 +344,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                                 Wasm::TypeIndex paramIndex = global.type.index;
                                 Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                                 if (paramIndex != argIndex)
-                                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument function did not match the reference type"_s)));
+                                    return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "Argument value did not match the reference type"_s)));
                             }
 
                             m_instance->setGlobal(import.kindIndex, value);

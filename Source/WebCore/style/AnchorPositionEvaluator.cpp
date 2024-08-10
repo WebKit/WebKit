@@ -25,33 +25,379 @@
 #include "config.h"
 #include "AnchorPositionEvaluator.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSValue.h"
+#include "CSSValueKeywords.h"
+#include "Document.h"
+#include "DocumentInlines.h"
+#include "Element.h"
+#include "Node.h"
+#include "RenderBlock.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderFragmentedFlow.h"
+#include "RenderInline.h"
+#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderState.h"
+#include "StyleScope.h"
+#include "WritingMode.h"
+#include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore::Style {
 
-Length AnchorPositionEvaluator::resolveAnchorValue(const CSSAnchorValue* anchorValue, const BuilderState& builderState)
+static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
 {
-    auto* element = builderState.element();
-    if (!element)
+    switch (id) {
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+        return BoxAxis::Horizontal;
+    case CSSPropertyTop:
+    case CSSPropertyBottom:
+        return BoxAxis::Vertical;
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetInlineEnd:
+        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Inline);
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
+        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Block);
+    default:
+        ASSERT_NOT_REACHED();
+        return BoxAxis::Horizontal;
+    }
+}
+
+static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const RenderStyle& style)
+{
+    switch (id) {
+    case CSSPropertyLeft:
+        return BoxSide::Left;
+    case CSSPropertyRight:
+        return BoxSide::Right;
+    case CSSPropertyTop:
+        return BoxSide::Top;
+    case CSSPropertyBottom:
+        return BoxSide::Bottom;
+    case CSSPropertyInsetInlineStart:
+        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineStart);
+    case CSSPropertyInsetInlineEnd:
+        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineEnd);
+    case CSSPropertyInsetBlockStart:
+        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockStart);
+    case CSSPropertyInsetBlockEnd:
+        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockEnd);
+    default:
+        ASSERT_NOT_REACHED();
+        return BoxSide::Top;
+    }
+}
+
+static BoxSide flipBoxSide(BoxSide side)
+{
+    switch (side) {
+    case BoxSide::Top:
+        return BoxSide::Bottom;
+    case BoxSide::Right:
+        return BoxSide::Left;
+    case BoxSide::Bottom:
+        return BoxSide::Top;
+    case BoxSide::Left:
+        return BoxSide::Right;
+    default:
+        ASSERT_NOT_REACHED();
+        return BoxSide::Top;
+    }
+}
+
+// Physical sides (left/right/top/bottom) can only be used in certain inset properties. "For example,
+// left is usable in left, right, or the logical inset properties that refer to the horizontal axis."
+// See: https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side
+static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyID insetPropertyID, const RenderStyle& style)
+{
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, style);
+
+    switch (anchorSideID) {
+    case CSSValueID::CSSValueInside:
+    case CSSValueID::CSSValueOutside:
+    case CSSValueID::CSSValueStart:
+    case CSSValueID::CSSValueEnd:
+    case CSSValueID::CSSValueSelfStart:
+    case CSSValueID::CSSValueSelfEnd:
+    case CSSValueID::CSSValueCenter:
+    case CSSValueID::CSSValueInvalid: // percentage
+        return true;
+    case CSSValueID::CSSValueTop:
+    case CSSValueID::CSSValueBottom:
+        return BoxAxis::Vertical == physicalAxis;
+    case CSSValueID::CSSValueLeft:
+    case CSSValueID::CSSValueRight:
+        return BoxAxis::Horizontal == physicalAxis;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+// Anchor side resolution for keywords 'start', 'end', 'self-start', and 'self-end'.
+// See: https://drafts.csswg.org/css-anchor-position-1/#funcdef-anchor
+static BoxSide computeStartEndBoxSide(CSSPropertyID insetPropertyID, CheckedRef<const RenderElement> anchorPositionedRenderer, bool shouldComputeStart, bool shouldUseContainingBlockWritingMode)
+{
+    // 1. Compute the physical axis of inset property (using the element's writing mode)
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+
+    // 2. Convert the physical axis to the corresponding logical axis w.r.t. the element OR containing block's writing mode
+    auto& textFlowStyle = shouldUseContainingBlockWritingMode ? anchorPositionedRenderer->containingBlock()->style() : anchorPositionedRenderer->style();
+    auto textFlow = makeTextFlow(textFlowStyle.writingMode(), textFlowStyle.direction());
+    auto logicalAxis = mapPhysicalAxisToLogicalAxis(textFlow, physicalAxis);
+
+    // 3. Convert the logical start OR end side to the corresponding physical side w.r.t. the
+    // element OR containing block's writing mode
+    if (logicalAxis == LogicalBoxAxis::Inline) {
+        if (shouldComputeStart)
+            return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineStart);
+        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineEnd);
+    }
+    if (shouldComputeStart)
+        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockStart);
+    return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockEnd);
+}
+
+// Insets for positioned elements are specified w.r.t. their containing blocks. Additionally, the containing block
+// for a `position: absolute` element is defined by the padding box of its nearest absolutely positioned ancestor.
+// Source: https://www.w3.org/TR/CSS2/visudet.html#containing-block-details.
+// However, some of the logic in the codebase that deals with finding offsets from a containing block are done from
+// the perspective of the container element's border box instead of its padding box. In those cases, we must remove
+// the border widths from those locations for the final inset value.
+static LayoutUnit removeBorderForInsetValue(LayoutUnit insetValue, BoxSide insetPropertySide, const RenderBlock& containingBlock)
+{
+    switch (insetPropertySide) {
+    case BoxSide::Top:
+        return insetValue - containingBlock.borderTop();
+    case BoxSide::Right:
+        return insetValue - containingBlock.borderRight();
+    case BoxSide::Bottom:
+        return insetValue - containingBlock.borderBottom();
+    case BoxSide::Left:
+        return insetValue - containingBlock.borderLeft();
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+// This computes the top left location, physical width, and physical height of the specified
+// anchor element. The location is computed relative to the specified containing block.
+static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderBlock> containingBlock)
+{
+    // Fragmented flows are a little tricky to deal with. One example of a fragmented
+    // flow is a block anchor element that is "fragmented" or split across multiple columns
+    // as a result of multi-column layout. In this case, we need to compute "the axis-aligned
+    // bounding rectangle of the fragments' border boxes" and make that our anchorHeight/Width.
+    // We also need to adjust the anchor's top left location to match that of the bounding box
+    // instead of the first fragment.
+    if (CheckedPtr fragmentedFlow = anchorBox->enclosingFragmentedFlow()) {
+        // Compute the location of the fragmented flow relative to the containing block.
+        LayoutPoint fragmentedFlowLocation { fragmentedFlow->localToContainerPoint({ }, &containingBlock.get()) };
+
+        // Compute the bounding box of the fragments.
+        // Location is relative to the fragmented flow.
+        CheckedPtr anchorRenderBox = dynamicDowncast<RenderBox>(&anchorBox.get());
+        if (!anchorRenderBox)
+            anchorRenderBox = anchorBox->containingBlock();
+        LayoutPoint offsetRelativeToFragmentedFlow = fragmentedFlow->mapFromLocalToFragmentedFlow(anchorRenderBox.get(), { }).location();
+        auto unfragmentedBorderBox = anchorBox->borderBoundingBox();
+        unfragmentedBorderBox.moveBy(offsetRelativeToFragmentedFlow);
+        auto fragmentsBoundingBox = fragmentedFlow->fragmentsBoundingBox(unfragmentedBorderBox);
+
+        // Compute the final location.
+        // FIXME: The final location of the fragments bounding box is not correctly
+        // computed in flipped writing modes (i.e. vertical-rl and horizontal-bt).
+        fragmentsBoundingBox.moveBy(fragmentedFlowLocation);
+        return fragmentsBoundingBox;
+    }
+
+    FloatPoint localPoint;
+    auto anchorWidth = anchorBox->offsetWidth();
+    auto anchorHeight = anchorBox->offsetHeight();
+    if (CheckedPtr anchorRenderInline = dynamicDowncast<RenderInline>(&anchorBox.get())) {
+        // RenderInline objects do not automatically account for their offset in RenderObject::localToContainerPoint,
+        // so we incorporate this offset via the localPoint.
+        localPoint = anchorRenderInline->linesBoundingBox().location();
+    }
+
+    LayoutPoint anchorLocation { anchorBox->localToContainerPoint(localPoint, &containingBlock.get()) };
+    return LayoutRect(anchorLocation, LayoutSize(anchorWidth, anchorHeight));
+}
+
+// "An anchor() function representing a valid anchor function resolves...to the <length> that would
+// align the edge of the positioned elements' inset-modified containing block corresponding to the
+// property the function appears in with the specified border edge of the target anchor element..."
+// See: https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
+static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, const CSSAnchorValue& anchorValue)
+{
+    CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
+    ASSERT(containingBlock);
+
+    auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->style());
+    auto anchorSideID = anchorValue.anchorSide()->valueID();
+    auto anchorRect = computeAnchorRectRelativeToContainingBlock(anchorBox, *containingBlock);
+
+    // Explicitly deal with the center/percentage value here.
+    // "Refers to a position a corresponding percentage between the start and end sides, with
+    // 0% being equivalent to start and 100% being equivalent to end. center is equivalent to 50%."
+    if (anchorSideID == CSSValueCenter || anchorSideID == CSSValueInvalid) {
+        double percentage = 0.5;
+        if (anchorSideID != CSSValueCenter)
+            percentage = dynamicDowncast<CSSPrimitiveValue>(anchorValue.anchorSide())->doubleValueDividingBy100IfPercentage();
+
+        // We assume that the "start" side always is either the top or left side of the anchor element.
+        // However, if that is not the case, we should take the complement of the percentage.
+        auto startSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
+        if (startSide == BoxSide::Bottom || startSide == BoxSide::Right)
+            percentage = 1 - percentage;
+
+        LayoutUnit insetValue;
+        auto insetPropertyAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+        if (insetPropertyAxis == BoxAxis::Vertical) {
+            insetValue = anchorRect.location().y() + anchorRect.height() * percentage;
+            if (insetPropertySide == BoxSide::Bottom)
+                insetValue = containingBlock->height() - insetValue;
+        } else {
+            insetValue = anchorRect.location().x() + anchorRect.width() * percentage;
+            if (insetPropertySide == BoxSide::Right)
+                insetValue = containingBlock->width() - insetValue;
+        }
+        insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
+        return Length(insetValue, LengthType::Fixed);
+    }
+
+    // Normalize the anchor side to a physical side
+    BoxSide anchorSide;
+    switch (anchorSideID) {
+    case CSSValueID::CSSValueTop:
+        anchorSide = BoxSide::Top;
+        break;
+    case CSSValueID::CSSValueBottom:
+        anchorSide = BoxSide::Bottom;
+        break;
+    case CSSValueID::CSSValueLeft:
+        anchorSide = BoxSide::Left;
+        break;
+    case CSSValueID::CSSValueRight:
+        anchorSide = BoxSide::Right;
+        break;
+    case CSSValueID::CSSValueInside:
+        anchorSide = insetPropertySide;
+        break;
+    case CSSValueID::CSSValueOutside:
+        anchorSide = flipBoxSide(insetPropertySide);
+        break;
+    case CSSValueID::CSSValueStart:
+        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
+        break;
+    case CSSValueID::CSSValueEnd:
+        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, true);
+        break;
+    case CSSValueID::CSSValueSelfStart:
+        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, false);
+        break;
+    case CSSValueID::CSSValueSelfEnd:
+        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, false);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        anchorSide = BoxSide::Top;
+        break;
+    }
+
+    // Compute inset from the containing block
+    LayoutUnit insetValue;
+    switch (anchorSide) {
+    case BoxSide::Top:
+        insetValue = anchorRect.location().y();
+        if (insetPropertySide == BoxSide::Bottom)
+            insetValue = containingBlock->height() - insetValue;
+        break;
+    case BoxSide::Bottom:
+        insetValue = anchorRect.location().y() + anchorRect.height();
+        if (insetPropertySide == BoxSide::Bottom)
+            insetValue = containingBlock->height() - insetValue;
+        break;
+    case BoxSide::Left:
+        insetValue = anchorRect.location().x();
+        if (insetPropertySide == BoxSide::Right)
+            insetValue = containingBlock->width() - insetValue;
+        break;
+    case BoxSide::Right:
+        insetValue = anchorRect.location().x() + anchorRect.width();
+        if (insetPropertySide == BoxSide::Right)
+            insetValue = containingBlock->width() - insetValue;
+        break;
+    }
+    insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
+    return Length(insetValue, LengthType::Fixed);
+}
+
+Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
+{
+    // FIXME: Determine when this if guard is true and what it means.
+    if (!builderState.element())
         return Length(0, LengthType::Fixed);
+    Ref anchorPositionedElement = *builderState.element();
 
     auto* anchorPositionedStateMap = builderState.cssToLengthConversionData().anchorPositionedStateMap();
     if (!anchorPositionedStateMap)
         return Length(0, LengthType::Fixed);
-
-    auto* anchorPositionedElementState = anchorPositionedStateMap->ensure(*element, [&] {
+    auto& anchorPositionedElementState = *anchorPositionedStateMap->ensure(anchorPositionedElement, [&] {
         return WTF::makeUnique<AnchorPositionedElementState>();
     }).iterator->value.get();
 
-    if (!anchorPositionedElementState->finishedCollectingAnchorNames)
-        anchorValue->collectAnchorNames(anchorPositionedElementState->anchorNames);
+    // If we are encountering this anchor() instance for the first time, then we need to collect
+    // all the relevant anchor-name strings that are referenced in this anchor function,
+    // including the references in the fallback value.
+    if (!anchorPositionedElementState.finishedCollectingAnchorNames)
+        anchorValue.collectAnchorNames(anchorPositionedElementState.anchorNames);
 
-    if (!anchorPositionedElementState->readyToBeResolved)
+    // An anchor() instance will be ready to be resolved when all anchor-name strings
+    // have been mapped to an actual anchor element in the DOM tree. At that point, we
+    // should also have layout information for the anchor-positioned element alongside
+    // the anchors referenced by the anchor-positioned element. Until then, we cannot
+    // resolve this anchor() instance.
+    if (!anchorPositionedElementState.readyToBeResolved)
         return Length(0, LengthType::Fixed);
 
-    // FIXME: Actually resolve the value
-    anchorPositionedElementState->hasBeenResolved = true;
-    return Length(0, LengthType::Fixed);
+    // Anchor value may now be resolved using layout information
+    anchorPositionedElementState.hasBeenResolved = true;
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorPositionedRenderer);
+
+    // Attempt to find the element associated with the target anchor
+    String anchorString = anchorValue.anchorElementString();
+    if (anchorString.isNull())
+        anchorString = anchorPositionedRenderer->style().positionAnchor();
+    auto anchorElementIt = anchorPositionedElementState.anchorElements.find(anchorString);
+    if (anchorElementIt == anchorPositionedElementState.anchorElements.end()) {
+        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
+        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
+        return Length(0, LengthType::Fixed);
+    }
+    CheckedPtr anchorRenderer = anchorElementIt->value->renderer();
+    ASSERT(anchorRenderer);
+
+    // Confirm that the axis specified by the inset property matches the side provided in
+    // the anchor() call.
+    auto insetPropertyID = builderState.cssPropertyID();
+    auto& anchorPositionedElementStyle = anchorPositionedElement->renderer()->style();
+    if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), insetPropertyID, anchorPositionedElementStyle)) {
+        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
+        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
+        return Length(0, LengthType::Fixed);
+    }
+
+    // Proceed with computing the inset value for the specified inset property.
+    CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
+    return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
 }
 
-}
+} // namespace WebCore::Style

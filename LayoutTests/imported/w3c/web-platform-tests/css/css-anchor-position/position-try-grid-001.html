@@ -33,27 +33,27 @@
   grid-column: 2 / 4;
   grid-row: 2 / 4;
   position: absolute;
-  position-try-options: --f1, --f2, --f3;
+  position-try-fallbacks: --f1, --f2, --f3;
   width: 100px;
   height: 100px;
   background: lime;
   opacity: .2;
   /* Position to the left of the anchor. */
-  right: anchor(--a1 left);
-  top: anchor(--a1 top);
-  }
+  position-anchor: --a1;
+  right: anchor(left);
+  top: anchor(top);
 }
 @position-try --f1 {
   inset: auto;
-  left: anchor(--a1 right);
-  top: anchor(--a1 top);
+  left: anchor(right);
+  top: anchor(top);
   width: 250px;
 }
 @position-try --f2 {
   /* Position to the right of the anchor. This entry should succeed. */
   inset: auto;
-  left: anchor(--a1 right);
-  top: anchor(--a1 top);
+  left: anchor(right);
+  top: anchor(top);
 }
 @position-try --f3 {
   /* Zero-sized, the last entry wins if none succeeded. */

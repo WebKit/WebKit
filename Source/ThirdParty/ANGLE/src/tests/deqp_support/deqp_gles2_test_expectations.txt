@@ -374,3 +374,32 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 42267264 : dEQP-GLES2.functional.fbo.render.*_stencilbuffer*bgra* = FAIL
 42267264 : dEQP-GLES2.functional.fbo.render.resize*bgra* = FAIL
 42267264 : dEQP-GLES2.functional.fbo.render.stencil*bgra* = FAIL
+
+// WebGPU failures
+356399840 WGPU : dEQP-GLES2.functional.buffer.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.clipping.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.color_clear.*complex* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.color_clear.*masked* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.color_clear.*scissored* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.default_vertex_attrib.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.depth_range.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.depth_stencil_clear.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.dither.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.draw.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.render.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fragment_ops.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_input.renderbuffer_framebuffer = FAIL
+356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_output.renderbuffer_framebuffer = FAIL
+356399840 WGPU : dEQP-GLES2.functional.negative_api.texture.generatemipmap_npot_wdt_hgt = FAIL
+356399840 WGPU : dEQP-GLES2.functional.polygon_offset.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.rasterization.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.read_pixels.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.shaders.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.state_query.shader.precision_fragment_lowp_int = FAIL
+356399840 WGPU : dEQP-GLES2.functional.state_query.shader.precision_vertex_lowp_int = FAIL
+356399840 WGPU : dEQP-GLES2.functional.state_query.shader.uniform_value_* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.texture.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.random.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.value.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.vertex_arrays.* = FAIL

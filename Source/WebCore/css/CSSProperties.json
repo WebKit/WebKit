@@ -1653,7 +1653,12 @@
                 "content-box",
                 {
                     "value": "border",
-                    "status": "unimplemented",
+                    "status": "unimplemented"
+                },
+                {
+                    "value": "border-area",
+                    "settings-flag": "cssBackgroundClipBorderAreaEnabled",
+                    "status": "experimental",
                     "url": "https://drafts.csswg.org/css-backgrounds-4/#background-clip"
                 },
                 {
@@ -1669,7 +1674,10 @@
                 "name-for-methods": "Clip",
                 "fill-layer-property": true,
                 "separator": " ",
-                "parser-grammar": "<single-background-clip>#"
+                "parser-function": "consumeBackgroundClip",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<single-background-clip>#",
+                "parser-grammar-unused-reason": "Needs support for settings-enabled keywords in the grammaer."
             },
             "specification": {
                 "category": "css-backgrounds",

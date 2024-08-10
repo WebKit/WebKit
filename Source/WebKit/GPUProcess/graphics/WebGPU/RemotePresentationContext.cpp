@@ -39,12 +39,13 @@
 
 namespace WebKit {
 
-RemotePresentationContext::RemotePresentationContext(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemotePresentationContext::RemotePresentationContext(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(presentationContext)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
+    , m_gpu(gpu)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemotePresentationContext::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -93,7 +94,7 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
     // but for now let's just create a new RemoteTexture object with the expected identifier, just for simplicity.
     // The Web Process should already be caching these current textures internally, so it's unlikely that we'll
     // actually run into a problem here.
-    auto remoteTexture = RemoteTexture::create(*connection, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    auto remoteTexture = RemoteTexture::create(*connection, m_gpu, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteTexture);
 }
 

@@ -75,13 +75,31 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomStr
     return 0;
 }
 
+// FIXME: Maybe we can unify both following functions
+
+static bool hasHostPseudoClassSubjectInSelectorList(const CSSSelectorList* selectorList)
+{
+    if (!selectorList)
+        return false;
+
+    for (auto& selector : *selectorList) {
+        if (selector.isHostPseudoClass())
+            return true;
+
+        if (hasHostPseudoClassSubjectInSelectorList(selector.selectorList()))
+            return true;
+    }
+
+    return false;
+}
+
 static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
 {
     auto isHostSelectorMatchingInShadowTreeInSelectorList = [](const CSSSelectorList* selectorList) {
         if (!selectorList || selectorList->isEmpty())
             return false;
-        for (auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-            if (isHostSelectorMatchingInShadowTree(*selector))
+        for (auto& selector : *selectorList) {
+            if (isHostSelectorMatchingInShadowTree(selector))
                 return true;
         }
         return false;
@@ -235,6 +253,8 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 rootElementSelector = selector;
                 break;
             default:
+                if (hasHostPseudoClassSubjectInSelectorList(selector->selectorList()))
+                    m_hasHostPseudoClassRulesInUniversalBucket = true;
                 break;
             }
             break;
@@ -246,6 +266,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         case CSSSelector::Match::PagePseudoClass:
             break;
         }
+        // We only process the subject (rightmost compound selector).
         if (selector->relation() != CSSSelector::Relation::Subselector)
             break;
         selector = selector->tagHistory();

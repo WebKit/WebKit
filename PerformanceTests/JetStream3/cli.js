@@ -30,7 +30,10 @@ console = {
 
 const isD8 = typeof Realm !== "undefined";
 if (isD8)
-    readFile = read;
+    globalThis.readFile = read;
+const isSpiderMonkey = typeof newGlobal !== "undefined";
+if (isSpiderMonkey)
+    globalThis.readFile = readRelativeToScript;
 
 if (typeof testList === "undefined")
     testList = undefined;
@@ -51,6 +54,7 @@ async function runJetStream() {
         await JetStream.start();
     } catch (e) {
         console.log("JetStream3 failed: " + e);
+        console.log(e.stack);
     }
 }
 runJetStream();

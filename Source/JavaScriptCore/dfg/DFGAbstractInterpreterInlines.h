@@ -50,6 +50,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "MathCommon.h"
 #include "NumberConstructor.h"
+#include "ObjectConstructor.h"
 #include "PutByStatus.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
@@ -4926,8 +4927,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case OverridesHasInstance:
         setNonCellTypeForNode(node, SpecBoolean);
         break;
-            
+
     case InstanceOf:
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+
+    case InstanceOfMegamorphic:
         clobberWorld();
         setNonCellTypeForNode(node, SpecBoolean);
         break;
@@ -4992,10 +4998,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Flush:
     case PhantomLocal:
         break;
+
+    case Construct: {
+        Edge calleeNode = m_graph.child(node, 0);
+        Edge newTargetNode = m_graph.child(node, 1);
+        JSValue calleeValue = forNode(calleeNode).m_value;
+        JSValue newTargetValue = forNode(newTargetNode).m_value;
+        if (calleeValue && newTargetValue) {
+            auto* callee = jsDynamicCast<JSObject*>(calleeValue);
+            auto* newTarget = jsDynamicCast<JSFunction*>(newTargetValue);
+            if (callee && newTarget) {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                if (callee->globalObject() == globalObject) {
+                    if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
+                        if (FunctionRareData* rareData = newTarget->rareData()) {
+                            if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                                Structure* structure = rareData->internalFunctionAllocationStructure();
+                                if (structure && structure->classInfoForCells() == JSFinalObject::info() && structure->hasMonoProto()) {
+                                    m_graph.freeze(rareData);
+                                    m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                    m_graph.freeze(globalObject);
+                                    m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                                    m_state.setShouldTryConstantFolding(true);
+                                    didFoldClobberWorld();
+                                    setForNode(node, structure);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        clobberWorld();
+        makeHeapTopForNode(node);
+        break;
+    }
             
     case Call:
     case TailCallInlinedCaller:
-    case Construct:
     case CallVarargs:
     case CallForwardVarargs:
     case TailCallVarargsInlinedCaller:

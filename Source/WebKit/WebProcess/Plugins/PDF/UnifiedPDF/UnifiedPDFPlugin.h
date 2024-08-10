@@ -279,7 +279,7 @@ private:
         No,
         Yes
     };
-    void updateLayout(AdjustScaleAfterLayout = AdjustScaleAfterLayout::No);
+    void updateLayout(AdjustScaleAfterLayout = AdjustScaleAfterLayout::No, std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride = { });
 
     WebCore::IntRect availableContentsRect() const;
 

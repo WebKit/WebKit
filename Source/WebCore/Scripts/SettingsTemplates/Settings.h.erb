@@ -42,6 +42,7 @@ public:
 
     WEBCORE_EXPORT void disableUnstableFeaturesForModernWebKit();
     WEBCORE_EXPORT static void disableGlobalUnstableFeaturesForModernWebKit();
+    WEBCORE_EXPORT void disableFeaturesForLockdownMode();
 
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.condition -%>

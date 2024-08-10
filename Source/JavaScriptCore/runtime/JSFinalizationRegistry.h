@@ -80,8 +80,20 @@ public:
     // token should be a JSObject, Symbol, or undefined.
     void registerTarget(VM&, JSCell* target, JSValue holdings, JSValue token);
 
+    struct LiveRegistration {
+        JSCell* target;
+        JSValue heldValue;
+        JSCell* unregisterToken = nullptr;
+    };
     JS_EXPORT_PRIVATE size_t liveCount(const Locker<JSCellLock>&);
+    Vector<LiveRegistration> liveRegistrations(const Locker<JSCellLock>&) const;
+
+    struct DeadRegistration {
+        JSValue heldValue;
+        JSCell* unregisterToken = nullptr;
+    };
     JS_EXPORT_PRIVATE size_t deadCount(const Locker<JSCellLock>&);
+    Vector<DeadRegistration> deadRegistrations(const Locker<JSCellLock>&) const;
 
 private:
     JSFinalizationRegistry(VM& vm, Structure* structure)

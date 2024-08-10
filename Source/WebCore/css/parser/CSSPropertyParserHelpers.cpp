@@ -3470,6 +3470,35 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range, const CSSParserC
     return CSSBackgroundRepeatValue::create(*value1, *value2);
 }
 
+RefPtr<CSSValue> consumeSingleBackgroundClip(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    switch (auto keyword = range.peek().id(); keyword) {
+    case CSSValueID::CSSValueBorderBox:
+    case CSSValueID::CSSValuePaddingBox:
+    case CSSValueID::CSSValueContentBox:
+    case CSSValueID::CSSValueText:
+    case CSSValueID::CSSValueWebkitText:
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(keyword);
+    case CSSValueID::CSSValueBorderArea:
+        if (!context.cssBackgroundClipBorderAreaEnabled)
+            return nullptr;
+        range.consumeIncludingWhitespace();
+        return CSSPrimitiveValue::create(keyword);
+
+    default:
+        return nullptr;
+    }
+}
+
+RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto lambda = [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeSingleBackgroundClip(range, context);
+    };
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, lambda);
+}
+
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://www.w3.org/TR/css-backgrounds-3/#background-size

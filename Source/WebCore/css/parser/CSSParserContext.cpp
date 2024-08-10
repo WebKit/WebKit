@@ -96,6 +96,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssStartingStyleAtRuleEnabled { document.settings().cssStartingStyleAtRuleEnabled() }
     , cssStyleQueriesEnabled { document.settings().cssStyleQueriesEnabled() }
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
+    , cssBackgroundClipBorderAreaEnabled  { document.settings().cssBackgroundClipBorderAreaEnabled() }
     , cssWordBreakAutoPhraseEnabled { document.settings().cssWordBreakAutoPhraseEnabled() }
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
@@ -129,19 +130,20 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssScopeAtRuleEnabled                     << 10
         | context.cssShapeFunctionEnabled                   << 11
         | context.cssTextUnderlinePositionLeftRightEnabled  << 12
-        | context.cssWordBreakAutoPhraseEnabled             << 13
-        | context.popoverAttributeEnabled                   << 14
-        | context.sidewaysWritingModesEnabled               << 15
-        | context.cssTextWrapPrettyEnabled                  << 16
-        | context.highlightAPIEnabled                       << 17
-        | context.grammarAndSpellingPseudoElementsEnabled   << 18
-        | context.customStateSetEnabled                     << 19
-        | context.thumbAndTrackPseudoElementsEnabled        << 20
+        | context.cssBackgroundClipBorderAreaEnabled        << 13
+        | context.cssWordBreakAutoPhraseEnabled             << 14
+        | context.popoverAttributeEnabled                   << 15
+        | context.sidewaysWritingModesEnabled               << 16
+        | context.cssTextWrapPrettyEnabled                  << 17
+        | context.highlightAPIEnabled                       << 18
+        | context.grammarAndSpellingPseudoElementsEnabled   << 19
+        | context.customStateSetEnabled                     << 20
+        | context.thumbAndTrackPseudoElementsEnabled        << 21
 #if ENABLE(SERVICE_CONTROLS)
-        | context.imageControlsEnabled                      << 21
+        | context.imageControlsEnabled                      << 22
 #endif
-        | context.lightDarkEnabled                          << 22
-        | (uint32_t)context.mode                            << 23; // This is multiple bits, so keep it last.
+        | context.lightDarkEnabled                          << 23
+        | (uint32_t)context.mode                            << 24; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

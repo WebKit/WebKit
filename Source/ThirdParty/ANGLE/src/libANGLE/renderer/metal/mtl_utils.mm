@@ -1511,6 +1511,9 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
             case 6:
                 family = MTLGPUFamilyApple6;
                 break;
+            case 7:
+                family = MTLGPUFamilyApple7;
+                break;
 #    endif
             default:
                 return false;

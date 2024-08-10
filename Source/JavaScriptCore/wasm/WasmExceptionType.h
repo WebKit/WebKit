@@ -46,7 +46,6 @@ namespace Wasm {
     macro(DivisionByZero, "Division by zero"_s) \
     macro(IntegerOverflow, "Integer overflow"_s) \
     macro(StackOverflow, "Stack overflow"_s) \
-    macro(FuncrefNotWasm, "Funcref must be an exported wasm function"_s) \
     macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s) \
     macro(OutOfBoundsArrayGet, "Out of bounds array.get"_s) \
     macro(OutOfBoundsArraySet, "Out of bounds array.set"_s) \
@@ -138,7 +137,6 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::CastFailure:
     case ExceptionType::OutOfMemory:
         return false;
-    case ExceptionType::FuncrefNotWasm:
     case ExceptionType::InvalidGCTypeUse:
     case ExceptionType::TypeErrorInvalidV128Use:
     case ExceptionType::TypeErrorV128TagAccessInJS:

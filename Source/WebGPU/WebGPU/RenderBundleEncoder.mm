@@ -1250,7 +1250,8 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
     m_maxVertexBufferSlot = std::max(m_maxVertexBufferSlot, slot);
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!optionalBuffer) {
-            m_utilizedBufferIndices.remove(slot);
+            if (slot < m_device->limits().maxVertexBuffers)
+                m_utilizedBufferIndices.remove(slot);
             if (slot < m_vertexBuffers.size())
                 m_vertexBuffers[slot] = BufferAndOffset();
 

@@ -40,11 +40,15 @@ namespace WebKit {
 
 void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    auto& sharedPreferences = sharedPreferencesForWebProcess(connection);
+    UNUSED_VARIABLE(sharedPreferences);
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferencesForWebProcess().someFeature)
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature)
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledBy::MultiConditionallyEnabled::name() && sharedPreferences.someFeature && sharedPreferences.otherFeature)
+        return IPC::handleMessage<Messages::TestWithEnabledBy::MultiConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::multiConditionallyEnabled);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -67,6 +71,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithEnabledBy::ConditionallyEnabled::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledBy_MultiConditionallyEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithEnabledBy::MultiConditionallyEnabled::Arguments>(globalObject, decoder);
 }
 
 }

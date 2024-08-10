@@ -1189,7 +1189,7 @@ bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
     return [contentView() isTextRecognitionInFullscreenVideoEnabled];
 }
 
-#if ENABLE(VIDEO)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&& bitmapHandle, FloatRect bounds)
 {
     [contentView() beginTextRecognitionForVideoInElementFullscreen:WTFMove(bitmapHandle) bounds:bounds];

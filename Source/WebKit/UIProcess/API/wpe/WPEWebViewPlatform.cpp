@@ -348,7 +348,7 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
     }
     case WPE_EVENT_TOUCH_DOWN:
 #if ENABLE(TOUCH_EVENTS)
-        m_touchEvents.add(wpe_event_touch_get_sequence_id(event), event);
+        m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
         page().handleTouchEvent(NativeWebTouchEvent(event, touchPointsForEvent(event)));
 #endif
         handleGesture(event);

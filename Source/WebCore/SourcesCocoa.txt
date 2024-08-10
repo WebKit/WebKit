@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2017-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -327,6 +327,7 @@ platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
+platform/cocoa/WebNSAttributedStringExtras.mm
 platform/gamepad/cocoa/GameControllerGamepad.mm
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
 platform/gamepad/mac/Dualshock3HIDGamepad.cpp
@@ -444,6 +445,7 @@ platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/IconCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm
+platform/graphics/cocoa/ImageAdapterCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/MediaPlayerCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @no-unify
@@ -462,14 +464,17 @@ platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
+platform/graphics/cocoa/WebLayer.mm
 platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm
 platform/graphics/cocoa/controls/ControlFactoryCocoa.mm
+platform/graphics/coretext/ComplexTextControllerCoreText.mm
 platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontCoreText.cpp
 platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/coretext/GlyphPageCoreText.cpp
+platform/graphics/coretext/SimpleFontDataCoreText.cpp
 platform/graphics/cv/CVUtilities.mm
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
@@ -484,20 +489,16 @@ platform/graphics/ios/IconIOS.mm
 platform/graphics/ios/controls/ControlFactoryIOS.mm
 platform/graphics/mac/AppKitControlSystemImage.mm
 platform/graphics/mac/ColorMac.mm
-platform/graphics/mac/ComplexTextControllerCoreText.mm
 platform/graphics/mac/FloatPointMac.mm
 platform/graphics/mac/FloatSizeMac.mm
 platform/graphics/mac/GraphicsChecksMac.cpp
 platform/graphics/mac/IconMac.mm
-platform/graphics/mac/ImageAdapterMac.mm
 platform/graphics/mac/IntPointMac.mm
 platform/graphics/mac/IntSizeMac.mm
 platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm
-platform/graphics/mac/SimpleFontDataCoreText.cpp
 platform/graphics/mac/WebKitNSImageExtras.mm
-platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/controls/ButtonMac.mm
 platform/graphics/mac/controls/ButtonControlMac.mm
 platform/graphics/mac/controls/ColorWellMac.mm
@@ -620,7 +621,6 @@ platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebCoreNSFontManagerExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
-platform/mac/WebNSAttributedStringExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp

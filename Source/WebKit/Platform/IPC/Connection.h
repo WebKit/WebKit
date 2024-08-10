@@ -658,7 +658,7 @@ private:
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-    bool m_wasKilled { false };
+    std::atomic<bool> m_didRequestProcessTermination { false };
 #elif OS(WINDOWS)
     // Called on the connection queue.
     void readEventHandler();

@@ -39,6 +39,7 @@
 #include "ModelProcessConnectionParameters.h"
 #include "ModelProcessProxy.h"
 #include "NetworkProcessConnectionInfo.h"
+#include "NetworkProcessMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "PlatformXRSystem.h"
@@ -72,6 +73,7 @@
 #include "WebPermissionControllerProxy.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebPreferencesKeys.h"
+#include "WebProcessActivityState.h"
 #include "WebProcessCache.h"
 #include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
@@ -326,6 +328,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 #if ENABLE(ROUTING_ARBITRATION)
     , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
 #endif
+    , m_activityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
@@ -581,10 +584,17 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         auto resourceDirectoryURL = decoder->decode<URL>();
         auto pageID = decoder->decode<WebPageProxyIdentifier>();
         auto checkAssumedReadAccessToResourceURL = decoder->decode<bool>();
+        auto destinationID = decoder->destinationID();
         if (loadParameters && resourceDirectoryURL && pageID && checkAssumedReadAccessToResourceURL) {
             if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), loadParameters->request.url(), *resourceDirectoryURL, loadParameters->sandboxExtensionHandle, *checkAssumedReadAccessToResourceURL);
-                send(Messages::WebPage::LoadRequest(WTFMove(*loadParameters)), decoder->destinationID());
+                auto url = loadParameters->request.url();
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), url, *resourceDirectoryURL,  *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTFMove(loadParameters)] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
+                    if (!weakThis)
+                        return;
+                    if (sandboxExtension)
+                        loadParameters->sandboxExtensionHandle = WTFMove(*sandboxExtension);
+                    weakThis->send(Messages::WebPage::LoadRequest(WTFMove(*loadParameters)), destinationID);
+                });
             }
         } else
             ASSERT_NOT_REACHED();
@@ -601,12 +611,19 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         auto pageID = decoder->decode<WebPageProxyIdentifier>();
         if (!pageID)
             return false;
-
+        auto destinationID = decoder->destinationID();
+        auto completionHandler = [weakThis = WeakPtr { *this }, parameters = WTFMove(parameters), destinationID] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
+            if (!weakThis)
+                return;
+            if (sandboxExtension)
+                parameters->sandboxExtensionHandle = WTFMove(*sandboxExtension);
+            weakThis->send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), destinationID);
+        };
         if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
             if (RefPtr item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), parameters->sandboxExtensionHandle);
-        }
-        send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), decoder->destinationID());
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), true, WTFMove(completionHandler));
+        } else
+            completionHandler(std::nullopt);
         return false;
     }
     return true;
@@ -907,22 +924,70 @@ void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentCont
     m_webUserContentControllerProxies.remove(proxy);
 }
 
-void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString)
+void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString, CompletionHandler<void()>&& completionHandler, bool directoryOnly)
 {
     URL url { urlString };
     if (!url.protocolIsFile())
-        return;
+        return completionHandler();
 
     // There's a chance that urlString does not point to a directory.
     // Get url's base URL to add to m_localPathsWithAssumedReadAccess.
     auto path = url.truncatedForUseAsBase().fileSystemPath();
     if (path.isNull())
-        return;
+        return completionHandler();
 
-    // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
-    // to have read access to this directory already.
-    m_localPathsWithAssumedReadAccess.add(path);
-    page.addPreviouslyVisitedPath(path);
+    RefPtr dataStore = websiteDataStore();
+    if (!dataStore)
+        return completionHandler();
+    auto afterAllowAccess = [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, path, completionHandler = WTFMove(completionHandler)] mutable {
+        if (!weakThis || !weakPage)
+            return completionHandler();
+
+        // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
+        // to have read access to this directory already.
+        weakThis->m_localPathsWithAssumedReadAccess.add(path);
+        weakPage->addPreviouslyVisitedPath(path);
+        completionHandler();
+    };
+    if (directoryOnly)
+        afterAllowAccess();
+    else
+        dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AllowFileAccessFromWebProcess(coreProcessIdentifier(), path), WTFMove(afterAllowAccess));
+}
+
+void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vector<String>& urls, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr dataStore = websiteDataStore();
+    if (!dataStore)
+        return completionHandler();
+    Vector<String> paths;
+    for (auto& urlString : urls) {
+        URL url { urlString };
+        if (!url.protocolIsFile())
+            continue;
+
+        // There's a chance that urlString does not point to a directory.
+        // Get url's base URL to add to m_localPathsWithAssumedReadAccess.
+        auto path = url.truncatedForUseAsBase().fileSystemPath();
+        if (path.isNull())
+            return completionHandler();
+        paths.append(path);
+    }
+    if (!paths.size())
+        return completionHandler();
+
+    dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(coreProcessIdentifier(), WTFMove(paths)), [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, paths, completionHandler = WTFMove(completionHandler)] mutable {
+        if (!weakThis || !weakPage)
+            return completionHandler();
+
+        // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
+        // to have read access to this directory already.
+        for (auto& path : paths) {
+            weakThis->m_localPathsWithAssumedReadAccess.add(path);
+            weakPage->addPreviouslyVisitedPath(path);
+        }
+        completionHandler();
+    });
 }
 
 bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const

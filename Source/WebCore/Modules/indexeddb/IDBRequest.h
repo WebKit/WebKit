@@ -128,6 +128,7 @@ public:
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
     bool willAbortTransactionAfterDispatchingEvent() const;
     void transactionTransitionedToFinishing();
+    bool isEventBeingDispatched() const { return !!m_eventBeingDispatched; }
 
 protected:
     IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, IndexedDB::RequestType);

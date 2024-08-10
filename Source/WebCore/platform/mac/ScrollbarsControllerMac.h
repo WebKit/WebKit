@@ -98,6 +98,7 @@ public:
     void stopScrollbarPaintTimer();
     void setVisibleScrollerThumbRect(const IntRect&);
 
+    void scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
 private:
 
     // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except

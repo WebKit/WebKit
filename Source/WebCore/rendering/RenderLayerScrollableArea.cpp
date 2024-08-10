@@ -361,7 +361,9 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
-        view.frameView().updateLayerPositionsAfterOverflowScroll(m_layer);
+        m_layer.updateLayerPositionsAfterOverflowScroll();
+
+        view.frameView().scheduleUpdateWidgetPositions();
 
         if (!m_updatingMarqueePosition) {
             // Avoid updating compositing layers if, higher on the stack, we're already updating layer
@@ -2045,6 +2047,12 @@ void RenderLayerScrollableArea::invalidateScrollAnchoringElement()
 FrameIdentifier RenderLayerScrollableArea::rootFrameID() const
 {
     return m_layer.renderer().frame().rootFrame().frameID();
+}
+
+void RenderLayerScrollableArea::scrollbarWidthChanged(ScrollbarWidth width)
+{
+    scrollbarsController().scrollbarWidthChanged(width);
+    availableContentSizeChanged(AvailableSizeChangeReason::ScrollbarsChanged);
 }
 
 } // namespace WebCore

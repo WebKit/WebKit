@@ -106,6 +106,7 @@ class MediaSource;
 class MediaSourceHandle;
 class MediaSourceInterfaceProxy;
 class MediaStream;
+class PausableIntervalTimer;
 class RenderMedia;
 class ScriptController;
 class ScriptExecutionContext;
@@ -130,6 +131,16 @@ class RemotePlayback;
 
 using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
+
+enum class HTMLMediaElementSourceType : uint8_t {
+    File,
+    HLS,
+    MediaSource,
+    ManagedMediaSource,
+    MediaStream,
+    LiveStream,
+    StoredStream,
+};
 
 using MediaProvider = std::optional < std::variant <
 #if ENABLE(MEDIA_STREAM)
@@ -670,15 +681,7 @@ public:
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
     void updateMediaState();
 
-    enum class SourceType : uint8_t {
-        File,
-        HLS,
-        MediaSource,
-        ManagedMediaSource,
-        MediaStream,
-        LiveStream,
-        StoredStream,
-    };
+    using SourceType = HTMLMediaElementSourceType;
     std::optional<SourceType> sourceType() const;
     String localizedSourceType() const;
 
@@ -1104,6 +1107,11 @@ private:
 #endif
 
     bool shouldDisableHDR() const;
+    bool isWatchtimeTimerActive() const;
+    void startWatchtimeTimer();
+    void pauseWatchtimeTimer();
+    void invalidateWatchtimeTimer();
+    void watchtimeTimerFired();
 
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
@@ -1408,6 +1416,8 @@ private:
 
     bool m_isChangingReadyStateWhileSuspended { false };
     Atomic<unsigned> m_remainingReadyStateChangedAttempts;
+
+    std::unique_ptr<PausableIntervalTimer> m_watchtimeTimer;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

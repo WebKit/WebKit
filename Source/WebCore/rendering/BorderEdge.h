@@ -67,7 +67,7 @@ private:
 };
 
 using BorderEdges = RectEdges<BorderEdge>;
-BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, bool setColorsToBlack = false, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
 BorderEdges borderEdgesForOutline(const RenderStyle&, float deviceScaleFactor);
 
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return firstEdge.color() == secondEdge.color(); }

@@ -262,7 +262,6 @@ private:
     void didChangeBackgroundColor() override;
 
     void startWindowDrag() override;
-    NSWindow *platformWindow() override;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
     bool effectiveAppearanceIsDark() const override;

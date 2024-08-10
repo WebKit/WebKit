@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View Transitions: @view-transition not applied from shadow tree. Test timed out
+PASS View Transitions: @view-transition not applied from shadow tree.
 

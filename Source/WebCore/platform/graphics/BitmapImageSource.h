@@ -167,6 +167,10 @@ private:
     bool shouldUseQuickLookForFullscreen() const final { return m_descriptor.shouldUseQuickLookForFullscreen(); }
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatial() const final { return m_descriptor.isSpatial(); }
+#endif
+
     // ImageFrame metadata
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;
 

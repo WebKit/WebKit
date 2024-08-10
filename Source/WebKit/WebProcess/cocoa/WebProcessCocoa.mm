@@ -419,8 +419,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::FontCache::setFontAllowlist(parameters.fontAllowList);
 #endif
 
-    m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
-
     WebCore::registerMemoryReleaseNotifyCallbacks();
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DiagnosticLoggingKeys.h"
 
+#include "HTMLMediaElement.h"
+
 namespace WebCore {
 
 String DiagnosticLoggingKeys::mediaLoadedKey()
@@ -753,6 +755,66 @@ String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cp
         return "50to70"_s;
     return "over70"_s;
 }
-    
+
+String DiagnosticLoggingKeys::mediaSourceTypeWatchTimeKey()
+{
+    return "watchtimeBySource"_s;
+}
+
+String DiagnosticLoggingKeys::mediaVideoCodecWatchTimeKey()
+{
+    return "watchtimeByVideoCodec"_s;
+}
+
+String DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
+{
+    return "watchtimeByAudioCodec"_s;
+}
+
+String DiagnosticLoggingKeys::secondsKey()
+{
+    return "seconds"_s;
+}
+
+String DiagnosticLoggingKeys::sourceTypeKey()
+{
+    return "sourceType"_s;
+}
+
+String DiagnosticLoggingKeys::videoCodecKey()
+{
+    return "videoCodec"_s;
+}
+
+String DiagnosticLoggingKeys::audioCodecKey()
+{
+    return "audioCodec"_s;
+}
+
+String DiagnosticLoggingKeys::mediaElementSourceTypeDiagnosticLoggingKey(HTMLMediaElementSourceType sourceType)
+{
+    switch (sourceType) {
+    case HTMLMediaElementSourceType::File:
+        return "file"_s;
+    case HTMLMediaElementSourceType::HLS:
+        return "hls"_s;
+    case HTMLMediaElementSourceType::MediaSource:
+        return "mediaSource"_s;
+    case HTMLMediaElementSourceType::ManagedMediaSource:
+        return "managedMediaSource"_s;
+    case HTMLMediaElementSourceType::MediaStream:
+        return "mediaStream"_s;
+    case HTMLMediaElementSourceType::LiveStream:
+        return "liveStream"_s;
+    case HTMLMediaElementSourceType::StoredStream:
+        return "storedStream"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
+
+
 } // namespace WebCore
 

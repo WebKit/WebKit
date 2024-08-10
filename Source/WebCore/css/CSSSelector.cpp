@@ -736,7 +736,7 @@ CSSSelector::RareData::RareData(const RareData& other)
         this->selectorList = makeUnique<CSSSelectorList>(*other.selectorList);
 };
 
-auto CSSSelector::RareData::deepCopy() const -> Ref<RareData> 
+auto CSSSelector::RareData::deepCopy() const -> Ref<RareData>
 {
     return adoptRef(*new RareData (*this));
 }
@@ -864,6 +864,11 @@ bool CSSSelector::hasExplicitPseudoClassScope() const
     };
 
     return visitAllSimpleSelectors(check);
+}
+
+bool CSSSelector::isHostPseudoClass() const
+{
+    return match() == Match::PseudoClass && pseudoClass() == PseudoClass::Host;
 }
 
 } // namespace WebCore

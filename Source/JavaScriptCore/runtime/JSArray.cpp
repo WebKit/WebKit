@@ -599,9 +599,10 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
             for (unsigned i = startIndex; i < newLength; ++i)
                 butterfly->contiguousInt32().at(this, i).setWithoutWriteBarrier(JSValue());
         }
-    } else if (type == ArrayWithDouble)
-        gcSafeMemcpy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), sizeof(JSValue) * otherLength);
-    else {
+    } else if (type == ArrayWithDouble) {
+        // Double array storage do not need to be safe against GC since they are not scanned.
+        memcpy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), sizeof(JSValue) * otherLength);
+    } else {
         gcSafeMemcpy(butterfly()->contiguous().data() + startIndex, otherArray->butterfly()->contiguous().data(), sizeof(JSValue) * otherLength);
         vm.writeBarrier(this);
     }
@@ -832,9 +833,10 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
             return nullptr;
 
         auto& resultButterfly = *resultArray->butterfly();
-        if (arrayType == ArrayWithDouble)
-            gcSafeMemcpy(resultButterfly.contiguousDouble().data(), source->butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
-        else
+        if (arrayType == ArrayWithDouble) {
+            // Double array storage do not need to be safe against GC since they are not scanned.
+            memcpy(resultButterfly.contiguousDouble().data(), source->butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+        } else
             gcSafeMemcpy(resultButterfly.contiguous().data(), source->butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
 
         ASSERT(resultButterfly.publicLength() == count);

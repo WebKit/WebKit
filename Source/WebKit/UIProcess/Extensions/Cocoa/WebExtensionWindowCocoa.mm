@@ -130,7 +130,7 @@ bool WebExtensionWindow::matches(const WebExtensionTabQueryParameters& parameter
     if (!extensionHasAccess())
         return false;
 
-    if (parameters.windowIdentifier && identifier() != parameters.windowIdentifier.value())
+    if (parameters.windowIdentifier && identifier() != parameters.windowIdentifier.value() && !isCurrent(parameters.windowIdentifier.value()))
         return false;
 
     if (parameters.windowType && !matches(parameters.windowType.value()))
@@ -139,7 +139,7 @@ bool WebExtensionWindow::matches(const WebExtensionTabQueryParameters& parameter
     if (parameters.frontmostWindow && isFrontmost() != parameters.frontmostWindow.value())
         return false;
 
-    if (parameters.currentWindow) {
+    if (parameters.currentWindow || isCurrent(parameters.windowIdentifier)) {
         auto currentWindow = extensionContext()->getWindow(WebExtensionWindowConstants::CurrentIdentifier, webPageProxyIdentifier);
         if (!currentWindow)
             return false;

@@ -32,31 +32,158 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
+#import "CocoaHelpers.h"
+#import "MessageSenderInlines.h"
+#import "WebExtensionAPISidebarAction.h"
+#import "WebExtensionContextMessages.h"
+#import "WebProcess.h"
+
 namespace WebKit {
+
+static NSString * const tabIdKey = @"tabId";
+static NSString * const windowIdKey = @"windowId";
+
+static ParseResult parseTabIdentifier(NSDictionary *options)
+{
+    id maybeTabId = [options objectForKey:tabIdKey];
+
+    if (!maybeTabId || [maybeTabId isKindOfClass:NSNull.class])
+        return std::monostate();
+
+    if ([maybeTabId isKindOfClass:NSNumber.class]) {
+        auto tabId = toWebExtensionTabIdentifier(((NSNumber *) maybeTabId).doubleValue);
+        return isValid(tabId) ? ParseResult(tabId.value()) : ParseResult(toErrorString(nil, @"options", @"'tabId' is invalid"));
+    }
+
+    return toErrorString(nil, @"options", @"'tabId' must be a number");
+}
+
+static ParseResult parseWindowIdentifier(NSDictionary *options)
+{
+    id maybeWindowId = [options objectForKey:tabIdKey];
+
+    if (!maybeWindowId || [maybeWindowId isKindOfClass:NSNull.class])
+        return std::monostate();
+
+    if ([maybeWindowId isKindOfClass:NSNumber.class]) {
+        auto windowId = toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue);
+        return isValid(windowId) ? ParseResult(windowId.value()) : ParseResult(toErrorString(nil, @"options", @"'windowId' is invalid"));
+    }
+
+    return toErrorString(nil, @"options", @"'windowId' must be a number");
+}
+
+static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSidebarParameters const& parameters)
+{
+    NSDictionary *serializedParameters = @{
+        @"enabled": @(parameters.enabled),
+        @"path": parameters.panelPath,
+    };
+
+    if (parameters.tabIdentifier) {
+        NSNumber *tabIdNum = [NSNumber numberWithUnsignedLongLong:parameters.tabIdentifier->toUInt64()];
+        [serializedParameters setValue:tabIdNum forKey:@"tabId"];
+    }
+
+    return serializedParameters;
+}
+
+static Expected<WebExtensionSidebarParameters, WebExtensionError> deserializeSidebarParameters(NSDictionary<NSString *, id> *serializedParameters)
+{
+    WebExtensionSidebarParameters parameters;
+
+    if (auto enabled = objectForKey<NSNumber>(serializedParameters, @"enabled"))
+        parameters.enabled = [enabled boolValue];
+
+    if (auto path = objectForKey<NSString>(serializedParameters, @"path"))
+        parameters.panelPath = path;
+
+    auto tabIdentifierResult = parseTabIdentifier(serializedParameters);
+    if (NSString *error = indicatesError(tabIdentifierResult).get())
+        return toWebExtensionError(nil, @"details", error);
+    parameters.tabIdentifier = toOptional<WebExtensionTabIdentifier>(tabIdentifierResult);
+
+    return parameters;
+}
 
 void WebExtensionAPISidePanel::getOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    auto result = parseTabIdentifier(options);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    const auto tabId = toOptional<WebExtensionTabIdentifier>(result);
+
+    WebProcess::singleton()
+        .sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetOptions(std::nullopt, tabId), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionSidebarParameters, WebExtensionError>&& result) {
+            if (!result) {
+                callback->reportError(result.error());
+                return;
+            }
+
+            callback->call(serializeSidebarParameters(result.value()));
+        }, extensionContext().identifier());
 }
 
 void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    auto result = deserializeSidebarParameters(options);
+    if (!result) {
+        *outExceptionString = result.error();
+        return;
+    }
+
+    std::optional<String> panelPath = result->panelPath != ""_s ? std::optional(result->panelPath) : std::nullopt;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, result->tabIdentifier, panelPath, result->enabled), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPISidePanel::getPanelBehavior(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    // FIXME: <https://webkit.org/b/276833> Implement panel behavior methods
     callback->reportError(@"unimplemented");
 }
 
 void WebExtensionAPISidePanel::setPanelBehavior(NSDictionary *behavior, Ref<WebExtensionCallbackHandler>&& callback, NSString** outExceptionString)
 {
+    // FIXME: <https://webkit.org/b/276833> Implement panel behavior methods
     callback->reportError(@"unimplemented");
 }
 
 void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    callback->reportError(@"unimplemented");
+    auto tabResult = parseTabIdentifier(options);
+    if ((*outExceptionString = indicatesError(tabResult).get()))
+        return;
+
+    auto tabId = toOptional<WebExtensionTabIdentifier>(tabResult);
+
+    auto windowResult = parseWindowIdentifier(options);
+    if ((*outExceptionString = indicatesError(windowResult).get()))
+        return;
+
+    auto windowId = toOptional<WebExtensionWindowIdentifier>(windowResult);
+
+    if (!windowId && !tabId) {
+        *outExceptionString = toErrorString(nil, @"details", @"it must specify at least one of 'tabId' or 'windowId'");
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(windowId, tabId), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 } // namespace WebKit

@@ -72,7 +72,7 @@ public:
     int totalSize() const { return m_totalSize; }
     int maximum() const { return m_totalSize - m_visibleSize; }
     ScrollbarWidth widthStyle() const { return m_widthStyle; }
-    
+
     int occupiedWidth() const;
     int occupiedHeight() const;
 

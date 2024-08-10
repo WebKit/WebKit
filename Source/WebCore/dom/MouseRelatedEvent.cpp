@@ -31,7 +31,6 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
-#include "RenderLayerInlines.h"
 #include "RenderObject.h"
 #include <wtf/IsoMallocInlines.h>
 

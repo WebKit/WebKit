@@ -807,6 +807,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateGenerator:
     case CreateAsyncGenerator:
     case InstanceOf:
+    case InstanceOfMegamorphic:
     case StringValueOf:
     case ObjectKeys:
     case ObjectGetOwnPropertyNames:

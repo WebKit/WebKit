@@ -60,7 +60,10 @@ enum class SheetAction : uint8_t {
     Copy,
     SaveImage,
     PauseAnimation,
-    PlayAnimation
+    PlayAnimation,
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    ViewSpatial
+#endif
 };
 
 enum class SelectionFlags : uint8_t {

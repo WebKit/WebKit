@@ -84,6 +84,7 @@ TEST(WebKit, RunOpenPanelNonLatin1)
     [webView mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1]];
     [webView mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1]];
     Util::run(&fileSelected);
+    Util::runFor(50_ms);
     
     __block bool testFinished = false;
     [webView evaluateJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" completionHandler:^(id result, NSError *error) {

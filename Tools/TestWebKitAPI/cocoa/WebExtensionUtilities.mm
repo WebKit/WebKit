@@ -77,8 +77,6 @@
     auto *window = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller usesPrivateBrowsing:NO];
     auto *windows = [NSMutableArray arrayWithObject:window];
 
-    __weak TestWebExtensionManager *weakSelf = self;
-
     _internalDelegate.openWindows = ^NSArray<id<WKWebExtensionWindow>> *(WKWebExtensionContext *) {
         return [windows copy];
     };
@@ -86,6 +84,9 @@
     _internalDelegate.focusedWindow = ^id<WKWebExtensionWindow>(WKWebExtensionContext *) {
         return window;
     };
+
+#if PLATFORM(MAC)
+    __weak TestWebExtensionManager *weakSelf = self;
 
     _internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
         auto *newWindow = [weakSelf openNewWindowUsingPrivateBrowsing:options.usePrivateBrowsing];
@@ -105,7 +106,6 @@
         if (std::isnan(desiredFrame.origin.x))
             desiredFrame.origin.x = currentFrame.origin.x;
 
-#if PLATFORM(MAC)
         CGRect screenFrame = newWindow.screenFrame;
         CGFloat screenTop = screenFrame.size.height + screenFrame.origin.y;
         if (std::isnan(desiredFrame.origin.y)) {
@@ -113,15 +113,12 @@
             CGFloat currentTop = screenTop - currentFrame.size.height - currentFrame.origin.y;
             desiredFrame.origin.y = screenTop - desiredFrame.size.height - currentTop;
         }
-#else
-        if (std::isnan(desiredFrame.origin.y))
-            desiredFrame.origin.y = currentFrame.origin.y;
-#endif
 
         newWindow.frame = desiredFrame;
 
         completionHandler(newWindow, nil);
     };
+#endif // PLATFORM(MAC)
 
     _internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
         auto *desiredWindow = dynamic_objc_cast<TestWebExtensionWindow>(options.window) ?: window;
@@ -910,6 +907,26 @@ NSData *makePNGData(CGSize size, SEL colorSelector)
 
     return UIImagePNGRepresentation(image);
 #endif
+}
+
+void runScriptWithUserGesture(const String& script, WKWebView *webView)
+{
+    ASSERT(webView);
+
+    bool callbackComplete = false;
+    id evalResult;
+
+    [webView callAsyncJavaScript:script arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&](id result, NSError *error) {
+        evalResult = result;
+        callbackComplete = true;
+
+        EXPECT_NULL(error);
+
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, static_cast<NSString *>(script));
+    }];
+
+    TestWebKitAPI::Util::run(&callbackComplete);
 }
 
 } // namespace Util

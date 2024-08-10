@@ -108,7 +108,7 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
         return { };
     auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
-        if (lineBoxStyle.lineHeight().isNegative())
+        if (lineBoxStyle.lineHeight().isNormal())
             return primaryFontMetrics.intAscent() + primaryFontMetrics.intDescent();
         return lineBoxStyle.computedLineHeight();
     };

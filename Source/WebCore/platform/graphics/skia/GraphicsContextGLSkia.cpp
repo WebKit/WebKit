@@ -106,6 +106,9 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
         m_pixelData = WTFMove(data);
         m_imagePixelData = m_pixelData->data();
+
+        // SkSurfaces backed by textures have RGBA format.
+        m_imageSourceFormat = DataFormat::RGBA8;
     } else {
         SkPixmap pixmap;
         if (!platformImage->peekPixels(&pixmap))
@@ -113,9 +116,11 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
 
         m_skImage = WTFMove(platformImage);
         m_imagePixelData = pixmap.addr();
+
+        // Raster SkSurfaces have BGRA format.
+        m_imageSourceFormat = DataFormat::BGRA8;
     }
 
-    m_imageSourceFormat = DataFormat::BGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;
 }

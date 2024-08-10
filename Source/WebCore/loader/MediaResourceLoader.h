@@ -67,7 +67,6 @@ public:
 private:
     void contextDestroyed() override;
 
-    bool m_wasMainResourceLoaded { false };
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document WTF_GUARDED_BY_CAPABILITY(mainThread);
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element WTF_GUARDED_BY_CAPABILITY(mainThread);
     String m_crossOriginMode WTF_GUARDED_BY_CAPABILITY(mainThread);

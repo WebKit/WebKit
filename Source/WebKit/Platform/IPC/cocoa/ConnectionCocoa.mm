@@ -596,7 +596,7 @@ bool Connection::kill()
 {
     if (m_xpcConnection) {
         terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::ConnectionKilled, "Connection::kill");
-        m_wasKilled = true;
+        m_didRequestProcessTermination = true;
         return true;
     }
     return false;

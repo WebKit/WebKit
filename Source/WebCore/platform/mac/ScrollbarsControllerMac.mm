@@ -1029,6 +1029,12 @@ void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)
     [m_scrollerImpPair contentAreaScrolledInDirection:NSMakePoint(delta.width(), delta.height())];
 }
 
+void ScrollbarsControllerMac::scrollbarWidthChanged(WebCore::ScrollbarWidth)
+{
+    updateScrollbarsThickness();
+    updateScrollerStyle();
+}
+
 static String scrollbarState(Scrollbar* scrollbar)
 {
     if (!scrollbar)

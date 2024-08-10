@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+[EnabledBy=WebGPUEnabled]
 messages -> RemoteRenderBundle NotRefCounted Stream {
     void Destruct()
     void SetLabel(String label)

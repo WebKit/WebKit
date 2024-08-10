@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NavigationHistoryEntry.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {

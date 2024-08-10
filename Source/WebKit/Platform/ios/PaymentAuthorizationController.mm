@@ -39,13 +39,16 @@
 
 @end
 
-@implementation WKPaymentAuthorizationControllerDelegate
+@implementation WKPaymentAuthorizationControllerDelegate {
+    __weak UIWindow *_presentingWindow;
+}
 
 - (instancetype)initWithRequest:(PKPaymentRequest *)request presenter:(WebKit::PaymentAuthorizationPresenter&)presenter
 {
     if (!(self = [super _initWithRequest:request presenter:presenter]))
         return nil;
 
+    _presentingWindow = presenter.client().presentingWindowForPaymentAuthorization(presenter);
     return self;
 }
 
@@ -87,7 +90,7 @@
 
 - (UIWindow *)presentationWindowForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
-    return nil;
+    return _presentingWindow;
 }
 
 #if HAVE(PASSKIT_COUPON_CODE)

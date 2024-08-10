@@ -23,8 +23,6 @@
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
-#include "RenderView.h"
-#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
@@ -74,23 +72,6 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
 inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContainer() const
 {
     return m_enclosingSVGHiddenOrResourceContainer.get();
-}
-
-inline const LayoutPoint& RenderLayer::location() const
-{
-    ASSERT(!renderer().view().frameView().layerAccessPrevented());
-    return m_topLeft;
-}
-
-inline const IntSize& RenderLayer::size() const
-{
-    ASSERT(!renderer().view().frameView().layerAccessPrevented());
-    return m_layerSize;
-}
-
-inline LayoutRect RenderLayer::rect() const
-{
-    return LayoutRect(location(), size());
 }
 
 } // namespace WebCore

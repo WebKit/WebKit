@@ -3047,10 +3047,10 @@ private:
                 }
             }
 
-            // Pre-Index Canonical Form:
+            // PreIndex Canonical Form:
             //     address = Add(base, offset)    --->   Move %base %address
             //     memory = Load(base, offset)           MoveWithIncrement (%address, prefix(offset)) %memory
-            // Post-Index Canonical Form:
+            // PostIndex Canonical Form:
             //     address = Add(base, offset)    --->   Move %base %address
             //     memory = Load(base, 0)                MoveWithIncrement (%address, postfix(offset)) %memory
             auto tryAppendIncrementAddress = [&] () -> bool {
@@ -4015,10 +4015,10 @@ private:
         }
 
         case Store: {
-            // Pre-Index Canonical Form:
+            // PreIndex Canonical Form:
             //     address = Add(base, Offset)              --->    Move %base %address
             //     memory = Store(value, base, Offset)              MoveWithIncrement %value (%address, prefix(offset))
-            // Post-Index Canonical Form:
+            // PostIndex Canonical Form:
             //     address = Add(base, Offset)              --->    Move %base %address
             //     memory = Store(value, base, 0)                   MoveWithIncrement %value (%address, postfix(offset))
             auto tryAppendIncrementAddress = [&] () -> bool {

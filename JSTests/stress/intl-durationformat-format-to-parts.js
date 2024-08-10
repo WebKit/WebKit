@@ -1,5 +1,4 @@
 //@ requireOptions("--useIntlDurationFormat=1")
-//@ skip if $hostOS != "darwin" # We are testing Intl features based on Darwin's ICU. The other port owners can extend it by testing it in their platforms and removing this condition.
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -61,7 +60,7 @@ if (Intl.DurationFormat) {
     {
         var fmt = new Intl.DurationFormat('en-US', { style: 'digital', fractionalDigits: 9, millseconds: 'numeric' });
         shouldBeOneOf(JSON.stringify(fmt.formatToParts({ hours: 7, minutes: 8, seconds: 9, milliseconds: 123, microseconds: 456, nanoseconds: 789 })), [
-            `[{"type":"integer","value":"7","unit":"hour"},{"type":"literal","value":":"},{"type":"integer","value":"08","unit":"minute"},{"type":"literal","value":":"},{"type":"integer","value":"09","unit":"second"},{"type":"decimal","value":".","unit":"second"},{"type":"fraction","value":"123456789","unit":"second"}]`,
+            `[{"type":"integer","value":"7","unit":"hour"},{"type":"literal","value":":"},{"type":"integer","value":"08","unit":"minute"},{"type":"literal","value":":"},{"type":"integer","value":"09","unit":"second"},{"type":"decimal","value":".","unit":"second"},{"type":"fraction","value":"123456788","unit":"second"}]`
         ]);
     }
 }

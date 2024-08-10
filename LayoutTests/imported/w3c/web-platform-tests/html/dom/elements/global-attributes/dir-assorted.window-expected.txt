@@ -1,17 +1,17 @@
 
 PASS Root element has a direction
 PASS Element outside the document tree has a direction
-FAIL Non-HTML element outside the document tree has a direction assert_true: expected true got false
+PASS Non-HTML element outside the document tree has a direction
 PASS Element without direction has parent element direction
-FAIL Non-HTML element without direction has parent element direction assert_true: expected true got false
+PASS Non-HTML element without direction has parent element direction
 PASS dir inheritance is correct after insertion and removal from document
-FAIL Non-HTML element text contents influence dir=auto assert_true: is RTL before change expected true got false
+PASS Non-HTML element text contents influence dir=auto
 PASS style element text contents do not influence dir=auto
 PASS script element text contents do not influence dir=auto
-FAIL non-html style element text contents influence dir=auto assert_true: expected true got false
-FAIL non-html script element text contents influence dir=auto assert_true: expected true got false
-FAIL non-html input element text contents influence dir=auto assert_true: expected true got false
-FAIL non-html textarea element text contents influence dir=auto assert_true: expected true got false
+PASS non-html style element text contents influence dir=auto
+PASS non-html script element text contents influence dir=auto
+PASS non-html input element text contents influence dir=auto
+PASS non-html textarea element text contents influence dir=auto
 PASS text changes apply to dir=auto on further ancestor after removing dir=auto from closer ancestor
 PASS text changes apply to dir=auto on further ancestor after removing dir=ltr from closer ancestor
 PASS directionality of bdi elements: dir=ltr with LTR contents in ltr parent

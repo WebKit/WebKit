@@ -65,7 +65,7 @@ PlayerExpectation._handTypes = [
     
 var playerExpectations = [];
 
-playerExpectations.push(new PlayerExpectation(59864, [ 120476, 101226, 11359, 5083, 982, 456, 370, 45, 3, 0]));
-playerExpectations.push(new PlayerExpectation(60020, [ 120166, 101440, 11452, 5096, 942, 496, 333, 67, 8, 0]));
-playerExpectations.push(new PlayerExpectation(60065, [ 120262, 101345, 11473, 5093, 941, 472, 335, 76, 3, 0]));
-playerExpectations.push(new PlayerExpectation(60064, [ 120463, 101218, 11445, 5065, 938, 446, 364, 58, 3, 0]));
+playerExpectations.push(new PlayerExpectation(60120, [120600, 102000, 10080, 5040, 1440, 360, 480, 0, 0, 0]));
+playerExpectations.push(new PlayerExpectation(60480, [120360, 99600, 11760, 6120, 1200, 360, 480, 120, 0, 0]));
+playerExpectations.push(new PlayerExpectation(61440, [121200, 99720, 11040, 6120, 1080, 480, 360, 0, 0, 0]));
+playerExpectations.push(new PlayerExpectation(57960, [121320, 100440, 11040, 5760, 840, 480, 120, 0, 0, 0]));

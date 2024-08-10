@@ -83,7 +83,7 @@ public:
     IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
     void deleteBackingStore() final;
 
-    bool supportsSimultaneousTransactions() final { return false; }
+    bool supportsSimultaneousReadWriteTransactions() final { return false; }
     bool isEphemeral() final { return false; }
     String fullDatabasePath() const final;
 

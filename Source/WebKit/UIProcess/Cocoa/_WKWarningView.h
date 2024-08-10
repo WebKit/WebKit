@@ -69,13 +69,14 @@ using RectType = CGRect;
 {
 @package
     CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
-    RefPtr<const WebKit::BrowsingWarning> _warning;
     WeakObjCPtr<_WKWarningViewTextView> _details;
     WeakObjCPtr<_WKWarningViewBox> _box;
 #if PLATFORM(WATCHOS)
     WeakObjCPtr<UIResponder> _previousFirstResponder;
 #endif
 }
+
+@property (nonatomic, readonly) RefPtr<const WebKit::BrowsingWarning> warning;
 
 - (instancetype)initWithFrame:(RectType)frame browsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 

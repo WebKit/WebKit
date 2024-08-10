@@ -343,4 +343,9 @@ void PageClientImplCocoa::videoControlsManagerDidChange()
     [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
 }
 
+CocoaWindow *PageClientImplCocoa::platformWindow() const
+{
+    return [m_webView window];
+}
+
 } // namespace WebKit

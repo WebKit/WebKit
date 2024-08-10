@@ -28,7 +28,7 @@ function test()
             IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "CompleteDatabase", (error, database) => {
                 InspectorTest.expectNoError(error);
 
-                function expectObjectStoreEntryCount(objectStore, expectedCount, message) {
+                function expectObjectStoreEntryCount(objectStore, expectedCount, message, callback) {
                     const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                     const indexName = "";
                     const skipCount = 0;
@@ -36,33 +36,44 @@ function test()
                     IndexedDBAgent.requestData(securityOrigin, database.name, objectStore.name, indexName, skipCount, pageSize, (error, entries, hasMore) => {
                         InspectorTest.expectNoError(error);
                         InspectorTest.expectThat(entries.length === expectedCount, message);
+                        callback();
                     });
                 }
 
                 let securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                let instructions = [
+                    { type: "check", objectStore: emptyObjectStore, expectedCount: 0, message: "'Empty' object store should always be empty." },
+                    { type: "check", objectStore: reviewersObjectStore, expectedCount: 4, message: "'Reviewers' object store should start with 4 entries." },
+                    { type: "check", objectStore: statsObjectStore, expectedCount: 4, message: "'Stats' object store should start with 4 entries." },
+                    { type: "clear", objectStore: reviewersObjectStore },
+                    { type: "check", objectStore: emptyObjectStore, expectedCount: 0, message: "'Empty' object store should always be empty." },
+                    { type: "check", objectStore: reviewersObjectStore, expectedCount: 0, message: "'Reviewers' object store should have been cleared." },
+                    { type: "check", objectStore: statsObjectStore, expectedCount: 4, message: "'Stats' object store remain unchanged with 4 entries." },
+                    { type: "clear", objectStore: statsObjectStore },
+                    { type: "check", objectStore: emptyObjectStore, expectedCount: 0, message: "'Empty' object store should always be empty." },
+                    { type: "check", objectStore: reviewersObjectStore, expectedCount: 0, message: "'Reviewers' object store should have been cleared." },
+                    { type: "check", objectStore: statsObjectStore, expectedCount: 0, message: "'Stats' object store should have been cleared." },
+                ];
 
-                expectObjectStoreEntryCount(emptyObjectStore, 0, "'Empty' object store should always be empty.");
-                expectObjectStoreEntryCount(reviewersObjectStore, 4, "'Reviewers' object store should start with 4 entries.");
-                expectObjectStoreEntryCount(statsObjectStore, 4, "'Stats' object store should start with 4 entries.");
+                function test() {
+                    instruction = instructions.shift();
+                    if (!instruction) {
+                        InspectorBackend.runAfterPendingDispatches(resolve);
+                        return;
+                    }
 
-                IndexedDBAgent.clearObjectStore(securityOrigin, database.name, reviewersObjectStore.name, (error) => {
-                    InspectorTest.expectNoError(error);
-                });
+                    if (instruction.type == "check")
+                        expectObjectStoreEntryCount(instruction.objectStore, instruction.expectedCount, instruction.message, test);
+                    else if (instruction.type == "clear") {
+                        IndexedDBAgent.clearObjectStore(securityOrigin, database.name, instruction.objectStore.name, (error) => {
+                            InspectorTest.expectNoError(error);
+                            test();
+                        });
+                    }
+                }
 
-                expectObjectStoreEntryCount(emptyObjectStore, 0, "'Empty' object store should always be empty.");
-                expectObjectStoreEntryCount(reviewersObjectStore, 0, "'Reviewers' object store should have been cleared.");
-                expectObjectStoreEntryCount(statsObjectStore, 4, "'Stats' object store remain unchanged with 4 entries.");
-
-                IndexedDBAgent.clearObjectStore(securityOrigin, database.name, statsObjectStore.name, (error) => {
-                    InspectorTest.expectNoError(error);
-                });
-
-                expectObjectStoreEntryCount(emptyObjectStore, 0, "'Empty' object store should always be empty.");
-                expectObjectStoreEntryCount(reviewersObjectStore, 0, "'Reviewers' object store should have been cleared.");
-                expectObjectStoreEntryCount(statsObjectStore, 0, "'Stats' object store should have been cleared.");
-
-                InspectorBackend.runAfterPendingDispatches(resolve);
+                test();
             });
         }
     });

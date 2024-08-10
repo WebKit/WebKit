@@ -88,6 +88,7 @@ struct LoadParameters {
     std::optional<double> dataDetectionReferenceDate;
 #endif
     bool isRequestFromClientOrUserInput { false };
+    bool isPerformingHTTPFallback { false };
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };

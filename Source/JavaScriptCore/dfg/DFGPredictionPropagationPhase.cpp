@@ -1218,6 +1218,7 @@ private:
         case SameValue:
         case OverridesHasInstance:
         case InstanceOf:
+        case InstanceOfMegamorphic:
         case InstanceOfCustom:
         case IsEmpty:
         case IsEmptyStorage:

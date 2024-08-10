@@ -438,6 +438,7 @@ public:
     virtual FrameIdentifier rootFrameID() const { return { }; }
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
+    WEBCORE_EXPORT virtual void scrollbarWidthChanged(ScrollbarWidth) { }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

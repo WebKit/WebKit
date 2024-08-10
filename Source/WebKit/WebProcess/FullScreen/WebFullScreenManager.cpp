@@ -85,7 +85,7 @@ Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage& page)
 WebFullScreenManager::WebFullScreenManager(WebPage& page)
     : WebCore::EventListener(WebCore::EventListener::CPPEventListenerType)
     , m_page(page)
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && ENABLE(IMAGE_ANALYSIS)
     , m_mainVideoElementTextRecognitionTimer(RunLoop::main(), this, &WebFullScreenManager::mainVideoElementTextRecognitionTimerFired)
 #endif
 #if !RELEASE_LOG_DISABLED
@@ -106,7 +106,9 @@ void WebFullScreenManager::invalidate()
     clearElement();
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
+#if ENABLE(IMAGE_ANALYSIS)
     m_mainVideoElementTextRecognitionTimer.stop();
+#endif
 #endif
 }
 
@@ -572,6 +574,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
         return;
     }
 
+#if ENABLE(IMAGE_ANALYSIS)
     if (targetElement == m_mainVideoElement.get()) {
         auto& targetVideoElement = downcast<WebCore::HTMLVideoElement>(*targetElement);
         if (targetVideoElement.paused() && !targetVideoElement.seeking())
@@ -579,6 +582,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
         else
             endTextRecognitionForMainVideoIfNeeded();
     }
+#endif
 #else
     UNUSED_PARAM(event);
     UNUSED_PARAM(context);
@@ -587,6 +591,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
 
 #if ENABLE(VIDEO)
 
+#if ENABLE(IMAGE_ANALYSIS)
 void WebFullScreenManager::mainVideoElementTextRecognitionTimerFired()
 {
     if (!m_element || !m_element->document().fullscreenManager().isFullscreen())
@@ -618,6 +623,7 @@ void WebFullScreenManager::endTextRecognitionForMainVideoIfNeeded()
         m_isPerformingTextRecognitionInMainVideo = false;
     }
 }
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&& element)
 {
@@ -635,7 +641,9 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
         for (auto& eventName : eventsToObserve.get())
             m_mainVideoElement->removeEventListener(eventName, *this, { });
 
+#if ENABLE(IMAGE_ANALYSIS)
         endTextRecognitionForMainVideoIfNeeded();
+#endif
     }
 
     m_mainVideoElement = WTFMove(element);
@@ -644,8 +652,10 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
         for (auto& eventName : eventsToObserve.get())
             m_mainVideoElement->addEventListener(eventName, *this, { });
 
+#if ENABLE(IMAGE_ANALYSIS)
         if (m_mainVideoElement->paused())
             scheduleTextRecognitionForMainVideo();
+#endif
     }
 }
 

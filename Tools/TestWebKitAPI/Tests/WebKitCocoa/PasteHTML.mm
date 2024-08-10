@@ -484,6 +484,21 @@ TEST(PasteHTML, DoesNotTransformColorsOfLightContentDuringOutdent)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.innerHTML"], @"<ul><li>hello</li><li>world</li></ul>");
 }
 
+TEST(PasteHTML, TransformColorsDependsOnUsedInlineStyle)
+{
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true, true);
+    [webView forceDarkMode];
+
+    [webView synchronouslyLoadTestPageNamed:@"rich-color-filtered"];
+
+    writeHTMLToPasteboard(@"<ul style='color: black'><li style='color: white'>Coffee</li><li style='color: white'>Milk</li><li style='color: white'>Tea</li></ul>");
+
+    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('li').style.color"], @"rgb(0, 0, 0)");
+}
+
 #endif // ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT)
 
 #endif // PLATFORM(COCOA)

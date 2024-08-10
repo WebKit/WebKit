@@ -56,7 +56,7 @@ public:
 
 private:
     void applyProperties(int firstProperty, int lastProperty);
-    void applyDeferredProperties();
+    void applyLogicalGroupProperties();
     void applyCustomProperties();
     void applyCustomPropertyImpl(const AtomString&, const PropertyCascade::Property&);
 

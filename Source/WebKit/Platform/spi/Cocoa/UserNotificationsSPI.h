@@ -63,6 +63,7 @@
 
 @interface UNUserNotificationCenter ()
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
+- (UNNotificationSettings *)notificationSettings;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

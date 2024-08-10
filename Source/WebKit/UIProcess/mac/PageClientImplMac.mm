@@ -980,11 +980,6 @@ void PageClientImpl::startWindowDrag()
     m_impl->startWindowDrag();
 }
 
-NSWindow *PageClientImpl::platformWindow()
-{
-    return m_impl->window();
-}
-
 #if ENABLE(DRAG_SUPPORT)
 
 void PageClientImpl::didPerformDragOperation(bool handled)

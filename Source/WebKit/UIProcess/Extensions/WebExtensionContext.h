@@ -263,6 +263,7 @@ public:
         Background,
         Inspector,
         Popup,
+        Sidebar,
         Tab,
     };
 
@@ -386,6 +387,8 @@ public:
     RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IncludeExtensionViews = IncludeExtensionViews::Yes, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     void forgetTab(WebExtensionTabIdentifier) const;
 
+    bool canOpenNewWindow() const;
+    void openNewWindow(const WebExtensionWindowParameters&, CompletionHandler<void(RefPtr<WebExtensionWindow>)>&&);
     void openNewTab(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>)>&&);
 
     WindowVector openWindows(IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
@@ -444,6 +447,8 @@ public:
     std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionTab&);
+    void openSidebarForTab(WebExtensionTab&, UserTriggered = UserTriggered::No);
+    void closeSidebarForTab(WebExtensionTab&, UserTriggered = UserTriggered::No);
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     const CommandsVector& commands();

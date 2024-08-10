@@ -869,7 +869,6 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-framese
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-percentage.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-frameset-and-frame-elements/large-rows-relsize.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1i.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1j.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/body-margin-1k.html [ ImageOnlyFailure ]
@@ -6647,10 +6646,6 @@ imported/w3c/web-platform-tests/css/css-variables/wide-keyword-fallback-002.html
 
 # WPT tests that are timing out.
 imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-within-database.any.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/transaction-scheduling-within-database.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
@@ -7059,14 +7054,6 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-6.htm
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-7.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-dynamic-8.html [ Skip ]
 
-# These tests rely on dynamic scrollbar styling which isn't implemented yet. webkit.org/b/211219
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-005.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-006.html [ Skip ]
-
 # Imported WPT css-tables which are crashing or fails.
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-auto.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-fixed.html [ ImageOnlyFailure ]
@@ -7418,14 +7405,6 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.
 # webkit.org/b/229520 CSS @scope unimplemented
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 
-# :is(:host) https://bugs.webkit.org/show_bug.cgi?id=264628
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-nesting/host-nesting-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/host-is-005.html [ ImageOnlyFailure ]
-
 webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
 
 # CloseWatcher related timeouts
@@ -7552,8 +7531,19 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-vie
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-image-pair.html [ ImageOnlyFailure ]
 
 # View transitions Level 2 - cross document transitions.
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-cssom.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-none-in-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-setup-transition.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-no-opt-in-on-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-cross-origin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender.html [ Skip ]
 
 # View transitions Level 2 - types.
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early-mutation.html [ Skip ]
@@ -7986,7 +7976,6 @@ imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002.html [ Image
 http/tests/site-isolation/touch-events [ Skip ]
 
 # CSS syntax
-imported/w3c/web-platform-tests/css/css-nesting/has-nesting.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scoping/scoped-reference-animation-002.html [ ImageOnlyFailure ]
 
 # CSS Ruby
@@ -8053,6 +8042,7 @@ imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ Im
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
 
 # -- Anchor Positioning -- #
+
 # Anchor positioning is not yet implemented...
 
 # general failures
@@ -8092,9 +8082,9 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-update-006
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-update-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-vlr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-vrl.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-abs-inline-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-inline-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/inset-area-scroll-adjust.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-abs-inline-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-inline-container.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-try-switch-from-fixed-anchor.html [ ImageOnlyFailure ]
@@ -8143,8 +8133,12 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-htb.ht
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Failure ]
-# minus wincairo
+
+# wpe-wk2 AND gtk-wk2 failures
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Failure ]
+
+# timeouts
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.html [ Skip ]
 
 # -- End: Anchor Positioning -- #
 

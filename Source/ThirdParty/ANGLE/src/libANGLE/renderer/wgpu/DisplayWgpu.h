@@ -91,10 +91,18 @@ class DisplayWgpu : public DisplayImpl
 
     void populateFeatureList(angle::FeatureList *features) override {}
 
+    angle::NativeWindowSystem getWindowSystem() const override;
+
     wgpu::Adapter &getAdapter() { return mAdapter; }
     wgpu::Device &getDevice() { return mDevice; }
     wgpu::Queue &getQueue() { return mQueue; }
     wgpu::Instance &getInstance() { return mInstance; }
+
+    const gl::Caps &getGLCaps() const { return mGLCaps; }
+    const gl::TextureCapsMap &getGLTextureCaps() const { return mGLTextureCaps; }
+    const gl::Extensions &getGLExtensions() const { return mGLExtensions; }
+    const gl::Limitations &getGLLimitations() const { return mGLLimitations; }
+    const ShPixelLocalStorageOptions &getPLSOptions() const { return mPLSOptions; }
 
     std::map<EGLNativeWindowType, wgpu::Surface> &getSurfaceCache() { return mSurfaceCache; }
 
@@ -113,6 +121,15 @@ class DisplayWgpu : public DisplayImpl
     wgpu::Instance mInstance;
     wgpu::Device mDevice;
     wgpu::Queue mQueue;
+
+    gl::Caps mGLCaps;
+    gl::TextureCapsMap mGLTextureCaps;
+    gl::Extensions mGLExtensions;
+    gl::Limitations mGLLimitations;
+    egl::Caps mEGLCaps;
+    egl::DisplayExtensions mEGLExtensions;
+    gl::Version mMaxSupportedClientVersion;
+    ShPixelLocalStorageOptions mPLSOptions;
 
     // http://anglebug.com/342213844
     // Dawn currently holds references to the internal swap chains for an unknown amount of time

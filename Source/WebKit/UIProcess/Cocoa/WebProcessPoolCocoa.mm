@@ -103,7 +103,6 @@
 
 #if PLATFORM(MAC)
 #import "WebInspectorPreferenceObserver.h"
-#import <QuartzCore/CARemoteLayerServer.h>
 #import <notify_keys.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
@@ -365,10 +364,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.shouldEnableFTLJIT = [defaults boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
     parameters.shouldEnableMemoryPressureReliefLogging = [defaults boolForKey:@"LogMemoryJetsamDetails"];
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
-
-#if HAVE(HOSTED_CORE_ANIMATION)
-    parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
-#endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = m_resolvedPaths.uiProcessBundleResourcePath;

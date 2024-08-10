@@ -269,6 +269,8 @@ public:
 
     FrameIdentifier rootFrameID() const final;
 
+    void scrollbarWidthChanged(ScrollbarWidth) override;
+
 private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;

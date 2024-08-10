@@ -96,6 +96,7 @@ public:
         Style::Relations styleRelations;
         PseudoIdSet pseudoIDSet;
         bool matchedInsideScope { false };
+        bool disallowHasPseudoClass { false };
     };
 
     bool match(const CSSSelector&, const Element&, CheckingContext&) const;
@@ -111,8 +112,8 @@ public:
     struct LocalContext;
     
 private:
-    MatchResult matchRecursively(CheckingContext&, const LocalContext&, PseudoIdSet&) const;
-    bool checkOne(CheckingContext&, const LocalContext&, MatchType&) const;
+    MatchResult matchRecursively(CheckingContext&, LocalContext&, PseudoIdSet&) const;
+    bool checkOne(CheckingContext&, LocalContext&, MatchType&) const;
     bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&) const;
     bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelector&) const;
 

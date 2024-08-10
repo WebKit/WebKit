@@ -429,6 +429,7 @@ namespace JSC { namespace DFG {
     /* Nodes for misc operations. */\
     macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \
     macro(InstanceOf, NodeMustGenerate | NodeResultBoolean) \
+    macro(InstanceOfMegamorphic, NodeMustGenerate | NodeResultBoolean) \
     macro(InstanceOfCustom, NodeMustGenerate | NodeResultBoolean) \
     macro(MatchStructure, NodeMustGenerate | NodeResultBoolean) \
     \

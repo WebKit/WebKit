@@ -94,8 +94,6 @@
     ProcessID presentingApplicationPID;
 
 #if PLATFORM(COCOA)
-    MachSendRight acceleratedCompositingPort;
-
     String uiProcessBundleResourcePath;
     WebKit::SandboxExtensionHandle uiProcessBundleResourcePathExtensionHandle;
 

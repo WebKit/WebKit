@@ -35,7 +35,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 
+// FIXME: when rdar://132766445 is resolved
+#if PLATFORM(IOS)
+TEST(WebKit, DISABLED_NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible)
+#else
 TEST(WebKit, NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500) configuration:configuration.get() addToWindow:YES]);

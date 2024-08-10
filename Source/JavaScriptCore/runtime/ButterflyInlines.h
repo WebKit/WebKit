@@ -104,7 +104,8 @@ inline Butterfly* Butterfly::tryCreate(VM& vm, JSObject*, size_t preCapacity, si
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     if (hasIndexingHeader)
         *result->indexingHeader() = indexingHeader;
-    gcSafeZeroMemory(result->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
+    // Use memcpy since this butterfly is not tied to any object yet.
+    memset(result->propertyStorage() - propertyCapacity, 0, propertyCapacity * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -139,13 +140,12 @@ inline Butterfly* Butterfly::createOrGrowPropertyStorage(
     size_t indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
     bool hasIndexingHeader = structure->hasIndexingHeader(intendedOwner);
     Butterfly* result = createUninitialized(vm, intendedOwner, preCapacity, newPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    gcSafeMemcpy(
+    // Use memcpy since this butterfly is not tied to any object yet.
+    memcpy(
         result->propertyStorage() - oldPropertyCapacity,
         oldButterfly->propertyStorage() - oldPropertyCapacity,
         totalSize(0, oldPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes));
-    gcSafeZeroMemory(
-        result->propertyStorage() - newPropertyCapacity,
-        (newPropertyCapacity - oldPropertyCapacity) * sizeof(EncodedJSValue));
+    memset(result->propertyStorage() - newPropertyCapacity, 0, (newPropertyCapacity - oldPropertyCapacity) * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -177,8 +177,8 @@ inline Butterfly* Butterfly::growArrayRight(
     void* newBase = vm.auxiliarySpace().allocate(vm, newSize, nullptr, AllocationFailureMode::ReturnNull);
     if (!newBase)
         return nullptr;
-    // FIXME: This probably shouldn't be a memcpy.
-    gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
+    // Use memcpy since this butterfly is not tied to any object yet.
+    memcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
     return fromBase(newBase, 0, propertyCapacity);
 }
 
@@ -220,7 +220,8 @@ inline Butterfly* Butterfly::reallocArrayRightIfPossible(
     void* newBase = vm.auxiliarySpace().allocate(vm, newSize, &deferralContext, AllocationFailureMode::ReturnNull);
     if (!newBase)
         return nullptr;
-    gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
+    // Use memcpy since this butterfly is not tied to any object yet.
+    memcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
     return fromBase(newBase, 0, propertyCapacity);
 }
 
@@ -237,7 +238,8 @@ inline Butterfly* Butterfly::resizeArray(
     size_t size = std::min(
         totalSize(0, propertyCapacity, oldHasIndexingHeader, oldIndexingPayloadSizeInBytes),
         totalSize(0, propertyCapacity, newHasIndexingHeader, newIndexingPayloadSizeInBytes));
-    gcSafeMemcpy(static_cast<JSValue*>(to), static_cast<JSValue*>(from), size);
+    // Use memcpy since this butterfly is not tied to any object yet.
+    memcpy(static_cast<JSValue*>(to), static_cast<JSValue*>(from), size);
     return result;
 }
 

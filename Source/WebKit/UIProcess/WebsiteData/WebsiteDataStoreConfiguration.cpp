@@ -142,7 +142,6 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_httpsProxy = this->m_httpsProxy;
     copy->m_deviceManagementRestrictionsEnabled = this->m_deviceManagementRestrictionsEnabled;
     copy->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = this->m_allLoadsBlockedByDeviceManagementRestrictionsForTesting;
-    copy->m_webPushDaemonUsesMockBundlesForTesting = this->m_webPushDaemonUsesMockBundlesForTesting;
     copy->m_boundInterfaceIdentifier = this->m_boundInterfaceIdentifier;
     copy->m_allowsCellularAccess = this->m_allowsCellularAccess;
     copy->m_legacyTLSEnabled = this->m_legacyTLSEnabled;
@@ -176,7 +175,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 
 WebPushD::WebPushDaemonConnectionConfiguration WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration() const
 {
-    return { m_webPushDaemonUsesMockBundlesForTesting, { }, { }, m_webPushPartitionString, m_identifier };
+    return { { }, { }, m_webPushPartitionString, m_identifier };
 }
 
 WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() const &

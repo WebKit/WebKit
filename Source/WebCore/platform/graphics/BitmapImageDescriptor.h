@@ -68,6 +68,10 @@ public:
     bool shouldUseQuickLookForFullscreen() const;
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatial() const;
+#endif
+
     void dump(TextStream&) const;
 
 private:

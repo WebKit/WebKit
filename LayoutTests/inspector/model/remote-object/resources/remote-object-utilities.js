@@ -28,17 +28,17 @@ TestPage.registerInitializer(() => {
     }
 
     window.runSteps = function(steps) {
-        let currentStepIndex = 0;
-
-        function checkComplete() {
-            if (++currentStepIndex >= steps.length)
+        function runStep(i) {
+            if (i >= steps.length) {
                 InspectorTest.completeTest();
-        }
+                return;
+            }
 
-        for (let {expression, browserOnly, filter} of steps) {
+            let {expression, browserOnly, filter, deep} = steps[i];
+
             if (browserOnly) {
-                checkComplete();
-                continue;
+                runStep(i + 1);
+                return;
             }
 
             filter = remoteObjectJSONFilter.bind(null, filter);
@@ -49,8 +49,22 @@ TestPage.registerInitializer(() => {
                 InspectorTest.log("EXPRESSION: " + expression);
                 InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
                 InspectorTest.log(JSON.stringify(remoteObject, filter, 2));
-                checkComplete();
+
+                if (deep) {
+                    remoteObject.getPropertyDescriptors((properties) => {
+                        for (let property of properties) {
+                            if (deep.includes(property.name))
+                                InspectorTest.log(JSON.stringify(property, filter, 2));
+                        }
+
+                        runStep(i + 1);
+                    }, {generatePreview: true});
+                    return;
+                }
+
+                runStep(i + 1);
             });
         }
+        runStep(0);
     };
 });

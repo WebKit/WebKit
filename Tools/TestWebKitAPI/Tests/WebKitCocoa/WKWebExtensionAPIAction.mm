@@ -1302,6 +1302,67 @@ TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIAction, WindowOpenOpensInNewWindow)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Open Popup')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        EXPECT_NOT_NULL(action);
+
+        Util::runScriptWithUserGesture("window.open('https://example.com/', '_blank', 'popup, width=100, height=50')"_s, action.popupWebView);
+    };
+
+#if PLATFORM(MAC)
+    auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(options.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"https://example.com/"]);
+
+        EXPECT_EQ(options.windowType, WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(options.windowState, WKWebExtensionWindowStateNormal);
+
+        EXPECT_EQ(options.frame.size.width, 100);
+        EXPECT_EQ(options.frame.size.height, 50);
+        EXPECT_TRUE(std::isnan(options.frame.origin.x));
+        EXPECT_TRUE(std::isnan(options.frame.origin.y));
+
+        originalOpenNewWindow(options, context, completionHandler);
+
+        [manager done];
+    };
+#else
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"https://example.com/"]);
+        EXPECT_NS_EQUAL(options.window, manager.get().defaultWindow);
+        EXPECT_EQ(options.index, 1ul);
+        EXPECT_EQ(options.active, YES);
+
+        originalOpenNewTab(options, context, completionHandler);
+
+        [manager done];
+    };
+#endif
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Popup");
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIAction, EmptyAction)
 {
     static auto *actionManifest = @{

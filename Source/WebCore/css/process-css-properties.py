@@ -929,7 +929,7 @@ class StyleProperties:
         if not a_is_high_priority and b_is_high_priority:
             return 1
 
-        # Sort logical longhands to the back, before shorthands.
+        # Sort longhands in a logical property group to the back, before shorthands.
         a_is_in_logical_property_group = a.codegen_properties.logical_property_group
         b_is_in_logical_property_group = b.codegen_properties.logical_property_group
         if a_is_in_logical_property_group and not b_is_in_logical_property_group:

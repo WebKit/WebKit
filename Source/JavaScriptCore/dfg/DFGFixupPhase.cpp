@@ -2293,11 +2293,18 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
         }
-            
+
         case InstanceOf: {
-            if (node->child1()->shouldSpeculateCell()
-                && node->child2()->shouldSpeculateCell()
-                && is64Bit()) {
+            if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell() && is64Bit()) {
+                fixEdge<CellUse>(node->child1());
+                fixEdge<CellUse>(node->child2());
+                break;
+            }
+            break;
+        }
+
+        case InstanceOfMegamorphic: {
+            if (is64Bit()) {
                 fixEdge<CellUse>(node->child1());
                 fixEdge<CellUse>(node->child2());
                 break;

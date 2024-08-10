@@ -75,6 +75,8 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
             return renderLineBreak->isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
+        if (is<RenderTable>(renderer))
+            return Layout::Box::NodeType::TableBox;
         return Layout::Box::NodeType::GenericElement;
     }();
 
@@ -429,9 +431,9 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         auto addSpacing = [&](auto& streamToUse) {
             size_t printedCharacters = 0;
             if (isDamaged)
-                streamToUse << "---------- -+";
+                streamToUse << "            -+";
             else
-                streamToUse << "---------- --";
+                streamToUse << "            --";
             while (++printedCharacters <= depth * 2)
                 streamToUse << " ";
 

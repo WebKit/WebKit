@@ -191,6 +191,7 @@ enum class Feature
     ForceTextureLodOffset3,
     ForceTextureLodOffset4,
     ForceWaitForSubmissionToCompleteForQueryResult,
+    GenerateFragmentShadingRateAttchementWithCpu,
     GenerateShareableShaders,
     GetDimensionsIgnoresBaseLevel,
     HasBaseVertexInstancedDraw,

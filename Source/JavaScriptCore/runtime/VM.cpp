@@ -1621,6 +1621,9 @@ void VM::visitAggregateImpl(Visitor& visitor)
     m_builtinExecutables->visitAggregate(visitor);
     m_regExpCache->visitAggregate(visitor);
 
+    if (heap.collectionScope() != CollectionScope::Full)
+        stringReplaceCache.visitAggregate(visitor);
+
     visitor.append(structureStructure);
     visitor.append(structureRareDataStructure);
     visitor.append(stringStructure);

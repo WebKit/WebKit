@@ -56,7 +56,7 @@ version = Version(1, 0, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
-    AutoInstall.register(Package('mock', Version(4)))
+    AutoInstall.register(Package('mock', Version(5, 1, 0), wheel=True))
 else:
     AutoInstall.register(Package('mock', Version(3, 0, 5)))
     if platform.system() == 'Windows':
@@ -64,6 +64,8 @@ else:
 
 if sys.version_info >= (3, 12):
     AutoInstall.register(Package('setuptools', Version(68, 1, 2)))
+elif sys.version_info >= (3, 9):
+    AutoInstall.register(Package('setuptools', Version(59, 8, 0)))
 elif sys.version_info >= (3, 0):
     AutoInstall.register(Package('setuptools', Version(56, 0, 0)))
 else:
@@ -75,7 +77,7 @@ else:
     AutoInstall.register(Package('certifi', Version(2021, 10, 8)))
 
 AutoInstall.register(Package('chardet', Version(3, 0, 4)))
-AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
+AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil', wheel=True))
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))

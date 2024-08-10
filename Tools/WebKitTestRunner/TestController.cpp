@@ -107,6 +107,7 @@
 
 #if PLATFORM(WIN)
 #include <direct.h>
+#include <shlwapi.h>
 #define getcwd _getcwd
 #define PATH_MAX _MAX_PATH
 #else
@@ -134,6 +135,24 @@ static WKDataRef copyWebCryptoMasterKey(WKPageRef, const void*)
 {
     // Any 128 bit key would do, all we need for testing is to implement the callback.
     return WKDataCreate((const uint8_t*)"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
+}
+
+static std::string testPath(WKURLRef url)
+{
+    auto scheme = adoptWK(WKURLCopyScheme(url));
+    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
+        auto path = adoptWK(WKURLCopyPath(url));
+        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
+        auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
+        RELEASE_ASSERT(length > 0);
+#if OS(WINDOWS)
+        // Remove the first '/' if it starts with something like "/C:/".
+        if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
+            return std::string(buffer.data() + 1, length - 1);
+#endif
+        return std::string(buffer.data(), length - 1);
+    }
+    return std::string();
 }
 
 void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, const void* clientInfo)
@@ -1481,19 +1500,19 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
         return 0;
 
     if (length >= 7 && strstr(pathOrURL, "file://")) {
-        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ pathOrURL + 7, length - 7 }))) {
+        auto url = adoptWK(WKURLCreateWithUTF8CString(pathOrURL));
+        auto path = testPath(url.get());
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
             printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
             return 0;
         }
-        return WKURLCreateWithUTF8CString(pathOrURL);
+        return url.leakRef();
     }
 
     // Creating from filesytem path.
 
 #if PLATFORM(WIN)
-    bool isAbsolutePath = false;
-    if (length >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
-        isAbsolutePath = true;
+    bool isAbsolutePath = !PathIsRelativeA(pathOrURL);
 #else
     bool isAbsolutePath = pathOrURL[0] == pathSeparator;
 #endif
@@ -1516,11 +1535,13 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     }
 
     auto cPath = buffer.get();
-    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ cPath + 7, strlen(cPath) - 7 }))) {
+    auto url = adoptWK(WKURLCreateWithUTF8CString(cPath));
+    auto path = testPath(url.get());
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
         printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
         return 0;
     }
-    return WKURLCreateWithUTF8CString(cPath);
+    return url.leakRef();
 }
 
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
@@ -1577,24 +1598,6 @@ static void contentExtensionStoreCallback(WKUserContentFilterRef filter, uint32_
     context->filter = filter ? adoptWK(filter) : nullptr;
     context->done = true;
     context->testController.notifyDone();
-}
-
-static std::string testPath(WKURLRef url)
-{
-    auto scheme = adoptWK(WKURLCopyScheme(url));
-    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
-        auto path = adoptWK(WKURLCopyPath(url));
-        auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
-        auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
-        RELEASE_ASSERT(length > 0);
-#if OS(WINDOWS)
-        // Remove the first '/' if it starts with something like "/C:/".
-        if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
-            return std::string(buffer.data() + 1, length - 1);
-#endif
-        return std::string(buffer.data(), length - 1);
-    }
-    return std::string();
 }
 
 static std::string contentExtensionJSONPath(WKURLRef url)

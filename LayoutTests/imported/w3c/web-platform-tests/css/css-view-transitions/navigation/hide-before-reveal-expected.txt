@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Inbound cross-document view-transition should be skipped if document is hidden Test timed out
+PASS Inbound cross-document view-transition should be skipped if document is hidden
 

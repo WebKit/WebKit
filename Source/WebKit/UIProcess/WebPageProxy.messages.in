@@ -20,6 +20,7 @@ Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[SharedPreferencesNeedsConnection]
 messages -> WebPageProxy {
     # UI messages
     CreateNewPage(struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (std::optional<WebCore::PageIdentifier> newPageID, std::optional<WebKit::WebPageCreationParameters> newPageParameters) Synchronous
@@ -67,7 +68,7 @@ messages -> WebPageProxy {
     SetHasActiveAnimatedScrolls(bool hasActiveAnimatedScrolls)
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted)
-    ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info)
+    [EnabledBy=ContactPickerAPIEnabled] ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info)
     PrintFrame(WebCore::FrameIdentifier frameID, String title, WebCore::FloatSize pdfFirstPageSize) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
@@ -84,15 +85,15 @@ messages -> WebPageProxy {
     DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);
-    SetColorPickerColor(WebCore::Color color);
-    EndColorPicker();
+    [EnabledBy=InputTypeColorEnabled] ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);
+    [EnabledBy=InputTypeColorEnabled] SetColorPickerColor(WebCore::Color color);
+    [EnabledBy=InputTypeColorEnabled] EndColorPicker();
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
-    HandleKeydownInDataList(String key);
-    EndDataListSuggestions();
+    [EnabledBy=DataListElementEnabled] ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
+    [EnabledBy=DataListElementEnabled] HandleKeydownInDataList(String key);
+    [EnabledBy=DataListElementEnabled] EndDataListSuggestions();
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
@@ -263,7 +264,7 @@ messages -> WebPageProxy {
     ShowContextMenuFromFrame(WebCore::FrameIdentifier frameID, WebKit::ContextMenuContextData contextMenuContextData, WebKit::UserData userData)
 #endif
 
-    DidFinishServiceWorkerPageRegistration(bool success)
+    [EnabledBy=ServiceWorkersEnabled] DidFinishServiceWorkerPageRegistration(bool success)
 
     # Database messages
     ExceededDatabaseQuota(WebCore::FrameIdentifier frameID, String originIdentifier, String databaseName, String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota) Synchronous
@@ -280,7 +281,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    RequestMediaKeySystemPermissionForFrame(WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
+    [EnabledBy=EncryptedMediaAPIEnabled] RequestMediaKeySystemPermissionForFrame(WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
 #endif
 
     # Notification messages
@@ -328,8 +329,6 @@ messages -> WebPageProxy {
 
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking) Synchronous
-    Speak(String string)
-    StopSpeaking()
 
     MakeFirstResponder()
     AssistiveTechnologyMakeFirstResponder()
@@ -367,9 +366,9 @@ messages -> WebPageProxy {
     DictationAlternatives(WebCore::DictationContext dictationContext) -> (Vector<String> alternatives) Synchronous
 #endif
 
-#if ENABLE(VIDEO)
-    BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
-    CancelTextRecognitionForVideoInElementFullScreen()
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
+    [EnabledBy=TextRecognitionInVideosEnabled] BeginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect videoBounds)
+    [EnabledBy=TextRecognitionInVideosEnabled] CancelTextRecognitionForVideoInElementFullScreen()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -501,18 +500,18 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferReference data)
-    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
-    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifier(String identifier)
-    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
-    [EnabledIf='attachmentElementEnabled()'] CloneAttachmentData(String fromIdentifier, String toIdentifier)
-    [EnabledIf='attachmentElementEnabled()'] DidInsertAttachmentWithIdentifier(String identifier, String source, enum:uint8_t WebCore::AttachmentAssociatedElementType associatedElementType)
-    [EnabledIf='attachmentElementEnabled()'] DidRemoveAttachmentWithIdentifier(String identifier)
-    [EnabledIf='attachmentElementEnabled()'] SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
+    [EnabledBy=AttachmentElementEnabled] RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferReference data)
+    [EnabledBy=AttachmentElementEnabled] RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
+    [EnabledBy=AttachmentElementEnabled] RegisterAttachmentIdentifier(String identifier)
+    [EnabledBy=AttachmentElementEnabled] RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
+    [EnabledBy=AttachmentElementEnabled] CloneAttachmentData(String fromIdentifier, String toIdentifier)
+    [EnabledBy=AttachmentElementEnabled] DidInsertAttachmentWithIdentifier(String identifier, String source, enum:uint8_t WebCore::AttachmentAssociatedElementType associatedElementType)
+    [EnabledBy=AttachmentElementEnabled] DidRemoveAttachmentWithIdentifier(String identifier)
+    [EnabledBy=AttachmentElementEnabled] SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
 #if PLATFORM(IOS_FAMILY)
-    [EnabledIf='attachmentElementEnabled()'] WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
+    [EnabledBy=AttachmentElementEnabled] WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
 #endif
-    [EnabledIf='attachmentElementEnabled()'] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
+    [EnabledBy=AttachmentElementEnabled] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
@@ -520,15 +519,14 @@ messages -> WebPageProxy {
     RemoveTextAnimationForAnimationID(WTF::UUID uuid)
 #endif
 
-CreateAppHighlightInSelectedRange)
 #if ENABLE(SPEECH_SYNTHESIS)
-    SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
-    SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()
-    SpeechSynthesisSetFinishedCallback() -> ()
-    SpeechSynthesisCancel()
-    SpeechSynthesisPause() -> ()
-    SpeechSynthesisResume() -> ()
-    SpeechSynthesisResetState()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisSetFinishedCallback() -> ()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisCancel()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisPause() -> ()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisResume() -> ()
+    [EnabledBy=SpeechSynthesisAPIEnabled] SpeechSynthesisResetState()
 #endif
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
@@ -575,32 +573,32 @@ CreateAppHighlightInSelectedRange)
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    [EnabledIf='modelElementEnabled()'] TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
+    [EnabledBy=ModelElementEnabled] TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
+    [EnabledBy=ModelElementEnabled] ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    [EnabledIf='modelElementEnabled()'] ModelElementCreateRemotePreview(String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementLoadRemotePreview(String uuid, URL url) -> (std::optional<WebCore::ResourceError> error)
-    [EnabledIf='modelElementEnabled()'] ModelElementDestroyRemotePreview(String uuid)
-    [EnabledIf='modelElementEnabled()'] ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    [EnabledIf='modelElementEnabled()'] HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    [EnabledIf='modelElementEnabled()'] HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    [EnabledIf='modelElementEnabled()'] ModelInlinePreviewUUIDs() -> (Vector<String> uuids)
+    [EnabledBy=ModelElementEnabled] ModelElementCreateRemotePreview(String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementLoadRemotePreview(String uuid, URL url) -> (std::optional<WebCore::ResourceError> error)
+    [EnabledBy=ModelElementEnabled] ModelElementDestroyRemotePreview(String uuid)
+    [EnabledBy=ModelElementEnabled] ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledBy=ModelElementEnabled] HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledBy=ModelElementEnabled] HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledBy=ModelElementEnabled] ModelInlinePreviewUUIDs() -> (Vector<String> uuids)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    [EnabledIf='modelElementEnabled()'] ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success)
-    [EnabledIf='modelElementEnabled()'] ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success)
-    [EnabledIf='modelElementEnabled()'] ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success)
-    [EnabledIf='modelElementEnabled()'] ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success)
-    [EnabledIf='modelElementEnabled()'] ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    [EnabledIf='modelElementEnabled()'] ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success)
+    [EnabledBy=ModelElementEnabled] ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success)
+    [EnabledBy=ModelElementEnabled] ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success)
+    [EnabledBy=ModelElementEnabled] ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success)
+    [EnabledBy=ModelElementEnabled] ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success)
+    [EnabledBy=ModelElementEnabled] ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledBy=ModelElementEnabled] ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success)
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
@@ -641,7 +639,7 @@ CreateAppHighlightInSelectedRange)
     FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
 
 #if ENABLE(GAMEPAD)
-    GamepadsRecentlyAccessed()
+    [EnabledBy=GamepadsEnabled] GamepadsRecentlyAccessed()
 #endif
 
     HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)

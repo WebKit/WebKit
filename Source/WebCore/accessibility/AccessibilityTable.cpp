@@ -231,8 +231,8 @@ bool AccessibilityTable::isDataTable() const
         WeakPtr currentParent = elementsToVisit.front();
         elementsToVisit.pop();
         bool rowIsAllTableHeaderCells = true;
-        for (auto* currentElement = currentParent ? currentParent->firstElementChild() : nullptr; currentElement; currentElement = currentElement->nextElementSibling()) {
-            if (auto* tableSectionElement = dynamicDowncast<HTMLTableSectionElement>(currentElement)) {
+        for (RefPtr currentElement = currentParent ? currentParent->firstElementChild() : nullptr; currentElement; currentElement = currentElement->nextElementSibling()) {
+            if (auto* tableSectionElement = dynamicDowncast<HTMLTableSectionElement>(currentElement.get())) {
                 if (tableSectionElement->hasTagName(theadTag)) {
                     if (topSectionIndicatesLayoutTable(tableSectionElement))
                         return false;
@@ -242,7 +242,7 @@ bool AccessibilityTable::isDataTable() const
                     ASSERT_WITH_MESSAGE(tableSectionElement->hasTagName(tfootTag), "table section elements should always have either thead, tbody, or tfoot tag");
                     firstFoot = firstFoot ? firstFoot : tableSectionElement;
                 }
-            } else if (auto* tableRow = dynamicDowncast<HTMLTableRowElement>(currentElement)) {
+            } else if (auto* tableRow = dynamicDowncast<HTMLTableRowElement>(currentElement.get())) {
                 firstRow = firstRow ? firstRow : tableRow;
 
                 rowCount += 1;
@@ -259,7 +259,7 @@ bool AccessibilityTable::isDataTable() const
                         alternatingRowColorCount++;
                     }
                 }
-            } else if (auto* cell = dynamicDowncast<HTMLTableCellElement>(currentElement)) {
+            } else if (auto* cell = dynamicDowncast<HTMLTableCellElement>(currentElement.get())) {
                 cellCount++;
 
                 bool isTHCell = cell->hasTagName(thTag);
@@ -534,7 +534,7 @@ void AccessibilityTable::addChildren()
 
         // Step 4: If the tr element being processed has no td or th element children, then increase ycurrent by 1, abort this set of steps, and return to the algorithm above.
         for (const auto& child : row->children()) {
-            auto* currentCell = dynamicDowncast<AccessibilityTableCell>(child.get());
+            RefPtr currentCell = dynamicDowncast<AccessibilityTableCell>(child.get());
             if (!currentCell)
                 continue;
             // (Not specified): As part of beginning to process this cell, reset its effective rowspan in case it had a non-default value set from a previous call to AccessibilityTable::addChildren().
@@ -643,7 +643,7 @@ void AccessibilityTable::addChildren()
         // Step 2: For each tr element that is a child of the element being processed,
         // in tree order, run the algorithm for processing rows.
         if (RefPtr tableSection = dynamicDowncast<HTMLTableSectionElement>(sectionElement)) {
-            for (auto& row : childrenOfType<HTMLTableRowElement>(*tableSection)) {
+            for (Ref row : childrenOfType<HTMLTableRowElement>(*tableSection)) {
                 RefPtr tableRow = dynamicDowncast<AccessibilityTableRow>(cache->getOrCreate(row));
                 processRow(tableRow.get());
             }
@@ -673,8 +673,8 @@ void AccessibilityTable::addChildren()
         if (auto* caption = dynamicDowncast<HTMLTableCaptionElement>(node)) {
             // Step 6: Associate the first caption element child of the table element with the table.
             if (!didAddCaption) {
-                if (auto* axCaption = cache->getOrCreate(*caption)) {
-                    addChild(axCaption, DescendIfIgnored::No);
+                if (RefPtr axCaption = cache->getOrCreate(*caption)) {
+                    addChild(axCaption.get(), DescendIfIgnored::No);
                     didAddCaption = true;
                 }
             }
@@ -702,7 +702,7 @@ void AccessibilityTable::addChildren()
         if (!descendantIsRow && !descendantIsRowGroup) {
             if (isAriaTable()) {
                 // We are forgiving with ARIA grid markup, descending past disallowed elements to build the grid structure (this is not specified, but consistent with other browsers).
-                if (auto* axObject = cache->getOrCreate(node); axObject && needsToDescend(*axObject)) {
+                if (RefPtr axObject = cache->getOrCreate(node); axObject && needsToDescend(*axObject)) {
                     for (const auto& child : axObject->children())
                         processTableDescendant(child ? child->node() : nullptr);
                 }
@@ -744,11 +744,11 @@ void AccessibilityTable::addChildren()
 
     // The remainder of this function is unspecified updating of internal data structures.
     for (unsigned i = 0; i < xWidth; ++i) {
-        auto& column = downcast<AccessibilityTableColumn>(*cache->create(AccessibilityRole::Column));
-        column.setColumnIndex(i);
-        column.setParent(this);
-        m_columns.append(&column);
-        addChild(&column, DescendIfIgnored::No);
+        RefPtr column = downcast<AccessibilityTableColumn>(cache->create(AccessibilityRole::Column));
+        column->setColumnIndex(i);
+        column->setParent(this);
+        m_columns.append(column.get());
+        addChild(column.get(), DescendIfIgnored::No);
     }
     addChild(headerContainer(), DescendIfIgnored::No);
 

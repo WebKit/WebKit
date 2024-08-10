@@ -104,6 +104,8 @@
     boolean expectCancel = false;
     boolean supportClientPin = false;
     boolean supportInternalUV = false;
+    long maxCredentialCountInList = 1;
+    long maxCredentialIdLength = 64;
 };
 
 [

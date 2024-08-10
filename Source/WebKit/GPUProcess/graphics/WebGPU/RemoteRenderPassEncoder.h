@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUColor.h"
 #include "WebGPUIdentifier.h"
@@ -53,19 +54,21 @@ class ObjectHeap;
 class RemoteRenderPassEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteRenderPassEncoder> create(WebCore::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPassEncoder> create(WebCore::WebGPU::RenderPassEncoder& renderPassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPassEncoder(renderPassEncoder, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteRenderPassEncoder(renderPassEncoder, objectHeap, WTFMove(streamConnection), gpu, identifier));
     }
 
     ~RemoteRenderPassEncoder();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteRenderPassEncoder(WebCore::WebGPU::RenderPassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteRenderPassEncoder(WebCore::WebGPU::RenderPassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteRenderPassEncoder(const RemoteRenderPassEncoder&) = delete;
     RemoteRenderPassEncoder(RemoteRenderPassEncoder&&) = delete;
@@ -121,6 +124,7 @@ private:
     Ref<WebCore::WebGPU::RenderPassEncoder> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
+    WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };
 

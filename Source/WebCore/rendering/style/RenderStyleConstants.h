@@ -344,6 +344,7 @@ enum class FillBox : uint8_t {
     BorderBox,
     PaddingBox,
     ContentBox,
+    BorderArea,
     Text,
     NoClip
 };

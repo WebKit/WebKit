@@ -1127,7 +1127,7 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
     // ::cue), we need a universal selector to set the combinator
     // (relation) on in the cases where there are no simple selectors preceding
     // the pseudo element.
-    bool isHostPseudo = compoundSelector.isHostPseudoSelector();
+    bool isHostPseudo = compoundSelector.isHostPseudoClass();
     if (isHostPseudo && elementName.isNull() && namespacePrefix.isNull())
         return;
     if (tag != anyQName() || isHostPseudo || isShadowDOM)

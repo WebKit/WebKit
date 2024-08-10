@@ -1331,10 +1331,11 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
     m_incomingMessagesLock.assertIsOwner();
     {
 #if PLATFORM(COCOA)
-        if (m_wasKilled)
+        if (m_didRequestProcessTermination)
             return;
 
         if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() >= maxPendingIncomingMessagesKillingThreshold) {
+            m_didRequestProcessTermination = true;
             dispatchToClientWithIncomingMessagesLock([protectedThis = Ref { *this }] {
                 if (!protectedThis->m_client)
                     return;

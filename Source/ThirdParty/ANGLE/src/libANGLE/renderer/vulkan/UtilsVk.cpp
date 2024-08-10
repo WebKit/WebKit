@@ -65,6 +65,8 @@ constexpr uint32_t kOverlayDrawFontBinding         = 2;
 constexpr uint32_t kGenerateMipmapDestinationBinding = 0;
 constexpr uint32_t kGenerateMipmapSourceBinding      = 1;
 
+constexpr uint32_t kGenerateFragmentShadingRateAttachmentBinding = 0;
+
 bool ValidateFloatOneAsUint()
 {
     union
@@ -1423,6 +1425,12 @@ void UtilsVk::destroy(ContextVk *contextVk)
 
     mPointSampler.destroy(device);
     mLinearSampler.destroy(device);
+
+    mGenerateFragmentShadingRateAttachment.program.destroy(renderer);
+    for (vk::PipelineHelper &pipeline : mGenerateFragmentShadingRateAttachment.pipelines)
+    {
+        pipeline.destroy(device);
+    }
 }
 
 angle::Result UtilsVk::ensureResourcesInitialized(ContextVk *contextVk,
@@ -1817,6 +1825,22 @@ angle::Result UtilsVk::ensureSamplersInitialized(ContextVk *contextVk)
     }
 
     return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::ensureGenerateFragmentShadingRateResourcesInitialized(ContextVk *contextVk)
+{
+    if (mGenerateFragmentShadingRateAttachment.program.valid(gl::ShaderType::Compute))
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[1] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1},
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::GenerateFragmentShadingRate, setSizes,
+                                      ArraySize(setSizes),
+                                      sizeof(GenerateFragmentShadingRateParameters));
 }
 
 angle::Result UtilsVk::setupComputeProgram(
@@ -4482,6 +4506,66 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
     // Close the render pass for this temporary framebuffer.
     return contextVk->flushCommandsAndEndRenderPass(
         RenderPassClosureReason::TemporaryForOverlayDraw);
+}
+
+angle::Result UtilsVk::generateFragmentShadingRate(
+    ContextVk *contextVk,
+    vk::ImageHelper *shadingRateAttachmentImageHelper,
+    vk::ImageViewHelper *shadingRateAttachmentImageViewHelper,
+    const GenerateFragmentShadingRateParameters &shadingRateParameters)
+{
+    ANGLE_TRY(ensureGenerateFragmentShadingRateResourcesInitialized(contextVk));
+
+    // Each workgroup processes an 8x8 tile of the image.
+    constexpr uint32_t kPixelWorkgroupSize = 8;
+    const uint32_t workGroupX =
+        UnsignedCeilDivide(shadingRateParameters.attachmentWidth, kPixelWorkgroupSize);
+    const uint32_t workGroupY =
+        UnsignedCeilDivide(shadingRateParameters.attachmentHeight, kPixelWorkgroupSize);
+
+    // Setup compute shader
+    vk::OutsideRenderPassCommandBufferHelper *commandBufferHelper;
+    vk::CommandBufferAccess access = {};
+
+    // Fragment shading rate image will always have 1 layer.
+    access.onImageComputeShaderWrite(shadingRateAttachmentImageHelper->getFirstAllocatedLevel(),
+                                     shadingRateAttachmentImageHelper->getLevelCount(), 0,
+                                     shadingRateAttachmentImageHelper->getLayerCount(),
+                                     shadingRateAttachmentImageHelper->getAspectFlags(),
+                                     shadingRateAttachmentImageHelper);
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBufferHelper(access, &commandBufferHelper));
+    VkDescriptorSet descriptorSet;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, commandBufferHelper,
+                                    Function::GenerateFragmentShadingRate, &descriptorSet));
+    VkDescriptorImageInfo destShadingRateImage = {};
+    destShadingRateImage.imageView =
+        shadingRateAttachmentImageViewHelper->getFragmentShadingRateImageView().getHandle();
+    destShadingRateImage.imageLayout =
+        shadingRateAttachmentImageHelper->getCurrentLayout(contextVk->getRenderer());
+    destShadingRateImage.sampler       = mPointSampler.getHandle();
+    VkWriteDescriptorSet writeInfos[1] = {};
+    writeInfos[0].sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfos[0].dstSet               = descriptorSet;
+    writeInfos[0].dstBinding           = kGenerateFragmentShadingRateAttachmentBinding;
+    writeInfos[0].descriptorCount      = 1;
+    writeInfos[0].descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    writeInfos[0].pImageInfo           = &destShadingRateImage;
+
+    vkUpdateDescriptorSets(contextVk->getDevice(), 1, writeInfos, 0, nullptr);
+
+    vk::RefCounted<vk::ShaderModule> *computeShader = nullptr;
+    ANGLE_TRY(contextVk->getShaderLibrary().getGenerateFragmentShadingRate_comp(contextVk, 0,
+                                                                                &computeShader));
+
+    // Record the command
+    vk::OutsideRenderPassCommandBuffer *commandBuffer;
+    commandBuffer = &commandBufferHelper->getCommandBuffer();
+    ANGLE_TRY(setupComputeProgram(contextVk, Function::GenerateFragmentShadingRate, computeShader,
+                                  &mGenerateFragmentShadingRateAttachment, descriptorSet,
+                                  &shadingRateParameters, sizeof(shadingRateParameters),
+                                  commandBufferHelper));
+    commandBuffer->dispatch(workGroupX, workGroupY, 1);
+    return angle::Result::Continue;
 }
 
 angle::Result UtilsVk::allocateDescriptorSetWithLayout(

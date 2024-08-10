@@ -3575,6 +3575,42 @@ TEST_P(Texture2DTestES3, TexImageWithDepthStencilPBO)
     EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
 }
 
+// Test that it is possible to upload to a texture, upload a second texture and delete the first.
+TEST_P(Texture2DTestES3, Texture1UploadThenTexture2UploadThenTexture1Delete)
+{
+    constexpr size_t kMaxBufferToImageCopySize = 64 * 1024 * 1024;
+    constexpr size_t kTexSize                  = 4096;
+    constexpr uint32_t kPixelSizeRGBA          = 4;
+    static_assert(kTexSize * kTexSize * kPixelSizeRGBA == kMaxBufferToImageCopySize);
+
+    std::vector<GLColor> textureColors(kTexSize * kTexSize, GLColor::red);
+
+    // A mutable texture is defined here. The second texture is used to flush the first one when the
+    // relevant feature (mutableMipmapTextureUpload) is enabled. If flushed, the update on level 0
+    // is large enough to trigger one submission using Vulkan, but the rest of its updates will not
+    // trigger a second one. In that case, the texture should not be deleted until all updates are
+    // processed.
+    GLuint texture1;
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kTexSize, kTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kTexSize / 2, kTexSize / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, textureColors.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 textureColors.data());
+    ASSERT_GL_NO_ERROR();
+
+    glDeleteTextures(1, &texture1);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that the driver performs a flush when there is a large amount of image updates.
 TEST_P(Texture2DMemoryTestES3, TextureDataInLoopUntilFlush)
 {
@@ -15217,10 +15253,14 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3RobustInit);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DTestES3RobustInit);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3Foveation);
-ANGLE_INSTANTIATE_TEST_ES3(Texture2DTestES3Foveation);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    Texture2DTestES3Foveation,
+    ES3_VULKAN().enable(Feature::GenerateFragmentShadingRateAttchementWithCpu));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES31Foveation);
-ANGLE_INSTANTIATE_TEST_ES31(Texture2DTestES31Foveation);
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    Texture2DTestES31Foveation,
+    ES31_VULKAN().enable(Feature::GenerateFragmentShadingRateAttchementWithCpu));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES31PPO);
 ANGLE_INSTANTIATE_TEST_ES31(Texture2DTestES31PPO);

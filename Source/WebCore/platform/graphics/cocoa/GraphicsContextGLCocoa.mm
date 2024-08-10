@@ -117,26 +117,24 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     if (powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
         displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
         displayAttributes.append(EGL_HIGH_POWER_ANGLE);
-    } else {
-        if (powerPreference == GraphicsContextGLPowerPreference::LowPower) {
-            displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
-            displayAttributes.append(EGL_LOW_POWER_ANGLE);
-        }
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    } else if (powerPreference == GraphicsContextGLPowerPreference::LowPower) {
+        displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
+        displayAttributes.append(EGL_LOW_POWER_ANGLE);
+    }
+#if PLATFORM(MAC)
+    else if (attrs.windowGPUID) {
         ASSERT(strstr(clientExtensions, "EGL_ANGLE_platform_angle_device_id"));
         // If the power preference is default, use the GPU the context window is on.
         // If the power preference is low power, and we know which GPU the context window is on,
         // most likely the lowest power is the GPU that drives the context window, as that GPU
         // is anyway already powered on.
-        if (attrs.windowGPUID) {
-            // EGL_PLATFORM_ANGLE_DEVICE_ID_*_ANGLE is the IOKit registry id on EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE.
-            displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE);
-            displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID >> 32));
-            displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE);
-            displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID));
-        }
-#endif
+        // EGL_PLATFORM_ANGLE_DEVICE_ID_*_ANGLE is the IOKit registry id on EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE.
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE);
+        displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID >> 32));
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE);
+        displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID));
     }
+#endif
     ASSERT(strstr(clientExtensions, "EGL_ANGLE_feature_control"));
     displayAttributes.append(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE);
     displayAttributes.append(reinterpret_cast<EGLAttrib>(disabledANGLEMetalFeatures));

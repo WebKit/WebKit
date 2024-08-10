@@ -1,14 +1,14 @@
 
-FAIL types: none shoud result in [] assert_array_equals: value is null, expected array
-FAIL types: abc shoud result in ["abc"] assert_array_equals: value is null, expected array
-FAIL types: abc xyz shoud result in ["abc","xyz"] assert_array_equals: value is null, expected array
-FAIL types:    abc 	xyz  shoud result in ["abc","xyz"] assert_array_equals: value is null, expected array
-FAIL types: abc none shoud result in [] assert_array_equals: value is null, expected array
-FAIL types: abc -ua-something shoud result in [] assert_array_equals: value is null, expected array
-FAIL types: abc -ok-something shoud result in ["abc","-ok-something"] assert_array_equals: value is null, expected array
-FAIL types: abc abc shoud result in ["abc","abc"] assert_array_equals: value is null, expected array
-FAIL types: abc ABC shoud result in ["abc","ABC"] assert_array_equals: value is null, expected array
-FAIL types: 123 shoud result in [] assert_array_equals: value is null, expected array
-FAIL types: * shoud result in [] assert_array_equals: value is null, expected array
-FAIL types: *11 abc shoud result in [] assert_array_equals: value is null, expected array
+FAIL types: none shoud result in [] assert_array_equals: value is undefined, expected array
+FAIL types: abc shoud result in ["abc"] assert_array_equals: value is undefined, expected array
+FAIL types: abc xyz shoud result in ["abc","xyz"] assert_array_equals: value is undefined, expected array
+FAIL types:    abc 	xyz  shoud result in ["abc","xyz"] assert_array_equals: value is undefined, expected array
+FAIL types: abc none shoud result in [] assert_array_equals: value is undefined, expected array
+FAIL types: abc -ua-something shoud result in [] assert_array_equals: value is undefined, expected array
+FAIL types: abc -ok-something shoud result in ["abc","-ok-something"] assert_array_equals: value is undefined, expected array
+FAIL types: abc abc shoud result in ["abc","abc"] assert_array_equals: value is undefined, expected array
+FAIL types: abc ABC shoud result in ["abc","ABC"] assert_array_equals: value is undefined, expected array
+FAIL types: 123 shoud result in [] assert_array_equals: value is undefined, expected array
+FAIL types: * shoud result in [] assert_array_equals: value is undefined, expected array
+FAIL types: *11 abc shoud result in [] assert_array_equals: value is undefined, expected array
 

@@ -435,7 +435,7 @@ static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebG
     glAttributes.isWebGL2 = isWebGL2;
 #if PLATFORM(MAC)
     GraphicsClient* graphicsClient = scriptExecutionContext.graphicsClient();
-    if (graphicsClient)
+    if (graphicsClient && attributes.powerPreference == WebGLContextAttributes::PowerPreference::Default)
         glAttributes.windowGPUID = gpuIDForDisplay(graphicsClient->displayID());
 #endif
 #if ENABLE(WEBXR)

@@ -560,6 +560,52 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
         && !isBlock(*sourceNode) && !isBlock(*destinationNode);
 }
 
+static bool nodeTreeHasInlineStyleWithLegibleColorForInvertLightness(const Node& node, std::optional<double> textLightness, std::optional<double> backgroundLightness)
+{
+    constexpr double lightnessDarkEnoughForText = 0.4;
+    constexpr double lightnessLightEnoughForBackground = 0.6;
+
+    constexpr auto lightnessIgnoringSemanticColors = [](const std::optional<Color>& color) -> std::optional<double> {
+        if (!color || !color->isVisible() || color->isSemantic())
+            return { };
+
+        return color->lightness();
+    };
+
+    if (is<Text>(node)) {
+        if (textLightness && *textLightness < lightnessDarkEnoughForText)
+            return true;
+
+        if (backgroundLightness && *backgroundLightness > lightnessLightEnoughForBackground)
+            return true;
+
+        return false;
+    }
+
+    std::optional<double> currentTextLightness;
+    std::optional<double> currentBackgroundLightness;
+
+    if (RefPtr element = dynamicDowncast<StyledElement>(node)) {
+        if (RefPtr inlineStyle = element->inlineStyle()) {
+            currentTextLightness = lightnessIgnoringSemanticColors(inlineStyle->propertyAsColor(CSSPropertyColor));
+            currentBackgroundLightness = lightnessIgnoringSemanticColors(inlineStyle->propertyAsColor(CSSPropertyBackgroundColor));
+        }
+    }
+
+    if (!currentTextLightness)
+        currentTextLightness = textLightness;
+
+    if (!currentBackgroundLightness)
+        currentBackgroundLightness = backgroundLightness;
+
+    for (RefPtr child = node.firstChild(); child; child = child->nextSibling()) {
+        if (nodeTreeHasInlineStyleWithLegibleColorForInvertLightness(*child, currentTextLightness, currentBackgroundLightness))
+            return true;
+    }
+
+    return false;
+}
+
 static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const Position& insertionPos)
 {
     // Dark mode content that is inserted should have the inline styles inverse color
@@ -584,32 +630,8 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
         }
     }
 
-    auto propertyLightness = [&](const StyleProperties& inlineStyle, CSSPropertyID propertyID) -> std::optional<double> {
-        auto color = inlineStyle.propertyAsColor(propertyID);
-        if (!color || !color.value().isVisible() || color.value().isSemantic())
-            return { };
-
-        return color.value().lightness();
-    };
-
-    const double lightnessDarkEnoughForText = 0.4;
-    const double lightnessLightEnoughForBackground = 0.6;
-
-    for (RefPtr node = fragment.firstChild(); node; node = NodeTraversal::next(*node)) {
-        RefPtr element = dynamicDowncast<StyledElement>(*node);
-        if (!element)
-            continue;
-
-        auto* inlineStyle = element->inlineStyle();
-        if (!inlineStyle)
-            continue;
-
-        auto textLightness = propertyLightness(*inlineStyle, CSSPropertyColor);
-        if (textLightness && *textLightness < lightnessDarkEnoughForText)
-            return false;
-
-        auto backgroundLightness = propertyLightness(*inlineStyle, CSSPropertyBackgroundColor);
-        if (backgroundLightness && *backgroundLightness > lightnessLightEnoughForBackground)
+    for (RefPtr node = fragment.firstChild(); node; node = node->nextSibling()) {
+        if (nodeTreeHasInlineStyleWithLegibleColorForInvertLightness(*node, std::nullopt, std::nullopt))
             return false;
     }
 

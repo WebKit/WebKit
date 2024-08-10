@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <wtf/Ref.h>
@@ -50,19 +51,21 @@ class ObjectHeap;
 class RemoteRenderPipeline final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteRenderPipeline> create(WebCore::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteRenderPipeline> create(WebCore::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteRenderPipeline(renderPipeline, objectHeap, WTFMove(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteRenderPipeline();
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
 
     void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteRenderPipeline(WebCore::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteRenderPipeline(WebCore::WebGPU::RenderPipeline&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteRenderPipeline(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline(RemoteRenderPipeline&&) = delete;
@@ -81,6 +84,7 @@ private:
     Ref<WebCore::WebGPU::RenderPipeline> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
+    WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
 };
 

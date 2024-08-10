@@ -37,6 +37,9 @@
 #import "ContextMenuContextData.h"
 #import "Logging.h"
 #import "SandboxUtilities.h"
+#import "WKFeature.h"
+#import "WKPreferences.h"
+#import "WKPreferencesPrivate.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionContext.h"
@@ -49,6 +52,7 @@
 #import "WebExtensionEventListenerType.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import "_WKFeatureInternal.h"
 #import "_WKWebExtensionStorageSQLiteStore.h"
 #import <WebCore/ContentRuleListResults.h>
 #import <wtf/BlockPtr.h>
@@ -505,6 +509,19 @@ void WebExtensionController::cookiesDidChange(API::HTTPCookieStore& cookieStore)
 
     for (Ref context : m_extensionContexts)
         context->cookiesDidChange(cookieStore);
+}
+
+bool WebExtensionController::isFeatureEnabled(const String& featureName) const
+{
+    WKPreferences *preferences = configuration().webViewConfiguration().preferences;
+
+    NSString *cocoaFeatureName = static_cast<NSString *>(featureName);
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:cocoaFeatureName])
+            return [preferences _isEnabledForFeature:feature];
+    }
+
+    return false;
 }
 
 RefPtr<WebExtensionContext> WebExtensionController::extensionContext(const WebExtension& extension) const

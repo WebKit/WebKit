@@ -31,6 +31,7 @@
 #include "GLContext.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 #include "PlatformDisplay.h"
 #include "ProcessCapabilities.h"
 #include <skia/core/SkBitmap.h>
@@ -71,7 +72,7 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
 
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     RELEASE_ASSERT(grContext);
-    auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height(), parameters.colorSpace.platformColorSpace());
+    auto imageInfo = SkImageInfo::Make(backendSize.width(), backendSize.height(), kRGBA_8888_SkColorType, kPremul_SkAlphaType, parameters.colorSpace.platformColorSpace());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
     auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, &properties);
     if (!surface || !surface->getCanvas())
@@ -126,7 +127,10 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
     auto data = SkData::MakeUninitialized(info.computeMinByteSize());
     auto* pixels = static_cast<uint8_t*>(data->writable_data());
     size_t rowBytes = static_cast<size_t>(info.minRowBytes64());
-    if (m_surface->readPixels(info, pixels, rowBytes, 0, 0))
+
+    // Create a SkImageInfo so the readPixels call will convert the RGBA pixels from the surface into BGRA.
+    SkImageInfo imageInfo = SkImageInfo::Make(info.width(), info.height(), SkColorType::kBGRA_8888_SkColorType, SkAlphaType::kPremul_SkAlphaType, colorSpace().platformColorSpace());
+    if (m_surface->readPixels(imageInfo, pixels, rowBytes, 0, 0))
         ImageBufferBackend::getPixelBuffer(srcRect, pixels, destination);
 }
 
@@ -139,7 +143,10 @@ void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelB
     auto data = SkData::MakeUninitialized(info.computeMinByteSize());
     auto* pixels = static_cast<uint8_t*>(data->writable_data());
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, pixels);
-    SkPixmap pixmap(info, pixels, info.minRowBytes64());
+
+    // Create a SkImageInfo so the writePixels call will transform the pixels from BGRA to RGBA when painting.
+    SkImageInfo imageInfo = SkImageInfo::Make(info.width(), info.height(), SkColorType::kBGRA_8888_SkColorType, SkAlphaType::kPremul_SkAlphaType, colorSpace().platformColorSpace());
+    SkPixmap pixmap(imageInfo, pixels, info.minRowBytes64());
     m_surface->writePixels(pixmap, 0, 0);
 }
 

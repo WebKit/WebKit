@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/AlphaPremultiplication.h>
@@ -72,6 +73,8 @@ public:
 
     virtual ~RemoteCompositorIntegration();
 
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
+
     void stopListeningForIPC();
 
 private:
@@ -99,8 +102,8 @@ private:
     Ref<WebCore::WebGPU::CompositorIntegration> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
-    WebGPUIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;
+    WebGPUIdentifier m_identifier;
 };
 
 } // namespace WebKit

@@ -57,6 +57,7 @@ enum class MessageName : uint16_t {
 #endif
     TestWithEnabledBy_AlwaysEnabled,
     TestWithEnabledBy_ConditionallyEnabled,
+    TestWithEnabledBy_MultiConditionallyEnabled,
     TestWithEnabledIf_AlwaysEnabled,
     TestWithEnabledIf_OnlyEnabledIfFeatureEnabled,
 #if PLATFORM(COCOA) || PLATFORM(GTK)

@@ -48,6 +48,9 @@ void EllipsisBoxPainter::paint()
     auto& style = m_lineBox.style();
     auto textColor = style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
 
+    if (m_paintInfo.forceTextColor())
+        textColor = m_paintInfo.forcedTextColor();
+
     if (m_lineBox.ellipsisSelectionState() != RenderObject::HighlightState::None) {
         paintSelection();
 

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View Transitions: @view-transition cascaldes correclty with layers. Test timed out
+FAIL View Transitions: @view-transition cascaldes correclty with layers. assert_not_equals: ViewTransition must be triggered. got disallowed value null
 

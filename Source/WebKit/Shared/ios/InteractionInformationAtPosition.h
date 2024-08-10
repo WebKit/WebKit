@@ -89,6 +89,9 @@ struct InteractionInformationAtPosition {
     bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
     bool isVerticalWritingMode { false };
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatialImage { false };
+#endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;

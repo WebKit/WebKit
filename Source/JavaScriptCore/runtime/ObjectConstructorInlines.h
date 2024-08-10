@@ -206,7 +206,8 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
     unsigned propertyCapacity = sourceStructure->outOfLineCapacity();
     if (propertyCapacity) {
         Butterfly* newButterfly = Butterfly::createUninitialized(vm, target, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
-        gcSafeMemcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
+        // memcpy is fine since newButterfly is not tied to any object yet.
+        memcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
         gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
         target->nukeStructureAndSetButterfly(vm, targetStructure->id(), newButterfly);
     } else
@@ -267,7 +268,8 @@ ALWAYS_INLINE JSObject* tryCreateObjectViaCloning(VM& vm, JSGlobalObject* global
     Butterfly* newButterfly = nullptr;
     if (propertyCapacity) {
         newButterfly = Butterfly::createUninitialized(vm, nullptr, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
-        gcSafeMemcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
+        // memcpy is fine since newButterfly is not tied to any object yet.
+        memcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
     }
     JSFinalObject* target = JSFinalObject::createWithButterfly(vm, sourceStructure, newButterfly);
     if (sourceStructure->inlineCapacity() > 0)

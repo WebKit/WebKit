@@ -68,10 +68,14 @@ struct IntegralTypedArrayAdaptor {
     
     static Type toNativeFromDouble(double value)
     {
+#if HAVE(FJCVTZS_INSTRUCTION)
+        return static_cast<Type>(toInt32(value));
+#else
         int32_t result = static_cast<int32_t>(value);
         if (static_cast<double>(result) != value)
             result = toInt32(value);
         return static_cast<Type>(result);
+#endif
     }
 
     static constexpr Type toNativeFromUndefined()

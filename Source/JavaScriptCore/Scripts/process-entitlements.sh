@@ -115,7 +115,7 @@ function maccatalyst_process_testapi_entitlements()
 function ios_family_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.private.pac.exception bool YES
-    if [[ "${PLATFORM_NAME}" != watchos ]]; then
+    if [[ "${PLATFORM_NAME}" != watchos && "${PLATFORM_NAME}" != appletvos ]]; then
         plistbuddy Add :com.apple.private.verified-jit bool YES
         if [[ "${PLATFORM_NAME}" == iphoneos ]]; then
             if (( $(( ${SDK_VERSION_ACTUAL} )) >= 170400 )); then

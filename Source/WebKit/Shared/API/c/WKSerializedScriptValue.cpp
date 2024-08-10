@@ -26,21 +26,17 @@
 #include "config.h"
 #include "WKSerializedScriptValue.h"
 
-#include "APISerializedScriptValue.h"
-#include "WKAPICast.h"
-
 WKTypeID WKSerializedScriptValueGetTypeID()
 {
-    return WebKit::toAPI(API::SerializedScriptValue::APIType);
+    return 0;
 }
 
-WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception)
+WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef, JSValueRef, JSValueRef*)
 {
-    auto serializedValue = API::SerializedScriptValue::create(context, value, exception);
-    return WebKit::toAPI(serializedValue.leakRef());
+    return nullptr;
 }
 
-JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)
+JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef, JSContextRef, JSValueRef*)
 {
-    return WebKit::toImpl(scriptValueRef)->deserialize(contextRef, exception);
+    return nullptr;
 }

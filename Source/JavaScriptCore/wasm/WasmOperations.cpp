@@ -853,7 +853,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JS
     WebAssemblyFunction* wasmFunction = nullptr;
     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
     if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
-        throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+        throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
         return { };
     }
 
@@ -865,7 +865,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JS
         Wasm::TypeIndex paramIndex = resultType.index;
         Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
         if (paramIndex != argIndex)
-            return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
+            return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
     }
     return v;
 }
@@ -885,7 +885,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSW
     JSValue value = JSValue::decode(v);
     value = Wasm::internalizeExternref(value);
     if (UNLIKELY(!Wasm::TypeInformation::castReference(value, resultType.isNullable(), resultType.index))) {
-        throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+        throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
         return { };
     }
     return JSValue::encode(value);
@@ -965,14 +965,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
                     WebAssemblyFunction* wasmFunction = nullptr;
                     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                     if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
-                        throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+                        throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         return;
                     }
                     if (Wasm::isRefWithTypeIndex(returnType) && !value.isNull()) {
                         Wasm::TypeIndex paramIndex = returnType.index;
                         Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                         if (paramIndex != argIndex) {
-                            throwTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
+                            throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                             return;
                         }
                     }
@@ -980,7 +980,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
                     ASSERT(Options::useWasmGC());
                     value = Wasm::internalizeExternref(value);
                     if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
-                        throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+                        throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         return;
                     }
                 }

@@ -247,19 +247,19 @@ class Reminder {
     }
 }
 
-function test(store) {
-    createLists(store, 10);
-    createReminders(store, 10);
-    addRandomTags(store);
+async function test(store, render) {
+    await render(() => createLists(store, 10));
+    await render(() => createReminders(store, 10));
+    await render(() => addRandomTags(store));
 
     const { popularTags } = store;
+    await render(() => pushBackRemindersWithTag(store, popularTags[0]));
+    await render(() => removeRemindersWithTag(store, popularTags[2]));
 
-    pushBackRemindersWithTag(store, popularTags[0]);
-    removeRemindersWithTag(store, popularTags[2]);
-    removeFirstAndLastRemindersFromEachList(store);
+    await render(() => removeFirstAndLastRemindersFromEachList(store));
+    await render(() => completeSomeReminders(store));
+    await render(() => sortRemindersByCompleted(store));
 
-    completeSomeReminders(store);
-    sortRemindersByCompleted(store);
-    removeCompletedReminders(store);
-    removeEmptyLists(store);
+    await render(() => removeCompletedReminders(store));
+    await render(() => removeEmptyLists(store));
 }

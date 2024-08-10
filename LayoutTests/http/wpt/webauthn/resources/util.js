@@ -279,6 +279,15 @@ function concatenateBuffers(buffer1, buffer2)
     return tmp.buffer;
 }
 
+function generateID(nonce) {
+    let idBuffer = new Uint8Array(32);
+    for (let i = 0; i < 8; i++) {
+        idBuffer[i] = nonce % 256;
+        nonce = Math.floor(nonce / 256);
+    }
+    return idBuffer;
+}
+
 // Very dirty asn1 decoder. Just works.
 function extractRawSignature(asn1signature)
 {

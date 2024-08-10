@@ -318,7 +318,7 @@ RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* se
 
     if (!configuration)
         configuration = defaultWebPushDaemonConfiguration();
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration.value()));
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(configuration.value()));
 
     return WTFMove(connection);
 }
@@ -341,7 +341,7 @@ TEST(WebPushD, BasicCommunication)
 
     // Send a basic message and make sure its reply handler ran.
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
-    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(defaultWebPushDaemonConfiguration()));
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(defaultWebPushDaemonConfiguration()));
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), ^(Vector<String>, Vector<String>) {
         done = true;
     });
@@ -716,7 +716,6 @@ public:
             (NSString *)kCFStreamPropertyHTTPSProxyPort: @(m_server->port())
         }];
         dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
         dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
@@ -996,42 +995,17 @@ public:
         TestWebKitAPI::Util::run(&done);
     }
 
-    // FIXME: remove this once we add fetchPushMessage to WKWebsiteDataStore.
-    void didShowNotificationForTesting()
+    RetainPtr<NSDictionary> fetchPushMessage()
     {
-        auto configuration = defaultWebPushDaemonConfiguration();
-        configuration.pushPartitionString = m_pushPartition;
-        configuration.dataStoreIdentifier = m_dataStoreIdentifier;
+        __block bool gotMessage = false;
+        __block RetainPtr<NSDictionary> message;
+        [m_dataStore _getPendingPushMessage:^(NSDictionary *rawMessage) {
+            message = rawMessage;
+            gotMessage = true;
+        }];
+        TestWebKitAPI::Util::run(&gotMessage);
 
-        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
-        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-
-        bool done = false;
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::DidShowNotificationForTesting(m_url.get()), [&]() {
-            done = true;
-        });
-        TestWebKitAPI::Util::run(&done);
-    }
-
-    // FIXME: switch to WKWebsiteDataStore method once we add that.
-    std::optional<WebKit::WebPushMessage> fetchPushMessage()
-    {
-        auto configuration = defaultWebPushDaemonConfiguration();
-        configuration.pushPartitionString = m_pushPartition;
-        configuration.dataStoreIdentifier = m_dataStoreIdentifier;
-
-        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service", WTFMove(configuration));
-        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-
-        std::optional<WebKit::WebPushMessage> result;
-        bool done = false;
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessage(), [&](std::optional<WebKit::WebPushMessage> message) {
-            result = WTFMove(message);
-            done = true;
-        });
-        TestWebKitAPI::Util::run(&done);
-
-        return result;
+        return message;
     }
 
     RetainPtr<NSArray<NSDictionary *>> fetchPushMessages()
@@ -1562,59 +1536,6 @@ TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
     ASSERT_TRUE(v->hasPushSubscription());
 }
 
-TEST_F(WebPushDTest, ImplicitSilentPushTimerCancelledOnShowingNotification)
-{
-    for (auto& v : webViews())
-        v->subscribe();
-    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
-
-    for (auto& v : webViews()) {
-        ASSERT_TRUE(v->hasPushSubscription());
-
-        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
-            v->injectPushMessage(@{ });
-            auto message = v->fetchPushMessage();
-            ASSERT_TRUE(message.has_value());
-            v->didShowNotificationForTesting();
-        }
-
-        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
-        ASSERT_TRUE(v->hasPushSubscription());
-    }
-}
-
-TEST_F(WebPushDTest, ImplicitSilentPushTimerCausesUnsubscribe)
-{
-    for (auto& v : webViews()) {
-        v->subscribe();
-        v->disableShowNotifications();
-    }
-    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
-
-    int i = 1;
-    for (auto& v : webViews()) {
-        ASSERT_TRUE(v->hasPushSubscription());
-
-        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
-            v->injectPushMessage(@{ });
-            auto message = v->fetchPushMessage();
-            ASSERT_TRUE(message.has_value());
-        }
-
-        bool unsubscribed = false;
-        TestWebKitAPI::Util::waitForConditionWithLogging([&] {
-            unsubscribed = !v->hasPushSubscription();
-            [NSThread sleepForTimeInterval:0.25];
-            return unsubscribed;
-        }, 5, @"Timed out waiting for push subscription to be unsubscribed.");
-        ASSERT_TRUE(unsubscribed);
-
-        // Unsubscribing from this data store should not affect subscriptions in other data stores.
-        ASSERT_EQ(subscribedTopicsCount(), webViews().size() - i);
-        i++;
-    }
-}
-
 TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
 {
     for (auto& v : webViews()) {
@@ -1803,6 +1724,61 @@ TEST_F(WebPushDBuiltInTest, TestPermissionsAfterSubscribe)
     EXPECT_TRUE([view->queryPermission(@"notifications") isEqual:@"granted"]);
     EXPECT_TRUE([view->queryPermissionFromServiceWorker(@"notifications") isEqual:@"granted"]);
 }
+
+TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCancelledOnShowingNotification)
+{
+    for (auto& v : webViews())
+        v->subscribe();
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+            ASSERT_TRUE(v->expectDecryptedMessage(@"null data", message.get()));
+        }
+
+        [NSThread sleepForTimeInterval:(WebKit::WebPushD::silentPushTimeoutForTesting.seconds() + 0.5)];
+        ASSERT_TRUE(v->hasPushSubscription());
+    }
+}
+
+TEST_F(WebPushDBuiltInTest, ImplicitSilentPushTimerCausesUnsubscribe)
+{
+    for (auto& v : webViews()) {
+        v->subscribe();
+        v->disableShowNotifications();
+    }
+    ASSERT_EQ(subscribedTopicsCount(), webViews().size());
+
+    int i = 1;
+    for (auto& v : webViews()) {
+        ASSERT_TRUE(v->hasPushSubscription());
+
+        for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
+            v->injectPushMessage(@{ });
+            auto message = v->fetchPushMessage();
+
+            // _processPushMessage should return false since we disabled showing notifications above.
+            ASSERT_FALSE(v->expectDecryptedMessage(@"null data", message.get()));
+        }
+
+        bool unsubscribed = false;
+        TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+            unsubscribed = !v->hasPushSubscription();
+            [NSThread sleepForTimeInterval:0.25];
+            return unsubscribed;
+        }, 5, @"Timed out waiting for push subscription to be unsubscribed.");
+        ASSERT_TRUE(unsubscribed);
+
+        // Unsubscribing from this data store should not affect subscriptions in other data stores.
+        ASSERT_EQ(subscribedTopicsCount(), webViews().size() - i);
+        i++;
+    }
+}
+
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 
@@ -2303,7 +2279,6 @@ TEST(WebPushD, DeclarativeParsing)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());
 
@@ -2358,7 +2333,6 @@ TEST(WebPushD, DeclarativeWebPushHandling)
 
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     dataStoreConfiguration.get().isDeclarativeWebPushEnabled = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
     clearWebsiteDataStore(dataStore.get());

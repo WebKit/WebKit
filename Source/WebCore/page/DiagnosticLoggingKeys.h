@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+enum class HTMLMediaElementSourceType : uint8_t;
+
 class DiagnosticLoggingKeys {
 public:
     static String applicationCacheKey();
@@ -167,9 +169,20 @@ public:
     WEBCORE_EXPORT static String webViewKey();
     static String yesKey();
 
+    static String mediaSourceTypeWatchTimeKey();
+    static String mediaVideoCodecWatchTimeKey();
+    static String mediaAudioCodecWatchTimeKey();
+
+    static String secondsKey();
+    static String sourceTypeKey();
+    static String videoCodecKey();
+    static String audioCodecKey();
+
     WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
     WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
     WEBCORE_EXPORT static String backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
+
+    static String mediaElementSourceTypeDiagnosticLoggingKey(HTMLMediaElementSourceType);
 };
 
 } // namespace WebCore

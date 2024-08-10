@@ -75,7 +75,7 @@ public:
     bool hasLineBoxRelativeAlignment() const;
 
     InlineLayoutUnit preferredLineHeight() const;
-    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
+    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNormal(); }
 
     inline bool mayStretchLineBox() const;
 

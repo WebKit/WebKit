@@ -30,8 +30,8 @@
 namespace WebKit {
 
 struct WebExtensionSidebarParameters {
-    bool enabled { false };
-    String panelPath;
+    bool enabled { true };
+    String panelPath { emptyString() };
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
 };
 

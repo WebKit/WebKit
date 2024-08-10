@@ -590,6 +590,9 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
             globalSizeRange->offset, globalSizeRange->size, ndrange.globalWorkSize.data());
     }
 
+    // Retain kernel object until we finish executing it later
+    mKernelCaptures.push_back(cl::KernelPtr{&kernelVk.getFrontendObject()});
+
     // Process each kernel argument/resource
     for (const auto &arg : kernelVk.getArgs())
     {
@@ -842,6 +845,7 @@ angle::Result CLCommandQueueVk::finishInternal()
     mMemoryCaptures.clear();
     mAssociatedEvents.clear();
     mDependencyTracker.clear();
+    mKernelCaptures.clear();
 
     return angle::Result::Continue;
 }

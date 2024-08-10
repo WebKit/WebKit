@@ -588,6 +588,41 @@ TEST_P(VulkanPerformanceCounterTest, NewTextureDoesNotBreakRenderPass)
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
+// Tests that each update for a large cube map face results in outside command buffer submission.
+TEST_P(VulkanPerformanceCounterTest, LargeCubeMapUpdatesSubmitsOutsideCommandBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    constexpr size_t kMaxBufferToImageCopySize = 64 * 1024 * 1024;
+    constexpr uint64_t kNumSubmits             = 6;
+    uint64_t expectedSubmitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal + kNumSubmits;
+
+    // Set up a simple large cubemap texture so that each face update, when flushed, can result in a
+    // separate submission.
+    GLTexture textureCube;
+    constexpr GLsizei kTexDim         = 4096;
+    constexpr uint32_t kPixelSizeRGBA = 4;
+    static_assert(kTexDim * kTexDim * kPixelSizeRGBA == kMaxBufferToImageCopySize);
+
+    std::vector<GLColor> kInitialData(kTexDim * kTexDim, GLColor::magenta);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureCube);
+
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, kTexDim, kTexDim, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, kInitialData.data());
+    }
+
+    // Flush the previous texture.
+    GLTexture lastTexture;
+    glBindTexture(GL_TEXTURE_2D, lastTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kInitialData.data());
+
+    // Verify number of submissions.
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedSubmitCommandsCount);
+}
+
 // Tests that submitting the outside command buffer due to texture upload size does not break the
 // current render pass.
 TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakRenderPass)

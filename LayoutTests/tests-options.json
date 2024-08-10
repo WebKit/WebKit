@@ -773,25 +773,10 @@
     "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-store.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex15-autoincrement.htm": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex8-valid_keys.htm": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm": [
@@ -801,9 +786,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html": [
@@ -828,9 +810,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/IndexedDB/wasm-module-value.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/IndexedDB/writer-starvation.htm": [

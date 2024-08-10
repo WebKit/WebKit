@@ -66,7 +66,7 @@ void AccessibilityTableHeaderContainer::addChildren()
     ASSERT(!m_childrenInitialized); 
     
     m_childrenInitialized = true;
-    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
+    RefPtr parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
     if (!parentTable || !parentTable->isExposable())
         return;
 

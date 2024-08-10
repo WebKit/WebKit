@@ -182,7 +182,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
 - (BOOL)_hasEnoughContentForOverlayRegions { return false; }
 - (void)_updateOverlayRegionsBehavior:(BOOL)selected { }
-- (void)_updateOverlayRegionRects:(HashSet<WebCore::IntRect>&)overlayRegions { }
+- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions { }
 - (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
 #endif
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutElementBox.h"
 
+#include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -215,6 +216,11 @@ LayoutUnit ElementBox::intrinsicRatio() const
 bool ElementBox::hasAspectRatio() const
 {
     return isImage();
+}
+
+RenderElement* ElementBox::rendererForIntegration() const
+{
+    return downcast<RenderElement>(Box::rendererForIntegration());
 }
 
 }

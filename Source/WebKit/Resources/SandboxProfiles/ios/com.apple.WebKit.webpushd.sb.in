@@ -186,6 +186,10 @@
 (allow file-read*
     (home-subpath "/Library/WebClips"))
 
+;; Support for looking up host apps from extensions.
+(allow mach-lookup
+    (global-name "com.apple.runningboard"))
+
 ;; Daemon prefs.
 (allow user-preference-read user-preference-write
     (preference-domain "com.apple.webkit.webpushd"))
