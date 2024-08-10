@@ -1358,8 +1358,8 @@ crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
 crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
 crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
-http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
-http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.https.any.html [ Pass ]
+http/wpt/crypto/rsa-pss-crash.https.any.worker.html [ Pass ]
 
 # Depend on iOS 11 API.
 fast/css/variables/env/ios [ Pass ]
@@ -3747,8 +3747,8 @@ webkit.org/b/242164 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/242194 compositing/images/positioned-image-content-rect.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/242225 http/wpt/service-workers/cache-control-request.html [ Pass Failure ]
-webkit.org/b/242225 http/wpt/service-workers/about-blank-iframe.html [ Pass Failure ]
+webkit.org/b/242225 http/wpt/service-workers/cache-control-request.https.html [ Pass Failure ]
+webkit.org/b/242225 http/wpt/service-workers/about-blank-iframe.https.html [ Pass Failure ]
 
 webkit.org/b/237569 imported/blink/svg/filters/filter-huge-clamping.svg [ Pass ImageOnlyFailure ]
 
@@ -4425,7 +4425,7 @@ webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [
 
 webkit.org/b/257832 imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html [ ImageOnlyFailure ]
 
-http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Pass ]
+http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.https.html [ Pass ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
 http/tests/misc/heic-accept-header.html [ Pass ]
@@ -4554,7 +4554,7 @@ editing/spelling/editing-word-with-marker-1.html [ Failure ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html [ Failure ]
 http/wpt/webcodecs/videoFrame-colorSpace.html [ Failure ]
 http/wpt/webcodecs/webcodecs-gc.html [ Failure ]
-http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
+http/wpt/webrtc/video-script-transform-keyframe-only.https.html [ Failure ]
 webkit.org/b/259088 imported/w3c/web-platform-tests/css/css-fonts/cjk-kerning.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-tables/border-writing-mode-dynamic-001.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html [ Failure ]
@@ -6351,9 +6351,9 @@ webkit.org/b/228670 http/wpt/service-workers/navigation-redirect-main-frame.http
 
 webkit.org/b/228165 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
-webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass Failure ]
-webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushManager.any.html [ Pass Failure ]
-webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushManager.any.serviceworker.html [ Pass Failure ]
+webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushEvent.https.any.serviceworker.html [ Pass Failure ]
+webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushManager.https.any.html [ Pass Failure ]
+webkit.org/b/232570 [ Debug ] http/wpt/push-api/pushManager.https.any.serviceworker.html [ Pass Failure ]
 http/wpt/service-workers/push-console-messages-no-showNotification.https.html [ Pass ]
 http/wpt/service-workers/push-console-messages-showNotification-async.https.html [ Pass ]
 http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Pass ]

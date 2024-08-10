@@ -293,14 +293,14 @@ webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-04-
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual.svg [ Failure ]
 
 # WebXR tests failing since 249564@main
-http/wpt/webxr/xrFrame_fillJointRadii.html [ Failure ]
-http/wpt/webxr/xrFrame_fillJointRadii_missing_joint_pose.html [ Failure ]
-http/wpt/webxr/xrFrame_fillPoses.html [ Failure ]
-http/wpt/webxr/xrFrame_fillPoses_missing_joint_pose.html [ Failure ]
-http/wpt/webxr/xrFrame_getJointPose.html [ Failure ]
-http/wpt/webxr/xrFrame_getJointPose_missing_joint_pose.html [ Failure ]
-http/wpt/webxr/xrHand.html [ Failure ]
-http/wpt/webxr/xrHandInput_gc.html [ Failure ]
+http/wpt/webxr/xrFrame_fillJointRadii.https.html [ Failure ]
+http/wpt/webxr/xrFrame_fillJointRadii_missing_joint_pose.https.html [ Failure ]
+http/wpt/webxr/xrFrame_fillPoses.https.html [ Failure ]
+http/wpt/webxr/xrFrame_fillPoses_missing_joint_pose.https.html [ Failure ]
+http/wpt/webxr/xrFrame_getJointPose.https.html [ Failure ]
+http/wpt/webxr/xrFrame_getJointPose_missing_joint_pose.https.html [ Failure ]
+http/wpt/webxr/xrHand.https.html [ Failure ]
+http/wpt/webxr/xrHandInput_gc.https.html [ Failure ]
 
 # Pending to create bug.
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
