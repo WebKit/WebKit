@@ -168,8 +168,8 @@ void RenderBlockFlow::willBeDestroyed()
                         childBox->removeFromParent();
                 }
             }
-        } else if (parent())
-            parent()->dirtyLinesFromChangedChild(*this);
+        } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
+            parent->dirtyLinesFromChangedChild(*this);
     }
 
     if (legacyLineLayout())

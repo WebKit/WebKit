@@ -1095,9 +1095,6 @@ void RenderElement::willBeRemovedFromTree()
     if (firstChild() || hasLayer())
         removeLayers();
 
-    if (isOutOfFlowPositioned() && parent()->childrenInline())
-        checkedParent()->dirtyLinesFromChangedChild(*this);
-
     RenderObject::willBeRemovedFromTree();
 }
 
