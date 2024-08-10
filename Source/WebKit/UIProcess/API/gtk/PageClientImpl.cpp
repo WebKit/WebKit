@@ -57,6 +57,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -68,6 +69,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageClientImpl);
 
 PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
     : m_viewWidget(viewWidget)

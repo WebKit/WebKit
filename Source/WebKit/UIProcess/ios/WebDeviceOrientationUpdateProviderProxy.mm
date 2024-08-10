@@ -34,8 +34,11 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/WebCoreMotionManager.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDeviceOrientationUpdateProviderProxy);
 
 WebDeviceOrientationUpdateProviderProxy::WebDeviceOrientationUpdateProviderProxy(WebPageProxy& page)
     : m_page(page)

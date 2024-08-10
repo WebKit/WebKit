@@ -31,6 +31,7 @@
 #import "PlatformXRCoordinator.h"
 
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Threading.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -40,7 +41,7 @@
 namespace WebKit {
 
 class ARKitCoordinator final : public PlatformXRCoordinator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ARKitCoordinator);
     struct RenderState;
 public:
     ARKitCoordinator();

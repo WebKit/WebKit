@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <wtf/Forward.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
@@ -56,7 +57,7 @@ enum class ApplicationType : uint8_t {
 };
 
 class ApplicationStateTracker : public CanMakeWeakPtr<ApplicationStateTracker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ApplicationStateTracker);
 public:
     ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
     ~ApplicationStateTracker();

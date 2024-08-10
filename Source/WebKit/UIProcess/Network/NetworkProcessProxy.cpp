@@ -78,6 +78,7 @@
 #include <WebCore/ResourceError.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/MakeString.h>
 
@@ -121,6 +122,8 @@ static WeakHashSet<NetworkProcessProxy>& networkProcessesSet()
     static NeverDestroyed<WeakHashSet<NetworkProcessProxy>> set;
     return set;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcessProxy);
 
 Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
 {

@@ -39,6 +39,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 #include <optional>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -299,6 +300,8 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
     send(Messages::DrawingArea::DidDiscardBackingStore());
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DrawingAreaProxyCoordinatedGraphicsDrawingMonitor, DrawingAreaProxyCoordinatedGraphics::DrawingMonitor);
 
 DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
     : m_timer(RunLoop::main(), this, &DrawingMonitor::stop)

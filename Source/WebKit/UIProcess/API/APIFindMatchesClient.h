@@ -27,6 +27,7 @@
 #define APIFindMatchesClient_h
 
 #include <WebCore/IntRect.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ class WebPageProxy;
 namespace API {
 
 class FindMatchesClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FindMatchesClient);
 public:
     virtual ~FindMatchesClient() { }
 

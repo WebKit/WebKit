@@ -28,13 +28,14 @@
 #include <WebCore/LinkIcon.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace API {
 
 class Data;
 
 class IconLoadingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IconLoadingClient);
 public:
     virtual ~IconLoadingClient() { }
 

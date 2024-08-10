@@ -29,13 +29,14 @@
 
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
 class WebPageDebuggable final : public Inspector::RemoteInspectionTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageDebuggable);
     WTF_MAKE_NONCOPYABLE(WebPageDebuggable);
 public:
     WebPageDebuggable(WebPageProxy&);

@@ -104,6 +104,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakListHashSet.h>
@@ -151,6 +152,8 @@ static WeakListHashSet<WebProcessProxy>& liveProcessesLRU()
     static NeverDestroyed<WeakListHashSet<WebProcessProxy>> processes;
     return processes;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessProxy);
 
 void WebProcessProxy::setProcessCountLimit(unsigned limit)
 {
@@ -273,7 +276,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 class UIProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UIProxyForCapture);
 public:
     explicit UIProxyForCapture(WebProcessProxy& process)
         : m_process(process)

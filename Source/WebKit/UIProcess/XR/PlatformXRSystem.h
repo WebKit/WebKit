@@ -33,6 +33,7 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/PlatformXR.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class PlatformXRSystem;
@@ -56,7 +57,7 @@ struct SharedPreferencesForWebProcess;
 struct XRDeviceInfo;
 
 class PlatformXRSystem : public IPC::MessageReceiver, public PlatformXRCoordinatorSessionEventClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlatformXRSystem);
 public:
     PlatformXRSystem(WebPageProxy&);
     virtual ~PlatformXRSystem();

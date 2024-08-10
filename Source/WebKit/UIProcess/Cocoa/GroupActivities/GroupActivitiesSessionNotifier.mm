@@ -32,6 +32,7 @@
 #import "WKGroupSession.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #import "WebKitSwiftSoftLink.h"
 
@@ -39,6 +40,8 @@ namespace WebKit {
 
 using namespace PAL;
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GroupActivitiesSessionNotifier);
 
 GroupActivitiesSessionNotifier& GroupActivitiesSessionNotifier::sharedNotifier()
 {

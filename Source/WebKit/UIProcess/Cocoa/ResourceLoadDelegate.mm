@@ -31,8 +31,11 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "_WKResourceLoadDelegate.h"
 #import "_WKResourceLoadInfoInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceLoadDelegate);
 
 ResourceLoadDelegate::ResourceLoadDelegate(WKWebView *webView)
     : m_webView(webView)
@@ -66,6 +69,8 @@ void ResourceLoadDelegate::setDelegate(id <_WKResourceLoadDelegate> delegate)
     m_delegateMethods.didReceiveResponse = [delegate respondsToSelector:@selector(webView:resourceLoad:didReceiveResponse:)];
     m_delegateMethods.didCompleteWithError = [delegate respondsToSelector:@selector(webView:resourceLoad:didCompleteWithError:response:)];
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ResourceLoadDelegateResourceLoadClient, ResourceLoadDelegate::ResourceLoadClient);
 
 ResourceLoadDelegate::ResourceLoadClient::ResourceLoadClient(ResourceLoadDelegate& delegate)
     : m_resourceLoadDelegate(delegate)

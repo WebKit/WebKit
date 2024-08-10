@@ -28,6 +28,7 @@
 #include "DrawingAreaInfo.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class RemotePageDrawingAreaProxy;
@@ -44,7 +45,7 @@ class DrawingAreaProxy;
 class WebProcessProxy;
 
 class RemotePageDrawingAreaProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageDrawingAreaProxy);
 public:
     RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
     ~RemotePageDrawingAreaProxy();

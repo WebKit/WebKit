@@ -41,6 +41,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -53,6 +54,8 @@ static WorkQueue& sharedQuickLookFileQueue()
     return queue.get();
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebFullScreenManagerProxy);
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
     : m_page(page)

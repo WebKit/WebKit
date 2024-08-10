@@ -29,6 +29,7 @@
 #import "WKFoundation.h"
 
 #import "APIAutomationSessionClient.h"
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @protocol _WKAutomationSessionDelegate;
@@ -36,7 +37,7 @@
 namespace WebKit {
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AutomationSessionClient);
 public:
     explicit AutomationSessionClient(id <_WKAutomationSessionDelegate>);
 

@@ -28,6 +28,7 @@
 
 #include "DisplayVBlankMonitorTimer.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -37,6 +38,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayVBlankMonitor);
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDisplayID displayID)
 {

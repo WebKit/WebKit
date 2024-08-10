@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "DisplayCaptureSessionManager.h"
@@ -41,6 +42,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageProxyTesting);
 
 WebPageProxyTesting::WebPageProxyTesting(WebPageProxy& page)
     : m_page(page)

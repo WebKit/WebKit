@@ -30,6 +30,7 @@
 #import "APIInspectorExtensionClient.h"
 #import "WKFoundation.h"
 #import <WebCore/FrameIdentifier.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class _WKInspectorExtension;
@@ -38,7 +39,7 @@
 namespace WebKit {
 
 class InspectorExtensionDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorExtensionDelegate);
 public:
     InspectorExtensionDelegate(_WKInspectorExtension *, id <_WKInspectorExtensionDelegate>);
     ~InspectorExtensionDelegate();
@@ -48,7 +49,7 @@ public:
 
 private:
     class InspectorExtensionClient final : public API::InspectorExtensionClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(InspectorExtensionClient);
     public:
         explicit InspectorExtensionClient(InspectorExtensionDelegate&);
         ~InspectorExtensionClient();

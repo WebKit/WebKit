@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSSet;
@@ -54,7 +55,7 @@ public:
 };
 
 class EndowmentStateTracker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(EndowmentStateTracker);
 public:
     static EndowmentStateTracker& singleton();
 

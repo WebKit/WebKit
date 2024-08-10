@@ -35,6 +35,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 #include "LayerHostingContext.h"
@@ -48,7 +49,7 @@ struct ModelProcessConnectionParameters;
 struct ModelProcessCreationParameters;
 
 class ModelProcessProxy final : public AuxiliaryProcessProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ModelProcessProxy);
     WTF_MAKE_NONCOPYABLE(ModelProcessProxy);
     friend LazyNeverDestroyed<ModelProcessProxy>;
 public:

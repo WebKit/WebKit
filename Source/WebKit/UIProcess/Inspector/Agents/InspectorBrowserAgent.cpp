@@ -34,11 +34,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorBrowserAgent);
 
 InspectorBrowserAgent::InspectorBrowserAgent(WebPageAgentContext& context)
     : InspectorAgentBase("Browser"_s, context)

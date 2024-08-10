@@ -31,8 +31,11 @@
 #include "APIWebsitePolicies.h"
 #include "WKWebpagePreferencesInternal.h"
 #include "WebProcessPool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPagePreferencesLockdownModeObserver);
 
 WebPagePreferencesLockdownModeObserver::WebPagePreferencesLockdownModeObserver(API::WebsitePolicies& policies)
     : m_policies(policies)

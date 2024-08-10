@@ -79,6 +79,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -118,6 +119,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 
     return navigationStates;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)

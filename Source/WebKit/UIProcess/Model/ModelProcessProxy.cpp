@@ -48,6 +48,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 
@@ -59,6 +60,8 @@ static WeakPtr<ModelProcessProxy>& singleton()
     static NeverDestroyed<WeakPtr<ModelProcessProxy>> singleton;
     return singleton;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessProxy);
 
 Ref<ModelProcessProxy> ModelProcessProxy::getOrCreate()
 {

@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -48,6 +49,8 @@ static String getTargetID(const ProvisionalPageProxy& provisionalPage)
 {
     return WebPageInspectorTarget::toTargetID(provisionalPage.webPageID());
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageInspectorController);
 
 WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPage)
     : m_frontendRouter(FrontendRouter::create())

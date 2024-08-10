@@ -35,6 +35,7 @@
 #include <WebCore/IntSize.h>
 #include <gtk/gtk.h>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 enum class DOMPasteAccessPolicy : uint8_t;
@@ -52,7 +53,7 @@ class PageClientImpl : public PageClient
     , public WebFullScreenManagerProxyClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
 public:
     explicit PageClientImpl(GtkWidget*);
 

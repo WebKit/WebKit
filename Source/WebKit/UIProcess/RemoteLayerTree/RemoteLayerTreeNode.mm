@@ -29,6 +29,7 @@
 #import "RemoteLayerTreeLayers.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
@@ -49,6 +50,8 @@ static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNod
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
 static NSString *const WKInteractionRegionContainerKey = @"WKInteractionRegionContainer";
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeNode);
 
 RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
     : m_layerID(layerID)

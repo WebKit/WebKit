@@ -41,6 +41,7 @@
 #include "WebProcessPool.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
@@ -54,6 +55,8 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
     static NeverDestroyed<WeakHashSet<SuspendedPageProxy>> map;
     return map;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
 
 RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {

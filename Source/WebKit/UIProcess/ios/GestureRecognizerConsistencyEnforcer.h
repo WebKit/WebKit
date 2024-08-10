@@ -31,6 +31,7 @@
 #import <wtf/Noncopyable.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKContentView;
@@ -39,7 +40,7 @@
 namespace WebKit {
 
 class GestureRecognizerConsistencyEnforcer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GestureRecognizerConsistencyEnforcer);
     WTF_MAKE_NONCOPYABLE(GestureRecognizerConsistencyEnforcer);
 public:
     GestureRecognizerConsistencyEnforcer(WKContentView *);

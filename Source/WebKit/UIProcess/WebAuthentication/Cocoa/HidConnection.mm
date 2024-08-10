@@ -31,6 +31,7 @@
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace fido;
@@ -55,6 +56,8 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
     connection->receiveReport(std::span { report, static_cast<size_t>(reportLength) });
 }
 #endif // HAVE(SECURITY_KEY_API)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HidConnection);
 
 HidConnection::HidConnection(IOHIDDeviceRef device)
     : m_device(device)

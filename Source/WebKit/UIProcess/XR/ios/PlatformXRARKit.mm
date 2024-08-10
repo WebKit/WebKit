@@ -35,10 +35,13 @@
 #import <Metal/MTLEvent_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #import <WebCore/PlatformXRPose.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import "ARKitSoftLink.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitCoordinator);
 
 struct ARKitCoordinator::RenderState {
     RetainPtr<id<WKARPresentationSession>> presentationSession;

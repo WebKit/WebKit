@@ -30,6 +30,7 @@
 #import "EditingRange.h"
 #import <WebCore/FloatRect.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSAttributedString;
 
@@ -38,7 +39,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class TextCheckingController final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextCheckingController);
     WTF_MAKE_NONCOPYABLE(TextCheckingController);
 public:
     explicit TextCheckingController(WebPageProxy&);

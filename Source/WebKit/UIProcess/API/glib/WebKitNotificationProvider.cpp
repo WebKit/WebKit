@@ -36,6 +36,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -72,6 +73,8 @@ private:
 
     WebKitNotificationProvider& m_provider;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitNotificationProvider);
 
 WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerProxy* notificationManager, WebKitWebContext* webContext)
     : m_webContext(webContext)

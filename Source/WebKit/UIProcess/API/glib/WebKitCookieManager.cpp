@@ -32,6 +32,7 @@
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -57,7 +58,7 @@ enum {
 };
 
 class CookieStoreObserver : public API::HTTPCookieStoreObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CookieStoreObserver);
 public:
     CookieStoreObserver(Function<void()>&& callback)
         : m_callback(WTFMove(callback)) { }

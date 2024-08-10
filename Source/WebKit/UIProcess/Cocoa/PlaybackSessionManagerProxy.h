@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
@@ -52,7 +53,7 @@ class PlaybackSessionModelContext final
     : public RefCounted<PlaybackSessionModelContext>
     , public WebCore::PlaybackSessionModel
     , public CanMakeCheckedPtr<PlaybackSessionModelContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionModelContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionModelContext);
 public:
     static Ref<PlaybackSessionModelContext> create(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)

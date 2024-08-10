@@ -33,8 +33,11 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCheckingController);
 
 TextCheckingController::TextCheckingController(WebPageProxy& webPageProxy)
     : m_page(webPageProxy)

@@ -30,8 +30,11 @@
 
 #import "Logging.h"
 #import "WKContentViewInteraction.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GestureRecognizerConsistencyEnforcer);
 
 GestureRecognizerConsistencyEnforcer::GestureRecognizerConsistencyEnforcer(WKContentView *view)
     : m_view(view)

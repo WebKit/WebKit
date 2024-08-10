@@ -52,6 +52,7 @@
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
@@ -676,7 +677,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     class WKMediaSessionCoordinatorForTesting
         : public WebKit::MediaSessionCoordinatorProxyPrivate
         , public WebCore::MediaSessionCoordinatorClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(WKMediaSessionCoordinatorForTesting);
     public:
 
         static Ref<WKMediaSessionCoordinatorForTesting> create(id <_WKMediaSessionCoordinator> privateCoordinator)

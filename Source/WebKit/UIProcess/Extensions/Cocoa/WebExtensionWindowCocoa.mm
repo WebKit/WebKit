@@ -40,8 +40,11 @@
 #import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionWindow);
 
 WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, WKWebExtensionWindow* delegate)
     : m_extensionContext(context)

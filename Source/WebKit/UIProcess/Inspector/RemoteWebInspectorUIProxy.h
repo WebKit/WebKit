@@ -30,10 +30,10 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorFrontendClient.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,7 +66,7 @@ class WebInspectorUIExtensionControllerProxy;
 #endif
 
 class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspectorUIProxyClient>, public CanMakeCheckedPtr<RemoteWebInspectorUIProxyClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteWebInspectorUIProxyClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteWebInspectorUIProxyClient);
 public:
     virtual ~RemoteWebInspectorUIProxyClient() { }
@@ -76,6 +76,7 @@ public:
 };
 
 class RemoteWebInspectorUIProxy : public RefCounted<RemoteWebInspectorUIProxy>, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteWebInspectorUIProxy);
 public:
     static Ref<RemoteWebInspectorUIProxy> create()
     {

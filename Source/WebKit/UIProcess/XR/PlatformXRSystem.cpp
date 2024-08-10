@@ -34,10 +34,13 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page.legacyMainFrameProcess().connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformXRSystem);
 
 PlatformXRSystem::PlatformXRSystem(WebPageProxy& page)
     : m_page(page)

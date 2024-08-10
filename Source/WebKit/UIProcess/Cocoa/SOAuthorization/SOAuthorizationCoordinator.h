@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS SOAuthorization;
 OBJC_CLASS WKSOAuthorizationDelegate;
@@ -47,7 +48,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SOAuthorizationCoordinator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SOAuthorizationCoordinator);
     WTF_MAKE_NONCOPYABLE(SOAuthorizationCoordinator);
 public:
     SOAuthorizationCoordinator();

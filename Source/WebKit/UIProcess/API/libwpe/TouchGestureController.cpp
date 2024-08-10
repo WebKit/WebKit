@@ -29,6 +29,7 @@
 #if USE(LIBWPE) && ENABLE(TOUCH_EVENTS)
 
 #include <WebCore/Scrollbar.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -39,6 +40,8 @@ static constexpr uint32_t axisLockMovementThreshold { 8 };
 static constexpr uint32_t axisLockActivationThreshold { 15 };
 static constexpr uint32_t axisLockReleaseThreshold { 30 };
 static constexpr uint32_t contextMenuThreshold { 500 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TouchGestureController);
 
 TouchGestureController::EventVariant TouchGestureController::handleEvent(const struct wpe_input_touch_event_raw* touchPoint)
 {

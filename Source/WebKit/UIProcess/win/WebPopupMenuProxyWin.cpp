@@ -42,6 +42,7 @@
 #include <WebCore/ScrollbarTheme.h>
 #include <windowsx.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -73,6 +74,8 @@ static void translatePoint(LPARAM& lParam, HWND from, HWND to)
     ::MapWindowPoints(from, to, &pt, 1);
     lParam = MAKELPARAM(pt.x, pt.y);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPopupMenuProxyWin);
 
 LRESULT CALLBACK WebPopupMenuProxyWin::WebPopupMenuProxyWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

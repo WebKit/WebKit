@@ -32,6 +32,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/Region.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
@@ -52,7 +53,8 @@ namespace WebKit {
 class WebPageProxy;
 
 class AcceleratedBackingStoreDMABuf final : public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStoreDMABuf);
+    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf);
 public:
     static std::unique_ptr<AcceleratedBackingStoreDMABuf> create(WebPageProxy&, WPEView*);
     ~AcceleratedBackingStoreDMABuf();

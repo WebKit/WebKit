@@ -41,6 +41,7 @@
 #include <WebCore/MediaKeySystemRequest.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -55,6 +56,8 @@ static WTFLogChannel& logChannel()
 {
     return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, EME);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemPermissionRequestManagerProxy);
 
 const Logger& MediaKeySystemPermissionRequestManagerProxy::logger() const
 {

@@ -35,8 +35,11 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBackForwardCache);
 
 WebBackForwardCache::WebBackForwardCache(WebProcessPool& processPool)
     : m_processPool(processPool)

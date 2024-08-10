@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PageClient.h"
+#include <wtf/TZoneMalloc.h>
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
 #endif
@@ -40,7 +41,7 @@ class PageClientImpl final : public PageClient
     , public WebFullScreenManagerProxyClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
 public:
     PageClientImpl(PlayStationWebView&);
 

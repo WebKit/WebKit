@@ -28,6 +28,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -77,7 +78,7 @@ static guint signals[LAST_SIGNAL] = { 0, };
 WEBKIT_DEFINE_FINAL_TYPE(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT, GObject)
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AutomationSessionClient);
 public:
     explicit AutomationSessionClient(WebKitAutomationSession* session)
         : m_session(session)

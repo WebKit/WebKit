@@ -31,6 +31,7 @@
 #include "WebExtensionDataType.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS WKWebExtensionDataRecord;
@@ -80,7 +81,7 @@ private:
 
 class WebExtensionDataRecordHolder : public RefCounted<WebExtensionDataRecordHolder> {
     WTF_MAKE_NONCOPYABLE(WebExtensionDataRecordHolder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionDataRecordHolder);
 
 public:
     template<typename... Args>

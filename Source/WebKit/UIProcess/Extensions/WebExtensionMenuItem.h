@@ -33,6 +33,7 @@
 #include "WebExtensionMenuItemContextType.h"
 #include "WebExtensionMenuItemType.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,7 +68,7 @@ struct WebExtensionMenuItemParameters;
 
 class WebExtensionMenuItem : public RefCounted<WebExtensionMenuItem>, public CanMakeWeakPtr<WebExtensionMenuItem> {
     WTF_MAKE_NONCOPYABLE(WebExtensionMenuItem);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionMenuItem);
 
 public:
     template<typename... Args>

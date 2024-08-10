@@ -40,6 +40,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -50,7 +51,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class ScriptMessageClient final : public WebScriptMessageHandler::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(X);
 public:
     ScriptMessageClient(RemoteInspectorProtocolHandler& inspectorProtocolHandler)
         : m_inspectorProtocolHandler(inspectorProtocolHandler) { }
@@ -97,7 +98,7 @@ private:
 };
 
 class LoaderClient final : public API::LoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LoaderClient);
 public:
     LoaderClient(Function<void()>&& loadedCallback)
         : m_loadedCallback { WTFMove(loadedCallback) } { }
