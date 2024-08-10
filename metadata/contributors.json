@@ -2898,6 +2898,16 @@
    },
    {
       "emails" : [
+         "com.idmsa@gmail.com"
+      ],
+      "github" : "iidmsa",
+      "name" : "Fady Farag",
+      "nicks" : [
+         "ffarag"
+      ]
+   },
+   {
+      "emails" : [
          "fsamuel@chromium.org"
       ],
       "name" : "Fady Samuel",
