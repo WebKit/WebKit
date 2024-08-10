@@ -5228,6 +5228,11 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
 OptionSet<ScrollCoordinationRole> RenderLayerCompositor::coordinatedScrollingRolesForLayer(const RenderLayer& layer, const RenderLayer* compositingAncestor) const
 {
     OptionSet<ScrollCoordinationRole> coordinationRoles;
+    if (!hasCoordinatedScrolling()) {
+        // If this frame isn't coordinated, it cannot contain any scrolling tree nodes.
+        return coordinationRoles;
+    }
+
     if (isViewportConstrainedFixedOrStickyLayer(layer))
         coordinationRoles.add(ScrollCoordinationRole::ViewportConstrained);
 
@@ -5267,11 +5272,6 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
             m_legacyScrollingLayerCoordinator->removeViewportConstrainedLayer(layer);
     }
 #endif
-
-    if (!hasCoordinatedScrolling()) {
-        // If this frame isn't coordinated, it cannot contain any scrolling tree nodes.
-        return { };
-    }
 
     auto newNodeID = treeState.parentNodeID.value_or(ScrollingNodeID { });
 

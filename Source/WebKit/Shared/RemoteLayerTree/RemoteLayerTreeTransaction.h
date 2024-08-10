@@ -205,6 +205,9 @@ public:
     bool viewportMetaTagWidthWasExplicit() const { return m_viewportMetaTagWidthWasExplicit; }
     void setViewportMetaTagWidthWasExplicit(bool widthWasExplicit) { m_viewportMetaTagWidthWasExplicit = widthWasExplicit; }
 
+    bool hasActiveViewTransition() const { return m_hasActiveViewTransition; }
+    void setHasActiveViewTransition(bool activeViewTransition) { m_hasActiveViewTransition = activeViewTransition; }
+
     bool viewportMetaTagCameFromImageDocument() const { return m_viewportMetaTagCameFromImageDocument; }
     void setViewportMetaTagCameFromImageDocument(bool cameFromImageDocument) { m_viewportMetaTagCameFromImageDocument = cameFromImageDocument; }
 
@@ -289,6 +292,7 @@ private:
     bool m_viewportMetaTagWidthWasExplicit { false };
     bool m_viewportMetaTagCameFromImageDocument { false };
     bool m_isInStableState { false };
+    bool m_hasActiveViewTransition { false };
 
     std::optional<EditorState> m_editorState;
 #if PLATFORM(IOS_FAMILY)

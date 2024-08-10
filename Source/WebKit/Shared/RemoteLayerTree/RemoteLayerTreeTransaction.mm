@@ -282,6 +282,7 @@ String RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("allowsUserScaling", m_allowsUserScaling);
     ts.dumpProperty("avoidsUnsafeArea", m_avoidsUnsafeArea);
     ts.dumpProperty("isInStableState", m_isInStableState);
+    ts.dumpProperty("hasActiveViewTransition", m_hasActiveViewTransition);
     ts.dumpProperty("renderTreeSize", m_renderTreeSize);
     ts.dumpProperty("root-layer", m_rootLayerID);
 

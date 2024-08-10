@@ -1918,6 +1918,26 @@ void Page::updateRendering()
         scrollingCoordinator->willStartRenderingUpdate();
 #endif
 
+    bool hasActiveViewTransition = false;
+    forEachDocument([&](auto& document) {
+        hasActiveViewTransition |= !!document.activeViewTransition();
+    });
+    if (hasActiveViewTransition != m_hasActiveViewTransition) {
+        m_hasActiveViewTransition = hasActiveViewTransition;
+
+        forEachDocument([&](auto& document) {
+            if (CheckedPtr renderView = document.renderView()) {
+                RenderBoxModelObject::forRendererAndContinuations(*renderView, [](RenderBoxModelObject& renderer) {
+                    if (renderer.hasLayer()) {
+                        renderer.layer()->setNeedsScrollingTreeUpdate();
+                        renderer.layer()->setNeedsCompositingConfigurationUpdate();
+                    }
+                });
+                renderView->frameView().setNeedsUpdateCompositingLayers();
+            }
+        });
+    }
+
     // Timestamps should not change while serving the rendering update steps.
     Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> initialDocuments;
     forEachDocument([&initialDocuments] (Document& document) {

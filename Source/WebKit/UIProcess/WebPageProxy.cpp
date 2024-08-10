@@ -3771,7 +3771,7 @@ void WebPageProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)
     if (!hasRunningProcess())
         return;
 
-    if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
+    if (drawingArea()->shouldSendWheelEventsToEventDispatcher() || m_hasActiveViewTransition) {
         continueWheelEventHandling(wheelEvent, { WheelEventProcessingSteps::SynchronousScrolling, false }, { });
         return;
     }

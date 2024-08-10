@@ -1700,7 +1700,7 @@ public:
     void resetObservationSizeForContainIntrinsicSize(Element&);
 
     RefPtr<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
-    ViewTransition* activeViewTransition() const;
+    WEBCORE_EXPORT ViewTransition* activeViewTransition() const;
     bool activeViewTransitionCapturedDocumentElement() const;
     void setActiveViewTransition(RefPtr<ViewTransition>&&);
 

@@ -71,8 +71,15 @@ void RemoteScrollingCoordinator::scheduleTreeStateCommit()
     m_webPage->drawingArea()->triggerRenderingUpdate();
 }
 
+void RemoteScrollingCoordinator::willStartRenderingUpdate()
+{
+    m_hasActiveViewTransition = page()->hasActiveViewTransition();
+}
+
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView& frameView) const
 {
+    if (m_hasActiveViewTransition)
+        return false;
     RenderView* renderView = frameView.renderView();
     return renderView && renderView->usesCompositing();
 }

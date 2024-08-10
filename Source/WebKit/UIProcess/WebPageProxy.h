@@ -3536,7 +3536,8 @@ private:
     bool m_sessionStateWasRestoredByAPIRequest { false };
     bool m_isQuotaIncreaseDenied { false };
     bool m_isLayerTreeFrozenDueToSwipeAnimation { false };
-    
+    bool m_hasActiveViewTransition { false };
+
     String m_overriddenMediaType;
 
     Vector<String> m_corsDisablingPatterns;

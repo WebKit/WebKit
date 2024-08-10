@@ -4871,6 +4871,11 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, 
     }
 #endif
 
+    if (RefPtr page = corePage())
+        layerTransaction.setHasActiveViewTransition(page->hasActiveViewTransition());
+    else
+        layerTransaction.setHasActiveViewTransition(false);
+
     layerTransaction.setContentsSize(frameView->contentsSize());
     layerTransaction.setScrollOrigin(frameView->scrollOrigin());
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());

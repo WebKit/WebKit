@@ -162,6 +162,8 @@ public:
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
 
+    void setNeedsUpdateCompositingLayers() { m_updateCompositingLayersIsPending = true; }
+
     // Returns true if a pending compositing layer update was done.
     bool updateCompositingLayersAfterLayoutIfNeeded();
 
