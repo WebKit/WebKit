@@ -929,13 +929,16 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
     _contentView = view;
 
+#if !PLATFORM(APPLETV)
     _previousButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.up"] style:UIBarButtonItemStylePlain target:self action:@selector(previous:)]);
     auto nextPreviousSpacer = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:NULL]);
     [nextPreviousSpacer setWidth:nextPreviousSpacerWidth];
     _nextButton = adoptNS([[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.down"] style:UIBarButtonItemStylePlain target:self action:@selector(next:)]);
-    auto closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close:)]);
 
     self.navigationItem.leftBarButtonItems = @[ _previousButton.get(), nextPreviousSpacer.get(), _nextButton.get() ];
+#endif
+
+    auto closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close:)]);
     self.navigationItem.rightBarButtonItem = closeButton.get();
 
     _collapsedSections = adoptNS([[NSMutableSet alloc] init]);
@@ -947,6 +950,16 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     }
 
     return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+#if PLATFORM(APPLETV)
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.tableView.tintColor = UIColor.systemBlueColor;
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -1230,6 +1243,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (PAL::currentUserInterfaceIdiomIsSmallScreen()) {
         [[_navigationController navigationBar] setBarTintColor:UIColor.systemGroupedBackgroundColor];
+
+#if PLATFORM(APPLETV)
+        [_navigationController setModalPresentationStyle:UIModalPresentationPageSheet];
+#endif
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
