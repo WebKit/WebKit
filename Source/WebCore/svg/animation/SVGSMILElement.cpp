@@ -213,6 +213,14 @@ void SVGSMILElement::buildPendingResource()
         svgTarget->addReferencingElement(*this);
 }
 
+bool SVGSMILElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    // https://svgwg.org/svg2-draft/styling.html#PresentationAttributes
+    if (name == SVGNames::fillAttr)
+        return false;
+    return StyledElement::hasPresentationalHintsForAttribute(name);
+}
+
 inline QualifiedName SVGSMILElement::constructAttributeName() const
 {
     auto parseResult = Document::parseQualifiedName(attributeWithoutSynchronization(SVGNames::attributeNameAttr));
