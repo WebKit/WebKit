@@ -33,6 +33,7 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "DocumentLoader.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"
@@ -99,7 +100,11 @@ ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& co
     return metadata;
 }
 
-MediaMetadata::MediaMetadata() = default;
+MediaMetadata::MediaMetadata()
+    : m_timer(*this, &MediaMetadata::refreshArtworkImage)
+{
+}
+
 MediaMetadata::~MediaMetadata() = default;
 
 void MediaMetadata::setMediaSession(MediaSession& session)
@@ -122,6 +127,8 @@ void MediaMetadata::setTitle(const String& title)
 
     m_metadata.title = title;
     metadataUpdated();
+
+    maybeStartTimer();
 }
 
 void MediaMetadata::setArtist(const String& artist)
@@ -131,6 +138,8 @@ void MediaMetadata::setArtist(const String& artist)
 
     m_metadata.artist = artist;
     metadataUpdated();
+
+    maybeStartTimer();
 }
 
 void MediaMetadata::setAlbum(const String& album)
@@ -140,6 +149,8 @@ void MediaMetadata::setAlbum(const String& album)
 
     m_metadata.album = album;
     metadataUpdated();
+
+    maybeStartTimer();
 }
 
 ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vector<MediaImage>&& artwork)
@@ -191,16 +202,30 @@ void MediaMetadata::refreshArtworkImage()
 {
     static_assert(s_minimumSize < s_idealSize);
 
+    m_timer.stop();
+
     m_artworkImageSrc = String();
     m_artworkImage = nullptr;
     m_artworkLoader = nullptr;
-    if (m_metadata.artwork.isEmpty())
+
+    if (!m_session)
         return;
-    if (!m_session || !m_session->document())
+    RefPtr document = m_session->document();
+    if (!document)
+        return;
+
+    RefPtr documentLoader = document->loader();
+    size_t numArtworks = m_metadata.artwork.size() ? m_metadata.artwork.size() : (documentLoader ? documentLoader->linkIcons().size() : 0);
+    if (!numArtworks)
+        return;
+    bool hasSetArtwork = m_metadata.artwork.size();
+    if (!hasSetArtwork && m_fallbackAttempted)
         return;
 
     // First look into the artwork's sizes attributes to attempt to determine the best score.
-    Vector<Pair> artworks(m_metadata.artwork.size(), [&](size_t index) -> Pair {
+    Vector<Pair> artworks(numArtworks, [&](size_t index) -> Pair {
+        if (!hasSetArtwork)
+            return { -1, documentLoader->linkIcons()[index].url.string() };
         auto size = [&](const String& sizes) -> IntSize {
             if (sizes.isEmpty())
                 return { };
@@ -239,6 +264,8 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
     String artworkImageSrc = artworks[index].src;
 
     m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), artworkImageSrc, [this, index, artworkImageSrc, artworks = WTFMove(artworks)](Image* image) mutable {
+        if (m_metadata.artwork.isEmpty())
+            m_fallbackAttempted = true;
         if (image && image->data() && image->width() && image->height()) {
             IntSize size { int(image->width()), int(image->height()) };
             float imageScore = imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize);
@@ -278,6 +305,13 @@ void MediaMetadata::metadataUpdated()
 {
     if (m_session)
         m_session->metadataUpdated();
+}
+
+void MediaMetadata::maybeStartTimer()
+{
+    if (m_timer.isActive() || m_artworkImage || m_artworkLoader || m_fallbackAttempted)
+        return;
+    m_timer.startOneShot(s_fallbackTimeout);
 }
 
 }
