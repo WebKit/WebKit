@@ -1609,6 +1609,9 @@ AA-large
 AAA
 AAA-large
 
+// color-layers()
+color-layers
+
 // color-mix()
 color-mix
 

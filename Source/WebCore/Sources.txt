@@ -977,6 +977,7 @@ css/calc/CSSCalcSymbolNode.cpp
 css/calc/CSSCalcSymbolsAllowed.cpp
 css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcValue.cpp
+css/color/CSSColorLayersResolver.cpp
 css/color/CSSColorMixResolver.cpp
 css/color/CSSColorMixSerialization.cpp
 css/color/CSSRelativeColorSerialization.cpp
@@ -984,12 +985,14 @@ css/color/CSSUnresolvedAbsoluteColor.cpp
 css/color/CSSUnresolvedColor.cpp
 css/color/CSSUnresolvedColorHex.cpp
 css/color/CSSUnresolvedColorKeyword.cpp
+css/color/CSSUnresolvedColorLayers.cpp
 css/color/CSSUnresolvedColorMix.cpp
 css/color/CSSUnresolvedColorResolutionContext.cpp
 css/color/CSSUnresolvedLightDark.cpp
 css/color/CSSUnresolvedRelativeColor.cpp
 css/color/StyleAbsoluteColor.cpp
 css/color/StyleColor.cpp
+css/color/StyleColorLayers.cpp
 css/color/StyleColorMix.cpp
 css/color/StyleCurrentColor.cpp
 css/parser/CSSAtRuleID.cpp

@@ -1006,6 +1006,20 @@ CSSColorContrastEnabled:
     WebCore:
       default: false
 
+CSSColorLayersEnabled:
+  type: bool
+  category: css
+  status: testable
+  humanReadableName: "CSS color-layers()"
+  humanReadableDescription: "Enable support for CSS color-layers()"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSContentVisibilityEnabled:
   type: bool
   status: stable
