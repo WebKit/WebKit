@@ -80,6 +80,20 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 
 webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Pass ]
 
+# webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass ]
+
+# webkit.org/b/277460 (REGRESSION (iOS 18): 9 layout tests need to be re-written to expect new behavior.)
+http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Pass ]
+http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Pass ]
+http/tests/cookies/same-site/popup-cross-site-post.html [ Pass ]
+http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Pass ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Pass ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
+
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 
 ### you should probably use the platform/ios/TestExpectations file, NOT this one.

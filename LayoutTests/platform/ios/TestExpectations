@@ -6456,7 +6456,8 @@ webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/audio-w
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Pass Failure ]
 
 webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Pass Timeout ]
-webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Pass Timeout ]
+#webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Pass Timeout ]
+# Uncomment above when webkit.org/b/277460 is resolved.
 
 #<rdar://76434263>
 http/wpt/mediarecorder/video-rotation.html [ Pass Failure ]
@@ -7472,3 +7473,17 @@ imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/b
 
 # webkit.org/b/277908 [ iOS ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html is a flaky text failure
 imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Pass Failure ]
+
+# webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
+
+# webkit.org/b/277460 (REGRESSION (iOS 18): 9 layout tests need to be re-written to expect new behavior.)
+http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ] # uncomment expectation set for this test (above) when this is resolved
+http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
