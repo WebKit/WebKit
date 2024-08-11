@@ -293,6 +293,11 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
 {
 }
 
+- (id)localContext
+{
+    return nil;
+}
+
 @end
 
 #endif // !PLATFORM(IOS_FAMILY)

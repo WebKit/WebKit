@@ -206,6 +206,11 @@ IGNORE_WARNINGS_END
 {
 }
 
+- (id)localContext
+{
+    return nil;
+}
+
 @end
 
 namespace TestWebKitAPI {
