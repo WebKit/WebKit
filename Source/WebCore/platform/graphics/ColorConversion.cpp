@@ -145,16 +145,8 @@ HWBA<float> ColorConversion<HWBA<float>, ExtendedSRGBA<float>>::convert(const Ex
 
     float hue = std::numeric_limits<float>::quiet_NaN();
 
-    // Compute `hue` as done in conversion to HSLA.
+    // Compute `hue` as done in conversion to HSLA, but don't adjust for negative saturation, in order to respect out-of-gamut colors.
     if (d != 0.0f) {
-        float lightness = (min + max) / 2.0f;
-
-        float saturation;
-        if (lightness == 0.0f || lightness == 1.0f)
-            saturation = 0.0f;
-        else
-            saturation = (max - lightness) / std::min(lightness, 1.0f - lightness);
-
         if (max == red)
             hue = ((green - blue) / d) + (green < blue ? 6.0f : 0.0f);
         else if (max == green)
@@ -163,9 +155,6 @@ HWBA<float> ColorConversion<HWBA<float>, ExtendedSRGBA<float>>::convert(const Ex
             hue = ((red - green) / d) + 4.0f;
 
         hue *= 60.0f;
-
-        if (saturation < 0.0f)
-            hue += 180.0f;
 
         if (hue >= 360.0f)
             hue -= 360.0f;
