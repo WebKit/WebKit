@@ -2226,10 +2226,10 @@ void Heap::finalize()
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full) {
         vm().jsonAtomStringCache.clear();
         vm().numericStrings.clearOnGarbageCollection();
+        vm().stringSplitCache.clear();
         vm().stringReplaceCache.clear();
     }
     vm().keyAtomStringCache.clear();
-    vm().stringSplitCache.clear();
 
     m_possiblyAccessedStringsFromConcurrentThreads.clear();
 

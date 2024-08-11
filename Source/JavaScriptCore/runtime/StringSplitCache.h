@@ -53,6 +53,8 @@ public:
     JSImmutableButterfly* get(const String& subject, const String& separator);
     void set(const String& subject, const String& separator, JSImmutableButterfly*);
 
+    DECLARE_VISIT_AGGREGATE;
+
     void clear()
     {
         m_entries.fill(Entry { });

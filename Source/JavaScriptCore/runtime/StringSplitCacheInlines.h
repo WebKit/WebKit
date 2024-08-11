@@ -88,4 +88,13 @@ inline void StringSplitCache::set(const String& subject, const String& separator
     }
 }
 
+template<typename Visitor>
+inline void StringSplitCache::visitAggregateImpl(Visitor& visitor)
+{
+    for (auto& entry : m_entries)
+        visitor.appendUnbarriered(entry.m_butterfly);
+}
+
+DEFINE_VISIT_AGGREGATE(StringSplitCache);
+
 } // namespace JSC
