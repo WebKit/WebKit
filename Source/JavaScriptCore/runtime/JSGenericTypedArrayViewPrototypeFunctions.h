@@ -640,6 +640,37 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
+    if constexpr (ViewClass::Adaptor::isInteger) {
+        typename ViewClass::ElementType target = targetOption.value();
+        if constexpr (ViewClass::elementSize == 1) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::reverseFind8(bitwise_cast<const uint8_t*>(array), target, index + 1));
+            if (result)
+                return JSValue::encode(jsNumber(result - array));
+            return JSValue::encode(jsNumber(-1));
+        }
+
+        if constexpr (ViewClass::elementSize == 2) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::reverseFind16(bitwise_cast<const uint16_t*>(array), target, index + 1));
+            if (result)
+                return JSValue::encode(jsNumber(result - array));
+            return JSValue::encode(jsNumber(-1));
+        }
+
+        if constexpr (ViewClass::elementSize == 4) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::reverseFind32(bitwise_cast<const uint32_t*>(array), target, index + 1));
+            if (result)
+                return JSValue::encode(jsNumber(result - array));
+            return JSValue::encode(jsNumber(-1));
+        }
+
+        if constexpr (ViewClass::elementSize == 8) {
+            auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::reverseFind64(bitwise_cast<const uint64_t*>(array), target, index + 1));
+            if (result)
+                return JSValue::encode(jsNumber(result - array));
+            return JSValue::encode(jsNumber(-1));
+        }
+    }
+
     // We always have at least one iteration, since we checked that length is different from 0 earlier.
     do {
         if (array[index] == targetOption.value())

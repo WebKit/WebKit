@@ -747,6 +747,47 @@ ALWAYS_INLINE const UChar* find16NonASCII(std::span<const UChar> data)
 }
 #endif
 
+template<typename UnsignedType>
+ALWAYS_INLINE const UnsignedType* reverseFindImpl(const UnsignedType* pointer, UnsignedType character, size_t length)
+{
+    auto charactersVector = SIMD::splat<UnsignedType>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findLastNonZeroIndex(mask);
+    };
+
+    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
+        return current == character;
+    };
+
+    constexpr size_t threshold = 32;
+    auto* end = pointer + length;
+    auto* cursor = SIMD::reverseFind<UnsignedType, threshold>(std::span { pointer, end }, vectorMatch, scalarMatch);
+    if (cursor == end)
+        return nullptr;
+    return cursor;
+}
+
+ALWAYS_INLINE const uint8_t* reverseFind8(const uint8_t* pointer, uint8_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint16_t* reverseFind16(const uint16_t* pointer, uint16_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint32_t* reverseFind32(const uint32_t* pointer, uint32_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint64_t* reverseFind64(const uint64_t* pointer, uint64_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
 template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
 inline size_t find(std::span<const CharacterType> characters, CharacterType matchCharacter, size_t index = 0)
 {
