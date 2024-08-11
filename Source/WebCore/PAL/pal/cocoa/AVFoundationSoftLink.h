@@ -73,6 +73,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesizer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechUtterance)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVStreamDataParser)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVURLAsset)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetPlaybackAssistant)
 
 #if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioSession)
@@ -412,5 +413,12 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayL
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
 #define AVSampleBufferAttachContentKey PAL::softLink_AVFoundation_AVSampleBufferAttachContentKey
+
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionStereoVideo, NSString *)
+#define AVAssetPlaybackConfigurationOptionStereoVideo PAL::get_AVFoundation_AVAssetPlaybackConfigurationOptionStereoVideo()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionStereoMultiviewVideo, NSString *)
+#define AVAssetPlaybackConfigurationOptionStereoMultiviewVideo PAL::get_AVFoundation_AVAssetPlaybackConfigurationOptionStereoMultiviewVideo()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVAssetPlaybackConfigurationOptionSpatialVideo, NSString *)
+#define AVAssetPlaybackConfigurationOptionSpatialVideo PAL::get_AVFoundation_AVAssetPlaybackConfigurationOptionSpatialVideo()
 
 #endif // USE(AVFOUNDATION)

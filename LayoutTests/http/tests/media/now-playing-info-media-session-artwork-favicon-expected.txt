@@ -1,0 +1,29 @@
+
+Tests that the NowPlaying metadata's artwork default to favicon.
+
+* NowPlaying should not be active before playback has started.
+RUN(video.src = findMediaFile("video", "../../media-resources/content/test"))
+EVENT(canplaythrough)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+RUN(navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album"}))
+RUN(navigator.mediaSession.playbackState = "paused")
+RUN(navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime})
+RUN(navigator.mediaSession.setActionHandler("play", playAction))
+RUN(navigator.mediaSession.setActionHandler("pause", pauseAction))
+
+* Start to play, NowPlaying should become active.
+RUN(navigator.mediaSession.callActionHandler({action: "play"}))
+ACTION: play
+EVENT(playing)
+RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
+ACTION: pause
+RUN(nowPlayingMetadata = internals.nowPlayingMetadata)
+EXPECTED (nowPlayingMetadata.title == 'title') OK
+EXPECTED (nowPlayingMetadata.artist == 'artist') OK
+EXPECTED (nowPlayingMetadata.album == 'album') OK
+EXPECTED (nowPlayingMetadata.artwork.mimeType == 'image/png') OK
+EXPECTED (nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/abe.png') OK
+
+END OF TEST
+

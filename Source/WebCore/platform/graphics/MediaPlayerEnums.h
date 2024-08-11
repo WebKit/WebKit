@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -110,6 +111,14 @@ enum class MediaPlayerNeedsRenderingModeChanged : bool {
     Yes,
 };
 
+enum class MediaPlayerVideoPlaybackConfigurationOption : uint8_t {
+    Mono = 1 << 0,
+    Stereo = 1 << 1,
+    StereoMultiview = 1 << 2,
+    Spatial = 1 << 3,
+};
+using MediaPlayerVideoPlaybackConfiguration = OptionSet<MediaPlayerVideoPlaybackConfigurationOption>;
+
 class MediaPlayerEnums {
 public:
     using NetworkState = MediaPlayerNetworkState;
@@ -123,6 +132,8 @@ public:
     using WirelessPlaybackTargetType = MediaPlayerWirelessPlaybackTargetType;
     using PitchCorrectionAlgorithm = MediaPlayerPitchCorrectionAlgorithm;
     using NeedsRenderingModeChanged = MediaPlayerNeedsRenderingModeChanged;
+    using VideoPlaybackConfigurationOption = MediaPlayerVideoPlaybackConfigurationOption;
+    using VideoPlaybackConfiguration = MediaPlayerVideoPlaybackConfiguration;
 
     enum {
         VideoFullscreenModeNone = 0,
@@ -140,6 +151,7 @@ String convertEnumerationToString(MediaPlayerEnums::NetworkState);
 String convertEnumerationToString(MediaPlayerEnums::Preload);
 String convertEnumerationToString(MediaPlayerEnums::SupportsType);
 String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy);
+WEBCORE_EXPORT String convertOptionSetToString(const MediaPlayerEnums::VideoPlaybackConfiguration&);
 
 } // namespace WebCore
 
@@ -170,6 +182,14 @@ struct LogArgument<WebCore::MediaPlayerEnums::BufferingPolicy> {
     static String toString(const WebCore::MediaPlayerEnums::BufferingPolicy policy)
     {
         return convertEnumerationToString(policy);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::MediaPlayerEnums::VideoPlaybackConfiguration> {
+    static String toString(const WebCore::MediaPlayerEnums::VideoPlaybackConfiguration& configuration)
+    {
+        return convertOptionSetToString(configuration);
     }
 };
 

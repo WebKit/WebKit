@@ -71,8 +71,6 @@ public:
     InlineLayoutState& layoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& layoutState() const { return m_inlineLayoutState; }
 
-    void layoutWithFormattingContextForBox(const ElementBox&);
-
     enum class EscapeReason {
         InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
@@ -97,7 +95,7 @@ private:
 
 private:
     const ElementBox& m_rootBlockContainer;
-    LayoutState& m_globalLayoutState;
+    LayoutState& m_layoutState;
     const FloatingContext m_floatingContext;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;

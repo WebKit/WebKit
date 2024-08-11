@@ -90,7 +90,7 @@ static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
 
 InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
     : m_rootBlockContainer(rootBlockContainer)
-    , m_globalLayoutState(layoutState)
+    , m_layoutState(layoutState)
     , m_floatingContext(rootBlockContainer, layoutState, parentBlockLayoutState.placedFloats())
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
@@ -327,14 +327,11 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     auto floatingContext = this->floatingContext();
     auto& placedFloats = layoutState().placedFloats();
 
-    InlineItemsBuilder { inlineContentCache, root(), m_globalLayoutState.securityOrigin() }.build({ });
+    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build({ });
 
     for (auto& inlineItem : inlineContentCache.inlineItems().content()) {
         if (inlineItem.isFloat()) {
             auto& floatBox = inlineItem.layoutBox();
-
-            layoutWithFormattingContextForBox(downcast<ElementBox>(floatBox));
-
             auto& floatBoxGeometry = geometryForBox(floatBox);
             auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
             staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
@@ -510,13 +507,13 @@ static inline bool isOkToAccessBoxGeometry(const Box& layoutBox, const ElementBo
 const BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason) const
 {
     ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
-    return m_globalLayoutState.geometryForBox(layoutBox);
+    return m_layoutState.geometryForBox(layoutBox);
 }
 
 BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason)
 {
     ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
-    return m_globalLayoutState.ensureGeometryForBox(layoutBox);
+    return m_layoutState.ensureGeometryForBox(layoutBox);
 }
 
 void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDamage)
@@ -541,17 +538,11 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
         // Unsupported damage. Need to run full build/layout.
         return { };
     };
-    InlineItemsBuilder { inlineContentCache, root(), m_globalLayoutState.securityOrigin() }.build(startPositionForInlineItemsBuilding());
+    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build(startPositionForInlineItemsBuilding());
     if (lineDamage)
         lineDamage->setInlineItemListClean();
     inlineContentCache.clearMaximumIntrinsicWidthLineContent();
 }
-
-void InlineFormattingContext::layoutWithFormattingContextForBox(const ElementBox& box)
-{
-    m_globalLayoutState.layoutWithFormattingContextForBox(box);
-}
-
 
 }
 }

@@ -100,6 +100,7 @@ struct CSSParserContext {
 #if ENABLE(SERVICE_CONTROLS)
     bool imageControlsEnabled : 1 { false };
 #endif
+    bool colorLayersEnabled : 1 { false };
     bool lightDarkEnabled : 1 { false };
 
     // Settings, those affecting properties.

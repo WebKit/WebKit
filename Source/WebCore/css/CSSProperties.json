@@ -10460,6 +10460,7 @@
         },
         "<blend-mode>": {
             "grammar": "normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity",
+            "exported": true,
             "specification": {
                 "category": "css-compositing",
                 "url": "https://www.w3.org/TR/compositing-1/#ltblendmodegt"

@@ -208,18 +208,30 @@ static bool hasTransparentContainerStyle(const RenderStyle& style)
             || !(style.borderTopWidth() && style.borderRightWidth() && style.borderBottomWidth() && style.borderLeftWidth()));
 }
 
-static bool usesFillColorWithExtremeLuminance(const RenderStyle& style)
+static bool colorIsChallengingToHighlight(const Color& color)
+{
+    constexpr double luminanceThreshold = 0.01;
+
+    return color.isValid()
+        && ((color.luminance() < luminanceThreshold || std::abs(color.luminance() - 1) < luminanceThreshold));
+}
+
+static bool styleIsChallengingToHighlight(const RenderStyle& style)
 {
     auto fillPaintType = style.fillPaintType();
+
+    if (fillPaintType == SVGPaintType::None) {
+        auto strokePaintType = style.strokePaintType();
+        if (strokePaintType != SVGPaintType::RGBColor && strokePaintType != SVGPaintType::CurrentColor)
+            return false;
+
+        return colorIsChallengingToHighlight(style.colorResolvingCurrentColor(style.strokePaintColor()));
+    }
+
     if (fillPaintType != SVGPaintType::RGBColor && fillPaintType != SVGPaintType::CurrentColor)
         return false;
 
-    auto fillColor = style.colorResolvingCurrentColor(style.fillPaintColor());
-
-    constexpr double luminanceThreshold = 0.01;
-
-    return fillColor.isValid()
-        && ((fillColor.luminance() < luminanceThreshold || std::abs(fillColor.luminance() - 1) < luminanceThreshold));
+    return colorIsChallengingToHighlight(style.colorResolvingCurrentColor(style.fillPaintColor()));
 }
 
 static bool isGuardContainer(const Element& element)
@@ -510,7 +522,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
         constexpr float smallShapeDimension = 30;
         bool shouldFallbackToContainerRegion = shapeBoundingBox.size().minDimension() < smallShapeDimension
-            && usesFillColorWithExtremeLuminance(style)
+            && styleIsChallengingToHighlight(style)
             && matchedElementIsGuardContainer;
 
         // Bail out, we'll convert the guard container to Interaction.

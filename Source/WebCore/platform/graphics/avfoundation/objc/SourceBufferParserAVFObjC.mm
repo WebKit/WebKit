@@ -49,6 +49,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/MakeString.h>
 
@@ -319,7 +320,17 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
             // FIXME(125161)    : Add TextTrack support
         }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        getVideoPlaybackConfiguration(asset.get())->whenSettled(RunLoop::current(), [protectedThis, this, segment = WTFMove(segment)](auto&& result) mutable {
+            if (result)
+                segment.videoPlaybackConfiguration = *result;
+            m_callOnClientThreadCallback([protectedThis = WTFMove(protectedThis), segment = WTFMove(segment)]() mutable {
+                protectedThis->m_didParseInitializationDataCallback(WTFMove(segment));
+            });
+        });
+#else
         m_didParseInitializationDataCallback(WTFMove(segment));
+#endif
     });
 }
 
@@ -369,6 +380,32 @@ void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(N
     });
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+Ref<SourceBufferParserAVFObjC::VideoPlaybackConfigurationPromise> SourceBufferParserAVFObjC::getVideoPlaybackConfiguration(AVAsset* asset)
+{
+    assertIsMainThread();
+
+    if (!asset || PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoMultiviewVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionSpatialVideo())
+        return VideoPlaybackConfigurationPromise::createAndReject(PlatformMediaError::NotSupportedError);
+    RetainPtr<AVAssetPlaybackAssistant> assistant = [PAL::getAVAssetPlaybackAssistantClass() assetPlaybackAssistantWithAsset:asset];
+    VideoPlaybackConfigurationPromise::Producer producer;
+    Ref promise = producer.promise();
+    [assistant loadPlaybackConfigurationOptionsWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)](NSArray<AVAssetPlaybackConfigurationOption>* playbackConfigurationOptions) mutable {
+        MediaPlayerVideoPlaybackConfiguration configuration;
+        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionStereoVideo])
+            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Stereo);
+        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionStereoMultiviewVideo])
+            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::StereoMultiview);
+        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionSpatialVideo])
+            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Spatial);
+        if (configuration.isEmpty())
+            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Mono);
+        producer.resolve(configuration);
+    }).get()];
+    return promise;
 }
+#endif
+
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

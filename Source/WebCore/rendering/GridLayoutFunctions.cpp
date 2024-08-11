@@ -115,16 +115,7 @@ ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection
 
 LayoutUnit marginLogicalSizeForGridItem(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& gridItem)
 {
-    LayoutUnit margin;
-    if (gridItem.needsLayout())
-        margin = computeMarginLogicalSizeForGridItem(grid, direction, gridItem);
-    else {
-        GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForGridItem(grid, gridItem, direction);
-        bool isRowAxis = flowAwareDirection == GridTrackSizingDirection::ForColumns;
-        LayoutUnit marginStart = marginStartIsAuto(gridItem, flowAwareDirection) ? 0_lu : isRowAxis ? gridItem.marginStart() : gridItem.marginBefore();
-        LayoutUnit marginEnd = marginEndIsAuto(gridItem, flowAwareDirection) ? 0_lu : isRowAxis ? gridItem.marginEnd() : gridItem.marginAfter();
-        margin = marginStart + marginEnd;
-    }
+    auto margin = computeMarginLogicalSizeForGridItem(grid, direction, gridItem);
 
     if (&grid != gridItem.parent()) {
         GridTrackSizingDirection subgridDirection = flowAwareDirectionForGridItem(grid, *downcast<RenderGrid>(gridItem.parent()), direction);

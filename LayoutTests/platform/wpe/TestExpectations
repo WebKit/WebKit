@@ -40,7 +40,6 @@ imported/mozilla/svg/filters/filter-marked-line-09.svg [ Pass ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-getComputedStyle-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-dynamic-001.html [ Pass ]

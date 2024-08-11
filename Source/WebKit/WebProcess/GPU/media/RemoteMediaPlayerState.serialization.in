@@ -49,5 +49,6 @@ struct WebKit::RemoteMediaPlayerState {
     bool hasAvailableVideoFrame;
     bool wirelessVideoPlaybackDisabled;
     bool didPassCORSAccessCheck;
+    WebCore::MediaPlayerVideoPlaybackConfiguration videoConfiguration;
 }
 #endif

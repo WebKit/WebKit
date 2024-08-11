@@ -7440,3 +7440,35 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 
 # webkit.org/b/277763 [ iOS ] imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html is a flaky failure
 imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass Failure ]
+
+# webkit.org/b/277896 ([ iOS ] fast/forms/ios/time-picker-value-change.html is a flaky text failure (277896))
+fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
+
+# webkit.org/b/277897 (Regression: 282030@main? [ iOS 17 Release ] imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html is a flaky text failure (277897))
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html [ Pass Failure ]
+
+# webkit.org/b/277898 [ iOS 17 ] imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html is a flaky text failure
+imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html [ Pass Failure ]
+
+# webkit.org/b/277901 Regression: (246931@main?) [ iOS ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html is a flaky failure
+imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
+
+# webkit.org/b/261919 NEW TEST(247465@main): [ macOS wk2 ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html is a flaky failure.
+webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ]
+
+# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
+
+# webkit.org/b/277905 [ iOS ] fast/scrolling/ios/scroll-anchoring-momentum-scroll.html is a flaky text failure
+fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
+
+# webkit.org/b/277907 [ iOS ] fast/scrolling/ios/overscroll-behavior-on-body.html is a flaky text failure
+fast/scrolling/ios/overscroll-behavior-on-body.html [ Pass Failure ]
+
+# rdar://124971386 (css-box/margin-trim/computed-margin-values layout tests failing in recursive cases)
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-self-collapsing-nested.html [ Pass Failure ]
+
+# webkit.org/b/277908 [ iOS ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html is a flaky text failure
+imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Pass Failure ]

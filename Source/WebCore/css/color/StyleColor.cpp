@@ -35,6 +35,7 @@
 #include "CSSUnresolvedColor.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
+#include "StyleColorLayers.h"
 #include "StyleColorMix.h"
 #include "StyleRelativeColor.h"
 #include <wtf/text/TextStream.h>
@@ -73,6 +74,11 @@ StyleColor::StyleColor(StyleCurrentColor&& color)
 
 StyleColor::StyleColor(StyleColorMix&& colorMix)
     : m_color { resolveAbsoluteComponents(WTFMove(colorMix)) }
+{
+}
+
+StyleColor::StyleColor(StyleColorLayers&& colorLayers)
+    : m_color { resolveAbsoluteComponents(WTFMove(colorLayers)) }
 {
 }
 
@@ -187,6 +193,9 @@ decltype(auto) StyleColor::visit(const StyleColor::ColorKind& color, F&&... f)
         [&](const UniqueRef<StyleColorMix>& colorMix) {
             return visitor(colorMix.get());
         },
+        [&](const UniqueRef<StyleColorLayers>& colorLayers) {
+            return visitor(colorLayers.get());
+        },
         [&]<typename Descriptor>(const UniqueRef<StyleRelativeColor<Descriptor>>& relativeColor) {
             return visitor(relativeColor.get());
         }
@@ -209,6 +218,9 @@ StyleColor::ColorKind StyleColor::copy(const StyleColor::ColorKind& other)
         },
         [] (const StyleColorMix& colorMix) -> StyleColor::ColorKind {
             return makeUniqueRef<StyleColorMix>(colorMix);
+        },
+        [] (const StyleColorLayers& colorLayers) -> StyleColor::ColorKind {
+            return makeUniqueRef<StyleColorLayers>(colorLayers);
         },
         []<typename Descriptor>(const StyleRelativeColor<Descriptor>& relativeColor) -> StyleColor::ColorKind {
             return makeUniqueRef<StyleRelativeColor<Descriptor>>(relativeColor);

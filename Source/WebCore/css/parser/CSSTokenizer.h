@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -49,11 +49,14 @@ public:
     static std::unique_ptr<CSSTokenizer> tryCreate(const String&);
     static std::unique_ptr<CSSTokenizer> tryCreate(const String&, CSSParserObserverWrapper&); // For the inspector
 
-    explicit CSSTokenizer(const String&);
+    WEBCORE_EXPORT explicit CSSTokenizer(const String&);
     CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
 
-    CSSParserTokenRange tokenRange() const;
+    WEBCORE_EXPORT CSSParserTokenRange tokenRange() const;
     unsigned tokenCount();
+
+    static bool isWhitespace(CSSParserTokenType);
+    static bool isNewline(UChar);
 
     Vector<String>&& escapedStringsForAdoption() { return WTFMove(m_stringPool); }
 
@@ -91,7 +94,8 @@ private:
     CSSParserToken blockStart(CSSParserTokenType blockType, CSSParserTokenType, StringView);
     CSSParserToken blockEnd(CSSParserTokenType, CSSParserTokenType startType);
 
-    CSSParserToken whiteSpace(UChar);
+    CSSParserToken newline(UChar);
+    CSSParserToken whitespace(UChar);
     CSSParserToken leftParenthesis(UChar);
     CSSParserToken rightParenthesis(UChar);
     CSSParserToken leftBracket(UChar);

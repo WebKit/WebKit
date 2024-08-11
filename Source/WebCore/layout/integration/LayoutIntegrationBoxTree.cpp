@@ -75,8 +75,6 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
             return renderLineBreak->isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
-        if (is<RenderTable>(renderer))
-            return Layout::Box::NodeType::TableBox;
         return Layout::Box::NodeType::GenericElement;
     }();
 

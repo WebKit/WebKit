@@ -59,6 +59,7 @@ private:
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
     void setupFullscreen(UIView&, const WebCore::FloatRect&, const WebCore::FloatSize&, UIView*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
+    void setVideoSpatial(bool) final;
     void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;

@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaDescription.h"
+#include "MediaPlayerEnums.h"
 #include "PlatformMediaError.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
@@ -69,6 +70,7 @@ public:
 
     struct InitializationSegment {
         MediaTime duration;
+        MediaPlayerVideoPlaybackConfiguration videoPlaybackConfiguration;
 
         struct AudioTrackInformation {
             RefPtr<MediaDescription> description;

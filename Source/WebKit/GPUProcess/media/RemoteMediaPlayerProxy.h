@@ -242,6 +242,7 @@ private:
 
     // MediaPlayerClient
     void mediaPlayerCharacteristicChanged() final;
+    void mediaPlayerVideoPlaybackConfigurationChanged() final;
     void mediaPlayerRenderingModeChanged() final;
     void mediaPlayerNetworkStateChanged() final;
     void mediaPlayerReadyStateChanged() final;

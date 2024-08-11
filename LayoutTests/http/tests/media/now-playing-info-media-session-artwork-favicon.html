@@ -1,0 +1,86 @@
+<!-- webkit-test-runner -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>now-playing-info-media-session-artwork-favicon</title>
+    <link rel="icon" type="image/png" href="../../media-resources/content/abe.png">
+    <script src=../../media-resources/video-test.js></script>
+    <script src=../../media-resources/media-file.js></script>
+    <script>
+
+        let nowPlayingState;
+
+        async function waitForAttributeToChange(attribute, expected) {
+            let start = new Date().getTime();
+            do {
+
+                if (internals.nowPlayingState[attribute] != expected)
+                    return;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } while (new Date().getTime() - start < 500);
+
+            failTest(`** Timed out waiting for "${attribute}" to change from "${expected}"`);
+        }
+
+        function playAction()
+        {
+            consoleWrite('ACTION: play');
+            runWithKeyDown(() => {
+                video.play();
+            });
+        }
+
+        function pauseAction()
+        {
+            consoleWrite('ACTION: pause');
+            runWithKeyDown(() => {
+                video.pause();
+            });
+        }
+
+        async function runTest()
+        {
+            findMediaElement();
+
+            consoleWrite('<br>* NowPlaying should not be active before playback has started.');
+            run('video.src = findMediaFile("video", "../../media-resources/content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            run('nowPlayingState = internals.nowPlayingState');
+            testExpected('nowPlayingState.registeredAsNowPlayingApplication', false);
+
+            run('navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album"})');
+            run('navigator.mediaSession.playbackState = "paused"')
+            run('navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime}');
+            run('navigator.mediaSession.setActionHandler("play", playAction)');
+            run('navigator.mediaSession.setActionHandler("pause", pauseAction)');
+
+            consoleWrite('<br>* Start to play, NowPlaying should become active.');
+            run('navigator.mediaSession.callActionHandler({action: "play"})');
+
+            await waitFor(video, 'playing');
+            run('navigator.mediaSession.callActionHandler({action: "pause"})');
+            await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
+
+            run('nowPlayingMetadata = internals.nowPlayingMetadata');
+            await testExpectedEventually('nowPlayingMetadata.title', 'title', '==', 1000);
+            await testExpectedEventually('nowPlayingMetadata.artist', 'artist', '==', 1000);
+            await testExpectedEventually('nowPlayingMetadata.album', 'album', '==', 1000);
+            await testExpectedEventually('nowPlayingMetadata.artwork.mimeType', 'image/png', '==', 1000);
+            await testExpectedEventually('nowPlayingMetadata.artwork.src', 'http://127.0.0.1:8000/media-resources/content/abe.png', '==', 1000);
+
+            consoleWrite('');
+        }
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+    </script>
+</head>
+<body">
+    <video controls></video>
+    <br>
+    Tests that the NowPlaying metadata's artwork default to favicon.
+</body>
+</html>

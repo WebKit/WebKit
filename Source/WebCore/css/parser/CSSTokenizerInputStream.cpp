@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -30,6 +30,8 @@
 #include "config.h"
 #include "CSSTokenizerInputStream.h"
 
+#include "CSSTokenizer.h"
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 
@@ -43,15 +45,31 @@ CSSTokenizerInputStream::CSSTokenizerInputStream(const String& input)
 void CSSTokenizerInputStream::advanceUntilNonWhitespace()
 {
     // Using ASCII whitespace here rather than CSS space since we don't do preprocessing
-    if (m_string->is8Bit()) {
-        auto characters = m_string->span8();
+    auto advance = [this](auto characters) {
         while (m_offset < m_stringLength && isASCIIWhitespace(characters[m_offset]))
             ++m_offset;
-    } else {
-        auto characters = m_string->span16();
-        while (m_offset < m_stringLength && isASCIIWhitespace(characters[m_offset]))
+    };
+
+    if (m_string->is8Bit())
+        advance(m_string->span8());
+    else
+        advance(m_string->span16());
+}
+
+void CSSTokenizerInputStream::advanceUntilNewlineOrNonWhitespace()
+{
+    auto advance = [this](auto characters) {
+        while (m_offset < m_stringLength && isASCIIWhitespace(characters[m_offset])) {
+            if (CSSTokenizer::isNewline(characters[m_offset]))
+                return;
             ++m_offset;
-    }
+        }
+    };
+
+    if (m_string->is8Bit())
+        advance(m_string->span8());
+    else
+        advance(m_string->span16());
 }
 
 double CSSTokenizerInputStream::getDouble(unsigned start, unsigned end) const

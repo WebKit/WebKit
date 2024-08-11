@@ -190,6 +190,7 @@ if (ENABLE_WEBCORE)
 
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/CSSParser.cpp
+        Tests/WebCore/CSSTokenizerTests.cpp
         Tests/WebCore/CalculationValue.cpp
         Tests/WebCore/ColorTests.cpp
         Tests/WebCore/ComplexTextController.cpp

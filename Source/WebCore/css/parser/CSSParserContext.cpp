@@ -108,6 +108,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(SERVICE_CONTROLS)
     , imageControlsEnabled { document.settings().imageControlsEnabled() }
 #endif
+    , colorLayersEnabled { document.settings().cssColorLayersEnabled() }
     , lightDarkEnabled { document.settings().cssLightDarkEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
@@ -142,8 +143,9 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #if ENABLE(SERVICE_CONTROLS)
         | context.imageControlsEnabled                      << 22
 #endif
-        | context.lightDarkEnabled                          << 23
-        | (uint32_t)context.mode                            << 24; // This is multiple bits, so keep it last.
+        | context.colorLayersEnabled                        << 23
+        | context.lightDarkEnabled                          << 24
+        | (uint32_t)context.mode                            << 25; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 
