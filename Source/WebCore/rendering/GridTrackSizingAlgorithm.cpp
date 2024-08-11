@@ -1308,7 +1308,16 @@ LayoutUnit DefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
 LayoutUnit DefiniteSizeStrategy::minContentForGridItem(RenderBox& gridItem, GridLayoutState& gridLayoutState) const
 {
     GridTrackSizingDirection gridItemInlineDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForColumns);
-    if (direction() == gridItemInlineDirection && gridItem.needsLayout() && shouldClearOverridingContainingBlockContentSizeForGridItem(gridItem, GridTrackSizingDirection::ForColumns))
+
+    auto shouldClearOverridingContainingBlockContentSize = [&] {
+        auto direction = this->direction();
+
+        if (!GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem) && direction == GridTrackSizingDirection::ForColumns && m_algorithm.isIntrinsicSizedGridArea(gridItem, GridAxis::GridRowAxis) && (gridItem.style().logicalWidth().isPercentOrCalculated() || hasRelativeMarginOrPaddingForGridItem(gridItem, direction)))
+            return true;
+        return direction == gridItemInlineDirection && gridItem.needsLayout() && shouldClearOverridingContainingBlockContentSizeForGridItem(gridItem, GridTrackSizingDirection::ForColumns);
+    }();
+
+    if (shouldClearOverridingContainingBlockContentSize)
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemInlineDirection, LayoutUnit());
     return GridTrackSizingAlgorithmStrategy::minContentForGridItem(gridItem, gridLayoutState);
 }

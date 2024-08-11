@@ -115,6 +115,7 @@ private:
 
 class GridTrackSizingAlgorithm final {
     friend class GridTrackSizingAlgorithmStrategy;
+    friend class DefiniteSizeStrategy;
 
 public:
     GridTrackSizingAlgorithm(const RenderGrid*, Grid&);

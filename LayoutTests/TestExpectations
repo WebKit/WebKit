@@ -1649,7 +1649,6 @@ imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-distribution
 webkit.org/b/234879 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-size-with-orthogonal-child-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-margin-dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-005.html [ ImageOnlyFailure ]
