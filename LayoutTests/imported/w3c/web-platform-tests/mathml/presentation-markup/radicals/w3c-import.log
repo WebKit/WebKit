@@ -17,6 +17,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/empty-msqrt-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/empty-msqrt-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/empty-msqrt.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/radical-rendering-from-in-flow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/radical-rendering-from-in-flow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/radical-rendering-from-in-flow.html

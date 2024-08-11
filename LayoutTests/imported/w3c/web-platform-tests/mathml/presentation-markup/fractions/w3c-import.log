@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/default-mfrac-padding-style.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001-ref.html
@@ -36,6 +37,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-3.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-4-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-4-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-4.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-created-dynamically.html
@@ -64,6 +68,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-004.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-005.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-006.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-007-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-007.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-008.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001.html

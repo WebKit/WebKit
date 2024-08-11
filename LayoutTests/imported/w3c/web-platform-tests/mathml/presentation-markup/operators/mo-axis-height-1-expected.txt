@@ -1,7 +1,37 @@
 
-PASS AxisHeight (size variant)
-PASS AxisHeight (glyph assembly)
+PASS symmetric stretching with respect to the math axis (size variant)
+PASS symmetric stretching with respect to the math axis (glyph assembly)
+FAIL Tascent = Tdescent = 0, minsize = 14em assert_approx_equals: mo ascent expected 120 +/- 5 but got 140
+FAIL Tascent = 6em > AxisHeight, Tdescent = 1em, symmetric = false, minsize = 14em assert_approx_equals: mo ascent expected 70 +/- 5 but got 120
+FAIL Tascent = 4em < AxisHeight, Tdescent = 3em, symmetric = false, minsize = 14em assert_approx_equals: mo ascent expected 50 +/- 5 but got 80
+FAIL Tascent = 6em > AxisHeight, Tdescent = 22em, symmetric = false, maxsize = 14em assert_approx_equals: mo ascent expected 55 +/- 5 but got 30
+FAIL Tascent = 4em < AxisHeight, Tdescent = 24em, symmetric = false, maxsize = 14em assert_approx_equals: mo ascent expected 50 +/- 5 but got 20
+FAIL symmetric stretching with respect to the math axis (minsize = 14em) assert_approx_equals: mo is symmetric expected 62 +/- 5 but got 78
+FAIL symmetric stretching with respect to the math axis (maxsize = 14em) assert_approx_equals: mo is symmetric expected 108 +/- 5 but got 32
 ↨
+1
 
 ↨
+2
+
+↨
+3
+
+↨
+4
+
+↨
+5
+
+↨
+6
+
+↨
+7
+
+↨
+8
+
+↨
+9
 

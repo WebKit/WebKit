@@ -7399,10 +7399,10 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-n
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-pr-strict.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/stretch-along-block-axis-001.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-op-4-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-op-4-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-op-4-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-legacy-length-values.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-border-margin-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/277195 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-label-focus.html [ Failure ]
