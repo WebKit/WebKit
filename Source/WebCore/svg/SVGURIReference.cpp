@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,18 +62,19 @@ void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString
 
 AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
 {
-    size_t start = url.find('#');
+    auto trimmedURL = url.trim(isASCIIWhitespace<UChar>);
+    size_t start = trimmedURL.find('#');
     if (start == notFound)
         return emptyAtom();
 
     if (!start)
-        return StringView(url).substring(1).toAtomString();
+        return StringView(trimmedURL).substring(1).toAtomString();
 
-    URL base = URL(document.baseURL(), url.left(start));
-    String fragmentIdentifier = url.substring(start);
+    URL base = URL(document.baseURL(), trimmedURL.left(start));
+    String fragmentIdentifier = trimmedURL.substring(start);
     URL urlWithFragment(base, fragmentIdentifier);
     if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
-        return StringView(fragmentIdentifier).substring(1).toAtomString();
+        return StringView(fragmentIdentifier).substring(1).trim(isASCIIWhitespace<UChar>).toAtomString();
 
     // The url doesn't have any fragment identifier.
     return emptyAtom();
@@ -82,17 +83,18 @@ AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, c
 auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeScope& treeScope, RefPtr<Document> externalDocument) -> TargetElementResult
 {
     // If there's no fragment identifier contained within the IRI string, we can't lookup an element.
-    size_t startOfFragmentIdentifier = iri.find('#');
+    auto trimmedIri = iri.trim(isASCIIWhitespace<UChar>);
+    size_t startOfFragmentIdentifier = trimmedIri.find('#');
     if (startOfFragmentIdentifier == notFound)
         return { };
 
     // Exclude the '#' character when determining the fragmentIdentifier.
-    auto id = StringView(iri).substring(startOfFragmentIdentifier + 1).toAtomString();
+    auto id = StringView(trimmedIri).substring(startOfFragmentIdentifier + 1).toAtomString();
     if (id.isEmpty())
         return { };
 
     Ref document = treeScope.documentScope();
-    auto url = document->completeURL(iri);
+    auto url = document->completeURL(trimmedIri);
     if (externalDocument) {
         // Enforce that the referenced url matches the url of the document that we've loaded for it!
         ASSERT(equalIgnoringFragmentIdentifier(url, externalDocument->url()));
@@ -100,7 +102,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
     }
 
     // Exit early if the referenced url is external, and we have no externalDocument given.
-    if (isExternalURIReference(iri, document))
+    if (isExternalURIReference(trimmedIri, document))
         return { nullptr, WTFMove(id) };
 
     RefPtr shadowHost = treeScope.rootNode().shadowHost();

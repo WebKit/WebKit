@@ -2104,9 +2104,6 @@ imported/w3c/web-platform-tests/svg/interact/parsing/pointer-events-computed.svg
 imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-003.html [ Skip ]
 imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-valid.svg [ Skip ]
-webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001.svg [ ImageOnlyFailure ]
-webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002.svg [ ImageOnlyFailure ]
-webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/view-viewbox-override.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size.html [ Skip ]
 imported/w3c/web-platform-tests/svg/shapes/ellipse-02.svg [ Skip ]
@@ -2156,6 +2153,11 @@ webkit.org/b/201992 imported/w3c/web-platform-tests/svg/linking/reftests/href-fi
 webkit.org/b/203172 imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual.svg [ Pass Timeout ]
 
 webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
+
+# Following below just show 1px difference - it could be due to hittesting or WebKit Testrunner difference.
+webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001.svg [ ImageOnlyFailure ]
+webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002.svg [ ImageOnlyFailure ]
+webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003.svg [ ImageOnlyFailure ]
 
 # Debug assertions are tracked as <rdar://problem/18216390>.
 [ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
