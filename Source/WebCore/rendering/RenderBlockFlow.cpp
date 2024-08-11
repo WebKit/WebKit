@@ -169,7 +169,7 @@ void RenderBlockFlow::willBeDestroyed()
                 }
             }
         } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
-            parent->dirtyLinesFromChangedChild(*this);
+            parent->dirtyLineFromChangedChild();
     }
 
     if (legacyLineLayout())

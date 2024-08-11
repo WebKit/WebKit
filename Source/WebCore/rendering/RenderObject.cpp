@@ -572,10 +572,8 @@ void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
     setEverHadLayout();
     setHadSkippedLayout(hadSkippedLayout == HadSkippedLayout::Yes);
 
-    if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
-        renderElement->setAncestorLineBoxDirty(false);
+    if (auto* renderElement = dynamicDowncast<RenderElement>(*this))
         renderElement->setLayoutIdentifier(renderElement->view().frameView().layoutContext().layoutIdentifier());
-    }
     m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
@@ -1847,7 +1845,7 @@ void RenderObject::insertedIntoTree()
 {
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->isSVGRenderer() && parent()->childrenInline())
-        checkedParent()->dirtyLinesFromChangedChild(*this);
+        checkedParent()->dirtyLineFromChangedChild();
 }
 
 void RenderObject::willBeRemovedFromTree()

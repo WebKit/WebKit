@@ -62,7 +62,7 @@ public:
     void removeLineBox(LegacyInlineFlowBox*);
     
     void dirtyLineBoxes();
-    void dirtyLinesFromChangedChild(RenderBoxModelObject& parent, RenderObject& child);
+    void dirtyLineFromChangedChild(RenderBoxModelObject& parent);
     void shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
     void paint(RenderBoxModelObject*, PaintInfo&, const LayoutPoint&) const;

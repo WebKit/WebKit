@@ -110,7 +110,7 @@ void RenderInline::willBeDestroyed()
                     box->removeFromParent();
             }
         } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
-            parent->dirtyLinesFromChangedChild(*this);
+            parent->dirtyLineFromChangedChild();
     }
 
     m_lineBoxes.deleteLineBoxes();

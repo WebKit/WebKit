@@ -151,10 +151,10 @@ protected:
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    void dirtyLinesFromChangedChild(RenderObject& child) final
+    void dirtyLineFromChangedChild() final
     {
         if (legacyLineLayout())
-            legacyLineLayout()->lineBoxes().dirtyLinesFromChangedChild(*this, child);
+            legacyLineLayout()->lineBoxes().dirtyLineFromChangedChild(*this);
     }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;

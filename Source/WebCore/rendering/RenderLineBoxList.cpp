@@ -311,7 +311,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     return false;
 }
 
-void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& container, RenderObject&)
+void RenderLineBoxList::dirtyLineFromChangedChild(RenderBoxModelObject& container)
 {
     ASSERT(is<RenderInline>(container) || is<RenderBlockFlow>(container));
     if (!container.isSVGRenderer())
@@ -325,10 +325,11 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         firstBox->root().markDirty();
         return;
     }
-    // For an empty inline, propagate the check up to our parent, unless the parent is already dirty.
-    if (container.isInline() && !container.ancestorLineBoxDirty()) {
-        container.parent()->dirtyLinesFromChangedChild(container);
-        container.setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+    // For an empty inline, propagate the check up to our parent.
+    if (inlineContainer && inlineContainer->everHadLayout()) {
+        auto* parent = inlineContainer->parent();
+        parent->dirtyLineFromChangedChild();
+        parent->setNeedsLayout();
     }
 }
 
