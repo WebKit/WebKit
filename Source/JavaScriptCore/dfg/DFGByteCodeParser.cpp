@@ -6616,7 +6616,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
                 addVarArgChild(get(VirtualRegister(operandIdx)));
             unsigned vectorLengthHint = std::max<unsigned>(profile.vectorLengthHintConcurrently(), numOperands);
-            set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(profile.selectIndexingTypeConcurrently()), OpInfo(vectorLengthHint)));
+            IndexingType indexingType = profile.selectIndexingTypeConcurrently();
+
+            // If it is an empty array and there is larger vectorLengthHint, it is very likely that this array will be extended later and just initially starting with an empty array.
+            // Let's use non CoW array in this case.
+            if (!numOperands && vectorLengthHint && isCopyOnWrite(indexingType)) {
+                switch (indexingType) {
+                case CopyOnWriteArrayWithInt32:
+                    indexingType = ArrayWithInt32;
+                    break;
+                case CopyOnWriteArrayWithDouble:
+                    indexingType = ArrayWithDouble;
+                    break;
+                case CopyOnWriteArrayWithContiguous:
+                    indexingType = ArrayWithContiguous;
+                    break;
+                }
+            }
+            set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(indexingType), OpInfo(vectorLengthHint)));
             NEXT_OPCODE(op_new_array);
         }
 
@@ -6669,11 +6686,34 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // cannot allocate from compilation threads.
             FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
             WTF::dependentLoadLoadFence();
+
             JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
             NewArrayBufferData data { };
-            data.indexingMode = immutableButterfly->indexingMode();
-            data.vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
+            unsigned vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
+            // If it is an empty array and there is larger vectorLengthHint, it is very likely that this array will be extended later and just initially starting with an empty array.
+            // Let's use non CoW array in this case.
+            if (!immutableButterfly->length() && vectorLengthHint) {
+                IndexingType indexingType = immutableButterfly->indexingType();
+                if (isCopyOnWrite(indexingType)) {
+                    switch (indexingType) {
+                    case CopyOnWriteArrayWithInt32:
+                        indexingType = ArrayWithInt32;
+                        break;
+                    case CopyOnWriteArrayWithDouble:
+                        indexingType = ArrayWithDouble;
+                        break;
+                    case CopyOnWriteArrayWithContiguous:
+                        indexingType = ArrayWithContiguous;
+                        break;
+                    }
+                    set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(indexingType), OpInfo(vectorLengthHint)));
+                    NEXT_OPCODE(op_new_array_buffer);
+                }
+            }
+
+            data.indexingMode = immutableButterfly->indexingMode();
+            data.vectorLengthHint = vectorLengthHint;
             set(VirtualRegister(bytecode.m_dst), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
             NEXT_OPCODE(op_new_array_buffer);
         }
