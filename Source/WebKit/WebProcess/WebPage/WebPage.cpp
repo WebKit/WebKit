@@ -9229,51 +9229,6 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
     return completionHandler(mainFrame->document()->loader()->lastNavigationWasAppInitiated());
 }
 
-#if ENABLE(WRITING_TOOLS_UI)
-
-void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData), WTFMove(completionHandler));
-}
-
-void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
-{
-    send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
-}
-
-void WebPage::removeTransparentMarkersForSessionID(const WTF::UUID& uuid)
-{
-    m_textAnimationController->removeTransparentMarkersForSessionID(uuid);
-}
-
-void WebPage::removeInitialTextAnimation(const WTF::UUID& uuid)
-{
-    m_textAnimationController->removeInitialTextAnimation(uuid);
-}
-
-void WebPage::addInitialTextAnimation(const WTF::UUID& uuid)
-{
-    m_textAnimationController->addInitialTextAnimation(uuid);
-}
-
-
-void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
-{
-    m_textAnimationController->addSourceTextAnimation(uuid, range, string, WTFMove(completionHandler));
-}
-
-void WebPage::addDestinationTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String string)
-{
-    m_textAnimationController->addDestinationTextAnimation(uuid, range, string);
-}
-
-void WebPage::clearAnimationsForSessionID(const WTF::UUID& uuid)
-{
-    m_textAnimationController->clearAnimationsForSessionID(uuid);
-}
-
-#endif
-
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)

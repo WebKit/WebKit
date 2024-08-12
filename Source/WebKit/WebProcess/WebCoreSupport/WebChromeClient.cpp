@@ -1903,12 +1903,12 @@ void WebChromeClient::addInitialTextAnimation(const WritingTools::Session::ID& s
     protectedPage()->addInitialTextAnimation(sessionID);
 }
 
-void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
     protectedPage()->addSourceTextAnimation(sessionID, range, string, WTFMove(completionHandler));
 }
 
-void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String string)
+void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const std::optional<CharacterRange>& range, const String& string)
 {
     protectedPage()->addDestinationTextAnimation(sessionID, range, string);
 }

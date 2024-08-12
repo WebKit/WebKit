@@ -4964,6 +4964,11 @@ std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools
     return m_writingToolsController->contextRangeForSessionWithID(sessionID);
 }
 
+void Page::showSelectionForWritingToolsSessionWithID(const WritingTools::Session::ID& sessionID) const
+{
+    return m_writingToolsController->showSelectionForWritingToolsSessionWithID(sessionID);
+}
+
 void Page::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WritingTools::Action action)
 {
     m_writingToolsController->writingToolsSessionDidReceiveAction(session, action);

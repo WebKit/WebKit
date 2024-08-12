@@ -686,9 +686,9 @@ public:
 
     virtual void addInitialTextAnimation(const WritingTools::SessionID&) { }
 
-    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String, WTF::CompletionHandler<void(TextAnimationRunMode)>&&) { }
+    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
 
-    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String) { }
+    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const std::optional<CharacterRange>&, const String&) { }
 
     virtual void clearAnimationsForSessionID(const WritingTools::SessionID&) { };
 #endif

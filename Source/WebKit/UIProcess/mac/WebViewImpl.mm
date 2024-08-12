@@ -3441,7 +3441,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 bool WebViewImpl::hasContentRelativeChildViews() const
 {
 #if ENABLE(WRITING_TOOLS)
-    return [m_TextAnimationTypeManager hasActiveTextAnimationType];
+    return [m_textAnimationTypeManager hasActiveTextAnimationType];
 #else
     return false;
 #endif
@@ -3478,14 +3478,14 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
 void WebViewImpl::suppressContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_TextAnimationTypeManager suppressTextAnimationType];
+    [m_textAnimationTypeManager suppressTextAnimationType];
 #endif
 }
 
 void WebViewImpl::restoreContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_TextAnimationTypeManager restoreTextAnimationType];
+    [m_textAnimationTypeManager restoreTextAnimationType];
 #endif
 }
 
@@ -4644,10 +4644,10 @@ void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::
     if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    if (!m_TextAnimationTypeManager)
-        m_TextAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
+    if (!m_textAnimationTypeManager)
+        m_textAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
 
-    [m_TextAnimationTypeManager addTextAnimationForAnimationID:uuid withData:data];
+    [m_textAnimationTypeManager addTextAnimationForAnimationID:uuid withData:data];
 }
 
 void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
@@ -4655,7 +4655,45 @@ void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
     if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    [m_TextAnimationTypeManager removeTextAnimationForAnimationID:uuid];
+    [m_textAnimationTypeManager removeTextAnimationForAnimationID:uuid];
+}
+
+void WebViewImpl::writingToolsCompositionSessionDidReceiveRestartAction()
+{
+    m_writingToolsTextReplacementsFinished = false;
+    m_partialIntelligenceTextPonderingAnimationCount = 0;
+}
+
+void WebViewImpl::writingToolsCompositionSessionDidReceiveReplacements(const WTF::UUID& sessionID, bool finished)
+{
+    m_writingToolsTextReplacementsFinished = finished;
+
+    willBeginPartialIntelligenceTextPonderingAnimation();
+}
+
+bool WebViewImpl::isWritingToolsTextReplacementsFinished() const
+{
+    return m_writingToolsTextReplacementsFinished;
+}
+
+bool WebViewImpl::isIntelligenceTextPonderingAnimationFinished() const
+{
+    return !m_partialIntelligenceTextPonderingAnimationCount;
+}
+
+void WebViewImpl::willBeginPartialIntelligenceTextPonderingAnimation()
+{
+    m_partialIntelligenceTextPonderingAnimationCount += 1;
+}
+
+void WebViewImpl::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    if (!m_partialIntelligenceTextPonderingAnimationCount) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_partialIntelligenceTextPonderingAnimationCount -= 1;
 }
 #endif
 

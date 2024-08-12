@@ -67,7 +67,7 @@ extension TextAnimationManager: UITextEffectViewSource {
             return UITargetedPreview(view: UIView(frame: .zero))
         }
         
-        let defaultPreview = UITargetedPreview(view: UIView(frame: .zero), parameters:UIPreviewParameters(), target:UIPreviewTarget(container:delegate.containingViewForTextAnimationType(), center:delegate.containingViewForTextAnimationType().center))
+        let defaultPreview = UITargetedPreview(view: UIView(frame: .zero), parameters: UIPreviewParameters(), target: UIPreviewTarget(container: delegate.containingViewForTextAnimationType(), center: delegate.containingViewForTextAnimationType().center))
         guard let uuidChunk = chunk as? TextEffectChunk else {
             Self.logger.debug("Can't get text preview. Incorrect UITextEffectTextChunk subclass")
             return defaultPreview

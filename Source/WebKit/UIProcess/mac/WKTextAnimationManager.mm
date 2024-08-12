@@ -89,34 +89,52 @@
 {
     RetainPtr<id<_WTTextEffect>> effect;
     RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
+
     switch (data.style) {
     case WebCore::TextAnimationType::Initial:
         effect = adoptNS([PAL::alloc_WTSweepTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
+
     case WebCore::TextAnimationType::Source:
         effect = adoptNS([PAL::alloc_WTReplaceSourceTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
+
         effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), uuid = RetainPtr(uuid), runMode = data.runMode] {
             auto strongWebView = weakWebView.get();
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
             if (strongWebView && animationID)
                 strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
         }).get();
+
         break;
+
     case WebCore::TextAnimationType::Final:
         effect = adoptNS([PAL::alloc_WTReplaceDestinationTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
-        static_cast<_WTReplaceDestinationTextEffect *>(effect.get()).preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID] {
+
+        effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID] {
             auto strongWebView = weakWebView.get();
             if (strongWebView)
                 strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, false);
         }).get();
+
         effect.get().completion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode] {
             auto strongWebView = weakWebView.get();
-            if (strongWebView)
-                strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
-            if (animationID)
-                strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
+
+            if (!strongWebView || !animationID)
+                return;
+
+            strongWebView->didEndPartialIntelligenceTextPonderingAnimation();
+
+            if (strongWebView->isIntelligenceTextPonderingAnimationFinished() && strongWebView->isWritingToolsTextReplacementsFinished()) {
+                // If the entire replacement has already been completed, and this is the end of the last animation,
+                // then reveal the selection.
+                strongWebView->page().showSelectionForWritingToolsSessionAssociatedWithAnimationID(*animationID);
+            }
+
+            strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
+            strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
         }).get();
+
         break;
     }
 
