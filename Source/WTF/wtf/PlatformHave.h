@@ -278,7 +278,7 @@
 #define HAVE_FLOAT16_INSTRUCTION 1
 #endif
 
-#if ((CPU(ARM64) || (CPU(X86_64) && !PLATFORM(PLAYSTATION))) && defined(__FLT16_MANT_DIG__))
+#if PLATFORM(COCOA) && (CPU(ARM64) || CPU(X86_64))
 #define HAVE_FLOAT16 1
 #endif
 
