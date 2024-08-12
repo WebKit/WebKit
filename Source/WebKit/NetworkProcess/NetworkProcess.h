@@ -59,6 +59,7 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -134,7 +135,7 @@ enum class CacheOption : uint8_t;
 class NetworkProcess final : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeCheckedPtr<NetworkProcess>
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkProcess);
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;

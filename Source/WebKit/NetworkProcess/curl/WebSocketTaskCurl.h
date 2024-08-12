@@ -32,6 +32,7 @@
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketDeflateFramer.h>
 #include <WebCore/WebSocketFrame.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class WebSocketTask;
@@ -56,7 +57,7 @@ class NetworkSocketChannel;
 struct SessionSet;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public WebCore::CurlStream::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();

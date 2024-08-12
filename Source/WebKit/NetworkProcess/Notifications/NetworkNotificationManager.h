@@ -34,6 +34,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/PushSubscriptionData.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ enum class MessageType : uint8_t;
 class NetworkSession;
 
 class NetworkNotificationManager : public NotificationManagerMessageHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkNotificationManager);
     friend class NetworkSession;
 public:
     NetworkSession& networkSession() const { return m_networkSession; }

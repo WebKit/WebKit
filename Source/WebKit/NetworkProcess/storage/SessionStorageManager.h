@@ -29,6 +29,7 @@
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct ClientOrigin;
@@ -40,7 +41,7 @@ class MemoryStorageArea;
 class StorageAreaRegistry;
 
 class SessionStorageManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SessionStorageManager);
 public:
     explicit SessionStorageManager(StorageAreaRegistry&);
     bool isActive() const;

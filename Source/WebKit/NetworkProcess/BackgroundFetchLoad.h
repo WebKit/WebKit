@@ -31,6 +31,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -56,7 +57,7 @@ class NetworkLoadChecker;
 class NetworkProcess;
 
 class BackgroundFetchLoad final : public WebCore::BackgroundFetchRecordLoader, public NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchLoad);
 public:
     BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
     ~BackgroundFetchLoad();

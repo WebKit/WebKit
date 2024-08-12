@@ -26,13 +26,13 @@
 #pragma once
 
 #include "PrivateClickMeasurementClient.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit::PCM {
 
 class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DaemonClient);
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;

@@ -31,6 +31,7 @@
 #include "WebBroadcastChannelRegistryMessages.h"
 #include <WebCore/MessageWithMessagePorts.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -49,6 +50,8 @@ static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
 {
     return !clientOrigin.topOrigin.isNull() && !clientOrigin.clientOrigin.isNull();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkBroadcastChannelRegistry);
 
 NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess& networkProcess)
     : m_networkProcess(networkProcess)

@@ -30,8 +30,11 @@
 #include "DaemonEncoder.h"
 #include "PrivateClickMeasurementConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::PCM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ManagerProxy);
 
 template<MessageType messageType, typename... Args>
 void ManagerProxy::sendMessage(Args&&... args) const

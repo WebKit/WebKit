@@ -100,6 +100,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WTFProcess.h>
@@ -146,6 +147,8 @@ static void callExitSoon(IPC::Connection*)
         terminateProcess(EXIT_FAILURE);
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcess);
 
 NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
     : m_downloadManager(*this)

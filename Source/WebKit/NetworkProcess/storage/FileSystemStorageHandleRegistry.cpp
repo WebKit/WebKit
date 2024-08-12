@@ -27,8 +27,11 @@
 #include "FileSystemStorageHandleRegistry.h"
 
 #include "FileSystemStorageHandle.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandleRegistry);
 
 FileSystemStorageHandleRegistry::FileSystemStorageHandleRegistry() = default;
 

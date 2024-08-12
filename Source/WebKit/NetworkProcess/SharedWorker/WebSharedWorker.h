@@ -35,6 +35,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Identified.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
 class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker>, public Identified<WebCore::SharedWorkerIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSharedWorker);
 public:
     WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
     ~WebSharedWorker();

@@ -32,9 +32,12 @@
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "WebCoreArgumentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingDownload);
 
 PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
     : m_networkLoad(makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession))

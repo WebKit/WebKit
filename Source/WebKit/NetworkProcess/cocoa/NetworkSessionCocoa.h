@@ -46,6 +46,7 @@ OBJC_CLASS NSURLCredentialStorage;
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 struct SessionWrapper;
@@ -88,7 +89,7 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
 };
 
 struct IsolatedSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IsolatedSession);
 public:
     SessionWrapper sessionWithCredentialStorage;
     WallTime lastUsed;
@@ -117,7 +118,7 @@ private:
 };
 
 class NetworkSessionCocoa final : public NetworkSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkSessionCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkSessionCocoa);
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);

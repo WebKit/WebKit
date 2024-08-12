@@ -66,6 +66,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -112,6 +113,9 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_stack_requires_http_protocols, bo
 #import "DeviceManagementSoftLink.h"
 
 using namespace WebKit;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IsolatedSession);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSessionCocoa);
 
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
 CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
@@ -1964,7 +1968,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 // Make NetworkLoad's redirection and challenge handling code pass everything to the NetworkLoadClient
 // and use NetworkLoad and a new NetworkLoadClient instead of BlobDataTaskClient and WKURLSessionTaskDelegate.
 class NetworkSessionCocoa::BlobDataTaskClient final : public NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkSessionCocoa::BlobDataTaskClient);
 public:
     BlobDataTaskClient(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
         : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url(), topOrigin), topOrigin ? topOrigin->securityOrigin().ptr() : nullptr))
@@ -2015,6 +2019,8 @@ private:
     WeakPtr<NetworkSessionCocoa> m_session;
     const DataTaskIdentifier m_identifier;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NetworkSessionCocoaBlobDataTaskClient, NetworkSessionCocoa::BlobDataTaskClient);
 
 void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
 {

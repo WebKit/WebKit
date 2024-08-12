@@ -41,10 +41,13 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoad);
 
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)

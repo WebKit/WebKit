@@ -27,8 +27,11 @@
 #include "StorageAreaBase.h"
 
 #include "StorageAreaMapMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageAreaBase);
 
 uint64_t StorageAreaBase::nextMessageIdentifier()
 {

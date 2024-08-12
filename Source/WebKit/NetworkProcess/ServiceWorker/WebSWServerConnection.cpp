@@ -58,6 +58,7 @@
 #include <cstdint>
 #include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace PAL;
@@ -76,6 +77,8 @@ using namespace WebCore;
         return; \
     } \
 } while (0)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerConnection);
 
 WebSWServerConnection::WebSWServerConnection(NetworkConnectionToWebProcess& networkConnectionToWebProcess, SWServer& server, IPC::Connection& connection, ProcessIdentifier processIdentifier)
     : SWServer::Connection(server, processIdentifier)
