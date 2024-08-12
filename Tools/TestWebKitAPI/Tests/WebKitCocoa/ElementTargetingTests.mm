@@ -580,6 +580,9 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
     EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
     EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromSearchText mediaAndLinkURLs] anyObject] lastPathComponent]);
+
+    [webView adjustVisibilityForTargets:@[ targetFromSearchText.get() ]];
+    EXPECT_TRUE([targetFromSearchText isSameElement:[[webView targetedElementInfoWithText:searchableText] firstObject]]);
 }
 
 TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)
