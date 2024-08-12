@@ -971,24 +971,25 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
     if (paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) {
         // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
         // the column group, column, row group, row, and then the cell.
-        RenderTableCol* column = table()->colElement(cell->col());
-        RenderTableCol* columnGroup = column ? column->enclosingColumnGroup() : nullptr;
 
         // Column groups and columns first.
         // FIXME: Columns and column groups do not currently support opacity, and they are being painted "too late" in
         // the stack, since we have already opened a transparency layer (potentially) for the table row group.
         // Note that we deliberately ignore whether or not the cell has a layer, since these backgrounds paint "behind" the
         // cell.
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, columnGroup);
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, column);
+        if (RenderTableCol* column = table()->colElement(cell->col())) {
+            if (RenderTableCol* columnGroup = column->enclosingColumnGroup())
+                cell->paintBackgroundsBehindCell(paintInfo, cellPoint, columnGroup, cellPoint);
+            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, column, cellPoint);
+        }
 
         // Paint the row group next.
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, this);
+        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, this, paintOffset);
 
         // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
         // painting the row background for the cell.
         if (!row.hasSelfPaintingLayer())
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, &row);
+            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, &row, cellPoint);
     }
     if ((!cell->hasSelfPaintingLayer() && !row.hasSelfPaintingLayer()))
         cell->paint(paintInfo, cellPoint);

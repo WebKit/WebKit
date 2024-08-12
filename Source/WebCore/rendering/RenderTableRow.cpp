@@ -239,7 +239,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
         // Paint the row background behind the cell.
         if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::ChildBlockBackground)
-            cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this);
+            cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this, paintOffset);
         if (!cell->hasSelfPaintingLayer())
             cell->paint(paintInfo, paintOffset);
     }

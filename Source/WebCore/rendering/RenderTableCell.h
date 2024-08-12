@@ -83,7 +83,7 @@ public:
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     void paintCollapsedBorders(PaintInfo&, const LayoutPoint&);
-    void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderElement* backgroundObject);
+    void paintBackgroundsBehindCell(PaintInfo&, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset);
 
     LayoutUnit cellBaselinePosition() const;
     bool isBaselineAligned() const;

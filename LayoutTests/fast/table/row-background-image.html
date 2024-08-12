@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Table row/col background image spans row/col</title>
+    <style type="text/css">
+      div { margin-bottom: 1em; }
+      table { border: 5px solid red; display: inline-table; }
+      td { border: 2px solid blue; }
+      td { width: 100px; }
+      td.v { width: initial; height: 50px; }
+      .bwh { background-image: linear-gradient(to right, black, black 50%, white 50%, white); }
+      .bwv { background-image: linear-gradient(to bottom, black, black 50%, white 50%, white); }
+    </style>
+  </head>
+  <body>
+    <div>
+      1.
+      <table>
+        <caption>Left black, right white</caption>
+        <tbody><tr class="bwh"><td class="b">&nbsp;</td><td class="w">&nbsp;</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      2.
+      <table style="writing-mode: vertical-lr">
+        <caption>Top black, bottom white</caption>
+        <tbody><tr class="bwv"><td class="b v">&nbsp;</td><td class="w v">&nbsp;</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      3.
+      <table>
+        <caption>Left cells black, right cells white</caption>
+        <tbody class="bwh"><tr><td class="b">&nbsp;</td><td class="b">&nbsp;</td><td class="w">&nbsp;</td><td class="w">&nbsp;</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      4.
+      <table>
+        <caption>Top black, bottom white</caption>
+        <tbody class="bwv"><tr><td class="b">&nbsp;</td></tr><tr><td class="b">&nbsp;</td></tr><tr><td class="w">&nbsp;</td></tr><tr><td class="w">&nbsp;</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      5.
+      <table>
+        <caption>Left cells black, right cells white, multiple sections</caption>
+        <tbody class="bwh"><tr><td class="b">&nbsp;</td><td class="b">&nbsp;</td><td class="w">&nbsp;</td><td class="w">&nbsp;</td></tr></tbody>
+        <tfoot class="bwh"><tr><td class="b">&nbsp;</td><td class="b">&nbsp;</td><td class="w">&nbsp;</td><td class="w">&nbsp;</td></tr></tfoot>
+      </table>
+    </div>
+  </body>
+</html>
