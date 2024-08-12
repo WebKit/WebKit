@@ -86,6 +86,7 @@ public:
     const Item* last() const { return list().isEmpty() ? nullptr : &m_list.last(); }
 
     void append(Item);
+    bool remove(const Box&);
     void clear();
 
     bool isEmpty() const { return list().isEmpty(); }
@@ -109,6 +110,13 @@ private:
     OptionSet<PositionType> m_positionTypes;
     bool m_isLeftToRightDirection { true };
 };
+
+inline bool PlacedFloats::remove(const Box& floatBox)
+{
+    return m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+        return placedFloatItem.layoutBox() == &floatBox;
+    });
+}
 
 inline bool PlacedFloats::hasLeftPositioned() const
 {
