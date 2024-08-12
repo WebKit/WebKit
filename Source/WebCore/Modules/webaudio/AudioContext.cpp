@@ -561,7 +561,7 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         !page->isVisibleAndActive()
     };
 
-    if (page->usesEphemeralSession())
+    if (page->usesEphemeralSession() && !document->settings().allowPrivacySensitiveOperationsInNonPersistentDataStores())
         return nowPlayingInfo;
 
 #if ENABLE(MEDIA_SESSION)

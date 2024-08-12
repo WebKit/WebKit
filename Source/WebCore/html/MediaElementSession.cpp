@@ -1309,7 +1309,7 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         allowsNowPlayingControlsVisibility
     };
 
-    if (page->usesEphemeralSession()) {
+    if (page->usesEphemeralSession() && !m_element.document().settings().allowPrivacySensitiveOperationsInNonPersistentDataStores()) {
         info.metadata = { };
         return info;
     }
