@@ -58,7 +58,7 @@ egl::Error DisplayWgpu::makeCurrent(egl::Display *display,
 egl::ConfigSet DisplayWgpu::generateConfigs()
 {
     egl::Config config;
-    config.renderTargetFormat    = GL_RGBA8;
+    config.renderTargetFormat    = GL_BGRA8_EXT;
     config.depthStencilFormat    = GL_DEPTH24_STENCIL8;
     config.bufferSize            = 32;
     config.redSize               = 8;

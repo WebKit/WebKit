@@ -2785,7 +2785,8 @@ angle::Result ContextMtl::handleDirtyRenderPass(const gl::Context *context)
     if (!IsTransformFeedbackOnly(mState))
     {
         // Start new render command encoder
-        ANGLE_MTL_TRY(this, mDrawFramebuffer->ensureRenderPassStarted(context));
+        mtl::RenderCommandEncoder *encoder;
+        ANGLE_TRY(mDrawFramebuffer->ensureRenderPassStarted(context, &encoder));
     }
     else
     {

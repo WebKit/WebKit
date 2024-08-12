@@ -123,14 +123,16 @@ View the [Dev setup instructions](doc/DevSetup.md).
 * Use ANGLE's [coding standard](doc/CodingStandard.md).
 * Learn how to [build ANGLE for Chromium development](doc/BuildingAngleForChromiumDevelopment.md).
 * Get help on [debugging ANGLE](doc/DebuggingTips.md).
-* Go through [ANGLE's orientation](doc/Orientation.md) and sift through [starter projects](https://bugs.chromium.org/p/angleproject/issues/list?q=Hotlist%3DStarterBug). If you decide to take on any task, write a comment so you can get in touch with us, and more importantly, set yourself as the "owner" of the bug. This avoids having multiple people accidentally working on the same issue.
+* Go through [ANGLE's orientation](doc/Orientation.md) and sift through [issues](https://issues.angleproject.org/). If you decide to take on any task, write a comment so you can get in touch with us, and more importantly, set yourself as the "owner" of the bug. This avoids having multiple people accidentally working on the same issue.
 
 
 * Read about WebGL on the [Khronos WebGL Wiki](http://khronos.org/webgl/wiki/Main_Page).
-* Learn about the initial ANGLE implementation details in the [OpenGL Insights chapter on ANGLE](http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-ANGLE.pdf) (this is not the most up-to-date ANGLE implementation details, it is listed here for historical reference only) and this [ANGLE presentation](https://drive.google.com/file/d/0Bw29oYeC09QbbHoxNE5EUFh0RGs/view?usp=sharing&resourcekey=0-CNvGnQGgFSvbXgX--Y_Iyg).
-* Learn about the past, present, and future of the ANGLE implementation in [this presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false).
-* Watch a [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end.
-* Track the [dEQP test conformance](doc/dEQP-Charts.md)
+* Learn about the internals of ANGLE:
+  * [Overview](https://docs.google.com/presentation/d/1qal4GgddwlUw-TPaXRYeTWLXUoaemgggBuTfg6_rwjU) with a focus on the Vulkan backend (2022)
+  * A [short presentation](https://youtu.be/QrIKdjmpmaA) on the Vulkan back-end (2018).
+  * Historical [presentation](https://docs.google.com/presentation/d/1CucIsdGVDmdTWRUbg68IxLE5jXwCb2y1E9YVhQo0thg/pub?start=false&loop=false) on the evolution of ANGLE and its use in Chromium
+  * Historical [presentation](https://drive.google.com/file/d/0Bw29oYeC09QbbHoxNE5EUFh0RGs/view?usp=sharing&resourcekey=0-CNvGnQGgFSvbXgX--Y_Iyg) with a focus on D3D
+  * The details of the initial implementation of ANGLE in the [OpenGL Insights chapter on ANGLE](http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-ANGLE.pdf) (these details are severely out-of-date, and this reference is listed here for historical reference only)
 * Read design docs on the [Vulkan back-end](src/libANGLE/renderer/vulkan/README.md)
 * Read about ANGLE's [testing infrastructure](infra/README.md)
 * View information on ANGLE's [supported extensions](doc/ExtensionSupport.md)

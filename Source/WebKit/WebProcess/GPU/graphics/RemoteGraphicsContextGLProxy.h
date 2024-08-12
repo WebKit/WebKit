@@ -373,7 +373,7 @@ public:
     void enableFoveation(PlatformGLObject arg0) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
 #endif
     // End of list used by generate-gpup-webgl script.
 

@@ -18,7 +18,8 @@ class TSymbolTable;
 
 [[nodiscard]] bool PruneInfiniteLoops(TCompiler *compiler,
                                       TIntermBlock *root,
-                                      TSymbolTable *symbolTable);
+                                      TSymbolTable *symbolTable,
+                                      bool *anyLoopsPruned);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_PRUNEINFINITELOOPS_H_

@@ -2357,6 +2357,9 @@ void Display::initializeFrontendFeatures()
 
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, forceMinimumMaxVertexAttributes, false);
 
+    // Reject shaders with undefined behavior.  In the compiler, this only applies to WebGL.
+    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, rejectWebglShadersWithUndefinedBehavior, true);
+
     mImplementation->initializeFrontendFeatures(&mFrontendFeatures);
 }
 

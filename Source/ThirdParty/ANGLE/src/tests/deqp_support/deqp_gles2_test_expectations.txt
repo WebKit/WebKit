@@ -396,8 +396,6 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.rasterization.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.read_pixels.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.state_query.shader.precision_fragment_lowp_int = FAIL
-356399840 WGPU : dEQP-GLES2.functional.state_query.shader.precision_vertex_lowp_int = FAIL
 356399840 WGPU : dEQP-GLES2.functional.state_query.shader.uniform_value_* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.texture.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.uniform_api.random.* = FAIL

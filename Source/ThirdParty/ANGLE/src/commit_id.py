@@ -109,13 +109,18 @@ if len(sys.argv) < 3 or operation != 'gen':
 
 output_file = sys.argv[2]
 commit_id_size = 12
-commit_id = 'unknown hash'
 commit_date = 'unknown date'
 commit_position = '0'
 
-if git_dir_exists:
+# If the ANGLE_UPSTREAM_HASH environment variable is set, use it as
+# commit_id. commit_date will be 'unknown date' and commit_position will be 0
+# in this case. See details in roll_aosp.sh where commit_id.py is invoked.
+commit_id = os.environ.get('ANGLE_UPSTREAM_HASH')
+# If ANGLE_UPSTREAM_HASH environment variable is not set, use the git command
+# to get the git hash, when .git is available
+if git_dir_exists and not commit_id:
     try:
-        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd) or commit_id
+        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
         commit_date = grab_output('git show -s --format=%ci HEAD', cwd) or commit_date
         commit_position = get_commit_position(cwd) or commit_position
     except:
@@ -123,7 +128,7 @@ if git_dir_exists:
 
 hfile = open(output_file, 'w')
 
-hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
+hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % (commit_id or "unknown hash"))
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
 hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
 hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)

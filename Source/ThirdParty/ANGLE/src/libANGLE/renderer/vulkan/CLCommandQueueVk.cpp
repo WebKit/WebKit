@@ -775,6 +775,14 @@ angle::Result CLCommandQueueVk::createEvent(CLEventImpl::CreateFunc *createFunc)
             // Save a reference to this event
             mAssociatedEvents.push_back(cl::EventPtr{&eventVk->getFrontendObject()});
 
+            if (mCommandQueue.getProperties().isSet(CL_QUEUE_PROFILING_ENABLE))
+            {
+                if (IsError(mCommandQueue.getImpl<CLCommandQueueVk>().flush()))
+                {
+                    ANGLE_CL_SET_ERROR(CL_OUT_OF_RESOURCES);
+                }
+            }
+
             return CLEventImpl::Ptr(eventVk);
         };
     }

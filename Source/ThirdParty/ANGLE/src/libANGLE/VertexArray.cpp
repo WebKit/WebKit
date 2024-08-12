@@ -360,53 +360,57 @@ VertexArray::DirtyBindingBits VertexArray::bindVertexBufferImpl(const Context *c
         return dirtyBindingBits;
     }
 
-    angle::ObserverBinding *observer = &mArrayBufferObserverBindings[bindingIndex];
-    observer->assignSubject(boundBuffer);
-
-    // Several nullptr checks are combined here for optimization purposes.
-    if (oldBuffer)
+    if (boundBuffer != oldBuffer)
     {
-        oldBuffer->onNonTFBindingChanged(-1);
-        oldBuffer->removeObserver(observer);
-        oldBuffer->removeContentsObserver(this, static_cast<uint32_t>(bindingIndex));
-        oldBuffer->release(context);
-        mState.mBufferBindingMask.reset(bindingIndex);
+        angle::ObserverBinding *observer = &mArrayBufferObserverBindings[bindingIndex];
+        observer->assignSubject(boundBuffer);
+
+        // Several nullptr checks are combined here for optimization purposes.
+        if (oldBuffer)
+        {
+            oldBuffer->onNonTFBindingChanged(-1);
+            oldBuffer->removeObserver(observer);
+            oldBuffer->removeContentsObserver(this, static_cast<uint32_t>(bindingIndex));
+            oldBuffer->release(context);
+            mState.mBufferBindingMask.reset(bindingIndex);
+        }
+
+        binding->assignBuffer(boundBuffer);
+
+        // Update client memory attribute pointers. Affects all bound attributes.
+        if (boundBuffer)
+        {
+            boundBuffer->addRef();
+            boundBuffer->onNonTFBindingChanged(1);
+            boundBuffer->addObserver(observer);
+            if (context->isWebGL())
+            {
+                mCachedTransformFeedbackConflictedBindingsMask.set(
+                    bindingIndex, boundBuffer->hasWebGLXFBBindingConflict(true));
+            }
+            mState.mBufferBindingMask.set(bindingIndex);
+            mState.mClientMemoryAttribsMask &= ~binding->getBoundAttributesMask();
+
+            bool isMapped     = boundBuffer->isMapped() == GL_TRUE;
+            bool isImmutable  = boundBuffer->isImmutable() == GL_TRUE;
+            bool isPersistent = (boundBuffer->getAccessFlags() & GL_MAP_PERSISTENT_BIT_EXT) != 0;
+            updateCachedArrayBuffersMasks(isMapped, isImmutable, isPersistent,
+                                          binding->getBoundAttributesMask());
+        }
+        else
+        {
+            if (context->isWebGL())
+            {
+                mCachedTransformFeedbackConflictedBindingsMask.set(bindingIndex, false);
+            }
+            mState.mClientMemoryAttribsMask |= binding->getBoundAttributesMask();
+            updateCachedArrayBuffersMasks(false, false, false, binding->getBoundAttributesMask());
+        }
     }
 
-    binding->assignBuffer(boundBuffer);
     binding->setOffset(offset);
     binding->setStride(stride);
     updateCachedBufferBindingSize(binding);
-
-    // Update client memory attribute pointers. Affects all bound attributes.
-    if (boundBuffer)
-    {
-        boundBuffer->addRef();
-        boundBuffer->onNonTFBindingChanged(1);
-        boundBuffer->addObserver(observer);
-        if (context->isWebGL())
-        {
-            mCachedTransformFeedbackConflictedBindingsMask.set(
-                bindingIndex, boundBuffer->hasWebGLXFBBindingConflict(true));
-        }
-        mState.mBufferBindingMask.set(bindingIndex);
-        mState.mClientMemoryAttribsMask &= ~binding->getBoundAttributesMask();
-
-        bool isMapped     = boundBuffer->isMapped() == GL_TRUE;
-        bool isImmutable  = boundBuffer->isImmutable() == GL_TRUE;
-        bool isPersistent = (boundBuffer->getAccessFlags() & GL_MAP_PERSISTENT_BIT_EXT) != 0;
-        updateCachedArrayBuffersMasks(isMapped, isImmutable, isPersistent,
-                                      binding->getBoundAttributesMask());
-    }
-    else
-    {
-        if (context->isWebGL())
-        {
-            mCachedTransformFeedbackConflictedBindingsMask.set(bindingIndex, false);
-        }
-        mState.mClientMemoryAttribsMask |= binding->getBoundAttributesMask();
-        updateCachedArrayBuffersMasks(false, false, false, binding->getBoundAttributesMask());
-    }
 
     return dirtyBindingBits;
 }
@@ -883,7 +887,10 @@ void VertexArrayBufferContentsObservers::enableForBuffer(Buffer *buffer, uint32_
 
 void VertexArrayBufferContentsObservers::disableForBuffer(Buffer *buffer, uint32_t attribIndex)
 {
-    buffer->removeContentsObserver(mVertexArray, attribIndex);
-    mBufferObserversBitMask.reset(attribIndex);
+    if (mBufferObserversBitMask.test(attribIndex))
+    {
+        buffer->removeContentsObserver(mVertexArray, attribIndex);
+        mBufferObserversBitMask.reset(attribIndex);
+    }
 }
 }  // namespace gl

@@ -1279,7 +1279,7 @@ bool DecompressBlob(const uint8_t *compressedData,
                     const size_t compressedSize,
                     size_t maxUncompressedDataSize,
                     MemoryBuffer *uncompressedData);
-uint32_t GenerateCrc(const uint8_t *data, size_t size);
+uint32_t GenerateCRC32(const uint8_t *data, size_t size);
 }  // namespace angle
 
 namespace std
