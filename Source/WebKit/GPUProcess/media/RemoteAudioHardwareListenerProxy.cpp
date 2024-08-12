@@ -30,8 +30,11 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteAudioHardwareListenerMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioHardwareListenerProxy);
 
 RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteAudioHardwareListenerIdentifier&& identifier)
     : m_gpuConnection(gpuConnection)

@@ -37,6 +37,7 @@
 #include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUTextureView.h>
 #include <WebCore/WebGPUTextureViewDescriptor.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #define MESSAGE_CHECK(assertion) do { \
@@ -51,6 +52,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTexture);
 
 RemoteTexture::RemoteTexture(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(texture)

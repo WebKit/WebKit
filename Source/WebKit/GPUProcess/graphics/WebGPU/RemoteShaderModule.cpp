@@ -34,8 +34,11 @@
 #include <WebCore/WebGPUCompilationInfo.h>
 #include <WebCore/WebGPUCompilationMessage.h>
 #include <WebCore/WebGPUShaderModule.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteShaderModule);
 
 RemoteShaderModule::RemoteShaderModule(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(shaderModule)

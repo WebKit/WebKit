@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace IPC {
@@ -50,7 +51,7 @@ class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
 class RemoteSampleBufferDisplayLayerManager final : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayerManager);
 public:
     static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection)
     {

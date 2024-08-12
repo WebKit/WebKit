@@ -53,7 +53,7 @@ class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
 
 class RemoteLegacyCDMFactoryProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMFactoryProxy);
 public:
     RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteLegacyCDMFactoryProxy();

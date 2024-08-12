@@ -71,6 +71,7 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NowPlayingManager.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
@@ -180,7 +181,7 @@ using namespace WebCore;
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 class GPUProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GPUProxyForCapture);
 public:
     explicit GPUProxyForCapture(GPUConnectionToWebProcess& process)
         : m_process(process)

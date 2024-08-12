@@ -46,6 +46,7 @@
 #import <WebCore/VideoFrameCV.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MediaTime.h>
+#import <wtf/TZoneMallocInlines.h>
 
 ALLOW_COMMA_BEGIN
 
@@ -59,6 +60,8 @@ ALLOW_COMMA_END
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCCodecsProxy);
 
 Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection)
 {

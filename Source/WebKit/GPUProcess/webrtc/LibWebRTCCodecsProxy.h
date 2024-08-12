@@ -39,6 +39,7 @@
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoDecoder.h>
 #include <atomic>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 
 namespace IPC {
@@ -64,7 +65,7 @@ struct SharedVideoFrame;
 class SharedVideoFrameReader;
 
 class LibWebRTCCodecsProxy final : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCCodecsProxy);
 public:
     static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&);
     ~LibWebRTCCodecsProxy();

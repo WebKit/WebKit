@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
@@ -69,7 +70,7 @@ class RemoteAudioDestination final
     : public WebCore::AudioUnitRenderer
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
@@ -195,6 +196,8 @@ private:
     uint64_t m_startFrame { 0 };
 #endif
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationManager);
 
 RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)

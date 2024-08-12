@@ -35,6 +35,7 @@
 #include <WebCore/CoreAudioCaptureSource.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -44,6 +45,8 @@ static bool categoryCanMixWithOthers(AudioSession::CategoryType category)
 {
     return category == AudioSession::CategoryType::AmbientSound;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxyManager);
 
 RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager(GPUProcess& gpuProcess)
     : m_gpuProcess(gpuProcess)

@@ -36,6 +36,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(IOSURFACE)
@@ -48,7 +49,7 @@ class GPUConnectionToWebProcess;
 // Class holding GPU process resources per Web Content process.
 // Thread-safe.
 class RemoteSharedResourceCache final : public ThreadSafeRefCounted<RemoteSharedResourceCache>, IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSharedResourceCache);
 public:
     static Ref<RemoteSharedResourceCache> create(GPUConnectionToWebProcess&);
     virtual ~RemoteSharedResourceCache();

@@ -29,6 +29,7 @@
 
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 
@@ -49,7 +50,7 @@ class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager
     : public WebCore::AudioSessionInterruptionObserver
     , private WebCore::AudioSessionConfigurationChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSessionProxyManager);
 public:
     RemoteAudioSessionProxyManager(GPUProcess&);
     ~RemoteAudioSessionProxyManager();
