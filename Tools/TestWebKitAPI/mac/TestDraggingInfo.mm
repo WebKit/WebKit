@@ -126,6 +126,7 @@
 @synthesize draggingSequenceNumber = _draggingSequenceNumber;
 @synthesize animatesToDestination = _animatesToDestination;
 @synthesize springLoadingHighlight = _springLoadingHighlight;
+@synthesize localContext = _localContext;
 
 - (NSWindow *)draggingDestinationWindow
 {
