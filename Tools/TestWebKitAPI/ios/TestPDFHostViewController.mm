@@ -28,11 +28,6 @@
 
 #if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 
-// FIXME (rdar://133488399): Move this to TestWebKitAPI.xcconfig.
-#if PLATFORM(APPLETV)
-asm(".linker_option \"-framework\", \"PDFKit\"");
-#endif
-
 #import "ClassMethodSwizzler.h"
 #import "PDFKitSPI.h"
 
