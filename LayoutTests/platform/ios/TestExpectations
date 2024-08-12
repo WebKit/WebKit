@@ -7495,3 +7495,6 @@ imported/w3c/web-platform-tests/css/css-content/quotes-026.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
+
+# webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
+fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]

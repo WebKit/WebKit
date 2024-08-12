@@ -128,3 +128,6 @@ imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub
 imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.html  [ Failure ]
 
 webkit.org/b/271712 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
+
+# webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
+fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
