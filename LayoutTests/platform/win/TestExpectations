@@ -353,6 +353,9 @@ fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
 
+# Tests glyph metrics of Apple Emoji font
+webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Skip ]
+
 # the test that uses these methods is Cocoa-specific, see webkit.org/b/152247
 fast/forms/attributed-strings.html [ Failure ]
 fast/forms/indeterminate-progress-inline-height.html [ Failure ]
@@ -987,7 +990,7 @@ http/tests/misc/form-post-textplain.html [ Failure ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
 http/wpt/fetch/response-opaque-clone.html [ Skip ]
-http/wpt/fetch/response-status-text.html [ Failure ]
+http/wpt/fetch/response-status-text.html [ Failure Slow ]
 
 
 http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
@@ -1690,7 +1693,6 @@ http/wpt/credential-management [ Skip ]
 http/wpt/cross-origin-opener-policy [ Skip ]
 http/wpt/cross-origin-resource-policy [ Skip ]
 http/wpt/crypto [ Skip ]
-http/wpt/css/css-highlight-api [ Skip ]
 http/wpt/entries-api [ Skip ]
 http/wpt/geometry [ Skip ]
 http/wpt/identity [ Skip ]
@@ -4024,6 +4026,12 @@ webkit.org/b/262817 fast/canvas/canvas-pattern-modify.html [ Pass Failure ]
 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 
 webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
+
+editing/selection/rtl-move-selection-right-left.html [ Slow ]
+fast/canvas/webgl/lose-context-on-timeout-async.html [ Slow ]
+fast/canvas/webgl/lose-context-on-timeout.html [ Slow ]
+fast/canvas/webgl/uninitialized-test.html [ Slow ]
+fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Slow ]
 
 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
 fast/forms/listbox-zero-item-height.html [ Failure ]
