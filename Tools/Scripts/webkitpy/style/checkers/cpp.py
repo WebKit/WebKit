@@ -4060,6 +4060,8 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
             error(line_number, 'readability/check', 4, 'Consider using gstStructureGet<T>() instead')
         if search(r'gst_structure_get_string', line):
             error(line_number, 'readability/check', 4, 'Consider using gstStructureGetString() instead')
+        if search(r'gst_structure_get_name', line):
+            error(line_number, 'readability/check', 4, 'Consider using gstStructureGetName() instead')
 
 
 def check_identifier_name_in_declaration(filename, line_number, line, file_state, error):

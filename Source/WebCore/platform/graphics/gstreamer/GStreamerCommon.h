@@ -67,7 +67,7 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps*, WebCore::IntSize&, GstVideoFo
 std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps*);
 bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 #endif
-const char* capsMediaType(const GstCaps*);
+StringView capsMediaType(const GstCaps*);
 bool doCapsHaveType(const GstCaps*, const char*);
 bool areEncryptedCaps(const GstCaps*);
 Vector<String> extractGStreamerOptionsFromCommandLine();
@@ -279,6 +279,8 @@ std::optional<T> gstStructureGet(const GstStructure*, StringView key);
 
 StringView gstStructureGetString(const GstStructure*, ASCIILiteral key);
 StringView gstStructureGetString(const GstStructure*, StringView key);
+
+StringView gstStructureGetName(const GstStructure*);
 
 String gstStructureToJSONString(const GstStructure*);
 

@@ -853,9 +853,9 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
                 GST_WARNING("Unable to convert codec %s to caps", mimeCodec.ascii().data());
                 continue;
             }
-            auto* structure = gst_caps_get_structure(codecCaps.get(), 0);
-            const char* name = gst_structure_get_name(structure);
-            auto caps = adoptGRef(gst_caps_new_simple("application/x-webm-enc", "original-media-type", G_TYPE_STRING, name, nullptr));
+            auto structure = gst_caps_get_structure(codecCaps.get(), 0);
+            auto name = gstStructureGetName(structure);
+            auto caps = adoptGRef(gst_caps_new_simple("application/x-webm-enc", "original-media-type", G_TYPE_STRING, reinterpret_cast<const char*>(name.rawCharacters()), nullptr));
             if (!factories.hasElementForCaps(ElementFactories::Type::Decryptor, caps))
                 return SupportsType::IsNotSupported;
         }

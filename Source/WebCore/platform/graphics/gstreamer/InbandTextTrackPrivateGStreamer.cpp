@@ -65,8 +65,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
-    const char* mediaType = capsMediaType(caps.get());
-    m_kind = g_str_has_prefix(mediaType, "closedcaption/") ? Kind::Captions : Kind::Subtitles;
+    m_kind = doCapsHaveType(caps.get(), "closedcaption/"_s) ? Kind::Captions : Kind::Subtitles;
 }
 
 void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)

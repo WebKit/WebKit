@@ -69,7 +69,7 @@ static unsigned long maximumNumberOfOutputChannels()
             unsigned size = gst_caps_get_size(caps.get());
             for (unsigned i = 0; i < size; i++) {
                 auto* structure = gst_caps_get_structure(caps.get(), i);
-                if (!g_str_equal(gst_structure_get_name(structure), "audio/x-raw"))
+                if (gstStructureGetName(structure) != "audio/x-raw"_s)
                     continue;
                 if (auto value = gstStructureGet<int>(structure, "channels"_s))
                     count = std::max(count, *value);

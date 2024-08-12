@@ -169,8 +169,9 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
                 // can cause caps negotiation failures with adaptive bitrate streams.
                 gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
 
+                auto name = WebCore::gstStructureGetName(incomingStructure);
                 gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self),
-                    "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
+                    "original-media-type", G_TYPE_STRING, reinterpret_cast<const char*>(name.rawCharacters()) , nullptr);
 
                 // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
                 // developement git master which will ship as version 1.16.0.

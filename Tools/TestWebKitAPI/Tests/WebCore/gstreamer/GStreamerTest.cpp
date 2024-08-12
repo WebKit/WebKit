@@ -67,6 +67,7 @@ TEST_F(GStreamerTest, gstStructureGetters)
     ASSERT_TRUE(!gstStructureGet<bool>(structure.get(), "bool-val-noexist"_s).has_value());
     ASSERT_EQ(gstStructureGetString(structure.get(), "str-val"_s), "hello-world"_s);
     ASSERT_TRUE(!gstStructureGetString(structure.get(), "str-val-noexist"_s));
+    ASSERT_EQ(gstStructureGetName(structure.get()), "foo"_s);
 
     // webkit.org/b/276224
     auto emptyIntOpt = gstStructureGet<int>(structure.get(), "int-val-noexist2"_s);

@@ -223,7 +223,7 @@ bool GStreamerMediaEndpoint::handleMessage(GstMessage* message)
         break;
     case GST_MESSAGE_ELEMENT: {
         const auto* data = gst_message_get_structure(message);
-        if (!g_strcmp0(gst_structure_get_name(data), "GstBinForwarded")) {
+        if (gstStructureGetName(data) == "GstBinForwarded"_s) {
             GRefPtr<GstMessage> subMessage;
             gst_structure_get(data, "message", GST_TYPE_MESSAGE, &subMessage.outPtr(), nullptr);
             if (GST_MESSAGE_TYPE(subMessage.get()) == GST_MESSAGE_EOS)
