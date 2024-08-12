@@ -42,6 +42,7 @@
 #include <wtf/OSObjectPtr.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -70,7 +71,7 @@ enum class PushClientConnectionIdentifierType { };
 using PushClientConnectionIdentifier = AtomicObjectIdentifier<PushClientConnectionIdentifierType>;
 
 class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnectionIdentifier>, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PushClientConnection);
 public:
     static RefPtr<PushClientConnection> create(xpc_connection_t, IPC::Decoder&);
 

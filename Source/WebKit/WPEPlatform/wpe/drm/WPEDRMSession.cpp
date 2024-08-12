@@ -29,10 +29,13 @@
 #include "WPEDRMSessionLogind.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Session);
 
 std::unique_ptr<Session> Session::create()
 {
