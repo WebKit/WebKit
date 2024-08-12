@@ -467,12 +467,6 @@ set(WTF_PUBLIC_HEADERS
     unicode/icu/ICUHelpers.h
 
     ForkExtras.h
-    extras/fp_extend.h
-    extras/fp_trunc.h
-    extras/int_endianness.h
-    extras/int_lib.h
-    extras/int_types.h
-    extras/int_util.h
     # unix/UnixFileDescriptor.h
 
     # win/DbgHelperWin.h
@@ -633,10 +627,6 @@ set(WTF_SOURCES
 
     unicode/icu/CollatorICU.cpp
     unicode/icu/ICUHelpers.cpp
-
-    extras/extendhfsf2.c
-    extras/truncdfhf2.c
-    extras/truncsfhf2.c
 )
 
 if (WIN32)
