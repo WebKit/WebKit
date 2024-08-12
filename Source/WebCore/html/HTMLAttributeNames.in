@@ -283,7 +283,9 @@ onoffline
 ononline
 onorientationchange
 onpagehide
+onpagereveal
 onpageshow
+onpageswap
 onpaste
 onpause
 onplay
