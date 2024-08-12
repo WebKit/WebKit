@@ -132,7 +132,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         document->styleScope().releaseMemory();
         if (RefPtr fontSelector = document->fontSelectorIfExists())
             fontSelector->emptyCaches();
-        document->cachedResourceLoader().garbageCollectDocumentResources();
+        document->protectedCachedResourceLoader()->garbageCollectDocumentResources();
 
         if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(document))
             pluginDocument->releaseMemory();

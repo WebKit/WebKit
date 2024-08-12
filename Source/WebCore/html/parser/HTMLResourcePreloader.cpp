@@ -90,7 +90,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
     if (!MQ::MediaQueryEvaluator { screenAtom(), document, document->renderStyle() }.evaluate(queries))
         return;
 
-    document->cachedResourceLoader().preload(preload->resourceType(), preload->resourceRequest(document));
+    document->protectedCachedResourceLoader()->preload(preload->resourceType(), preload->resourceRequest(document));
 }
 
 }

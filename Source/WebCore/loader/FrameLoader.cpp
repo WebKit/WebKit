@@ -798,8 +798,8 @@ void FrameLoader::didBeginDocument(bool dispatch)
     document->initContentSecurityPolicy();
 
     Ref settings = frame->settings();
-    document->cachedResourceLoader().setImagesEnabled(settings->areImagesEnabled());
-    document->cachedResourceLoader().setAutoLoadImages(settings->loadsImagesAutomatically());
+    document->protectedCachedResourceLoader()->setImagesEnabled(settings->areImagesEnabled());
+    document->protectedCachedResourceLoader()->setAutoLoadImages(settings->loadsImagesAutomatically());
 
     std::optional<NavigationNavigationType> navigationType;
 
