@@ -6970,7 +6970,7 @@ webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 
 webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ] # TODO: uncomment line above with explicit pass expectation for this test when issue is resolved.
 
-webkit.org/b/271712 [ Debug ] fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
+webkit.org/b/271712 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Pass Timeout ]
 
 webkit.org/b/271785 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 webkit.org/b/271785 media/modern-media-controls/overflow-support/playback-speed.html [ Timeout ]
