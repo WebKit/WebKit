@@ -203,6 +203,9 @@ void RenderMultiColumnFlow::setPageBreak(const RenderBlock* block, LayoutUnit of
 
 void RenderMultiColumnFlow::updateMinimumPageHeight(const RenderBlock* block, LayoutUnit offset, LayoutUnit minHeight)
 {
+    if (!hasValidFragmentInfo())
+        return;
+
     if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset)))
         multicolSet->updateMinimumColumnHeight(minHeight);
 }
