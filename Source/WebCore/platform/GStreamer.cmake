@@ -111,6 +111,7 @@ if (ENABLE_VIDEO)
                 ${GSTREAMER_CODECPARSERS_LIBRARIES}
             )
         endif ()
+        list(APPEND WebCore_LIBRARIES OpenSSL::Crypto)
     elseif (USE_GSTREAMER_WEBRTC)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${GSTREAMER_RTP_INCLUDE_DIRS}
