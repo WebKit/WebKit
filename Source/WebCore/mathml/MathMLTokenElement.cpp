@@ -54,17 +54,15 @@ Ref<MathMLTokenElement> MathMLTokenElement::create(const QualifiedName& tagName,
 void MathMLTokenElement::didAttachRenderers()
 {
     MathMLPresentationElement::didAttachRenderers();
-    auto* mathmlRenderer = renderer();
-    if (is<RenderMathMLToken>(mathmlRenderer))
-        downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
+    if (CheckedPtr mathmlRenderer = dynamicDowncast<RenderMathMLToken>(renderer()))
+        mathmlRenderer->updateTokenContent();
 }
 
 void MathMLTokenElement::childrenChanged(const ChildChange& change)
 {
     MathMLPresentationElement::childrenChanged(change);
-    auto* mathmlRenderer = renderer();
-    if (is<RenderMathMLToken>(mathmlRenderer))
-        downcast<RenderMathMLToken>(*mathmlRenderer).updateTokenContent();
+    if (CheckedPtr mathmlRenderer = dynamicDowncast<RenderMathMLToken>(renderer()))
+        mathmlRenderer->updateTokenContent();
 }
 
 RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
