@@ -2456,10 +2456,6 @@ webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
 
 webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.worker.html [ Pass Failure ]
 
-# rdar://132528380 (REGRESSION (281042@main): [ macOS ] 2x tiled-drawing/scrolling/overflow/overflow-scrolled-* is flaky failing.
-tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage.html [ Pass Failure ]
-tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass Failure ]
-
 # webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
 http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
 
