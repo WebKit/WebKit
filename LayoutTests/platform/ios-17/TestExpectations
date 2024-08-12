@@ -94,6 +94,13 @@ imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.
 imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
 
+# webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
+imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-content/quotes-026.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ Pass ]
+
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 
 ### you should probably use the platform/ios/TestExpectations file, NOT this one.
