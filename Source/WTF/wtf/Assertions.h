@@ -754,6 +754,24 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #endif /* ASSERT_ENABLED */
 
+/* CONJECTURE_ASSERT is only used to facilitate on-going analysis work to test conjectures
+   about the code. We want to be able to land these in the code base for some time to enable
+   extended testing.
+
+   If the conjecture is proven false it, the CONJECTURE_ASSERT should either be removed or
+   updated to test a new conjecture. If the conjecture is proven true, the CONJECTURE_ASSERT
+   should either be promoted to an ASSERT or RELEASE_ASSERT as appropriate, or removed if
+   deemed of low value.
+
+   The number of CONJECTURE_ASSERTs should not be growing unboundedly, and they should not
+   stay in the codebase perpetually.
+ */
+#if ENABLE(CONJECTURE_ASSERT)
+#define CONJECTURE_ASSERT(assertion, ...) RELEASE_ASSERT(assertion, __VA_ARGS__)
+#else
+#define CONJECTURE_ASSERT(assertion, ...)
+#endif
+
 #ifdef __cplusplus
 #define RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(...) RELEASE_ASSERT_WITH_MESSAGE(assertionFailureDueToUnreachableCode, __VA_ARGS__)
 
