@@ -83,6 +83,7 @@ public:
     bool establishesInlineFormattingContext() const;
     bool establishesTableFormattingContext() const;
     bool establishesFlexFormattingContext() const;
+    bool establishesGridFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
@@ -141,6 +142,7 @@ public:
     bool isInternalTableBox() const;
     bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex; }
     bool isFlexItem() const;
+    bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }

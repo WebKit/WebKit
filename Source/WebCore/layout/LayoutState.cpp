@@ -42,10 +42,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction)
     : m_type(type)
     , m_rootContainer(rootContainer)
     , m_securityOrigin(document.securityOrigin())
+    , m_formattingContextLayoutFunction(WTFMove(formattingContextLayoutFunction))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -148,6 +149,11 @@ void LayoutState::destroyInlineContentCache(const ElementBox& formattingContextR
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
     m_inlineContentCaches.remove(&formattingContextRoot);
+}
+
+void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box)
+{
+    return m_formattingContextLayoutFunction(box, *this);
 }
 
 }

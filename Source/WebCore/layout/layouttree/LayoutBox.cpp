@@ -92,6 +92,7 @@ bool Box::establishesFormattingContext() const
         || establishesBlockFormattingContext()
         || establishesTableFormattingContext()
         || establishesFlexFormattingContext()
+        || establishesGridFormattingContext()
         || establishesIndependentFormattingContext();
 }
 
@@ -118,7 +119,7 @@ bool Box::establishesBlockFormattingContext() const
     if (isFloatingPositioned()) {
         // Not all floating or out-of-positioned block level boxes establish BFC.
         // See [9.7 Relationships between 'display', 'position', and 'float'] for details.
-        return style().display() == DisplayType::Block;
+        return isBlockContainer();
     }
 
     if (isBlockContainer() && !isBlockBox())
@@ -160,6 +161,11 @@ bool Box::establishesTableFormattingContext() const
 bool Box::establishesFlexFormattingContext() const
 {
     return isFlexBox();
+}
+
+bool Box::establishesGridFormattingContext() const
+{
+    return isGridBox();
 }
 
 bool Box::establishesIndependentFormattingContext() const

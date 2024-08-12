@@ -45,9 +45,11 @@ namespace LayoutIntegration {
 class BoxGeometryUpdater {
 public:
     BoxGeometryUpdater(BoxTree&, Layout::LayoutState&);
+    BoxGeometryUpdater(Layout::LayoutState&);
 
     void setGeometriesForLayout();
     void setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode);
+    void updateGeometryAfterLayout(const Layout::ElementBox&);
 
     Layout::ConstraintsForInlineContent updateInlineContentConstraints();
     HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }

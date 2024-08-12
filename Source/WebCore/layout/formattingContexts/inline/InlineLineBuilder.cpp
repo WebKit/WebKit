@@ -909,6 +909,8 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
+    formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(floatBox));
+
     auto& floatingContext = this->floatingContext();
     auto boxGeometry = [&]() -> BoxGeometry {
         auto marginTrim = rootStyle().marginTrim();

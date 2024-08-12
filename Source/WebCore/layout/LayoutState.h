@@ -62,7 +62,7 @@ public:
     // Primary layout state has a direct geometry cache in layout boxes.
     enum class Type { Primary, Secondary };
 
-    LayoutState(const Document&, const ElementBox& rootContainer, Type);
+    LayoutState(const Document&, const ElementBox& rootContainer, Type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction);
     ~LayoutState();
 
     Type type() const { return m_type; }
@@ -103,6 +103,8 @@ public:
 
     const ElementBox& root() const { return m_rootContainer; }
 
+    void layoutWithFormattingContextForBox(const ElementBox&);
+
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
@@ -122,6 +124,8 @@ private:
 
     CheckedRef<const ElementBox> m_rootContainer;
     Ref<SecurityOrigin> m_securityOrigin;
+
+    Function<void(const ElementBox&, LayoutState&)> m_formattingContextLayoutFunction;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

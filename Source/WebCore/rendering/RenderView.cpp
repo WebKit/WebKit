@@ -35,6 +35,7 @@
 #include "ImageQualityController.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -79,7 +80,7 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox))
     , m_selection(*this)
 {
     // FIXME: We should find a way to enforce this at compile time.

@@ -35,8 +35,10 @@
 #include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutState.h"
 #include "Logging.h"
+#include "RenderBlockFlow.h"
 #include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>

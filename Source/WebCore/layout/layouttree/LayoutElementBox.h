@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CachedImage;
+class RenderElement;
 class RenderStyle;
 
 namespace Layout {
@@ -96,6 +97,8 @@ public:
 
     // FIXME: This doesn't belong.
     CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
+
+    RenderElement* rendererForIntegration() const;
 
 private:
     friend class Box;
