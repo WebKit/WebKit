@@ -313,7 +313,7 @@
 #if CPU(ARM64) && OS(DARWIN) && (__SIZEOF_POINTER__ == 8)
 // Only MacroAssemblerARM64 is known to build.
 // Building with TZONE_MALLOC currently disabled for all platforms.
-#define USE_TZONE_MALLOC 0
+#define USE_TZONE_MALLOC 1
 #else
 #define USE_TZONE_MALLOC 0
 #endif
