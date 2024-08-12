@@ -486,6 +486,63 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('img').attachmentIdentifier"] isEqualToString:pngAttachment.uniqueIdentifier]);
 }
 
+TEST(AdaptiveImageGlyph, InsertWKAttachmentsMovingParagraphs)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+
+    auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body dir='auto' role='textbox' aria-label='Message Body'><br><div id='AppleMailSignature' dir='ltr'><!-- signature open -->Sent from my iPhone <!-- signature close --></div></body>"];
+    [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
+
+    NSString *setSelectionJavaScript = @""
+    "(() => {"
+    "  const element = document.getElementById('AppleMailSignature');"
+    "  const range = document.createRange();"
+    "  range.setStart(element.childNodes[1], 20);"
+    "  range.setEnd(element.childNodes[1], 20);"
+    "  "
+    "  var selection = window.getSelection();"
+    "  selection.removeAllRanges();"
+    "  selection.addRange(range);"
+    "})();";
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+
+    RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
+
+    [webView insertAdaptiveImageGlyph:adaptiveImageGlyph.get()];
+    [webView waitForNextPresentationUpdate];
+
+    auto attachmentSortFunction = ^(_WKAttachment *a, _WKAttachment *b) {
+        return [a.info.contentType compare:b.info.contentType];
+    };
+
+    auto insertedAttachments = [[webView insertedAttachments] sortedArrayUsingComparator:attachmentSortFunction];
+    EXPECT_EQ(insertedAttachments.count, 2U);
+    EXPECT_EQ([[webView removedAttachments] count], 0U);
+
+    auto heicAttachment = [insertedAttachments objectAtIndex:0];
+    auto heicAttachmentInfo = heicAttachment.info;
+    EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
+    EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
+    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
+
+    auto pngAttachment = [insertedAttachments objectAtIndex:1];
+    auto pngAttachmentInfo =  pngAttachment.info;
+    EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
+    EXPECT_TRUE([pngAttachmentInfo.name containsString:@"png"]);
+    EXPECT_EQ(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
+
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('img').attachmentIdentifier"] isEqualToString:pngAttachment.uniqueIdentifier]);
+}
+
 TEST(AdaptiveImageGlyph, InsertMultiple)
 {
     auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 800)]);
