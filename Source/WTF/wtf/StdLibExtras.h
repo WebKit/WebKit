@@ -54,6 +54,18 @@ inline constexpr Dest __bit_cast(const Source &source) {
 }
 #endif
 
+#ifndef __extendhfsf2
+extern "C" float __extendhfsf2(uint16_t a);
+#endif
+
+#ifndef __truncdfhf2
+extern "C" uint16_t __truncdfhf2(double a);
+#endif
+
+#ifndef __truncsfhf2
+extern "C" uint16_t __truncsfhf2(float a);
+#endif
+
 // Use this macro to declare and define a debug-only global variable that may have a
 // non-trivial constructor and destructor. When building with clang, this will suppress
 // warnings about global constructors and exit-time destructors.
