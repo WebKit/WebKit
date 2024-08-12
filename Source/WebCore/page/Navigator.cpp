@@ -81,7 +81,7 @@ Navigator::~Navigator() = default;
 
 String Navigator::appVersion() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return String();
     if (frame->settings().webAPIStatisticsEnabled())
@@ -308,7 +308,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 
 DOMPluginArray& Navigator::plugins()
 {
-    if (auto* frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
+    if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::Plugins);
 
     initializePluginAndMimeTypeArrays();
@@ -317,7 +317,7 @@ DOMPluginArray& Navigator::plugins()
 
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
-    if (auto* frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
+    if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::MimeTypes);
 
     initializePluginAndMimeTypeArrays();
@@ -333,7 +333,7 @@ bool Navigator::pdfViewerEnabled()
 
 bool Navigator::cookieEnabled() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return false;
 
@@ -358,7 +358,7 @@ bool Navigator::cookieEnabled() const
 
 bool Navigator::standalone() const
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     return frame && frame->settings().standalone();
 }
 
@@ -368,12 +368,12 @@ GPU* Navigator::gpu()
 {
 #if HAVE(WEBGPU_IMPLEMENTATION)
     if (!m_gpuForWebGPU) {
-        auto* frame = this->frame();
+        RefPtr frame = this->frame();
         if (!frame)
             return nullptr;
         if (!frame->settings().webGPUEnabled())
             return nullptr;
-        auto* page = frame->page();
+        RefPtr page = frame->page();
         if (!page)
             return nullptr;
         auto gpu = page->chrome().createGPUForWebGPU();
@@ -389,7 +389,7 @@ GPU* Navigator::gpu()
 
 Document* Navigator::document()
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     return frame ? frame->document() : nullptr;
 }
 
@@ -453,8 +453,8 @@ PushManager& Navigator::pushManager()
 
 static URL toScope(Navigator& navigator)
 {
-    if (auto* frame = navigator.frame()) {
-        if (auto* document = frame->document())
+    if (RefPtr frame = navigator.frame()) {
+        if (RefPtr document = frame->document())
             return URL { document->url().protocolHostAndPort() };
     }
 
