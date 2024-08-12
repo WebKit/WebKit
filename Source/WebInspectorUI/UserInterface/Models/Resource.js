@@ -884,6 +884,14 @@ WI.Resource = class Resource extends WI.SourceCode
             console.assert(scriptForTarget);
             if (scriptForTarget)
                 return scriptForTarget.requestContentFromBackend();
+        } else if (this.type === WI.Resource.Type.StyleSheet) {
+            return new Promise((resolve, reject) => {
+                WI.cssManager.lookupStyleSheetForResource(this, (cssStyleSheet) => {
+                    this._target.CSSAgent.getStyleSheetText(cssStyleSheet.id)
+                        .then((text) => resolve(text))
+                        .catch((error) => reject(error));
+                });
+            });
         } else {
             // If we have the requestIdentifier we can get the actual response for this specific resource.
             // Otherwise the content will be cached resource data, which might not exist anymore.

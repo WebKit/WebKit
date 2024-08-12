@@ -1041,6 +1041,8 @@ String InspectorStyleSheet::finalURL() const
 
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
+    bool wasMutatedByJS = m_pageStyleSheet->wasMutatedByJS();
+
     {
         // Have a separate scope for clearRules() (bug 95324).
         CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
@@ -1052,6 +1054,11 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
         m_pageStyleSheet->clearChildRuleCSSOMWrappers();
         fireStyleSheetChanged();
     }
+
+    // Restore the value of the mutation flag as the mutation was done by the user from frontend
+    // and not from JS.
+    if (!wasMutatedByJS)
+        m_pageStyleSheet->clearWasMutatedByJS();
 }
 
 ExceptionOr<void> InspectorStyleSheet::setText(const String& text)
@@ -1272,6 +1279,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
         .setIsInline(styleSheet->isInline() && styleSheet->startPosition() != TextPosition())
         .setStartLine(styleSheet->startPosition().m_line.zeroBasedInt())
         .setStartColumn(styleSheet->startPosition().m_column.zeroBasedInt())
+        .setWasMutatedByJS(styleSheet->wasMutatedByJS())
         .release();
 }
 

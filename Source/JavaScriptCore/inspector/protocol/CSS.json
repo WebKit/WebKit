@@ -144,7 +144,8 @@
                 { "name": "disabled", "type": "boolean", "description": "Denotes whether the stylesheet is disabled."},
                 { "name": "isInline", "type": "boolean", "description": "Whether this stylesheet is a <style> tag created by the parser. This is not set for document.written <style> tags." },
                 { "name": "startLine", "type": "number", "description": "Line offset of the stylesheet within the resource (zero based)." },
-                { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." }
+                { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." },
+                { "name": "wasMutatedByJS", "type": "boolean", "description": "Whether this stylesheet has been modified by CSSOM in JavaScript." }
             ]
         },
         {

@@ -220,6 +220,13 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
         if (oldMainTitle !== this.mainTitle)
             this.callFirstAncestorFunction("descendantResourceTreeElementMainTitleDidChange", [this, oldMainTitle]);
+
+        if (!this.subtitle && this._resource.type === WI.Resource.Type.StyleSheet) {
+            WI.cssManager.lookupStyleSheetForResource(this._resource, (cssStyleSheet) => {
+                if (cssStyleSheet.wasMutatedByJS)
+                    this.subtitle = WI.UIString("CSSOM-modified");
+            });
+        }
     }
 
     updateStatus()

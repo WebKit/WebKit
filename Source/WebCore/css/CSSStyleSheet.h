@@ -94,8 +94,14 @@ public:
     ExceptionOr<void> replaceSync(String&&);
 
     bool wasMutated() const { return m_wasMutated; }
+    bool wasMutatedByJS() const { return m_wasMutatedByJS; }
     bool wasConstructedByJS() const { return m_wasConstructedByJS; }
     Document* constructorDocument() const;
+
+    // Used by InspectorStyleSheet to indicate that a mutation was done by the user from
+    // the frontend and not by JavaScript running in background. (If this is not called after
+    // a mutation, we assume that it's done by JS.)
+    void clearWasMutatedByJS() { m_wasMutatedByJS = false; }
 
     // For CSSRuleList.
     unsigned length() const;
@@ -180,6 +186,7 @@ private:
     bool m_isInlineStylesheet { false };
     bool m_isDisabled { false };
     bool m_wasMutated { false };
+    bool m_wasMutatedByJS { false };
     bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
     String m_title;

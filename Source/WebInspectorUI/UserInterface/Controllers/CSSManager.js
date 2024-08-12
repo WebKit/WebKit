@@ -614,7 +614,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
         let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
         let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
-        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.wasMutatedByJS);
 
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetAdded, {styleSheet});
     }
@@ -629,6 +629,11 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._styleSheetIdentifierMap.delete(styleSheetIdentifier);
 
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetRemoved, {styleSheet});
+    }
+
+    lookupStyleSheetForResource(resource, callback)
+    {
+        this._lookupStyleSheet(resource.parentFrame, resource.url, callback);
     }
 
     // Private
@@ -717,11 +722,6 @@ WI.CSSManager = class CSSManager extends WI.Object
         return frame.id + ":" + url;
     }
 
-    _lookupStyleSheetForResource(resource, callback)
-    {
-        this._lookupStyleSheet(resource.parentFrame, resource.url, callback);
-    }
-
     _lookupStyleSheet(frame, url, callback)
     {
         console.assert(frame instanceof WI.Frame);
@@ -758,7 +758,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.wasMutatedByJS);
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);
@@ -803,7 +803,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 revision.updateRevisionContent(resource.content);
             }
 
-            this._lookupStyleSheetForResource(resource, styleSheetFound.bind(this));
+            this.lookupStyleSheetForResource(resource, styleSheetFound.bind(this));
         }
 
         if (!resource.__pendingChangeTimeout)

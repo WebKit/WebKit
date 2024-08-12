@@ -250,6 +250,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
         scope.didChangeStyleSheetContents();
 
         m_wasMutated = true;
+        m_wasMutatedByJS = true;
     });
 }
 
@@ -259,6 +260,7 @@ void CSSStyleSheet::didMutate()
         scope.didChangeStyleSheetContents();
 
         m_wasMutated = true;
+        m_wasMutatedByJS = true;
     });
 }
 
