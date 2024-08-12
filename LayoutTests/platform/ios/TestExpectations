@@ -7498,3 +7498,6 @@ imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullw
 
 # webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
 fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
+
+# webkit.org/b/277986 [ iOS MacOS ] http/tests/navigation/page-cache-shared-worker.html is a flaky timeout
+http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]

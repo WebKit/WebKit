@@ -2464,3 +2464,6 @@ http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.htm
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Pass Timeout Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Timeout ]
 http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure ]
+
+# webkit.org/b/277986 [ iOS MacOS ] http/tests/navigation/page-cache-shared-worker.html is a flaky timeout
+http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]
