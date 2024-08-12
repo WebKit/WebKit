@@ -112,6 +112,7 @@ TEST(WebKit, UploadDirectory)
         [webView sendClickAtPoint:chooseFileButtonLocation];
         while (![delegate sentDirectory])
             TestWebKitAPI::Util::spinRunLoop();
+        Util::runFor(50_ms);
         [webView evaluateJavaScript:@"document.getElementById('form').submit()" completionHandler:nil];
         [webView _test_waitForDidFinishNavigation];
     }

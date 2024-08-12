@@ -252,6 +252,8 @@ private:
     RefPtr<WebCore::ShapeDetection::FaceDetector> createFaceDetector(const WebCore::ShapeDetection::FaceDetectorOptions&) const final;
     RefPtr<WebCore::ShapeDetection::TextDetector> createTextDetector() const final;
 
+    void registerBlobPathForTesting(const String&, CompletionHandler<void()>&&) final;
+
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

@@ -236,7 +236,8 @@ private:
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
-    unsigned remoteImagesCountForTesting() const final; 
+    unsigned remoteImagesCountForTesting() const final;
+    void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&) final;
 
     void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
 
