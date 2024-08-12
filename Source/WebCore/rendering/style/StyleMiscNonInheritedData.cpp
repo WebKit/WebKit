@@ -62,6 +62,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , justifySelf(RenderStyle::initialSelfAlignment())
     , objectPosition(RenderStyle::initialObjectPosition())
     , order(RenderStyle::initialOrder())
+    , tableLayout(static_cast<unsigned>(RenderStyle::initialTableLayout()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , usedAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
@@ -104,6 +105,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
 #endif
     , hasExplicitlySetDirection(o.hasExplicitlySetDirection)
     , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
+    , tableLayout(o.tableLayout)
     , aspectRatioType(o.aspectRatioType)
     , appearance(o.appearance)
     , usedAppearance(o.usedAppearance)
@@ -154,6 +156,7 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && hasExplicitlySetDirection == o.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
         && aspectRatioType == o.aspectRatioType
+        && tableLayout == o.tableLayout
         && appearance == o.appearance
         && usedAppearance == o.usedAppearance
         && textOverflow == o.textOverflow
