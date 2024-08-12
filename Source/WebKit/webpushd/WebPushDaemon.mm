@@ -49,6 +49,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -261,6 +262,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
     auto reply = adoptOSObject(xpc_dictionary_create_reply(request));
     auto replyHandler = [xpcConnection = WTFMove(xpcConnection), reply = WTFMove(reply)] (UniqueRef<IPC::Encoder>&& encoder) {
+        RELEASE_ASSERT(RunLoop::isMain());
         auto xpcData = WebKit::encoderToXPCData(WTFMove(encoder));
         xpc_dictionary_set_uint64(reply.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
         xpc_dictionary_set_value(reply.get(), protocolEncodedMessageKey, xpcData.get());
@@ -723,20 +725,21 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
     auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
     RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
 
-    auto blockPtr = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
-        Vector<WebCore::NotificationData> notificationDatas;
-        for (UNNotification *notification in notifications) {
-            auto notificationData = WebCore::NotificationData::fromDictionary(notification.request.content.userInfo);
-            if (!notificationData) {
-                RELEASE_LOG_ERROR(Push, "GetNotifications - Skipping notification with invalid Notification userInfo");
-                continue;
+    auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(connection.subscriptionSetIdentifier()), completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
+        WorkQueue::main().dispatch([identifier = crossThreadCopy(identifier), notifications = RetainPtr { notifications }, completionHandler = WTFMove(completionHandler)] mutable {
+            Vector<WebCore::NotificationData> notificationDatas;
+            for (UNNotification *notification in notifications.get()) {
+                auto notificationData = WebCore::NotificationData::fromDictionary(notification.request.content.userInfo);
+                if (!notificationData) {
+                    RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8().data());
+                    continue;
+                }
+                notificationDatas.append(*notificationData);
             }
-            notificationDatas.append(*notificationData);
-        }
-
-        completionHandler(notificationDatas);
+            RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), identifier.debugDescription().utf8().data());
+            completionHandler(notificationDatas);
+        });
     });
-
 
     [center getDeliveredNotificationsWithCompletionHandler:blockPtr.get()];
 }
@@ -774,7 +777,7 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
     RetainPtr notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(connection);
     RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
 
-    auto blockPtr = makeBlockPtr([originString = origin.toString(), replySender = WTFMove(replySender)](UNNotificationSettings *settings) mutable {
+    auto blockPtr = makeBlockPtr([originString = crossThreadCopy(origin.toString()), replySender = WTFMove(replySender)](UNNotificationSettings *settings) mutable {
         auto permissionState = [](UNAuthorizationStatus status) {
             switch (status) {
             case UNAuthorizationStatusNotDetermined: return WebCore::PushPermissionState::Prompt;
@@ -817,7 +820,7 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
     RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     UNAuthorizationOptions options = UNAuthorizationOptionBadge | UNAuthorizationOptionAlert | UNAuthorizationOptionSound;
 
-    auto blockPtr = makeBlockPtr([originString = origin.toString(), replySender = WTFMove(replySender)](BOOL granted, NSError *error) mutable {
+    auto blockPtr = makeBlockPtr([originString = crossThreadCopy(origin.toString()), replySender = WTFMove(replySender)](BOOL granted, NSError *error) mutable {
         if (error)
             RELEASE_LOG_ERROR(Push, "Failed to request push permission for %{sensitive}s: %{public}@", originString.utf8().data(), error);
         else
@@ -862,9 +865,14 @@ void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::Secur
     UNMutableNotificationContent *content = [UNMutableNotificationContent new];
     content.badge = appBadge ? [NSNumber numberWithLongLong:*appBadge] : nil;
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:NSUUID.UUID.UUIDString content:content trigger:nil];
+    RetainPtr debugDescription = (NSString *)connection.subscriptionSetIdentifier().debugDescription();
     [center addNotificationRequest:request withCompletionHandler:^(NSError *error) {
-        if (error)
-            WEBPUSHDAEMON_RELEASE_LOG_ERROR(Push, "Error attempting to set badge count for web app %s", connection.pushPartitionString().utf8().data());
+        if (error) {
+            RELEASE_LOG_ERROR(Push, "Error attempting to set badge count for web app %{public}@", debugDescription.get());
+            return;
+        }
+
+        RELEASE_LOG(Push, "%{public}s badge count for web app %{public}@", appBadge ? "Set" : "Reset", debugDescription.get());
     }];
 #endif // PLATFORM(MAC)
 }
