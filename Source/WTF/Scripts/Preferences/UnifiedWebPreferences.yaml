@@ -980,7 +980,7 @@ CSSAnchorPositioningEnabled:
 
 CSSBackgroundClipBorderAreaEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS background-clip: border-area"
   humanReadableDescription: "Enable the border-area value for background-clip"

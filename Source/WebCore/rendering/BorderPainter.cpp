@@ -41,6 +41,86 @@
 
 namespace WebCore {
 
+static bool borderStyleFillsBorderArea(BorderStyle style)
+{
+    switch (style) {
+    case BorderStyle::None:
+    case BorderStyle::Hidden:
+    case BorderStyle::Inset:
+    case BorderStyle::Groove:
+    case BorderStyle::Outset:
+    case BorderStyle::Ridge:
+    case BorderStyle::Solid:
+        return true;
+    case BorderStyle::Dotted:
+    case BorderStyle::Dashed:
+    case BorderStyle::Double:
+        return false;
+    }
+    return true;
+}
+
+static bool styleRequiresClipPolygon(BorderStyle style)
+{
+    switch (style) {
+    case BorderStyle::None:
+    case BorderStyle::Hidden:
+    case BorderStyle::Inset:
+    case BorderStyle::Groove:
+    case BorderStyle::Outset:
+    case BorderStyle::Ridge:
+    case BorderStyle::Solid:
+    case BorderStyle::Double:
+        return false;
+    case BorderStyle::Dotted:
+    case BorderStyle::Dashed:
+        // These are drawn with a stroke, so we have to clip to get corner miters.
+        return true;
+    }
+
+    return false;
+}
+
+static bool borderStyleHasInnerDetail(BorderStyle style)
+{
+    switch (style) {
+    case BorderStyle::None:
+    case BorderStyle::Hidden:
+    case BorderStyle::Inset:
+    case BorderStyle::Outset:
+    case BorderStyle::Solid:
+    case BorderStyle::Dotted:
+    case BorderStyle::Dashed:
+        return false;
+
+    case BorderStyle::Groove:
+    case BorderStyle::Ridge:
+    case BorderStyle::Double:
+        return true;
+    }
+
+    return false;
+}
+
+static bool borderStyleIsDottedOrDashed(BorderStyle style)
+{
+    return style == BorderStyle::Dotted || style == BorderStyle::Dashed;
+}
+
+static bool decorationHasAllSimpleEdges(const RectEdges<BorderEdge>& edges)
+{
+    for (auto side : allBoxSides) {
+        auto& currEdge = edges.at(side);
+
+        if (!currEdge.widthForPainting())
+            continue;
+
+        if (!borderStyleFillsBorderArea(currEdge.style()))
+            return false;
+    }
+    return true;
+}
+
 struct BorderPainter::Sides {
     RoundedRect outerBorder;
     RoundedRect innerBorder;
@@ -90,6 +170,31 @@ bool BorderPainter::allCornersClippedOut(const RoundedRect& border, const Layout
         return false;
 
     return true;
+}
+
+std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, const RenderStyle& style, float deviceScaleFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+{
+    auto edges = borderEdges(style, deviceScaleFactor, includeLogicalLeftEdge, includeLogicalRightEdge);
+    if (!decorationHasAllSimpleEdges(edges))
+        return std::nullopt;
+
+    auto outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    auto innerBorder = style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+
+    Path path;
+    auto pixelSnappedOuterBorder = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (pixelSnappedOuterBorder.isRounded())
+        path.addRoundedRect(pixelSnappedOuterBorder);
+    else
+        path.addRect(pixelSnappedOuterBorder.rect());
+
+    auto pixelSnappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (pixelSnappedInnerBorder.isRounded())
+        path.addRoundedRect(pixelSnappedInnerBorder);
+    else
+        path.addRect(pixelSnappedInnerBorder.rect());
+
+    return path;
 }
 
 static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdges& edges, BoxSide side)
@@ -178,7 +283,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect unadjustedInnerBorder = (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge) : innerBorder;
     auto edges = borderEdges(style, document().deviceScaleFactor(), m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder), includeLogicalLeftEdge, includeLogicalRightEdge);
-    auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
+    bool haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     if (haveAllSolidEdges && outerBorder.isRounded() && allCornersClippedOut(outerBorder, m_paintInfo.rect))
         outerBorder.setRadii(RoundedRect::Radii());
@@ -557,26 +662,6 @@ void BorderPainter::paintTranslucentBorderSides(const RoundedRect& outerBorder, 
 static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const LayoutSize& secondRadius)
 {
     return !firstRadius.isEmpty() || !secondRadius.isEmpty();
-}
-
-inline bool styleRequiresClipPolygon(BorderStyle style)
-{
-    return style == BorderStyle::Dotted || style == BorderStyle::Dashed; // These are drawn with a stroke, so we have to clip to get corner miters.
-}
-
-static bool borderStyleFillsBorderArea(BorderStyle style)
-{
-    return !(style == BorderStyle::Dotted || style == BorderStyle::Dashed || style == BorderStyle::Double);
-}
-
-static bool borderStyleHasInnerDetail(BorderStyle style)
-{
-    return style == BorderStyle::Groove || style == BorderStyle::Ridge || style == BorderStyle::Double;
-}
-
-static bool borderStyleIsDottedOrDashed(BorderStyle style)
-{
-    return style == BorderStyle::Dotted || style == BorderStyle::Dashed;
 }
 
 // BorderStyle::Outset darkens the bottom and right (and maybe lightens the top and left)
@@ -1411,6 +1496,7 @@ bool BorderPainter::shouldAntialiasLines(GraphicsContext& context)
     return !context.getCTM().isIdentityOrTranslationOrFlipped();
 }
 
+// This never changes the alpha of the color, so it's OK that callers don't check for PaintBehavior::ForceBlackBorder.
 Color BorderPainter::calculateBorderStyleColor(const BorderStyle& style, const BoxSide& side, const Color& color)
 {
     ASSERT(style == BorderStyle::Inset || style == BorderStyle::Outset);
