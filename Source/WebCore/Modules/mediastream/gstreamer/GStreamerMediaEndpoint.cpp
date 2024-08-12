@@ -107,6 +107,10 @@ bool GStreamerMediaEndpoint::initializePipeline()
     if (!m_webrtcBin)
         return false;
 
+    auto rtpBin = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_webrtcBin.get()), "rtpbin"));
+    if (gstObjectHasProperty(rtpBin.get(), "add-reference-timestamp-meta"))
+        g_object_set(rtpBin.get(), "add-reference-timestamp-meta", TRUE, nullptr);
+
     g_signal_connect(GST_BIN_CAST(m_webrtcBin.get()), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin*, GstElement* element, gpointer) {
         GUniquePtr<char> elementName(gst_element_get_name(element));
 

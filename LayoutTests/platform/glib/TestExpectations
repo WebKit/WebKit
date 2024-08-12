@@ -1161,7 +1161,6 @@ webkit.org/b/244776 webkit.org/b/230028 media/media-source/media-source-seek-twi
 
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
-imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 

@@ -25,7 +25,6 @@
 #include "GStreamerCommon.h"
 #include "GStreamerWebRTCUtils.h"
 #include "VideoFrameGStreamer.h"
-#include "VideoFrameMetadataGStreamer.h"
 #include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_incoming_video_debug);
@@ -40,31 +39,6 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_video_debug, "webkitwebrtcincomingvideo", 0, "WebKit WebRTC incoming video");
     });
-}
-
-bool RealtimeIncomingVideoSourceGStreamer::setBin(const GRefPtr<GstElement>& bin)
-{
-    if (!RealtimeIncomingSourceGStreamer::setBin(bin))
-        return false;
-
-    auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(this->bin()), "sink"));
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
-    gst_pad_add_probe(sinkPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
-        auto videoFrameTimeMetadata = std::make_optional<VideoFrameTimeMetadata>({ });
-        videoFrameTimeMetadata->receiveTime = MonotonicTime::now().secondsSinceEpoch();
-
-        auto* buffer = GST_BUFFER_CAST(GST_PAD_PROBE_INFO_DATA(info));
-        {
-            GstMappedRtpBuffer rtpBuffer(buffer, GST_MAP_READ);
-            if (rtpBuffer)
-                videoFrameTimeMetadata->rtpTimestamp = gst_rtp_buffer_get_timestamp(rtpBuffer.mappedData());
-        }
-
-        buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(videoFrameTimeMetadata));
-        GST_PAD_PROBE_INFO_DATA(info) = buffer;
-        return GST_PAD_PROBE_OK;
-    }, nullptr, nullptr);
-    return true;
 }
 
 const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::settings()
