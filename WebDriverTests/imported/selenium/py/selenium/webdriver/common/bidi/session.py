@@ -16,4 +16,27 @@
 # under the License.
 
 
-__version__ = "4.31.1"
+def session_subscribe(*events, browsing_contexts=[]):
+    cmd_dict = {
+        "method": "session.subscribe",
+        "params": {
+            "events": events,
+        },
+    }
+    if browsing_contexts:
+        cmd_dict["params"]["browsingContexts"] = browsing_contexts
+    _ = yield cmd_dict
+    return None
+
+
+def session_unsubscribe(*events, browsing_contexts=[]):
+    cmd_dict = {
+        "method": "session.unsubscribe",
+        "params": {
+            "events": events,
+        },
+    }
+    if browsing_contexts:
+        cmd_dict["params"]["browsingContexts"] = browsing_contexts
+    _ = yield cmd_dict
+    return None
