@@ -236,6 +236,20 @@ void SpeculativeJIT::compileFunction()
         branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
 
         getArityPadding(vm(), numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
+        subPtr(stackPointerRegister, TrustedImm32(static_cast<int32_t>(prologueStackPointerDelta())), GPRInfo::regT3); // Initially expected callFramePointer after prologue.
+        add32(TrustedImm32(CallFrame::headerSizeInRegisters), GPRInfo::argumentGPR2);
+
+        // Check to see if we have extra slots we can use
+        //
+        // argumentGPR0's padding is `align2(numParameters + CallFrame::headerSizeInRegisters) - (argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`
+        // And extra slot means the above padding is an odd number. And after filling extra slot, it becomes +1, thus even number.
+        static_assert(stackAlignmentRegisters() == 2);
+        auto noExtraSlot = branchTest32(Zero, GPRInfo::argumentGPR0, TrustedImm32(stackAlignmentRegisters() - 1));
+        storeTrustedValue(jsUndefined(), BaseIndex(GPRInfo::regT3, GPRInfo::argumentGPR2, TimesEight));
+        add32(TrustedImm32(1), GPRInfo::argumentGPR2);
+        and32(TrustedImm32(-stackAlignmentRegisters()), GPRInfo::argumentGPR0);
+        branchTest32(Zero, GPRInfo::argumentGPR0).linkTo(entryLabel, this);
+        noExtraSlot.link(this);
 
 #if CPU(X86_64)
         pop(GPRInfo::argumentGPR1);

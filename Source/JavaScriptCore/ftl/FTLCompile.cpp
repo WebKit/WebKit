@@ -157,6 +157,20 @@ void compile(State& state, Safepoint::Result& safepointResult)
             unsigned numberOfParameters = codeBlock->numParameters();
             CCallHelpers::JumpList stackOverflowWithEntry;
             jit.getArityPadding(vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
+            jit.subPtr(CCallHelpers::stackPointerRegister, CCallHelpers::TrustedImm32(static_cast<int32_t>(prologueStackPointerDelta())), GPRInfo::regT3); // Initially expected callFramePointer after prologue.
+            jit.add32(CCallHelpers::TrustedImm32(CallFrame::headerSizeInRegisters), GPRInfo::argumentGPR2);
+
+            // Check to see if we have extra slots we can use
+            //
+            // argumentGPR0's padding is `align2(numParameters + CallFrame::headerSizeInRegisters) - (argumentCountIncludingThis + CallFrame::headerSizeInRegisters)`
+            // And extra slot means the above padding is an odd number. And after filling extra slot, it becomes +1, thus even number.
+            static_assert(stackAlignmentRegisters() == 2);
+            auto noExtraSlot = jit.branchTest32(CCallHelpers::Zero, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1));
+            jit.storeTrustedValue(jsUndefined(), CCallHelpers::BaseIndex(GPRInfo::regT3, GPRInfo::argumentGPR2, CCallHelpers::TimesEight));
+            jit.add32(CCallHelpers::TrustedImm32(1), GPRInfo::argumentGPR2);
+            jit.and32(CCallHelpers::TrustedImm32(-stackAlignmentRegisters()), GPRInfo::argumentGPR0);
+            jit.branchTest32(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(mainPathLabel, &jit);
+            noExtraSlot.link(&jit);
 
 #if CPU(X86_64)
             jit.pop(GPRInfo::argumentGPR1);
