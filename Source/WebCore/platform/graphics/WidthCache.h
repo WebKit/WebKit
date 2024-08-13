@@ -135,11 +135,9 @@ public:
 
     float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, GlyphOverflow* glyphOverflow)
     {
+        UNUSED_PARAM(hasWordSpacingOrLetterSpacing);
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
-            return nullptr;
-        // Word spacing and letter spacing can change the width of a word.
-        if (hasWordSpacingOrLetterSpacing)
             return nullptr;
         // Since this is just a width cache, we don't have enough information to satisfy glyph queries.
         if (glyphOverflow)
