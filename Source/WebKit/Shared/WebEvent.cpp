@@ -31,9 +31,12 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebKeyboardEvent.h"
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebEvent);
 
 WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, WallTime timestamp, WTF::UUID authorizationToken)
     : m_type(type)

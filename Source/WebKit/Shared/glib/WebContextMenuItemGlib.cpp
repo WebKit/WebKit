@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebContextMenuItemGlib.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(CONTEXT_MENUS)
 #include "APIObject.h"
 #include <gio/gio.h>
@@ -36,6 +38,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextMenuItemGlib);
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
     : WebContextMenuItemData(type, action, String { title }, enabled, checked)

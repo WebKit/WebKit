@@ -35,8 +35,11 @@
 #import "CoreIPCPlistObject.h"
 #import "CoreIPCString.h"
 #import <wtf/Assertions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCPlistDictionary);
 
 CoreIPCPlistDictionary::CoreIPCPlistDictionary(NSDictionary *dictionary)
 {

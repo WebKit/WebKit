@@ -27,6 +27,7 @@
 #import "CoreIPCNSURLRequest.h"
 
 #import "GeneratedSerializers.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
@@ -63,6 +64,8 @@ namespace WebKit {
 
 #define SET_DICT_FROM_PRIMITIVE(KEY, CLASS, PRIMITIVE) \
     [dict setObject:[NSNumber numberWith##PRIMITIVE:m_data.KEY] forKey:@#KEY]
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLRequest);
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 {

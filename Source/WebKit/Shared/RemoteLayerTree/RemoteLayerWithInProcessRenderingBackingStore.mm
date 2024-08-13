@@ -40,6 +40,7 @@
 #import <WebCore/ImageBufferPixelFormat.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -142,7 +143,7 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
 }
 
 class ImageBufferBackingStoreFlusher final : public ThreadSafeImageBufferSetFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBufferBackingStoreFlusher);
     WTF_MAKE_NONCOPYABLE(ImageBufferBackingStoreFlusher);
 public:
     static std::unique_ptr<ImageBufferBackingStoreFlusher> create(std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> imageBufferFlusher)

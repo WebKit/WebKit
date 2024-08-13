@@ -36,6 +36,7 @@
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
@@ -82,8 +83,8 @@ enum class LayerContentsType : uint8_t {
 };
 
 class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStore);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStore(PlatformCALayerRemote&);
     virtual ~RemoteLayerBackingStore();
@@ -222,8 +223,8 @@ protected:
 // The subset of RemoteLayerBackingStore that gets serialized into the UI
 // process, and gets applied to the CALayer.
 class RemoteLayerBackingStoreProperties {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStoreProperties);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreProperties);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStoreProperties() = default;
     RemoteLayerBackingStoreProperties(RemoteLayerBackingStoreProperties&&) = default;

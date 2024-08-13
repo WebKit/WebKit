@@ -29,6 +29,7 @@
 #include "ProcessThrottler.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,7 @@ class WebPage;
 class WebProcessProxy;
 
 class RemoteObjectRegistry : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteObjectRegistry);
 public:
     virtual ~RemoteObjectRegistry();
 

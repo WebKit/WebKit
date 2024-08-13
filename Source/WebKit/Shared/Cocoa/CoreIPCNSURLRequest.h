@@ -37,6 +37,7 @@
 #import "CoreIPCURL.h"
 
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 
 OBJC_CLASS NSURLRequest;
@@ -148,7 +149,7 @@ struct CoreIPCNSURLRequestData {
 };
 
 class CoreIPCNSURLRequest {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CoreIPCNSURLRequest);
 public:
     CoreIPCNSURLRequest(NSURLRequest *);
     CoreIPCNSURLRequest(CoreIPCNSURLRequestData&&);

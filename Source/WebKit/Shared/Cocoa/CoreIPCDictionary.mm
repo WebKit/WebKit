@@ -25,12 +25,15 @@
 
 #import "config.h"
 #import "CoreIPCDictionary.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 
 #import "CoreIPCTypes.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCDictionary);
 
 CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
 {
