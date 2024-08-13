@@ -34,6 +34,7 @@
 #include <wtf/Range.h>
 #include <wtf/RangeSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -77,7 +78,7 @@ class WebWheelEvent;
 struct WebHitTestResultData;
 
 class PDFPlugin final : public PDFPluginBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFPlugin);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPlugin);
 public:
     static bool pdfKitLayerControllerIsAvailable();

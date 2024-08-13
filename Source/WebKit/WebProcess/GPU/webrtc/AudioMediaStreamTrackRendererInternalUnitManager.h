@@ -30,6 +30,7 @@
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/SharedMemory.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -54,7 +55,7 @@ namespace WebKit {
 class AudioMediaStreamTrackRendererInternalUnitManagerProxy;
 
 class AudioMediaStreamTrackRendererInternalUnitManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererInternalUnitManager);
 public:
     AudioMediaStreamTrackRendererInternalUnitManager() = default;
 

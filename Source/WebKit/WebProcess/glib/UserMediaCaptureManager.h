@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class CaptureDevice;
@@ -45,7 +46,7 @@ namespace WebKit {
 class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaCaptureManager);
     WTF_MAKE_NONCOPYABLE(UserMediaCaptureManager);
 public:
     explicit UserMediaCaptureManager(WebProcess&);

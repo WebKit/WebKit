@@ -36,11 +36,14 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCaptureSampleManager);
 
 RemoteCaptureSampleManager::RemoteCaptureSampleManager()
     : m_queue(WorkQueue::create("RemoteCaptureSampleManager"_s, WorkQueue::QOS::UserInteractive))
@@ -170,6 +173,8 @@ void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdenti
     auto videoFrame = VideoFrameCV::create(presentationTime, mirrored, rotation, WTFMove(pixelBuffer));
     iterator->value->remoteVideoFrameAvailable(videoFrame.get(), metadata);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteCaptureSampleManagerRemoteAudio, RemoteCaptureSampleManager::RemoteAudio);
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)
     : m_source(WTFMove(source))

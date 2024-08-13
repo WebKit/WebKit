@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class WebPage;
 class WebAutomationDOMWindowObserver;
 
 class WebAutomationSessionProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebAutomationSessionProxy);
 public:
     WebAutomationSessionProxy(const String& sessionIdentifier);
     ~WebAutomationSessionProxy();

@@ -30,13 +30,14 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUQuerySet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteQuerySetProxy final : public WebCore::WebGPU::QuerySet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteQuerySetProxy);
 public:
     static Ref<RemoteQuerySetProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

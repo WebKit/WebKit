@@ -32,6 +32,7 @@
 #include "RemoteAudioSourceProviderManagerMessages.h"
 #include "SharedCARingBuffer.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
@@ -113,6 +114,8 @@ void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifi
     }
     iterator->value->audioSamplesAvailable(startFrame, numberOfFrames);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteAudioSourceProviderManagerRemoteAudio, RemoteAudioSourceProviderManager::RemoteAudio);
 
 RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSourceProvider>&& provider)
     : m_provider(WTFMove(provider))

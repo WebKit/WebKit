@@ -30,13 +30,14 @@
 #include "RemoteTextureProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUTextureView.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteTextureViewProxy final : public WebCore::WebGPU::TextureView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteTextureViewProxy);
 public:
     static Ref<RemoteTextureViewProxy> create(RemoteTextureProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

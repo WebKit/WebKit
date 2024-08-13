@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -38,7 +39,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageTesting : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageTesting);
     WTF_MAKE_NONCOPYABLE(WebPageTesting);
 public:
     explicit WebPageTesting(WebPage&);

@@ -33,13 +33,13 @@ ALLOW_COMMA_BEGIN
 #include <webrtc/api/async_dns_resolver.h>
 ALLOW_COMMA_END
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class LibWebRTCDnsResolverFactory final : public webrtc::AsyncDnsResolverFactoryInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCDnsResolverFactory);
 public:
     class Resolver : public webrtc::AsyncDnsResolverInterface {
     public:

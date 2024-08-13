@@ -35,8 +35,11 @@
 #include "StreamClientConnection.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::ShapeDetection {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBarcodeDetectorProxy);
 
 Ref<RemoteBarcodeDetectorProxy> RemoteBarcodeDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
 {

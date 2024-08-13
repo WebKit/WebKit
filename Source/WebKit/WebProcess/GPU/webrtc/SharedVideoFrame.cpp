@@ -37,6 +37,7 @@
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/VideoFrameLibWebRTC.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBWEBRTC)
 
@@ -53,6 +54,8 @@ ALLOW_COMMA_END
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedVideoFrameWriter);
 
 SharedVideoFrameWriter::SharedVideoFrameWriter()
     : m_semaphore(makeUniqueRef<IPC::Semaphore>())
@@ -191,6 +194,8 @@ void SharedVideoFrameWriter::disable()
     m_isDisabled = true;
     m_semaphore->signal();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedVideoFrameReader);
 
 SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, const ProcessIdentity& resourceOwner, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
     : m_objectHeap(WTFMove(objectHeap))

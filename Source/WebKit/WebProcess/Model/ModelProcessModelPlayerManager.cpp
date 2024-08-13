@@ -33,8 +33,11 @@
 #include "WebPage.h"
 #include <WebCore/ModelPlayerClient.h>
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerManager);
 
 Ref<ModelProcessModelPlayerManager> ModelProcessModelPlayerManager::create()
 {

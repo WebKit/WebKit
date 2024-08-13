@@ -37,6 +37,7 @@
 #include <WebCore/ScrollView.h>
 #include <WebCore/TiledBacking.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // Subclasses
 #if PLATFORM(COCOA)
@@ -51,6 +52,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingArea);
 
 std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
 {

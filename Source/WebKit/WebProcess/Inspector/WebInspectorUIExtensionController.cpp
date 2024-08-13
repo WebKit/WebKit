@@ -40,8 +40,11 @@
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorUIExtensionController);
 
 WebInspectorUIExtensionController::WebInspectorUIExtensionController(WebCore::InspectorFrontendClient& inspectorFrontend, WebCore::PageIdentifier pageIdentifier)
     : m_frontendClient(inspectorFrontend)

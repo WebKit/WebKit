@@ -30,13 +30,14 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUSampler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteSamplerProxy final : public WebCore::WebGPU::Sampler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSamplerProxy);
 public:
     static Ref<RemoteSamplerProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

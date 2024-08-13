@@ -36,6 +36,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Timer.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS PDFAction;
 OBJC_CLASS PDFDestination;
@@ -103,7 +104,7 @@ enum class AnnotationSearchDirection : bool {
 };
 
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UnifiedPDFPlugin);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UnifiedPDFPlugin);
 
     friend class AsyncPDFRenderer;

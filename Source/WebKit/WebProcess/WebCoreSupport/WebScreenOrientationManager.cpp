@@ -31,8 +31,11 @@
 #include "WebProcess.h"
 #include "WebScreenOrientationManagerMessages.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebScreenOrientationManager);
 
 WebScreenOrientationManager::WebScreenOrientationManager(WebPage& page)
     : m_page(page)

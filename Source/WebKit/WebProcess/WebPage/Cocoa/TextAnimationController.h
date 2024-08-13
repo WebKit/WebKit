@@ -29,8 +29,8 @@
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/SimpleRange.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 
@@ -69,7 +69,7 @@ struct ReplacedRangeAndString {
 };
 
 class TextAnimationController final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextAnimationController);
     WTF_MAKE_NONCOPYABLE(TextAnimationController);
 
 public:

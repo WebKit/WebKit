@@ -31,10 +31,13 @@
 #include "WebPageProxyMessages.h"
 #include "WebSpeechSynthesisVoice.h"
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSpeechSynthesisClient);
 
 const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisClient::voiceList()
 {

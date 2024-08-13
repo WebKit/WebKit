@@ -28,11 +28,12 @@
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebMessagePortChannelProvider final : public WebCore::MessagePortChannelProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebMessagePortChannelProvider);
 public:
     static WebMessagePortChannelProvider& singleton();
 

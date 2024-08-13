@@ -35,6 +35,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -62,7 +63,7 @@ class WebInspectorUI;
 
 class WebInspectorUIExtensionController
     : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorUIExtensionController);
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionController);
 public:
     WebInspectorUIExtensionController(WebCore::InspectorFrontendClient&, WebCore::PageIdentifier);

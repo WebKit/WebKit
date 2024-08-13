@@ -52,8 +52,11 @@
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
 #include "RemoteTextureViewProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
 
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Adapter& adapter)
 {

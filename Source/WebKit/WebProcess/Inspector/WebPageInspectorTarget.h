@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorTarget.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -35,7 +36,7 @@ class WebPage;
 class WebPageInspectorTargetFrontendChannel;
 
 class WebPageInspectorTarget final : public Inspector::InspectorTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTarget);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTarget);
 public:
     explicit WebPageInspectorTarget(WebPage&);

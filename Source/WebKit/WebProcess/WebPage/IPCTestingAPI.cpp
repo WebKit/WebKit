@@ -65,6 +65,7 @@
 #include <wtf/PageBlock.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit::IPCTestingAPI {
@@ -348,7 +349,7 @@ private:
 };
 
 class JSMessageListener final : public IPC::MessageObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(JSMessageListener);
 public:
     enum class Type { Incoming, Outgoing };
 
@@ -2965,6 +2966,8 @@ JSValueRef JSIPC::processTargets(JSContextRef context, JSObjectRef thisObject, J
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     return toRef(vm, processTargetsObject);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSMessageListener);
 
 JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSC::JSGlobalObject* globalObject, JSObjectRef callback)
     : m_jsIPC(jsIPC)

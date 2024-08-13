@@ -29,13 +29,14 @@
 
 #include <WebCore/VideoDecoder.h>
 #include <WebCore/VideoEncoder.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebProcess;
 
 class RemoteVideoCodecFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoCodecFactory);
 public:
     explicit RemoteVideoCodecFactory(WebProcess&);
     ~RemoteVideoCodecFactory();

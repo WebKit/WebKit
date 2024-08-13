@@ -32,6 +32,7 @@
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/Scrollbar.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -39,6 +40,8 @@ static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
 static constexpr Seconds deltaHistoryMaximumInterval = 150_ms;
 static constexpr WebCore::FramesPerSecond idealCurveFrameRate = 60;
 static constexpr Seconds idealCurveFrameInterval = 1_s / idealCurveFrameRate;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MomentumEventDispatcher);
 
 MomentumEventDispatcher::MomentumEventDispatcher(Client& client)
     : m_client(client)

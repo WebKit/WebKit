@@ -38,8 +38,11 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSocket);
 
 LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, WebCore::ScriptExecutionContextIdentifier contextIdentifier, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)

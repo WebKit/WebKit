@@ -39,6 +39,7 @@
 #include <WebCore/PlatformScreen.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WTF {
@@ -71,7 +72,7 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
 class DrawingArea : public IPC::MessageReceiver, public WebCore::DisplayRefreshMonitorFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DrawingArea);
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
 public:

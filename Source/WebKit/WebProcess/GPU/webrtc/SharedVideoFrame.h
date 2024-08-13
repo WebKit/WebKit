@@ -35,6 +35,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
@@ -64,7 +65,7 @@ struct SharedVideoFrame {
 };
 
 class SharedVideoFrameWriter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SharedVideoFrameWriter);
 public:
     SharedVideoFrameWriter();
 
@@ -98,7 +99,7 @@ private:
 };
 
 class SharedVideoFrameReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SharedVideoFrameReader);
 public:
     ~SharedVideoFrameReader();
 

@@ -31,6 +31,7 @@
 #include "EditingRange.h"
 #include "MessageReceiver.h"
 #include <WebCore/SimpleRange.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -48,7 +49,7 @@ namespace WebKit {
 class WebPage;
 
 class TextCheckingControllerProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextCheckingControllerProxy);
 public:
     TextCheckingControllerProxy(WebPage&);
     ~TextCheckingControllerProxy();

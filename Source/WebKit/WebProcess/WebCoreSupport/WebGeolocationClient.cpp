@@ -33,9 +33,12 @@
 #include "WebProcess.h"
 #include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationPositionData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationClient);
 
 WebGeolocationClient::~WebGeolocationClient()
 {

@@ -34,8 +34,11 @@
 #include "WCUpdateInfo.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWCLayerTreeHostProxy);
 
 RemoteWCLayerTreeHostProxy::RemoteWCLayerTreeHostProxy(WebPage& page, bool usesOffscreenRendering)
     : m_page(page)

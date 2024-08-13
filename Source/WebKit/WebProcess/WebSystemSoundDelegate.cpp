@@ -28,8 +28,11 @@
 
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSystemSoundDelegate);
 
 void WebSystemSoundDelegate::systemBeep()
 {

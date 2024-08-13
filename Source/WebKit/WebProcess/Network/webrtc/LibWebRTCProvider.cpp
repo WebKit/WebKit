@@ -41,6 +41,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_COMMA_BEGIN
 
@@ -98,7 +99,7 @@ void LibWebRTCProvider::setVP9HardwareSupportForTesting(std::optional<bool> valu
 #endif
 
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RTCSocketFactory);
 public:
     RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, RegistrableDomain&&);
 
@@ -121,6 +122,8 @@ private:
     bool m_isRelayDisabled { false };
     RegistrableDomain m_domain;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSocketFactory);
 
 RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain)
     : m_pageIdentifier(pageIdentifier)

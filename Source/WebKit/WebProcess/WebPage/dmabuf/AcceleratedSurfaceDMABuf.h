@@ -33,6 +33,7 @@
 #include "MessageReceiver.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
@@ -96,7 +97,7 @@ private:
     void releaseUnusedBuffersTimerFired();
 
     class RenderTarget {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(RenderTarget);
     public:
         virtual ~RenderTarget();
 

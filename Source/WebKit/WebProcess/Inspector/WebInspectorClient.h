@@ -28,6 +28,7 @@
 #include <WebCore/InspectorClient.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -42,7 +43,7 @@ class WebPage;
 class RepaintIndicatorLayerClient;
 
 class WebInspectorClient : public WebCore::InspectorClient, private WebCore::PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorClient);
 friend class RepaintIndicatorLayerClient;
 public:
     WebInspectorClient(WebPage*);

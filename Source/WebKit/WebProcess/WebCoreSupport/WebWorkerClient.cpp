@@ -34,6 +34,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
 #include "RemoteGraphicsContextGLProxy.h"
@@ -114,6 +115,8 @@ RefPtr<WebCore::WebGPU::GPU> GPUProcessWebWorkerClient::createGPUForWebGPU() con
 #endif
 
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebWorkerClient);
 
 UniqueRef<WebWorkerClient> WebWorkerClient::create(Page& page, SerialFunctionDispatcher& dispatcher)
 {

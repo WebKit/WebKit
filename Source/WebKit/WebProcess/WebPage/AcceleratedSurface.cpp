@@ -28,6 +28,7 @@
 
 #include "WebPage.h"
 #include <WebCore/PlatformDisplay.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(WPE_RENDERER)
 #include "AcceleratedSurfaceLibWPE.h"
@@ -45,6 +46,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedSurface);
 
 std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
 {

@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 #if !HAVE(DISPLAY_LINK)
 #include "ThreadedDisplayRefreshMonitor.h"
@@ -70,7 +71,7 @@ class LayerTreeHost
 #endif
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LayerTreeHost);
 public:
 #if HAVE(DISPLAY_LINK)
     explicit LayerTreeHost(WebPage&);
