@@ -728,7 +728,7 @@ void DataDetection::detectContentInFrame(LocalFrame* frame, OptionSet<DataDetect
 
     workQueue().dispatch([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), document = Ref { *document }, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get())) {
-            callOnMainRunLoop([completionHandler = WTFMove(completionHandler)]() mutable {
+            callOnMainRunLoop([scanner = WTFMove(scanner), scanQuery = WTFMove(scanQuery), document = WTFMove(document), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(nil);
             });
             return;
