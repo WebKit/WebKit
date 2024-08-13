@@ -2950,18 +2950,18 @@ private:
                 if (base1 != base2 || !address->child(1)->hasIntPtr())
                     return false;
                 intptr_t offset = address->child(1)->asIntPtr();
-                Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
-                if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
+                Value::OffsetType truncatedOffset = static_cast<Value::OffsetType>(offset);
+                if (truncatedOffset != offset || !Arg::isValidIncrementIndexForm(truncatedOffset))
                     return false;
                 if (m_locked.contains(address) || m_locked.contains(base1))
                     return false;
 
                 Arg incrementArg = Arg();
                 if (memory->offset()) {
-                    if (smallOffset == memory->offset())
-                        incrementArg = Arg::preIndex(tmp(address), smallOffset);
+                    if (truncatedOffset == memory->offset())
+                        incrementArg = Arg::preIndex(tmp(address), truncatedOffset);
                 } else
-                    incrementArg = Arg::postIndex(tmp(address), smallOffset);
+                    incrementArg = Arg::postIndex(tmp(address), truncatedOffset);
 
                 if (incrementArg) {
                     append(relaxedMoveForType(address->type()), tmp(address->child(0)), tmp(address));
@@ -3881,18 +3881,18 @@ private:
                 if (base1 != base2 || !address->child(1)->hasIntPtr())
                     return false;
                 intptr_t offset = address->child(1)->asIntPtr();
-                Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
-                if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
+                Value::OffsetType truncatedOffset = static_cast<Value::OffsetType>(offset);
+                if (truncatedOffset != offset || !Arg::isValidIncrementIndexForm(truncatedOffset))
                     return false;
                 if (m_locked.contains(address) || m_locked.contains(base1) || m_locked.contains(value))
                     return false;
 
                 Arg incrementArg = Arg();
                 if (memory->offset()) {
-                    if (smallOffset == memory->offset())
-                        incrementArg = Arg::preIndex(tmp(address), smallOffset);
+                    if (truncatedOffset == memory->offset())
+                        incrementArg = Arg::preIndex(tmp(address), truncatedOffset);
                 } else
-                    incrementArg = Arg::postIndex(tmp(address), smallOffset);
+                    incrementArg = Arg::postIndex(tmp(address), truncatedOffset);
 
                 if (incrementArg) {
                     append(relaxedMoveForType(address->type()), tmp(base1), tmp(address));

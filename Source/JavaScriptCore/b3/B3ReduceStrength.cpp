@@ -2155,11 +2155,11 @@ private:
                 intptr_t offset = address->child(1)->asIntPtr();
                 if (!sumOverflows<intptr_t>(offset, memory->offset())) {
                     offset += memory->offset();
-                    Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
-                    if (smallOffset == offset) {
+                    Value::OffsetType truncatedOffset = static_cast<Value::OffsetType>(offset);
+                    if (truncatedOffset == offset) {
                         address = address->child(0);
                         memory->lastChild() = address;
-                        memory->setOffset(smallOffset);
+                        memory->setOffset(truncatedOffset);
                         m_changed = true;
                     }
                 }
