@@ -1525,7 +1525,7 @@ public:
 
     LayoutRect absoluteEventHandlerBounds(bool&) final;
 
-    bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
+    bool visualUpdatesAllowed() const { return m_visualUpdatesPreventedReasons.isEmpty(); }
 
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
@@ -2055,7 +2055,18 @@ private:
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
 
     void setVisualUpdatesAllowed(ReadyState);
-    void setVisualUpdatesAllowed(bool);
+
+    enum class VisualUpdatesPreventedReason {
+        Client         = 1 << 0,
+        ReadyState     = 1 << 1,
+        Suspension     = 1 << 2,
+    };
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState }; }
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::Client, VisualUpdatesPreventedReason::ReadyState }; }
+
+    void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason);
+    void removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPreventedReason>);
+
     void visualUpdatesSuppressionTimerFired();
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes.add(listenerType); }
@@ -2503,6 +2514,8 @@ private:
 
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
+    OptionSet<VisualUpdatesPreventedReason> m_visualUpdatesPreventedReasons;
+
     FocusTrigger m_latestFocusTrigger { };
 
 #if ENABLE(DOM_AUDIO_SESSION)
@@ -2581,7 +2594,6 @@ private:
     bool m_isSuspended { false };
 
     bool m_scheduledTasksAreSuspended { false };
-    bool m_visualUpdatesAllowed { true };
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
     bool m_userDidInteractWithPage { false };
@@ -2641,6 +2653,7 @@ private:
     bool m_wasRemovedLastRefCalled { false };
 
     bool m_hasBeenRevealed { false };
+    bool m_visualUpdatesAllowedChangeRequiresLayoutMilestones { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

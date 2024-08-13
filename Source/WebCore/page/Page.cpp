@@ -4043,6 +4043,8 @@ void Page::forEachRenderableDocument(const Function<void(Document&)>& functor) c
             continue;
         if (document->renderingIsSuppressedForViewTransition())
             continue;
+        if (!document->visualUpdatesAllowed())
+            continue;
         documents.append(*document);
     }
     for (auto& document : documents)
