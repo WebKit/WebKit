@@ -1381,18 +1381,26 @@ auto PDFDiscretePresentationController::pdfPositionForCurrentView(bool preserveP
     if (!preservePosition)
         return { };
 
-    if (!m_plugin->documentLayout().hasLaidOutPDFDocument())
+    auto& documentLayout = m_plugin->documentLayout();
+    if (!documentLayout.hasLaidOutPDFDocument())
         return { };
 
     auto visibleRow = this->visibleRow();
     if (!visibleRow)
         return { };
 
-    return VisiblePDFPosition { visibleRow->pages[0], { } };
+    auto pageIndex = visibleRow->pages[0];
+    auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+    auto topLeftInDocumentSpace = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint { });
+    auto pagePoint = documentLayout.documentToPDFPage(FloatPoint { pageBounds.center().x(), topLeftInDocumentSpace.y() }, pageIndex);
+
+    return VisiblePDFPosition { pageIndex, pagePoint };
 }
 
 void PDFDiscretePresentationController::restorePDFPosition(const VisiblePDFPosition& info)
 {
+    // FIXME: This needs to respect the point as well, in order for transitions from
+    // scrolling mode to discrete mode to not lose your place in the page.
     ensurePageIsVisible(info.pageIndex);
 }
 
