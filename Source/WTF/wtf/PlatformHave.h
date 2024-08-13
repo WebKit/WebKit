@@ -278,7 +278,7 @@
 #define HAVE_FLOAT16_INSTRUCTION 1
 #endif
 
-#if PLATFORM(COCOA) && (CPU(ARM64) || CPU(X86_64))
+#if OS(DARWIN) && CPU(ARM64)
 #define HAVE_FLOAT16 1
 #endif
 
