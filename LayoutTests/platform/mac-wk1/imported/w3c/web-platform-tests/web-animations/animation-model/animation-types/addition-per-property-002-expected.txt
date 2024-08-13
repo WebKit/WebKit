@@ -254,8 +254,8 @@ PASS text-box-edge (type: discrete) has testAddition function
 PASS text-box-edge: "text" onto "leading"
 PASS text-box-edge: "leading" onto "text"
 PASS text-box-trim (type: discrete) has testAddition function
-PASS text-box-trim: "start" onto "none"
-PASS text-box-trim: "none" onto "start"
+PASS text-box-trim: "trim-start" onto "none"
+PASS text-box-trim: "none" onto "trim-start"
 PASS text-decoration (type: discrete) has testAddition function
 PASS text-decoration: "overline" onto "underline"
 PASS text-decoration: "underline" onto "overline"

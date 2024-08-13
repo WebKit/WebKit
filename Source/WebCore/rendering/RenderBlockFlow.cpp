@@ -740,8 +740,8 @@ void TextBoxTrimmer::setTextBoxTrimForSubtree(const RenderBlockFlow* inlineForma
     }
     // FIXME: Add support for nested leading trims if applicable.
     layoutState->resetTextBoxTrim();
-    auto applyTextBoxTrimStart = textBoxTrim == TextBoxTrim::Start || textBoxTrim == TextBoxTrim::Both;
-    auto applyTextBoxTrimEnd = (textBoxTrim == TextBoxTrim::End || textBoxTrim == TextBoxTrim::Both) && inlineFormattingContextRootForTextBoxTrimEnd;
+    auto applyTextBoxTrimStart = textBoxTrim == TextBoxTrim::TrimStart || textBoxTrim == TextBoxTrim::TrimBoth;
+    auto applyTextBoxTrimEnd = (textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth) && inlineFormattingContextRootForTextBoxTrimEnd;
     if (applyTextBoxTrimEnd) {
         layoutState->addTextBoxTrimEnd(*inlineFormattingContextRootForTextBoxTrimEnd);
         // FIXME: Instead we should just damage the last line.
@@ -793,7 +793,7 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
 
     auto handleTextBoxTrimEnd = [&] {
         auto textBoxTrim = TextBoxTrimmer::textBoxTrim(*this);
-        auto hasTextBoxTrimEnd = textBoxTrim == TextBoxTrim::End || textBoxTrim == TextBoxTrim::Both;
+        auto hasTextBoxTrimEnd = textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth;
         if (!hasTextBoxTrimEnd)
             return;
         // Dirty the last formatted line (in the last IFC) and issue relayout with forcing trimming the last line.

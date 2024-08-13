@@ -1242,9 +1242,9 @@ TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
 {
     switch (textBoxTrim) {
     case TextBoxTrim::None: ts << "None"; break;
-    case TextBoxTrim::Start: ts << "Start"; break;
-    case TextBoxTrim::End: ts << "End"; break;
-    case TextBoxTrim::Both: ts << "Both"; break;
+    case TextBoxTrim::TrimStart: ts << "trim-start"; break;
+    case TextBoxTrim::TrimEnd: ts << "trim-end"; break;
+    case TextBoxTrim::TrimBoth: ts << "trim-both"; break;
     }
     return ts;
 }

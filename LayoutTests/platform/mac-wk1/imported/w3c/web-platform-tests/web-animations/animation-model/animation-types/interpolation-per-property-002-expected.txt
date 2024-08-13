@@ -313,9 +313,9 @@ PASS text-box-edge uses discrete animation when animating between "leading" and 
 PASS text-box-edge uses discrete animation when animating between "leading" and "text" with effect easing
 PASS text-box-edge uses discrete animation when animating between "leading" and "text" with keyframe easing
 PASS text-box-trim (type: discrete) has testInterpolation function
-PASS text-box-trim uses discrete animation when animating between "none" and "start" with linear easing
-PASS text-box-trim uses discrete animation when animating between "none" and "start" with effect easing
-PASS text-box-trim uses discrete animation when animating between "none" and "start" with keyframe easing
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with linear easing
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with effect easing
+PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with keyframe easing
 PASS text-decoration (type: discrete) has testInterpolation function
 PASS text-decoration uses discrete animation when animating between "underline" and "overline" with linear easing
 PASS text-decoration uses discrete animation when animating between "underline" and "overline" with effect easing

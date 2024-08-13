@@ -245,6 +245,12 @@ use-script
 no-change
 reset-size
 
+// CSS_PROP_TEXT_BOX_TRIM
+// none
+trim-start
+trim-end
+trim-both
+
 // CSS_PROP_GLYPH_ORIENTATION_HORIZONTAL
 
 // CSS_PROP_GLYPH_ORIENTATION_VERTICAL

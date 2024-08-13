@@ -705,9 +705,9 @@ enum class TextGroupAlign : uint8_t {
 
 enum class TextBoxTrim : uint8_t {
     None,
-    Start,
-    End,
-    Both
+    TrimStart,
+    TrimEnd,
+    TrimBoth
 };
 
 enum class MarginTrimType : uint8_t {

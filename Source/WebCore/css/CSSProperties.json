@@ -679,9 +679,9 @@
         "text-box-trim": {
             "values": [
                 "none",
-                "start",
-                "end",
-                "both"
+                "trim-start",
+                "trim-end",
+                "trim-both"
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextBoxTrimEnabled",
