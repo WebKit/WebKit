@@ -1583,6 +1583,11 @@ bool UnifiedPDFPlugin::requestStopKeyboardScrollAnimation(bool immediate)
     return scrollingCoordinator.requestStopKeyboardScrollAnimation(*this, immediate);
 }
 
+WebCore::OverscrollBehavior UnifiedPDFPlugin::overscrollBehavior() const
+{
+    return isInDiscreteDisplayMode() ? WebCore::OverscrollBehavior::None : WebCore::OverscrollBehavior::Auto;
+}
+
 bool UnifiedPDFPlugin::isInDiscreteDisplayMode() const
 {
     return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete;

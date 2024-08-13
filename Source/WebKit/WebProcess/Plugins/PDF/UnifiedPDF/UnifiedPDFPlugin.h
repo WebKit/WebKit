@@ -491,6 +491,10 @@ private:
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
 
+    WebCore::OverscrollBehavior overscrollBehavior() const;
+    WebCore::OverscrollBehavior horizontalOverscrollBehavior() const override { return overscrollBehavior(); }
+    WebCore::OverscrollBehavior verticalOverscrollBehavior() const override { return overscrollBehavior(); }
+
     WebCore::FloatSize centeringOffset() const;
 
     // HUD Actions.
