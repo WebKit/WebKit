@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "DocumentLoader.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
@@ -162,7 +163,13 @@ MediaSession::MediaSession(Navigator& navigator)
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
-MediaSession::~MediaSession() = default;
+MediaSession::~MediaSession()
+{
+    if (m_metadata)
+        m_metadata->resetMediaSession();
+    if (m_defaultMetadata)
+        m_defaultMetadata->resetMediaSession();
+}
 
 void MediaSession::suspend(ReasonForSuspension reason)
 {
@@ -194,7 +201,7 @@ void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
     m_metadata = WTFMove(metadata);
     if (m_metadata)
         m_metadata->setMediaSession(*this);
-    notifyMetadataObservers();
+    notifyMetadataObservers(m_metadata);
 }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -363,9 +370,9 @@ Document* MediaSession::document() const
     return m_navigator->window()->document();
 }
 
-void MediaSession::metadataUpdated()
+void MediaSession::metadataUpdated(const MediaMetadata& metadata)
 {
-    notifyMetadataObservers();
+    notifyMetadataObservers(const_cast<MediaMetadata*>(&metadata));
 }
 
 bool MediaSession::hasObserver(MediaSessionObserver& observer) const
@@ -393,10 +400,10 @@ void MediaSession::forEachObserver(const Function<void(MediaSessionObserver&)>& 
     m_observers.forEach(apply);
 }
 
-void MediaSession::notifyMetadataObservers()
+void MediaSession::notifyMetadataObservers(const RefPtr<MediaMetadata>& metadata)
 {
-    forEachObserver([this](auto& observer) {
-        observer.metadataChanged(m_metadata);
+    forEachObserver([&](auto& observer) {
+        observer.metadataChanged(metadata);
     });
 }
 
@@ -462,9 +469,20 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
     if (auto currentPosition = this->currentPosition())
         info.currentTime = *currentPosition;
 
-    if (m_metadata && m_metadata->artworkImage()) {
-        ASSERT(m_metadata->artworkImage()->data(), "An image must always have associated data");
-        info.metadata.artwork = { { m_metadata->artworkSrc(), m_metadata->artworkImage()->mimeType(), m_metadata->artworkImage() } };
+    if (!m_defaultMetadata && (!m_metadata || m_metadata->artwork().isEmpty())) {
+        if (RefPtr loader = document() ? document()->loader() : nullptr; loader && loader->linkIcons().size()) {
+            Vector<URL> images { document()->loader()->linkIcons().size(), [&](size_t index) {
+                return loader->linkIcons()[index].url;
+            } };
+            m_defaultMetadata = MediaMetadata::create(*this, WTFMove(images));
+        }
+    }
+
+    if (RefPtr metadataWithImage = m_metadata && m_metadata->artworkImage() ? m_metadata : (m_defaultMetadata && m_defaultMetadata->artworkImage() ? m_defaultMetadata : nullptr)) {
+        ASSERT(metadataWithImage->artworkImage()->data(), "An image must always have associated data");
+        info.metadata.artwork = { { metadataWithImage->artworkSrc(), metadataWithImage->artworkImage()->mimeType(), metadataWithImage->artworkImage() } };
+    }
+    if (m_metadata) {
         info.metadata.title = m_metadata->title();
         info.metadata.artist = m_metadata->artist();
         info.metadata.album = m_metadata->album();

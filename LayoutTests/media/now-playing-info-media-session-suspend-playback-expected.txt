@@ -20,9 +20,8 @@ RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
 ACTION: pause
 
 * Metadata should not be blank.
-RUN(nowPlayingMetadata = internals.nowPlayingMetadata)
-EXPECTED (nowPlayingMetadata != 'null') OK
-EXPECTED (nowPlayingMetadata.title != '') OK
+EXPECTED (internals.nowPlayingMetadata != 'null') OK
+EXPECTED (internals.nowPlayingMetadata.title != '') OK
 
 * Suspending all media playback NowPlaying to deactivate.
 RUN(internals.suspendAllMediaPlayback())

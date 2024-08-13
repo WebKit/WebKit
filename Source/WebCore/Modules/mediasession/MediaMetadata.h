@@ -31,8 +31,8 @@
 #include "CachedResourceHandle.h"
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
-#include "Timer.h"
 #include <wtf/Function.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,9 +66,10 @@ private:
     CachedResourceHandle<CachedImage> m_cachedImage;
 };
 
-class MediaMetadata : public RefCounted<MediaMetadata> {
+class MediaMetadata final : public RefCounted<MediaMetadata> {
 public:
     static ExceptionOr<Ref<MediaMetadata>> create(ScriptExecutionContext&, std::optional<MediaMetadataInit>&&);
+    static Ref<MediaMetadata> create(MediaSession&, Vector<URL>&&);
     ~MediaMetadata();
 
     void setMediaSession(MediaSession&);
@@ -108,19 +109,15 @@ private:
     void refreshArtworkImage();
     void tryNextArtworkImage(uint32_t, Vector<Pair>&&);
 
-    void maybeStartTimer();
-
     static constexpr int s_minimumSize = 128;
     static constexpr int s_idealSize = 512;
-    static constexpr auto s_fallbackTimeout = 500_ms;
 
     WeakPtr<MediaSession> m_session;
     MediaSessionMetadata m_metadata;
     std::unique_ptr<ArtworkImageLoader> m_artworkLoader;
     String m_artworkImageSrc;
     RefPtr<Image> m_artworkImage;
-    bool m_fallbackAttempted { false };
-    Timer m_timer;
+    Vector<URL> m_defaultImages;
 };
 
 }

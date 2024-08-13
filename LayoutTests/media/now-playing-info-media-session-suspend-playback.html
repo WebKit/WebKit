@@ -60,9 +60,8 @@
             await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
 
             consoleWrite('<br>* Metadata should not be blank.');
-            run('nowPlayingMetadata = internals.nowPlayingMetadata');
-            await testExpectedEventually('nowPlayingMetadata', null, '!=', 10000);
-            await testExpectedEventually('nowPlayingMetadata.title', '', '!=', 10000);
+            await testExpectedEventually('internals.nowPlayingMetadata', null, '!=', 10000);
+            await testExpectedEventually('internals.nowPlayingMetadata.title', '', '!=', 10000);
 
             consoleWrite('<br>* Suspending all media playback NowPlaying to deactivate.');
             run('internals.suspendAllMediaPlayback()');
