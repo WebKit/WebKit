@@ -612,6 +612,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (!pageID)
             return false;
         auto destinationID = decoder->destinationID();
+        auto backForwardItemID = parameters->backForwardItemID;
         auto completionHandler = [weakThis = WeakPtr { *this }, parameters = WTFMove(parameters), destinationID] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
             if (!weakThis)
                 return;
@@ -620,7 +621,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             weakThis->send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), destinationID);
         };
         if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
-            if (RefPtr item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
+            if (RefPtr item = WebBackForwardListItem::itemForID(backForwardItemID))
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), true, WTFMove(completionHandler));
         } else
             completionHandler(std::nullopt);
