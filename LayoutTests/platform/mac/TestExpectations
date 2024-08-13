@@ -2467,3 +2467,6 @@ http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure 
 
 # webkit.org/b/277986 [ iOS MacOS ] http/tests/navigation/page-cache-shared-worker.html is a flaky timeout
 http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]
+
+# webkit.org/b/278052 REGRESSION (282158@main): [macOS] inspector/console/webcore-logging.html is a flaky failure
+inspector/console/webcore-logging.html [ Pass Failure ]
