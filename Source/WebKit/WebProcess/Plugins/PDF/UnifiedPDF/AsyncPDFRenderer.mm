@@ -372,11 +372,9 @@ void AsyncPDFRenderer::enqueueTilePaintIfNecessary(const TiledBacking& tiledBack
 {
     // Round the clip rect to integer bounds so that we don't end up making
     // ImageBuffers with floating point sizes.
-    std::optional<FloatRect> enclosingClipRect;
-    if (clipRect)
-        enclosingClipRect = enclosingIntRect(*clipRect);
-
-    auto renderInfo = renderInfoForTile(tiledBacking, tileInfo, tileRect, enclosingClipRect);
+    auto renderInfo = renderInfoForTile(tiledBacking, tileInfo, tileRect, clipRect.transform([](const auto& rect) {
+        return enclosingIntRect(rect);
+    }));
     if (renderInfo.pageCoverage.pages.isEmpty())
         return;
 
