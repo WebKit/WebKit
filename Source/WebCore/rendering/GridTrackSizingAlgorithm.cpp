@@ -866,10 +866,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemBlockDirection, std::nullopt);
         gridItem.setNeedsLayout(MarkOnlyThis);
 
-        auto& itemsLayoutRequirements = gridLayoutState.itemsLayoutRequirements();
-
         if (renderGrid()->canSetColumnAxisStretchRequirementForItem(gridItem))
-            itemsLayoutRequirements.add(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
+            gridLayoutState.setLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
     }
 
     // We need to clear the stretched content size to properly compute logical height during layout.

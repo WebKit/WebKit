@@ -281,13 +281,12 @@ bool RenderGrid::canSetColumnAxisStretchRequirementForItem(const RenderBox& grid
 
 void RenderGrid::computeLayoutRequirementsForItemsBeforeLayout(GridLayoutState& gridLayoutState) const
 {
-    auto& itemsLayoutRequirements = gridLayoutState.itemsLayoutRequirements();
     for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
         if (!gridItem.needsLayout() || gridItem.isOutOfFlowPositioned() || gridItem.isExcludedFromNormalLayout())
             continue;
 
         if (canSetColumnAxisStretchRequirementForItem(gridItem))
-            itemsLayoutRequirements.add(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
+            gridLayoutState.setLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
     }
 }
 
@@ -1674,14 +1673,12 @@ void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, Gr
         LayoutUnit desiredLogicalHeight = gridItem.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
         gridItem.setOverridingLogicalHeight(desiredLogicalHeight);
 
-        auto& itemsLayoutRequirements = gridLayoutState.itemsLayoutRequirements();
-
         auto itemNeedsRelayoutForStretchAlignment = [&]() {
             if (desiredLogicalHeight != gridItem.logicalHeight())
                 return true;
 
             if (canSetColumnAxisStretchRequirementForItem(gridItem))
-                return itemsLayoutRequirements.get(gridItem) == ItemLayoutRequirement::NeedsColumnAxisStretchAlignment;
+                return gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
 
             return is<RenderBlock>(gridItem) && downcast<RenderBlock>(gridItem).hasPercentHeightDescendants();
         }();

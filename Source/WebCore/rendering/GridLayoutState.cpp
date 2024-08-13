@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
@@ -23,23 +24,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "RenderBox.h"
-#include <wtf/CheckedPtr.h>
+#include "config.h"
+#include "GridLayoutState.h"
 
 namespace WebCore {
 
-enum class ItemLayoutRequirement : uint8_t { NeedsColumnAxisStretchAlignment = 1 << 0 };
-using ItemsLayoutRequirements = SingleThreadWeakHashMap<RenderBox, OptionSet<ItemLayoutRequirement>>;
+bool GridLayoutState::containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement layoutRequirement) const
+{
+    if (auto itr = m_itemsLayoutRequirements.find(gridItem); itr != m_itemsLayoutRequirements.end())
+        return itr->value.contains(layoutRequirement);
+    return false;
+}
 
-class GridLayoutState {
-public:
-    bool containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
-    void setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
+void GridLayoutState::setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement layoutRequirement)
+{
+    m_itemsLayoutRequirements.ensure(gridItem, [&] {
+        return OptionSet<ItemLayoutRequirement> { };
+    }).iterator->value.add(layoutRequirement);
+}
 
-private:
-    ItemsLayoutRequirements m_itemsLayoutRequirements;
-};
-
-} // namespace WebCore
+}
