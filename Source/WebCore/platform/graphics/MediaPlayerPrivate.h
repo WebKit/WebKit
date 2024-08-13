@@ -235,10 +235,6 @@ public:
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const { return MediaPlayer::MovieLoadType::Unknown; }
 
-    using VideoPlaybackConfiguration = MediaPlayer::VideoPlaybackConfiguration;
-    using VideoPlaybackConfigurationOption = MediaPlayer::VideoPlaybackConfigurationOption;
-    virtual VideoPlaybackConfiguration videoPlaybackConfiguration() const { return { }; }
-
     virtual void prepareForRendering() { }
 
     // Time value in the movie's time scale. It is only necessary to override this if the media

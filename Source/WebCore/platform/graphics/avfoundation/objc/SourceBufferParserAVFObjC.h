@@ -73,11 +73,6 @@ public:
     void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, uint64_t trackID);
     void didProvideContentKeyRequestSpecifierForTrackID(NSData*, uint64_t trackID);
 
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    using VideoPlaybackConfigurationPromise = NativePromise<MediaPlayerVideoPlaybackConfiguration, PlatformMediaError>;
-    static Ref<VideoPlaybackConfigurationPromise> getVideoPlaybackConfiguration(AVAsset*);
-#endif
-
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const { return m_logger.get(); }

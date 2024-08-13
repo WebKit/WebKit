@@ -208,8 +208,6 @@ public:
     // A characteristic of the media file, eg. video, audio, closed captions, etc, has changed.
     virtual void mediaPlayerCharacteristicChanged() { }
 
-    virtual void mediaPlayerVideoPlaybackConfigurationChanged() { }
-
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated() { return false; }
 
@@ -539,11 +537,6 @@ public:
 
     using MediaPlayerEnums::MovieLoadType;
     MovieLoadType movieLoadType() const;
-
-    using MediaPlayerEnums::VideoPlaybackConfiguration;
-    using MediaPlayerEnums::VideoPlaybackConfigurationOption;
-    void videoPlaybackConfigurationChanged();
-    VideoPlaybackConfiguration videoPlaybackConfiguration() const;
 
     using MediaPlayerEnums::Preload;
     Preload preload() const;
