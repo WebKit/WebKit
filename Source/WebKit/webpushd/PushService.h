@@ -34,6 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -46,7 +47,7 @@ class SubscribeRequest;
 class UnsubscribeRequest;
 
 class PushService {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PushService);
 public:
     using IncomingPushMessageHandler = Function<void(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&)>;
 

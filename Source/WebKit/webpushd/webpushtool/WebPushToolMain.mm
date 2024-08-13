@@ -30,6 +30,7 @@
 #import "WebPushToolConnection.h"
 #import <optional>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WTFProcess.h>
 
 #if HAVE(OS_LAUNCHD_JOB) && (PLATFORM(MAC) || PLATFORM(IOS))
@@ -162,7 +163,6 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 namespace WebKit {
 
 class WebPushToolVerb {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebPushToolVerb() = default;
     virtual void run(WebPushTool::Connection&) = 0;
@@ -170,6 +170,7 @@ public:
 };
 
 class InjectPushMessageVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InjectPushMessageVerb);
 public:
     InjectPushMessageVerb(PushMessageForTesting&& message)
         : m_pushMessage(WTFMove(message)) { }
@@ -191,6 +192,7 @@ private:
 };
 
 class GetPushPermissionStateVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GetPushPermissionStateVerb);
 public:
     GetPushPermissionStateVerb(const String& scope)
         : m_scope(scope) { }
@@ -209,6 +211,7 @@ private:
 };
 
 class RequestPushPermissionVerb : public WebPushToolVerb {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RequestPushPermissionVerb);
 public:
     RequestPushPermissionVerb(const String& scope)
         : m_scope(scope) { }

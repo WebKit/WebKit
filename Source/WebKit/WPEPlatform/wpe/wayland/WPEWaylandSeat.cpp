@@ -32,9 +32,12 @@
 #include "WPEToplevelWaylandPrivate.h"
 #include <linux/input.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WPE {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandSeat);
 
 WaylandSeat::WaylandSeat(struct wl_seat* seat)
     : m_seat(seat)

@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "ModelConnectionToWebProcess.h"
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -48,7 +49,7 @@ class ModelProcessModelPlayerProxy;
 
 class ModelProcessModelPlayerManagerProxy
     : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerManagerProxy);
 public:
     explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);
     ~ModelProcessModelPlayerManagerProxy();

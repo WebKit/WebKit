@@ -26,10 +26,13 @@
 #import "config.h"
 #import "PushServiceConnection.h"
 
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 namespace WebPushD {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushServiceConnection);
 
 PushCrypto::ClientKeys PushServiceConnection::generateClientKeys()
 {

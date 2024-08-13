@@ -28,10 +28,13 @@
 
 #include "WPECursorTheme.h"
 #include "WPEDRM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CursorTheme);
 
 std::unique_ptr<CursorTheme> CursorTheme::create(const char* name, uint32_t size)
 {
