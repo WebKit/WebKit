@@ -22,6 +22,9 @@ PASS: movementY is correct.
 pointermove fired.
 PASS: movementX is correct.
 PASS: movementY is correct.
+pointermove fired.
+PASS: movementX is correct.
+PASS: movementY is correct.
 pointerup fired.
 PASS: movementX is correct.
 PASS: movementY is correct.
