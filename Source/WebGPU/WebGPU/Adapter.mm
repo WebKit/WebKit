@@ -31,8 +31,11 @@
 #import "Instance.h"
 #import <algorithm>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Adapter);
 
 Adapter::Adapter(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
     : m_device(device)

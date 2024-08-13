@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
@@ -44,7 +45,7 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
 class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QuerySet);
 public:
     static Ref<QuerySet> create(id<MTLBuffer> visibilityBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {

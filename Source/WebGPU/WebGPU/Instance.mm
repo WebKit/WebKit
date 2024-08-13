@@ -35,8 +35,11 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Instance);
 
 Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {

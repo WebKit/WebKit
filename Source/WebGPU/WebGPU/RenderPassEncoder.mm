@@ -39,6 +39,7 @@
 #import "RenderPipeline.h"
 #import "TextureView.h"
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -57,6 +58,8 @@ if (id<MTLRenderPipelineState> pso = makePso) \
     [commandEncoder setRenderPipelineState:pso]; \
 else \
     return __VA_ARGS__;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPassEncoder);
 
 RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device, MTLRenderPassDescriptor* metalDescriptor)
     : m_renderCommandEncoder(renderCommandEncoder)

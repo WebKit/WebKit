@@ -34,8 +34,11 @@
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Texture);
 
 bool Texture::isCompressedFormat(WGPUTextureFormat format)
 {

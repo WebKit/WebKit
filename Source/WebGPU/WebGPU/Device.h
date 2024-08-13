@@ -36,6 +36,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -67,7 +68,7 @@ class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Device);
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
     static Ref<Device> createInvalid(Adapter& adapter)

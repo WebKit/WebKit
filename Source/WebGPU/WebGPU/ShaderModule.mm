@@ -39,6 +39,7 @@
 #import <WebGPU/WebGPU.h>
 #import <wtf/DataLog.h>
 #import <wtf/StringPrintStream.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -220,6 +221,8 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 
     return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, nil, WTFMove(functionNames));
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModule);
 
 auto ShaderModule::convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult) -> CheckResult
 {

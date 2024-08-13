@@ -32,6 +32,7 @@
 #import "Pipeline.h"
 #import "RenderBundleEncoder.h"
 #import "WGSLShaderModule.h"
+#import <wtf/TZoneMallocInlines.h>
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
 @interface NSObject ()
@@ -1581,6 +1582,8 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
         callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), WTFMove(error));
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPipeline);
 
 RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor& descriptor, RequiredBufferIndicesContainer&& requiredBufferIndices, BufferBindingSizesForPipeline&& minimumBufferSizes, Device& device)
     : m_renderPipelineState(renderPipelineState)

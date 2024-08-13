@@ -37,10 +37,13 @@
 #import "TextureView.h"
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
 constexpr static auto largeBufferSize = 32 * 1024 * 1024;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
 
 Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     : m_commandQueue(commandQueue)

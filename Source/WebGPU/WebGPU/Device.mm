@@ -46,6 +46,7 @@
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebGPU {
@@ -123,6 +124,8 @@ bool GPUFrameCapture::captureFirstFrame = false;
 bool GPUFrameCapture::enabled = false;
 int GPUFrameCapture::submitCallsCaptured = 0;
 int GPUFrameCapture::maxSubmitCallsToCapture = 1;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Device);
 
 bool Device::shouldStopCaptureAfterSubmit()
 {

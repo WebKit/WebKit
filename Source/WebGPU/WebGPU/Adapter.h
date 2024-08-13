@@ -30,6 +30,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 
 struct WGPUAdapterImpl {
 };
@@ -41,7 +42,7 @@ class Instance;
 
 // https://gpuweb.github.io/gpuweb/#gpuadapter
 class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Adapter);
 public:
     static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
     {

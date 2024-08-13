@@ -31,6 +31,7 @@
 #import <wtf/Lock.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/Ref.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
 struct WGPUInstanceImpl {
@@ -47,7 +48,7 @@ class PresentationContext;
 
 // https://gpuweb.github.io/gpuweb/#gpu
 class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     static Ref<Instance> create(const WGPUInstanceDescriptor&);
     static Ref<Instance> createInvalid()

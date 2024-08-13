@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "Texture.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -76,6 +77,8 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     }
     return descriptor;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BindGroupLayout);
 
 bool BindGroupLayout::isPresent(const WGPUSamplerBindingLayout& sampler)
 {

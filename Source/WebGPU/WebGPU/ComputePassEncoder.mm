@@ -35,6 +35,7 @@
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "QuerySet.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -47,6 +48,8 @@ if (!m_computeCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder-
     m_computeCommandEncoder = nil; \
     return; \
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePassEncoder);
 
 ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor&, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)

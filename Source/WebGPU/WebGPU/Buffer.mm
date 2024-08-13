@@ -30,6 +30,7 @@
 #import "Device.h"
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -140,6 +141,8 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
     return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::Unmapped, { static_cast<size_t>(0), static_cast<size_t>(0) }, *this);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
 
 Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)

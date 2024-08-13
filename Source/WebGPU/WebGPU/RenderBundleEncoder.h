@@ -32,6 +32,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
@@ -75,7 +76,7 @@ class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderBundleEncoder);
 public:
     static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     {
