@@ -2300,6 +2300,28 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
     return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
 }
 
+static RefPtr<Element> getElementByIdIncludingDisconnected(const Element& startElement, const AtomString& id)
+{
+    if (id.isEmpty())
+        return nullptr;
+
+    if (LIKELY(startElement.isInTreeScope()))
+        return startElement.treeScope().getElementById(id);
+
+    // https://html.spec.whatwg.org/#attr-associated-element
+    // Attr associated element lookup does not depend on whether the element
+    // is connected. However, the TreeScopeOrderedMap that is used for
+    // TreeScope::getElementById() only stores connected elements.
+    if (RefPtr root = startElement.rootElement()) {
+        for (auto& element : descendantsOfType<Element>(*root)) {
+            if (element.getIdAttribute() == id)
+                return const_cast<Element*>(&element);
+        }
+    }
+
+    return nullptr;
+}
+
 RefPtr<Element> Element::getElementAttribute(const QualifiedName& attributeName) const
 {
     ASSERT(isElementReflectionAttribute(document().settings(), attributeName));
@@ -2319,7 +2341,7 @@ RefPtr<Element> Element::getElementAttribute(const QualifiedName& attributeName)
     if (id.isNull())
         return nullptr;
 
-    return treeScope().getElementById(id);
+    return getElementByIdIncludingDisconnected(*this, id);
 }
 
 void Element::setElementAttribute(const QualifiedName& attributeName, Element* element)
@@ -2365,7 +2387,7 @@ std::optional<Vector<Ref<Element>>> Element::getElementsArrayAttribute(const Qua
 
     SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
     return WTF::compactMap(ids, [&](auto& id) {
-        return treeScope().getElementById(id);
+        return getElementByIdIncludingDisconnected(*this, id);
     });
 }
 
@@ -3463,12 +3485,12 @@ CustomElementReactionQueue* Element::reactionQueue() const
 CustomElementDefaultARIA& Element::customElementDefaultARIA()
 {
     ASSERT(isPrecustomizedOrDefinedCustomElement());
-    auto* deafultARIA = elementRareData()->customElementDefaultARIA();
-    if (!deafultARIA) {
+    auto* defaultARIA = elementRareData()->customElementDefaultARIA();
+    if (!defaultARIA) {
         elementRareData()->setCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
-        deafultARIA = elementRareData()->customElementDefaultARIA();
+        defaultARIA = elementRareData()->customElementDefaultARIA();
     }
-    return *deafultARIA;
+    return *defaultARIA;
 }
 
 CheckedRef<CustomElementDefaultARIA> Element::checkedCustomElementDefaultARIA()
