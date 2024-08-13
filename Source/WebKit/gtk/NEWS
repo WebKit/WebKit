@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.44.3
+================
+
+What's new in WebKitGTK 2.44.3?
+
+  - Fix web process cache suspend/resume when sandbox is enabled.
+  - Fix accelerated images dissapearing after scrolling.
+  - Fix video flickering with DMA-BUF sink.
+  - Fix pointer lock on X11.
+  - Fix movement delta on mouse events in GTK3.
+  - Undeprecate console message API and make it available in 2022 API.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.44.2
 ================
 
