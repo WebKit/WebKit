@@ -651,6 +651,21 @@ CacheableIdentifier GetByStatus::singleIdentifier() const
     return singleIdentifierForICStatus(m_variants);
 }
 
+#if ENABLE(JIT)
+
+CacheType GetByStatus::preferredCacheType() const
+{
+    if (!isSimple())
+        return CacheType::GetByIdSelf;
+    for (const auto& variant : m_variants) {
+        if (variant.conditionSet().isEmpty())
+            return CacheType::GetByIdSelf;
+    }
+    return CacheType::GetByIdPrototype;
+}
+
+#endif
+
 void GetByStatus::dump(PrintStream& out) const
 {
     out.print("(");

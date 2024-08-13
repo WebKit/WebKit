@@ -249,6 +249,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, "id"_s, node->identifierNumber(), "{"_s, identifiers()[node->identifierNumber()], "}"_s);
     if (node->hasCacheableIdentifier() && node->cacheableIdentifier())
         out.print(comma, "cachable-id {"_s, node->cacheableIdentifier(), "}"_s);
+    if (node->hasCacheType())
+        out.print(comma, node->cacheType());
     if (node->hasPromotedLocationDescriptor())
         out.print(comma, node->promotedLocationDescriptor());
     if (node->hasClassInfo())

@@ -376,7 +376,8 @@ void Node::convertToGetByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier id
     children.child1() = Edge(base.node(), CellUse);
     children.child2() = Edge();
     children.child3() = Edge();
-    m_opInfo = identifier;
+    auto* data = graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
+    m_opInfo = data;
 }
 
 void Node::convertToPutByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier identifier)

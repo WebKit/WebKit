@@ -59,6 +59,7 @@
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "InByStatus.h"
+#include "InlineCacheCompiler.h"
 #include "InstanceOfStatus.h"
 #include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
@@ -3092,7 +3093,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 // Check that regExpObject's exec is actually the primodial RegExp.prototype.exec.
                 UniquedStringImpl* execPropertyID = m_vm->propertyNames->exec.impl();
                 m_graph.identifiers().ensure(execPropertyID);
-                Node* actualProperty = addToGraph(TryGetById, OpInfo(CacheableIdentifier::createFromImmortalIdentifier(execPropertyID)), OpInfo(SpecFunction), Edge(regExpObject, CellUse));
+                auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(execPropertyID), CacheType::GetByIdPrototype });
+                Node* actualProperty = addToGraph(TryGetById, OpInfo(data), OpInfo(SpecFunction), Edge(regExpObject, CellUse));
                 FrozenValue* regExpPrototypeExec = m_graph.freeze(globalObject->regExpProtoExecFunction());
                 addToGraph(CheckIsConstant, OpInfo(regExpPrototypeExec), Edge(actualProperty, CellUse));
             }
@@ -5437,6 +5439,7 @@ void ByteCodeParser::handleGetById(
         getById = TryGetById;
     else
         getById = getByStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
+    auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, getByStatus.preferredCacheType() });
 
     if (getById != TryGetById) {
         if (getByStatus.isModuleNamespace()) {
@@ -5456,7 +5459,7 @@ void ByteCodeParser::handleGetById(
 #if USE(JSVALUE64)
         if (type == AccessType::GetById) {
             if (getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, identifier.uid())) {
-                set(destination, addToGraph(GetByIdMegamorphic, OpInfo(identifier), OpInfo(prediction), base));
+                set(destination, addToGraph(GetByIdMegamorphic, OpInfo(data), OpInfo(prediction), base));
                 return;
             }
         }
@@ -5477,12 +5480,12 @@ void ByteCodeParser::handleGetById(
                             m_graph.compilation()->noticeInlinedGetById();
                         return;
                     }
-                    set(destination, addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    set(destination, addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
                     return;
                 }
 
                 if (!check(variant.conditionSet())) {
-                    set(destination, addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    set(destination, addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
                     return;
                 }
 
@@ -5491,10 +5494,10 @@ void ByteCodeParser::handleGetById(
 
                 addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), unwrapped);
-                auto* data = m_graph.m_callCustomAccessorData.add();
-                data->m_customAccessor = variant.customAccessorGetter();
-                data->m_identifier = identifier;
-                set(destination, addToGraph(CallCustomAccessorGetter, OpInfo(data), OpInfo(prediction), base));
+                auto* customData = m_graph.m_callCustomAccessorData.add();
+                customData->m_customAccessor = variant.customAccessorGetter();
+                customData->m_identifier = identifier;
+                set(destination, addToGraph(CallCustomAccessorGetter, OpInfo(customData), OpInfo(prediction), base));
                 return;
 
             }
@@ -5504,7 +5507,7 @@ void ByteCodeParser::handleGetById(
     ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect ||  !getByStatus.makesCalls());
     if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
         set(destination,
-            addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+            addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
         return;
     }
     
@@ -5517,7 +5520,7 @@ void ByteCodeParser::handleGetById(
             || !Options::usePolymorphicAccessInlining()
             || getByStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
             set(destination,
-                addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
             return;
         }
 
@@ -5531,7 +5534,7 @@ void ByteCodeParser::handleGetById(
         for (const GetByVariant& variant : getByStatus.variants()) {
             if (variant.intrinsic() != NoIntrinsic) {
                 set(destination,
-                    addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
                 return;
             }
 
@@ -5546,7 +5549,7 @@ void ByteCodeParser::handleGetById(
             GetByOffsetMethod method = planLoad(variant.conditionSet());
             if (!method) {
                 set(destination,
-                    addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                    addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
                 return;
             }
             
@@ -5557,10 +5560,10 @@ void ByteCodeParser::handleGetById(
             m_graph.compilation()->noticeInlinedGetById();
     
         // 2) Emit a MultiGetByOffset
-        MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
-        data->cases = cases;
-        data->identifierNumber = identifierNumber;
-        set(destination, addToGraph(MultiGetByOffset, OpInfo(data), OpInfo(prediction), unwrapped));
+        MultiGetByOffsetData* multiData = m_graph.m_multiGetByOffsetData.add();
+        multiData->cases = cases;
+        multiData->identifierNumber = identifierNumber;
+        set(destination, addToGraph(MultiGetByOffset, OpInfo(multiData), OpInfo(prediction), unwrapped));
         return;
     }
 
@@ -5571,7 +5574,7 @@ void ByteCodeParser::handleGetById(
     
     Node* loadedValue = load(prediction, base, unwrapped, identifierNumber, variant);
     if (!loadedValue) {
-        set(destination, addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+        set(destination, addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
         return;
     }
 
@@ -5601,7 +5604,7 @@ void ByteCodeParser::handleGetById(
         // to the intrinsic function--bail and emit a regular GetById
         if (!variant.callLinkStatus()) {
             set(destination,
-                addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+                addToGraph(getById, OpInfo(data), OpInfo(prediction), base));
             return;
         }
     }
@@ -5667,8 +5670,8 @@ void ByteCodeParser::handleGetPrivateNameById(
     ASSERT(!getByStatus.isCustomAccessor());
     ASSERT(!getByStatus.makesCalls());
     if (!getByStatus.isSimple() || !getByStatus.numVariants() || !Options::useAccessInlining()) {
-        set(destination,
-            addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+        auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
+        set(destination, addToGraph(GetPrivateNameById, OpInfo(data), OpInfo(prediction), base, nullptr));
         return;
     }
 
@@ -5676,8 +5679,8 @@ void ByteCodeParser::handleGetPrivateNameById(
         if (!m_graph.m_plan.isFTL()
             || !Options::usePolymorphicAccessInlining()
             || getByStatus.numVariants() > Options::maxPolymorphicAccessInliningListSize()) {
-            set(destination,
-                addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+            auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
+            set(destination, addToGraph(GetPrivateNameById, OpInfo(data), OpInfo(prediction), base, nullptr));
             return;
         }
 
@@ -5697,11 +5700,11 @@ void ByteCodeParser::handleGetPrivateNameById(
             m_graph.compilation()->noticeInlinedGetById();
 
         // 2) Emit a MultiGetByOffset
-        MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
-        data->cases = cases;
-        data->identifierNumber = identifierNumber;
+        MultiGetByOffsetData* multiData = m_graph.m_multiGetByOffsetData.add();
+        multiData->cases = cases;
+        multiData->identifierNumber = identifierNumber;
         set(destination,
-            addToGraph(MultiGetByOffset, OpInfo(data), OpInfo(prediction), unwrapped));
+            addToGraph(MultiGetByOffset, OpInfo(multiData), OpInfo(prediction), unwrapped));
         return;
     }
 
@@ -5715,8 +5718,8 @@ void ByteCodeParser::handleGetPrivateNameById(
 
     Node* loadedValue = load(prediction, base, unwrapped, identifierNumber, variant);
     if (!loadedValue) {
-        set(destination,
-            addToGraph(GetPrivateNameById, OpInfo(identifier), OpInfo(prediction), base, nullptr));
+        auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
+        set(destination, addToGraph(GetPrivateNameById, OpInfo(data), OpInfo(prediction), base, nullptr));
         return;
     }
 
@@ -5777,11 +5780,11 @@ void ByteCodeParser::handleDeleteById(
             }
         }
 
-        MultiDeleteByOffsetData* data = m_graph.m_multiDeleteByOffsetData.add();
-        data->variants = deleteByStatus.variants();
-        data->identifierNumber = identifierNumber;
+        MultiDeleteByOffsetData* multiData = m_graph.m_multiDeleteByOffsetData.add();
+        multiData->variants = deleteByStatus.variants();
+        multiData->identifierNumber = identifierNumber;
         set(destination,
-            addToGraph(MultiDeleteByOffset, OpInfo(data), base));
+            addToGraph(MultiDeleteByOffset, OpInfo(multiData), base));
         return;
     }
 
@@ -5810,13 +5813,13 @@ void ByteCodeParser::handleDeleteById(
     else
         propertyStorage = addToGraph(GetButterfly, base);
 
-    StorageAccessData* data = m_graph.m_storageAccessData.add();
-    data->offset = variant.offset();
-    data->identifierNumber = identifierNumber;
+    StorageAccessData* storageData = m_graph.m_storageAccessData.add();
+    storageData->offset = variant.offset();
+    storageData->identifierNumber = identifierNumber;
 
     addToGraph(
         PutByOffset,
-        OpInfo(data),
+        OpInfo(storageData),
         propertyStorage,
         base,
         jsConstant(JSValue()));
@@ -7599,7 +7602,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
 
-            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, uid) ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), base, thisValue));
+            auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), CacheType::GetByIdSelf });
+            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, uid) ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(data), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
@@ -8889,7 +8893,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.state() != GetByStatus::Simple
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
-                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), get(bytecode.m_scope)));
+                    auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), CacheType::GetByIdSelf });
+                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(data), OpInfo(prediction), get(bytecode.m_scope)));
                     break;
                 }
 

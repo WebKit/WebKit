@@ -70,18 +70,7 @@ void JITInlineCacheGenerator::finalize(
     m_stubInfo->slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }
 
-#if ENABLE(DFG_JIT)
-void JITInlineCacheGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, GPRReg stubInfoGPR)
-{
-    m_start = jit.label();
-    jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
-    jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
-    m_done = jit.label();
-}
-#endif
-
-void JITInlineCacheGenerator::generateBaselineDataICFastPath(JIT& jit, GPRReg stubInfoGPR)
+void JITInlineCacheGenerator::generateDataICFastPath(CCallHelpers& jit, GPRReg stubInfoGPR)
 {
     m_start = jit.label();
     if (Options::useHandlerIC()) {
@@ -150,6 +139,15 @@ static void generateGetByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
         doneCases.append(jit.jump());
         break;
     }
+    case CacheType::GetByIdPrototype: {
+        jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratch1GPR);
+        slowCases.append(jit.branch32(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID())));
+        jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch1GPR);
+        jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineHolder()), resultJSR.payloadGPR());
+        jit.loadProperty(resultJSR.payloadGPR(), scratch1GPR, resultJSR);
+        doneCases.append(jit.jump());
+        break;
+    }
     case CacheType::ArrayLength: {
         jit.load8(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
         slowCases.append(jit.branchTest32(CCallHelpers::Zero, scratch1GPR, CCallHelpers::TrustedImm32(IsArray)));
@@ -183,7 +181,7 @@ void JITGetByIdGenerator::generateFastPath(CCallHelpers& jit)
     generateFastCommon(jit, m_isLengthAccess ? InlineAccess::sizeForLengthAccess() : InlineAccess::sizeForPropertyAccess());
 }
 
-void JITGetByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITGetByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     m_start = jit.label();
 
@@ -196,16 +194,6 @@ void JITGetByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
 
     m_done = jit.label();
 }
-
-#if ENABLE(DFG_JIT)
-void JITGetByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR)
-{
-    m_start = jit.label();
-    jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    generateGetByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, scratch1GPR, resultJSR, m_cacheType);
-    m_done = jit.label();
-}
-#endif
 
 JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters,
@@ -225,7 +213,7 @@ void JITGetByIdWithThisGenerator::generateFastPath(CCallHelpers& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
-void JITGetByIdWithThisGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITGetByIdWithThisGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     m_start = jit.label();
 
@@ -238,16 +226,6 @@ void JITGetByIdWithThisGenerator::generateBaselineDataICFastPath(JIT& jit)
 
     m_done = jit.label();
 }
-
-#if ENABLE(DFG_JIT)
-void JITGetByIdWithThisGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR)
-{
-    m_start = jit.label();
-    jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    generateGetByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, scratch1GPR, resultJSR, CacheType::GetByIdSelf);
-    m_done = jit.label();
-}
-#endif
 
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters, CacheableIdentifier propertyName,
@@ -279,7 +257,7 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     done.link(&jit);
 }
 
-void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITPutByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::PutById::baseJSR;
     using BaselineJITRegisters::PutById::valueJSR;
@@ -291,18 +269,6 @@ void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
     generatePutByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, valueJSR, scratch1GPR, baseJSR.payloadGPR());
     m_done = jit.label();
 }
-
-#if ENABLE(DFG_JIT)
-void JITPutByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR)
-{
-    m_start = jit.label();
-    jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    // The second scratch can be the same to baseJSR. In Baseline JIT, we clobber the baseJSR to save registers.
-    generatePutByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, valueJSR, scratch1GPR, baseJSR.payloadGPR());
-    m_done = jit.label();
-}
-#endif
-
 
 void JITPutByIdGenerator::generateFastPath(CCallHelpers& jit)
 {
@@ -328,10 +294,10 @@ void JITDelByValGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITDelByValGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITDelByValGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::DelByVal::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITDelByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
@@ -358,10 +324,10 @@ void JITDelByIdGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITDelByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITDelByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::DelById::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITDelByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
@@ -388,10 +354,10 @@ void JITInByValGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITInByValGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITInByValGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::InByVal::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITInByValGenerator::finalize(
@@ -438,7 +404,7 @@ void JITInByIdGenerator::generateFastPath(CCallHelpers& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
-void JITInByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITInByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::InById::baseJSR;
     using BaselineJITRegisters::InById::resultJSR;
@@ -449,16 +415,6 @@ void JITInByIdGenerator::generateBaselineDataICFastPath(JIT& jit)
     generateInByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, scratch1GPR, resultJSR);
     m_done = jit.label();
 }
-
-#if ENABLE(DFG_JIT)
-void JITInByIdGenerator::generateDFGDataICFastPath(DFG::JITCompiler& jit, StructureStubInfoIndex stubInfoConstant, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR)
-{
-    m_start = jit.label();
-    jit.loadStructureStubInfo(stubInfoConstant, stubInfoGPR);
-    generateInByIdInlineAccessBaselineDataIC(jit, stubInfoGPR, baseJSR, scratch1GPR, resultJSR);
-    m_done = jit.label();
-}
-#endif
 
 JITInstanceOfGenerator::JITInstanceOfGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex,
@@ -480,10 +436,10 @@ void JITInstanceOfGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITInstanceOfGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITInstanceOfGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::Instanceof::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITInstanceOfGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
@@ -512,10 +468,10 @@ void JITGetByValGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITGetByValGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITGetByValGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::GetByVal::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITGetByValGenerator::generateEmptyPath(CCallHelpers& jit)
@@ -551,10 +507,10 @@ void JITGetByValWithThisGenerator::generateFastPath(CCallHelpers& jit)
 }
 
 #if USE(JSVALUE64)
-void JITGetByValWithThisGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITGetByValWithThisGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::GetByValWithThis::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 #endif
 
@@ -590,10 +546,10 @@ void JITPutByValGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITPutByValGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITPutByValGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::PutByVal::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITPutByValGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
@@ -621,10 +577,10 @@ void JITPrivateBrandAccessGenerator::generateFastPath(CCallHelpers& jit)
     m_done = jit.label();
 }
 
-void JITPrivateBrandAccessGenerator::generateBaselineDataICFastPath(JIT& jit)
+void JITPrivateBrandAccessGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::PrivateBrand::stubInfoGPR;
-    JITInlineCacheGenerator::generateBaselineDataICFastPath(jit, stubInfoGPR);
+    JITInlineCacheGenerator::generateDataICFastPath(jit, stubInfoGPR);
 }
 
 void JITPrivateBrandAccessGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)

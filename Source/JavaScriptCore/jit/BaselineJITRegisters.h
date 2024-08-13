@@ -149,7 +149,8 @@ namespace GetByIdWithThis {
     static constexpr GPRReg stubInfoGPR { preferredArgumentGPR<SlowOperation, 2>() };
     static constexpr auto scratchRegisters = allocatedScratchRegisters<GPRInfo, baseJSR, thisJSR, stubInfoGPR, GPRInfo::handlerGPR>;
     static constexpr GPRReg scratch1GPR { scratchRegisters[0] };
-    static_assert(noOverlap(baseJSR, thisJSR, stubInfoGPR, scratch1GPR), "Required for call to slow operation");
+    static constexpr GPRReg scratch2GPR { scratchRegisters[1] };
+    static_assert(noOverlap(baseJSR, thisJSR, stubInfoGPR, scratch1GPR, scratch2GPR), "Required for call to slow operation");
     static_assert(noOverlap(resultJSR, stubInfoGPR));
 }
 

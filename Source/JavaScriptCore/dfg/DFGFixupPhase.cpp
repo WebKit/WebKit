@@ -4101,13 +4101,9 @@ private:
 
         auto emitPrimordialCheckFor = [&] (JSValue primordialProperty, UniquedStringImpl* propertyUID) {
             m_graph.identifiers().ensure(propertyUID);
-            Node* actualProperty = m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, TryGetById, node->origin,
-                OpInfo(CacheableIdentifier::createFromImmortalIdentifier(propertyUID)), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
-
-            m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, CheckIsConstant, node->origin,
-                OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
+            auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromImmortalIdentifier(propertyUID), CacheType::GetByIdPrototype });
+            Node* actualProperty = m_insertionSet.insertNode(m_indexInBlock, SpecNone, TryGetById, node->origin, OpInfo(data), OpInfo(SpecFunction), Edge(searchRegExp, CellUse));
+            m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckIsConstant, node->origin, OpInfo(m_graph.freeze(primordialProperty)), Edge(actualProperty, CellUse));
         };
 
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
