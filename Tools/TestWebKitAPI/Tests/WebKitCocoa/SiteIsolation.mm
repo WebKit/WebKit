@@ -1396,7 +1396,7 @@ TEST(SiteIsolation, RunOpenPanel)
     [webView waitForPendingMouseEvents];
     Util::run(&fileSelected);
 
-    EXPECT_WK_STREQ("test", [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:[[webView firstChildFrame] info]] stringValue]);
+    EXPECT_WK_STREQ("test", [webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:[[webView firstChildFrame] info]]);
 }
 
 TEST(SiteIsolation, CancelOpenPanel)
@@ -2668,7 +2668,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomNavigatorPlatform)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
-    EXPECT_WK_STREQ("Custom Navigator Platform", [[webView objectByEvaluatingJavaScript:@"navigator.platform" inFrame:[[webView firstChildFrame] info]] stringValue]);
+    EXPECT_WK_STREQ("Custom Navigator Platform", [webView objectByEvaluatingJavaScript:@"navigator.platform" inFrame:[[webView firstChildFrame] info]]);
 }
 
 TEST(SiteIsolation, LoadHTMLString)
