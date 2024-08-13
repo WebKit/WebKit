@@ -30,7 +30,10 @@
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/WrappedCryptoKey.h>
 #import <optional>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCryptoClient);
 
 std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8_t>& key) const
 {

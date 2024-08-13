@@ -28,6 +28,7 @@
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -43,7 +44,7 @@ namespace WebKit {
 
 class StorageTracker {
     WTF_MAKE_NONCOPYABLE(StorageTracker);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StorageTracker);
 public:
     static void initializeTracker(const String& storagePath, WebCore::StorageTrackerClient*);
     static StorageTracker& tracker();

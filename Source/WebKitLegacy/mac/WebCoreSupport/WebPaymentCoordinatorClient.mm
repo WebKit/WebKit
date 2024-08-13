@@ -29,7 +29,10 @@
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPaymentCoordinatorClient);
 
 // FIXME: Why is this distinct from EmptyPaymentCoordinatorClient?
 WebPaymentCoordinatorClient::WebPaymentCoordinatorClient()

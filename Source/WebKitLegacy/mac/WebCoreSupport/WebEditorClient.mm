@@ -85,6 +85,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
@@ -190,6 +191,8 @@ static WebViewInsertAction kit(EditorInsertAction action)
 }
 
 @end
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebEditorClient);
 
 WebEditorClient::WebEditorClient(WebView *webView)
     : m_webView(webView)

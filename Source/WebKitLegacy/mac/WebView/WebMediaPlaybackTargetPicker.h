@@ -31,6 +31,7 @@
 #include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/WebMediaSessionManagerClient.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +44,7 @@ class Page;
 }
 
 class WebMediaPlaybackTargetPicker : public WebCore::WebMediaSessionManagerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebMediaPlaybackTargetPicker);
 public:
     static std::unique_ptr<WebMediaPlaybackTargetPicker> create(WebView *, WebCore::Page&);
 

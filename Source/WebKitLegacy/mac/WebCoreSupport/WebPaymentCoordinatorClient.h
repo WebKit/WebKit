@@ -29,8 +29,10 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import <wtf/TZoneMalloc.h>
+
 class WebPaymentCoordinatorClient final : public WebCore::PaymentCoordinatorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorClient);
 public:
     WebPaymentCoordinatorClient();
     ~WebPaymentCoordinatorClient();

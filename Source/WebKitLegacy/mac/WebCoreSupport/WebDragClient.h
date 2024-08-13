@@ -26,11 +26,12 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #import <WebCore/DragClient.h>
+#import <wtf/TZoneMalloc.h>
 
 @class WebView;
 
 class WebDragClient : public WebCore::DragClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebDragClient);
 public:
     WebDragClient(WebView*);
 

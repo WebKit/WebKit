@@ -91,6 +91,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -157,6 +158,8 @@ NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebChromeClient);
 
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)

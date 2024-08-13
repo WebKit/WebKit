@@ -39,6 +39,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/NakedRef.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKResponder.h>
@@ -72,6 +73,8 @@ using namespace WebCore;
 - (id)initWithGeolocation:(NakedRef<Geolocation>)geolocation;
 @end
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationClient);
 
 WebGeolocationClient::WebGeolocationClient(WebView *webView)
     : m_webView(webView)

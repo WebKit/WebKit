@@ -38,6 +38,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
@@ -48,6 +49,8 @@ using namespace WebCore;
 }
 - (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler;
 @end
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNotificationClient);
 
 WebNotificationClient::WebNotificationClient(WebView *webView)
     : m_webView(webView)

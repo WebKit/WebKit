@@ -26,9 +26,10 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #import <WebCore/MediaKeySystemClient.h>
+#import <wtf/TZoneMalloc.h>
 
 class WebMediaKeySystemClient final : public WebCore::MediaKeySystemClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebMediaKeySystemClient);
 public:
     static WebMediaKeySystemClient& singleton();
 

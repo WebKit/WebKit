@@ -25,13 +25,13 @@
 
 #import <WebCore/RunLoopObserver.h>
 #import <wtf/CheckedPtr.h>
-#import <wtf/FastMalloc.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 @class WebView;
 
 class WebViewRenderingUpdateScheduler : public CanMakeWeakPtr<WebViewRenderingUpdateScheduler>, public CanMakeCheckedPtr<WebViewRenderingUpdateScheduler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebViewRenderingUpdateScheduler);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebViewRenderingUpdateScheduler);
 public:
     explicit WebViewRenderingUpdateScheduler(WebView*);

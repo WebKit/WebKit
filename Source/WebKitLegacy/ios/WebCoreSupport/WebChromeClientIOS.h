@@ -26,9 +26,10 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WebChromeClient.h"
+#import <wtf/TZoneMalloc.h>
 
 class WebChromeClientIOS final : public WebChromeClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebChromeClientIOS);
 public:
     WebChromeClientIOS(WebView* webView)
         : WebChromeClient(webView)

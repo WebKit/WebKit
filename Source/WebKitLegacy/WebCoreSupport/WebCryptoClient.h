@@ -27,10 +27,11 @@
 
 #import "WebView.h"
 #import <WebCore/CryptoClient.h>
+#import <wtf/TZoneMalloc.h>
 
 
 class WebCryptoClient:  public WebCore::CryptoClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCryptoClient);
 public:
     WebCryptoClient() = default;
     ~WebCryptoClient() = default;
