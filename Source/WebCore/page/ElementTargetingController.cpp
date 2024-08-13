@@ -689,7 +689,7 @@ static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
 }
 
 enum class IsNearbyTarget : bool { No, Yes };
-static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache)
+static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache, const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& adjustedElements)
 {
     element.document().updateLayoutIgnorePendingStylesheets();
 
@@ -705,6 +705,14 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         positionType = renderer->style().position();
         boundsInClientCoordinates = computeClientRect(*renderer);
     }
+
+    bool isInVisibilityAdjustmentSubtree = [&] {
+        for (RefPtr ancestor = &element; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+            if (adjustedElements.contains(*ancestor))
+                return true;
+        }
+        return false;
+    }();
 
     auto [renderedText, screenReaderText, hasLargeReplacedDescendant] = TextExtraction::extractRenderedText(element);
     return { {
@@ -723,7 +731,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),
-        .isInVisibilityAdjustmentSubtree = element.isInVisibilityAdjustmentSubtree(),
+        .isInVisibilityAdjustmentSubtree = isInVisibilityAdjustmentSubtree,
         .hasLargeReplacedDescendant = hasLargeReplacedDescendant,
         .hasAudibleMedia = hasAudibleMedia(element)
     } };
@@ -821,7 +829,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
 
 static bool shouldIgnoreExistingVisibilityAdjustments(const TargetedElementRequest& request)
 {
-    return std::holds_alternative<String>(request.data);
+    return std::holds_alternative<String>(request.data) || std::holds_alternative<TargetedElementSelectors>(request.data);
 }
 
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
@@ -1141,7 +1149,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        if (auto info = targetedElementInfo(*iterator, IsNearbyTarget::No, cache)) {
+        if (auto info = targetedElementInfo(*iterator, IsNearbyTarget::No, cache, m_adjustedElements)) {
             results.append(WTFMove(*info));
             addOutOfFlowTargetClientRectIfNeeded(*iterator);
         }
@@ -1200,7 +1208,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     }();
 
     for (auto& element : nearbyTargets) {
-        if (auto info = targetedElementInfo(element, IsNearbyTarget::Yes, cache)) {
+        if (auto info = targetedElementInfo(element, IsNearbyTarget::Yes, cache, m_adjustedElements)) {
             results.append(WTFMove(*info));
             addOutOfFlowTargetClientRectIfNeeded(element);
         }
@@ -1630,6 +1638,8 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     RefPtr document = mainFrame->document();
     if (!document)
         return false;
+
+    document->updateLayoutIgnorePendingStylesheets();
 
     HashSet<Ref<Element>> elementsToReset;
     if (identifiers.isEmpty()) {

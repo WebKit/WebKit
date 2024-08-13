@@ -400,6 +400,7 @@ TEST(ElementTargeting, RequestElementsFromSelectors)
     EXPECT_EQ(1U, [targets count]);
     EXPECT_WK_STREQ("DIV.absolute.bottom-right", [target selectorsIncludingShadowHosts].firstObject.firstObject);
     EXPECT_TRUE([target isInVisibilityAdjustmentSubtree]);
+    EXPECT_WK_STREQ("Bottom Right", [target renderedText]);
 
     didAdjustVisibility = false;
 
