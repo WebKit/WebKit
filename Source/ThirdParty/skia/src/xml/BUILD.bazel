@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 XML_FILES = [
     "SkDOM.cpp",
@@ -45,7 +43,10 @@ skia_cc_library(
     srcs = [":_xml_srcs"],
     hdrs = [":_xml_hdrs"],
     features = ["layering_check"],
-    visibility = ["//modules/svg:__subpackages__"],
+    visibility = [
+        "//modules/svg:__subpackages__",
+        "//src/svg:__pkg__",
+    ],
     deps = [
         "//src/base",
         "//src/core",

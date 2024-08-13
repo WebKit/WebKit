@@ -147,13 +147,127 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/effects/imagefilters:srcs",
 			}}},
 	},
+	{GNI: "gn/ports.gni", Vars: []exporter.GNIFileListExportDesc{
+		{Var: "skia_ports_sources",
+			Rules: []string{
+				"//src/ports:global_init",
+				"//src/ports:osfile",
+			}},
+		{Var: "skia_ports_freetype_sources",
+			Rules: []string{
+				"//src/ports:typeface_freetype",
+				"//src/ports:typeface_freetype_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_android_public",
+			Rules: []string{
+				"//include/ports:android_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_android_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_android_hdrs",
+				"//src/ports:fontmgr_android_srcs",
+			}},
+		{Var: "skia_ports_fontmgr_custom_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_custom_hdrs",
+				"//src/ports:fontmgr_custom_srcs",
+			}},
+		{Var: "skia_ports_fontmgr_coretext_public",
+			Rules: []string{
+				"//include/ports:mac_typeface",
+				"//include/ports:coretext_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_coretext_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_coretext_srcs",
+				"//src/ports:typeface_mac_srcs",
+				"//src/ports:typeface_mac_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_directory_public",
+			Rules: []string{
+				"//include/ports:directory_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_directory_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_custom_directory",
+			}},
+		{Var: "skia_ports_fontmgr_embedded_public",
+			Rules: []string{
+				"//include/ports:data_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_embedded_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_custom_embedded",
+			}},
+		{Var: "skia_ports_fontmgr_empty_public",
+			Rules: []string{
+				"//include/ports:empty_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_empty_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_custom_empty",
+			}},
+		{Var: "skia_ports_fontmgr_fontconfig_public",
+			Rules: []string{
+				"//include/ports:fontconfig_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_fontconfig_sources",
+			Rules: []string{
+				"//src/ports:legacy_fontmgr_fontconfig",
+			}},
+		{Var: "skia_ports_fontmgr_fontations_public",
+			Rules: []string{
+				"//include/ports:fontmgr_fontations_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_fontations_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_fontations_empty_srcs",
+			}},
+		{Var: "skia_ports_fontmgr_fuchsia_public",
+			Rules: []string{
+				"//include/ports:fuchsia_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fontmgr_fuchsia_sources",
+			Rules: []string{
+				"//src/ports:fontmgr_fuchsia_srcs",
+			}},
+		{Var: "skia_ports_typeface_fontations_sources",
+			Rules: []string{
+				"//src/ports:typeface_fontations_hdrs",
+				"//src/ports:typeface_fontations_srcs",
+			}},
+		{Var: "skia_ports_windows_sources",
+			Rules: []string{
+				"//src/ports:osfile_win",
+			}},
+		{Var: "skia_ports_windows_fonts_public",
+			Rules: []string{
+				"//include/ports:typeface_windows_hdrs",
+			}},
+		{Var: "skia_ports_windows_fonts_sources",
+			Rules: []string{
+				"//src/ports:windows_fonts_srcs",
+			}},
+		{Var: "skia_ports_fci_public",
+			Rules: []string{
+				"//include/ports:fci_fontmgr_hdrs",
+			}},
+		{Var: "skia_ports_fci_sources",
+			Rules: []string{
+				"//src/ports:fontconfig_interface_srcs",
+			}},
+		{Var: "skia_ports_fonthost_win_sources",
+			Rules: []string{
+				"//src/ports:fonthost_win_srcs",
+			}},
+	}},
 	{GNI: "gn/pdf.gni", Vars: []exporter.GNIFileListExportDesc{
 		{Var: "skia_pdf_public",
 			Rules: []string{"//include/docs:public_hdrs"}},
 		{Var: "skia_pdf_sources",
 			Rules: []string{
-				"//src/pdf:pdf_hdrs",
-				"//src/pdf:pdf_srcs",
+				"//src/pdf:_pdf_hdrs",
+				"//src/pdf:_pdf_srcs",
 			}},
 		{Var: "skia_pdf_jpeginfo_lib",
 			Rules: []string{"//src/pdf:jpeg_info_libjpeg"}},
@@ -161,7 +275,7 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			Rules: []string{"//src/pdf:jpeg_info_none"}},
 	}},
 	{GNI: "gn/sksl.gni", Vars: []exporter.GNIFileListExportDesc{
-		{Var: "skia_sksl_sources",
+		{Var: "skia_sksl_core_sources",
 			Rules: []string{
 				"//include/private:sksl_private_hdrs",
 				"//include/sksl:public_hdrs",
@@ -179,15 +293,51 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/sksl:sksl_hdrs",
 				"//src/sksl:sksl_srcs",
 			}},
+		// TODO(kjlubick) remove this group after clients are migrated
+		// onto core and/or graphite
+		{Var: "skia_sksl_default_module_sources",
+			Rules: []string{
+				"//src/sksl:sksl_default_module_srcs",
+				"//src/sksl:sksl_graphite_modules_hdrs",
+				"//src/sksl:sksl_graphite_modules_srcs",
+			}},
+		{Var: "skia_sksl_core_module_sources",
+			Rules: []string{
+				"//src/sksl:sksl_default_module_srcs",
+				"//src/sksl:sksl_graphite_modules_hdrs",
+			}},
+		{Var: "skia_sksl_graphite_modules_sources",
+			Rules: []string{
+				"//src/sksl:sksl_graphite_modules_srcs",
+				"//src/sksl:sksl_graphite_modules_hdrs",
+			}},
 		{Var: "skia_sksl_tracing_sources",
 			Rules: []string{
 				"//src/sksl/tracing:enabled_hdrs",
 				"//src/sksl/tracing:enabled_srcs",
 			}},
-		{Var: "skia_sksl_gpu_sources",
+		{Var: "skia_sksl_pipeline_sources",
 			Rules: []string{
-				"//src/sksl/codegen:legacy_gpu_hdrs",
-				"//src/sksl/codegen:legacy_gpu_srcs",
+				"//src/sksl/codegen:gpu",
+			}},
+		{Var: "skia_sksl_codegen_sources",
+			Rules: []string{
+				"//src/sksl/codegen:glsl",
+				"//src/sksl/codegen:metal",
+				"//src/sksl/codegen:spirv",
+				"//src/sksl/codegen:wgsl",
+			}},
+		{Var: "skia_sksl_hlsl_sources",
+			Rules: []string{
+				"//src/sksl/codegen:hlsl",
+			}},
+		{Var: "skia_sksl_validate_spirv_sources",
+			Rules: []string{
+				"//src/sksl/codegen:spirv_validator",
+			}},
+		{Var: "skia_sksl_validate_wgsl_sources",
+			Rules: []string{
+				"//src/sksl/codegen:wgsl_validator",
 			}},
 		{Var: "skslc_deps",
 			Rules: []string{
@@ -198,6 +348,7 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/gpu/ganesh:core_skslc_srcs",
 				"//src/ports:malloc",
 				"//src/ports:osfile",
+				"//src/sksl:sksl_skslc_module_srcs",
 				"//src/utils:utils_skslc_hdrs",
 				"//src/utils:utils_skslc_srcs",
 				"//src/utils:json_srcs",
@@ -414,8 +565,12 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_shared_vk_sources",
 			Rules: []string{
 				"//include/private/gpu/vk:private_hdrs",
-				"//src/gpu/vk:vk_hdrs",
-				"//src/gpu/vk:vk_srcs"}},
+				"//src/gpu/vk:_vk_hdrs",
+				"//src/gpu/vk:_vk_srcs"}},
+		{Var: "skia_vma_sources",
+			Rules: []string{
+				"//src/gpu/vk/vulkanmemoryallocator:vma_srcs",
+				"//src/gpu/vk/vulkanmemoryallocator:vma_hdrs"}},
 		{Var: "skia_shared_mtl_sources",
 			Rules: []string{
 				"//include/gpu/mtl:public_hdrs",

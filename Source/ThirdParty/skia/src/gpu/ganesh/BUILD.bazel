@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "generate_cpp_files_for_headers", "select_multi", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "select_multi", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 # In separate groups for exporting to sksl.gni:skslc_deps.
 SKSLC_FILES = [
@@ -394,6 +392,7 @@ skia_cc_library(
         "//src/gpu/ganesh/mock:private_hdrs",
         "//include/gpu/mock:public_hdrs",
     ],
+    defines = ["SK_GANESH"],
     features = ["layering_check"],
     local_defines = ["SK_USE_LEGACY_GANESH_TEXT_APIS"],
     visibility = [
@@ -455,7 +454,10 @@ skia_cc_library(
         "//src/gpu/ganesh/mock:private_hdrs",
         "//include/gpu/mock:public_hdrs",
     ],
-    defines = ["GR_TEST_UTILS"],
+    defines = [
+        "GR_TEST_UTILS",
+        "SK_GANESH",
+    ],
     features = ["layering_check"],
     local_defines = ["SK_USE_LEGACY_GANESH_TEXT_APIS"],
     visibility = [
@@ -475,8 +477,36 @@ skia_cc_library(
 generate_cpp_files_for_headers(
     name = "headers_to_compile",
     headers = [
+        "GrAppliedClip.h",
+        "GrAutoLocaleSetter.h",
         "GrBackendSemaphorePriv.h",
         "GrBackendSurfacePriv.h",
+        "GrBaseContextPriv.h",
         "GrClip.h",
+        "GrCpuBuffer.h",
+        "GrDeferredUpload.h",
+        "GrDrawIndirectCommand.h",
+        "GrDstProxyView.h",
+        "GrFPArgs.h",
+        "GrGpuResourceCacheAccess.h",
+        "GrGpuResourcePriv.h",
+        "GrNativeRect.h",
+        "GrNonAtomicRef.h",
+        "GrOpsTypes.h",
+        "GrPixmap.h",
+        "GrSimpleMesh.h",
+        "GrSurfaceProxyPriv.h",
+        "GrTextureProxyCacheAccess.h",
+        "GrTextureProxyPriv.h",
+        "GrTracing.h",
+        "GrTTopoSort.h",
+        "GrUserStencilSettings.h",
+        "GrWindowRectangles.h",
+        "GrWaitRenderTask.h",
+
+        # Trips an assertion in IWYU
+        # /tmp/iwyu/iwyu.cc:2003: Assertion failed:
+        #   TODO(csilvers): for objc and clang lang extensions
+        # "GrColor.h",
     ],
 )

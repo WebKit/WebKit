@@ -6,7 +6,6 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 cc_binary(
     name = "path_combiner",
     srcs = ["src/path_main.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-fuse-ld=lld",
         "-lpthread",
@@ -25,7 +24,6 @@ cc_library(
 cc_binary(
     name = "png_decoder",
     srcs = ["src/decode_png_main.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-fuse-ld=lld",
         "-lpthread",
@@ -39,7 +37,6 @@ cc_binary(
 cc_binary(
     name = "decode_everything",
     srcs = ["src/decode_everything.cpp"],
-    copts = ["-std=c++17"],
     linkopts = select({
         "@platforms//os:linux": [
             "-fuse-ld=lld",
@@ -63,7 +60,6 @@ cc_binary(
 cc_binary(
     name = "write_text_to_png",
     srcs = ["src/write_text_to_png.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-fuse-ld=lld",
         "-lpthread",
@@ -80,7 +76,6 @@ cc_binary(
 cc_binary(
     name = "shape_text",
     srcs = ["src/shape_text.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-fuse-ld=lld",
         "-lpthread",
@@ -89,7 +84,7 @@ cc_binary(
         "@skia//:core",
         "@skia//:fontmgr_empty_freetype",
         "@skia//:jpeg_encode_codec",
-        "@skia//:skparagraph_harfbuzz_unicode",
+        "@skia//:skparagraph_harfbuzz_skunicode",
         "@skia//:skunicode_icu",
     ],
 )
@@ -97,7 +92,6 @@ cc_binary(
 cc_binary(
     name = "use_ganesh_gl",
     srcs = ["src/ganesh_gl.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-lpthread",
     ] + select(
@@ -137,7 +131,6 @@ objc_library(
 cc_binary(
     name = "use_ganesh_vulkan",
     srcs = ["src/ganesh_vulkan.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-lpthread",
     ],
@@ -150,24 +143,23 @@ cc_binary(
 cc_binary(
     name = "use_ganesh_metal",
     srcs = ["src/ganesh_metal.cpp"],
-    copts = ["-std=c++17"],
     target_compatible_with = select({
         "@platforms//os:macos": [],
         "@platforms//os:ios": [],
         "//conditions:default": ["@platforms//:incompatible"],
     }),
     deps = [
-        ":metal_context_helper",
+        ":ganesh_metal_context_helper",
         "@skia//:core",
         "@skia//:ganesh_metal",
+        "@skia//:jpeg_encode_codec",
     ],
 )
 
 objc_library(
-    name = "metal_context_helper",
-    srcs = ["src/metal_context_helper.mm"],
-    hdrs = ["src/metal_context_helper.h"],
-    copts = ["-std=c++17"],
+    name = "ganesh_metal_context_helper",
+    srcs = ["src/ganesh_metal_context_helper.mm"],
+    hdrs = ["src/ganesh_metal_context_helper.h"],
     includes = ["src"],
     sdk_frameworks = [
         # Without MetalKit added as a dependency, `[*device newCommandQueue]` fails
@@ -182,14 +174,61 @@ objc_library(
     deps = [
         "@skia//:core",
         "@skia//:ganesh_metal",
+    ],
+)
+
+cc_binary(
+    name = "use_graphite_native_metal",
+    srcs = ["src/graphite_native_metal.cpp"],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":graphite_metal_context_helper",
+        "@skia//:core",
+        "@skia//:graphite_native_metal",
         "@skia//:jpeg_encode_codec",
+    ],
+)
+
+objc_library(
+    name = "graphite_metal_context_helper",
+    srcs = ["src/graphite_metal_context_helper.mm"],
+    hdrs = ["src/graphite_metal_context_helper.h"],
+    includes = ["src"],
+    sdk_frameworks = [
+        # Without MetalKit added as a dependency, `[*device newCommandQueue]` fails
+        "MetalKit",
+        "Metal",
+    ],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        "@skia//:core",
+        "@skia//:graphite_native_metal",
+    ],
+)
+
+cc_binary(
+    name = "use_graphite_native_vulkan",
+    srcs = ["src/graphite_native_vulkan.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:graphite_native_vulkan",
     ],
 )
 
 cc_binary(
     name = "use_skresources",
     srcs = ["src/use_skresources.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-lpthread",
     ],
@@ -204,7 +243,6 @@ cc_binary(
 cc_binary(
     name = "svg_with_primitive",
     srcs = ["src/svg_renderer.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-lpthread",
     ],
@@ -223,7 +261,6 @@ cc_binary(
 cc_binary(
     name = "svg_with_harfbuzz",
     srcs = ["src/svg_renderer.cpp"],
-    copts = ["-std=c++17"],
     linkopts = [
         "-lpthread",
     ],
@@ -234,6 +271,22 @@ cc_binary(
         "@skia//:skshaper_unicode",
         "@skia//:skunicode_icu",
         "@skia//:svg_renderer",
+    ] + select({
+        "@platforms//os:linux": ["@skia//:fontmgr_fontconfig_freetype"],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": [],
+    }),
+)
+
+cc_binary(
+    name = "write_to_pdf",
+    srcs = ["src/write_to_pdf.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:pdf_writer",
     ] + select({
         "@platforms//os:linux": ["@skia//:fontmgr_fontconfig_freetype"],
         "@platforms//os:macos": ["@skia//:fontmgr_coretext"],

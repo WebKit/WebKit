@@ -13,7 +13,7 @@
 
 #include "src/core/SkSLTypeShared.h"
 #include "src/gpu/Blend.h"
-#include "src/gpu/PipelineUtils.h"
+#include "src/gpu/SkSLToBackend.h"
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/ComputePipelineDesc.h"
 #include "src/gpu/graphite/ContextUtils.h"
@@ -115,8 +115,9 @@ sk_sp<GraphicsPipeline> MtlResourceProvider::createGraphicsPipeline(
         const RenderPassDesc& renderPassDesc) {
     std::string vsMSL, fsMSL;
     SkSL::Program::Interface vsInterface, fsInterface;
-    SkSL::ProgramSettings settings;
 
+    SkSL::ProgramSettings settings;
+    settings.fSharpenTextures = true;
     settings.fForceNoRTFlip = true;
 
     SkSL::Compiler skslCompiler;
@@ -124,7 +125,7 @@ sk_sp<GraphicsPipeline> MtlResourceProvider::createGraphicsPipeline(
 
     const RenderStep* step =
             fSharedContext->rendererProvider()->lookup(pipelineDesc.renderStepID());
-    const bool useStorageBuffers = fSharedContext->caps()->storageBufferPreferred();
+    const bool useStorageBuffers = fSharedContext->caps()->storageBufferSupport();
 
     UniquePaintParamsID paintID = pipelineDesc.paintParamsID();
     FragSkSLInfo fsSkSLInfo = BuildFragmentSkSL(fSharedContext->caps(),
@@ -241,29 +242,24 @@ sk_sp<ComputePipeline> MtlResourceProvider::createComputePipeline(
 
 sk_sp<Texture> MtlResourceProvider::createTexture(SkISize dimensions,
                                                   const TextureInfo& info,
-                                                  std::string_view label,
                                                   skgpu::Budgeted budgeted) {
-    return MtlTexture::Make(this->mtlSharedContext(), dimensions, info, std::move(label), budgeted);
+    return MtlTexture::Make(this->mtlSharedContext(), dimensions, info, budgeted);
 }
 
-sk_sp<Texture> MtlResourceProvider::createWrappedTexture(const BackendTexture& texture) {
-    CFTypeRef mtlHandleTexture = texture.getMtlTexture();
+sk_sp<Texture> MtlResourceProvider::onCreateWrappedTexture(const BackendTexture& texture) {
+    CFTypeRef mtlHandleTexture = BackendTextures::GetMtlTexture(texture);
     if (!mtlHandleTexture) {
         return nullptr;
     }
     sk_cfp<id<MTLTexture>> mtlTexture = sk_ret_cfp((id<MTLTexture>)mtlHandleTexture);
-    return MtlTexture::MakeWrapped(this->mtlSharedContext(),
-                                   texture.dimensions(),
-                                   texture.info(),
-                                   std::move(mtlTexture),
-                                   "WrappedTexture");
+    return MtlTexture::MakeWrapped(this->mtlSharedContext(), texture.dimensions(), texture.info(),
+                                   std::move(mtlTexture));
 }
 
 sk_sp<Buffer> MtlResourceProvider::createBuffer(size_t size,
                                                 BufferType type,
-                                                AccessPattern accessPattern,
-                                                std::string_view label) {
-    return MtlBuffer::Make(this->mtlSharedContext(), size, type, accessPattern, std::move(label));
+                                                AccessPattern accessPattern) {
+    return MtlBuffer::Make(this->mtlSharedContext(), size, type, accessPattern);
 }
 
 sk_sp<Sampler> MtlResourceProvider::createSampler(const SamplerDesc& samplerDesc) {
@@ -361,12 +357,12 @@ BackendTexture MtlResourceProvider::onCreateBackendTexture(SkISize dimensions,
     if (!texture) {
         return {};
     }
-    return BackendTexture(dimensions, (CFTypeRef)texture.release());
+    return BackendTextures::MakeMetal(dimensions, (CFTypeRef)texture.release());
 }
 
 void MtlResourceProvider::onDeleteBackendTexture(const BackendTexture& texture) {
     SkASSERT(texture.backend() == BackendApi::kMetal);
-    CFTypeRef texHandle = texture.getMtlTexture();
+    CFTypeRef texHandle = BackendTextures::GetMtlTexture(texture);
     SkCFSafeRelease(texHandle);
 }
 

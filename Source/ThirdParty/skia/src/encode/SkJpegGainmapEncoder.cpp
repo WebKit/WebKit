@@ -18,6 +18,9 @@
 #include "src/codec/SkJpegMultiPicture.h"
 #include "src/codec/SkJpegPriv.h"
 #include "src/codec/SkJpegSegmentScan.h"
+#include "src/codec/SkTiffUtility.h"
+#include "src/core/SkStreamPriv.h"
+#include "src/encode/SkJpegEncoderImpl.h"
 
 #include <vector>
 
@@ -27,7 +30,7 @@ static bool is_single_channel(SkColor4f c) { return c.fR == c.fG && c.fG == c.fB
 // HDRGM encoding
 
 // Generate the XMP metadata for an HDRGM file.
-sk_sp<SkData> get_hdrgm_xmp_data(const SkGainmapInfo& gainmapInfo) {
+sk_sp<SkData> get_gainmap_image_xmp_metadata(const SkGainmapInfo& gainmapInfo) {
     SkDynamicMemoryWStream s;
     const float kLog2 = std::log(2.f);
     const SkColor4f gainMapMin = {std::log(gainmapInfo.fGainmapRatioMin.fR) / kLog2,
@@ -122,7 +125,7 @@ sk_sp<SkData> get_hdrgm_xmp_data(const SkGainmapInfo& gainmapInfo) {
 }
 
 // Generate the GContainer metadata for an image with a JPEG gainmap.
-static sk_sp<SkData> get_gcontainer_xmp_data(size_t gainmapItemLength) {
+static sk_sp<SkData> get_base_image_xmp_metadata(size_t gainmapItemLength) {
     SkDynamicMemoryWStream s;
     s.writeText(
             "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"Adobe XMP Core 5.1.2\">\n"
@@ -158,20 +161,65 @@ static sk_sp<SkData> get_gcontainer_xmp_data(size_t gainmapItemLength) {
 
 static sk_sp<SkData> encode_to_data(const SkPixmap& pm,
                                     const SkJpegEncoder::Options& options,
-                                    SkData* xmpMetadata) {
-    SkJpegEncoder::Options optionsWithXmp = options;
-    optionsWithXmp.xmpMetadata = xmpMetadata;
+                                    const SkJpegMetadataEncoder::SegmentList& metadataSegments) {
     SkDynamicMemoryWStream encodeStream;
-    auto encoder = SkJpegEncoder::Make(&encodeStream, pm, optionsWithXmp);
+    auto encoder = SkJpegEncoderImpl::MakeRGB(&encodeStream, pm, options, metadataSegments);
     if (!encoder || !encoder->encodeRows(pm.height())) {
         return nullptr;
     }
     return encodeStream.detachAsData();
 }
 
-static sk_sp<SkData> get_mpf_segment(const SkJpegMultiPictureParameters& mpParams) {
+static sk_sp<SkData> get_exif_params() {
     SkDynamicMemoryWStream s;
-    auto segmentParameters = mpParams.serialize();
+
+    s.write(kExifSig, sizeof(kExifSig));
+    s.write8(0);
+
+    s.write(SkTiff::kEndianBig, sizeof(SkTiff::kEndianBig));
+    SkWStreamWriteU32BE(&s, 8);  // Offset of index IFD
+
+    // Write the index IFD.
+    {
+        constexpr uint16_t kIndexIfdNumberOfTags = 1;
+        SkWStreamWriteU16BE(&s, kIndexIfdNumberOfTags);
+
+        constexpr uint16_t kSubIFDOffsetTag = 0x8769;
+        constexpr uint32_t kSubIfdCount = 1;
+        constexpr uint32_t kSubIfdOffset = 26;
+        SkWStreamWriteU16BE(&s, kSubIFDOffsetTag);
+        SkWStreamWriteU16BE(&s, SkTiff::kTypeUnsignedLong);
+        SkWStreamWriteU32BE(&s, kSubIfdCount);
+        SkWStreamWriteU32BE(&s, kSubIfdOffset);
+
+        constexpr uint32_t kIndexIfdNextIfdOffset = 0;
+        SkWStreamWriteU32BE(&s, kIndexIfdNextIfdOffset);
+    }
+
+    // Write the sub-IFD.
+    {
+        constexpr uint16_t kSubIfdNumberOfTags = 1;
+        SkWStreamWriteU16BE(&s, kSubIfdNumberOfTags);
+
+        constexpr uint16_t kVersionTag = 0x9000;
+        constexpr uint32_t kVersionCount = 4;
+        constexpr uint8_t kVersion[kVersionCount] = {'0', '2', '3', '2'};
+        SkWStreamWriteU16BE(&s, kVersionTag);
+        SkWStreamWriteU16BE(&s, SkTiff::kTypeUndefined);
+        SkWStreamWriteU32BE(&s, kVersionCount);
+        s.write(kVersion, sizeof(kVersion));
+
+        constexpr uint32_t kSubIfdNextIfdOffset = 0;
+        SkWStreamWriteU32BE(&s, kSubIfdNextIfdOffset);
+    }
+
+    return s.detachAsData();
+}
+
+static sk_sp<SkData> get_mpf_segment(const SkJpegMultiPictureParameters& mpParams,
+                                     size_t imageNumber) {
+    SkDynamicMemoryWStream s;
+    auto segmentParameters = mpParams.serialize(static_cast<uint32_t>(imageNumber));
     const size_t mpParameterLength = kJpegSegmentParameterLengthSize + segmentParameters->size();
     s.write8(0xFF);
     s.write8(kMpfMarker);
@@ -181,29 +229,89 @@ static sk_sp<SkData> get_mpf_segment(const SkJpegMultiPictureParameters& mpParam
     return s.detachAsData();
 }
 
+static sk_sp<SkData> get_iso_gainmap_segment_params(sk_sp<SkData> data) {
+    SkDynamicMemoryWStream s;
+    s.write(kISOGainmapSig, sizeof(kISOGainmapSig));
+    s.write(data->data(), data->size());
+    return s.detachAsData();
+}
+
 bool SkJpegGainmapEncoder::EncodeHDRGM(SkWStream* dst,
                                        const SkPixmap& base,
                                        const SkJpegEncoder::Options& baseOptions,
                                        const SkPixmap& gainmap,
                                        const SkJpegEncoder::Options& gainmapOptions,
                                        const SkGainmapInfo& gainmapInfo) {
-    // Encode the gainmap image with the HDRGM XMP metadata.
+    bool includeUltraHDRv1 = gainmapInfo.isUltraHDRv1Compatible();
+
+    // All images will have the same minimial Exif metadata.
+    auto exif_params = get_exif_params();
+
+    // Encode the gainmap image.
     sk_sp<SkData> gainmapData;
     {
-        // We will include the HDRGM XMP metadata in the gainmap image.
-        auto hdrgmXmp = get_hdrgm_xmp_data(gainmapInfo);
-        gainmapData = encode_to_data(gainmap, gainmapOptions, hdrgmXmp.get());
+        SkJpegMetadataEncoder::SegmentList metadataSegments;
+
+        // Start with Exif metadata.
+        metadataSegments.emplace_back(kExifMarker, exif_params);
+
+        // MPF segment will be inserted after this.
+
+        // Add XMP metadata.
+        if (includeUltraHDRv1) {
+            SkJpegMetadataEncoder::AppendXMPStandard(
+                    metadataSegments, get_gainmap_image_xmp_metadata(gainmapInfo).get());
+        }
+
+        // Include the ICC profile of the alternate color space, if it is used.
+        if (gainmapInfo.fGainmapMathColorSpace) {
+            SkJpegMetadataEncoder::AppendICC(
+                    metadataSegments, gainmapOptions, gainmapInfo.fGainmapMathColorSpace.get());
+        }
+
+        // Add the ISO 21946-1 metadata.
+        metadataSegments.emplace_back(kISOGainmapMarker,
+                                      get_iso_gainmap_segment_params(gainmapInfo.serialize()));
+
+        // Encode the gainmap image.
+        gainmapData = encode_to_data(gainmap, gainmapOptions, metadataSegments);
         if (!gainmapData) {
             SkCodecPrintf("Failed to encode gainmap image.\n");
             return false;
         }
     }
 
-    // Encode the base image with the Container XMP metadata.
+    // Encode the base image.
     sk_sp<SkData> baseData;
     {
-        auto containerXmp = get_gcontainer_xmp_data(static_cast<int32_t>(gainmapData->size()));
-        baseData = encode_to_data(base, baseOptions, containerXmp.get());
+        SkJpegMetadataEncoder::SegmentList metadataSegments;
+
+        // Start with Exif metadata.
+        metadataSegments.emplace_back(kExifMarker, exif_params);
+
+        // MPF segment will be inserted after this.
+
+        // Include XMP.
+        if (includeUltraHDRv1) {
+            // Add to the gainmap image size the size of the MPF segment for image 1 of a 2-image
+            // file.
+            SkJpegMultiPictureParameters mpParams(2);
+            size_t gainmapImageSize = gainmapData->size() + get_mpf_segment(mpParams, 1)->size();
+            SkJpegMetadataEncoder::AppendXMPStandard(
+                    metadataSegments,
+                    get_base_image_xmp_metadata(static_cast<int32_t>(gainmapImageSize)).get());
+        }
+
+        // Include ICC profile metadata.
+        SkJpegMetadataEncoder::AppendICC(metadataSegments, baseOptions, base.colorSpace());
+
+        // Include the ISO 21946-1 version metadata.
+        metadataSegments.emplace_back(
+                kISOGainmapMarker,
+                get_iso_gainmap_segment_params(SkGainmapInfo::SerializeVersion()));
+
+        // Encode the base image.
+        baseData = encode_to_data(base, baseOptions, metadataSegments);
         if (!baseData) {
             SkCodecPrintf("Failed to encode base image.\n");
             return false;
@@ -218,90 +326,89 @@ bool SkJpegGainmapEncoder::EncodeHDRGM(SkWStream* dst,
     return MakeMPF(dst, images, 2);
 }
 
+// Compute the offset into |image| at which the MP segment should be inserted. Return 0 on failure.
+static size_t mp_segment_offset(const SkData* image) {
+    // Scan the image until StartOfScan marker.
+    SkJpegSegmentScanner scan(kJpegMarkerStartOfScan);
+    scan.onBytes(image->data(), image->size());
+    if (!scan.isDone()) {
+        SkCodecPrintf("Failed to scan image header.\n");
+        return 0;
+    }
+    const auto& segments = scan.getSegments();
+
+    // Search for the Exif segment and place the MP parameters immediately after. See 5.1.
+    // Basic MP File Structure, which indicates "The MP Extensions are specified in the APP2
+    // marker segment which follows immediately after the Exif Attributes in the APP1 marker
+    // segment except as specified in section 7".
+    for (size_t segmentIndex = 0; segmentIndex < segments.size() - 1; ++segmentIndex) {
+        const auto& segment = segments[segmentIndex];
+        if (segment.marker != kExifMarker) {
+            continue;
+        }
+        auto params = SkJpegSegmentScanner::GetParameters(image, segment);
+        if (params->size() < sizeof(kExifSig) ||
+            memcmp(params->data(), kExifSig, sizeof(kExifSig)) != 0) {
+            continue;
+        }
+        // Insert the MPF segment at the offset of the next segment.
+        return segments[segmentIndex + 1].offset;
+    }
+
+    // If there is no Exif segment, then insert the MPF segment just before the StartOfScan.
+    return segments.back().offset;
+}
+
 bool SkJpegGainmapEncoder::MakeMPF(SkWStream* dst, const SkData** images, size_t imageCount) {
     if (imageCount < 1) {
         return true;
     }
 
-    // Create a scan of the primary image.
-    SkJpegSegmentScanner primaryScan;
-    primaryScan.onBytes(images[0]->data(), images[0]->size());
-    if (!primaryScan.isDone()) {
-        SkCodecPrintf("Failed to scan encoded primary image header.\n");
-        return false;
+    // The offset into each image at which the MP segment will be written.
+    std::vector<size_t> mpSegmentOffsets(imageCount);
+
+    // Populate the MP parameters (image sizes and offsets).
+    SkJpegMultiPictureParameters mpParams(imageCount);
+    size_t cumulativeSize = 0;
+    for (size_t i = 0; i < imageCount; ++i) {
+        // Compute the offset into the each image where we will write the MP parameters.
+        mpSegmentOffsets[i] = mp_segment_offset(images[i]);
+        if (!mpSegmentOffsets[i]) {
+            return false;
+        }
+
+        // Add the size of the MPF segment to image size. Note that the contents of
+        // get_mpf_segment() are incorrect (because we don't have the right offset values), but
+        // the size is correct.
+        const size_t imageSize = images[i]->size() + get_mpf_segment(mpParams, i)->size();
+        mpParams.images[i].dataOffset = SkJpegMultiPictureParameters::GetImageDataOffset(
+                cumulativeSize, mpSegmentOffsets[0]);
+        mpParams.images[i].size = static_cast<uint32_t>(imageSize);
+        cumulativeSize += imageSize;
     }
 
-    // Copy the primary image up to its StartOfScan, then insert the MPF segment, then copy the rest
-    // of the primary image, and all other images.
-    size_t bytesRead = 0;
-    size_t bytesWritten = 0;
-    for (const auto& segment : primaryScan.getSegments()) {
-        // Write all ECD before this segment.
-        {
-            size_t ecdBytesToWrite = segment.offset - bytesRead;
-            if (!dst->write(images[0]->bytes() + bytesRead, ecdBytesToWrite)) {
-                SkCodecPrintf("Failed to write entropy coded data.\n");
-                return false;
-            }
-            bytesWritten += ecdBytesToWrite;
-            bytesRead = segment.offset;
+    // Write the images.
+    for (size_t i = 0; i < imageCount; ++i) {
+        // Write up to the MP segment.
+        if (!dst->write(images[i]->bytes(), mpSegmentOffsets[i])) {
+            SkCodecPrintf("Failed to write image header.\n");
+            return false;
         }
 
-        // If this isn't a StartOfScan, write just the segment.
-        if (segment.marker != kJpegMarkerStartOfScan) {
-            const size_t bytesToWrite = kJpegMarkerCodeSize + segment.parameterLength;
-            if (!dst->write(images[0]->bytes() + bytesRead, bytesToWrite)) {
-                SkCodecPrintf("Failed to copy segment.\n");
-                return false;
-            }
-            bytesWritten += bytesToWrite;
-            bytesRead += bytesToWrite;
-            continue;
-        }
-
-        // We're now at the StartOfScan.
-        const size_t bytesRemaining = images[0]->size() - bytesRead;
-
-        // Compute the MPF offsets for the images.
-        SkJpegMultiPictureParameters mpParams;
-        {
-            mpParams.images.resize(imageCount);
-            const size_t mpSegmentSize = kJpegMarkerCodeSize + kJpegSegmentParameterLengthSize +
-                                         mpParams.serialize()->size();
-            mpParams.images[0].size =
-                    static_cast<uint32_t>(bytesWritten + mpSegmentSize + bytesRemaining);
-            uint32_t offset =
-                    static_cast<uint32_t>(bytesRemaining + mpSegmentSize - kJpegMarkerCodeSize -
-                                          kJpegSegmentParameterLengthSize - sizeof(kMpfSig));
-            for (size_t i = 1; i < imageCount; ++i) {
-                mpParams.images[i].dataOffset = offset;
-                mpParams.images[i].size = static_cast<uint32_t>(images[i]->size());
-                offset += mpParams.images[i].size;
-            }
-        }
-
-        // Write the MPF segment.
-        auto mpfSegment = get_mpf_segment(mpParams);
+        // Write the MP segment.
+        auto mpfSegment = get_mpf_segment(mpParams, i);
         if (!dst->write(mpfSegment->data(), mpfSegment->size())) {
             SkCodecPrintf("Failed to write MPF segment.\n");
             return false;
         }
 
-        // Write the rest of the primary file.
-        if (!dst->write(images[0]->bytes() + bytesRead, bytesRemaining)) {
-            SkCodecPrintf("Failed to write remainder of primary image.\n");
+        // Write the rest of the image.
+        if (!dst->write(images[i]->bytes() + mpSegmentOffsets[i],
+                        images[i]->size() - mpSegmentOffsets[i])) {
+            SkCodecPrintf("Failed to write image body.\n");
             return false;
         }
-        bytesRead += bytesRemaining;
-        SkASSERT(bytesRead == images[0]->size());
-        break;
     }
 
-    // Write the remaining files.
-    for (size_t i = 1; i < imageCount; ++i) {
-        if (!dst->write(images[i]->data(), images[i]->size())) {
-            SkCodecPrintf("Failed to write auxiliary image.\n");
-        }
-    }
     return true;
 }

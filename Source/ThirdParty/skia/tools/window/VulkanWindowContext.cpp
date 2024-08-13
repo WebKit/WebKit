@@ -17,11 +17,13 @@
 #include "include/gpu/ganesh/vk/GrVkDirectContext.h"
 #include "include/gpu/vk/GrVkTypes.h"
 #include "include/gpu/vk/VulkanExtensions.h"
+#include "src/gpu/GpuTypesPriv.h"
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "src/base/SkAutoMalloc.h"
 #include "src/gpu/ganesh/vk/GrVkImage.h"
 #include "src/gpu/ganesh/vk/GrVkUtil.h"
 #include "src/gpu/vk/VulkanInterface.h"
+#include "src/gpu/vk/vulkanmemoryallocator/VulkanAMDMemoryAllocator.h"
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 // windows wants to define this as CreateSemaphoreA or CreateSemaphoreW
@@ -57,7 +59,7 @@ void VulkanWindowContext::initializeContext() {
     // any config code here (particularly for msaa)?
 
     PFN_vkGetInstanceProcAddr getInstanceProc = fGetInstanceProcAddr;
-    GrVkBackendContext backendContext;
+    skgpu::VulkanBackendContext backendContext;
     skgpu::VulkanExtensions extensions;
     VkPhysicalDeviceFeatures2 features;
     if (!sk_gpu_test::CreateVkBackendContext(getInstanceProc, &backendContext, &extensions,
@@ -93,8 +95,11 @@ void VulkanWindowContext::initializeContext() {
     localGetPhysicalDeviceProperties(backendContext.fPhysicalDevice, &physDeviceProperties);
     uint32_t physDevVersion = physDeviceProperties.apiVersion;
 
-    fInterface.reset(new skgpu::VulkanInterface(backendContext.fGetProc, fInstance, fDevice,
-                                                backendContext.fInstanceVersion, physDevVersion,
+    fInterface.reset(new skgpu::VulkanInterface(backendContext.fGetProc,
+                                                fInstance,
+                                                fDevice,
+                                                backendContext.fMaxAPIVersion,
+                                                physDevVersion,
                                                 &extensions));
 
     GET_PROC(DestroyInstance);
@@ -115,6 +120,16 @@ void VulkanWindowContext::initializeContext() {
     GET_DEV_PROC(AcquireNextImageKHR);
     GET_DEV_PROC(QueuePresentKHR);
     GET_DEV_PROC(GetDeviceQueue);
+
+    backendContext.fMemoryAllocator =
+            skgpu::VulkanAMDMemoryAllocator::Make(fInstance,
+                                                  backendContext.fPhysicalDevice,
+                                                  backendContext.fDevice,
+                                                  physDevVersion,
+                                                  &extensions,
+                                                  fInterface.get(),
+                                                  skgpu::ThreadSafe::kNo,
+                                                  /*blockSize=*/std::nullopt);
 
     fContext = GrDirectContexts::MakeVulkan(backendContext, fDisplayParams.fGrContextOptions);
 

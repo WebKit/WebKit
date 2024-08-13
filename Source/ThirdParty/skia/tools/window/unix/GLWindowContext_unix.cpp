@@ -60,6 +60,10 @@ GLWindowContext_xlib::GLWindowContext_xlib(const XlibWindowInfo& winInfo, const 
 
 using CreateContextAttribsFn = GLXContext(Display*, GLXFBConfig, GLXContext, Bool, const int*);
 
+static sk_sp<const GrGLInterface> make_interface() {
+    return GrGLInterfaces::MakeGLX();
+}
+
 sk_sp<const GrGLInterface> GLWindowContext_xlib::onInitializeContext() {
     SkASSERT(fDisplay);
     SkASSERT(!fGLContext);
@@ -97,7 +101,7 @@ sk_sp<const GrGLInterface> GLWindowContext_xlib::onInitializeContext() {
                     current = true;
                     // Look to see if RenderDoc is attached. If so, re-create the context with a
                     // core profile.
-                    interface = GrGLInterfaces::MakeGLX();
+                    interface = make_interface();
                     if (interface && interface->fExtensions.has("GL_EXT_debug_tool")) {
                         interface.reset();
                         glXMakeCurrent(fDisplay, None, nullptr);
@@ -151,7 +155,7 @@ sk_sp<const GrGLInterface> GLWindowContext_xlib::onInitializeContext() {
                  &border_width, &depth);
     glViewport(0, 0, fWidth, fHeight);
 
-    return interface ? interface : GrGLInterfaces::MakeGLX();
+    return interface ? interface : make_interface();
 }
 
 GLWindowContext_xlib::~GLWindowContext_xlib() {

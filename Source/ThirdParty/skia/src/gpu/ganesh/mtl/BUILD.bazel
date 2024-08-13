@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 # A list of files that is included by C++ files, but whose
 # implementation resides in .mm files. The latter may need to
@@ -98,14 +96,20 @@ skia_objc_library(
         ":mtl_cpp_hdrs",
         ":mtl_hdrs",
         ":mtl_srcs",
-        "//include/ports:core_foundation_hdrs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
     ],
     hdrs = [
+        "//include/gpu:ganesh_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
         "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
     ],
     copts = ["-fobjc-arc"],
+    defines = ["SK_METAL"],
     sdk_frameworks = [
         "Metal",
+        "MetalKit",
         "Foundation",
     ],
     visibility = ["//:__pkg__"],

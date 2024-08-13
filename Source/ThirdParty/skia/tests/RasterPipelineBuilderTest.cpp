@@ -561,6 +561,65 @@ branch_if_no_active_lanes_eq   branch -16 (label 0 at #2) if no lanes of v2 == 0
     }
 }
 
+DEF_TEST(RasterPipelineBuilderBackwardsBranchOverInvocationShouldRewind, r) {
+    // Branching backward over a call to invoke_shader should always emit a stack_rewind op.
+    SkSL::RP::Builder builder;
+    int label1 = builder.nextLabelID();
+    builder.push_constant_f(10.0f);
+    builder.label(label1);
+    builder.push_constant_f(20.0f);
+    builder.invoke_shader(9);
+    builder.push_constant_f(30.0f);
+    builder.discard_stack(3);
+    builder.branch_if_any_lanes_active(label1);
+
+    std::unique_ptr<SkSL::RP::Program> program = builder.finish(/*numValueSlots=*/3,
+                                                                /*numUniformSlots=*/0,
+                                                                /*numImmutableSlots=*/0);
+    check(r, *program,
+R"(copy_constant                  $0 = 0x41200000 (10.0)
+label                          label 0
+copy_constant                  $1 = 0x41A00000 (20.0)
+invoke_shader                  invoke_shader 0x00000009
+stack_rewind
+jump                           jump -4 (label 0 at #2)
+)");
+}
+
+DEF_TEST(RasterPipelineBuilderBackwardsBranchWithoutInvocationMightNotRewind, r) {
+    SkSL::RP::Builder builder;
+    int label1 = builder.nextLabelID();
+    builder.push_constant_f(10.0f);
+    builder.invoke_shader(9);
+    builder.push_constant_f(20.0f);
+    builder.label(label1);
+    builder.push_constant_f(30.0f);
+    builder.discard_stack(3);
+    builder.branch_if_any_lanes_active(label1);
+
+    std::unique_ptr<SkSL::RP::Program> program = builder.finish(/*numValueSlots=*/3,
+                                                                /*numUniformSlots=*/0,
+                                                                /*numImmutableSlots=*/0);
+#if SK_HAS_MUSTTAIL
+    check(r, *program,
+R"(copy_constant                  $0 = 0x41200000 (10.0)
+invoke_shader                  invoke_shader 0x00000009
+copy_constant                  $1 = 0x41A00000 (20.0)
+label                          label 0
+jump                           jump -1 (label 0 at #4)
+)");
+#else
+    check(r, *program,
+R"(copy_constant                  $0 = 0x41200000 (10.0)
+invoke_shader                  invoke_shader 0x00000009
+copy_constant                  $1 = 0x41A00000 (20.0)
+label                          label 0
+stack_rewind
+jump                           jump -2 (label 0 at #4)
+)");
+#endif
+}
+
 DEF_TEST(RasterPipelineBuilderBinaryFloatOps, r) {
     using BuilderOp = SkSL::RP::BuilderOp;
 

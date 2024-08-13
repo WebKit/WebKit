@@ -17,6 +17,7 @@
 namespace skgpu::graphite {
 
 class VulkanBuffer;
+class VulkanDescriptorSet;
 class VulkanResourceProvider;
 class VulkanSharedContext;
 class VulkanTexture;
@@ -68,13 +69,15 @@ private:
                                       const MutableTextureState* newState) override;
 
     bool onAddRenderPass(const RenderPassDesc&,
-                        const Texture* colorTexture,
-                        const Texture* resolveTexture,
-                        const Texture* depthStencilTexture,
-                        SkRect viewport,
-                        const DrawPassList&) override;
+                         SkIRect renderPassBounds,
+                         const Texture* colorTexture,
+                         const Texture* resolveTexture,
+                         const Texture* depthStencilTexture,
+                         SkRect viewport,
+                         const DrawPassList&) override;
 
     bool beginRenderPass(const RenderPassDesc&,
+                         SkIRect renderPassBounds,
                          const Texture* colorTexture,
                          const Texture* resolveTexture,
                          const Texture* depthStencilTexture);
@@ -203,8 +206,7 @@ private:
     bool fBindUniformBuffers = false;
     bool fBindTextureSamplers = false;
 
-    std::array<BindBufferInfo, VulkanGraphicsPipeline::kNumUniformBuffers> fUniformBuffersToBind
-            = {{{nullptr, 0}}};
+    std::array<BindBufferInfo, VulkanGraphicsPipeline::kNumUniformBuffers> fUniformBuffersToBind;
     VkDescriptorSet fTextureSamplerDescSetToBind = VK_NULL_HANDLE;
 
     int fNumTextureSamplers = 0;
@@ -223,4 +225,3 @@ private:
 } // namespace skgpu::graphite
 
 #endif // skgpu_graphite_VulkanCommandBuffer_DEFINED
-

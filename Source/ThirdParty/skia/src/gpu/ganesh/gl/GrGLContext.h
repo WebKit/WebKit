@@ -9,12 +9,21 @@
 #ifndef GrGLContext_DEFINED
 #define GrGLContext_DEFINED
 
-#include "include/gpu/gl/GrGLExtensions.h"
+#include "include/core/SkRefCnt.h"
 #include "include/gpu/gl/GrGLInterface.h"
+#include "include/gpu/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLCaps.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
+#include <memory>
+#include <utility>
+
+class GrGLExtensions;
 struct GrContextOptions;
+
+namespace SkSL {
+enum class GLSLGeneration;
+}
 
 /**
  * Encapsulates information about an OpenGL context including the OpenGL
@@ -53,6 +62,7 @@ public:
     }
     GrGLANGLEBackend angleBackend() const { return fDriverInfo.fANGLEBackend; }
     GrGLDriver angleDriver() const { return fDriverInfo.fANGLEDriver; }
+    GrGLDriverVersion angleDriverVersion() const { return fDriverInfo.fANGLEDriverVersion; }
     GrGLVendor angleVendor() const { return fDriverInfo.fANGLEVendor; }
     GrGLRenderer angleRenderer() const { return fDriverInfo.fANGLERenderer; }
 

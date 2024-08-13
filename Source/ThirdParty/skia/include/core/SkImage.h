@@ -468,6 +468,9 @@ public:
     /** Copies SkRect of pixels from SkImage to dstPixels. Copy starts at offset (srcX, srcY),
         and does not exceed SkImage (width(), height()).
 
+        Graphite has deprecated this API in favor of the equivalent asynchronous API on
+        skgpu::graphite::Context (with an optional explicit synchonization).
+
         dstInfo specifies width, height, SkColorType, SkAlphaType, and SkColorSpace of
         destination. dstRowBytes specifies the gap from one destination row to the next.
         Returns true if pixels are copied. Returns false if:
@@ -508,6 +511,9 @@ public:
     /** Copies a SkRect of pixels from SkImage to dst. Copy starts at (srcX, srcY), and
         does not exceed SkImage (width(), height()).
 
+        Graphite has deprecated this API in favor of the equivalent asynchronous API on
+        skgpu::graphite::Context (with an optional explicit synchonization).
+
         dst specifies width, height, SkColorType, SkAlphaType, SkColorSpace, pixel storage,
         and row bytes of destination. dst.rowBytes() specifics the gap from one destination
         row to the next. Returns true if pixels are copied. Returns false if:
@@ -542,13 +548,6 @@ public:
                     int srcY,
                     CachingHint cachingHint = kAllow_CachingHint) const;
 
-#if defined(GRAPHITE_TEST_UTILS)
-    bool readPixelsGraphite(skgpu::graphite::Recorder*,
-                            const SkPixmap& dst,
-                            int srcX,
-                            int srcY) const;
-#endif
-
 #ifndef SK_IMAGE_READ_PIXELS_DISABLE_LEGACY_API
     /** Deprecated. Use the variants that accept a GrDirectContext. */
     bool readPixels(const SkImageInfo& dstInfo, void* dstPixels, size_t dstRowBytes,
@@ -566,8 +565,17 @@ public:
         AsyncReadResult& operator=(AsyncReadResult&&) = delete;
 
         virtual ~AsyncReadResult() = default;
+        /** Returns how many planes of data are in the result. e.g. 3 for YUV data. */
         virtual int count() const = 0;
+        /** Returns the raw pixel data for a given plane.
+         *
+         * It will be organized as per the dst SkImageInfo passed in to the async read call.
+         *
+         * Clients may wish to create an SkPixmap with this data using the dst SkImageInfo
+         * and rowBytes(i).
+         */
         virtual const void* data(int i) const = 0;
+        /** Returns how many bytes correspond to a single row of image data */
         virtual size_t rowBytes(int i) const = 0;
 
     protected:
@@ -594,9 +602,12 @@ public:
     /** Makes image pixel data available to caller, possibly asynchronously. It can also rescale
         the image pixels.
 
-        Currently asynchronous reads are only supported on the GPU backend and only when the
+        Currently asynchronous reads are only supported in the Ganesh GPU backend and only when the
         underlying 3D API supports transfer buffers and CPU/GPU synchronization primitives. In all
         other cases this operates synchronously.
+
+        For the Graphite backend this API has been deprecated in favor of the equivalent API
+        on skgpu::graphite::Context.
 
         Data is read from the source sub-rectangle, is optionally converted to a linear gamma, is
         rescaled to the size indicated by 'info', is then converted to the color space, color type,
@@ -700,6 +711,26 @@ public:
     */
     bool scalePixels(const SkPixmap& dst, const SkSamplingOptions&,
                      CachingHint cachingHint = kAllow_CachingHint) const;
+
+    /**
+     * Create a new image by copying this image and scaling to fit the ImageInfo's dimensions
+     * and converting the pixels into the ImageInfo's ColorInfo.
+     * This is done retaining the domain (backend) of the image (e.g. gpu, raster)
+     *
+     * The Recorder parameter is required if the original image was created on a graphite Recorder,
+     * but must be nullptr if it was create in some other way (e.g. GrContext, raster, deferred).
+     *
+     * return nullptr if the requested ColorInfo is not supported,  its dimesions are out of range,
+     *  or if the recorder is null on a graphite Image.
+     */
+    sk_sp<SkImage> makeScaled(skgpu::graphite::Recorder*,
+                              const SkImageInfo&,
+                              const SkSamplingOptions&) const;
+
+    sk_sp<SkImage> makeScaled(const SkImageInfo& info,
+                              const SkSamplingOptions& sampling) const {
+        return this->makeScaled(nullptr, info, sampling);
+    }
 
     /** Returns encoded SkImage pixels as SkData, if SkImage was created from supported
         encoded stream format. Platform support for formats vary and may require building

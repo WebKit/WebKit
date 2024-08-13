@@ -16,8 +16,14 @@
 #include "include/gpu/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/vk/GrVkDirectContext.h"
-#include "include/gpu/vk/GrVkBackendContext.h"
+#include "include/gpu/vk/VulkanBackendContext.h"
 #include "include/gpu/vk/VulkanExtensions.h"
+#include "include/gpu/vk/VulkanMemoryAllocator.h"
+
+// These are private files. Clients would need to look at these and implement
+// similar solutions.
+#include "src/gpu/vk/vulkanmemoryallocator/VulkanMemoryAllocatorPriv.h"
+#include "src/gpu/GpuTypesPriv.h"
 #include "tools/gpu/vk/VkTestUtils.h"
 
 #include <string.h>
@@ -36,12 +42,12 @@
     } while(false)
 
 int main(int argc, char** argv) {
-    GrVkBackendContext backendContext;
+    skgpu::VulkanBackendContext backendContext;
     VkDebugReportCallbackEXT debugCallback;
     std::unique_ptr<skgpu::VulkanExtensions> extensions(new skgpu::VulkanExtensions());
     std::unique_ptr<VkPhysicalDeviceFeatures2> features(new VkPhysicalDeviceFeatures2);
 
-    // First we need to create a GrVkBackendContext so that we can make a Vulkan GrDirectContext.
+    // First we need to create a VulkanBackendContext so that we can make a Vulkan GrDirectContext.
     // The vast majority of this chunk of code is setting up the VkInstance and VkDevice objects.
     // Normally a client will have their own way of creating these objects. This example uses Skia's
     // test helper sk_gpu_test::CreateVkBackendContext to aid in this. Clients can look at this
@@ -79,7 +85,10 @@ int main(int argc, char** argv) {
     }
     ACQUIRE_INST_VK_PROC(DestroyDevice);
 
-    // Create a GrDirectContext with our GrVkBackendContext
+    backendContext.fMemoryAllocator = skgpu::VulkanMemoryAllocators::Make(
+            backendContext, skgpu::ThreadSafe::kNo, std::nullopt);
+
+    // Create a GrDirectContext with our VulkanBackendContext
     sk_sp<GrDirectContext> context = GrDirectContexts::MakeVulkan(backendContext);
     if (!context) {
         fVkDestroyDevice(backendContext.fDevice, nullptr);

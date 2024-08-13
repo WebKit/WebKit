@@ -24,12 +24,13 @@ skia_graphite_public = [
 ]
 
 skia_graphite_sources = [
-  "$_include_private/ContextOptionsPriv.h",
   "$_src/AtlasProvider.cpp",
   "$_src/AtlasProvider.h",
   "$_src/Attribute.h",
   "$_src/BackendSemaphore.cpp",
+  "$_src/BackendSemaphorePriv.h",
   "$_src/BackendTexture.cpp",
+  "$_src/BackendTexturePriv.h",
   "$_src/Buffer.cpp",
   "$_src/Buffer.h",
   "$_src/BufferManager.cpp",
@@ -50,6 +51,7 @@ skia_graphite_sources = [
   "$_src/ComputePipeline.h",
   "$_src/ComputeTypes.h",
   "$_src/Context.cpp",
+  "$_src/ContextOptionsPriv.h",
   "$_src/ContextPriv.h",
   "$_src/ContextUtils.cpp",
   "$_src/ContextUtils.h",
@@ -142,6 +144,7 @@ skia_graphite_sources = [
   "$_src/Texture.cpp",
   "$_src/Texture.h",
   "$_src/TextureInfo.cpp",
+  "$_src/TextureInfoPriv.h",
   "$_src/TextureProxy.cpp",
   "$_src/TextureProxy.h",
   "$_src/TextureProxyView.h",
@@ -189,6 +192,8 @@ skia_graphite_sources = [
   "$_src/render/MiddleOutFanRenderStep.h",
   "$_src/render/PerEdgeAAQuadRenderStep.cpp",
   "$_src/render/PerEdgeAAQuadRenderStep.h",
+  "$_src/render/SDFTextLCDRenderStep.cpp",
+  "$_src/render/SDFTextLCDRenderStep.h",
   "$_src/render/SDFTextRenderStep.cpp",
   "$_src/render/SDFTextRenderStep.h",
   "$_src/render/TessellateCurvesRenderStep.cpp",
@@ -232,9 +237,9 @@ skia_graphite_dawn_public = [
 ]
 
 skia_graphite_dawn_sources = [
-  "$_include_private/DawnTypesPriv.h",
   "$_src/dawn/DawnAsyncWait.cpp",
   "$_src/dawn/DawnAsyncWait.h",
+  "$_src/dawn/DawnBackendTexture.cpp",
   "$_src/dawn/DawnBuffer.cpp",
   "$_src/dawn/DawnBuffer.h",
   "$_src/dawn/DawnCaps.cpp",
@@ -247,6 +252,8 @@ skia_graphite_dawn_sources = [
   "$_src/dawn/DawnErrorChecker.h",
   "$_src/dawn/DawnGraphicsPipeline.cpp",
   "$_src/dawn/DawnGraphicsPipeline.h",
+  "$_src/dawn/DawnGraphiteTypesPriv.cpp",
+  "$_src/dawn/DawnGraphiteTypesPriv.h",
   "$_src/dawn/DawnGraphiteUtils.cpp",
   "$_src/dawn/DawnGraphiteUtilsPriv.h",
   "$_src/dawn/DawnQueueManager.cpp",
@@ -259,7 +266,7 @@ skia_graphite_dawn_sources = [
   "$_src/dawn/DawnSharedContext.h",
   "$_src/dawn/DawnTexture.cpp",
   "$_src/dawn/DawnTexture.h",
-  "$_src/dawn/DawnTypesPriv.cpp",
+  "$_src/dawn/DawnTextureInfo.cpp",
   "$_src/dawn/DawnUtils.cpp",
   "$_src/dawn/DawnUtilsPriv.h",
 ]
@@ -271,7 +278,8 @@ skia_graphite_mtl_public = [
 ]
 
 skia_graphite_mtl_sources = [
-  "$_include_private/MtlGraphiteTypesPriv.h",
+  "$_src/mtl/MtlBackendSemaphore.mm",
+  "$_src/mtl/MtlBackendTexture.mm",
   "$_src/mtl/MtlBlitCommandEncoder.h",
   "$_src/mtl/MtlBuffer.h",
   "$_src/mtl/MtlBuffer.mm",
@@ -298,6 +306,7 @@ skia_graphite_mtl_sources = [
   "$_src/mtl/MtlSharedContext.mm",
   "$_src/mtl/MtlTexture.h",
   "$_src/mtl/MtlTexture.mm",
+  "$_src/mtl/MtlTextureInfo.mm",
 ]
 
 skia_graphite_vk_public = [
@@ -306,7 +315,8 @@ skia_graphite_vk_public = [
 ]
 
 skia_graphite_vk_sources = [
-  "$_include_private/VulkanGraphiteTypesPriv.h",
+  "$_src/vk/VulkanBackendSemaphore.cpp",
+  "$_src/vk/VulkanBackendTexture.cpp",
   "$_src/vk/VulkanBuffer.cpp",
   "$_src/vk/VulkanBuffer.h",
   "$_src/vk/VulkanCaps.cpp",
@@ -322,6 +332,7 @@ skia_graphite_vk_sources = [
   "$_src/vk/VulkanGraphicsPipeline.cpp",
   "$_src/vk/VulkanGraphicsPipeline.h",
   "$_src/vk/VulkanGraphiteTypes.cpp",
+  "$_src/vk/VulkanGraphiteTypesPriv.h",
   "$_src/vk/VulkanGraphiteUtils.cpp",
   "$_src/vk/VulkanGraphiteUtilsPriv.h",
   "$_src/vk/VulkanImageView.cpp",
@@ -334,12 +345,13 @@ skia_graphite_vk_sources = [
   "$_src/vk/VulkanResourceProvider.h",
   "$_src/vk/VulkanSampler.cpp",
   "$_src/vk/VulkanSampler.h",
-  "$_src/vk/VulkanSamplerYcbcrConversion.cpp",
-  "$_src/vk/VulkanSamplerYcbcrConversion.h",
   "$_src/vk/VulkanSharedContext.cpp",
   "$_src/vk/VulkanSharedContext.h",
   "$_src/vk/VulkanTexture.cpp",
   "$_src/vk/VulkanTexture.h",
+  "$_src/vk/VulkanTextureInfo.cpp",
+  "$_src/vk/VulkanYcbcrConversion.cpp",
+  "$_src/vk/VulkanYcbcrConversion.h",
 ]
 
 skia_graphite_vello_sources = [
@@ -349,16 +361,38 @@ skia_graphite_vello_sources = [
   "$_src/compute/VelloRenderer.h",
 ]
 
-skia_graphite_precompile_public = []
+skia_graphite_precompile_public = [
+  "$_include/precompile/Precompile.h",
+  "$_include/precompile/PrecompileBase.h",
+  "$_include/precompile/PrecompileBlender.h",
+  "$_include/precompile/PrecompileColorFilter.h",
+  "$_include/precompile/PrecompileImageFilter.h",
+  "$_include/precompile/PrecompileMaskFilter.h",
+  "$_include/precompile/PrecompileRuntimeEffect.h",
+  "$_include/precompile/PrecompileShader.h",
+  "$_include/precompile/PaintOptions.h",
+]
 
 skia_graphite_precompile_sources = [
-  "$_src/FactoryFunctions.cpp",
-  "$_src/FactoryFunctions.h",
-  "$_src/FactoryFunctionsPriv.h",
-  "$_src/PaintOptionsPriv.h",
-  "$_src/Precompile.cpp",
-  "$_src/Precompile.h",
-  "$_src/PrecompileBasePriv.h",
+  "$_src/PrecompileInternal.h",
   "$_src/PublicPrecompile.cpp",
   "$_src/PublicPrecompile.h",
+  "$_src/precompile/PaintOption.cpp",
+  "$_src/precompile/PaintOption.h",
+  "$_src/precompile/PaintOptions.cpp",
+  "$_src/precompile/PaintOptionsPriv.h",
+  "$_src/precompile/PrecompileBaseComplete.h",
+  "$_src/precompile/PrecompileBasePriv.h",
+  "$_src/precompile/PrecompileBlender.cpp",
+  "$_src/precompile/PrecompileBlenderPriv.h",
+  "$_src/precompile/PrecompileColorFilter.cpp",
+  "$_src/precompile/PrecompileColorFiltersPriv.h",
+  "$_src/precompile/PrecompileImageFilter.cpp",
+  "$_src/precompile/PrecompileImageFilterPriv.h",
+  "$_src/precompile/PrecompileImageFiltersPriv.h",
+  "$_src/precompile/PrecompileMaskFilter.cpp",
+  "$_src/precompile/PrecompileRuntimeEffect.cpp",
+  "$_src/precompile/PrecompileShader.cpp",
+  "$_src/precompile/PrecompileShaderPriv.h",
+  "$_src/precompile/PrecompileShadersPriv.h",
 ]

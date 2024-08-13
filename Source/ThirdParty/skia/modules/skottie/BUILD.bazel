@@ -1,44 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_binary", "skia_cc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_binary", "skia_cc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
-
-skia_cc_library(
-    name = "legacy_skottie",
-    srcs = [
-        "//modules/skottie/src:srcs",
-        "//modules/skottie/src/text:text_shaper_srcs",
-    ],
-    hdrs = ["//modules/skottie/include:hdrs"],
-    defines = [
-        "SK_ENABLE_SKOTTIE_SKSLEFFECT",
-        "SK_ENABLE_SKOTTIE",
-    ],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        "//:skia_internal",
-        "//modules/skresources:legacy_skresources",
-        "//modules/sksg:legacy_sksg",
-        "//modules/skshaper:legacy_skshaper",
-        "//modules/skunicode:legacy_skunicode",
-    ],
-)
-
-skia_cc_library(
-    name = "legacy_utils",
-    srcs = ["//modules/skottie/utils:srcs"],
-    hdrs = ["//modules/skottie/utils:hdrs"],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        ":legacy_skottie",
-        "//tools/skui",
-    ],
-)
 
 skia_cc_binary(
     name = "skottie_tool_cpu",

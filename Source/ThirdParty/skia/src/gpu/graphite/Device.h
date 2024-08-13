@@ -16,8 +16,8 @@
 #include "src/gpu/graphite/DrawOrder.h"
 #include "src/gpu/graphite/geom/Rect.h"
 #include "src/gpu/graphite/geom/Transform_graphite.h"
-#include "src/text/gpu/SDFTControl.h"
 #include "src/text/gpu/SubRunContainer.h"
+#include "src/text/gpu/SubRunControl.h"
 
 enum class SkBackingFit;
 class SkStrokeRec;
@@ -76,8 +76,7 @@ public:
 
     // Ensures clip elements are drawn that will clip previous draw calls, snaps all pending work
     // from the DrawContext as a RenderPassTask and records it in the Device's recorder.
-    // TODO(b/333073673): Optionally pass in the Recorder that triggered the flush for validation.
-    void flushPendingWorkToRecorder(Recorder* recorder=nullptr);
+    void flushPendingWorkToRecorder();
 
     const Transform& localToDeviceTransform();
 
@@ -113,11 +112,7 @@ public:
     // Only used for scratch devices.
     sk_sp<Task> lastDrawTask() const;
 
-    // SkCanvas only uses drawCoverageMask w/o this staging flag, so only enable
-    // mask filters in clients that have finished migrating.
-#if !defined(SK_RESOLVE_FILTERS_BEFORE_RESTORE)
     bool useDrawCoverageMaskForMaskFilters() const override { return true; }
-#endif
 
     // Clipping
     void pushClipStack() override { fClip.save(); }
@@ -186,7 +181,6 @@ public:
 
     void drawDrawable(SkCanvas*, SkDrawable*, const SkMatrix*) override {}
     void drawMesh(const SkMesh&, sk_sp<SkBlender>, const SkPaint&) override {}
-    void drawShadow(const SkPath&, const SkDrawShadowRec&) override {}
 
     // Special images and layers
     sk_sp<SkSurface> makeSurface(const SkImageInfo&, const SkSurfaceProps&) override;
@@ -285,16 +279,12 @@ private:
                                                           const SkStrokeRec&,
                                                           bool requireMSAA) const;
 
-    bool needsFlushBeforeDraw(int numNewDraws, DstReadRequirement) const;
+    bool needsFlushBeforeDraw(int numNewRenderSteps, DstReadRequirement) const;
 
     // Flush internal work, such as pending clip draws and atlas uploads, into the Device's DrawTask
     void internalFlush();
 
-    // TODO(b/333073673): Detect memory stomping over fRecorder to see if that's the cause of
-    // crashes; can be removed once the issue is resolved.
-    SkDEBUGCODE(const intptr_t fPreRecorderSentinel;)
     Recorder* fRecorder;
-    SkDEBUGCODE(const intptr_t fPostRecorderSentinel;)
     sk_sp<DrawContext> fDC;
     // Scratch devices hold on to their last snapped DrawTask so that they can be directly
     // referenced when the device image is drawn into some other surface.
@@ -323,7 +313,7 @@ private:
     // TODO(b/330864257): Clean up once flushPendingWorkToRecorder() doesn't have to be re-entrant
     bool fIsFlushing = false;
 
-    const sktext::gpu::SDFTControl fSDFTControl;
+    const sktext::gpu::SubRunControl fSubRunControl;
 
 #if defined(SK_DEBUG)
     // When not 0, this Device is an unregistered scratch device that is intended to go out of

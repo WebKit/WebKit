@@ -184,6 +184,7 @@ add_library(Skia STATIC
     src/core/SkBlitter_A8.cpp
     src/core/SkBlitter_ARGB32.cpp
     src/core/SkBlitter_Sprite.cpp
+    src/core/SkBlurEngine.cpp
     src/core/SkBlurMask.cpp
     src/core/SkBlurMaskFilterImpl.cpp
     src/core/SkCachedData.cpp
@@ -356,12 +357,12 @@ add_library(Skia STATIC
     src/gpu/BlurUtils.cpp
     src/gpu/DataUtils.cpp
     src/gpu/DitherUtils.cpp
-    src/gpu/PipelineUtils.cpp
     src/gpu/RectanizerPow2.cpp
     src/gpu/RectanizerSkyline.cpp
     src/gpu/ResourceKey.cpp
     src/gpu/ShaderErrorHandler.cpp
     src/gpu/SkBackingFit.cpp
+    src/gpu/SkSLToBackend.cpp
     src/gpu/Swizzle.cpp
     src/gpu/TiledTextureUtils.cpp
 
@@ -735,13 +736,13 @@ add_library(Skia STATIC
     src/text/gpu/DistanceFieldAdjustTable.cpp
     src/text/gpu/GlyphVector.cpp
     src/text/gpu/SDFMaskFilter.cpp
-    src/text/gpu/SDFTControl.cpp
     src/text/gpu/SkChromeRemoteGlyphCache.cpp
     src/text/gpu/Slug.cpp
     src/text/gpu/SlugImpl.cpp
     src/text/gpu/StrikeCache.cpp
     src/text/gpu/SubRunAllocator.cpp
     src/text/gpu/SubRunContainer.cpp
+    src/text/gpu/SubRunControl.cpp
     src/text/gpu/TextBlob.cpp
     src/text/gpu/TextBlobRedrawCoordinator.cpp
     src/text/gpu/VertexFiller.cpp
@@ -757,6 +758,8 @@ add_library(Skia STATIC
     src/sksl/SkSLIntrinsicList.cpp
     src/sksl/SkSLLexer.cpp
     src/sksl/SkSLMangler.cpp
+    src/sksl/SkSLModule.cpp
+    src/sksl/SkSLModuleDataDefault.cpp
     src/sksl/SkSLModuleLoader.cpp
     src/sksl/SkSLOperator.cpp
     src/sksl/SkSLOutputStream.cpp
@@ -779,6 +782,7 @@ add_library(Skia STATIC
     src/sksl/analysis/SkSLIsTrivialExpression.cpp
     src/sksl/analysis/SkSLProgramUsage.cpp
     src/sksl/analysis/SkSLReturnsInputAlpha.cpp
+    src/sksl/analysis/SkSLSpecialization.cpp
     src/sksl/analysis/SkSLSwitchCaseContainsExit.cpp
     src/sksl/analysis/SkSLSymbolTableStackBuilder.cpp
     src/sksl/codegen/SkSLGLSLCodeGenerator.cpp
@@ -787,7 +791,6 @@ add_library(Skia STATIC
     src/sksl/codegen/SkSLRasterPipelineBuilder.cpp
     src/sksl/codegen/SkSLRasterPipelineCodeGenerator.cpp
     src/sksl/codegen/SkSLSPIRVCodeGenerator.cpp
-    src/sksl/codegen/SkSLSPIRVtoHLSL.cpp
     src/sksl/codegen/SkSLWGSLCodeGenerator.cpp
     src/sksl/ir/SkSLBinaryExpression.cpp
     src/sksl/ir/SkSLBlock.cpp

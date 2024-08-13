@@ -27,6 +27,12 @@ public:
     bool useAsyncPipelineCreation() const { return fUseAsyncPipelineCreation; }
     bool allowScopedErrorChecks() const { return fAllowScopedErrorChecks; }
 
+    // If this has no value then loading the resolve texture via a LoadOp is not supported.
+    std::optional<wgpu::LoadOp> resolveTextureLoadOp() const {
+        return fSupportedResolveTextureLoadOp;
+    }
+    bool supportsPartialLoadResolve() const { return fSupportsPartialLoadResolve; }
+
     TextureInfo getDefaultSampledTextureInfo(SkColorType,
                                              Mipmapped mipmapped,
                                              Protected,
@@ -47,6 +53,8 @@ public:
     UniqueKey makeGraphicsPipelineKey(const GraphicsPipelineDesc&,
                                       const RenderPassDesc&) const override;
     UniqueKey makeComputePipelineKey(const ComputePipelineDesc&) const override;
+    ImmutableSamplerInfo getImmutableSamplerInfo(const TextureProxy* proxy) const override;
+    GraphiteResourceKey makeSamplerKey(const SamplerDesc&) const override;
     uint32_t channelMask(const TextureInfo&) const override;
     bool isRenderable(const TextureInfo&) const override;
     bool isStorage(const TextureInfo&) const override;
@@ -55,9 +63,7 @@ public:
                             ResourceType,
                             Shareable,
                             GraphiteResourceKey*) const override;
-    uint64_t getRenderPassDescKey(const RenderPassDesc& renderPassDesc) const;
-
-    static constexpr size_t kFormatCnt = 16;
+    uint32_t getRenderPassDescKeyForPipeline(const RenderPassDesc& renderPassDesc) const;
 
 private:
     const ColorTypeInfo* getColorTypeInfo(SkColorType, const TextureInfo&) const override;
@@ -111,8 +117,9 @@ private:
         std::unique_ptr<ColorTypeInfo[]> fColorTypeInfos;
         int fColorTypeInfoCount = 0;
     };
-    // Size here must match size of kFormats in DawnCaps.cpp
-    std::array<FormatInfo, kFormatCnt> fFormatTable;
+    // Size here must be at least the size of kFormats in DawnCaps.cpp.
+    static constexpr size_t kFormatCount = 17;
+    std::array<FormatInfo, kFormatCount> fFormatTable;
 
     static size_t GetFormatIndex(wgpu::TextureFormat format);
     const FormatInfo& getFormatInfo(wgpu::TextureFormat format) const {
@@ -123,9 +130,15 @@ private:
     wgpu::TextureFormat fColorTypeToFormatTable[kSkColorTypeCnt];
     void setColorType(SkColorType, std::initializer_list<wgpu::TextureFormat> formats);
 
-#if !defined(__EMSCRIPTEN__)
-    bool fTransientAttachmentSupport = false;
-#endif
+    // When supported, this value will hold the TransientAttachment usage symbol that is only
+    // defined in Dawn native builds and not EMSCRIPTEN but this avoids having to #define guard it.
+    wgpu::TextureUsage fSupportedTransientAttachmentUsage = wgpu::TextureUsage::None;
+    // When supported this holds the ExpandResolveTexture load op, otherwise holds no value.
+    std::optional<wgpu::LoadOp> fSupportedResolveTextureLoadOp;
+    // When 'fSupportedResolveTextureLoadOp' is supported, it by default performs full size expand
+    // and resolve. With this feature, we can do that partially according to the actual damage
+    // region.
+    bool fSupportsPartialLoadResolve = false;
 
     bool fUseAsyncPipelineCreation = true;
     bool fAllowScopedErrorChecks = true;

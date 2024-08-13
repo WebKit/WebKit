@@ -18,23 +18,21 @@
 #include "include/effects/SkColorMatrix.h"
 #include "include/gpu/graphite/Context.h"
 #include "include/gpu/graphite/Surface.h"
+#include "include/gpu/graphite/precompile/Precompile.h"
+#include "include/gpu/graphite/precompile/PrecompileColorFilter.h"
 #include "modules/skcms/skcms.h"
 #include "src/core/SkBlenderBase.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/ContextUtils.h"
-#include "src/gpu/graphite/FactoryFunctions.h"
 #include "src/gpu/graphite/KeyContext.h"
-#include "src/gpu/graphite/PaintOptionsPriv.h"
 #include "src/gpu/graphite/PaintParams.h"
 #include "src/gpu/graphite/PaintParamsKey.h"
 #include "src/gpu/graphite/PipelineData.h"
-#include "src/gpu/graphite/Precompile.h"
-#include "src/gpu/graphite/PublicPrecompile.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/Renderer.h"
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/geom/Geometry.h"
-#include "tools/ToolUtils.h"
+#include "src/gpu/graphite/precompile/PaintOptionsPriv.h"
 #include "tools/gpu/GrContextFactory.h"
 #include "tools/graphite/ContextFactory.h"
 
@@ -84,12 +82,6 @@ SkPath make_path() {
     path.close();
     return path.detach();
 }
-
-#ifdef SK_DEBUG
-void dump(ShaderCodeDictionary* dict, UniquePaintParamsID id) {
-    dict->lookup(id).dump(dict);
-}
-#endif
 
 //--------------------------------------------------------------------------------------------------
 // color spaces
@@ -340,8 +332,7 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                                                                     : Layout::kStd140;
 
     PaintParamsKeyBuilder builder(dict);
-    PipelineDataGatherer gatherer(recorder->priv().caps(), layout);
-
+    PipelineDataGatherer gatherer(layout);
 
     auto [paint, paintOptions] = create_random_paint(fuzz, depth);
 
@@ -397,11 +388,11 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
 #ifdef SK_DEBUG
     if (result == precompileIDs.end()) {
         SkDebugf("From paint: ");
-        dump(dict, paintID);
+        dict->dump(paintID);
 
         SkDebugf("From combination builder:");
         for (auto iter : precompileIDs) {
-            dump(dict, iter);
+            dict->dump(iter);
         }
     }
 #endif

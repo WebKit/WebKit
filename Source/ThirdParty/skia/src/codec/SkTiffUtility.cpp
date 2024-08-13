@@ -13,13 +13,15 @@
 #include <cstddef>
 #include <utility>
 
+namespace SkTiff {
+
 constexpr size_t kSizeEntry = 12;
 constexpr size_t kSizeShort = 2;
 constexpr size_t kSizeLong = 4;
 
-bool SkTiffImageFileDirectory::IsValidType(uint16_t type) { return type >= 1 && type <= 12; }
+bool ImageFileDirectory::IsValidType(uint16_t type) { return type >= 1 && type <= 12; }
 
-size_t SkTiffImageFileDirectory::BytesForType(uint16_t type) {
+size_t ImageFileDirectory::BytesForType(uint16_t type) {
     switch (type) {
         case kTypeUnsignedByte:
             return 1;
@@ -64,6 +66,7 @@ static const uint8_t* get_entry_address(const SkData* data,
 static bool validate_ifd(const SkData* data,
                          bool littleEndian,
                          uint32_t ifdOffset,
+                         bool allowTruncated,
                          uint16_t* outNumEntries,
                          uint32_t* outNextIfdOffset) {
     const uint8_t* dataCurrent = data->bytes();
@@ -91,6 +94,13 @@ static bool validate_ifd(const SkData* data,
         SkCodecPrintf("Insufficient space (%u) to store all %u entries.\n",
                       static_cast<uint32_t>(data->size()),
                       numEntries);
+        if (allowTruncated) {
+            // Set the number of entries to the number of entries that can be fully read, and set
+            // the next IFD offset to 0 (indicating that there is no next IFD).
+            *outNumEntries = dataSize / kSizeEntry;
+            *outNextIfdOffset = 0;
+            return true;
+        }
         return false;
     }
 
@@ -104,6 +114,11 @@ static bool validate_ifd(const SkData* data,
     // Read the next IFD offset.
     if (dataSize < kSizeLong) {
         SkCodecPrintf("Insufficient space to store next IFD offset.\n");
+        if (allowTruncated) {
+            // Set the next IFD offset to 0 (indicating that there is no next IFD).
+            *outNextIfdOffset = 0;
+            return true;
+        }
         return false;
     }
 
@@ -112,9 +127,9 @@ static bool validate_ifd(const SkData* data,
     return true;
 }
 
-bool SkTiffImageFileDirectory::ParseHeader(const SkData* data,
-                                           bool* outLittleEndian,
-                                           uint32_t* outIfdOffset) {
+bool ImageFileDirectory::ParseHeader(const SkData* data,
+                                     bool* outLittleEndian,
+                                     uint32_t* outIfdOffset) {
     // Read the endianness (4 bytes) and IFD offset (4 bytes).
     if (data->size() < 8) {
         SkCodecPrintf("Tiff header must be at least 8 bytes.\n");
@@ -132,40 +147,43 @@ bool SkTiffImageFileDirectory::ParseHeader(const SkData* data,
     return true;
 }
 
-std::unique_ptr<SkTiffImageFileDirectory> SkTiffImageFileDirectory::MakeFromOffset(
-        sk_sp<SkData> data, bool littleEndian, uint32_t ifdOffset) {
+std::unique_ptr<ImageFileDirectory> ImageFileDirectory::MakeFromOffset(sk_sp<SkData> data,
+                                                                       bool littleEndian,
+                                                                       uint32_t ifdOffset,
+                                                                       bool allowTruncated) {
     uint16_t numEntries = 0;
     uint32_t nextOffset = 0;
-    if (!validate_ifd(data.get(), littleEndian, ifdOffset, &numEntries, &nextOffset)) {
+    if (!validate_ifd(
+                data.get(), littleEndian, ifdOffset, allowTruncated, &numEntries, &nextOffset)) {
         SkCodecPrintf("Failed to validate IFD.\n");
         return nullptr;
     }
-    return std::unique_ptr<SkTiffImageFileDirectory>(new SkTiffImageFileDirectory(
+    return std::unique_ptr<ImageFileDirectory>(new ImageFileDirectory(
             std::move(data), littleEndian, ifdOffset, numEntries, nextOffset));
 }
 
-SkTiffImageFileDirectory::SkTiffImageFileDirectory(sk_sp<SkData> data,
-                                                   bool littleEndian,
-                                                   uint32_t offset,
-                                                   uint16_t numEntries,
-                                                   uint32_t nextIfdOffset)
+ImageFileDirectory::ImageFileDirectory(sk_sp<SkData> data,
+                                       bool littleEndian,
+                                       uint32_t offset,
+                                       uint16_t numEntries,
+                                       uint32_t nextIfdOffset)
         : fData(std::move(data))
         , fLittleEndian(littleEndian)
         , fOffset(offset)
         , fNumEntries(numEntries)
         , fNextIfdOffset(nextIfdOffset) {}
 
-uint16_t SkTiffImageFileDirectory::getEntryTag(uint16_t entryIndex) const {
+uint16_t ImageFileDirectory::getEntryTag(uint16_t entryIndex) const {
     const uint8_t* entry = get_entry_address(fData.get(), fOffset, entryIndex);
     return get_endian_short(entry, fLittleEndian);
 }
 
-bool SkTiffImageFileDirectory::getEntryRawData(uint16_t entryIndex,
-                                               uint16_t* outTag,
-                                               uint16_t* outType,
-                                               uint32_t* outCount,
-                                               const uint8_t** outData,
-                                               size_t* outDataSize) const {
+bool ImageFileDirectory::getEntryRawData(uint16_t entryIndex,
+                                         uint16_t* outTag,
+                                         uint16_t* outType,
+                                         uint32_t* outCount,
+                                         const uint8_t** outData,
+                                         size_t* outDataSize) const {
     const uint8_t* entry = get_entry_address(fData.get(), fOffset, entryIndex);
 
     // Read the tag
@@ -205,7 +223,7 @@ bool SkTiffImageFileDirectory::getEntryRawData(uint16_t entryIndex,
     return true;
 }
 
-sk_sp<SkData> SkTiffImageFileDirectory::getEntryUndefinedData(uint16_t entryIndex) const {
+sk_sp<SkData> ImageFileDirectory::getEntryUndefinedData(uint16_t entryIndex) const {
     uint16_t type = 0;
     uint32_t count = 0;
     const uint8_t* data = nullptr;
@@ -219,10 +237,10 @@ sk_sp<SkData> SkTiffImageFileDirectory::getEntryUndefinedData(uint16_t entryInde
     return SkData::MakeSubset(fData.get(), data - fData->bytes(), size);
 }
 
-bool SkTiffImageFileDirectory::getEntryValuesGeneric(uint16_t entryIndex,
-                                                     uint16_t type,
-                                                     uint32_t count,
-                                                     void* values) const {
+bool ImageFileDirectory::getEntryValuesGeneric(uint16_t entryIndex,
+                                               uint16_t type,
+                                               uint32_t count,
+                                               void* values) const {
     uint16_t entryType = 0;
     uint32_t entryCount = 0;
     const uint8_t* entryData = nullptr;
@@ -278,3 +296,5 @@ bool SkTiffImageFileDirectory::getEntryValuesGeneric(uint16_t entryIndex,
     }
     return true;
 }
+
+}  // namespace SkTiff

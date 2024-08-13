@@ -23,13 +23,16 @@ class DawnBuffer;
 
 class DawnResourceProvider final : public ResourceProvider {
 public:
+    template <size_t NumEntries>
+    using BindGroupKey = FixedSizeKey<2 * NumEntries>;
+
+    static constexpr size_t kNumUniformEntries = 4;
+
     DawnResourceProvider(SharedContext* sharedContext,
                          SingleOwner*,
                          uint32_t recorderID,
                          size_t resourceBudget);
     ~DawnResourceProvider() override;
-
-    sk_sp<Texture> createWrappedTexture(const BackendTexture&) override;
 
     sk_sp<DawnTexture> findOrCreateDiscardableMSAALoadTexture(SkISize dimensions,
                                                               const TextureInfo& msaaInfo);
@@ -50,7 +53,8 @@ public:
     // - Render step uniforms.
     // - Paint uniforms.
     const wgpu::BindGroup& findOrCreateUniformBuffersBindGroup(
-            const std::array<std::pair<const DawnBuffer*, uint32_t>, 3>& boundBuffersAndSizes);
+            const std::array<std::pair<const DawnBuffer*, uint32_t>, kNumUniformEntries>&
+                    boundBuffersAndSizes);
 
     // Find or create a bind group containing the given sampler & texture.
     const wgpu::BindGroup& findOrCreateSingleTextureSamplerBindGroup(const DawnSampler* sampler,
@@ -62,14 +66,10 @@ private:
                                                    const RenderPassDesc&) override;
     sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) override;
 
-    sk_sp<Texture> createTexture(SkISize,
-                                 const TextureInfo&,
-                                 std::string_view label,
-                                 skgpu::Budgeted) override;
-    sk_sp<Buffer> createBuffer(size_t size,
-                               BufferType type,
-                               AccessPattern,
-                               std::string_view label) override;
+    sk_sp<Texture> createTexture(SkISize, const TextureInfo&, skgpu::Budgeted) override;
+    sk_sp<Buffer> createBuffer(size_t size, BufferType type, AccessPattern) override;
+
+    sk_sp<Texture> onCreateWrappedTexture(const BackendTexture&) override;
 
     sk_sp<Sampler> createSampler(const SamplerDesc&) override;
 
@@ -80,23 +80,22 @@ private:
 
     DawnSharedContext* dawnSharedContext() const;
 
-    skia_private::THashMap<uint64_t, wgpu::RenderPipeline> fBlitWithDrawPipelines;
+    skia_private::THashMap<uint32_t, wgpu::RenderPipeline> fBlitWithDrawPipelines;
 
     wgpu::BindGroupLayout fUniformBuffersBindGroupLayout;
     wgpu::BindGroupLayout fSingleTextureSamplerBindGroupLayout;
 
     wgpu::Buffer fNullBuffer;
 
-    struct UniqueKeyHash {
-        uint32_t operator()(const skgpu::UniqueKey& key) const { return key.hash(); }
-    };
+    template <size_t NumEntries>
+    using BindGroupCache = SkLRUCache<BindGroupKey<NumEntries>,
+                                      wgpu::BindGroup,
+                                      typename BindGroupKey<NumEntries>::Hash>;
 
-    using BindGroupCache = SkLRUCache<UniqueKey, wgpu::BindGroup, UniqueKeyHash>;
-
-    BindGroupCache fUniformBufferBindGroupCache;
-    BindGroupCache fSingleTextureSamplerBindGroups;
+    BindGroupCache<kNumUniformEntries> fUniformBufferBindGroupCache;
+    BindGroupCache<1> fSingleTextureSamplerBindGroups;
 };
 
-} // namespace skgpu::graphite
+}  // namespace skgpu::graphite
 
-#endif // skgpu_graphite_DawnResourceProvider_DEFINED
+#endif  // skgpu_graphite_DawnResourceProvider_DEFINED

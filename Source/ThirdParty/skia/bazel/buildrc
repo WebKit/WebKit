@@ -192,7 +192,8 @@ build:skottie_container --config=ck_full_webgl2_release \
 # only needed in release mode. Thus our C++ debug includes should be a superset of the
 # release includes.
 build:enforce_iwyu --features=skia_enforce_iwyu --cc_output_directory_tag=iwyu \
-                   --compilation_mode=dbg --keep_going
+                   --compilation_mode=dbg --keep_going \
+                   --linkopt="SKIA_SKIP_LINKING"
 
 build:use_linux_rbe_pool --config=linux_rbe --remote_download_minimal
 
@@ -218,6 +219,11 @@ build:metal_ganesh --enable_gpu_test_utils --gpu_backend=metal_ganesh\
 build:cpu --config=cpu_only
 build:gl --config=gl_ganesh
 build:vk --config=vulkan_ganesh
+
+# We would ideally like to remove the SKSL_STANDALONE define one day,
+# but it is needed by SkRasterPipelineBuilder when being compiled for GN
+build:compile_sksl --cc_output_directory_tag=compile_sksl \
+    --compilation_mode=opt --//src/core:load_sksl_from_disk --copt="-DSKSL_STANDALONE=1"
 
 # Layering check does not work without sandboxing because the system headers are not in the
 # right spot and so they are not found.

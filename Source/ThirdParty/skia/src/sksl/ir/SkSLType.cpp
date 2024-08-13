@@ -77,6 +77,14 @@ public:
         return fTargetType.isAllowedInES2();
     }
 
+    bool isOrContainsBool() const override {
+        return fTargetType.isOrContainsBool();
+    }
+
+    bool isOrContainsAtomic() const override {
+        return fTargetType.isOrContainsAtomic();
+    }
+
     size_t slotCount() const override {
         return fTargetType.slotCount();
     }
@@ -158,8 +166,14 @@ public:
             , fCount(count)
             , fIsBuiltin(isBuiltin) {
         SkASSERT(count > 0 || count == kUnsizedArray);
-        // Disallow multi-dimensional arrays.
+        // Multi-dimensional arrays are disallowed.
         SkASSERT(!componentType.is<ArrayType>());
+    }
+
+    bool matches(const Type& otherType) const override {
+        const Type& that = otherType.resolve();
+        return that.isArray() && this->columns() == that.columns() &&
+               this->componentType().matches(that.componentType());
     }
 
     bool isArray() const override {
@@ -176,6 +190,10 @@ public:
 
     bool isOrContainsAtomic() const override {
         return fComponentType.isOrContainsAtomic();
+    }
+
+    bool isOrContainsBool() const override {
+        return fComponentType.isOrContainsBool();
     }
 
     bool isUnsizedArray() const override {
@@ -302,6 +320,10 @@ public:
         return true;
     }
 
+    bool isOrContainsBool() const override {
+        return fScalarType.isBoolean();
+    }
+
     size_t slotCount() const override {
         return 1;
     }
@@ -360,6 +382,10 @@ public:
 
     bool isAllowedInUniform(Position*) const override {
         return fNumberKind != NumberKind::kBoolean;
+    }
+
+    bool isOrContainsBool() const override {
+        return fNumberKind == NumberKind::kBoolean;
     }
 
     size_t slotCount() const override {
@@ -605,6 +631,7 @@ public:
             fContainsArray        = fContainsArray        || f.fType->isOrContainsArray();
             fContainsUnsizedArray = fContainsUnsizedArray || f.fType->isOrContainsUnsizedArray();
             fContainsAtomic       = fContainsAtomic       || f.fType->isOrContainsAtomic();
+            fContainsBool         = fContainsBool         || f.fType->isOrContainsBool();
             fIsAllowedInES2       = fIsAllowedInES2       && f.fType->isAllowedInES2();
         }
         for (const Field& f : fFields) {
@@ -660,6 +687,10 @@ public:
         return fContainsAtomic;
     }
 
+    bool isOrContainsBool() const override {
+        return fContainsBool;
+    }
+
     size_t slotCount() const override {
         SkASSERT(!fContainsUnsizedArray);
         return fSlotCount;
@@ -693,6 +724,7 @@ private:
     bool fContainsArray = false;
     bool fContainsUnsizedArray = false;
     bool fContainsAtomic = false;
+    bool fContainsBool = false;
     bool fIsBuiltin = false;
     bool fIsAllowedInES2 = true;
 };
@@ -737,6 +769,10 @@ public:
         return fComponentType.isAllowedInUniform(errorPosition);
     }
 
+    bool isOrContainsBool() const override {
+        return fComponentType.isOrContainsBool();
+    }
+
     size_t slotCount() const override {
         return fColumns;
     }
@@ -770,7 +806,7 @@ std::unique_ptr<Type> Type::MakeArrayType(const Context& context,
                                           const Type& componentType,
                                           int columns) {
     return std::make_unique<ArrayType>(std::move(name), componentType.abbreviatedName(),
-                                       componentType, columns, context.fConfig->fIsBuiltinCode);
+                                       componentType, columns, context.fConfig->isBuiltinCode());
 }
 
 std::unique_ptr<Type> Type::MakeGenericType(const char* name,
@@ -856,6 +892,11 @@ std::unique_ptr<Type> Type::MakeStructType(const Context& context,
                                                     "' is not permitted in " +
                                                     std::string(aStructOrIB));
         }
+        if (interfaceBlock && field.fType->isOrContainsBool()) {
+            // Reject booleans anywhere in an interface block.
+            context.fErrors->error(field.fPosition, "type 'bool' is not permitted in an "
+                                                    "interface block");
+        }
         if (field.fType->isOrContainsUnsizedArray()) {
             if (!interfaceBlock) {
                 // Reject unsized arrays anywhere in structs.
@@ -881,7 +922,7 @@ std::unique_ptr<Type> Type::MakeStructType(const Context& context,
                                     "' is too deeply nested");
     }
     return std::make_unique<StructType>(pos, name, std::move(fields), nestingDepth + 1,
-                                        interfaceBlock, context.fConfig->fIsBuiltinCode);
+                                        interfaceBlock, context.fConfig->isBuiltinCode());
 }
 
 std::unique_ptr<Type> Type::MakeTextureType(const char* name, SpvDim_ dimensions, bool isDepth,
@@ -1190,7 +1231,7 @@ const Type* Type::clone(const Context& context, SymbolTable* symbolTable) const 
     // If we are compiling a program, and the type comes from the program's module, it is safe to
     // assume that the type is in-scope anywhere in the program without actually recursing through
     // the SymbolTable hierarchy to prove it.
-    if (!context.fConfig->fIsBuiltinCode && this->isBuiltin()) {
+    if (!context.fConfig->isBuiltinCode() && this->isBuiltin()) {
         return this;
     }
     // Even if the type isn't a built-in, it might already exist in the SymbolTable. Search by name.
@@ -1217,7 +1258,7 @@ const Type* Type::clone(const Context& context, SymbolTable* symbolTable) const 
                                                  TArray<Field>(fieldSpan.data(), fieldSpan.size()),
                                                  this->structNestingDepth(),
                                                  /*interfaceBlock=*/this->isInterfaceBlock(),
-                                                 /*isBuiltin=*/context.fConfig->fIsBuiltinCode));
+                                                 /*isBuiltin=*/context.fConfig->isBuiltinCode()));
         }
         default:
             SkDEBUGFAILF("don't know how to clone type '%s'", this->description().c_str());

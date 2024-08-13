@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_filegroup", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 SURFACE_FILES = [
     "SkSurface_Ganesh.cpp",
@@ -22,7 +20,10 @@ split_srcs_and_hdrs(
 skia_filegroup(
     name = "mtl_objc_srcs",
     srcs = ["SkSurface_GaneshMtl.mm"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
+    visibility = [
+        "//src/gpu/ganesh:__pkg__",
+        "//src/gpu/ganesh/mtl:__pkg__",
+    ],
 )
 
 skia_filegroup(

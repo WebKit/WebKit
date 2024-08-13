@@ -8,24 +8,28 @@
 #ifndef GrVkBackendSurface_DEFINED
 #define GrVkBackendSurface_DEFINED
 
-#include "include/gpu/vk/GrVkTypes.h"
 #include "include/private/base/SkAPI.h"
+#include "include/private/gpu/vk/SkiaVulkan.h"
 
 #include <string_view>
 
 class GrBackendFormat;
 class GrBackendTexture;
 class GrBackendRenderTarget;
+struct GrVkImageInfo;
 
+namespace skgpu {
+struct VulkanYcbcrConversionInfo;
+}
 
 namespace GrBackendFormats {
 
 SK_API GrBackendFormat MakeVk(VkFormat format, bool willUseDRMFormatModifiers = false);
-SK_API GrBackendFormat MakeVk(const GrVkYcbcrConversionInfo& ycbcrInfo,
+SK_API GrBackendFormat MakeVk(const skgpu::VulkanYcbcrConversionInfo& ycbcrInfo,
                               bool willUseDRMFormatModifiers = false);
 
 SK_API bool AsVkFormat(const GrBackendFormat&, VkFormat*);
-SK_API const GrVkYcbcrConversionInfo* GetVkYcbcrConversionInfo(const GrBackendFormat&);
+SK_API const skgpu::VulkanYcbcrConversionInfo* GetVkYcbcrConversionInfo(const GrBackendFormat&);
 
 }  // namespace GrBackendFormats
 

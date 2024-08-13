@@ -42,7 +42,6 @@ const (
 	CAS_RECIPES       = "recipes"
 	CAS_RECREATE_SKPS = "recreate-skps"
 	CAS_SKOTTIE_WASM  = "skottie-wasm"
-	CAS_SKPBENCH      = "skpbench"
 	CAS_TASK_DRIVERS  = "task-drivers"
 	CAS_TEST          = "test"
 	CAS_WASM_GM       = "wasm-gm"
@@ -65,7 +64,7 @@ const (
 	OLD_OS_LINUX_GCE               = "Debian-9.8"
 	COMPILE_TASK_NAME_OS_LINUX     = "Debian10"
 	COMPILE_TASK_NAME_OS_LINUX_OLD = "Debian9"
-	DEFAULT_OS_MAC                 = "Mac-10.15.7"
+	DEFAULT_OS_MAC                 = "Mac-14.5"
 	DEFAULT_OS_WIN                 = "Windows-Server-17763"
 
 	// Small is a 2-core machine.
@@ -195,7 +194,7 @@ var (
 			Path: "mac_toolchain",
 			// When this is updated, also update
 			// https://skia.googlesource.com/skcms.git/+/f1e2b45d18facbae2dece3aca673fe1603077846/infra/bots/gen_tasks.go#56
-			Version: "git_revision:796d2b92cff93fc2059623ce0a66284373ceea0a",
+			Version: "git_revision:e018acef6f136ec8bbf378a026a910b40ba3a7a9",
 		},
 	}
 
@@ -549,17 +548,6 @@ func GenTasks(cfg *Config) {
 		},
 		Excludes: []string{rbe.ExcludeGitDir},
 	})
-	b.MustAddCasSpec(CAS_SKPBENCH, &specs.CasSpec{
-		Root: "..",
-		Paths: []string{
-			"skia/.vpython3",
-			"skia/infra/bots/assets",
-			"skia/infra/bots/run_recipe.py",
-			"skia/tools/skpbench",
-			"skia/tools/valgrind.supp",
-		},
-		Excludes: []string{rbe.ExcludeGitDir},
-	})
 	b.MustAddCasSpec(CAS_TASK_DRIVERS, &specs.CasSpec{
 		Root: "..",
 		Paths: []string{
@@ -732,11 +720,11 @@ func (b *jobBuilder) deriveCompileTaskName() string {
 		if val := b.parts["extra_config"]; val != "" {
 			ec = strings.Split(val, "_")
 			ignore := []string{
-				"Skpbench", "AbandonGpuContext", "PreAbandonGpuContext", "Valgrind",
+				"AbandonGpuContext", "PreAbandonGpuContext", "Valgrind",
 				"FailFlushTimeCallbacks", "ReleaseAndAbandonGpuContext",
 				"NativeFonts", "GDI", "NoGPUThreads", "DDL1", "DDL3",
-				"DDLTotal", "DDLRecord", "9x9", "BonusConfigs", "ColorSpaces", "GL",
-				"SkottieTracing", "SkottieWASM", "GpuTess", "DMSAAStats", "Mskp", "Docker", "PDF",
+				"DDLRecord", "BonusConfigs", "ColorSpaces", "GL",
+				"SkottieTracing", "SkottieWASM", "GpuTess", "DMSAAStats", "Docker", "PDF",
 				"Puppeteer", "SkottieFrames", "RenderSKP", "CanvasPerf", "AllPathsVolatile",
 				"WebGL2", "i5", "OldestSupportedSkpVersion", "FakeWGPU", "Protected"}
 			keep := make([]string, 0, len(ec))
@@ -757,7 +745,11 @@ func (b *jobBuilder) deriveCompileTaskName() string {
 			task_os = COMPILE_TASK_NAME_OS_LINUX
 		} else if b.os("iOS") {
 			ec = append([]string{task_os}, ec...)
-			task_os = "Mac"
+			if b.parts["compiler"] == "Xcode11.4.1" {
+				task_os = "Mac10.15.7"
+			} else {
+				task_os = "Mac"
+			}
 		} else if b.matchOs("Win") {
 			task_os = "Win"
 		} else if b.compiler("GCC") {
@@ -829,6 +821,7 @@ var androidDeviceInfos = map[string][]string{
 	"GalaxyS7_G930FD": {"herolte", "R16NW_G930FXXS2ERH6"}, // This is Oreo.
 	"GalaxyS9":        {"starlte", "QP1A.190711.020"},     // This is Android10.
 	"GalaxyS20":       {"exynos990", "QP1A.190711.020"},
+	"GalaxyS24":       {"pineapple", "UP1A.231005.007"},
 	"JioNext":         {"msm8937", "RKQ1.210602.002"},
 	"Mokey":           {"mokey", "UDC_11161052"},
 	"MokeyGo32":       {"mokey_go32", "UQ1A.240105.003.A1_11159138"},
@@ -863,7 +856,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			"Debian11":   DEBIAN_11_OS,
 			"Mac":        DEFAULT_OS_MAC,
 			"Mac10.15.1": "Mac-10.15.1",
-			"Mac10.15.7": "Mac-10.15.7", // Same as 'Mac', but explicit.
+			"Mac10.15.7": "Mac-10.15.7",
 			"Mac11":      "Mac-11.4",
 			"Mac12":      "Mac-12",
 			"Mac13":      "Mac-13",
@@ -882,8 +875,8 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			d["os"] = DEFAULT_OS_LINUX_GCE
 		}
 		if os == "Win10" && b.parts["model"] == "Golo" {
-			// ChOps-owned machines have Windows 10 21h1.
-			d["os"] = "Windows-10-19043"
+			// ChOps-owned machines have Windows 10 22H2.
+			d["os"] = "Windows-10-19045"
 		}
 		if b.parts["model"] == "iPhone11" {
 			d["os"] = "iOS-13.6"
@@ -998,7 +991,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"IntelIrisXe":   "8086:9a49-31.0.101.5186",
 					"RadeonHD7770":  "1002:683d-26.20.13031.18002",
 					"RadeonR9M470X": "1002:6646-26.20.13031.18002",
-					"QuadroP400":    "10de:1cb3-30.0.15.1179",
+					"QuadroP400":    "10de:1cb3-31.0.15.5222",
 					"RadeonVega6":   "1002:1636-31.0.14057.5006",
 					"RTX3060":       "10de:2489-31.0.15.3699",
 				}[b.parts["cpu_or_gpu_value"]]
@@ -1104,7 +1097,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			d["cpu"] = "x86-64-Haswell_GCE"
 			// Use many-core machines for Build tasks.
 			d["machine_type"] = MACHINE_TYPE_LARGE
-		} else if d["os"] == DEFAULT_OS_MAC {
+		} else if d["os"] == DEFAULT_OS_MAC || d["os"] == "Mac-10.15.7" {
 			// Mac CPU bots are no longer VMs.
 			d["cpu"] = "x86-64"
 			d["cores"] = "12"
@@ -1673,10 +1666,7 @@ func (b *taskBuilder) commonTestPerfAssets() {
 	if b.extraConfig("CanvasKit", "PathKit") || (b.role("Test") && b.extraConfig("LottieWeb")) {
 		return
 	}
-	if b.extraConfig("Skpbench") {
-		// Skpbench only needs skps
-		b.asset("skp", "mskp")
-	} else if b.os("Android", "ChromeOS", "iOS") {
+	if b.os("Android", "ChromeOS", "iOS") {
 		b.asset("skp", "svg", "skimage")
 	} else if b.extraConfig("OldestSupportedSkpVersion") {
 		b.assetWithVersion("skp", oldestSupportedSkpVersion)
@@ -1975,10 +1965,7 @@ func (b *jobBuilder) perf() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		recipe := "perf"
 		cas := CAS_PERF
-		if b.extraConfig("Skpbench") {
-			recipe = "skpbench"
-			cas = CAS_SKPBENCH
-		} else if b.extraConfig("PathKit") {
+		if b.extraConfig("PathKit") {
 			cas = CAS_PATHKIT
 			recipe = "perf_pathkit"
 		} else if b.extraConfig("CanvasKit") {
@@ -1996,8 +1983,6 @@ func (b *jobBuilder) perf() {
 		b.recipeProps(EXTRA_PROPS)
 		if recipe == "perf" {
 			b.nanobenchFlags(doUpload)
-		} else if recipe == "skpbench" {
-			b.skpbenchFlags()
 		}
 		b.kitchenTask(recipe, OUTPUT_PERF)
 		b.cas(cas)
@@ -2197,16 +2182,18 @@ var shorthandToLabel = map[string]labelAndSavedOutputDir{
 	"skottie_tool_gpu":           {"//modules/skottie:skottie_tool_gpu", ""},
 
 	// Note: these paths are relative to the WORKSPACE in //example/external_client
-	"decode_everything":  {"//:decode_everything", ""},
-	"path_combiner":      {"//:path_combiner", ""},
-	"png_decoder":        {"//:png_decoder", ""},
-	"shape_text":         {"//:shape_text", ""},
-	"svg_with_harfbuzz":  {"//:svg_with_harfbuzz", ""},
-	"svg_with_primitive": {"//:svg_with_primitive", ""},
-	"use_ganesh_gl":      {"//:use_ganesh_gl", ""},
-	"use_ganesh_vulkan":  {"//:use_ganesh_vulkan", ""},
-	"use_skresources":    {"//:use_skresources", ""},
-	"write_text_to_png":  {"//:write_text_to_png", ""},
+	"decode_everything":          {"//:decode_everything", ""},
+	"path_combiner":              {"//:path_combiner", ""},
+	"png_decoder":                {"//:png_decoder", ""},
+	"shape_text":                 {"//:shape_text", ""},
+	"svg_with_harfbuzz":          {"//:svg_with_harfbuzz", ""},
+	"svg_with_primitive":         {"//:svg_with_primitive", ""},
+	"use_ganesh_gl":              {"//:use_ganesh_gl", ""},
+	"use_ganesh_vulkan":          {"//:use_ganesh_vulkan", ""},
+	"use_graphite_native_vulkan": {"//:use_graphite_native_vulkan", ""},
+	"use_skresources":            {"//:use_skresources", ""},
+	"write_text_to_png":          {"//:write_text_to_png", ""},
+	"write_to_pdf":               {"//:write_to_pdf", ""},
 
 	// Currently there is no way to tell Bazel "only test go_test targets", so we must group them
 	// under a test_suite.

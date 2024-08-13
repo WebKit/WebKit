@@ -17,6 +17,8 @@
 
 #include "webgpu/webgpu_cpp.h"  // NO_G3_REWRITE
 
+#include <optional>
+
 namespace skgpu::graphite {
 class ComputePipeline;
 class DawnBuffer;
@@ -43,6 +45,7 @@ private:
     bool setNewCommandBufferResources() override;
 
     bool onAddRenderPass(const RenderPassDesc&,
+                         SkIRect renderPassBounds,
                          const Texture* colorTexture,
                          const Texture* resolveTexture,
                          const Texture* depthStencilTexture,
@@ -52,6 +55,7 @@ private:
 
     // Methods for populating a Dawn RenderPassEncoder:
     bool beginRenderPass(const RenderPassDesc&,
+                         SkIRect renderPassBounds,
                          const Texture* colorTexture,
                          const Texture* resolveTexture,
                          const Texture* depthStencilTexture);
@@ -66,12 +70,12 @@ private:
                         int height);
     void endRenderPass();
 
-    void addDrawPass(const DrawPass*);
+    bool addDrawPass(const DrawPass*);
 
-    void bindGraphicsPipeline(const GraphicsPipeline*);
+    bool bindGraphicsPipeline(const GraphicsPipeline*);
     void setBlendConstants(float* blendConstants);
 
-    void bindUniformBuffer(const BindUniformBufferInfo& info, UniformSlot);
+    void bindUniformBuffer(const BindBufferInfo& info, UniformSlot);
     void bindDrawBuffers(const BindBufferInfo& vertices,
                          const BindBufferInfo& instances,
                          const BindBufferInfo& indices,
@@ -149,6 +153,15 @@ private:
 
     wgpu::Buffer fCurrentIndirectBuffer;
     size_t fCurrentIndirectBufferOffset = 0;
+
+    using IntrinsicConstant = std::array<float, 4>;
+
+    static constexpr int kBufferBindingOffsetAlignment = 256;
+    static constexpr int kIntrinsicConstantAlignedSize =
+            SkAlignTo(sizeof(IntrinsicConstant), kBufferBindingOffsetAlignment);
+    static constexpr int kNumSlotsForIntrinsicConstantBuffer = 8;
+
+    std::optional<IntrinsicConstant> fCurrentRTAdjust;
 
     sk_sp<DawnBuffer> fIntrinsicConstantBuffer;
     int fIntrinsicConstantBufferSlotsUsed = 0;

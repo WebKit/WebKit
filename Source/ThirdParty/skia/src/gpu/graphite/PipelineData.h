@@ -17,10 +17,12 @@
 #include "include/core/SkTileMode.h"
 #include "include/private/SkColorData.h"
 #include "src/base/SkEnumBitMask.h"
+#include "src/core/SkTHash.h"
 #include "src/gpu/graphite/Caps.h"
 #include "src/gpu/graphite/DrawTypes.h"
 #include "src/gpu/graphite/TextureProxy.h"
 #include "src/gpu/graphite/UniformManager.h"
+#include "src/shaders/gradients/SkGradientBaseShader.h"
 
 class SkArenaAlloc;
 
@@ -65,14 +67,8 @@ public:
     bool operator!=(const TextureDataBlock& other) const { return !(*this == other);  }
     uint32_t hash() const;
 
-    void add(const Caps* caps,
-             const SkSamplingOptions& sampling,
-             const SkTileMode tileModes[2],
-             sk_sp<TextureProxy> proxy) {
-        // Before relinquishing ownership of the proxy, query Caps to gather any relevant sampler
-        // conversion information for the SamplerDesc.
-        ImmutableSamplerInfo info = caps->getImmutableSamplerInfo(proxy);
-        fTextureData.push_back({std::move(proxy), SamplerDesc{sampling, tileModes, info}});
+    void add(sk_sp<TextureProxy> proxy, const SamplerDesc& samplerDesc) {
+        fTextureData.push_back({std::move(proxy), samplerDesc});
     }
 
     void reset() {
@@ -94,17 +90,15 @@ private:
 // obviously, vastly complicate uniform accumulation.
 class PipelineDataGatherer {
 public:
-    PipelineDataGatherer(const Caps* caps, Layout layout);
+    PipelineDataGatherer(Layout layout);
 
     void resetWithNewLayout(Layout layout);
 
     // Check that the gatherer has been reset to its initial state prior to collecting new data.
     SkDEBUGCODE(void checkReset();)
 
-    void add(const SkSamplingOptions& sampling,
-             const SkTileMode tileModes[2],
-             sk_sp<TextureProxy> proxy) {
-        fTextureDataBlock.add(fCaps, sampling, tileModes, std::move(proxy));
+    void add(sk_sp<TextureProxy> proxy, const SamplerDesc& samplerDesc) {
+        fTextureDataBlock.add(std::move(proxy), samplerDesc);
     }
     bool hasTextures() const { return !fTextureDataBlock.empty(); }
 
@@ -122,37 +116,73 @@ public:
 
     void writePaintColor(const SkPMColor4f& color) { fUniformManager.writePaintColor(color); }
 
+    void beginStruct(int baseAligment) { fUniformManager.beginStruct(baseAligment); }
+    void endStruct() { fUniformManager.endStruct(); }
+
     bool hasUniforms() const { return fUniformManager.size(); }
+
+    bool hasGradientBufferData() const { return !fGradientStorage.empty(); }
+
+    SkSpan<const float> gradientBufferData() const { return fGradientStorage; }
 
     // Returns the uniform data written so far. Will automatically pad the end of the data as needed
     // to the overall required alignment, and so should only be called when all writing is done.
-    UniformDataBlock finishUniformDataBlock() { return fUniformManager.finishUniformDataBlock(); }
+    UniformDataBlock finishUniformDataBlock() { return UniformDataBlock(fUniformManager.finish()); }
+
+    // Checks if data already exists for the requested gradient shader, and returns a nullptr
+    // and the offset the data begins at. If it doesn't exist, it allocates the data for the
+    // required number of stops and caches the start index, returning the data pointer
+    // and index offset the data will begin at.
+    std::pair<float*, int> allocateGradientData(int numStops, const SkGradientBaseShader* shader) {
+        int* existingOfffset = fGradientOffsetCache.find(shader);
+        if (existingOfffset) {
+            return std::make_pair(nullptr, *existingOfffset);
+        }
+
+        auto dataPair = this->allocateFloatData(numStops * 5);
+        fGradientOffsetCache.set(shader, dataPair.second);
+
+        return dataPair;
+    }
 
 private:
-#ifdef SK_DEBUG
-    friend class UniformExpectationsValidator;
+    // Allocates the data for the requested number of bytes and returns the
+    // pointer and buffer index offset the data will begin at.
+    std::pair<float*, int> allocateFloatData(int size) {
+        int lastSize = fGradientStorage.size();
+        fGradientStorage.resize(lastSize + size);
+        float* startPtr = fGradientStorage.begin() + lastSize;
 
-    void setExpectedUniforms(SkSpan<const Uniform> expectedUniforms);
-    void doneWithExpectedUniforms() { fUniformManager.doneWithExpectedUniforms(); }
-#endif // SK_DEBUG
+        return std::make_pair(startPtr, lastSize);
+    }
 
-    const Caps* const fCaps;
+    SkDEBUGCODE(friend class UniformExpectationsValidator;)
+
     TextureDataBlock  fTextureDataBlock;
     UniformManager    fUniformManager;
+
+    SkTDArray<float>  fGradientStorage;
+    // Storing the address of the shader as a proxy for comparing
+    // the colors and offsets arrays to keep lookup fast.
+    skia_private::THashMap<const SkGradientBaseShader*, int> fGradientOffsetCache;
 };
 
 #ifdef SK_DEBUG
 class UniformExpectationsValidator {
 public:
-    UniformExpectationsValidator(PipelineDataGatherer *gatherer,
-                                 SkSpan<const Uniform> expectedUniforms);
+    UniformExpectationsValidator(PipelineDataGatherer* gatherer,
+                                 SkSpan<const Uniform> expectedUniforms,
+                                 bool isSubstruct=false)
+            : fGatherer(gatherer) {
+        fGatherer->fUniformManager.setExpectedUniforms(expectedUniforms, isSubstruct);
+    }
 
     ~UniformExpectationsValidator() {
-        fGatherer->doneWithExpectedUniforms();
+        fGatherer->fUniformManager.doneWithExpectedUniforms();
     }
 
 private:
-    PipelineDataGatherer *fGatherer;
+    PipelineDataGatherer* fGatherer;
 
     UniformExpectationsValidator(UniformExpectationsValidator &&) = delete;
     UniformExpectationsValidator(const UniformExpectationsValidator &) = delete;
