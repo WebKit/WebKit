@@ -2097,9 +2097,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
 
 LayoutUnit RenderGrid::columnAxisOffsetForGridItem(const RenderBox& gridItem) const
 {
-    LayoutUnit startOfRow;
-    LayoutUnit endOfRow;
-    gridAreaPositionForGridItem(gridItem, GridTrackSizingDirection::ForRows, startOfRow, endOfRow);
+    auto [startOfRow, endOfRow] = gridAreaPositionForGridItem(gridItem, GridTrackSizingDirection::ForRows);
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(gridItem);
     LayoutUnit columnAxisGridItemSize = GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) ? gridItem.logicalWidth() + gridItem.marginLogicalWidth() : gridItem.logicalHeight() + gridItem.marginLogicalHeight();
     LayoutUnit masonryOffset = areMasonryRows() ? m_masonryLayout.offsetForGridItem(gridItem) : 0_lu;
@@ -2123,9 +2121,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForGridItem(const RenderBox& gridItem) co
 
 LayoutUnit RenderGrid::rowAxisOffsetForGridItem(const RenderBox& gridItem) const
 {
-    LayoutUnit startOfColumn;
-    LayoutUnit endOfColumn;
-    gridAreaPositionForGridItem(gridItem, GridTrackSizingDirection::ForColumns, startOfColumn, endOfColumn);
+    auto [startOfColumn, endOfColumn] = gridAreaPositionForGridItem(gridItem, GridTrackSizingDirection::ForColumns);
     LayoutUnit startPosition = startOfColumn + marginStartForChild(gridItem);
     LayoutUnit masonryOffset = areMasonryColumns() ? m_masonryLayout.offsetForGridItem(gridItem) : 0_lu;
     if (hasAutoMarginsInRowAxis(gridItem))
@@ -2253,31 +2249,31 @@ LayoutUnit RenderGrid::logicalOffsetForOutOfFlowGridItem(const RenderBox& gridIt
     return trackBreadth - offset - gridItemBreadth;
 }
 
-void RenderGrid::gridAreaPositionForOutOfFlowGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const
+std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForOutOfFlowGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction) const
 {
     ASSERT(gridItem.isOutOfFlowPositioned());
     ASSERT(GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, direction));
     auto trackBreadth = GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, direction)->value();
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
-    start = isRowAxis ? borderStart() : borderBefore();
+    auto start = isRowAxis ? borderStart() : borderBefore();
     if (auto line = outOfFlowItemLine.get(&gridItem)) {
         auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
         start = positions[line.value()];
     }
     start += logicalOffsetForOutOfFlowGridItem(gridItem, direction, trackBreadth);
-    end = start + trackBreadth;
+    return { start, start + trackBreadth };
 }
 
-void RenderGrid::gridAreaPositionForInFlowGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const
+std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForInFlowGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction) const
 {
     ASSERT(!gridItem.isOutOfFlowPositioned());
     const GridSpan& span = currentGrid().gridItemSpan(gridItem, direction);
     // FIXME (lajava): This is a common pattern, why not defining a function like
     // positions(direction) ?
     auto& positions = direction == GridTrackSizingDirection::ForColumns ? m_columnPositions : m_rowPositions;
-    start = positions[span.startLine()];
-    end = positions[span.endLine()];
+    auto start = positions[span.startLine()];
+    auto end = positions[span.endLine()];
     // The 'positions' vector includes distribution offset (because of content
     // alignment) and gutters, so we need to subtract them to get the actual
     // end position for a given track (this does not have to be done for the
@@ -2288,14 +2284,14 @@ void RenderGrid::gridAreaPositionForInFlowGridItem(const RenderBox& gridItem, Gr
         && currentGrid().isEmptyAutoRepeatTrack(direction, span.endLine()))) {
         end -= gridGap(direction) + gridItemOffset(direction);
     }
+    return { start, end };
 }
 
-void RenderGrid::gridAreaPositionForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction, LayoutUnit& start, LayoutUnit& end) const
+std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction) const
 {
     if (gridItem.isOutOfFlowPositioned())
-        gridAreaPositionForOutOfFlowGridItem(gridItem, direction, start, end);
-    else
-        gridAreaPositionForInFlowGridItem(gridItem, direction, start, end);
+        return gridAreaPositionForOutOfFlowGridItem(gridItem, direction);
+    return gridAreaPositionForInFlowGridItem(gridItem, direction);
 }
 
 ContentPosition static resolveContentDistributionFallback(ContentDistribution distribution)
