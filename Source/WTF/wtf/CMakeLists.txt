@@ -286,6 +286,7 @@ set(WTF_PUBLIC_HEADERS
     StdLibExtras.h
     StdList.h
     StdMap.h
+    StdMultimap.h
     StdSet.h
     StdUnorderedMap.h
     StdUnorderedSet.h
