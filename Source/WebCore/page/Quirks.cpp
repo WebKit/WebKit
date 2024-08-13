@@ -1742,6 +1742,18 @@ bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const
     return shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(m_document->topDocument().url());
 }
 
+bool Quirks::shouldFlipScreenDimensions() const
+{
+#if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
+    if (!needsQuirks())
+        return false;
+
+    return shouldFlipScreenDimensionsInternal(m_document->topDocument().url());
+#else
+    return false;
+#endif
+}
+
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
 // to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
 // Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.

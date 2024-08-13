@@ -84,6 +84,7 @@ public:
     bool shouldDisableNavigatorStandaloneQuirk() const;
 
     bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const;
+    bool shouldFlipScreenDimensions() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
