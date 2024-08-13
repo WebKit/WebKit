@@ -11,4 +11,6 @@ PASS Calling StylePropertyMap.append with a var ref throws TypeError
 PASS Appending a list-valued property with CSSStyleValue or String updates its values
 PASS Appending a list-valued property with list-valued string updates its values
 PASS StylePropertyMap.append is case-insensitive
+FAIL Appending to a list containing a variable reference should throw assert_throws_js: function "() => styleMap.append('transition-duration', CSS.s(1))" did not throw
+PASS Appending to a longhand list containing a variable reference should throw
 

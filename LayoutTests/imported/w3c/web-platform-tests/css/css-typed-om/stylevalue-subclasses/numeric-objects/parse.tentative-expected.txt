@@ -8,4 +8,6 @@ PASS Parsing ignores surrounding spaces
 PASS Parsing min() is successful
 PASS Parsing max() is successful
 PASS Parsing clamp() is successful
+PASS Parsing sum of multiple min() is successful
+PASS Parsing product of multiple min() is successful
 
