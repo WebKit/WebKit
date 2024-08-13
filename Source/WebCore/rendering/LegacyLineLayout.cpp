@@ -147,7 +147,7 @@ LegacyRootInlineBox* LegacyLineLayout::createAndAppendRootInlineBox()
     LegacyRootInlineBox* rootBox = newRootBox.get();
     m_lineBoxes.appendLineBox(WTFMove(newRootBox));
 
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && legacyRootBox() == rootBox) {
         if (AXObjectCache* cache = m_flow.document().existingAXObjectCache())
             cache->deferRecomputeIsIgnored(m_flow.element());
     }
@@ -199,7 +199,7 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
         RenderInline* inlineFlow = obj != &m_flow ? &downcast<RenderInline>(*obj) : nullptr;
 
         // Get the last box we made for this render object.
-        parentBox = inlineFlow ? inlineFlow->lastLineBox() : downcast<RenderBlockFlow>(*obj).lastRootBox();
+        parentBox = inlineFlow ? inlineFlow->lastLegacyInlineBox() : downcast<RenderBlockFlow>(*obj).legacyRootBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line. If this box or its ancestor is unconstructed but it has
@@ -278,13 +278,11 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
 
     // We should have a root inline box. It should be unconstructed and
     // be the last continuation of our line list.
-    ASSERT(lastRootBox() && !lastRootBox()->isConstructed());
+    ASSERT(legacyRootBox() && !legacyRootBox()->isConstructed());
 
     // Now mark the line boxes as being constructed.
-    lastRootBox()->setConstructed();
-
-    // Return the last line.
-    return lastRootBox();
+    legacyRootBox()->setConstructed();
+    return legacyRootBox();
 }
 
 void LegacyLineLayout::removeInlineBox(BidiRun& run, const LegacyRootInlineBox& rootLineBox) const
@@ -451,17 +449,13 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     return lineBox;
 }
 
-static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& firstRootInlineBox, const LegacyRootInlineBox& lastRootInlineBox)
+static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& rootInlineBox)
 {
-    for (auto* rootInlineBox = &firstRootInlineBox; rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
-        if (rootInlineBox->hasSelfPaintInlineBox()) {
-            for (auto* inlineBox = rootInlineBox->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
-                if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(inlineBox->renderer()); renderer && renderer->hasSelfPaintingLayer())
-                    renderer->repaint();
-            }
+    if (rootInlineBox.hasSelfPaintInlineBox()) {
+        for (auto* inlineBox = rootInlineBox.firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
+            if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(inlineBox->renderer()); renderer && renderer->hasSelfPaintingLayer())
+                renderer->repaint();
         }
-        if (rootInlineBox == &lastRootInlineBox)
-            break;
     }
 }
 
@@ -490,8 +484,8 @@ void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
     }
 
     layoutRunsAndFloatsInRange(resolver);
-    if (firstRootBox())
-        repaintSelfPaintInlineBoxes(*firstRootBox(), *lastRootBox());
+    if (legacyRootBox())
+        repaintSelfPaintInlineBoxes(*legacyRootBox());
 }
 
 void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
@@ -579,25 +573,21 @@ void LegacyLineLayout::layoutLineBoxes()
         layoutRunsAndFloats(hasInlineChild);
     }
 
-    if (!firstRootBox() && m_flow.hasLineIfEmpty())
+    if (!legacyRootBox() && m_flow.hasLineIfEmpty())
         m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight(true, m_flow.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 }
 
 void LegacyLineLayout::addOverflowFromInlineChildren()
 {
-    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
+    if (auto* rootBox = legacyRootBox()) {
+        LayoutRect childVisualOverflowRect = rootBox->visualOverflowRect(rootBox->lineTop(), rootBox->lineBottom());
         m_flow.addVisualOverflow(childVisualOverflowRect);
     }
 }
 
 size_t LegacyLineLayout::lineCount() const
 {
-    size_t count = 0;
-    for (auto* box = firstRootBox(); box; box = box->nextRootBox())
-        ++count;
-
-    return count;
+    return legacyRootBox() ? 1 : 0;
 }
 
 const RenderStyle& LegacyLineLayout::style() const

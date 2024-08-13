@@ -71,8 +71,8 @@ public:
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
-    LegacyInlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    LegacyInlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+    LegacyInlineFlowBox* firstLegacyInlineBox() const { return m_lineBoxes.firstLegacyLineBox(); }
+    LegacyInlineFlowBox* lastLegacyInlineBox() const { return m_lineBoxes.lastLegacyLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;

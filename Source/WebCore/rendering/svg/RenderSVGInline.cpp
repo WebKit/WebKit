@@ -132,7 +132,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         return;
 
     FloatRect textBoundingBox = textAncestor->strokeBoundingBox();
-    for (auto* box = firstLineBox(); box; box = box->nextLineBox())
+    for (auto* box = firstLegacyInlineBox(); box; box = box->nextLineBox())
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), UseTransforms, wasFixed));
 }
 

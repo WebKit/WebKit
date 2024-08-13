@@ -322,7 +322,7 @@ static TextStream& operator<<(TextStream& ts, const LegacyRenderSVGShape& shape)
 
 static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 {
-    auto* box = downcast<SVGRootInlineBox>(text.firstRootBox());
+    auto* box = downcast<SVGRootInlineBox>(text.legacyRootBox());
     if (!box)
         return;
 

@@ -493,13 +493,11 @@ void RenderSVGText::applyTransform(TransformationMatrix& transform, const Render
 
 VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, HitTestSource source, const RenderFragmentContainer* fragment)
 {
-    LegacyRootInlineBox* rootBox = firstRootBox();
+    auto* rootBox = legacyRootBox();
     if (!rootBox)
         return createVisiblePosition(0, Affinity::Downstream);
 
-    ASSERT(!rootBox->nextRootBox());
     ASSERT(childrenInline());
-
     LegacyInlineBox* closestBox = downcast<SVGRootInlineBox>(*rootBox).closestLeafChildForPosition(pointInContents);
     if (!closestBox)
         return createVisiblePosition(0, Affinity::Downstream);

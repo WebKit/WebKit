@@ -153,7 +153,7 @@ RenderBlockFlow::~RenderBlockFlow()
 void RenderBlockFlow::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed()) {
-        if (firstRootBox()) {
+        if (legacyRootBox()) {
             // We can't wait for RenderBox::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             if (isSelectionBorder())
@@ -163,10 +163,8 @@ void RenderBlockFlow::willBeDestroyed()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
-                    while (auto childBox = box->firstChild())
-                        childBox->removeFromParent();
-                }
+                if (auto* childBox = legacyRootBox()->firstChild())
+                    childBox->removeFromParent();
             }
         } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
             parent->dirtyLineFromChangedChild();
@@ -3313,11 +3311,10 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
         }
 
         if (legacyLineLayout()) {
-            bool isFirstLine = lastRootBox() == firstRootBox();
-            const auto& style = isFirstLine ? firstLineStyle() : this->style();
+            auto& style = firstLineStyle();
             // LegacyInlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
-            lastBaseline = style.metricsOfPrimaryFont().intAscent(lastRootBox()->baselineType())
-                + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
+            lastBaseline = style.metricsOfPrimaryFont().intAscent(legacyRootBox()->baselineType())
+                + (style.isFlippedLinesWritingMode() ? logicalHeight() - legacyRootBox()->logicalBottom() : legacyRootBox()->logicalTop());
         }
         else if (modernLineLayout())
             lastBaseline = floorToInt(modernLineLayout()->lastLineLogicalBaseline());
@@ -4135,7 +4132,7 @@ void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const Legac
         modernLineLayout->outputLineTree(stream, depth);
         return;
     }
-    for (const LegacyRootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
+    if (auto* root = legacyRootBox())
         root->outputLineTreeAndMark(stream, markedBox, depth);
 }
 #endif

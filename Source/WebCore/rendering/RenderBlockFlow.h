@@ -339,8 +339,7 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    LegacyRootInlineBox* firstRootBox() const { return legacyLineLayout() ? legacyLineLayout()->firstRootBox() : nullptr; }
-    LegacyRootInlineBox* lastRootBox() const { return legacyLineLayout() ? legacyLineLayout()->lastRootBox() : nullptr; }
+    LegacyRootInlineBox* legacyRootBox() const { return legacyLineLayout() ? legacyLineLayout()->legacyRootBox() : nullptr; }
 
     void setChildrenInline(bool) final;
 
