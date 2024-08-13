@@ -1326,6 +1326,12 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     if (!style)
         return AnchorPositionedElementAction::None;
 
+    bool isAnchor = generatesBox(*style) && !style->anchorNames().isEmpty();
+    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(element);
+    bool isAnchorPositioned = !!anchorPositionedElementState;
+    if (!isAnchor && !isAnchorPositioned)
+        return AnchorPositionedElementAction::None;
+
     // Maintain the list of anchors (in tree order) used for anchor-positioned elements
     if (!style->anchorNames().isEmpty()) {
         for (auto& anchorName : style->anchorNames()) {
@@ -1337,7 +1343,6 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     }
 
     // Check if this element is anchor-positioned
-    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(element);
     if (!anchorPositionedElementState)
         return AnchorPositionedElementAction::None;
 

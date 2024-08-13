@@ -346,6 +346,15 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
         return Length(0, LengthType::Fixed);
     Ref anchorPositionedElement = *builderState.element();
 
+    // FIXME: Support pseudo-elements.
+    if (builderState.style().pseudoElementType() != PseudoId::None)
+        return Length(0, LengthType::Fixed);
+
+    // In-flow elements cannot be anchor-positioned.
+    // FIXME: Should attempt to resolve the fallback value.
+    if (!builderState.style().hasOutOfFlowPosition())
+        return Length(0, LengthType::Fixed);
+
     auto* anchorPositionedStateMap = builderState.cssToLengthConversionData().anchorPositionedStateMap();
     if (!anchorPositionedStateMap)
         return Length(0, LengthType::Fixed);
