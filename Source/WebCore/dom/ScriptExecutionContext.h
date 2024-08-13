@@ -305,7 +305,7 @@ public:
     void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
 
     bool allowsMediaDevices() const;
-    ServiceWorker* activeServiceWorker() const;
+    ServiceWorker* activeServiceWorker() const { return m_activeServiceWorker.get(); }
     void setActiveServiceWorker(RefPtr<ServiceWorker>&&);
 
     void registerServiceWorker(ServiceWorker&);

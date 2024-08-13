@@ -675,11 +675,6 @@ bool ScriptExecutionContext::allowsMediaDevices() const
 #endif
 }
 
-ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
-{
-    return m_activeServiceWorker.get();
-}
-
 void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serviceWorker)
 {
     m_activeServiceWorker = WTFMove(serviceWorker);
