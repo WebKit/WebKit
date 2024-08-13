@@ -3803,6 +3803,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D247B6614689B8600E78B76 /* Build configuration list for PBXNativeTarget "WTF" */;
 			buildPhases = (
+				520CF9492BDA9B4800C27FD2 /* Generate clangd configuration file */,
 				DDE99316278D08B900F60D26 /* Product Dependencies */,
 				DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */,
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
@@ -3875,6 +3876,27 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		520CF9492BDA9B4800C27FD2 /* Generate clangd configuration file */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_WORKSPACE_DIR)/Tools/clangd/update-clangd-config",
+				"$(WK_WORKSPACE_DIR)/Tools/clangd/clangd-config.yaml.tpl",
+			);
+			name = "Generate clangd configuration file";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_WORKSPACE_DIR)/.clangd",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${DEPLOYMENT_LOCATION}\" != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\" \"${SCRIPT_OUTPUT_FILE_0}\"\nfi\n";
+		};
 		DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

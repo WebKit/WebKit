@@ -1,0 +1,14 @@
+[update-compile-commands-symlink]
+# The compile_commands.json symlink in the WebKit source root directory
+# will be updated during builds to the first of the following paths
+# that exists.
+# NOTE: Indentation is important! (Python's ConfigParser INI syntax)
+candidates =
+    WebKitBuild/Debug/DeveloperTools/compile_commands.json
+    WebKitBuild/Release/DeveloperTools/compile_commands.json
+    WebKitBuild/GTK/Debug/DeveloperTools/compile_commands.json
+    WebKitBuild/GTK/Release/DeveloperTools/compile_commands.json
+    WebKitBuild/WPE/Debug/DeveloperTools/compile_commands.json
+    WebKitBuild/WPE/Release/DeveloperTools/compile_commands.json
+    WebKitBuild/JSCOnly/Debug/DeveloperTools/compile_commands.json
+    WebKitBuild/JSCOnly/Release/DeveloperTools/compile_commands.json

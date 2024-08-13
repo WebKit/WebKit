@@ -4,6 +4,8 @@
 .DS_Store
 .directory
 /WebKitBuild/
+/.clangd
+/update-compile-commands-symlink.conf
 /test262-results/
 autoinstall.cache.d
 project.xcworkspace
