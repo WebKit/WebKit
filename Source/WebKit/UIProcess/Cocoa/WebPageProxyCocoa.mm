@@ -1223,20 +1223,20 @@ void WebPageProxy::writingToolsSessionDidReceiveAction(const WebCore::WritingToo
 
 #if ENABLE(WRITING_TOOLS_UI)
 
-void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID)
 {
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::EnableSourceTextAnimationAfterElementWithID(elementID, uuid), webPageIDInMainFrameProcess());
+    legacyMainFrameProcess().send(Messages::WebPage::EnableSourceTextAnimationAfterElementWithID(elementID), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& elementID)
 {
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID, uuid), webPageIDInMainFrameProcess());
+    legacyMainFrameProcess().send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
@@ -1288,20 +1288,12 @@ void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::U
     legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTFMove(completionHandler), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::showSelectionForWritingToolsSessionAssociatedWithAnimationID(const WTF::UUID& animationID)
+void WebPageProxy::showSelectionForActiveWritingToolsSession()
 {
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForWritingToolsSessionAssociatedWithAnimationID(animationID), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::showSelectionForWritingToolsSessionWithID(const WebCore::WritingTools::Session::ID& sessionID)
-{
-    if (!hasRunningProcess())
-        return;
-
-    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForWritingToolsSessionWithID(sessionID), webPageIDInMainFrameProcess());
+    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&)
@@ -1320,18 +1312,14 @@ void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebPageProxy::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(IPC::Connection& connection, const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebPageProxy::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(IPC::Connection& connection, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    MESSAGE_CHECK(sessionID.isValid());
-
-    protectedPageClient()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
+    protectedPageClient()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(replacementID, selectionBoundsInRootView);
 }
 
-void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connection& connection, const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
+void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connection& connection, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    MESSAGE_CHECK(sessionID.isValid());
-
-    protectedPageClient()->proofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID);
+    protectedPageClient()->proofreadingSessionUpdateStateForSuggestionWithID(state, replacementID);
 }
 
 #endif // ENABLE(WRITING_TOOLS)

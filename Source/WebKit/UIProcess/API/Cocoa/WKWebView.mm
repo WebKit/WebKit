@@ -445,7 +445,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    _writingToolsSessions = [NSMapTable strongToWeakObjectsMapTable];
+    _activeWritingToolsSession = nil;
     _writingToolsTextSuggestions = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
@@ -2141,7 +2141,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     auto webSession = WebKit::convertToWebSession(session);
 
     if (session) {
-        [_writingToolsSessions setObject:session forKey:session.uuid];
+        _activeWritingToolsSession = session;
         _page->setWritingToolsActive(true);
     }
 
@@ -2246,7 +2246,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    [_writingToolsSessions removeObjectForKey:session.uuid];
+    _activeWritingToolsSession = nil;
     [_writingToolsTextSuggestions removeAllObjects];
 
     _page->setWritingToolsActive(false);
@@ -2298,13 +2298,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #pragma mark - WTTextViewDelegate invoking methods
 
-- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
+- (void)_proofreadingSessionShowDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
 {
-    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
-    if (!session)
+    if (!_activeWritingToolsSession)
         return;
 
-    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)session.textViewDelegate;
+    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)[_activeWritingToolsSession textViewDelegate];
 
     if (![textViewDelegate respondsToSelector:@selector(proofreadingSessionWithUUID:showDetailsForSuggestionWithUUID:relativeToRect:inView:)])
         return;
@@ -2315,21 +2314,20 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     RetainPtr view = _contentView;
 #endif
 
-    [textViewDelegate proofreadingSessionWithUUID:session.uuid showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
+    [textViewDelegate proofreadingSessionWithUUID:[_activeWritingToolsSession uuid] showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
 }
 
-- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestion::State)state forSuggestionWithUUID:(NSUUID *)replacementUUID
+- (void)_proofreadingSessionUpdateState:(WebCore::WritingTools::TextSuggestion::State)state forSuggestionWithUUID:(NSUUID *)replacementUUID
 {
-    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
-    if (!session)
+    if (!_activeWritingToolsSession)
         return;
 
-    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)session.textViewDelegate;
+    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)[_activeWritingToolsSession textViewDelegate];
 
     if (![textViewDelegate respondsToSelector:@selector(proofreadingSessionWithUUID:updateState:forSuggestionWithUUID:)])
         return;
 
-    [textViewDelegate proofreadingSessionWithUUID:session.uuid updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
+    [textViewDelegate proofreadingSessionWithUUID:[_activeWritingToolsSession uuid] updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
 }
 
 #endif
@@ -3169,7 +3167,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return nil;
 
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableSourceTextAnimationAfterElementWithID(elementID, *uuid);
+    _page->enableSourceTextAnimationAfterElementWithID(elementID);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
@@ -3191,7 +3189,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return nil;
 
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableTextAnimationTypeForElementWithID(elementID, *uuid);
+    _page->enableTextAnimationTypeForElementWithID(elementID);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];

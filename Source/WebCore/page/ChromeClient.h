@@ -674,23 +674,23 @@ public:
     virtual double baseViewportLayoutSizeScaleFactor() const { return 1; }
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WritingTools::SessionID&, const WritingTools::TextSuggestionID&, IntRect) { }
+    virtual void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WritingTools::TextSuggestionID&, IntRect) { }
 
-    virtual void proofreadingSessionUpdateStateForSuggestionWithID(const WritingTools::SessionID&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestionID&) { }
+    virtual void proofreadingSessionUpdateStateForSuggestionWithID(WritingTools::TextSuggestionState, const WritingTools::TextSuggestionID&) { }
 
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) { }
 
-    virtual void removeTransparentMarkersForSessionID(const WritingTools::SessionID&) { }
+    virtual void removeTransparentMarkersForActiveWritingToolsSession() { }
 
-    virtual void removeInitialTextAnimation(const WritingTools::SessionID&) { }
+    virtual void removeInitialTextAnimationForActiveWritingToolsSession() { }
 
-    virtual void addInitialTextAnimation(const WritingTools::SessionID&) { }
+    virtual void addInitialTextAnimationForActiveWritingToolsSession() { }
 
-    virtual void addSourceTextAnimation(const WritingTools::SessionID&, const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
+    virtual void addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
 
-    virtual void addDestinationTextAnimation(const WritingTools::SessionID&, const std::optional<CharacterRange>&, const String&) { }
+    virtual void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>&, const String&) { }
 
-    virtual void clearAnimationsForSessionID(const WritingTools::SessionID&) { };
+    virtual void clearAnimationsForActiveWritingToolsSession() { };
 #endif
 
     virtual void hasActiveNowPlayingSessionChanged(bool) { }

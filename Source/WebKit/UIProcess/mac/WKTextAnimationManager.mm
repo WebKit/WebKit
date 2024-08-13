@@ -128,7 +128,7 @@
             if (strongWebView->isIntelligenceTextPonderingAnimationFinished() && strongWebView->isWritingToolsTextReplacementsFinished()) {
                 // If the entire replacement has already been completed, and this is the end of the last animation,
                 // then reveal the selection.
-                strongWebView->page().showSelectionForWritingToolsSessionAssociatedWithAnimationID(*animationID);
+                strongWebView->page().showSelectionForActiveWritingToolsSession();
             }
 
             strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);

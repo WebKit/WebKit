@@ -382,11 +382,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 
-    EnableSourceTextAnimationAfterElementWithID(String elementID, WTF::UUID uuid);
-    EnableTextAnimationTypeForElementWithID(String elementID, WTF::UUID uuid);
+    EnableSourceTextAnimationAfterElementWithID(String elementID);
+    EnableTextAnimationTypeForElementWithID(String elementID);
 
-    ShowSelectionForWritingToolsSessionAssociatedWithAnimationID(WTF::UUID animationID);
-    ShowSelectionForWritingToolsSessionWithID(WebCore::WritingTools::Session::ID sessionID);
+    ShowSelectionForActiveWritingToolsSession();
 #endif
 
     # Popup menu.
