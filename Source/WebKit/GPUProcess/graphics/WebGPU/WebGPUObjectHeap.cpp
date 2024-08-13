@@ -52,12 +52,15 @@
 #include "RemoteShaderModule.h"
 #include "RemoteTexture.h"
 #include "RemoteTextureView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #include <WebCore/WebGPU.h>
 #endif
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectHeap);
 
 ObjectHeap::ObjectHeap()
 {

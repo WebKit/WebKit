@@ -32,6 +32,7 @@
 #include "SharedCARingBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
@@ -49,7 +50,7 @@ class RemoteAudioDestination;
 class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit;
 
 class RemoteAudioMediaStreamTrackRendererInternalUnitManager : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioMediaStreamTrackRendererInternalUnitManager);
     WTF_MAKE_NONCOPYABLE(RemoteAudioMediaStreamTrackRendererInternalUnitManager);
 public:
     explicit RemoteAudioMediaStreamTrackRendererInternalUnitManager(GPUConnectionToWebProcess&);

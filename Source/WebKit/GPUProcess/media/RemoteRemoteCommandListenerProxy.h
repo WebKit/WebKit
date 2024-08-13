@@ -31,6 +31,7 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include <WebCore/RemoteCommandListener.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -44,7 +45,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 
 class RemoteRemoteCommandListenerProxy : public RefCounted<RemoteRemoteCommandListenerProxy>, private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRemoteCommandListenerProxy);
 public:
     static Ref<RemoteRemoteCommandListenerProxy> create(GPUConnectionToWebProcess& process, RemoteRemoteCommandListenerIdentifier&& identifier)
     {

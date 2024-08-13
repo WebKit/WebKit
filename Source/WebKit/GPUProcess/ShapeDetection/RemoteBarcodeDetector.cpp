@@ -35,8 +35,11 @@
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/DetectedBarcodeInterface.h>
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBarcodeDetector);
 
 RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_backing(WTFMove(barcodeDetector))

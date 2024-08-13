@@ -35,10 +35,13 @@
 #include "SampleBufferDisplayLayerMessages.h"
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/LocalSampleBufferDisplayLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSampleBufferDisplayLayer);
 
 RefPtr<RemoteSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::create(GPUConnectionToWebProcess& gpuConnection, SampleBufferDisplayLayerIdentifier identifier, Ref<IPC::Connection>&& connection)
 {

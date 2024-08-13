@@ -36,12 +36,15 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (connection ? &connection->connection() : nullptr))
 
 namespace WebKit {
 using namespace WebCore;
 static constexpr Seconds mediaRecorderDefaultTimeout { 1_s };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaRecorder);
 
 std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options)
 {

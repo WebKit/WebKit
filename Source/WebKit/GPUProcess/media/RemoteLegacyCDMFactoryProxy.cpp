@@ -36,10 +36,13 @@
 #include "RemoteLegacyCDMSessionProxyMessages.h"
 #include <WebCore/LegacyCDM.h>
 #include <wtf/Algorithms.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLegacyCDMFactoryProxy);
 
 RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)

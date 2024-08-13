@@ -29,6 +29,7 @@
 #include "RemoteSharedResourceCache.h"
 
 #include "GPUConnectionToWebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(IOSURFACE)
 #include <WebCore/IOSurfacePool.h>
@@ -53,6 +54,8 @@ constexpr size_t imageBufferForCanvasLimit = 50000;
 
 static std::atomic<size_t> globalAcceleratedImageBufferCount = 0;
 static std::atomic<size_t> globalImageBufferForCanvasCount = 0;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCache);
 
 Ref<RemoteSharedResourceCache> RemoteSharedResourceCache::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {

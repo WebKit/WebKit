@@ -33,8 +33,11 @@
 #include "WebGPUObjectHeap.h"
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUQueue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQueue);
 
 RemoteQueue::RemoteQueue(WebCore::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(queue)

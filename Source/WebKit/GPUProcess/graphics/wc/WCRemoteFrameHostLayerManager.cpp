@@ -31,11 +31,12 @@
 #include <WebCore/BitmapTexture.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class WCRemoteFrameHostLayer final : public WebCore::TextureMapperPlatformLayer {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCRemoteFrameHostLayer);
 public:
     void paintToTextureMapper(WebCore::TextureMapper& textureMapper, const WebCore::FloatRect& targetRect, const WebCore::TransformationMatrix& modelViewMatrix, float opacity) override
     {
@@ -53,7 +54,7 @@ private:
 };
 
 class WCRemoteFrameHostLayerManager::RemoteFrameHostLayerData final {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCRemoteFrameHostLayerManager);
 public:
     RemoteFrameHostLayerData(WebCore::ProcessIdentifier webProcessIdentifier)
         : m_webProcessIdentifier(webProcessIdentifier)

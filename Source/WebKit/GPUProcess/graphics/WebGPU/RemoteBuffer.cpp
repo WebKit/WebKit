@@ -34,8 +34,11 @@
 
 #include <WebCore/SharedMemory.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBuffer);
 
 RemoteBuffer::RemoteBuffer(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, bool mappedAtCreation, WebGPUIdentifier identifier)
     : m_backing(buffer)

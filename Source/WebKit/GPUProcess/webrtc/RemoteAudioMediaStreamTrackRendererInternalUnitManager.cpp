@@ -43,6 +43,7 @@
 #include <WebCore/CoreAudioCaptureSource.h>
 #include <WebCore/CoreAudioSharedUnit.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -61,7 +62,7 @@ class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit
     , public WebCore::CoreAudioSpeakerSamplesProducer
     , public WebCore::AudioSessionInterruptionObserver
     , private WebCore::AudioMediaStreamTrackRendererInternalUnit::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 public:
     RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&&);
     ~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit();
@@ -106,6 +107,8 @@ private:
     bool m_shouldRegisterAsSpeakerSamplesProducer { false };
     bool m_canReset { true };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioMediaStreamTrackRendererInternalUnitManager);
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManager::RemoteAudioMediaStreamTrackRendererInternalUnitManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
@@ -161,6 +164,8 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::notifyLastToCapture
     for (auto& unit : m_units.values())
         unit->setShouldRegisterAsSpeakerSamplesProducer(connection->isLastToCaptureAudio());
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, Ref<IPC::Connection>&& connection, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback)
     : m_identifier(identifier)
