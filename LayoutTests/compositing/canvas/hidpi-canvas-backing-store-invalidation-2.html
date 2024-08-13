@@ -28,12 +28,10 @@ function doTest() {
     document.getElementById('layers-before').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
   }
 
-  requestAnimationFrame(function() {
-    if (window.internals) {
-      window.internals.setPageScaleFactor(0.5, 0, 0);
-    }
+  requestAnimationFrame(async function() {
 
     if (window.testRunner) {
+      await window.testRunner.setPageScaleFactor(0.5, 0, 0);
       document.getElementById('layers-after').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
       testRunner.notifyDone();
     }

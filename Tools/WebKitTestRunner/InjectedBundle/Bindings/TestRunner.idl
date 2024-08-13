@@ -463,4 +463,5 @@ interface TestRunner {
     Promise<undefined> flushConsoleLogs();
 
     Promise<undefined> setTopContentInset(double contentInset);
+    Promise<undefined> setPageScaleFactor(unrestricted double scaleFactor, long x, long y);
 };

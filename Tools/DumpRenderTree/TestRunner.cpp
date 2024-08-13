@@ -495,7 +495,7 @@ static JSValueRef flushConsoleLogsCallback(JSContextRef context, JSObjectRef fun
 {
     if (argumentCount == 1)
         JSObjectCallAsFunction(context, JSValueToObject(context, arguments[0], 0), thisObject, 0, 0, 0);
-    return JSValueMakeUndefined(context);
+    return TestRunner::alwaysResolvePromise(context);
 }
 
 static JSValueRef generateTestReportCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1792,7 +1792,7 @@ static JSValueRef setTopContentInsetCallback(JSContextRef context, JSObjectRef f
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     double contentInset = JSValueToNumber(context, arguments[0], exception);
     controller->setTopContentInset(contentInset);
-    return JSValueMakeUndefined(context);
+    return TestRunner::alwaysResolvePromise(context);
 }
 
 static JSValueRef failNextNewCodeBlock(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1842,6 +1842,21 @@ static JSValueRef runUIScriptCallback(JSContextRef context, JSObjectRef, JSObjec
     controller->runUIScript(context, script.get(), callback);
 
     return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setPageScaleFactorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount == 3) {
+        TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+        double scaleFactor = JSValueToNumber(context, arguments[0], exception);
+        ASSERT(!*exception);
+        int x = JSValueToInt64(context, arguments[1], exception);
+        ASSERT(!*exception);
+        int y = JSValueToInt64(context, arguments[2], exception);
+        ASSERT(!*exception);
+        controller->setPageScaleFactor(scaleFactor, x, y);
+    }
+    return TestRunner::alwaysResolvePromise(context);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2100,6 +2115,7 @@ const JSStaticFunction* TestRunner::staticFunctions()
         { "stopLoading", stopLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTopContentInset", setTopContentInsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setPageScaleFactor", setPageScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS_FAMILY)
         { "setPagePaused", setPagePausedCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif

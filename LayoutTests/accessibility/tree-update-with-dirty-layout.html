@@ -24,7 +24,8 @@ if (window.accessibilityController) {
     var scale = 0.1;
     // Repeatedly dirty layout by changing the page scalor factor.
     setInterval(async function () {
-        internals.setPageScaleFactor(scale, 0, 0);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(scale, 0, 0);
 
         scale += 0.01;
         if (scale >= 4)
@@ -33,12 +34,14 @@ if (window.accessibilityController) {
 
     var traversalOutput;
     setTimeout(async function() {
-        internals.setPageScaleFactor(2, 0, 0);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(2, 0, 0);
 
         const newParagraph = document.createElement("p");
         newParagraph.innerText = "Paragraph four";
         document.getElementById("main").appendChild(newParagraph);
-        internals.setPageScaleFactor(2.5, 0, 0);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(2.5, 0, 0);
 
         await waitFor(() => {
             // Depending on the scale factor at the time we traverse, there may be scrollbars present. They aren't important

@@ -3287,3 +3287,14 @@ void WKPageSetTopContentInsetForTesting(WKPageRef pageRef, float contentInset, v
         callback(context);
     });
 }
+
+void WKPageSetPageScaleFactorForTesting(WKPageRef pageRef, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler)
+{
+    auto* pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(context);
+
+    pageForTesting->setPageScaleFactor(scaleFactor, toIntPoint(point), [context, completionHandler] {
+        completionHandler(context);
+    });
+}

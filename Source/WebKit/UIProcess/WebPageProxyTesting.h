@@ -30,6 +30,10 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class IntPoint;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -73,6 +77,7 @@ public:
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
 
+    void setPageScaleFactor(float scaleFactor, WebCore::IntPoint, CompletionHandler<void()>&&);
 private:
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
     bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;

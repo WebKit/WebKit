@@ -41,6 +41,7 @@
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/GeolocationPositionData.h>
 #import <WebKit/DOMDocument.h>
@@ -472,6 +473,20 @@ void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
 #if !PLATFORM(IOS_FAMILY)
     [[mainFrame webView] setAutomaticLinkDetectionEnabled:enabled];
 #endif
+}
+
+JSValueRef TestRunner::alwaysResolvePromise(JSContextRef context)
+{
+    JSContext *jsContext = [JSContext contextWithJSGlobalContextRef:toGlobalRef(toJS(context))];
+    auto callback = ^(JSValue *resolve, JSValue *) {
+        [resolve callWithArguments:nil];
+    };
+    return [[JSValue valueWithNewPromiseInContext:jsContext fromExecutor:callback] JSValueRef];
+}
+
+void TestRunner::setPageScaleFactor(double scaleFactor, long x, long y)
+{
+    [[mainFrame webView] _scaleWebView:scaleFactor atOrigin:NSMakePoint(x, y)];
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool cycles)

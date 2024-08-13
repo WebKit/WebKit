@@ -8,14 +8,16 @@
     </style>
     <script>
       window.enablePixelTesting = true;
+      if (window.testRunner)
+          window.testRunner.waitUntilDone();
 
-      function scrollViaJavascript() {
+      async function scrollViaJavascript() {
           var scaleFactor = 2.0;
-          if (window.internals) {
-             window.internals.setPageScaleFactor(scaleFactor, 0, 0);
+          if (window.testRunner) {
+             await window.testRunner.setPageScaleFactor(scaleFactor, 0, 0);
           }
 
-          // The page scale, as set by window.internals.setPageScaleFactor should not be apparent
+          // The page scale, as set by window.testRunner.setPageScaleFactor should not be apparent
           // to javascript. So, we expect scrolling to (100,100) to be page coordinates, rather
           // than device pixels.
           document.scrollingElement.scrollLeft = 100;
@@ -27,19 +29,20 @@
           shouldBe("window.scrollY", "100");
       }
 
-      function scrollViaSetScaleFactor() {
-          if (window.internals) {
-              // Test that the scroll offset changes even if scaleFactor remains
-              // the same.
-              window.internals.setPageScaleFactor(1, 30, 30);
-              shouldBe("window.document.scrollingElement.scrollTop", "30");
-              shouldBe("window.document.scrollingElement.scrollLeft", "30");
-          }
+      async function scrollViaSetScaleFactor() {
+        // Test that the scroll offset changes even if scaleFactor remains
+        // the same.
+        if (window.testRunner)
+            await window.testRunner.setPageScaleFactor(1, 30, 30);
+        shouldBe("window.document.scrollingElement.scrollTop", "30");
+        shouldBe("window.document.scrollingElement.scrollLeft", "30");
       }
 
-      function test() {
-          scrollViaSetScaleFactor();
-          scrollViaJavascript();
+      async function test() {
+          await scrollViaSetScaleFactor();
+          await scrollViaJavascript();
+          if (window.testRunner)
+              window.testRunner.notifyDone();
       }
     </script>
     <script src="../../resources/js-test-pre.js"></script>

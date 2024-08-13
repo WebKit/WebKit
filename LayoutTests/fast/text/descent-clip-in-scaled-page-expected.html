@@ -15,21 +15,25 @@
 <script>
     if (window.testRunner && window.testRunner.setTextSubpixelPositioning)
         window.testRunner.setTextSubpixelPositioning(true);
-    if (window.internals)
-        window.internals.setPageScaleFactor(1.7, 0, 0);
+        window.testRunner.waitUntilDone();
+        window.testRunner.setPageScaleFactor(1.7, 0, 0).then(() => {
+            [13, 14, 15, 16, 17, 18].forEach((item) => {
+            let div = document.createElement("div");
+            div.innerHTML += "&nbsp;pppp&nbsp;";
+            div.style = "font-size: " + item + "px";
+            document.getElementById("body").appendChild(div);
+            });
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        });
+     }
 </script>
 </head>
-<body>
+<body id="body">
     Tests if the bottom of the text is truncated when the page is scaled by a fractional factor.
     If success, the text in the "overflow: hidden" div (the test case) should be displayed
     the same as in a normal div (the ref html).
     'p' is the character in ahem font with only the descent part.
     <br><br>
-    <div style="font-size: 13px">&nbsp;pppp&nbsp;</div>
-    <div style="font-size: 14px">&nbsp;pppp&nbsp;</div>
-    <div style="font-size: 15px">&nbsp;pppp&nbsp;</div>
-    <div style="font-size: 16px">&nbsp;pppp&nbsp;</div>
-    <div style="font-size: 17px">&nbsp;pppp&nbsp;</div>
-    <div style="font-size: 18px">&nbsp;pppp&nbsp;</div>
 </body>
 </html>

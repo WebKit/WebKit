@@ -34,6 +34,7 @@
 #include "WebProcess.h"
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
 
@@ -110,6 +111,15 @@ void WebPageTesting::clearWheelEventTestMonitor()
 void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<void()>&& completionHandler)
 {
     protectedPage()->setTopContentInset(contentInset);
+    completionHandler();
+}
+
+void WebPageTesting::setPageScaleFactor(double scale, IntPoint origin, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return completionHandler();
+    page->setPageScaleFactor(scale, origin);
     completionHandler();
 }
 

@@ -31,9 +31,12 @@
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #include "WebFrameProxy.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/IntPoint.h>
+#include <wtf/CallbackAggregator.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "DisplayCaptureSessionManager.h"
@@ -202,6 +205,14 @@ void WebPageProxyTesting::setTopContentInset(float contentInset, CompletionHandl
 Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
 {
     return m_page.get();
+}
+
+void WebPageProxyTesting::setPageScaleFactor(float scaleFactor, IntPoint point, CompletionHandler<void()>&& completionHandler)
+{
+    Ref callback = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), [callback] { }, pageID);
+    });
 }
 
 } // namespace WebKit

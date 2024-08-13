@@ -3,8 +3,9 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body style="margin:0px">
+<body style="margin:0px" onload="runTest()">
 <script>
+window.jsTestIsAsync = true;
 description("This tests that page scaling does not affect mouse event pageX and pageY coordinates.");
 
 var html = document.documentElement;
@@ -49,16 +50,18 @@ function testEvents(button, description, expectedString) {
     debug("");
     clearEventLog();
 }
-
-if (window.eventSender && window.internals) {
+async function runTest() {
+if (window.eventSender && window.internals && window.testRunner) {
     eventSender.mouseMoveTo(10, 10);
     // We are clicking in the same position on screen. As we scale or transform the page,
     // we expect the pageX and pageY event coordinates to change because different
     // parts of the document are under the mouse.
     testEvents(0, "Unscaled", "click(10, 10)");
 
-    window.internals.setPageScaleFactor(0.5, 0, 0);
+    await window.testRunner.setPageScaleFactor(0.5, 0, 0);
     testEvents(0, "setPageScale(0.5)", "click(20, 20)");
+    finishJSTest();
+}
 }
 </script>
 <script src="../../resources/js-test-post.js"></script>

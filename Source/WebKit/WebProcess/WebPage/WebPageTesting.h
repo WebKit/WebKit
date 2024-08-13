@@ -33,6 +33,10 @@ class Connection;
 class Decoder;
 }
 
+namespace WebCore {
+class IntPoint;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -58,6 +62,8 @@ private:
 #endif
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
+
+    void setPageScaleFactor(double scale, WebCore::IntPoint origin, CompletionHandler<void()>&&);
 
     void clearWheelEventTestMonitor();
     Ref<WebPage> protectedPage() const;
