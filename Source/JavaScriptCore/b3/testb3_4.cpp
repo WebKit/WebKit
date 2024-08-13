@@ -28,6 +28,386 @@
 
 #if ENABLE(B3_JIT) && !CPU(ARM)
 
+void testLoadStorePair1()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] () {
+        struct Pair {
+            uint32_t value1;
+            uint32_t value2;
+        };
+
+        Pair pair1 = { 1, 2 };
+        Pair pair2 = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pair1Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint32_t));
+        Value* pair1Address2 = root->appendNew<Value>(proc, Add, Origin(), pair1Address1, offset);
+        Value* pair2Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* pair2Address2 = root->appendNew<Value>(proc, Add, Origin(), pair2Address1, offset);
+
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pair1Address1);
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pair1Address2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pair2Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pair2Address2);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "ldp      w0, w2, [x0, #0]");
+            checkUsesInstruction(*code, "stp      w0, w2, [x1, #0]");
+        }
+        invoke<int32_t>(*code, &pair1, &pair2);
+
+        CHECK_EQ(pair1.value1, pair2.value1);
+        CHECK_EQ(pair1.value2, pair2.value2);
+    };
+
+    test32();
+
+    auto test64 = [&] () {
+        struct Pair {
+            uint64_t value1;
+            uint64_t value2;
+        };
+
+        Pair pair1 = { 1, 2 };
+        Pair pair2 = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pair1Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pair1Address2 = root->appendNew<Value>(proc, Add, Origin(), pair1Address1, offset);
+        Value* pair2Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* pair2Address2 = root->appendNew<Value>(proc, Add, Origin(), pair2Address1, offset);
+
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address1);
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pair2Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pair2Address2);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "ldp      x0, x2, [x0, #0]");
+            checkUsesInstruction(*code, "stp      x0, x2, [x1, #0]");
+        }
+        invoke<int32_t>(*code, &pair1, &pair2);
+
+        CHECK_EQ(pair1.value1, pair2.value1);
+        CHECK_EQ(pair1.value2, pair2.value2);
+    };
+
+    test64();
+}
+
+void testLoadStorePair2()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] () {
+        struct Pair {
+            uint32_t value1;
+            uint32_t value2;
+        };
+
+        Pair pair1 = { 1, 2 };
+        Pair pair2 = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pair1Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint32_t));
+        Value* pair1Address2 = root->appendNew<Value>(proc, Add, Origin(), pair1Address1, offset);
+        Value* pair2Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* pair2Address2 = root->appendNew<Value>(proc, Add, Origin(), pair2Address1, offset);
+
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pair1Address2);
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), pair1Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pair2Address2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pair2Address1);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64() && Options::useB3CanonicalizeLoadStorePair()) {
+            checkUsesInstruction(*code, "ldp      w0, w2, [x0, #0]");
+            checkUsesInstruction(*code, "stp      w0, w2, [x1, #0]");
+        }
+        invoke<int32_t>(*code, &pair1, &pair2);
+
+        CHECK_EQ(pair1.value1, pair2.value1);
+        CHECK_EQ(pair1.value2, pair2.value2);
+    };
+
+    test32();
+
+    auto test64 = [&] () {
+        struct Pair {
+            uint64_t value1;
+            uint64_t value2;
+        };
+
+        Pair pair1 = { 1, 2 };
+        Pair pair2 = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pair1Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pair1Address2 = root->appendNew<Value>(proc, Add, Origin(), pair1Address1, offset);
+        Value* pair2Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* pair2Address2 = root->appendNew<Value>(proc, Add, Origin(), pair2Address1, offset);
+
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address2);
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pair2Address2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pair2Address1);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64() && Options::useB3CanonicalizeLoadStorePair()) {
+            checkUsesInstruction(*code, "ldp      x0, x2, [x0, #0]");
+            checkUsesInstruction(*code, "stp      x0, x2, [x1, #0]");
+        }
+        invoke<int32_t>(*code, &pair1, &pair2);
+
+        CHECK_EQ(pair1.value1, pair2.value1);
+        CHECK_EQ(pair1.value2, pair2.value2);
+    };
+
+    test64();
+}
+
+void testLoadStorePair3()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] () {
+        uint32_t nums1[] = { 0, 0, 0 };
+        uint32_t nums2[] = { 1, 2, 3 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint32_t));
+        Value* pairAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* pairAddress1 = root->appendNew<Value>(proc, Add, Origin(), pairAddress, offset);
+        Value* pairAddress2 = root->appendNew<Value>(proc, Add, Origin(), pairAddress1, offset);
+
+        Value* numsAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* numsAddress1 = root->appendNew<Value>(proc, Add, Origin(), numsAddress, offset);
+        Value* numsAddress2 = root->appendNew<Value>(proc, Add, Origin(), numsAddress1, offset);
+
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), numsAddress1);
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), numsAddress2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pairAddress1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pairAddress2);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "ldp      w1, w2, [x1, #4]");
+            checkUsesInstruction(*code, "stp      w1, w2, [x0, #4]");
+        }
+        invoke<uint64_t>(*code, &nums1, &nums2);
+        CHECK_EQ(nums1[1], nums2[1]);
+        CHECK_EQ(nums2[2], nums2[2]);
+    };
+
+    test32();
+
+    auto test64 = [&] () {
+        uint64_t nums1[] = { 0, 0, 0 };
+        uint64_t nums2[] = { 1, 2, 3 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pairAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* pairAddress1 = root->appendNew<Value>(proc, Add, Origin(), pairAddress, offset);
+        Value* pairAddress2 = root->appendNew<Value>(proc, Add, Origin(), pairAddress1, offset);
+
+        Value* numsAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* numsAddress1 = root->appendNew<Value>(proc, Add, Origin(), numsAddress, offset);
+        Value* numsAddress2 = root->appendNew<Value>(proc, Add, Origin(), numsAddress1, offset);
+
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), numsAddress1);
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), numsAddress2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pairAddress1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pairAddress2);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            checkUsesInstruction(*code, "ldp      x1, x2, [x1, #8]");
+            checkUsesInstruction(*code, "stp      x1, x2, [x0, #8]");
+        }
+        invoke<uint64_t>(*code, &nums1, &nums2);
+        CHECK_EQ(nums1[1], nums2[1]);
+        CHECK_EQ(nums2[2], nums2[2]);
+    };
+
+    test64();
+}
+
+void testLoadStorePair4()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test32 = [&] () {
+        uint32_t nums1[] = { 0, 0, 0 };
+        uint32_t nums2[] = { 1, 2, 3 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint32_t));
+        Value* pairAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* pairAddress1 = root->appendNew<Value>(proc, Add, Origin(), pairAddress, offset);
+        Value* pairAddress2 = root->appendNew<Value>(proc, Add, Origin(), pairAddress1, offset);
+
+        Value* numsAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* numsAddress1 = root->appendNew<Value>(proc, Add, Origin(), numsAddress, offset);
+        Value* numsAddress2 = root->appendNew<Value>(proc, Add, Origin(), numsAddress1, offset);
+
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), numsAddress2);
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), numsAddress1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pairAddress2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pairAddress1);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64() && Options::useB3CanonicalizeLoadStorePair()) {
+            checkUsesInstruction(*code, "ldp      w1, w2, [x1, #4]");
+            checkUsesInstruction(*code, "stp      w1, w2, [x0, #4]");
+        }
+        invoke<uint64_t>(*code, &nums1, &nums2);
+        CHECK_EQ(nums1[1], nums2[1]);
+        CHECK_EQ(nums2[2], nums2[2]);
+    };
+
+    test32();
+
+    auto test64 = [&] () {
+        uint64_t nums1[] = { 0, 0, 0 };
+        uint64_t nums2[] = { 1, 2, 3 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pairAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* pairAddress1 = root->appendNew<Value>(proc, Add, Origin(), pairAddress, offset);
+        Value* pairAddress2 = root->appendNew<Value>(proc, Add, Origin(), pairAddress1, offset);
+
+        Value* numsAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* numsAddress1 = root->appendNew<Value>(proc, Add, Origin(), numsAddress, offset);
+        Value* numsAddress2 = root->appendNew<Value>(proc, Add, Origin(), numsAddress1, offset);
+
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), numsAddress2);
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), numsAddress1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pairAddress2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pairAddress1);
+        root->appendNewControlValue(proc, Return, Origin(), offset);
+
+        auto code = compileProc(proc);
+        if (isARM64() && Options::useB3CanonicalizeLoadStorePair()) {
+            checkUsesInstruction(*code, "ldp      x1, x2, [x1, #8]");
+            checkUsesInstruction(*code, "stp      x1, x2, [x0, #8]");
+        }
+        invoke<uint64_t>(*code, &nums1, &nums2);
+        CHECK_EQ(nums1[1], nums2[1]);
+        CHECK_EQ(nums2[2], nums2[2]);
+    };
+
+    test64();
+}
+
+void testLoadStorePair5()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    auto test1 = [&] () {
+        struct Pair {
+            uint64_t value1;
+            uint64_t value2;
+        };
+
+        Pair pair1 = { 1, 2 };
+        Pair pair2 = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pair1Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pair1Address2 = root->appendNew<Value>(proc, Add, Origin(), pair1Address1, offset);
+        Value* pair2Address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* pair2Address2 = root->appendNew<Value>(proc, Add, Origin(), pair2Address1, offset);
+
+        Value* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const64Value>(proc, Origin(), 3), pair1Address1);
+        Value* value2 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair1Address2);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value1, pair2Address1);
+        Value* returnValue = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pair2Address1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value2, pair2Address2);
+        root->appendNewControlValue(proc, Return, Origin(), returnValue);
+
+        auto code = compileProc(proc);
+
+        CHECK_EQ(invoke<int32_t>(*code, &pair1, &pair2), 1);
+        CHECK_EQ(pair1.value1, 3ULL);
+        CHECK_EQ(pair2.value1, 1ULL);
+        CHECK_EQ(pair1.value2, pair2.value2);
+    };
+
+    test1();
+
+    auto test2 = [&] () {
+        struct Pair {
+            uint64_t value1;
+            uint64_t value2;
+        };
+
+        Pair pair = { 0, 0 };
+
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* pairAddress1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<Const64Value>(proc, Origin(), sizeof(uint64_t));
+        Value* pairAddress2 = root->appendNew<Value>(proc, Add, Origin(), pairAddress1, offset);
+        Value* value = root->appendNew<Const64Value>(proc, Origin(), 3);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, pairAddress1);
+        Value* returnValue = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), pairAddress1);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), value, pairAddress2);
+        root->appendNewControlValue(proc, Return, Origin(), returnValue);
+
+        auto code = compileProc(proc);
+
+        CHECK_EQ(invoke<int32_t>(*code, &pair), 3);
+        CHECK_EQ(pair.value1, 3ULL);
+        CHECK_EQ(pair.value2, 3ULL);
+    };
+
+    test2();
+}
+
 void testStoreRelAddLoadAcq32(int amount)
 {
     Procedure proc;
@@ -3245,6 +3625,12 @@ void addSExtTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& t
     RUN(testBitAndSExt32(42, 0xffff00000000llu));
     RUN(testBitAndSExt32(-1, 0xffff00000000llu));
     RUN(testBitAndSExt32(0x80000000, 0xffff00000000llu));
+
+    RUN(testLoadStorePair1());
+    RUN(testLoadStorePair2());
+    RUN(testLoadStorePair3());
+    RUN(testLoadStorePair4());
+    RUN(testLoadStorePair5());
 }
 
 #endif // ENABLE(B3_JIT)

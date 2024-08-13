@@ -4163,6 +4163,60 @@ void testSub32ArgImm()
 }
 
 #if CPU(ARM64)
+void testLoadStorePair32Int()
+{
+    struct Pair {
+        uint32_t value1;
+        uint32_t value2;
+    };
+
+    Pair pair1 = { 1, 2 };
+    Pair pair2 = { 0, 0 };
+
+    auto testLoadStorePair = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg pair1 = GPRInfo::argumentGPR0;
+        constexpr GPRReg pair2 = GPRInfo::argumentGPR1;
+        jit.loadPair32(CCallHelpers::Address(pair1, 0), GPRInfo::regT2, GPRInfo::regT3);
+        jit.storePair32(GPRInfo::regT2, GPRInfo::regT3, CCallHelpers::Address(pair2, 0));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    invoke<void>(testLoadStorePair, &pair1, &pair2);
+    CHECK_EQ(pair1.value1, pair2.value1);
+    CHECK_EQ(pair1.value2, pair2.value2);
+}
+
+void testLoadStorePair64Int()
+{
+    struct Pair {
+        uint64_t value1;
+        uint64_t value2;
+    };
+
+    Pair pair1 = { 1, 2 };
+    Pair pair2 = { 0, 0 };
+
+    auto testLoadStorePair = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg pair1 = GPRInfo::argumentGPR0;
+        constexpr GPRReg pair2 = GPRInfo::argumentGPR1;
+        jit.loadPair64(CCallHelpers::Address(pair1, 0), GPRInfo::regT2, GPRInfo::regT3);
+        jit.storePair64(GPRInfo::regT2, GPRInfo::regT3, CCallHelpers::Address(pair2, 0));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    invoke<void>(testLoadStorePair, &pair1, &pair2);
+    CHECK_EQ(pair1.value1, pair2.value1);
+    CHECK_EQ(pair1.value2, pair2.value2);
+}
+
 void testLoadStorePair64Int64()
 {
     constexpr uint64_t initialValue = 0x5555aaaabbbb8800ull;
@@ -6087,6 +6141,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #endif
 
 #if CPU(ARM64)
+    RUN(testLoadStorePair32Int());
+    RUN(testLoadStorePair64Int());
     RUN(testLoadStorePair64Int64());
     RUN(testLoadStorePair64Double());
     RUN(testMultiplySignExtend32());

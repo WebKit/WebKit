@@ -2979,6 +2979,38 @@ private:
             if (tryAppendIncrementAddress())
                 return;
 
+            // Load Pair Canonical Form:
+            //     memory1 = Load(base, offset)
+            //     memory2 = Load(base, offset + bytes)  -->  LoadPair (%base, offset), %memory1, %memory2
+            auto tryAppendLoadPair = [&]() ALWAYS_INLINE_LAMBDA {
+                if (memory->hasFence())
+                    return false;
+                MemoryValue* memory2 = memory;
+                Value* base2 = memory2->lastChild();
+                Air::Opcode opcode = tryOpcodeForType(LoadPair32, LoadPair64, memory2->type());
+                if (!isValidForm(opcode, Arg::Addr, Arg::Tmp, Arg::Tmp) || !m_index)
+                    return false;
+                Value* prevValue = m_block->at(m_index - 1);
+                if (prevValue->opcode() != Load || m_locked.contains(prevValue))
+                    return false;
+
+                MemoryValue* memory1 = prevValue->as<MemoryValue>();
+                Value* base1 = memory1->lastChild();
+                Value::OffsetType offset1 = memory1->offset();
+                Value::OffsetType offset2 = memory2->offset();
+                Value::OffsetType subResult = 0;
+                Value::OffsetType bytes = opcode == LoadPair32 ? 4 : 8;
+                if (memory1->type() != memory2->type() || base1 != base2 || !WTF::safeSub(offset2, offset1, subResult) || subResult != bytes)
+                    return false;
+
+                append(opcode, Arg::addr(tmp(base1), offset1), tmp(memory1), tmp(memory2));
+                commitInternal(memory1);
+                return true;
+            };
+
+            if (tryAppendLoadPair())
+                return;
+
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
@@ -3906,6 +3938,38 @@ private:
             };
 
             if (tryAppendIncrementAddress())
+                return;
+
+            // Store Pair Canonical Form:
+            //     memory1 = Store(value1, base, offset)
+            //     memory2 = Store(value2, base, offset + bytes)  -->  StorePair %value1, %value2, (%base, offset)
+            auto tryAppendStorePair = [&] () ALWAYS_INLINE_LAMBDA {
+                MemoryValue* memory2 = m_value->as<MemoryValue>();
+                Value* value2 = memory2->child(0);
+                Air::Opcode opcode = tryOpcodeForType(StorePair32, StorePair64, value2->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Addr) || !m_index)
+                    return false;
+                Value* prevValue = m_block->at(m_index - 1);
+                if (prevValue->opcode() != Store || m_locked.contains(prevValue))
+                    return false;
+
+                MemoryValue* memory1 = prevValue->as<MemoryValue>();
+                Value* value1 = memory1->child(0);
+                Value* base1 = memory1->child(1);
+                Value* base2 = memory2->child(1);
+                Value::OffsetType offset1 = memory1->offset();
+                Value::OffsetType offset2 = memory2->offset();
+                Value::OffsetType subResult = 0;
+                Value::OffsetType bytes = opcode == StorePair32 ? 4 : 8;
+                if (value1->type() != value2->type() || base1 != base2 || !WTF::safeSub(offset2, offset1, subResult) || subResult != bytes)
+                    return false;
+
+                append(opcode, tmp(value1), tmp(value2), Arg::addr(tmp(base1), offset1));
+                commitInternal(memory1);
+                return true;
+            };
+
+            if (tryAppendStorePair())
                 return;
 
             Value* valueToStore = m_value->child(0);

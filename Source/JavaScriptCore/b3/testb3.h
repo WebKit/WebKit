@@ -1195,6 +1195,12 @@ void testNegDouble(double);
 void testNegFloat(float);
 void testNegFloatWithUselessDoubleConversion(float);
 
+void testLoadStorePair1();
+void testLoadStorePair2();
+void testLoadStorePair3();
+void testLoadStorePair4();
+void testLoadStorePair5();
+
 void addArgTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addBitTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addCallTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);

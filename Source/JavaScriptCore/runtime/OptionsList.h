@@ -468,6 +468,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \
     v(Bool, useB3HoistLoopInvariantValues, true, Normal, nullptr) \
     v(Bool, useB3CanonicalizePrePostIncrements, false, Normal, nullptr) \
+    v(Bool, useB3CanonicalizeLoadStorePair, false, Normal, nullptr) \
     v(Bool, useAirOptimizePairedLoadStore, true, Normal, nullptr) \
     \
     v(Bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects"_s) \
