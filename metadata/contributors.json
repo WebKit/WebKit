@@ -1078,6 +1078,13 @@
    },
    {
       "emails" : [
+         "ablackwood@apple.com"
+      ],
+      "github" : "morthaur",
+      "name" : "Austin Blackwood"
+   },
+   {
+      "emails" : [
          "ayumi_kojima@apple.com"
       ],
       "name" : "Ayumi Kojima",
