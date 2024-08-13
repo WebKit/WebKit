@@ -103,6 +103,7 @@
 #include <WebCore/TextRecognitionOptions.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <WebCore/WebGPUCreateImpl.h>
@@ -180,6 +181,8 @@ AXRelayProcessSuspendedNotification::~AXRelayProcessSuspendedNotification()
 #if !PLATFORM(COCOA)
 void AXRelayProcessSuspendedNotification::sendProcessSuspendMessage(bool) { }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebChromeClient);
 
 WebChromeClient::WebChromeClient(WebPage& page)
     : m_page(page)

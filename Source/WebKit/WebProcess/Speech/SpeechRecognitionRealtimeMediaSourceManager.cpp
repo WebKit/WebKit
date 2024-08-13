@@ -36,6 +36,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SpeechRecognitionCaptureSource.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -59,7 +60,7 @@ class SpeechRecognitionRealtimeMediaSourceManager::Source final
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<SpeechRecognitionRealtimeMediaSourceManager::Source>
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SpeechRecognitionRealtimeMediaSourceManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Source);
 public:
     Source(RealtimeMediaSourceIdentifier identifier, Ref<RealtimeMediaSource>&& source, Ref<IPC::Connection>&& connection)
@@ -148,6 +149,8 @@ private:
     std::optional<CAAudioStreamDescription> m_description { };
 #endif
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRealtimeMediaSourceManager);
 
 SpeechRecognitionRealtimeMediaSourceManager::SpeechRecognitionRealtimeMediaSourceManager(Ref<IPC::Connection>&& connection)
     : m_connection(WTFMove(connection))

@@ -27,6 +27,7 @@
 
 #include "WebEvent.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class HitTestResult;
@@ -46,7 +47,7 @@ class SecurityOrigin;
 namespace InjectedBundle {
 
 class PageUIClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageUIClient);
 public:
     virtual ~PageUIClient() { }
 

@@ -30,8 +30,11 @@
 
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ShareableBitmap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WCBackingStore);
 
 WCBackingStore::WCBackingStore(std::optional<ImageBufferBackendHandle>&& handle)
 {

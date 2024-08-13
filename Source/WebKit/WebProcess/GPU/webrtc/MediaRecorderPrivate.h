@@ -34,6 +34,7 @@
 #include <WebCore/MediaRecorderPrivate.h>
 #include <wtf/Identified.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -53,7 +54,7 @@ class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
     , public CanMakeWeakPtr<MediaRecorderPrivate>
     , private Identified<MediaRecorderIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivate);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);

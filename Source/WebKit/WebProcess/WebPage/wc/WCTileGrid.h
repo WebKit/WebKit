@@ -29,6 +29,7 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ public:
     using TileIndex = WebCore::TextureMapperSparseBackingStore::TileIndex;
 
     class Tile {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(WCTileGrid);
         WTF_MAKE_NONCOPYABLE(Tile);
     public:
         Tile(WebCore::IntRect);

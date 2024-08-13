@@ -32,8 +32,11 @@
 #include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaResourceProxy);
 
 RemoteMediaResourceProxy::RemoteMediaResourceProxy(Ref<IPC::Connection>&& connection, WebCore::PlatformMediaResource& platformMediaResource, RemoteMediaResourceIdentifier identifier)
     : m_connection(WTFMove(connection))

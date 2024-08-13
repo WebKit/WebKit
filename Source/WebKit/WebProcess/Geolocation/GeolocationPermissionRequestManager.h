@@ -29,6 +29,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class Geolocation;
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebPage;
 
 class GeolocationPermissionRequestManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GeolocationPermissionRequestManager);
 public:
     explicit GeolocationPermissionRequestManager(WebPage&);
     ~GeolocationPermissionRequestManager();

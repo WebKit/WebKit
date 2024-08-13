@@ -43,6 +43,7 @@
 #include <WebCore/TransformOperations.h>
 #include <WebCore/TransformationMatrix.h>
 #include <pal/spi/mac/NSScrollViewSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,6 +76,8 @@ static TextStream& operator<<(TextStream& ts, PageTransitionState state)
     return ts;
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDiscretePresentationController);
 
 PDFDiscretePresentationController::PDFDiscretePresentationController(UnifiedPDFPlugin& plugin)
     : PDFPresentationController(plugin)

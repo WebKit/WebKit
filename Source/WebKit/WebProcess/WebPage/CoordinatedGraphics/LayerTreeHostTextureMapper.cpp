@@ -41,9 +41,12 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerTreeHost);
 
 bool LayerTreeHost::prepareForRendering()
 {

@@ -34,9 +34,12 @@
 #include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaCaptureManager);
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
 {

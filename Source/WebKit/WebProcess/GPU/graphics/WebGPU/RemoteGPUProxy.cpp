@@ -43,8 +43,11 @@
 #include <WebCore/WebGPUPresentationContextDescriptor.h>
 #include <WebCore/WebGPUSupportedFeatures.h>
 #include <WebCore/WebGPUSupportedLimits.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGPUProxy);
 
 RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, WebPage& page)
 {

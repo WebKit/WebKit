@@ -36,6 +36,7 @@
 #include "WebProcess.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,6 +47,8 @@ namespace WebKit {
 
 using namespace PAL;
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionCoordinator);
 
 Ref<RemoteMediaSessionCoordinator> RemoteMediaSessionCoordinator::create(WebPage& page, const String& identifier)
 {

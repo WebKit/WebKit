@@ -29,6 +29,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -55,7 +56,7 @@ public:
 };
 
 class PDFScriptEvaluator : public RefCounted<PDFScriptEvaluator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFScriptEvaluator);
     WTF_MAKE_NONCOPYABLE(PDFScriptEvaluator);
 public:
     static void runScripts(CGPDFDocumentRef, PDFScriptEvaluatorClient&);

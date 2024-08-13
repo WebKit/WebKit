@@ -41,9 +41,12 @@
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemPermissionRequestManager);
 
 MediaKeySystemPermissionRequestManager::MediaKeySystemPermissionRequestManager(WebPage& page)
     : m_page(page)

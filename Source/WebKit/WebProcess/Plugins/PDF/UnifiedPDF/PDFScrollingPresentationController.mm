@@ -36,9 +36,12 @@
 #include <WebCore/ScrollAnimator.h>
 #include <WebCore/TiledBacking.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFScrollingPresentationController);
 
 PDFScrollingPresentationController::PDFScrollingPresentationController(UnifiedPDFPlugin& plugin)
     : PDFPresentationController(plugin)

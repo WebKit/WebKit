@@ -33,9 +33,12 @@
 #include "PDFKitSPI.h"
 #include "PDFScrollingPresentationController.h"
 #include <WebCore/GraphicsLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPresentationController);
 
 RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDocumentLayout::DisplayMode mode, UnifiedPDFPlugin& plugin)
 {

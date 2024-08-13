@@ -32,11 +32,12 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/ResourceResponse.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteMediaResourceProxy final : public WebCore::PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResourceProxy);
 public:
     RemoteMediaResourceProxy(Ref<IPC::Connection>&&, WebCore::PlatformMediaResource&, RemoteMediaResourceIdentifier);
     ~RemoteMediaResourceProxy();

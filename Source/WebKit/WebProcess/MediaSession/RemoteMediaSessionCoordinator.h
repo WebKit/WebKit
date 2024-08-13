@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionCoordinatorPrivate.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebPage;
 
 class RemoteMediaSessionCoordinator final : public WebCore::MediaSessionCoordinatorPrivate , public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionCoordinator);
 public:
     static Ref<RemoteMediaSessionCoordinator> create(WebPage&, const String&);
     ~RemoteMediaSessionCoordinator();

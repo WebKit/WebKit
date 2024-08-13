@@ -35,6 +35,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -54,7 +55,7 @@ class PluginView;
 class WebPage;
 
 class FindController final : private WebCore::PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FindController);
     WTF_MAKE_NONCOPYABLE(FindController);
 
 public:

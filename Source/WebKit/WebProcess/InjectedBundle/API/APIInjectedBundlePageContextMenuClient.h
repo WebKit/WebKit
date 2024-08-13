@@ -29,6 +29,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class ContextMenuContext;
@@ -49,7 +50,7 @@ class Object;
 namespace InjectedBundle {
 
 class PageContextMenuClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageContextMenuClient);
 public:
     virtual ~PageContextMenuClient() { }
 

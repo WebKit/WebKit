@@ -31,6 +31,7 @@
 #include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ImageBuffer;
@@ -45,7 +46,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteCompositorIntegrationProxy final : public WebCore::WebGPU::CompositorIntegration {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCompositorIntegrationProxy);
 public:
     static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

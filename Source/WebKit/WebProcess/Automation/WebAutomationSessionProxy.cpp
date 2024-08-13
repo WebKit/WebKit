@@ -63,6 +63,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -110,6 +111,8 @@ static inline JSValueRef callPropertyFunction(JSContextRef context, JSObjectRef 
 
     return JSObjectCallAsFunction(context, function, object, argumentCount, arguments, exception);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAutomationSessionProxy);
 
 WebAutomationSessionProxy::WebAutomationSessionProxy(const String& sessionIdentifier)
     : m_sessionIdentifier(sessionIdentifier)

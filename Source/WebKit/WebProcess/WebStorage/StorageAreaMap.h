@@ -36,6 +36,7 @@
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -59,7 +60,7 @@ class StorageAreaImpl;
 class StorageNamespaceImpl;
 
 class StorageAreaMap final : public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StorageAreaMap);
 public:
     StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();

@@ -62,11 +62,14 @@
 #include <WebCore/UserTypingGestureIndicator.h>
 #include <WebCore/VisibleUnits.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebEditorClient);
 
 bool WebEditorClient::shouldDeleteRange(const std::optional<SimpleRange>& range)
 {

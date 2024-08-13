@@ -29,6 +29,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -54,7 +55,7 @@ class ResourceError;
 namespace WebKit {
 
 class WebPrintOperationGtk {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPrintOperationGtk);
 public:
     explicit WebPrintOperationGtk(const PrintInfo&);
     ~WebPrintOperationGtk();

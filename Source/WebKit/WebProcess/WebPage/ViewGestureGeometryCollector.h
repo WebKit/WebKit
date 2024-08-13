@@ -28,6 +28,7 @@
 
 #include "MessageReceiver.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class FloatPoint;
@@ -40,7 +41,7 @@ namespace WebKit {
 class WebPage;
 
 class ViewGestureGeometryCollector : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ViewGestureGeometryCollector);
 public:
     ViewGestureGeometryCollector(WebPage&);
     ~ViewGestureGeometryCollector();

@@ -42,6 +42,7 @@
 #include <unistd.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
@@ -95,6 +96,8 @@ static uint64_t generateTargetID()
     static uint64_t identifier = 0;
     return ++identifier;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(AcceleratedSurfaceDMABufRenderTarget, AcceleratedSurfaceDMABuf::RenderTarget);
 
 AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(uint64_t surfaceID, const WebCore::IntSize& size)
     : m_id(generateTargetID())

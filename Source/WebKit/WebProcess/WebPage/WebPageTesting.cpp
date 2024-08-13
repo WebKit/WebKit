@@ -37,9 +37,12 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageTesting);
 
 WebPageTesting::WebPageTesting(WebPage& page)
     : m_page(page)

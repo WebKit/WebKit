@@ -29,6 +29,7 @@
 
 #include "WebProcessSupplement.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -38,7 +39,7 @@ class WebProcess;
 class AudioSessionRoutingArbitrator final
     : public WebProcessSupplement
     , public WebCore::AudioSessionRoutingArbitrationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionRoutingArbitrator);
 public:
     explicit AudioSessionRoutingArbitrator(WebProcess&);
     virtual ~AudioSessionRoutingArbitrator();

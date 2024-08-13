@@ -36,10 +36,13 @@
 #include "WebProcess.h"
 #include <WebCore/LegacyCDM.h>
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLegacyCDMFactory);
 
 RemoteLegacyCDMFactory::RemoteLegacyCDMFactory(WebProcess&)
 {

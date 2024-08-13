@@ -30,13 +30,14 @@
 #include "RemoteCommandEncoderProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUComputePassEncoder.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteComputePassEncoderProxy final : public WebCore::WebGPU::ComputePassEncoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteComputePassEncoderProxy);
 public:
     static Ref<RemoteComputePassEncoderProxy> create(RemoteCommandEncoderProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

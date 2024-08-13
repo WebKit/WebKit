@@ -32,9 +32,12 @@
 #include "WebPage.h"
 #include <WebCore/MediaKeySystemController.h>
 #include <WebCore/MediaKeySystemRequest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaKeySystemClient);
 
 WebMediaKeySystemClient::WebMediaKeySystemClient(WebPage& page)
     : m_page(page)

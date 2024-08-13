@@ -30,6 +30,7 @@
 #include "LibWebRTCResolverIdentifier.h"
 #include "RTCNetwork.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -41,7 +42,7 @@ namespace WebKit {
 class LibWebRTCSocketFactory;
 
 class WebRTCResolver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCResolver);
 public:
     WebRTCResolver(LibWebRTCSocketFactory&, LibWebRTCResolverIdentifier);
 

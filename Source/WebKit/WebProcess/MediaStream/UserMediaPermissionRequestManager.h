@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class UserMediaPermissionRequestManager;
@@ -50,7 +51,7 @@ class UserMediaPermissionRequestManager : public WebCore::MediaCanStartListener
                                         , public WebCore::RealtimeMediaSourceCenterObserver
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaPermissionRequestManager);
 public:
     using WebCore::MediaCanStartListener::weakPtrFactory;
     using WebCore::MediaCanStartListener::WeakValueType;

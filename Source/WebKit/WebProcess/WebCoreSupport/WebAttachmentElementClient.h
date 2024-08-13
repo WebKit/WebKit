@@ -28,13 +28,14 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include <WebCore/AttachmentElementClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebAttachmentElementClient final : public WebCore::AttachmentElementClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebAttachmentElementClient);
 public:
     explicit WebAttachmentElementClient(WebPage&);
 

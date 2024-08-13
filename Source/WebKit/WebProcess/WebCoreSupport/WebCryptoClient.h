@@ -27,6 +27,7 @@
 
 #include <WebCore/CryptoClient.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -34,7 +35,7 @@ namespace WebKit {
 class WebPage;
 
 class WebCryptoClient:  public WebCore::CryptoClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCryptoClient);
 public:
     WebCryptoClient(WebCore::PageIdentifier);
     WebCryptoClient() = default;

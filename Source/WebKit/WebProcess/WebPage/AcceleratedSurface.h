@@ -27,6 +27,7 @@
 
 #include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class RunLoop;
@@ -41,7 +42,8 @@ namespace WebKit {
 class WebPage;
 
 class AcceleratedSurface {
-    WTF_MAKE_NONCOPYABLE(AcceleratedSurface); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(AcceleratedSurface);
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedSurface);
 public:
     class Client {
     public:

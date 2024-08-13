@@ -29,6 +29,7 @@
 
 #include "PDFPresentationController.h"
 #include <WebCore/GraphicsLayerClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PlatformWheelEvent;
@@ -49,7 +50,7 @@ enum class PageTransitionState : uint8_t {
 };
 
 class PDFDiscretePresentationController final : public PDFPresentationController, public WebCore::GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFDiscretePresentationController);
     WTF_MAKE_NONCOPYABLE(PDFDiscretePresentationController);
 public:
     PDFDiscretePresentationController(UnifiedPDFPlugin&);

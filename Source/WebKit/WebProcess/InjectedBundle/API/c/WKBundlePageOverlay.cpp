@@ -42,6 +42,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace API {
 
@@ -56,7 +57,7 @@ template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
 }
 
 class PageOverlayClientImpl : API::Client<WKBundlePageOverlayClientBase>, public WebKit::WebPageOverlay::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageOverlayClientImpl);
 public:
     explicit PageOverlayClientImpl(WKBundlePageOverlayClientBase* client)
     {

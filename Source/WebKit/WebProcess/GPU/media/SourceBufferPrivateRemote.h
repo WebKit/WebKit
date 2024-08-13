@@ -39,6 +39,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,7 @@ class MediaSourcePrivateRemote;
 class SourceBufferPrivateRemote final
     : public WebCore::SourceBufferPrivate
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SourceBufferPrivateRemote);
 public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
     virtual ~SourceBufferPrivateRemote();

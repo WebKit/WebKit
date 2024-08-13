@@ -55,6 +55,7 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/TextIndicatorWindow.h>
@@ -62,6 +63,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FindController);
 
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)

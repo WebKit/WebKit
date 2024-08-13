@@ -34,6 +34,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct FetchOptions;
@@ -47,7 +48,8 @@ class WebPage;
 class WebURLSchemeTaskProxy;
 
 class WebLoaderStrategy final : public WebCore::LoaderStrategy {
-    WTF_MAKE_NONCOPYABLE(WebLoaderStrategy); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebLoaderStrategy);
+    WTF_MAKE_NONCOPYABLE(WebLoaderStrategy);
 public:
     WebLoaderStrategy();
     ~WebLoaderStrategy() final;

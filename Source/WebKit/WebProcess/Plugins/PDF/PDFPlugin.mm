@@ -96,6 +96,7 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
@@ -504,6 +505,8 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
 bool PDFPlugin::pdfKitLayerControllerIsAvailable()
 {
