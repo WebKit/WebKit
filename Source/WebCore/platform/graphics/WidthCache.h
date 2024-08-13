@@ -27,6 +27,7 @@
 #define WidthCache_h
 
 #include "TextRun.h"
+#include "TextSpacing.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
@@ -133,7 +134,7 @@ public:
         return addSlowCase(text, entry);
     }
 
-    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, GlyphOverflow* glyphOverflow)
+    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing, GlyphOverflow* glyphOverflow)
     {
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
@@ -146,6 +147,9 @@ public:
             return nullptr;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
         if (run.allowTabs())
+            return nullptr;
+        // width calculation with text-spacing depends on context of adjacent characters.
+        if (hasTextSpacing && invalidateCacheForTextSpacing(run))
             return nullptr;
 
         return add(run.text(), entry);
@@ -200,6 +204,23 @@ private:
         return nullptr;
     }
 
+    // returns true if cache is/was invalidated
+    bool invalidateCacheForTextSpacing(const TextRun& textRun)
+    {
+        if (m_hasSeenIdeograph)
+            return true;
+        const auto& text = textRun.textAsString();
+        for (unsigned index = 0; index < text.length(); ++index) {
+            if (TextSpacing::isIdeograph(text.characterAt(index))) {
+                m_hasSeenIdeograph = true;
+                clear();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     using Map = HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
     using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
 
@@ -211,6 +232,7 @@ private:
     int m_countdown;
     SingleCharMap m_singleCharMap;
     Map m_map;
+    bool m_hasSeenIdeograph;
 };
 
 } // namespace WebCore

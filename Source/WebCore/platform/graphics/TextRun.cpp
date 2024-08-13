@@ -38,6 +38,7 @@ struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize>
     float float2;
     float float3;
     ExpansionBehavior expansionBehavior;
+    TextSpacing::SpacingState spacingState;
     unsigned bitfields : 5;
 };
 
