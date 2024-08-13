@@ -1,8 +1,27 @@
 diff --git a/resources/benchmark-runner.mjs b/resources/benchmark-runner.mjs
-index 06596a7..5db38cf 100644
+index 47084c8..4fd3dcd 100644
 --- a/resources/benchmark-runner.mjs
 +++ b/resources/benchmark-runner.mjs
-@@ -441,6 +441,8 @@ export class BenchmarkRunner {
+@@ -1,3 +1,18 @@
++const send_data = data => {
++    const req = new XMLHttpRequest();
++    req.open("POST", "/signpost", false); // synchronous fetch
++    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
++    req.send(JSON.stringify(data));
++};
++if (globalThis.__signpostStart === undefined && globalThis.__signpostStop === undefined) {
++    globalThis.__signpostStart = testname => {
++        send_data({type: "signpostStart", testname, timestamp: performance.now()});
++    };
++    globalThis.__signpostStop = testname => {
++        send_data({type: "signpostStop", testname, timestamp: performance.now()});
++    };
++};
++
+ import { Metric } from "./metric.mjs";
+ import { params } from "./params.mjs";
+ 
+@@ -462,6 +477,8 @@ export class BenchmarkRunner {
          const syncEndLabel = `${suite.name}.${test.name}-sync-end`;
          const asyncStartLabel = `${suite.name}.${test.name}-async-start`;
          const asyncEndLabel = `${suite.name}.${test.name}-async-end`;
@@ -11,7 +30,7 @@ index 06596a7..5db38cf 100644
  
          let syncTime;
          let asyncStartTime;
-@@ -455,21 +457,25 @@ export class BenchmarkRunner {
+@@ -476,21 +493,25 @@ export class BenchmarkRunner {
                  performance.mark("warmup-end");
              }
              performance.mark(startLabel);
