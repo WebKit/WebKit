@@ -385,16 +385,15 @@ protected:
     bool isContextLost() const { return !m_streamConnection; }
     void markContextLost();
 
-    static inline Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return m_streamConnection->send(std::forward<T>(message), m_identifier, defaultSendTimeout);
+        return m_streamConnection->send(std::forward<T>(message), m_identifier);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return m_streamConnection->sendSync(std::forward<T>(message), m_identifier, defaultSendTimeout);
+        return m_streamConnection->sendSync(std::forward<T>(message), m_identifier);
     }
 
     GraphicsContextGLIdentifier m_identifier { GraphicsContextGLIdentifier::generate() };

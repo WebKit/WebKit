@@ -5,7 +5,8 @@
         testRunner.dumpAsText()
 
     if (window.IPC) {
-        [streamConnection, streamConnectionHandle] = IPC.createStreamClientConnection(14);
+        const defaultTimeout = 1000;
+        [streamConnection, streamConnectionHandle] = IPC.createStreamClientConnection(14, defaultTimeout);
         streamConnection.open();
         IPC.sendMessage(
             'GPU',
@@ -21,7 +22,6 @@
         streamConnection.sendMessage(
             1872,
             IPC.messages.RemoteRenderingBackend_CacheGradient.name,
-            0.1,
             [
                 {type: 'uint8_t',value: 1},
                 {type: 'float',value: 20.91822109052055},

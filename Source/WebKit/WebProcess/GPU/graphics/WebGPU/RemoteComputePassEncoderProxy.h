@@ -60,11 +60,10 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
 
     void setPipeline(const WebCore::WebGPU::ComputePipeline&) final;

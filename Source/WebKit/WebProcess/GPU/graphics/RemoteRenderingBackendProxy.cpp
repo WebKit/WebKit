@@ -103,7 +103,7 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     if (m_connection)
         return;
     static constexpr auto connectionBufferSizeLog2 = 21;
-    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, defaultTimeout);
     if (!connectionPair)
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
@@ -125,7 +125,7 @@ auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V
     RefPtr connection = this->connection();
     if (UNLIKELY(!connection))
         return IPC::Error::InvalidConnection;
-    auto result = connection->send(std::forward<T>(message), destination, defaultTimeout);
+    auto result = connection->send(std::forward<T>(message), destination);
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, m_identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
         didBecomeUnresponsive();
@@ -139,7 +139,7 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     RefPtr connection = this->connection();
     if (!connection)
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
-    auto result = connection->sendSync(std::forward<T>(message), destination, defaultTimeout);
+    auto result = connection->sendSync(std::forward<T>(message), destination);
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,  m_identifier.toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
         didBecomeUnresponsive();
@@ -153,7 +153,7 @@ auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, 
     RefPtr connection = this->connection();
     if (UNLIKELY(!connection))
         return IPC::Error::InvalidConnection;
-    auto replyID = connection->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(callback), destination, defaultTimeout);
+    auto replyID = connection->sendWithAsyncReply(std::forward<T>(message), std::forward<C>(callback), destination);
     if (UNLIKELY(!replyID)) {
         RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendWithAsyncReply - failed, name:%" PUBLIC_LOG_STRING, m_identifier.toUInt64(), IPC::description(T::name()).characters());
         didBecomeUnresponsive();
@@ -543,7 +543,7 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     if (!m_isResponsive)
         return nullptr;
     if (UNLIKELY(!m_connection->hasSemaphores())) {
-        auto error = m_connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), defaultTimeout);
+        auto error = m_connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
         if (error != IPC::Error::NoError) {
             RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::connection() - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING, renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
             didBecomeUnresponsive();
@@ -586,8 +586,8 @@ Function<bool()> RemoteRenderingBackendProxy::flushImageBuffers()
             return false;
         };
     }
-    return [flushSemaphore = WTFMove(flushSemaphore)]() mutable {
-        return flushSemaphore.waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+    return [flushSemaphore = WTFMove(flushSemaphore), timeoutDuration = m_connection->defaultTimeoutDuration()]() mutable {
+        return flushSemaphore.waitFor(timeoutDuration);
     };
 }
 

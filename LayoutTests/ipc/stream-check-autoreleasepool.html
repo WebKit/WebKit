@@ -11,18 +11,18 @@ promise_test(async t => {
     const bufferSizeLog2 = 9;
     const streamTesterID = 447;
     for (const processTarget of IPC.processTargets) {
-        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2, defaultTimeout);
         streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },
             { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
         ]);
-        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name);
         streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
 
         // Test starts here.
         try {
-            let result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, defaultTimeout, []);
+            let result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, []);
             let previousValue = result.arguments[0];
 
             assert_equals(previousValue.type, "int32_t", `for ${ processTarget }`);
@@ -30,7 +30,7 @@ promise_test(async t => {
             // Autoreleasepool drains between message processing. Add an idle wait so that it no
             // messages are posted, so the pool drains.
             await new Promise((resolve) => setTimeout(resolve, 300));
-            result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, defaultTimeout, []);
+            result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_CheckAutoreleasePool.name, []);
             previousValue = result.arguments[0];
             assert_equals(previousValue.type, "int32_t", `for ${ processTarget }`);
             assert_equals(previousValue.value, 1, `for ${ processTarget }`);

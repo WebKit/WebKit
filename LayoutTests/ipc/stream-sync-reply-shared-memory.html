@@ -10,18 +10,18 @@ if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
     const bufferSizeLog2 = 9;
     const streamTesterID = 447;
     for (const processTarget of IPC.processTargets) {
-        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2, defaultTimeout);
         streamConnection.open();
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
             { type: 'uint64_t', value: streamTesterID },
             { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
         ]);
-        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name);
         streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
 
         // Test starts here.
         try {
-            const result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_SyncMessageReturningSharedMemory1.name, defaultTimeout, [{ type: 'uint32_t', value: 8 }]);
+            const result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_SyncMessageReturningSharedMemory1.name, [{ type: 'uint32_t', value: 8 }]);
             const firstReply = result.arguments[0];
             assert_equals(firstReply.type, "SharedMemory", `for ${ processTarget }`);
             assert_equals(firstReply.protection, "ReadOnly", `for ${ processTarget }`);

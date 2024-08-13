@@ -13,7 +13,7 @@ function fuzz() {
     const defaultTimeout = 1000;
     o4=IPC.pageID;
     o5=IPC.webPageProxyID;
-    let pair = IPC.createStreamClientConnection(14);
+    let pair = IPC.createStreamClientConnection(14, defaultTimeout);
     o35=pair[0];
     o36=pair[1];
     o35.open();
@@ -33,7 +33,7 @@ function fuzz() {
             debug("Failed: " + error)
     }
     try {
-        resp = o35.waitForMessage(backendID, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, defaultTimeout)
+        resp = o35.waitForMessage(backendID, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name)
     } catch (error) {
         if (!(error instanceof TypeError))
             debug("Failed: " + error)
@@ -45,7 +45,7 @@ function fuzz() {
             debug("Failed: " + error)
     }
     try {
-        o35.sendMessage(backendID, IPC.messages.RemoteRenderingBackend_CreateImageBuffer.name, 0.1,
+        o35.sendMessage(backendID, IPC.messages.RemoteRenderingBackend_CreateImageBuffer.name,
                   [{type: 'float', value: 804},
                    {type: 'float', value: 486},
                    {type: 'uint8_t', value: 0},
@@ -59,13 +59,13 @@ function fuzz() {
             debug("Failed: " + error)
     }
     try {
-        o35.waitForMessage(imageBufferID, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, defaultTimeout);
+        o35.waitForMessage(imageBufferID, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name);
     } catch (error) {
         if (!(error instanceof TypeError))
             debug("Failed: " + error)
     }
     try {
-        o35.sendSyncMessage(imageBufferID,IPC.messages.RemoteImageBuffer_GetShareableBitmap.name,0.1,[{type: 'bool',value: 0}]);
+        o35.sendSyncMessage(imageBufferID,IPC.messages.RemoteImageBuffer_GetShareableBitmap.name, [{type: 'bool',value: 0}]);
     } catch (error) {
         if (!(error instanceof TypeError))
             debug("Failed: " + error)

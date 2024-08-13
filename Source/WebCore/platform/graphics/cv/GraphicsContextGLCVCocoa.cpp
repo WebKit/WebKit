@@ -605,13 +605,14 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     TextureContent content { reinterpret_cast<intptr_t>(surface), IOSurfaceGetID(surface), IOSurfaceGetSeed(surface), level, internalFormat, format, type, unpackFlipY, orientation };
     auto it = m_knownContent.find(outputTexture);
     if (it != m_knownContent.end() && it->value == content) {
+        WTFLogAlways("SKIPPING!");
         // If the texture hasn't been modified since the last time we copied to it, and the
         // image hasn't been modified since the last time it was copied, this is a no-op.
         return true;
     }
     if (!m_context || !GraphicsContextGLCocoa::makeCurrent(m_display, m_context))
         return false;
-
+    WTFLogAlways("Drawing.");
     // Compute transform that undoes the `orientation`, e.g. moves the origin to top left.
     // Even number of operations (flipX, flipY, swapXY) means a rotation.
     // Odd number of operations means a rotation and a flip.

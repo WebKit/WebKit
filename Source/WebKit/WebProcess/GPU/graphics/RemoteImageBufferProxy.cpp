@@ -85,7 +85,7 @@ ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
     if (UNLIKELY(!connection))
         return;
 
-    auto result = connection->send(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = connection->send(std::forward<T>(message), renderingResourceIdentifier());
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
         didBecomeUnresponsive();
@@ -99,7 +99,7 @@ ALWAYS_INLINE auto RemoteImageBufferProxy::sendSync(T&& message)
     if (UNLIKELY(!connection))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = connection->sendSync(std::forward<T>(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = connection->sendSync(std::forward<T>(message), renderingResourceIdentifier());
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING, IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
         didBecomeUnresponsive();
@@ -177,7 +177,7 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
         return m_backend.get();
     RefPtr connection = this->connection();
     if (connection) {
-        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier);
         if (error != IPC::Error::NoError) {
             RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
                 m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());

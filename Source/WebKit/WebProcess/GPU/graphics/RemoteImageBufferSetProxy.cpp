@@ -42,16 +42,16 @@ class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteIm
     WTF_MAKE_NONCOPYABLE(RemoteImageBufferSetProxyFlushFence);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteImageBufferSetProxyFlushFence> create(RenderingUpdateID renderingUpdateID)
+    static Ref<RemoteImageBufferSetProxyFlushFence> create(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
     {
-        return adoptRef(*new RemoteImageBufferSetProxyFlushFence { renderingUpdateID });
+        return adoptRef(*new RemoteImageBufferSetProxyFlushFence { renderingUpdateID, timeoutDuration });
     }
 
-    bool waitFor(Seconds relativeTimeout)
+    bool wait()
     {
         Locker locker { m_lock };
         if (!m_handles)
-            m_condition.waitFor(m_lock, relativeTimeout);
+            m_condition.waitFor(m_lock, m_timeoutDuration);
         tracePoint(FlushRemoteImageBufferEnd, reinterpret_cast<uintptr_t>(this), 1u);
         return !!m_handles;
     }
@@ -72,8 +72,9 @@ public:
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
 
 private:
-    RemoteImageBufferSetProxyFlushFence(RenderingUpdateID renderingUpdateID)
+    RemoteImageBufferSetProxyFlushFence(RenderingUpdateID renderingUpdateID, Seconds timeoutDuration)
         : m_renderingUpdateID(renderingUpdateID)
+        , m_timeoutDuration(timeoutDuration)
     {
         tracePoint(FlushRemoteImageBufferStart, reinterpret_cast<uintptr_t>(this));
     }
@@ -81,6 +82,7 @@ private:
     Condition m_condition;
     std::optional<BufferSetBackendHandle> m_handles WTF_GUARDED_BY_LOCK(m_lock);
     RenderingUpdateID m_renderingUpdateID;
+    const Seconds m_timeoutDuration;
 };
 
 namespace {
@@ -96,7 +98,7 @@ public:
 
     bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
-        if (m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout)) {
+        if (m_flushState->wait()) {
             handlesMap.add(m_identifier, makeUnique<BufferSetBackendHandle>(*m_flushState->takeHandles()));
             return true;
         }
@@ -119,7 +121,7 @@ ALWAYS_INLINE auto RemoteImageBufferSetProxy::send(T&& message)
     if (UNLIKELY(!connection))
         return IPC::Error::InvalidConnection;
 
-    auto result = connection->send(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = connection->send(std::forward<T>(message), identifier());
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteImageBufferSetProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());
@@ -135,7 +137,7 @@ ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
     if (UNLIKELY(!connection))
         return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
 
-    auto result = connection->sendSync(std::forward<T>(message), identifier(), RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = connection->sendSync(std::forward<T>(message), identifier());
     if (UNLIKELY(!result.succeeded())) {
         RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Proxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::description(T::name()).characters(), IPC::errorAsString(result.error()).characters());
@@ -250,7 +252,7 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flus
     RefPtr connection = this->connection();
     if (!connection)
         return nullptr;
-    Ref pendingFlush = RemoteImageBufferSetProxyFlushFence::create(m_remoteRenderingBackendProxy->renderingUpdateID());
+    Ref pendingFlush = RemoteImageBufferSetProxyFlushFence::create(m_remoteRenderingBackendProxy->renderingUpdateID(), connection->defaultTimeoutDuration());
     {
         Locker locker { m_lock };
         m_pendingFlush = pendingFlush.ptr();

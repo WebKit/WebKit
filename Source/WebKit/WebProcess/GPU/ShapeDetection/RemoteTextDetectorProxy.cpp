@@ -40,7 +40,7 @@ namespace WebKit::ShapeDetection {
 
 Ref<RemoteTextDetectorProxy> RemoteTextDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier)
 {
-    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteTextDetector(identifier), renderingBackendIdentifier, Seconds::infinity());
+    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteTextDetector(identifier), renderingBackendIdentifier);
     return adoptRef(*new RemoteTextDetectorProxy(WTFMove(streamClientConnection), renderingBackendIdentifier, identifier));
 }
 
@@ -53,12 +53,12 @@ RemoteTextDetectorProxy::RemoteTextDetectorProxy(Ref<IPC::StreamClientConnection
 
 RemoteTextDetectorProxy::~RemoteTextDetectorProxy()
 {
-    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteTextDetector(m_backing), m_renderingBackendIdentifier, Seconds::infinity());
+    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteTextDetector(m_backing), m_renderingBackendIdentifier);
 }
 
 void RemoteTextDetectorProxy::detect(Ref<WebCore::ImageBuffer>&& imageBuffer, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
 {
-    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteTextDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing, Seconds::infinity());
+    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteTextDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing);
 }
 
 } // namespace WebKit::WebGPU

@@ -16,7 +16,8 @@ if (window.IPC) {
 
     const testBytes = Uint8Array.from({length: 64}, (x, i) => i + 0x41);
     const bufferSizeLog2 = 6;
-    const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+    const defaultTimeout = 1000;
+    const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2, defaultTimeout);
     streamConnection.open();
 
     let streamBuffer = streamConnection.streamBuffer();

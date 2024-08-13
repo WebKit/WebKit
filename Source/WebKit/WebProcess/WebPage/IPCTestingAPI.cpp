@@ -461,6 +461,15 @@ static std::optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
     return std::nullopt;
 }
 
+static std::optional<double> convertToDouble(JSC::JSValue jsValue)
+{
+    if (jsValue.isNumber())
+        return jsValue.asNumber();
+    if (jsValue.isBigInt())
+        return JSC::JSBigInt::toBigUInt64(jsValue);
+    return std::nullopt;
+}
+
 namespace {
 
 struct SyncIPCMessageInfo {
@@ -1074,13 +1083,12 @@ JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSOb
 struct IPCStreamMessageInfo {
     uint64_t destinationID;
     IPC::MessageName messageName;
-    IPC::Timeout timeout;
 };
 
 static std::optional<IPCStreamMessageInfo> extractIPCStreamMessageInfo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    if (argumentCount < 3) {
-        *exception = createTypeError(context, "Must specify destination ID, message ID, and timeout as the first three arguments"_s);
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify destination ID, message ID as the first two arguments"_s);
         return std::nullopt;
     }
 
@@ -1093,17 +1101,7 @@ static std::optional<IPCStreamMessageInfo> extractIPCStreamMessageInfo(JSContext
     if (!messageName)
         return std::nullopt;
 
-    Seconds timeoutDuration;
-    {
-        auto jsValue = toJS(globalObject, arguments[2]);
-        if (!jsValue.isNumber()) {
-            *exception = createTypeError(context, "Timeout must be a number"_s);
-            return std::nullopt;
-        }
-        timeoutDuration = Seconds { jsValue.asNumber() };
-    }
-
-    return { { *destinationID, *messageName, { timeoutDuration } } };
+    return { { *destinationID, *messageName } };
 }
 
 bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(uint64_t destinationID, IPC::Timeout timeout)
@@ -1127,10 +1125,11 @@ JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObje
     auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
         return JSValueMakeUndefined(context);
-    auto [destinationID, messageName, timeout] = *info;
+    auto [destinationID, messageName] = *info;
+    auto timeout = jsIPC->m_streamConnection->defaultTimeout();
     if (!jsIPC->prepareToSendOutOfStreamMessage(destinationID, timeout))
         return JSValueMakeUndefined(context);
-    JSValueRef messageArguments = argumentCount > 3 ? arguments[3] : nullptr;
+    JSValueRef messageArguments = argumentCount > 2 ? arguments[2] : nullptr;
     return jsSend(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, context, messageArguments, exception);
 }
 
@@ -1141,21 +1140,21 @@ JSValueRef JSIPCStreamClientConnection::sendWithAsyncReply(JSContextRef context,
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
-    if (argumentCount < 5) {
-        *exception = createTypeError(context, "Must specify destination ID, message ID, timeout, messageArguments, callback as the first five arguments"_s);
+    if (argumentCount < 4) {
+        *exception = createTypeError(context, "Must specify destination ID, message ID, messageArguments, callback as the first four arguments"_s);
         return JSValueMakeUndefined(context);
     }
     auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
         return JSValueMakeUndefined(context);
-    auto [destinationID, messageName, timeout] = *info;
+    auto [destinationID, messageName] = *info;
     if (!messageReplyArgumentDescriptions(messageName)) {
         *exception = createError(context, "Message does not have a reply"_s);
         return JSValueMakeUndefined(context);
     }
     JSObjectRef callback = nullptr;
-    if (JSValueIsObject(context, arguments[4])) {
-        callback = JSValueToObject(context, arguments[4], exception);
+    if (JSValueIsObject(context, arguments[3])) {
+        callback = JSValueToObject(context, arguments[3], exception);
         if (!JSObjectIsFunction(context, callback))
             callback = nullptr;
     }
@@ -1163,11 +1162,12 @@ JSValueRef JSIPCStreamClientConnection::sendWithAsyncReply(JSContextRef context,
         *exception = createTypeError(context, "Must specify callback as the fifth argument"_s);
         return JSValueMakeUndefined(context);
     }
+    auto timeout = jsIPC->m_streamConnection->defaultTimeout();
     if (!jsIPC->prepareToSendOutOfStreamMessage(destinationID, timeout)) {
         *exception = createError(context, "IPC error: prepare failed"_s);
         return JSValueMakeUndefined(context);
     }
-    return jsSendWithAsyncReply(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, context, callback, arguments[3], exception);
+    return jsSendWithAsyncReply(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, context, callback, arguments[2], exception);
 }
 
 JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1180,12 +1180,13 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
     auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
         return JSValueMakeUndefined(context);
-    auto [destinationID, messageName, timeout] = *info;
+    auto [destinationID, messageName] = *info;
+    auto timeout = jsIPC->m_streamConnection->defaultTimeout();
     if (!jsIPC->prepareToSendOutOfStreamMessage(destinationID, timeout)) {
         *exception = createError(context, "IPC error: prepare failed"_s);
         return JSValueMakeUndefined(context);
     }
-    JSValueRef messageArguments = argumentCount > 3 ? arguments[3] : nullptr;
+    JSValueRef messageArguments = argumentCount > 2 ? arguments[2] : nullptr;
     return jsSendSync(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, timeout, context, messageArguments, exception);
 }
 
@@ -1201,8 +1202,8 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
         return JSValueMakeUndefined(context);
     }
 
-    if (argumentCount < 3) {
-        *exception = createTypeError(context, "Must specify destination ID, value, and timeout as the first three arguments"_s);
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify destination ID, value as the first two arguments"_s);
         return JSValueMakeUndefined(context);
     }
 
@@ -1220,21 +1221,11 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
         value = static_cast<int32_t>(jsValue.asNumber());
     }
 
-    Seconds timeoutDuration;
-    {
-        auto jsValue = toJS(globalObject, arguments[2]);
-        if (!jsValue.isNumber()) {
-            *exception = createTypeError(context, "timeout must be a number"_s);
-            return JSValueMakeUndefined(context);
-        }
-        timeoutDuration = Seconds { jsValue.asNumber() };
-    }
-
     auto& streamConnection = jsStreamConnection->connection();
     enum JSIPCStreamTesterIdentifierType { };
     auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
-    auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
+    auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination);
     if (!sendResult.succeeded()) {
         *exception = createTypeError(context, "sync send failed"_s);
         return JSValueMakeUndefined(context);
@@ -1255,11 +1246,11 @@ JSValueRef JSIPCStreamClientConnection::waitForMessage(JSContextRef context, JSO
         *exception = createTypeError(context, "Must specify the destination ID and message ID as the first two arguments"_s);
         return JSValueMakeUndefined(context);
     }
-    auto info = extractSyncIPCMessageInfo(context, argumentCount, arguments, exception);
+    auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
         return JSValueMakeUndefined(context);
-    auto [destinationID, messageName, timeout] = *info;
-    return jsWaitForMessage(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, timeout, context, exception);
+    auto [destinationID, messageName] = *info;
+    return jsWaitForMessage(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, jsIPC->m_streamConnection->defaultTimeout(), context, exception);
 }
 
 JSValueRef JSIPCStreamClientConnection::waitForAsyncReplyAndDispatchImmediately(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1269,15 +1260,15 @@ JSValueRef JSIPCStreamClientConnection::waitForAsyncReplyAndDispatchImmediately(
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
-    if (argumentCount < 3) {
-        *exception = createTypeError(context, "Must specify the message name, async reply ID and timeout as the first three arguments"_s);
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify the message name, async reply ID as the first two arguments"_s);
         return JSValueMakeUndefined(context);
     }
     auto info = extractIPCStreamMessageInfo(context, argumentCount, arguments, exception);
     if (!info)
         return JSValueMakeUndefined(context);
-    auto [destinationID, messageName, timeout] = *info;
-    return jsWaitForAsyncReplyAndDispatchImmediately(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, timeout, context, exception);
+    auto [destinationID, messageName] = *info;
+    return jsWaitForAsyncReplyAndDispatchImmediately(jsIPC->m_streamConnection->connectionForTesting(), destinationID, messageName, jsIPC->m_streamConnection->defaultTimeout(), context, exception);
 }
 
 JSObjectRef JSIPCStreamConnectionBuffer::createJSWrapper(JSContextRef context)
@@ -2603,7 +2594,13 @@ JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef
         *exception = createTypeError(context, "Must specify the size"_s);
         return JSValueMakeUndefined(context);
     }
-    auto connectionPair = IPC::StreamClientConnection::create(*bufferSizeLog2);
+    auto defaultTimeoutDuration = argumentCount > 1 ? convertToDouble(toJS(globalObject, arguments[1])) : std::optional<double> { };
+    if (!defaultTimeoutDuration) {
+        *exception = createTypeError(context, "Must specify the defaultTimeoutDuration"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto connectionPair = IPC::StreamClientConnection::create(*bufferSizeLog2, Seconds(*defaultTimeoutDuration));
     if (!connectionPair) {
         *exception = createError(context, "Failed to create the connection"_s);
         return JSValueMakeUndefined(context);
