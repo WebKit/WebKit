@@ -72,7 +72,6 @@ class NativeExecutable;
     macro(PolymorphicTopTierThunk, polymorphicTopTierThunk) \
     macro(PolymorphicTopTierThunkForClosure, polymorphicTopTierThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
-    macro(ArityFixup, arityFixupGenerator) \
     macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandler) \
     macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandler) \
     macro(GetByIdMissHandler, getByIdMissHandler) \

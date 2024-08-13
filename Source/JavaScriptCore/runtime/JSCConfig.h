@@ -91,6 +91,7 @@ struct Config {
     uintptr_t startOfStructureHeap;
     uintptr_t sizeOfStructureHeap;
     void* defaultCallThunk;
+    void* arityFixupThunk;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;

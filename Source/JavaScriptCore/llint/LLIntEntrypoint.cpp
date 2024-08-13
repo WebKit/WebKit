@@ -200,6 +200,15 @@ MacroAssemblerCodeRef<JSEntryPtrTag> defaultCall()
     return LLInt::getCodeRef<JSEntryPtrTag>(llint_default_call_trampoline);
 }
 
+CodePtr<JITThunkPtrTag> arityFixup()
+{
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        return CodePtr<JITThunkPtrTag>::fromTaggedPtr(g_jscConfig.arityFixupThunk);
+#endif
+    return nullptr;
+}
+
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint()
 {
 #if ENABLE(JIT)

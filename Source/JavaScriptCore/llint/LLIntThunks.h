@@ -88,6 +88,9 @@ MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk();
 MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointThunk(OpcodeSize);
 MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk();
+#if ENABLE(JIT)
+MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupThunk();
+#endif
 
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrowThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtExceptionThunk();
