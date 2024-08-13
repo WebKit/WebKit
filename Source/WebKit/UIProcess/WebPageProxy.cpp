@@ -4537,6 +4537,14 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             sourceURL = provisionalPage->provisionalURL();
     }
 
+    if (RefPtr websitePolicies = navigation->currentRequest().url().protocolIs("https"_s) ? navigation->websitePolicies() : nullptr; websitePolicies
+        && (websitePolicies->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSFirst)
+            || websitePolicies->httpsByDefaultMode() == HTTPSByDefaultMode::UpgradeWithHTTPFallback)) {
+            URL preconnectHTTPURL { navigation->currentRequest().url() };
+            preconnectHTTPURL.setProtocol("http"_s);
+            preconnectTo(ResourceRequest { preconnectHTTPURL });
+    }
+
     m_isLockdownModeExplicitlySet = (navigation->websitePolicies() && navigation->websitePolicies()->isLockdownModeExplicitlySet()) || m_configuration->isLockdownModeExplicitlySet();
     auto lockdownMode = (navigation->websitePolicies() ? navigation->websitePolicies()->lockdownModeEnabled() : shouldEnableLockdownMode()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
 
