@@ -29,6 +29,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <mach/semaphore.h>
@@ -54,7 +55,7 @@ std::optional<EventSignalPair> createEventSignalPair();
 // It is generally preferred to start using IPC::Event/Signal instead
 // to avoid this.
 class Semaphore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Semaphore);
     WTF_MAKE_NONCOPYABLE(Semaphore);
 public:
     Semaphore();

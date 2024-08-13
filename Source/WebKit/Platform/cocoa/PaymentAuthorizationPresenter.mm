@@ -44,6 +44,7 @@
 #import <WebCore/ApplePayShippingMethodUpdate.h>
 #import <WebCore/PaymentMerchantSession.h>
 #import <WebCore/PaymentSummaryItems.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -265,6 +266,8 @@ static RetainPtr<NSArray> toNSErrors(const Vector<Ref<WebCore::ApplePayError>>& 
         return toNSError(error);
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentAuthorizationPresenter);
 
 void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::PaymentMerchantSession& merchantSession)
 {

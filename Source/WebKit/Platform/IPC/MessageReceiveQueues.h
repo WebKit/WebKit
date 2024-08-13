@@ -28,11 +28,12 @@
 #include "Connection.h"
 #include "MessageReceiveQueue.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace IPC {
 
 class FunctionDispatcherQueue final : public MessageReceiveQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunctionDispatcherQueue);
 public:
     FunctionDispatcherQueue(FunctionDispatcher& dispatcher, MessageReceiver& receiver)
         : m_dispatcher(dispatcher)
@@ -53,7 +54,7 @@ private:
 };
 
 class WorkQueueMessageReceiverQueue final : public MessageReceiveQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkQueueMessageReceiverQueue);
 public:
     WorkQueueMessageReceiverQueue(WorkQueue& queue, WorkQueueMessageReceiver& receiver)
         : m_queue(queue)
