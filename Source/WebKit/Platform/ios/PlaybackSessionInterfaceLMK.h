@@ -30,13 +30,14 @@
 #include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
 #include <wtf/Observer.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WKLinearMediaPlayerDelegate;
 
 namespace WebKit {
 
 class PlaybackSessionInterfaceLMK final : public WebCore::PlaybackSessionInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceLMK);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceLMK);
 public:
     static Ref<PlaybackSessionInterfaceLMK> create(WebCore::PlaybackSessionModel&);

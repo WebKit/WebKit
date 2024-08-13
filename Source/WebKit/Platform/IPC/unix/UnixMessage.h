@@ -30,6 +30,7 @@
 #include "Attachment.h"
 #include "Encoder.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -78,7 +79,7 @@ private:
 };
 
 class UnixMessage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UnixMessage);
 public:
     UnixMessage(Encoder& encoder)
         : m_attachments(encoder.releaseAttachments())

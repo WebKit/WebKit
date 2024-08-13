@@ -36,6 +36,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 #import "WebKitSwiftSoftLink.h"
@@ -216,6 +217,8 @@
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceLMK);
 
 Ref<PlaybackSessionInterfaceLMK> PlaybackSessionInterfaceLMK::create(WebCore::PlaybackSessionModel& model)
 {

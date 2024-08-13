@@ -28,6 +28,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "IPCSemaphore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace IPC {
 
@@ -41,7 +42,7 @@ std::optional<EventSignalPair> createEventSignalPair();
 // killed).
 // FIXME: Write proper interruptible implementations for non-COCOA platforms.
 class Signal {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Signal);
     WTF_MAKE_NONCOPYABLE(Signal);
 public:
     Signal(Signal&& other) = default;
@@ -83,7 +84,7 @@ private:
 };
 
 class Event {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Event);
     WTF_MAKE_NONCOPYABLE(Event);
 public:
 #if PLATFORM(COCOA)
