@@ -483,7 +483,8 @@ void TextIterator::advance()
             if (!isRendererVisible(renderer.get(), m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*protectedCurrentNode()) && !renderer;
-            } else if (is<Element>(m_currentNode.get()) && renderer->isSkippedContentRoot()) {
+            } else if ((is<Element>(m_currentNode.get()) && renderer->isSkippedContentRoot())
+                || (m_behaviors.contains(TextIteratorBehavior::IgnoresInertNodes) && renderer->style().effectiveInert())) {
                 m_handledChildren = true;
             } else {
                 // handle current node according to its type

@@ -69,6 +69,8 @@ enum class TextIteratorBehavior : uint16_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
     EmitsObjectReplacementCharactersForAttachments = 1 << 13,
 #endif
+
+    IgnoresInertNodes  = 1 << 14,
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;
