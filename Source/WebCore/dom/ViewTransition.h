@@ -165,7 +165,7 @@ public:
     void setupViewTransition();
     void handleTransitionFrame();
 
-    void startInbound();
+    void activateViewTransition();
 
     UniqueRef<ViewTransitionParams> takeViewTransitionParams();
 
@@ -193,7 +193,6 @@ private:
     Ref<MutableStyleProperties> copyElementBaseProperties(RenderLayerModelObject&, LayoutSize&);
 
     // Setup view transition sub-algorithms.
-    void activateViewTransition();
     ExceptionOr<void> captureOldState();
     ExceptionOr<void> captureNewState();
     void setupTransitionPseudoElements();

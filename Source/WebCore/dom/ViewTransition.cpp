@@ -104,7 +104,8 @@ Ref<ViewTransition> ViewTransition::createInbound(Document& document, std::uniqu
 
     document.setActiveViewTransition(viewTransition.ptr());
 
-    viewTransition->startInbound();
+    viewTransition->m_updateCallbackDone.second->resolve();
+    viewTransition->m_phase = ViewTransitionPhase::UpdateCallbackCalled;
 
     return viewTransition;
 }
@@ -184,20 +185,6 @@ void ViewTransition::skipTransition()
 {
     if (m_phase != ViewTransitionPhase::Done)
         skipViewTransition(Exception { ExceptionCode::AbortError, "Skipping view transition because skipTransition() was called."_s });
-}
-
-void ViewTransition::startInbound()
-{
-    if (!document())
-        return;
-
-    ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);
-
-    if (m_phase != ViewTransitionPhase::Done)
-        m_phase = ViewTransitionPhase::UpdateCallbackCalled;
-
-    m_updateCallbackDone.second->resolve();
-    activateViewTransition();
 }
 
 // https://drafts.csswg.org/css-view-transitions/#call-dom-update-callback-algorithm

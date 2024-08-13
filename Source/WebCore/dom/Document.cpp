@@ -8097,10 +8097,22 @@ void Document::reveal()
     PageRevealEvent::Init init;
 
     // FIXME: This should implement more of https://drafts.csswg.org/css-view-transitions-2/#resolve-inbound-cross-document-view-transition
-    if (m_inboundViewTransitionParams && resolveViewTransitionRule())
-        init.viewTransition = ViewTransition::createInbound(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    RefPtr<ViewTransition> inboundTransition;
+    if (m_inboundViewTransitionParams && resolveViewTransitionRule()) {
+        inboundTransition = ViewTransition::createInbound(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+        init.viewTransition = inboundTransition;
+    }
 
     dispatchWindowEvent(PageRevealEvent::create(eventNames().pagerevealEvent, WTFMove(init)), this);
+
+    if (inboundTransition) {
+        // FIXME: Prepare to run script given document.
+
+        inboundTransition->activateViewTransition();
+
+        // FIXME: Clean up after running script given document.
+        eventLoop().performMicrotaskCheckpoint();
+    }
 }
 
 void Document::transferViewTransitionParams(Document& newDocument)
