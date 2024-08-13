@@ -142,7 +142,7 @@ void testLoadPreIndex32()
     fixSSA(proc);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#4]!");
 
     auto expected = [&] () -> int32_t {
@@ -215,7 +215,7 @@ void testLoadPreIndex64()
     fixSSA(proc);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#8]!");
 
     auto expected = [&] () -> int64_t {
@@ -288,7 +288,7 @@ void testLoadPostIndex32()
     fixSSA(proc);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #4");
 
     auto expected = [&] () -> int32_t {
@@ -361,7 +361,7 @@ void testLoadPostIndex64()
     fixSSA(proc);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #8");
 
     auto expected = [&] () -> int64_t {
@@ -472,7 +472,7 @@ void testStorePreIndex32()
     root->appendNewControlValue(proc, Return, Origin(), preIncrement);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#4]!");
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int32_t*>(res);
@@ -498,7 +498,7 @@ void testStorePreIndex64()
     root->appendNewControlValue(proc, Return, Origin(), preIncrement);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#8]!");
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int64_t*>(res);
@@ -526,7 +526,7 @@ void testStorePostIndex32()
     root->appendNewControlValue(proc, Return, Origin(), preIncrement);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #4");
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int32_t*>(res);
@@ -553,7 +553,7 @@ void testStorePostIndex64()
     root->appendNewControlValue(proc, Return, Origin(), preIncrement);
 
     auto code = compileProc(proc);
-    if (isARM64())
+    if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #8");
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int64_t*>(res);
@@ -4233,18 +4233,15 @@ void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testZShrArgImm32(0xffffffff, 63));
     RUN(testCSEStoreWithLoop());
 
-    if (Options::useB3CanonicalizePrePostIncrements()) {
-        RUN(testLoadPreIndex32());
-        RUN(testLoadPreIndex64());
-        RUN(testLoadPostIndex32());
-        RUN(testLoadPostIndex64());
-        RUN(testLoadPreIndex32WithStore());
-
-        RUN(testStorePreIndex32());
-        RUN(testStorePreIndex64());
-        RUN(testStorePostIndex32());
-        RUN(testStorePostIndex64());
-    }
+    RUN(testLoadPreIndex32());
+    RUN(testLoadPreIndex64());
+    RUN(testLoadPostIndex32());
+    RUN(testLoadPostIndex64());
+    RUN(testLoadPreIndex32WithStore());
+    RUN(testStorePreIndex32());
+    RUN(testStorePreIndex64());
+    RUN(testStorePostIndex32());
+    RUN(testStorePostIndex64());
 }
 
 #endif // ENABLE(B3_JIT)

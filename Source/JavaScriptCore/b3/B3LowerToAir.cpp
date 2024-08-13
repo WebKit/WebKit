@@ -2937,12 +2937,14 @@ private:
             // PostIndex Canonical Form:
             //     address = Add(base, offset)    --->   Move %base %address
             //     memory = Load(base, 0)                MoveWithIncrement (%address, postfix(offset)) %memory
-            auto tryAppendIncrementAddress = [&] () -> bool {
+            auto tryAppendIncrementAddress = [&]() -> bool {
+                if (memory->hasFence())
+                    return false;
                 Air::Opcode opcode = tryOpcodeForType(MoveWithIncrement32, MoveWithIncrement64, memory->type());
                 if (!isValidForm(opcode, Arg::PreIndex, Arg::Tmp) || !m_index)
                     return false;
                 Value* address = m_block->at(m_index - 1);
-                if (address->opcode() != Add || address->type() != Int64)
+                if (address->opcode() != Add || address->type() != Int64 || m_locked.contains(address))
                     return false;
 
                 Value* base1 = address->child(0);
@@ -2952,8 +2954,6 @@ private:
                 intptr_t offset = address->child(1)->asIntPtr();
                 Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
                 if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
-                    return false;
-                if (m_locked.contains(address) || m_locked.contains(base1))
                     return false;
 
                 Arg incrementArg = Arg();
@@ -3873,7 +3873,7 @@ private:
                 if (!isValidForm(opcode, Arg::PreIndex, Arg::Tmp) || !m_index)
                     return false;
                 Value* address = m_block->at(m_index - 1);
-                if (address->opcode() != Add || address->type() != Int64)
+                if (address->opcode() != Add || address->type() != Int64 || m_locked.contains(address))
                     return false;
 
                 Value* base1 = address->child(0);
@@ -3883,8 +3883,6 @@ private:
                 intptr_t offset = address->child(1)->asIntPtr();
                 Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
                 if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
-                    return false;
-                if (m_locked.contains(address) || m_locked.contains(base1) || m_locked.contains(value))
                     return false;
 
                 Arg incrementArg = Arg();
