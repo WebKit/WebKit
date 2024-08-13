@@ -42,7 +42,7 @@ fi
 
 # If LTO is not enabled, we still need to be able to do a local release build.
 # We use bullseye for CI to support older versions of glibc, but that requires libc++.
-if [ "$WEBKIT_RELEASE_TYPE" == "Debug" || "$LTO_FLAG" == "" ]; then
+if [ "$WEBKIT_RELEASE_TYPE" == "Debug" ] || [ "$LTO_FLAG" == "" ]; then
     export DEBIAN_VERSION="bookworm"
 else
     export DEBIAN_VERSION="bullseye"
