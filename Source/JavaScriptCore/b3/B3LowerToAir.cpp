@@ -430,13 +430,14 @@ private:
     {
         Tmp& tmp = m_valueToTmp[value];
         if (!tmp) {
+            Value* prevValue = value;
             while (shouldCopyPropagate(value))
                 value = value->child(0);
 
             if (value->opcode() == FramePointer)
                 return Tmp(GPRInfo::callFrameRegister);
 
-            Tmp& realTmp = m_valueToTmp[value];
+            Tmp& realTmp = prevValue == value ? tmp : m_valueToTmp[value];
             if (!realTmp) {
                 realTmp = m_code.newTmp(value->resultBank());
                 if (m_procedure.isFastConstant(value->key()))
