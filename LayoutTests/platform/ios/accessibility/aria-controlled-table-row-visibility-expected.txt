@@ -1,0 +1,36 @@
+This test ensures the accessibility tree is correct after table rows with an aria-controls relationship dynamically change their hidden status.
+
+
+{StaticText AXLabel: Author}
+
+{StaticText AXLabel: Title}
+
+{Button}
+
+{StaticText AXLabel: A Brief History of Time}
+
+PASS: output.includes('Carl Sagan') === false
+
+
+Traversal after un-hiding #r2:
+
+{StaticText AXLabel: Author}
+
+{StaticText AXLabel: Title}
+
+{Button}
+
+{StaticText AXLabel: A Brief History of Time}
+
+{StaticText AXLabel: Carl Sagan}
+
+{StaticText AXLabel: Cosmos}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a table caption
+Author	Title
+Toggle second row	A Brief History of Time
+Carl Sagan	Cosmos
