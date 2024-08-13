@@ -135,11 +135,14 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
             else
                 callee->setEntrypoint(LLInt::wasmFunctionEntryThunk().retaggedCode<WasmEntryPtrTag>());
 #endif
-        } else
-            if (m_moduleInformation->usesSIMD(functionIndex))
-                callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline));
-            else
-                callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        } else {
+            if (m_moduleInformation->usesSIMD(functionIndex)) {
+                Locker locker { m_lock };
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                return;
+            }
+            callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        }
         llintCallee = callee.ptr();
         m_calleesVector[functionIndex] = WTFMove(callee);
     } else

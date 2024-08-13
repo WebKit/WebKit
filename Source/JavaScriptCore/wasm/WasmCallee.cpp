@@ -58,6 +58,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LLIntCallee);
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Private)
     , m_compilationMode(compilationMode)
+    , m_index(0xBADBADBA)
 {
 }
 
@@ -65,6 +66,7 @@ Callee::Callee(Wasm::CompilationMode compilationMode, size_t index, std::pair<co
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Public)
     , m_compilationMode(compilationMode)
     , m_indexOrName(index, WTFMove(name))
+    , m_index(index)
 {
 }
 

@@ -55,8 +55,10 @@ namespace Wasm {
 
 class Callee : public NativeCallee {
     WTF_MAKE_TZONE_ALLOCATED(Callee);
+    friend class JSC::LLIntOffsetsExtractor;
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
+    uint32_t index() const { return m_index; }
     CompilationMode compilationMode() const { return m_compilationMode; }
 
     CodePtr<WasmEntryPtrTag> entrypoint() const;
@@ -83,6 +85,7 @@ protected:
 private:
     const CompilationMode m_compilationMode;
     const IndexOrName m_indexOrName;
+    const uint32_t m_index;
 
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
@@ -227,10 +230,13 @@ class WasmToJSCallee final : public Callee {
     WTF_MAKE_TZONE_ALLOCATED(WasmToJSCallee);
 public:
     friend class Callee;
+    friend class JSC::LLIntOffsetsExtractor;
 
+    WasmToJSCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name) : Callee(Wasm::CompilationMode::WasmToJSMode, index, WTFMove(name)) { };
     static WasmToJSCallee& singleton();
 
 private:
+
     WasmToJSCallee();
 
     std::tuple<void*, void*> rangeImpl() const

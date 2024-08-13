@@ -329,6 +329,7 @@ private:
     BitVector m_passiveElements;
     BitVector m_passiveDataSegments;
     FixedVector<RefPtr<const Wasm::Tag>> m_tags;
+    Vector<Ref<Wasm::WasmToJSCallee>> importCallees;
 };
 
 } // namespace JSC

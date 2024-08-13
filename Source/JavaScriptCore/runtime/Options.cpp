@@ -662,6 +662,8 @@ static inline void disableAllJITOptions()
     if (!Options::useInterpretedJSEntryWrappers() && Options::useWasm())
         disableAllWasmOptions();
 
+    Options::useWasmSIMD() = false;
+
     Options::usePollingTraps() = true;
 
     Options::dumpDisassembly() = false;

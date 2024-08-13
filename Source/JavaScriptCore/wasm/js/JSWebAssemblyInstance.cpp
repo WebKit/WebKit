@@ -187,8 +187,11 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
 
     for (unsigned importFunctionNum = 0; importFunctionNum < numImportFunctions(); ++importFunctionNum) {
         auto* info = importFunctionInfo(importFunctionNum);
-        if (!info->targetInstance)
+        if (!info->targetInstance) {
             info->importFunctionStub = module().importFunctionStub(importFunctionNum);
+            importCallees.append(adoptRef(*new WasmToJSCallee(importFunctionNum, { nullptr, nullptr })));
+            info->boxedTargetCalleeLoadLocation = reinterpret_cast<const uintptr_t*>(importCallees.last().ptr());
+        }
         else
             info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(importFunctionNum);
     }

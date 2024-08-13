@@ -2765,6 +2765,14 @@ op(js_to_wasm_wrapper_entry, macro ()
     crash()
 end)
 
+op(wasm_to_wasm_wrapper_entry, macro ()
+    crash()
+end)
+
+op(wasm_to_js_wrapper_entry, macro ()
+    crash()
+end)
+
 op(wasm_function_prologue_trampoline, macro ()
     crash()
 end)
