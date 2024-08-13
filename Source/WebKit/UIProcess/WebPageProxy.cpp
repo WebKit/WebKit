@@ -8203,11 +8203,12 @@ void WebPageProxy::requestDOMPasteAccess(DOMPasteAccessCategory pasteAccessCateg
         auto originFromFrame = SecurityOrigin::create(frame->url());
         MESSAGE_CHECK_COMPLETION(m_process, origin->isSameOriginDomain(originFromFrame), completionHandler(DOMPasteAccessResponse::DeniedForGesture));
 
-        static constexpr auto recentlyRequestedDOMPasteOriginDelay = 1_s;
         static constexpr auto recentlyRequestedDOMPasteOriginLimit = 10;
 
         auto currentTime = ApproximateTime::now();
         m_recentlyRequestedDOMPasteOrigins.removeAllMatching([&](auto& identifierAndTimestamp) {
+            static constexpr auto recentlyRequestedDOMPasteOriginDelay = 1_s;
+
             auto& [identifier, lastRequestTime] = identifierAndTimestamp;
             return identifier == originIdentifier || currentTime - lastRequestTime > recentlyRequestedDOMPasteOriginDelay;
         });

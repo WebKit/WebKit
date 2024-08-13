@@ -600,8 +600,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     SymbolTableEntry entry(varOffset);
                     functionSymbolTable->set(NoLockingNecessary, name, entry);
 
+IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
                     const Identifier& ident =
                         static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
+IGNORE_GCC_WARNINGS_END
 
                     varOrAnonymous = addConstant(ident);
                 }
