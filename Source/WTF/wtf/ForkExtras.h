@@ -25,31 +25,3 @@ typedef struct jsstring_iterator {
 #ifdef __cplusplus
 }
 #endif
-
-#if CPU(X86_64)
-
-#ifndef __extendhfsf2
-#if defined(__FLT16_MANT_DIG__)
-extern "C" float __extendhfsf2(_Float16 a);
-#else
-extern "C" float __extendhfsf2(uint16_t a);
-#endif
-#endif
-
-#ifndef __truncdfhf2
-#if defined(__FLT16_MANT_DIG__)
-extern "C" _Float16 __truncdfhf2(double a);
-#else
-extern "C" uint16_t __truncdfhf2(double a);
-#endif
-#endif
-
-#ifndef __truncsfhf2
-#if defined(__FLT16_MANT_DIG__)
-extern "C" _Float16 __truncsfhf2(float a);
-#else
-extern "C" uint16_t __truncsfhf2(float a);
-#endif
-#endif
-
-#endif

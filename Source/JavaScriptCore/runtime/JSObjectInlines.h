@@ -37,7 +37,6 @@
 #include "MegamorphicCache.h"
 #include "StructureInlines.h"
 #include "TypedArrayType.h"
-#include <wtf/ForkExtras.h>
 
 namespace JSC {
 

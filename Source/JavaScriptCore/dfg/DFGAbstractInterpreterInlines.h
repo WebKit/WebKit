@@ -62,7 +62,6 @@
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/ForkExtras.h>
 
 namespace JSC { namespace DFG {
 

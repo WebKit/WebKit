@@ -39,7 +39,6 @@
 #include <wtf/GetPtr.h>
 #include <wtf/TypeCasts.h>
 #include <bit>
-#include <wtf/ForkExtras.h>
 
 #if defined(__cpp_lib_bit_cast) && __cpp_lib_bit_cast >= 201806L
 #define __bit_cast std::bit_cast

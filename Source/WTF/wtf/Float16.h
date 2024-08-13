@@ -56,7 +56,7 @@ namespace WTF {
  */
 constexpr float convertFloat16ToFloat32(uint16_t h)
 {
-#if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
+#if HAVE(FLOAT16)
     return static_cast<float>(__bit_cast<_Float16>(h));
 #else
 
@@ -178,7 +178,7 @@ constexpr double convertFloat16ToFloat64(uint16_t h)
  */
 constexpr uint16_t convertFloat32ToFloat16(float f)
 {
-#if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
+#if HAVE(FLOAT16)
     return __bit_cast<uint16_t>(static_cast<_Float16>(f));
 #else
     const float scale_to_inf = 0x1.0p+112f; // 0x77800000
@@ -206,7 +206,7 @@ constexpr uint16_t convertFloat32ToFloat16(float f)
 // Adopted from V8's DoubleToFloat16, which adopted from https://gist.github.com/rygorous/2156668.
 constexpr uint16_t convertFloat64ToFloat16(double value)
 {
-#if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
+#if HAVE(FLOAT16)
     return __bit_cast<uint16_t>(static_cast<_Float16>(value));
 #else
     // uint64_t constants prefixed with kFP64 are bit patterns of doubles.
@@ -286,7 +286,7 @@ constexpr uint16_t convertFloat64ToFloat16(double value)
 #endif
 }
 
-#if (CPU(ARM64) || CPU(X86_64)) && defined(__FLT16_MANT_DIG__)
+#if HAVE(FLOAT16)
 class Float16 {
 public:
     constexpr Float16() = default;
