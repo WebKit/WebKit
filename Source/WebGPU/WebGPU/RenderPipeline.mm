@@ -1774,7 +1774,6 @@ WGPUPrimitiveTopology RenderPipeline::primitiveTopology() const
 
 MTLIndexType RenderPipeline::stripIndexFormat() const
 {
-    ASSERT(m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 || m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint32);
     return m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32;
 }
 

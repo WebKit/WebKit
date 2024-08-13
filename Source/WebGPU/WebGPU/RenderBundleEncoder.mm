@@ -901,7 +901,7 @@ bool RenderBundleEncoder::validToEncodeCommand() const
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
-    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid()) {
+    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid() || m_finished) {
         m_device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
     }
