@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestPDFHostViewController.h"
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#if USE(PDFKIT_FOR_TESTING) && PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
 #import "PDFKitSPI.h"
@@ -131,4 +131,4 @@ std::unique_ptr<ClassMethodSwizzler> createPDFHostViewControllerSwizzler()
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // USE(PDFKIT_FOR_TESTING) && PLATFORM(IOS_FAMILY)

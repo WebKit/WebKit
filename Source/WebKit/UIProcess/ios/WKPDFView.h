@@ -35,6 +35,8 @@
 #endif
 >
 
++ (BOOL)platformSupportsPDFView;
+
 @end
 
 #endif // ENABLE(WKPDFVIEW)
