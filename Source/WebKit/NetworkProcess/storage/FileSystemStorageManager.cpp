@@ -29,8 +29,11 @@
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageHandleRegistry.h"
 #include "WebFileSystemStorageConnectionMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageManager);
 
 FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(WTFMove(path))

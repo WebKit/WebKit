@@ -38,6 +38,7 @@
 #include <wtf/Lock.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -51,6 +52,9 @@ static constexpr auto versionDirectoryPrefix = "Version "_s;
 static constexpr auto recordsDirectoryName = "Records"_s;
 static constexpr auto blobsDirectoryName = "Blobs"_s;
 static constexpr auto blobSuffix = "-blob"_s;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageRecord, Storage::Record);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageTimings, Storage::Timings);
 
 static inline size_t maximumInlineBodySize()
 {
@@ -66,7 +70,7 @@ static uint64_t nextReadOperationOrdinal()
 }
 
 struct Storage::ReadOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Storage::ReadOperation);
 public:
     ReadOperation(Storage& storage, const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
         : storage(storage)
@@ -93,6 +97,8 @@ public:
     bool isCanceled { false };
     Timings timings;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageReadOperation, Storage::ReadOperation);
 
 bool Storage::isHigherPriority(const std::unique_ptr<ReadOperation>& a, const std::unique_ptr<ReadOperation>& b)
 {
@@ -130,7 +136,7 @@ bool Storage::ReadOperation::finish()
 }
 
 struct Storage::WriteOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Storage::WriteOperation);
 public:
     WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
         : storage(storage)
@@ -148,8 +154,10 @@ public:
     std::atomic<unsigned> activeCount { 0 };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageWriteOperation, Storage::WriteOperation);
+
 struct Storage::TraverseOperation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Storage::TraverseOperation);
 public:
     TraverseOperation(Ref<Storage>&& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
         : storage(WTFMove(storage))
@@ -167,6 +175,8 @@ public:
     Condition activeCondition;
     unsigned activeCount WTF_GUARDED_BY_LOCK(activeLock) { 0 };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageTraverseOperation, Storage::TraverseOperation);
 
 static String makeCachePath(const String& baseCachePath)
 {

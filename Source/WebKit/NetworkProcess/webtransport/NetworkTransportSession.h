@@ -30,6 +30,7 @@
 #include <WebCore/ProcessQualified.h>
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class NetworkTransportSession;
@@ -54,7 +55,7 @@ using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdenti
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class NetworkTransportSession : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSession);
 public:
     static void initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&&);
 

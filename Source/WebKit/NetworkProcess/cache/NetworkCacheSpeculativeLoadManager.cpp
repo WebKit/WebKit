@@ -42,6 +42,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -127,7 +128,7 @@ static bool responseNeedsRevalidation(const ResourceResponse& response, WallTime
 }
 
 class SpeculativeLoadManager::ExpiringEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeculativeLoadManager::ExpiringEntry);
 public:
     explicit ExpiringEntry(WTF::Function<void()>&& expirationHandler)
         : m_lifetimeTimer(WTFMove(expirationHandler))
@@ -139,8 +140,11 @@ private:
     Timer m_lifetimeTimer;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManagerExpiringEntry, SpeculativeLoadManager::ExpiringEntry);
+
+
 class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeculativeLoadManager::PreloadedEntry);
 public:
     PreloadedEntry(std::unique_ptr<Entry> entry, std::optional<ResourceRequest>&& speculativeValidationRequest, WTF::Function<void()>&& lifetimeReachedHandler)
         : ExpiringEntry(WTFMove(lifetimeReachedHandler))
@@ -161,6 +165,8 @@ private:
     std::unique_ptr<Entry> m_entry;
     std::optional<ResourceRequest> m_speculativeValidationRequest;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManagerPreloadedEntry, SpeculativeLoadManager::PreloadedEntry);
 
 class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
 public:
@@ -259,6 +265,8 @@ private:
     bool m_didRetrieveExistingEntry { false };
     bool m_didReceiveMainResourceResponse { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculativeLoadManager);
 
 SpeculativeLoadManager::SpeculativeLoadManager(Cache& cache, Storage& storage)
     : m_cache(cache)

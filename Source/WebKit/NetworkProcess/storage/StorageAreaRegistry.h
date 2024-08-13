@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StorageAreaIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -33,7 +34,7 @@ namespace WebKit {
 class StorageAreaBase;
 
 class StorageAreaRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StorageAreaRegistry);
 public:
     StorageAreaRegistry();
     void registerStorageArea(StorageAreaIdentifier, StorageAreaBase&);

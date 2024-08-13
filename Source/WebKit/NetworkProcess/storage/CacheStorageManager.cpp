@@ -32,6 +32,7 @@
 #include <WebCore/StorageUtilities.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -162,7 +163,9 @@ static FileSystem::Salt readOrMakeSalt(const String& saltPath)
 
     return valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
 }
-    
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageManager);
+
 String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
 {
     if (rootDirectory.isEmpty())

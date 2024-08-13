@@ -31,6 +31,7 @@
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
@@ -57,7 +58,7 @@ class ServiceWorkerDownloadTask;
 class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSWServerToContextConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSWServerToContextConnection);
 public:
     using WebCore::SWServerToContextConnection::weakPtrFactory;

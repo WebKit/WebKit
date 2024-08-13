@@ -32,14 +32,15 @@
 #include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class PrefetchCache {
+    WTF_MAKE_TZONE_ALLOCATED(PrefetchCache);
     WTF_MAKE_NONCOPYABLE(PrefetchCache);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     PrefetchCache();
     ~PrefetchCache();

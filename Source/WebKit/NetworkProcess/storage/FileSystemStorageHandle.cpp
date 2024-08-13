@@ -30,6 +30,7 @@
 #include "FileSystemStorageManager.h"
 #include "SharedFileHandle.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -41,6 +42,8 @@ constexpr char pathSeparator = '/';
 constexpr uint64_t defaultInitialCapacity = 1 * MB;
 constexpr uint64_t defaultMaxCapacityForExponentialGrowth = 256 * MB;
 constexpr uint64_t defaultCapacityStep = 128 * MB;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandle);
 
 std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
 {

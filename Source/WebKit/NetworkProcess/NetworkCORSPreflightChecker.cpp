@@ -35,6 +35,7 @@
 #include "WebErrors.h"
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #define CORS_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
@@ -42,6 +43,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkCORSPreflightChecker);
 
 NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
     : m_parameters(WTFMove(parameters))

@@ -28,8 +28,11 @@
 
 #include "MemoryStorageArea.h"
 #include "StorageAreaRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SessionStorageManager);
 
 SessionStorageManager::SessionStorageManager(StorageAreaRegistry& registry)
     : m_registry(registry)

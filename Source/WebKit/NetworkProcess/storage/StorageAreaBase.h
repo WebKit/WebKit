@@ -31,6 +31,7 @@
 #include "StorageAreaMapIdentifier.h"
 #include <WebCore/ClientOrigin.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ enum class StorageError : uint8_t {
 
 class StorageAreaBase : public CanMakeWeakPtr<StorageAreaBase>, public Identified<StorageAreaIdentifier> {
     WTF_MAKE_NONCOPYABLE(StorageAreaBase);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StorageAreaBase);
 public:
     static uint64_t nextMessageIdentifier();
     virtual ~StorageAreaBase();

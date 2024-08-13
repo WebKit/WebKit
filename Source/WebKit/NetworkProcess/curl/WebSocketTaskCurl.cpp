@@ -33,9 +33,11 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CurlStreamScheduler.h>
 #include <WebCore/WebSocketHandshake.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
 WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin)
     : m_channel(channel)

@@ -27,11 +27,12 @@
 
 #include "NetworkTransportReceiveStream.h"
 #include "NetworkTransportSendStream.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class NetworkTransportBidirectionalStream : public NetworkTransportSendStream, public NetworkTransportReceiveStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportBidirectionalStream);
 public:
     NetworkTransportBidirectionalStream(NetworkTransportSession&);
 };

@@ -40,6 +40,7 @@
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "NetworkDataTaskCocoa.h"
@@ -49,6 +50,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Download);
 
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, NetworkSession& session, const String& suggestedName)
     : m_downloadManager(downloadManager)

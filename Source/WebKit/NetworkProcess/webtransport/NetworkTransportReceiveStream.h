@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -32,7 +33,7 @@ namespace WebKit {
 class NetworkTransportSession;
 
 class NetworkTransportReceiveStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportReceiveStream);
 public:
     NetworkTransportReceiveStream(NetworkTransportSession&);
 private:

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/DOMCacheIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -33,7 +34,7 @@ namespace WebKit {
 class CacheStorageCache;
 
 class CacheStorageRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CacheStorageRegistry);
 public:
     CacheStorageRegistry();
     void registerCache(WebCore::DOMCacheIdentifier, CacheStorageCache&);

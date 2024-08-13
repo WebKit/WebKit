@@ -30,6 +30,7 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -51,7 +52,7 @@ class FileSystemStorageManager;
 enum class FileSystemStorageError : uint8_t;
 
 class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager>, public Identified<WebCore::FileSystemHandleIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageHandle);
 public:
     enum class Type : uint8_t { File, Directory, Any };
     static std::unique_ptr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);

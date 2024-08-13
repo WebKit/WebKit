@@ -31,6 +31,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSURLSessionWebSocketTask;
@@ -57,7 +58,7 @@ class NetworkSocketChannel;
 struct SessionSet;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public NetworkTaskCocoa {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WeakPtr<SessionSet>&&, const WebCore::ResourceRequest&, const WebCore::ClientOrigin&, RetainPtr<NSURLSessionWebSocketTask>&&, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy);
     ~WebSocketTask() = default;

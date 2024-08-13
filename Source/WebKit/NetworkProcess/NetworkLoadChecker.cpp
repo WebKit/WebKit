@@ -43,6 +43,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #define LOAD_CHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
@@ -50,6 +51,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadChecker);
 
 NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTFMove(options))

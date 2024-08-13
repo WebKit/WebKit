@@ -28,6 +28,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <libsoup/soup.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
@@ -35,7 +36,7 @@ class NetworkSocketChannel;
 struct SessionSet;
 
 class WebSocketTask {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
     ~WebSocketTask();
