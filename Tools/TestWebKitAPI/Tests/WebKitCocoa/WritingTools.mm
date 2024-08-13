@@ -2637,12 +2637,19 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
     [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
         EXPECT_EQ(1UL, contexts.count);
 
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+        TestWebKitAPI::Util::runFor(0.1_s);
+
         EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
 
         RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
 
-        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:NO];
         TestWebKitAPI::Util::runFor(0.1_s);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+
+        [webView waitForSelectionValue:@"Z"];
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
