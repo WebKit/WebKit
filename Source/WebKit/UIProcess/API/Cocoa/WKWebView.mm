@@ -1807,28 +1807,40 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
+
 - (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
-#elif PLATFORM(MAC)
+#else
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
+
     _impl->addTextAnimationForAnimationID(*uuid, data);
 #endif
 }
+
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)nsUUID
 {
 #if PLATFORM(IOS_FAMILY)
     [_contentView removeTextAnimationForAnimationID:nsUUID];
-#elif PLATFORM(MAC)
+#else
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
+
     _impl->removeTextAnimationForAnimationID(*uuid);
 #endif
 }
+
+- (void)_didEndPartialIntelligenceTextPonderingAnimation
+{
+#if PLATFORM(MAC)
+    _impl->didEndPartialIntelligenceTextPonderingAnimation();
+#endif
+}
+
 #endif
 
 - (WKPageRef)_pageForTesting
@@ -2232,6 +2244,10 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
+#if PLATFORM(MAC)
+    _impl->writingToolsCompositionSessionDidReceiveReplacements(webSession->identifier, finished);
+#endif
+
     _page->compositionSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
 }
 
@@ -2243,9 +2259,18 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    _page->writingToolsSessionDidReceiveAction(*webSession, WebKit::convertToWebAction(action));
-}
+    auto webAction = WebKit::convertToWebAction(action);
 
+#if PLATFORM(MAC)
+    if (webAction == WebCore::WritingTools::Action::Restart && webSession->compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply) {
+        // This must be done in the UI process to avoid any race conditions that may result from IPC
+        // to/from the web process with the UI process animations.
+        _impl->writingToolsCompositionSessionDidReceiveRestartAction();
+    }
+#endif
+
+    _page->writingToolsSessionDidReceiveAction(*webSession, webAction);
+}
 
 #pragma mark - WTTextViewDelegate invoking methods
 
@@ -3100,10 +3125,12 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 {
     return [self _enableSourceTextAnimationAfterElementWithID:elementID];
 }
+
 - (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
 {
     return [self _enableFinalTextAnimationForElementWithID:elementID];
 }
+
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
     return [self _disableTextAnimationWithUUID:nsUUID];

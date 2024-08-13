@@ -80,12 +80,14 @@ public:
 
     void removeInitialTextAnimation(const WTF::UUID& sessionUUID);
     void addInitialTextAnimation(const WTF::UUID& sessionUUID);
-    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
-    void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String);
+    void addSourceTextAnimation(const WTF::UUID& sessionUUID, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
+    void addDestinationTextAnimation(const WTF::UUID& sessionUUID, const std::optional<WebCore::CharacterRange>&, const String&);
 
     void clearAnimationsForSessionID(const WTF::UUID& sessionUUID);
 
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool visible, CompletionHandler<void()>&&);
+
+    void showSelectionForWritingToolsSessionAssociatedWithAnimationID(const WTF::UUID&);
 
     std::optional<WebCore::TextIndicatorData> createTextIndicatorForRange(const WebCore::SimpleRange&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);

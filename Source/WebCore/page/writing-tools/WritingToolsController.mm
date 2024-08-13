@@ -355,7 +355,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
     }
 }
 
-void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
+void WritingToolsController::showSelectionForWritingToolsSessionWithID(const WritingTools::Session::ID& sessionID) const
 {
     RefPtr document = this->document();
     if (!document) {
@@ -363,8 +363,51 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
-    if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
+    auto it = m_states.find(sessionID);
+    if (it == m_states.end()) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+
+    auto* state = std::get_if<CompositionState>(&it->value);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto currentRange = state->currentRange;
+    if (!currentRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    document->selection().setSelection(*currentRange);
+}
+
+void WritingToolsController::compositionSessionDidFinishReplacement(const WritingTools::Session& session)
+{
+    // An empty optional range implies that an animation should be considered to have already been finished.
+    m_page->chrome().client().addDestinationTextAnimation(session.identifier, std::nullopt, ""_s);
+}
+
+void WritingToolsController::compositionSessionDidFinishReplacement(const WritingTools::Session& session, const CharacterRange& updatedRange, const String& replacementText)
+{
+    m_page->chrome().client().addDestinationTextAnimation(session.identifier, updatedRange, replacementText);
+}
+
+void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
+{
+    RefPtr document = this->document();
+    if (!document) {
+        compositionSessionDidFinishReplacement(session);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (runMode == WebCore::TextAnimationRunMode::DoNotRun) {
+        compositionSessionDidFinishReplacement(session);
+        return;
+    }
 
     auto contextTextCharacterCount = context.attributedText.string.length();
 
@@ -372,18 +415,20 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     // be strictly less than the length of the attributed string.
     if (UNLIKELY(contextTextCharacterCount < range.location + range.length)) {
         RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
+        compositionSessionDidFinishReplacement(session);
         ASSERT_NOT_REACHED();
         return;
     }
 
     CheckedPtr state = stateForSession<WritingTools::Session::Type::Composition>(session);
     if (!state) {
+        compositionSessionDidFinishReplacement(session);
         ASSERT_NOT_REACHED();
         return;
     }
 
     // When `didReceiveText` is invoked multiple times, subsequent invocations will always have their replacement text as a superset
-    // of the prior invocations' text. Therefore, this can effectively be modelled as the prior replacement being undone, and then the
+    // of the prior invocations' text. Therefore, this can effectively be modeled as the prior replacement being undone, and then the
     // current replacement being applied.
     //
     // This is specifically needed in the case where tables and/or lists are the replacement text, since it is impossible to construct
@@ -401,14 +446,13 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto currentContextRange = currentCommand->endingContextRange();
     state->reappliedCommands.append(WritingToolsCompositionCommand::create(Ref { *document }, currentContextRange));
 
-    document->selection().clear();
-
     // The current session context range is always the range associated with the most recently applied command.
     auto sessionRange = state->reappliedCommands.last()->endingContextRange();
     auto sessionRangeCharacterCount = characterCount(sessionRange);
 
     if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
         RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", session.identifier.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
+        compositionSessionDidFinishReplacement(session);
         ASSERT_NOT_REACHED();
         return;
     }
@@ -428,18 +472,26 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
     replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
-    if (runMode == WebCore::TextAnimationRunMode::OnlyReplaceText)
+    if (runMode == TextAnimationRunMode::OnlyReplaceText) {
+        compositionSessionDidFinishReplacement(session);
         return;
+    }
 
     // FIXME: We won't be setting the selection after every replace, we need a different way to
-    // caluculate this range.
+    // calculate this range.
     auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
-    if (!selectionRange)
+    if (!selectionRange) {
+        compositionSessionDidFinishReplacement(session);
+        ASSERT_NOT_REACHED();
         return;
+    }
+
+    state->currentRange = selectionRange;
 
     auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
-    m_page->chrome().client().addDestinationTextAnimation(session.identifier, rangeAfterReplace, attributedText.string);
+    compositionSessionDidFinishReplacement(session, rangeAfterReplace, attributedText.string);
+    document->selection().clear();
 }
 
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
@@ -520,9 +572,6 @@ template<>
 void WritingToolsController::writingToolsSessionDidReceiveAction<WritingTools::Session::Type::Composition>(const WritingTools::Session& session, WritingTools::Action action)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::writingToolsSessionDidReceiveAction<Composition> (%s) [action: %hhu]", session.identifier.toString().utf8().data(), enumToUnderlyingType(action));
-
-    // Smart reply composition sessions never send any actions to the delegate.
-    ASSERT(session.compositionType != WritingTools::Session::CompositionType::SmartReply);
 
     switch (action) {
     case WritingTools::Action::ShowOriginal: {
@@ -813,9 +862,12 @@ void WritingToolsController::restartCompositionForSession(const WritingTools::Se
     }
 
     m_page->chrome().client().clearAnimationsForSessionID(session.identifier);
+
     // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply)
+    if (session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply) {
+        document->selection().clear();
         m_page->chrome().client().addInitialTextAnimation(session.identifier);
+    }
 
     // The stack will never be empty as the sentinel command always exists.
     auto currentContextRange = state->reappliedCommands.last()->endingContextRange();

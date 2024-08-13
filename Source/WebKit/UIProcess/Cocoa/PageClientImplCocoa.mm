@@ -167,6 +167,11 @@ void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uui
 {
     [m_webView _removeTextAnimationForAnimationID:uuid];
 }
+
+void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
+}
 #endif
 
 void PageClientImplCocoa::pageClosed()

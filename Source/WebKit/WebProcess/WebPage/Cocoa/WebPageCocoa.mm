@@ -314,6 +314,47 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
+
+void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData), WTFMove(completionHandler));
+}
+
+void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
+{
+    send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
+}
+
+void WebPage::removeTransparentMarkersForSessionID(const WTF::UUID& uuid)
+{
+    m_textAnimationController->removeTransparentMarkersForSessionID(uuid);
+}
+
+void WebPage::removeInitialTextAnimation(const WTF::UUID& uuid)
+{
+    m_textAnimationController->removeInitialTextAnimation(uuid);
+}
+
+void WebPage::addInitialTextAnimation(const WTF::UUID& uuid)
+{
+    m_textAnimationController->addInitialTextAnimation(uuid);
+}
+
+void WebPage::addSourceTextAnimation(const WTF::UUID& uuid, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+{
+    m_textAnimationController->addSourceTextAnimation(uuid, range, string, WTFMove(completionHandler));
+}
+
+void WebPage::addDestinationTextAnimation(const WTF::UUID& uuid, const std::optional<CharacterRange>& range, const String& string)
+{
+    m_textAnimationController->addDestinationTextAnimation(uuid, range, string);
+}
+
+void WebPage::clearAnimationsForSessionID(const WTF::UUID& uuid)
+{
+    m_textAnimationController->clearAnimationsForSessionID(uuid);
+}
+
 void WebPage::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     m_textAnimationController->createTextIndicatorForTextAnimationID(uuid, WTFMove(completionHandler));
@@ -332,6 +373,21 @@ void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementI
 void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
 {
     m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID, uuid);
+}
+
+void WebPage::showSelectionForWritingToolsSessionAssociatedWithAnimationID(const WTF::UUID& animationID)
+{
+    m_textAnimationController->showSelectionForWritingToolsSessionAssociatedWithAnimationID(animationID);
+}
+
+void WebPage::showSelectionForWritingToolsSessionWithID(const WritingTools::Session::ID& sessionID)
+{
+    corePage()->showSelectionForWritingToolsSessionWithID(sessionID);
+}
+
+void WebPage::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    send(Messages::WebPageProxy::DidEndPartialIntelligenceTextPonderingAnimation());
 }
 
 #endif // ENABLE(WRITING_TOOLS)
