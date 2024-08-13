@@ -1,4 +1,16 @@
 =================
+WPE WebKit 2.44.3
+=================
+
+What's new in WPE WebKit 2.44.3?
+
+  - Fix web process cache suspend/resume when sandbox is enabled.
+  - Fix accelerated images dissapearing after scrolling.
+  - Fix video flickering with DMA-BUF sink.
+  - Undeprecate console message API and make it available in 2022 API.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.44.2
 =================
 
