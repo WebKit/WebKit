@@ -693,7 +693,7 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
         if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, inlineTextItem->isWhitespace()))
             continue;
         inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState));
-        spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(inlineTextBox.content().characterAt(start + length - 1));
+        spacingState.lastCharacterClassFromPreviousRun = inlineItem.style().textAutospace().isNoAutospace() ? TextSpacing::CharacterClass::Undefined : TextSpacing::characterClass(inlineTextBox.content().characterAt(start + length - 1));
     }
 }
 

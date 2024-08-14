@@ -666,7 +666,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     isMonotonic = false;
             }
             UChar character = *(charactersPointer + characterIndex);
-            auto characterClass = TextSpacing::characterClass(character);
 
             bool treatAsSpace = FontCascade::treatAsSpace(character);
             CGGlyph glyph = glyphs[glyphIndex];
@@ -755,11 +754,12 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             const auto& textAutoSpace =  m_font.textAutospace();
             float textAutoSpaceSpacing = 0;
-            if (textAutoSpace.hasIdeographAlpha() && previousCharacterClass != TextSpacing::CharacterClass::Undefined) {
-                if (textAutoSpace.shouldApplySpacing(previousCharacterClass, characterClass)) {
-                    textAutoSpaceSpacing = complexTextRun.textAutospaceSize();
-                    advance.expand(textAutoSpaceSpacing, 0);
-                }
+            auto characterClass = TextSpacing::CharacterClass::Undefined;
+            if (!textAutoSpace.isNoAutospace())
+                characterClass = TextSpacing::characterClass(character);
+            if (textAutoSpace.shouldApplySpacing(previousCharacterClass, characterClass)) {
+                textAutoSpaceSpacing = complexTextRun.textAutospaceSize();
+                advance.expand(textAutoSpaceSpacing, 0);
             }
             m_textAutoSpaceSpacings.append(textAutoSpaceSpacing);
 
