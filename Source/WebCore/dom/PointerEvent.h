@@ -151,6 +151,19 @@ private:
         return isInActiveButtonsState ? 0.5 : 0;
     }
 
+    struct PointerEventTilt {
+        long tiltX;
+        long tiltY;
+    };
+
+    struct PointerEventAngle {
+        double altitudeAngle;
+        double azimuthAngle;
+    };
+
+    static PointerEventAngle angleFromTilt(long tiltX, long tiltY);
+    static PointerEventTilt tiltFromAngle(double altitudeAngle, double azimuthAngle);
+
     PointerEvent();
     PointerEvent(const AtomString&, Init&&, IsTrusted);
     PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
