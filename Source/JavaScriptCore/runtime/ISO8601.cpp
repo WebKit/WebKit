@@ -580,6 +580,9 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
         return std::nullopt;
     buffer.advance();
 
+    if (*buffer == '!')
+        buffer.advance();
+
     switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-':
