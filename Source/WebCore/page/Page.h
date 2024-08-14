@@ -551,6 +551,11 @@ public:
     WEBCORE_EXPORT void setZoomedOutPageScaleFactor(float);
     float zoomedOutPageScaleFactor() const { return m_zoomedOutPageScaleFactor; }
 
+    void setPageZoomFactor(float pageZoomFactor) { m_pageZoomFactor = pageZoomFactor; }
+    float pageZoomFactor() const { return m_pageZoomFactor; }
+    void setTextZoomFactor(float textZoomFactor) { m_textZoomFactor = textZoomFactor; }
+    float textZoomFactor() const { return m_textZoomFactor; }
+
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     WEBCORE_EXPORT void setDeviceScaleFactor(float);
 
@@ -1331,6 +1336,8 @@ private:
     float m_zoomedOutPageScaleFactor { 0 };
     float m_deviceScaleFactor { 1 };
     float m_viewScaleFactor { 1 };
+    float m_pageZoomFactor { 1 };
+    float m_textZoomFactor { 1 };
 
     float m_topContentInset { 0 };
     FloatBoxExtent m_obscuredInsets;

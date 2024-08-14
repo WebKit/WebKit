@@ -161,11 +161,11 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
     : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener)
     , m_loader(makeUniqueRef<FrameLoader>(*this, clientCreator(*this)))
     , m_script(makeUniqueRef<ScriptController>(*this))
-    , m_pageZoomFactor(parentPageZoomFactor(this))
-    , m_textZoomFactor(parentTextZoomFactor(this))
     , m_rootFrame(WebCore::rootFrame(*this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
+    setPageZoomFactor(parentPageZoomFactor(this));
+    setTextZoomFactor(parentTextZoomFactor(this));
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
 
@@ -989,21 +989,28 @@ String LocalFrame::trackedRepaintRectsAsText() const
     return protectedView()->trackedRepaintRectsAsText();
 }
 
+float LocalFrame::pageZoomFactor() const
+{
+    return protectedPage()->pageZoomFactor();
+}
+
+float LocalFrame::textZoomFactor() const
+{
+    return protectedPage()->textZoomFactor();
+}
+
 void LocalFrame::setPageZoomFactor(float factor)
 {
-    setPageAndTextZoomFactors(factor, m_textZoomFactor);
+    setPageAndTextZoomFactors(factor, textZoomFactor());
 }
 
 void LocalFrame::setTextZoomFactor(float factor)
 {
-    setPageAndTextZoomFactors(m_pageZoomFactor, factor);
+    setPageAndTextZoomFactors(pageZoomFactor(), factor);
 }
 
-void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor)
+void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactorInput, float textZoomFactorInput)
 {
-    if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
-        return;
-
     RefPtr page = this->page();
     if (!page)
         return;
@@ -1020,21 +1027,24 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
         return;
 
     std::optional<ScrollPosition> scrollPositionAfterZoomed;
-    if (m_pageZoomFactor != pageZoomFactor) {
+    if (pageZoomFactor() != pageZoomFactorInput) {
         // Compute the scroll position with scale after zooming to stay the same position in the content.
         if (RefPtr view = this->view()) {
             scrollPositionAfterZoomed = view->scrollPosition();
-            scrollPositionAfterZoomed->scale(pageZoomFactor / m_pageZoomFactor);
+            scrollPositionAfterZoomed->scale(pageZoomFactorInput / pageZoomFactor());
         }
     }
-    m_pageZoomFactor = pageZoomFactor;
-    m_textZoomFactor = textZoomFactor;
+
+    if (pageZoomFactor() == pageZoomFactorInput && textZoomFactor() == textZoomFactorInput) {
+        protectedPage()->setPageZoomFactor(pageZoomFactorInput);
+        protectedPage()->setTextZoomFactor(textZoomFactorInput);
+    }
 
     document->resolveStyle(Document::ResolveStyleType::Rebuild);
 
     for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(child.get()))
-            localFrame->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+            localFrame->setPageAndTextZoomFactors(pageZoomFactor(), textZoomFactor());
     }
 
     if (RefPtr view = this->view()) {

@@ -207,9 +207,9 @@ public:
     void setDocument(RefPtr<Document>&&);
 
     WEBCORE_EXPORT void setPageZoomFactor(float);
-    float pageZoomFactor() const { return m_pageZoomFactor; }
+    WEBCORE_EXPORT float pageZoomFactor() const;
     WEBCORE_EXPORT void setTextZoomFactor(float);
-    float textZoomFactor() const { return m_textZoomFactor; }
+    WEBCORE_EXPORT float textZoomFactor() const;
     WEBCORE_EXPORT void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
     // Scale factor of this frame with respect to the container.
@@ -370,9 +370,6 @@ private:
     VisibleSelection m_rangedSelectionBase;
     VisibleSelection m_rangedSelectionInitialExtent;
 #endif
-
-    float m_pageZoomFactor;
-    float m_textZoomFactor;
 
     int m_activeDOMObjectsAndAnimationsSuspendedCount { 0 };
     bool m_documentIsBeingReplaced { false };
