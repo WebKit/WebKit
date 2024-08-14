@@ -683,7 +683,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
             return finalizeRenderCommand();
         }
 
-        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCount * indexSizeInBytes);
+        auto lastIndexOffset = checkedSum<NSUInteger>(indexBufferOffsetInBytes, indexCount * indexSizeInBytes);
         if (lastIndexOffset.hasOverflowed() || lastIndexOffset.value() > m_indexBufferSize) {
             makeInvalid(@"firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize");
             return finalizeRenderCommand();
@@ -692,7 +692,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
         if (!runIndexBufferValidation(firstInstance, instanceCount))
             return finalizeRenderCommand();
 
-        if (!indexCount || !instanceCount || !indexBuffer || m_indexBuffer->isDestroyed())
+        if (!indexCount || !instanceCount || !indexBuffer || m_indexBuffer->isDestroyed() || lastIndexOffset.value() > indexBuffer.length)
             return finalizeRenderCommand();
 
         storeVertexBufferCountsForValidation(indexCount, instanceCount, firstIndex, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
