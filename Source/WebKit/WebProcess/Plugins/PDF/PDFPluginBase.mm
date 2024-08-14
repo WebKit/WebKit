@@ -1136,7 +1136,12 @@ DictionaryPopupInfo PDFPluginBase::dictionaryPopupInfoForSelection(PDFSelection 
     if (!selection.string.length)
         return dictionaryPopupInfo;
 
-    NSAttributedString *nsAttributedString = selection.attributedString;
+    NSAttributedString *nsAttributedString = [selection] {
+        static constexpr unsigned maximumSelectionLength = 250;
+        if (selection.string.length > maximumSelectionLength)
+            return [selection.attributedString attributedSubstringFromRange:NSMakeRange(0, maximumSelectionLength)];
+        return selection.attributedString;
+    }();
     RetainPtr scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
 
     auto scaleFactor = contentScaleFactor();
