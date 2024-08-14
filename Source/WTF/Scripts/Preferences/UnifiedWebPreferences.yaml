@@ -946,10 +946,8 @@ BuiltInNotificationsEnabled:
   condition: ENABLE(WEB_PUSH_NOTIFICATIONS)
   defaultValue:
     WebCore:
-      "PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
       default: false
     WebKit:
-      "PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
       default: false
 
 CFNetworkNetworkLoaderEnabled:
