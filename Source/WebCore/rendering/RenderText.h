@@ -70,6 +70,7 @@ public:
 
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
+    const RenderStyle* targetTextPseudoStyle() const;
 
     virtual String originalText() const;
 
@@ -351,6 +352,13 @@ inline const RenderStyle* RenderText::grammarErrorPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->grammarErrorPseudoStyle();
+    return nullptr;
+}
+
+inline const RenderStyle* RenderText::targetTextPseudoStyle() const
+{
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->targetTextPseudoStyle();
     return nullptr;
 }
 

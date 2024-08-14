@@ -1825,6 +1825,11 @@ const RenderStyle* RenderElement::grammarErrorPseudoStyle() const
     return textSegmentPseudoStyle(PseudoId::GrammarError);
 }
 
+const RenderStyle* RenderElement::targetTextPseudoStyle() const
+{
+    return textSegmentPseudoStyle(PseudoId::TargetText);
+}
+
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (!isInline() || isReplacedOrInlineBlock()) {

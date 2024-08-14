@@ -278,6 +278,8 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
         return PseudoId::SpellingError;
     case PseudoElement::Selection:
         return PseudoId::Selection;
+    case PseudoElement::TargetText:
+        return PseudoId::TargetText;
     case PseudoElement::Highlight:
         return PseudoId::Highlight;
     case PseudoElement::Marker:

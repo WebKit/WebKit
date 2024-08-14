@@ -1481,6 +1481,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::WebKitScrollbarTrackPiece:
             case CSSSelector::PseudoElement::Selection:
             case CSSSelector::PseudoElement::SpellingError:
+            case CSSSelector::PseudoElement::TargetText:
             case CSSSelector::PseudoElement::ViewTransition:
             case CSSSelector::PseudoElement::UserAgentPart:
             case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:

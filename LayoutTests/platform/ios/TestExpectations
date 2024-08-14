@@ -3600,6 +3600,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-ord
 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-decoration-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-underline-order.html [ ImageOnlyFailure ]
 
+webkit.org/b/278056 imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ ImageOnlyFailure ]
+
 # These tests require platform support.
 # <rdar://problem/87944426>
 fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]

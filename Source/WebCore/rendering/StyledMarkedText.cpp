@@ -94,6 +94,11 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     }
     case MarkedText::Type::FragmentHighlight: {
+        if (CheckedPtr renderStyle = renderer.targetTextPseudoStyle()) {
+            computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
+            break;
+        }
+
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
         style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
         break;

@@ -879,6 +879,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::After: ts << "after"; break;
     case PseudoId::Selection: ts << "selection"; break;
     case PseudoId::SpellingError: ts << "spelling-error"; break;
+    case PseudoId::TargetText: ts << "target-text"; break;
     case PseudoId::ViewTransition: ts << "view-transition"; break;
     case PseudoId::ViewTransitionGroup: ts << "view-transition-group"; break;
     case PseudoId::ViewTransitionImagePair: ts << "view-transition-image-pair"; break;

@@ -123,6 +123,7 @@ public:
 
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
+    const RenderStyle* targetTextPseudoStyle() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);

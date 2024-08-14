@@ -286,7 +286,7 @@ struct PseudoElementIdentifier;
 struct ScopedName;
 }
 
-constexpr auto PublicPseudoIDBits = 16;
+constexpr auto PublicPseudoIDBits = 17;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
 constexpr auto PseudoElementTypeBits = 5;

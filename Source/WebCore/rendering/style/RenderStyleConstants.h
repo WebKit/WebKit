@@ -97,6 +97,7 @@ enum class PseudoId : uint32_t {
     Backdrop,
     WebKitScrollbar,
     SpellingError,
+    TargetText,
     ViewTransition,
     ViewTransitionGroup,
     ViewTransitionImagePair,
