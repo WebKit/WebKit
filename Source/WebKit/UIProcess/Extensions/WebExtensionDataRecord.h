@@ -33,6 +33,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSArray;
+OBJC_CLASS NSMutableArray;
 OBJC_CLASS WKWebExtensionDataRecord;
 
 namespace WebKit {
