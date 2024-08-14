@@ -37,6 +37,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebPushD {
@@ -46,9 +47,12 @@ class PushServiceRequest;
 class SubscribeRequest;
 class UnsubscribeRequest;
 
-class PushService {
+class PushService : public CanMakeWeakPtr<PushService> {
     WTF_MAKE_TZONE_ALLOCATED(PushService);
 public:
+    friend class SubscribeRequest;
+    friend class UnsubscribeRequest;
+
     using IncomingPushMessageHandler = Function<void(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&)>;
 
     static void create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&&, CompletionHandler<void(std::unique_ptr<PushService>&&)>&&);
@@ -89,10 +93,15 @@ private:
 
     void removeRecordsImpl(const WebCore::PushSubscriptionSetIdentifier&, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
+    void updateSubscriptionSetState(CompletionHandler<void()>&&);
+    void updateTopicLists(CompletionHandler<void()>&&);
+
     UniqueRef<PushServiceConnection> m_connection;
     UniqueRef<WebCore::PushDatabase> m_database;
 
     IncomingPushMessageHandler m_incomingPushMessageHandler;
+
+    int m_notifyToken;
 
     PushServiceRequestMap m_getSubscriptionRequests;
     PushServiceRequestMap m_subscribeRequests;
