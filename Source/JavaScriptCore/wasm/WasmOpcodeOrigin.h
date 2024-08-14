@@ -53,7 +53,7 @@ public:
     {
         ASSERT(static_cast<uint32_t>(offset) == offset);
         ASSERT(static_cast<OpType>(static_cast<uint8_t>(prefix)) == prefix);
-        ASSERT(((opcode & (1 << 24)) - 1) == opcode);
+        ASSERT((opcode & ((1 << 24) - 1)) == opcode);
         packedData = (static_cast<uint64_t>(opcode) << 40) | (static_cast<uint64_t>(prefix) << 32) | offset;
     }
     OpcodeOrigin(B3::Origin origin)
