@@ -3463,7 +3463,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-002.html [ Ima
 # WPT support ::target-text (webkit.org/b/236817)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]

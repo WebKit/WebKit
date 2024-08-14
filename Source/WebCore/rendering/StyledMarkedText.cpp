@@ -40,7 +40,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     if (!pseudoElementStyle)
         return;
 
-    style.backgroundColor = pseudoElementStyle->colorResolvingCurrentColor(pseudoElementStyle->backgroundColor());
+    style.backgroundColor = pseudoElementStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor, paintInfo.paintBehavior);
     style.textStyles.fillColor = pseudoElementStyle->computedStrokeColor();
     style.textStyles.strokeColor = pseudoElementStyle->computedStrokeColor();
     style.textStyles.hasExplicitlySetFillColor = pseudoElementStyle->hasExplicitlySetColor();
