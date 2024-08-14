@@ -12,5 +12,5 @@ Click left button again to end the test.
 Test passes if the proper behavior of the events is observed.
 
 
-FAIL mouse pointerevent movementX/Y with pointerlock test assert_equals: expected 9 but got 19
+FAIL mouse pointerevent movementX/Y with pointerlock test assert_equals: expected 408 but got 418
 

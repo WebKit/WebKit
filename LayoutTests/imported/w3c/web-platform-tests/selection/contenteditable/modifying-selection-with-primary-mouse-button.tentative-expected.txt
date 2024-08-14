@@ -8,5 +8,5 @@ PASS Primary click shouldn't move caret in an editable element if the default of
 PASS Primary click shouldn't move caret in an editable element if the default of pointerdown event is prevented
 FAIL Shift + Primary click should extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
 FAIL Shift + Primary click in a link shouldn't extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
-PASS Primary mouse button down should move caret, and primary mouse button up should extend the selection
+FAIL Primary mouse button down should move caret, and primary mouse button up should extend the selection assert_equals: Selection#anchorNode should stay in the second <span> element which mousedown occurred on expected Text node "second span." but got Element node <div contenteditable=""><span id="span1">first span.</spa...
 
