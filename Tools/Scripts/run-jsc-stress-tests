@@ -621,10 +621,6 @@ if $platform == "watchos"
     $memoryLimited = true
 end
 
-if not $jitTests
-    $isWasmPlatform = false
-end
-
 # This is meant for skipping execution of tests than require a lot of address
 # space. Cf. $memoryLimited, which is meant for tests that actually make use of
 # a lot of memory.

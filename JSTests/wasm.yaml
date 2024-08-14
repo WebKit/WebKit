@@ -28,7 +28,7 @@
 - path: wasm/js-api/
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/noJIT/
-  cmd: runNoJIT unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/function-tests
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/references
