@@ -493,7 +493,7 @@ void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget,
 
 void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* triggeringEvent, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "changeLocation: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "changeLocation");
     ASSERT(frameRequest.resourceRequest().httpMethod() == "GET"_s);
 
     Ref frame = m_frame.get();
@@ -1024,7 +1024,7 @@ void FrameLoader::checkCallImplicitClose()
 
 void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, LocalFrame* childFrame)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURLIntoChildFrame: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURLIntoChildFrame");
 
     ASSERT(childFrame);
 
@@ -1063,7 +1063,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, L
 
 void FrameLoader::loadArchive(Ref<Archive>&& archive)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadArchive: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadArchive");
 
     RefPtr mainResource = archive->mainResource();
     ASSERT(mainResource);
@@ -1228,7 +1228,7 @@ void FrameLoader::updateURLAndHistory(const URL& newURL, RefPtr<SerializedScript
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation, NavigationHistoryBehavior historyHandling)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadInSameDocument: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadInSameDocument");
 
     // If we have a state object, we cannot also be a new navigation.
     ASSERT(!stateObject || (stateObject && !isNewNavigation));
@@ -1374,7 +1374,7 @@ void FrameLoader::setupForReplace()
 
 void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, RefPtr<FormState>&& formState, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadFrameRequest: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadFrameRequest");
 
     m_errorOccurredInLoading = false;
 
@@ -1482,7 +1482,7 @@ bool FrameLoader::isStopLoadingAllowed() const
 
 void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, RefPtr<FormState>&& formState, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURL: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURL");
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET"_s);
 
     m_errorOccurredInLoading = false;
@@ -1633,7 +1633,7 @@ SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
 
 void FrameLoader::load(FrameLoadRequest&& request)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (FrameLoadRequest): frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (FrameLoadRequest)");
 
     m_errorOccurredInLoading = false;
 
@@ -1686,7 +1686,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, NavigationAction&& action, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction");
 
     m_errorOccurredInLoading = false;
 
@@ -1712,7 +1712,7 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
 
 void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* requesterOrigin)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (DocumentLoader): frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (DocumentLoader)");
 
     m_errorOccurredInLoading = false;
 
@@ -1757,7 +1757,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader");
 
     m_errorOccurredInLoading = false;
 
@@ -1926,7 +1926,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     if (!m_documentLoader)
         return;
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "reloadWithOverrideEncoding: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "reloadWithOverrideEncoding");
 
     ResourceRequest request = m_documentLoader->request();
     URL unreachableURL = m_documentLoader->unreachableURL();
@@ -1957,7 +1957,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     if (m_documentLoader->request().url().isEmpty())
         return;
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "reload: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "reload");
 
     // Replace error-page URL with the URL we were trying to reach.
     ResourceRequest initialRequest = m_documentLoader->request();
@@ -3411,7 +3411,7 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
 
 void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& referrer, FrameLoadType loadType, Event* event, RefPtr<FormState>&& formState, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadPostRequest: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadPostRequest");
 
     m_errorOccurredInLoading = false;
 
@@ -4256,7 +4256,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
 // methods of FrameLoader.
 void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadDifferentDocumentItem: frame load started");
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadDifferentDocumentItem");
 
     Ref frame = m_frame.get();
 

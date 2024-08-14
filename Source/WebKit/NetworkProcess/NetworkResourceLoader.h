@@ -167,6 +167,10 @@ public:
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
     void sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
 
+    void sendDidReceiveResponse(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    void sendDidFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
+    void sendDidReceiveData(const WebCore::FragmentedSharedBuffer&, size_t length);
+
     bool isAppInitiated();
 
 #if ENABLE(CONTENT_FILTERING)
