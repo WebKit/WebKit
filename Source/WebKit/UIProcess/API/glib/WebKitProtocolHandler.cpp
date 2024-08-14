@@ -68,6 +68,7 @@
 #endif
 
 #if USE(GBM)
+#include <WebCore/DRMDeviceManager.h>
 #include <WebCore/PlatformDisplayGBM.h>
 #include <gbm.h>
 #endif
@@ -506,7 +507,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if USE(GBM)
             const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
             if (!disableGBM || !strcmp(disableGBM, "0")) {
-                if (auto* device = PlatformDisplay::sharedDisplay().gbmDevice())
+                if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
                     platformDisplay = PlatformDisplayGBM::create(device);
             }
 #endif
@@ -523,7 +524,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if USE(GBM)
                 if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
-                    if (drmVersion* version = drmGetVersion(gbm_device_get_fd(PlatformDisplay::sharedDisplay().gbmDevice()))) {
+                    auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
+                    if (drmVersion* version = drmGetVersion(gbm_device_get_fd(device))) {
                         addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
                         drmFreeVersion(version);
                     }

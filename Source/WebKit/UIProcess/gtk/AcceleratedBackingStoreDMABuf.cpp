@@ -43,6 +43,7 @@
 #include <wtf/glib/WTFGType.h>
 
 #if USE(GBM)
+#include <WebCore/DRMDeviceManager.h>
 #include <drm_fourcc.h>
 #include <gbm.h>
 
@@ -421,7 +422,7 @@ void AcceleratedBackingStoreDMABuf::BufferEGLImage::release()
 #if USE(GBM)
 RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferGBM::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const WebCore::IntSize& size, DMABufRendererBufferFormat::Usage usage, uint32_t format, UnixFileDescriptor&& fd, uint32_t stride)
 {
-    auto* device = WebCore::PlatformDisplay::sharedDisplay().gbmDevice();
+    auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(WebCore::DRMDeviceManager::NodeType::Render);
     if (!device) {
         WTFLogAlways("Failed to get GBM device");
         return nullptr;

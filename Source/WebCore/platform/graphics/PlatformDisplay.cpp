@@ -510,15 +510,6 @@ const String& PlatformDisplay::drmRenderNodeFile()
 #endif // USE(LIBDRM)
 
 #if USE(GBM)
-struct gbm_device* PlatformDisplay::gbmDevice()
-{
-    auto& manager = DRMDeviceManager::singleton();
-    if (!manager.isInitialized())
-        manager.initializeMainDevice(drmRenderNodeFile());
-
-    return manager.mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
-}
-
 const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 {
     static std::once_flag onceFlag;

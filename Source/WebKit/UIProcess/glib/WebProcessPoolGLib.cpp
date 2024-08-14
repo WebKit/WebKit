@@ -62,6 +62,10 @@
 #include <wpe/wpe-platform.h>
 #endif
 
+#if USE(GBM)
+#include <WebCore/DRMDeviceManager.h>
+#endif
+
 namespace WebKit {
 
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
@@ -92,6 +96,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #else
     parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
 #endif
+    auto& manager = WebCore::DRMDeviceManager::singleton();
+    if (!manager.isInitialized())
+        manager.initializeMainDevice(parameters.renderDeviceFile);
 #endif
 
 #if PLATFORM(GTK)
