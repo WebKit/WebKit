@@ -60,7 +60,7 @@ class SizesCalcParser {
 public:
     SizesCalcParser(CSSParserTokenRange, const Document&);
 
-    float result() const;
+    WEBCORE_EXPORT float result() const;
     bool isValid() const { return m_isValid; }
 
 private:
