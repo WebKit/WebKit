@@ -533,7 +533,7 @@ private:
     { 
         if (v->opcode() != b3Opcode)
             return false;
-        if (m_locked.contains(v->child(0)))
+        if (!canBeInternal(v->child(0)))
             return false;
         return true;
     }
@@ -3043,7 +3043,7 @@ private:
 
                 // MADD: d = n * m + a
                 auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
-                    if (left->opcode() != Mul || !canBeInternal(left) || m_locked.contains(right))
+                    if (left->opcode() != Mul || !canBeInternal(left))
                         return false;
                     Value* multiplyLeft = left->child(0);
                     Value* multiplyRight = left->child(1);
@@ -3064,12 +3064,12 @@ private:
                     if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                         append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(right), tmp(m_value));
                         commitInternal(left);
+                        commitInternal(multiplyLeft);
+                        commitInternal(multiplyRight);
                         return true;
                     }
 
                     if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp))
-                        return false;
-                    if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
                         return false;
                     append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
                     commitInternal(left);
@@ -3107,7 +3107,7 @@ private:
                     return false;
 
                 // MSUB: d = a - n * m
-                if (m_locked.contains(left) || right->opcode() != Mul || !canBeInternal(right))
+                if (right->opcode() != Mul || !canBeInternal(right))
                     return false;
                 Value* multiplyLeft = right->child(0);
                 Value* multiplyRight = right->child(1);
@@ -3128,12 +3128,12 @@ private:
                 if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                     append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(left), tmp(m_value));
                     commitInternal(right);
+                    commitInternal(multiplyLeft);
+                    commitInternal(multiplyRight);
                     return true;
                 }
 
                 if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp))
-                    return false;
-                if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
                     return false;
                 append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
                 commitInternal(right);
@@ -3156,12 +3156,14 @@ private:
         }
 
         case Neg: {
+            Value* child = m_value->child(0);
+
             auto tryAppendMultiplyNeg = [&] () -> bool {
                 // MNEG : d = -(n * m)
-                if (m_value->child(0)->opcode() != Mul || !canBeInternal(m_value->child(0)))
+                if (child->opcode() != Mul || !canBeInternal(child))
                     return false;
-                Value* multiplyLeft = m_value->child(0)->child(0);
-                Value* multiplyRight = m_value->child(0)->child(1);
+                Value* multiplyLeft = child->child(0);
+                Value* multiplyRight = child->child(1);
                 Air::Opcode airOpcode = tryOpcodeForType(MultiplyNeg32, MultiplyNeg64, m_value->type());
                 auto tryNewAirOpcode = [&] () -> Air::Opcode {
                     if (airOpcode != MultiplyNeg64)
@@ -3178,23 +3180,23 @@ private:
                 Air::Opcode newAirOpcode = tryNewAirOpcode();
                 if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                     append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(m_value));
-                    commitInternal(m_value->child(0));
+                    commitInternal(child);
+                    commitInternal(multiplyLeft);
+                    commitInternal(multiplyRight);
                     return true;
                 }
 
                 if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp))
                     return false;
-                if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
-                    return false;
                 append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(m_value));
-                commitInternal(m_value->child(0));
+                commitInternal(child);
                 return true;
             };
 
             if (tryAppendMultiplyNeg())
                 return;
 
-            appendUnOp<Neg32, Neg64, NegateDouble, NegateFloat>(m_value->child(0));
+            appendUnOp<Neg32, Neg64, NegateDouble, NegateFloat>(child);
             return;
         }
 
@@ -3218,6 +3220,8 @@ private:
                 Air::Opcode opcode = tryAirOpcode();
                 if (isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                     append(opcode, tmp(left->child(0)), tmp(right->child(0)), tmp(m_value));
+                    commitInternal(left);
+                    commitInternal(right);
                     return true;
                 }
                 return false;
@@ -3306,12 +3310,12 @@ private:
                 Air::Opcode opcode = opcodeForType(ExtractUnsignedBitfield32, ExtractUnsignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp)) 
                     return false;
-                if (left->opcode() != ZShr)
+                if (left->opcode() != ZShr || !canBeInternal(left))
                     return false;
 
                 Value* srcValue = left->child(0);
                 Value* lsbValue = left->child(1);
-                if (m_locked.contains(srcValue) || !imm(lsbValue) || lsbValue->asInt() < 0 || !right->hasInt())
+                if (!imm(lsbValue) || lsbValue->asInt() < 0 || !right->hasInt())
                     return false;
 
                 uint64_t lsb = lsbValue->asInt();
@@ -3325,6 +3329,7 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                commitInternal(left);
                 return true;
             };
 
@@ -3336,16 +3341,17 @@ private:
                 Air::Opcode opcode = opcodeForType(ClearBitsWithMask32, ClearBitsWithMask64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) 
                     return false;
-                if (right->opcode() != BitXor)
+                if (right->opcode() != BitXor || !canBeInternal(right))
                     return false;
 
                 Value* nValue = left;
                 Value* mValue = right->child(0);
                 Value* minusOne = right->child(1);
-                if (m_locked.contains(nValue) || m_locked.contains(mValue) || !minusOne->hasInt() || !minusOne->isInt(-1))
+                if (!minusOne->hasInt() || !minusOne->isInt(-1))
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
+                commitInternal(right);
                 return true;
             };
 
@@ -3390,13 +3396,15 @@ private:
                     return false;
                 if (left->opcode() != Shl || left->child(0)->opcode() != BitAnd || right->opcode() != ZShr)
                     return false;
+                if (!canBeInternal(left) || !canBeInternal(left->child(0)) || !canBeInternal(right))
+                    return false;
 
                 Value* nValue = left->child(0)->child(0);
                 Value* maskValue = left->child(0)->child(1);
                 Value* highWidthValue = left->child(1);
                 Value* mValue = right->child(0);
                 Value* lowWidthValue = right->child(1);
-                if (m_locked.contains(nValue) || m_locked.contains(mValue) || !maskValue->hasInt())
+                if (!maskValue->hasInt())
                     return false;
                 if (!imm(highWidthValue) || highWidthValue->asInt() < 0)
                     return false;
@@ -3416,6 +3424,9 @@ private:
 
                 ASSERT(lowWidth < datasize);
                 append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));
+                commitInternal(left);
+                commitInternal(left->child(0));
+                commitInternal(right);
                 return true;
             };
 
@@ -3431,14 +3442,14 @@ private:
                     return false;
                 if (left->opcode() != Shl || right->opcode() != BitAnd || left->child(0)->opcode() != BitAnd)
                     return false;
+                if (!canBeInternal(left) || !canBeInternal(left->child(0)) || !canBeInternal(right))
+                    return false;
 
                 Value* nValue = left->child(0)->child(0);
                 Value* maskValue1 = left->child(0)->child(1);
                 Value* lsbValue = left->child(1);
                 Value* dValue = right->child(0);
                 Value* maskValue2 = right->child(1);
-                if (m_locked.contains(nValue) || m_locked.contains(dValue))
-                    return false;
                 if (!maskValue1->hasInt() || !imm(lsbValue) || lsbValue->asInt() < 0 || !maskValue2->hasInt())
                     return false;
 
@@ -3467,6 +3478,9 @@ private:
                 Tmp result = tmp(m_value);
                 append(relaxedMoveForType(m_value->type()), tmp(dValue), result);
                 append(opcode, tmp(nValue), imm(lsbValue), imm(width), result);
+                commitInternal(left);
+                commitInternal(left->child(0));
+                commitInternal(right);
                 return true;
             };
 
@@ -3482,14 +3496,14 @@ private:
                     return false;
                 if (left->opcode() != BitAnd || left->child(0)->opcode() != ZShr || right->opcode() != BitAnd)
                     return false;
+                if (!canBeInternal(left) || !canBeInternal(left->child(0)) || !canBeInternal(right))
+                    return false;
 
                 Value* nValue = left->child(0)->child(0);
                 Value* maskValue1 = left->child(1);
                 Value* lsbValue = left->child(0)->child(1);
                 Value* dValue = right->child(0);
                 Value* maskValue2 = right->child(1);
-                if (m_locked.contains(nValue) || m_locked.contains(dValue))
-                    return false;
                 if (!maskValue1->hasInt() || !imm(lsbValue) || lsbValue->asInt() < 0 || !maskValue2->hasInt())
                     return false;
 
@@ -3517,6 +3531,9 @@ private:
                 Tmp result = tmp(m_value);
                 append(relaxedMoveForType(m_value->type()), tmp(dValue), result);
                 append(opcode, tmp(nValue), imm(lsbValue), imm(width), result);
+                commitInternal(left);
+                commitInternal(left->child(0));
+                commitInternal(right);
                 return true;
             };
 
@@ -3528,16 +3545,17 @@ private:
                 Air::Opcode opcode = opcodeForType(OrNot32, OrNot64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) 
                     return false;
-                if (right->opcode() != BitXor)
+                if (right->opcode() != BitXor || !canBeInternal(right))
                     return false;
 
                 Value* nValue = left;
                 Value* mValue = right->child(0);
                 Value* minusOne = right->child(1);
-                if (m_locked.contains(nValue) || m_locked.contains(mValue) || !minusOne->hasInt() || !minusOne->isInt(-1))
+                if (!minusOne->hasInt() || !minusOne->isInt(-1))
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
+                commitInternal(right);
                 return true;
             };
 
@@ -3587,7 +3605,7 @@ private:
                     return false;
                 Value* nValue = left;
                 Value* minusOne = right->child(1);
-                if (m_locked.contains(nValue) || !minusOne->hasInt() || !minusOne->isInt(-1))
+                if (!minusOne->hasInt() || !minusOne->isInt(-1) || !canBeInternal(right))
                     return false;
 
                 // eon-with-shift Pattern: d = n ^ ((m ShiftType amount) ^ -1)
@@ -3600,7 +3618,7 @@ private:
                         return false;
                     Value* mValue = shiftValue->child(0);
                     Value* amountValue = shiftValue->child(1);
-                    if (!canBeInternal(shiftValue) || m_locked.contains(mValue) || !imm(amountValue) || amountValue->asInt() < 0)
+                    if (!imm(amountValue) || amountValue->asInt() < 0 || !canBeInternal(shiftValue))
                         return false;
                     uint64_t amount = amountValue->asInt();
                     uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
@@ -3618,9 +3636,10 @@ private:
 
                 Value* mValue = right->child(0);
                 Air::Opcode opcode = opcodeForType(XorNot32, XorNot64, m_value->type());
-                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp) || m_locked.contains(mValue))
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp))
                     return false;
                 append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
+                commitInternal(right);
                 return true;
             };
 
@@ -3666,9 +3685,6 @@ private:
                 uint64_t lsb = right->asInt();
 
                 auto doAppend = [&](Value* nValue, uint64_t mask) -> bool {
-                    if (m_locked.contains(nValue))
-                        return false;
-
                     if (!mask || mask & (mask + 1))
                         return false;
 
@@ -3719,15 +3735,15 @@ private:
                 Air::Opcode opcode = opcodeForType(InsertSignedBitfieldInZero32, InsertSignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != SShr || left->child(0)->opcode() != Shl)
+                if (left->opcode() != SShr || !canBeInternal(left))
+                    return false;
+                if (left->child(0)->opcode() != Shl || !canBeInternal(left->child(0)))
                     return false;
 
                 Value* srcValue = left->child(0)->child(0);
                 Value* amount1Value = left->child(0)->child(1);
                 Value* amount2Value = left->child(1);
                 Value* lsbValue = right;
-                if (m_locked.contains(srcValue))
-                    return false;
                 if (!imm(amount1Value) || !imm(amount2Value) || !imm(lsbValue))
                     return false;
                 if (amount1Value->asInt() < 0 || amount2Value->asInt() < 0 || lsbValue->asInt() < 0)
@@ -3747,6 +3763,8 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                commitInternal(left);
+                commitInternal(left->child(0));
                 return true;
             };
 
@@ -3772,15 +3790,15 @@ private:
                 Air::Opcode opcode = opcodeForType(ExtractSignedBitfield32, ExtractSignedBitfield64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != Shl || (left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr))
+                if (left->opcode() != Shl || !canBeInternal(left))
+                    return false;
+                if ((left->child(0)->opcode() != ZShr && left->child(0)->opcode() != SShr) || !canBeInternal(left->child(0)))
                     return false;
 
                 Value* srcValue = left->child(0)->child(0);
                 Value* lsbValue = left->child(0)->child(1);
                 Value* amount1Value = left->child(1);
                 Value* amount2Value = right;
-                if (m_locked.contains(srcValue))
-                    return false;
                 if (!imm(lsbValue) || !imm(amount1Value) || !imm(amount2Value))
                     return false;
                 if (lsbValue->asInt() < 0 || amount1Value->asInt() < 0 || amount2Value->asInt() < 0)
@@ -3800,6 +3818,8 @@ private:
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
+                commitInternal(left);
+                commitInternal(left->child(0));
                 return true;
             };
 
