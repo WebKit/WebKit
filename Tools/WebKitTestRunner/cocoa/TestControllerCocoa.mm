@@ -68,9 +68,9 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/MakeString.h>
 
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
-
 #if ENABLE(IMAGE_ANALYSIS)
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 
