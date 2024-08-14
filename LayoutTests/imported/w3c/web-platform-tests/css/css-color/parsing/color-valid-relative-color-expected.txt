@@ -1075,4 +1075,12 @@ PASS e.style['color'] = "LCH(from var(--accent) l c calc(h + 180))" should set t
 PASS e.style['color'] = "lch(from var(--mycolor) l 0 h)" should set the property value
 PASS e.style['color'] = "var(--mygray)" should set the property value
 PASS e.style['color'] = "lch(from var(--mygray) l 30 h)" should set the property value
+FAIL e.style['color'] = "color(from rebeccapurple srgb r g b)" should set the property value Colors do not match.
+Actual:   color(from rebeccapurple srgb r g b)
+Expected: color(srgb 0.4 0.2 0.6).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 0
+FAIL e.style['color'] = "rgb(from color(srgb 0.4 0.2 0.6) r g b)" should set the property value Colors do not match.
+Actual:   rgb(from color(srgb 0.4 0.2 0.6) r g b)
+Expected: color(srgb 0.4 0.2 0.6).
+Error: assert_equals: Color format is correct. expected "color(srgb   )" but got "rgb(from color(srgb   ) r g b)"
 
