@@ -43,12 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
 WKDOWNLOADPROGRESS_ADDITIONS
-#else
+#endif
+
 @interface WKDownloadProgress : NSProgress
 
 - (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download&)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension;
 
 @end
-#endif
 
 NS_ASSUME_NONNULL_END

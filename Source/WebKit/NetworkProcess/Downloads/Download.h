@@ -41,7 +41,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-OBJC_CLASS WKDownloadProgress;
+OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
 
@@ -126,7 +126,11 @@ private:
     RefPtr<NetworkDataTask> m_download;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
-    RetainPtr<WKDownloadProgress> m_progress;
+    RetainPtr<NSProgress> m_progress;
+#endif
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    RetainPtr<NSData> m_bookmarkData;
+    RetainPtr<NSURL> m_bookmarkURL;
 #endif
     PAL::SessionID m_sessionID;
     bool m_hasReceivedData { false };

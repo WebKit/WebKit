@@ -78,10 +78,13 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 void Download::platformDestroyDownload()
 {
     if (m_progress)
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
+#if HAVE(NSPROGRESS_PUBLISHING_SPI) && !HAVE(MODERN_DOWNLOADPROGRESS)
         [m_progress _unpublish];
 #else
         [m_progress unpublish];
+#endif
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    m_bookmarkURL = nil;
 #endif
 }
 
@@ -89,7 +92,27 @@ void Download::platformDestroyDownload()
 void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData)
 {
     RetainPtr bookmark = toNSData(bookmarkData);
-    m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url bookmarkData:bookmark.get()]);
+    m_bookmarkData = bookmark;
+
+    BOOL bookmarkIsStale = NO;
+    NSError* error = nil;
+    m_bookmarkURL = adoptNS([NSURL URLByResolvingBookmarkData:m_bookmarkData.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error]);
+    if (!m_bookmarkURL)
+        NSLog(@"Unable to create bookmark URL, error = %@", error);
+
+    bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), NULL);
+
+    if (shouldEnableModernDownloadProgress) {
+        m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url]);
+        [m_progress publish];
+    } else {
+        m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url sandboxExtension:nullptr]);
+#if HAVE(NSPROGRESS_PUBLISHING_SPI)
+        [m_progress _publish];
+#else
+        [m_progress publish];
+#endif
+    }
 }
 #else
 void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
