@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Old view transition aborted by new view transition.
+
+PASS Constructing pageswap event
+PASS Constructing pageswap event with a custom name
+PASS Constructing pageswap event with empty dictionary
+PASS Constructing pageswap event with a null viewTransition
+PASS Constructing pageswap event with a viewTransition
+PASS Constructing pageswap event with a viewTransition and activation
+

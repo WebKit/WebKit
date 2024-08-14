@@ -1,0 +1,9 @@
+
+FAIL e.style['view-transition-group'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "nearest" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "contain" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "abc" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "custom-ident" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['view-transition-group'] = "a-1" should set the property value assert_not_equals: property should be set got disallowed value ""
+

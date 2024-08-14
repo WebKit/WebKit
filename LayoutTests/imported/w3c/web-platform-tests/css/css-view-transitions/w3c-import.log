@@ -21,8 +21,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-on-non-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-on-non-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-pseudo-class-match-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-pseudo-class-match.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-type-on-non-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/active-view-transition-type-on-non-root.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset-expected.html
@@ -377,6 +381,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-crash-set-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-crash-view-transition-in-massive-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-named-elements-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-named-elements-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-named-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked.html
@@ -556,6 +563,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/set-universal-specificity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/set-universal-specificity-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/set-universal-specificity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class-inside-shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class-inside-shadow-important-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class-inside-shadow-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class-inside-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-class.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-name-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-name-nested-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/shadow-part-with-name-nested.html
