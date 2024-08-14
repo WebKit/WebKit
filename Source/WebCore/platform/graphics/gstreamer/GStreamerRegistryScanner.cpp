@@ -860,7 +860,7 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
                 return SupportsType::IsNotSupported;
         }
 #else
-        if (!factories.hasElementForMediaType(ElementFactories::Type::Decryptor, "application/x-webm-enc"))
+        if (!factories.hasElementForMediaType(ElementFactories::Type::Decryptor, "application/x-webm-enc"_s))
             return SupportsType::IsNotSupported;
 #endif // GST_CHECK_VERSION(1, 22, 0)
     }
