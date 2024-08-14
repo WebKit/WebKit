@@ -39,7 +39,10 @@
 #include "Path.h"
 #include "RenderBox.h"
 #include "SVGPathBuilder.h"
+#include "SVGPathByteStreamSource.h"
 #include "SVGPathParser.h"
+#include "SVGPathSegList.h"
+#include "SVGPathSegValue.h"
 #include "SVGPathSource.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
@@ -213,9 +216,139 @@ private:
 
 // MARK: -
 
+class ShapeConversionPathConsumer final : public SVGPathConsumer {
+public:
+    ShapeConversionPathConsumer(Vector<BasicShapeShape::ShapeSegment>& segmentList)
+        : m_segmentList(segmentList)
+    { }
+
+    const std::optional<CoordinatePair>& initialMove() const { return m_initialMove; }
+
+private:
+    static CoordinateAffinity fromCoordinateMode(PathCoordinateMode mode)
+    {
+        switch (mode) {
+        case AbsoluteCoordinates:
+            return CoordinateAffinity::Absolute;
+        case RelativeCoordinates:
+            return CoordinateAffinity::Relative;
+        }
+        return CoordinateAffinity::Absolute;
+    }
+
+    static CoordinatePair fromPoint(FloatPoint p)
+    {
+        return { Length(p.x(), LengthType::Fixed), Length(p.y(), LengthType::Fixed) };
+    }
+
+    void incrementPathSegmentCount() override
+    {
+    }
+
+    bool continueConsuming() override
+    {
+        return true;
+    }
+
+    void moveTo(const FloatPoint& offsetPoint, bool, PathCoordinateMode mode) override
+    {
+        if (m_segmentList.isEmpty() && mode == PathCoordinateMode::AbsoluteCoordinates && !m_initialMove) {
+            m_initialMove = fromPoint(offsetPoint);
+            return;
+        }
+
+        auto offset = fromPoint(offsetPoint);
+        m_segmentList.append(ShapeMoveSegment(fromCoordinateMode(mode), WTFMove(offset)));
+    }
+
+    void lineTo(const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        m_segmentList.append(ShapeLineSegment(fromCoordinateMode(mode), WTFMove(offset)));
+    }
+
+    void lineToHorizontal(float len, PathCoordinateMode mode) override
+    {
+        auto length = Length(len, LengthType::Fixed);
+        m_segmentList.append(ShapeHorizontalLineSegment(fromCoordinateMode(mode), WTFMove(length)));
+    }
+
+    void lineToVertical(float len, PathCoordinateMode mode) override
+    {
+        auto length = Length(len, LengthType::Fixed);
+        m_segmentList.append(ShapeVerticalLineSegment(fromCoordinateMode(mode), WTFMove(length)));
+    }
+
+    void curveToCubic(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        auto c1 = fromPoint(controlPoint1);
+        auto c2 = fromPoint(controlPoint2);
+        m_segmentList.append(ShapeCurveSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(c1), WTFMove(c2)));
+    }
+
+    void curveToQuadratic(const FloatPoint& controlPoint, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        auto cp = fromPoint(controlPoint);
+        m_segmentList.append(ShapeCurveSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(cp)));
+    }
+
+    void curveToCubicSmooth(const FloatPoint& controlPoint2, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        auto c2 = fromPoint(controlPoint2);
+        m_segmentList.append(ShapeSmoothSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(c2)));
+    }
+
+    void curveToQuadraticSmooth(const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        m_segmentList.append(ShapeSmoothSegment(fromCoordinateMode(mode), WTFMove(offset)));
+    }
+
+    void arcTo(float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
+    {
+        auto offset = fromPoint(offsetPoint);
+        auto ellipseSize = LengthSize { Length(r1, LengthType::Fixed), Length(r2, LengthType::Fixed) };
+        auto sweep = sweepFlag ? RotationDirection::Clockwise : RotationDirection::Counterclockwise;
+        auto arcSize = largeArcFlag ? ShapeArcSegment::ArcSize::Large : ShapeArcSegment::ArcSize::Small;
+        m_segmentList.append(ShapeArcSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(ellipseSize), sweep, arcSize, angle));
+    }
+
+    void closePath() override
+    {
+        m_segmentList.append(ShapeCloseSegment());
+    }
+
+    Vector<BasicShapeShape::ShapeSegment>& m_segmentList;
+    std::optional<CoordinatePair> m_initialMove;
+};
+
+// MARK: -
+
 Ref<BasicShapeShape> BasicShapeShape::create(WindRule windRule, const CoordinatePair& startPoint, Vector<ShapeSegment>&& commands)
 {
     return adoptRef(* new BasicShapeShape(windRule, startPoint, WTFMove(commands)));
+}
+
+RefPtr<BasicShapeShape> BasicShapeShape::createFromPath(const BasicShapePath& path)
+{
+    auto* pathData = path.pathData();
+    if (!pathData)
+        return nullptr;
+
+    // FIXME: Isn't not totally clear how to convert a initial Move command to the Shape's "from" parameter.
+    // https://github.com/w3c/csswg-drafts/issues/10740
+    Vector<ShapeSegment> shapeCommands;
+
+    ShapeConversionPathConsumer converter(shapeCommands);
+    SVGPathByteStreamSource source(*pathData);
+
+    if (!SVGPathParser::parse(source, converter, UnalteredParsing))
+        return nullptr;
+
+    return adoptRef(* new BasicShapeShape(path.windRule(), converter.initialMove().value_or(CoordinatePair { }), WTFMove(shapeCommands)));
 }
 
 BasicShapeShape::BasicShapeShape(WindRule windRule, const CoordinatePair& startPoint, Vector<ShapeSegment>&& commands)
@@ -388,13 +521,13 @@ auto BasicShapeShape::blend(const ShapeSegment& fromSegment, const ShapeSegment&
 
 bool BasicShapeShape::canBlend(const BasicShape& other) const
 {
-    // FIXME: https://drafts.csswg.org/css-shapes-2/#interpolating-shape says we should interpolate with path(),
-    // but that will get increasingly untenable as the shape commands evolve.
+    if (other.type() == Type::Path)
+        return canBlendWithPath(downcast<BasicShapePath>(other));
+
     if (other.type() != type())
         return false;
 
     const auto& otherShape = downcast<BasicShapeShape>(other);
-
     if (otherShape.windRule() != windRule())
         return false;
 
@@ -412,8 +545,21 @@ bool BasicShapeShape::canBlend(const BasicShape& other) const
     return true;
 }
 
+// https://drafts.csswg.org/css-shapes-2/#interpolating-shape
+bool BasicShapeShape::canBlendWithPath(const BasicShapePath& path) const
+{
+    if (path.windRule() != windRule())
+        return false;
+
+    RefPtr pathAsShape = BasicShapeShape::createFromPath(path);
+    return pathAsShape && canBlend(*pathAsShape);
+}
+
 Ref<BasicShape> BasicShapeShape::blend(const BasicShape& from, const BlendingContext& context) const
 {
+    if (from.type() == Type::Path)
+        return BasicShapeShape::blendWithPath(from, *this, context);
+
     ASSERT(type() == from.type());
     const auto& fromShape = downcast<BasicShapeShape>(from);
 
@@ -427,14 +573,26 @@ Ref<BasicShape> BasicShapeShape::blend(const BasicShape& from, const BlendingCon
     for (size_t i = 0; i < segments().size(); ++i) {
         const auto& toSegment = result->segments()[i];
         const auto& fromSegment = fromShape.segments()[i];
-
-        ShapeSegment theSegment = blend(fromSegment, toSegment, context);
-        UNUSED_PARAM(theSegment);
-
-        result->segments()[i] = theSegment;
+        result->segments()[i] = blend(fromSegment, toSegment, context);
     }
 
     return result;
+}
+
+Ref<BasicShape> BasicShapeShape::blendWithPath(const BasicShape& from, const BasicShape& to, const BlendingContext& context)
+{
+    if (from.type() == Type::Path) {
+        RefPtr fromAsShape = BasicShapeShape::createFromPath(downcast<BasicShapePath>(from));
+        if (!fromAsShape)
+            return to.clone();
+        return to.blend(*fromAsShape, context);
+    }
+
+    ASSERT(to.type() == Type::Path);
+    RefPtr toAsShape = BasicShapeShape::createFromPath(downcast<BasicShapePath>(to));
+    if (!toAsShape)
+        return from.clone();
+    return toAsShape->blend(from, context);
 }
 
 bool BasicShapeShape::operator==(const BasicShape& other) const

@@ -2548,8 +2548,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-009.h
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-010.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-4.html [ ImageOnlyFailure ]
@@ -2569,8 +2567,6 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-3-svg.htm
 imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg [ ImageOnlyFailure ]
 
 # CSS shape()
-webkit.org/b/277609 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
-webkit.org/b/277609 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-006.html [ ImageOnlyFailure ]

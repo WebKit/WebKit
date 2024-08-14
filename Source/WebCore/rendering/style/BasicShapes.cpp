@@ -32,6 +32,7 @@
 
 #include "AnimationUtilities.h"
 #include "BasicShapeConversion.h"
+#include "BasicShapesShape.h"
 #include "CalculationValue.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
@@ -690,6 +691,9 @@ bool BasicShapePath::operator==(const BasicShape& other) const
 
 bool BasicShapePath::canBlend(const BasicShape& other) const
 {
+    if (other.type() == Type::Shape)
+        return other.canBlend(*this);
+
     if (type() != other.type())
         return false;
 
@@ -699,6 +703,9 @@ bool BasicShapePath::canBlend(const BasicShape& other) const
 
 Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, const BlendingContext& context) const
 {
+    if (from.type() == Type::Shape)
+        return BasicShapeShape::blendWithPath(from, *this, context);
+
     ASSERT(type() == from.type());
 
     auto& fromPath = downcast<BasicShapePath>(from);
