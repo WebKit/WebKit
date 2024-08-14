@@ -91,9 +91,15 @@ unsigned initializeMSAASampleCount(GrDirectContext* grContext)
 
     std::call_once(onceFlag, [grContext] {
         // Let the user override the default sample count if they want to.
-        String envString = String::fromLatin1(getenv("WEBKIT_MSAA_SAMPLE_COUNT"));
+        String envString = String::fromLatin1(getenv("WEBKIT_SKIA_MSAA_SAMPLE_COUNT"));
         if (!envString.isEmpty())
             sampleCount = parseInteger<unsigned>(envString).value_or(0);
+
+        if (sampleCount <= 1) {
+            // Values of 0 or 1 mean disabling MSAA.
+            sampleCount = 0;
+            return;
+        }
 
         // Skia checks internally whether MSAA is supported, but also disables it for several platforms where it
         // knows there are bugs. The only way to know whether our sample count will work is trying to create a
@@ -146,7 +152,7 @@ public:
         return m_skiaGrContext.get();
     }
 
-    unsigned sampleCount()
+    unsigned sampleCount() const
     {
         return m_sampleCount;
     }
@@ -163,9 +169,8 @@ private:
         if (auto grContext = GrDirectContexts::MakeGL(skiaGLInterface())) {
             m_skiaGLContext = WTFMove(glContext);
             m_skiaGrContext = WTFMove(grContext);
+            m_sampleCount = initializeMSAASampleCount(m_skiaGrContext.get());
         }
-
-        m_sampleCount = initializeMSAASampleCount(m_skiaGrContext.get());
     }
 
     void invalidateOnCurrentThread()
@@ -204,7 +209,7 @@ GrDirectContext* PlatformDisplay::skiaGrContext()
     return s_skiaGLContext->skiaGrContext();
 }
 
-unsigned PlatformDisplay::msaaSampleCount()
+unsigned PlatformDisplay::msaaSampleCount() const
 {
     return s_skiaGLContext->sampleCount();
 }

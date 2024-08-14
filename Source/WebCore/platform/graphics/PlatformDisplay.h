@@ -141,7 +141,7 @@ public:
 #if USE(SKIA)
     GLContext* skiaGLContext();
     GrDirectContext* skiaGrContext();
-    unsigned msaaSampleCount();
+    unsigned msaaSampleCount() const;
 #endif
 
 #if USE(ATSPI)
