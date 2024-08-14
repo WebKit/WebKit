@@ -367,10 +367,6 @@ fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 fast/url/standard-url.html [ Failure ]
 fast/url/tab-and-newline-stripping.html [ Failure ]
 
-# Uses testRunner.titleTextDirection, which is Chromium-only
-webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
-webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
-
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Skip ]
@@ -383,23 +379,6 @@ fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Skip 
 fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Skip ]
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Skip ]
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
-
-# Needs WebGL video texture support
-fast/canvas/canvas-createPattern-video-loading.html [ Skip ]
-fast/canvas/canvas-createPattern-video-modify.html [ Skip ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
-fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
-fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
-webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
-webgl/2.0.0/conformance/textures/video [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
-webgl/2.0.0/conformance2/textures/video [ Skip ]
-webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
-webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Skip ]
-webgl/tex-2d-video-no-change-wrap.html [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
@@ -425,10 +404,12 @@ fast/canvas/canvas-will-read-frequently.html [ Skip ]
 fast/scrolling/pan-scroll [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
-# These areas are not implemented well on Windows port
+# TestRunner
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-### TestRunner
+# Uses testRunner.titleTextDirection, which is Chromium-only
+webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
+webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
 
 # page visibility isn't supported yet
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
@@ -468,7 +449,23 @@ storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.ht
 # TestRunner::setStorageDatabaseIdleInterval(double) not implemented
 storage/domstorage/storage-close-database-on-idle.html [ Skip ]
 
-### TestRunner end
+# testRunner.setStatisticsShouldDowngradeReferrer() is not supported
+http/tests/security/referrer-policy-header.html [ Skip ]
+http/tests/security/referrer-policy-header-multipart.html [ Skip ]
+http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
+http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
+
+# testRunner.dontForceRepaint
+compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
+compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
+compositing/repaint/copy-forward-dirty-region.html [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Unknown category
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61829 fast/events/drag-image-filename.html [ Skip ]
@@ -549,6 +546,7 @@ fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 # The CookieStore API is not fully implemented on WinCario yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Following tests are labeled "Skip" because not working well and causes crash or timeout
@@ -653,7 +651,9 @@ crypto/subtle/rsa-indexeddb-non-exportable.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb-private.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 
+#//////////////////////////////////////////////////////////////////////////////////////////
 # js
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 # This only applies to file:// loading of ES6 Modules via the import syntax. When
 # Windows recognizes .mjs files as JavaScript, this will just work.
@@ -812,15 +812,6 @@ http/tests/push-api [ Skip ]
 http/tests/quicklook [ Skip ]
 http/tests/referrer-policy-iframe [ Skip ]
 http/tests/referrer-policy-script [ Skip ]
-
-# testRunner.setStatisticsShouldDowngradeReferrer() is not supported
-http/tests/security/referrer-policy-header.html [ Skip ]
-http/tests/security/referrer-policy-header-multipart.html [ Skip ]
-http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
-http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
-http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 
 # ResourceLoadStatistics
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Failure ]
@@ -1035,13 +1026,9 @@ http/tests/site-isolation [ Skip ]
 
 webkit.org/b/68278  http/tests/history/back-with-fragment-change.py [ Failure Pass ]
 
-#///////////////////////////////////////////////////////////////////////////////
-# Issue categories below are shared with other platforms (primarily AppleWin)
-#///////////////////////////////////////////////////////////////////////////////
-
-################################################################################
-#############################   Animation Issues   #############################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Animation
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 
@@ -1058,28 +1045,35 @@ webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Sk
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
-################################################################################
-###########################   End Animation Issues   ###########################
-################################################################################
 
-
-################################################################################
-############################   Compositing Issues   ############################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Compositing
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
 
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Skip ]
 
-################################################################################
-##########################   End Compositing Issues   ##########################
-################################################################################
+compositing/animation/repaint-after-clearing-shared-backing.html [ ImageOnlyFailure ]
+compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
+compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
+compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
+compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
+compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
+compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
 
+# ImageOnlyFailure only on local PC. Depends on the graphis driver?
+compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pass ]
 
-################################################################################
-################################   CSS Issues   ################################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# CSS
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/136484 fast/css-generated-content/initial-letter-first-line-wrapping.html  [ ImageOnlyFailure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
@@ -1148,14 +1142,9 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-t
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Pass ]
 
-################################################################################
-##############################   End CSS Issues   ##############################
-################################################################################
-
-
-################################################################################
-################################   DOM Issues   ################################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# DOM
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Pass Failure ]
 
@@ -1193,14 +1182,9 @@ fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 
 webkit.org/b/224735 [ Release ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Crash
 
-################################################################################
-##############################   End DOM Issues   ##############################
-################################################################################
-
-
-################################################################################
-##############################   Editing Issues   ##############################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Editing
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/203100 editing/async-clipboard [ Skip ]
 
@@ -1258,14 +1242,9 @@ webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
 
 editing/input/press-tab-during-ime-composition.html [ Failure ]
 
-################################################################################
-############################   End Editing Issues   ############################
-################################################################################
-
-
-################################################################################
-##############################   Storage Issues   ##############################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Storage
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 # TODO These tests failures need to be investigated
 
@@ -1299,9 +1278,119 @@ imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html [ Ski
 imported/w3c/web-platform-tests/cookies/samesite/form-post-blank-reload.https.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html [ Skip ]
 
-################################################################################
-############################   End Storage Issues   ############################
-################################################################################
+#//////////////////////////////////////////////////////////////////////////////////////////
+# WebGL
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# Needs WebGL video texture support
+fast/canvas/canvas-createPattern-video-loading.html [ Skip ]
+fast/canvas/canvas-createPattern-video-modify.html [ Skip ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
+fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
+fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
+webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.0/conformance/textures/video [ Skip ]
+webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.0/conformance2/textures/video [ Skip ]
+webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
+webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Skip ]
+webgl/tex-2d-video-no-change-wrap.html [ Skip ]
+
+webgl/1.0.3 [ Skip ]
+webgl/1.0.x [ Skip ]
+webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
+webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
+
+[ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
+
+[ Debug ] fast/canvas/webgl/webgl2-large-getbuffersubdata.html [ Skip ] # Slow
+
+# Needs JIT
+webkit.org/b/274059 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/misc/uninitialized-test.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Timeout
+webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Skip ] # Failure Timeout
+
+fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
+fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Failure
+fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
+fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
+fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
+fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
+fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Skip ] # Timeout
+fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
+fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
+fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
+fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
+
+webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
+webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
+webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
+webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
+webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
+webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
+webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
+webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout Failure Pass
+webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
+
+# Not applicable.
+webgl/webgl-backend-type.html [ Skip ]
+
+webgl/lose-context-after-context-lost.html [ Failure ]
+webgl/max-active-contexts-gc.html [ Failure Pass ]
+webgl/multiple-context-losses.html [ Failure ]
+
+webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Skip ] # Timeout
+webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
+webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
+
+fast/canvas/webgl/colorspaces-test.html [ Failure Pass ]
+fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
+
+fast/canvas/webgl/move-canvas-in-document-while-clean.html [ ImageOnlyFailure ]
+
+webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
+webgl/many-contexts.html [ Skip ] # Timeout
+webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
+
+webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
+
+fast/canvas/webgl/lose-context-on-timeout-async.html [ Slow ]
+fast/canvas/webgl/lose-context-on-timeout.html [ Slow ]
+fast/canvas/webgl/uninitialized-test.html [ Slow ]
+fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Slow ]
+
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Unknown category
+#//////////////////////////////////////////////////////////////////////////////////////////
 
 # Passes on Win10, fails on Win11
 webkit.org/b/159755 fast/text/emoji-gender-3.html [ Pass ImageOnlyFailure ]
@@ -1939,34 +2028,7 @@ traversal [ Skip ]
 userscripts [ Skip ]
 webanimations [ Skip ]
 webexposed [ Skip ]
-webgl/1.0.3 [ Skip ]
-webgl/1.0.x [ Skip ]
-webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 webxr [ Skip ]
-
-[ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
-
-[ Debug ] fast/canvas/webgl/webgl2-large-getbuffersubdata.html [ Skip ] # Slow
-
-# Needs JIT
-webkit.org/b/274059 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
-webkit.org/b/274059 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Timeout
-webkit.org/b/274059 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Timeout
-webkit.org/b/274059 webgl/2.0.y/conformance/misc/uninitialized-test.html [ Skip ] # Timeout
-webkit.org/b/274059 webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Timeout
-webkit.org/b/274059 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Skip ] # Failure Timeout
 
 webkit.org/b/268988 fast/events/key-events-in-input-button.html [ Failure ]
 
@@ -1991,21 +2053,7 @@ fast/canvas/canvas-measureText-2.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
 fast/canvas/font-family-system-ui-canvas.html [ Skip ] # ImageOnlyFailure
-fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
-fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Failure
-fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
-fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
-fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
-fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
-fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
-fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Skip ] # Timeout
-fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Skip ] # Timeout
-fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
-fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
-fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
-fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
+
 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/custom-elements/defined-rule.html [ ImageOnlyFailure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
@@ -2115,22 +2163,6 @@ inspector/cpu-profiler/threads.html [ Failure ]
 loader/reload-subresource-when-type-changes.html [ Failure ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
 loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
-webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
-webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.y/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
-webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
-webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
-webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
-webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
-webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
-webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout Failure Pass
-webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
-webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 workers/bomb.html [ Skip ] # Timeout
 
 webkit.org/b/162830 fast/events/tabindex-focus-blur-all.html [ Pass Timeout ]
@@ -2152,18 +2184,11 @@ fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
 
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 
-# Not applicable.
-webgl/webgl-backend-type.html [ Skip ]
-
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
 # Fails on Win10, Passes on Win11
 fast/text/flag-codepoint.html [ ImageOnlyFailure Pass ]
 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure Pass ]
-
-webgl/lose-context-after-context-lost.html [ Failure ]
-webgl/max-active-contexts-gc.html [ Failure Pass ]
-webgl/multiple-context-losses.html [ Failure ]
 
 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 
@@ -2197,9 +2222,7 @@ compositing/tiling/tiled-reflection-inwindow.html [ Skip ]
 
 # Skip all dump render tree tests.
 # webkit.org/b/270768
-animations/3d/change-transform-in-end-event.html [ Skip ]
 animations/3d/matrix-transform-type-animation.html [ Skip ]
-animations/3d/state-at-end-event-transform.html [ Skip ]
 animations/state-at-end-event.html [ Skip ]
 compositing/animation/state-at-end-event-transform-layer.html [ Skip ]
 compositing/color-matching/image-color-matching.html [ Skip ]
@@ -3798,19 +3821,6 @@ compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
 css3/filters/backdrop/resource-use-change-size-from-zero.html [ Skip ]
 css3/filters/filtered-compositing-descendant.html [ Skip ]
 
-compositing/animation/repaint-after-clearing-shared-backing.html [ ImageOnlyFailure ]
-compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
-compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
-compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
-compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
-compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
-compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
-compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-compositing/clipping/cached-cliprect-with-compositing-boundary.html [ ImageOnlyFailure ]
-compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
-compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
-
 # Tests using eventSender.callAfterScrollingCompletes time out
 compositing/fixed-with-main-thread-scrolling.html [ Skip ] # Timeout
 
@@ -3832,12 +3842,6 @@ fast/transforms/rotated-transform-affects-scrolling-1.html [ Failure ]
 fast/transforms/rotated-transform-affects-scrolling-2.html [ Failure ]
 
 fast/workers/worker-multi-startup.html [ Skip ] # Timeout
-webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Skip ] # Timeout
-webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
-webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
-
-fast/canvas/webgl/colorspaces-test.html [ Failure Pass ]
-fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 
 imported/w3c/web-platform-tests/cookies/size/attributes.www.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/size/name-and-value.html [ Failure ]
@@ -3897,7 +3901,6 @@ fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
-fast/canvas/webgl/move-canvas-in-document-while-clean.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ] # ImageOnlyFailure
 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
@@ -3912,9 +3915,6 @@ fast/css/accent-color/text.html [ Pass ]
 
 fast/events/wheel/wheel-event-destroys-frame.html [ Skip ] # Timeout
 fast/text/install-font-style-recalc.html [ Skip ] # Timeout
-webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
-webgl/many-contexts.html [ Skip ] # Timeout
-webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
 
 
 # Tests depend on the system timezone.
@@ -3966,7 +3966,6 @@ fast/text/variations [ Skip ]
 
 webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
 
-webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
@@ -3981,9 +3980,6 @@ webkit.org/b/230504 css3/masking/reference-clip-path-animate-transform-repaint.h
 # ImageOnlyFailure only on Buildbot
 fast/forms/placeholder-with-positioned-element.html [ ImageOnlyFailure Pass ]
 fast/forms/input-placeholder-text-indent.html [ ImageOnlyFailure Pass ]
-
-# ImageOnlyFailure only on local PC. Depends on the graphis driver?
-compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pass ]
 
 fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
 
@@ -4028,10 +4024,6 @@ animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
 
 editing/selection/rtl-move-selection-right-left.html [ Slow ]
-fast/canvas/webgl/lose-context-on-timeout-async.html [ Slow ]
-fast/canvas/webgl/lose-context-on-timeout.html [ Slow ]
-fast/canvas/webgl/uninitialized-test.html [ Slow ]
-fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Slow ]
 
 fast/css3-text/css3-text-decoration/text-decoration-thickness.html [ ImageOnlyFailure ]
 fast/forms/listbox-zero-item-height.html [ Failure ]
@@ -4124,11 +4116,6 @@ webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html [ Skip ]
-
-# testRunner.dontForceRepaint
-compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
-compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
-compositing/repaint/copy-forward-dirty-region.html [ Skip ]
 
 # Failing with non-English keyboard
 webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure Pass ]
