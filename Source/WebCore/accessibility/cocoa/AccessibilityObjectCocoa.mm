@@ -196,7 +196,8 @@ RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range
     auto result = adoptNS([[NSMutableArray alloc] init]);
 
     // Iterate over the range to build the AX attributed strings.
-    for (TextIterator it(range); !it.atEnd(); it.advance()) {
+    TextIterator it = textIteratorIgnoringFullSizeKana(range);
+    for (; !it.atEnd(); it.advance()) {
         Node& node = it.range().start.container;
 
         // Non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX).

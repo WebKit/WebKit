@@ -707,6 +707,9 @@ accessibility/cells-inside-contenteditable.html [ Skip ]
 
 http/wpt/service-workers/mac [ Skip ]
 
+# TextMarkerRangeForElement is only implemented on Cocoa platforms.
+accessibility/full-size-kana-untransformed.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

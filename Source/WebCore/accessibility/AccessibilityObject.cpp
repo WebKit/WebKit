@@ -1707,7 +1707,7 @@ StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Pos
 
 String AccessibilityObject::stringForRange(const SimpleRange& range) const
 {
-    TextIterator it(range);
+    TextIterator it = textIteratorIgnoringFullSizeKana(range);
     if (it.atEnd())
         return String();
 
@@ -1738,7 +1738,8 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
         return { };
 
     StringBuilder builder;
-    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
+    TextIterator it = textIteratorIgnoringFullSizeKana(*range);
+    for (; !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
@@ -3851,7 +3852,7 @@ bool AccessibilityObject::pressedIsPresent() const
 
 TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() const
 {
-    TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresStyleVisibility };
+    TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresStyleVisibility, TextIteratorBehavior::IgnoresFullSizeKana };
 
 #if USE(ATSPI)
     // We need to emit replaced elements for ATSPI, and present
@@ -3861,7 +3862,12 @@ TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() co
     
     return behaviors;
 }
-    
+
+TextIterator AccessibilityObject::textIteratorIgnoringFullSizeKana(const SimpleRange& range)
+{
+    return TextIterator(range, { TextIteratorBehavior::IgnoresFullSizeKana });
+}
+
 AccessibilityRole AccessibilityObject::buttonRoleType() const
 {
     // If aria-pressed is present, then it should be exposed as a toggle button.
