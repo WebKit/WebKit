@@ -493,21 +493,21 @@ TEST(WKWebExtension, BackgroundParsing)
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
 #if TARGET_OS_IPHONE
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
 #else
-    EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
+    EXPECT_TRUE(testExtension.hasPersistentBackgroundContent);
 #endif
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"page": @"test.html", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
 #if TARGET_OS_IPHONE
@@ -520,75 +520,75 @@ TEST(WKWebExtension, BackgroundParsing)
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
 #if TARGET_OS_IPHONE
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
 #else
-    EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
+    EXPECT_TRUE(testExtension.hasPersistentBackgroundContent);
 #endif
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js" };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test-1.js", @"test-2.js" ], @"service_worker": @"test.js", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"page": @"test.html", @"service_worker": @"test.js", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test-1.js", @"test-2.js" ], @"page": @"test.html", @"service_worker": @"test.js", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"service_worker": @"test.js", @"type": @"module", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_TRUE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{ @"scripts": @[ @"test.js", @"test2.js" ], @"type": @"module", @"persistent": @NO };
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
-    EXPECT_TRUE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
+    EXPECT_TRUE(testExtension._hasModularBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     // Invalid cases
@@ -598,7 +598,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_TRUE(testExtension.backgroundContentIsPersistent);
+    EXPECT_TRUE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -609,7 +609,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -619,8 +619,8 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
-    EXPECT_FALSE(testExtension._backgroundContentUsesModules);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
+    EXPECT_FALSE(testExtension._hasModularBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -629,7 +629,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -638,7 +638,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -647,7 +647,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -656,7 +656,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -665,7 +665,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -674,7 +674,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -683,7 +683,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -692,7 +692,7 @@ TEST(WKWebExtension, BackgroundParsing)
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_FALSE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension.backgroundContentIsPersistent);
+    EXPECT_FALSE(testExtension.hasPersistentBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
     EXPECT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidBackgroundPersistence));
@@ -711,7 +711,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -723,7 +723,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -733,7 +733,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -743,7 +743,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -753,7 +753,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -763,7 +763,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -773,7 +773,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -783,7 +783,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -793,7 +793,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary[@"background"] = @{
@@ -804,7 +804,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     // Invalid cases
@@ -816,7 +816,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_TRUE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_TRUE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
 
@@ -828,7 +828,7 @@ TEST(WKWebExtension, BackgroundPreferredEnvironmentParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     EXPECT_TRUE(testExtension.hasBackgroundContent);
-    EXPECT_FALSE(testExtension._backgroundContentIsServiceWorker);
+    EXPECT_FALSE(testExtension._hasServiceWorkerBackgroundContent);
     EXPECT_NE(testExtension.errors.count, 0ul);
     EXPECT_NOT_NULL(matchingError(testExtension.errors, WKWebExtensionErrorInvalidManifestEntry));
 

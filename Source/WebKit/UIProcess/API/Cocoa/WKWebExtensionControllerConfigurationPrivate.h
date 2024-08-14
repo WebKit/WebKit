@@ -39,13 +39,13 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract A Boolean value indicating if this configuration uses a temporary directory.
- @discussion This property indicates whether the configuration is persistent, with data stored in a temporary directory.
+ @discussion Indicates whether the configuration is persistent, with data stored in a temporary directory.
 */
 @property (nonatomic, readonly, getter=_isTemporary) BOOL _temporary;
 
 /*!
  @abstract The file path to the storage directory, if applicable.
- @discussion This property contains the file path to the storage directory used by the configuration. It is `nil` for non-persistent
+ @discussion Provides the file path to the storage directory used by the configuration. It is `nil` for non-persistent
  configurations. For persistent configurations, it provides the path where data is stored, which may be a temporary directory.
 */
 @property (nonatomic, nullable, copy, setter=_setStorageDirectoryPath:) NSString *_storageDirectoryPath;

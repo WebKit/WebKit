@@ -34,7 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "WKWebExtensionControllerDelegatePrivate.h"
-#import "WKWebExtensionWindowCreationOptionsInternal.h"
+#import "WKWebExtensionWindowConfigurationInternal.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionUtilities.h"
@@ -55,11 +55,11 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static constexpr CGFloat NaN = std::numeric_limits<CGFloat>::quiet_NaN();
     static constexpr CGRect CGRectNaN = { { NaN, NaN }, { NaN, NaN } };
 
-    auto *creationOptions = [[WKWebExtensionWindowCreationOptions alloc] _init];
-    creationOptions.windowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
-    creationOptions.windowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
-    creationOptions.focused = creationParameters.focused.value_or(true);
-    creationOptions.usePrivateBrowsing = creationParameters.privateBrowsing.value_or(false);
+    auto *configuration = [[WKWebExtensionWindowConfiguration alloc] _init];
+    configuration.windowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
+    configuration.windowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
+    configuration.shouldBeFocused = creationParameters.focused.value_or(true);
+    configuration.shouldBePrivate = creationParameters.privateBrowsing.value_or(false);
 
     if (creationParameters.frame) {
         CGRect desiredFrame = creationParameters.frame.value();
@@ -75,9 +75,9 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             desiredFrame.origin.y = screenFrame.size.height + screenFrame.origin.y - desiredFrame.size.height - desiredFrame.origin.y;
 #endif
 
-        creationOptions.frame = desiredFrame;
+        configuration.frame = desiredFrame;
     } else
-        creationOptions.frame = CGRectNaN;
+        configuration.frame = CGRectNaN;
 
     NSMutableArray<NSURL *> *urls = [NSMutableArray array];
     NSMutableArray<id<WKWebExtensionTab>> *tabs = [NSMutableArray array];
@@ -97,10 +97,10 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
         }
     }
 
-    creationOptions.tabURLs = [urls copy];
-    creationOptions.tabs = [tabs copy];
+    configuration.tabURLs = [urls copy];
+    configuration.tabs = [tabs copy];
 
-    [extensionController()->delegate() webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
+    [extensionController()->delegate() webExtensionController:extensionController()->wrapper() openNewWindowUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

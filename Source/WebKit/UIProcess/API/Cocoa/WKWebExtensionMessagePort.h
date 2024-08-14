@@ -78,16 +78,17 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MessagePort)
 
 /*!
  @abstract Sends a message to the connected web extension.
- @param message The message that needs to be sent, which must be JSON-serializable.
- @param completionHandler An optional block to be invoked after the message is sent, taking a boolean and an optional error object as parameters.
+ @param message The JSON-serializable message to be sent.
+ @param completionHandler An optional block to be invoked after the message is sent, taking an optional error object.
+ @note The message must be JSON-serializable according to `+[NSJSONSerialization isValidJSONObject:]` method.
  */
-- (void)sendMessage:(nullable id)message completionHandler:(void (^ _Nullable)(BOOL success, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
+- (void)sendMessage:(nullable id)message completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(sendMessage(_:completionHandler:));
 
 /*!
  @abstract Disconnects the port, terminating all further messages.
  @param error An optional error object indicating the reason for disconnection.
  */
-- (void)disconnectWithError:(nullable NSError *)error;
+- (void)disconnectWithError:(nullable NSError *)error NS_SWIFT_NAME(disconnect(throwing:));
 
 @end
 

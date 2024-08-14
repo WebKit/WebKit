@@ -92,7 +92,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The active errors for the extension.
- @discussion This property holds an array of error objects if there are any errors, or an empty array if there are no errors.
+ @discussion Provides an array of error objects if there are any errors, or an empty array if there are no errors.
  */
 @property (nonatomic, readonly, copy) NSArray<NSError *> *errors;
 
@@ -191,9 +191,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract A Boolean value indicating whether the extension has background content that stays in memory as long as the extension is loaded.
  @note Note that extensions are only allowed to have persistent background content on macOS. An `WKWebExtensionErrorInvalidBackgroundPersistence`
- error will be reported on iOS if an attempt is made to load a persistent extension.
+ error will be reported on iOS, iPadOS, and visionOS if an attempt is made to load a persistent extension.
  */
-@property (nonatomic, readonly) BOOL backgroundContentIsPersistent;
+@property (nonatomic, readonly) BOOL hasPersistentBackgroundContent;
 
 /*!
  @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.

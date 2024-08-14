@@ -52,7 +52,7 @@
 }
 
 #if PLATFORM(MAC)
-- (void)webExtensionController:(WKWebExtensionController *)controller openNewWindowWithOptions:(WKWebExtensionWindowCreationOptions *)options forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<WKWebExtensionWindow> newWindow, NSError *error))completionHandler
+- (void)webExtensionController:(WKWebExtensionController *)controller openNewWindowUsingConfiguration:(WKWebExtensionWindowConfiguration *)options forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<WKWebExtensionWindow> newWindow, NSError *error))completionHandler
 {
     if (_openNewWindow)
         return _openNewWindow(options, extensionContext, completionHandler);
@@ -61,7 +61,7 @@
 }
 #endif
 
-- (void)webExtensionController:(WKWebExtensionController *)controller openNewTabWithOptions:(WKWebExtensionTabCreationOptions *)options forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<WKWebExtensionTab> newTab, NSError *error))completionHandler
+- (void)webExtensionController:(WKWebExtensionController *)controller openNewTabUsingConfiguration:(WKWebExtensionTabConfiguration *)options forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<WKWebExtensionTab> newTab, NSError *error))completionHandler
 {
     if (_openNewTab)
         return _openNewTab(options, extensionContext, completionHandler);
@@ -114,7 +114,7 @@
         completionHandler(urls, nil);
 }
 
-- (void)webExtensionController:(WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(NSString *)applicationIdentifier forExtensionContext:(WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id, NSError *))replyHandler
+- (void)webExtensionController:(WKWebExtensionController *)controller sendMessage:(id)message toApplicationWithIdentifier:(NSString *)applicationIdentifier forExtensionContext:(WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id, NSError *))replyHandler
 {
     if (_sendMessage)
         _sendMessage(message, applicationIdentifier, replyHandler);

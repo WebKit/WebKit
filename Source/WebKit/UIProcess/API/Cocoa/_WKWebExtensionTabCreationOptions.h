@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebExtensionTabCreationOptions.h>
+#import <WebKit/WKWebExtensionTabConfiguration.h>
 
 WK_EXTERN
-@interface _WKWebExtensionTabCreationOptions : WKWebExtensionTabCreationOptions
+@interface _WKWebExtensionTabCreationOptions : WKWebExtensionTabConfiguration
 @end
 
-#define _WKWebExtensionTabCreationOptions WKWebExtensionTabCreationOptions
+#define _WKWebExtensionTabCreationOptions WKWebExtensionTabConfiguration

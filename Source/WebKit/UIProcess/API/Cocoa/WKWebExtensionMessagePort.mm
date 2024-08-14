@@ -66,18 +66,18 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
     return _webExtensionMessagePort->isDisconnected();
 }
 
-- (void)sendMessage:(id)message completionHandler:(void (^)(BOOL success, NSError *))completionHandler
+- (void)sendMessage:(id)message completionHandler:(void (^)(NSError *))completionHandler
 {
     if (!completionHandler)
-        completionHandler = ^(BOOL, NSError *) { };
+        completionHandler = ^(NSError *) { };
 
-    _webExtensionMessagePort->sendMessage(message, [completionHandler = makeBlockPtr(completionHandler)] (WebKit::WebExtensionMessagePort::Error error) {
+    _webExtensionMessagePort->sendMessage(message, [completionHandler = makeBlockPtr(completionHandler)](WebKit::WebExtensionMessagePort::Error error) {
         if (error) {
-            completionHandler(NO, toAPI(error.value()));
+            completionHandler(toAPI(error.value()));
             return;
         }
 
-        completionHandler(YES, nil);
+        completionHandler(nil);
     });
 }
 
@@ -110,9 +110,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
     return NO;
 }
 
-- (void)sendMessage:(id)message completionHandler:(void (^)(BOOL success, NSError *))completionHandler
+- (void)sendMessage:(id)message completionHandler:(void (^)(NSError *))completionHandler
 {
-    completionHandler(NO, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
+    completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
 }
 
 - (void)disconnectWithError:(NSError *)error

@@ -23,28 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebExtensionTabCreationOptions.h"
-
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+#import "WKWebExtensionWindowConfiguration.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-@interface WKWebExtensionTabCreationOptions ()
+@interface WKWebExtensionWindowConfiguration ()
 
 - (instancetype)_init NS_DESIGNATED_INITIALIZER;
 
-@property (readwrite, setter=_setWindow:) id <WKWebExtensionWindow> window;
-@property (readwrite, setter=_setIndex:) NSUInteger index;
-@property (readwrite, setter=_setParentTab:) id <WKWebExtensionTab> parentTab;
-@property (readwrite, setter=_setURL:) NSURL *url;
-@property (readwrite, setter=_setActive:) BOOL active;
-@property (readwrite, setter=_setSelected:) BOOL selected;
-@property (readwrite, setter=_setPinned:) BOOL pinned;
-@property (readwrite, setter=_setMuted:) BOOL muted;
-@property (readwrite, setter=_setReaderModeShowing:) BOOL readerModeShowing;
+@property (readwrite, setter=_setFrame:) CGRect frame;
+@property (readwrite, setter=_setWindowType:) WKWebExtensionWindowType windowType;
+@property (readwrite, setter=_setWindowState:) WKWebExtensionWindowState windowState;
+@property (readwrite, setter=_setTabURLs:) NSArray<NSURL *> *tabURLs;
+@property (readwrite, setter=_setTabs:) NSArray<id <WKWebExtensionTab>> *tabs;
+@property (readwrite, setter=_setShouldBeFocused:) BOOL shouldBeFocused;
+@property (readwrite, setter=_setShouldBePrivate:) BOOL shouldBePrivate;
 
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
-
-WK_HEADER_AUDIT_END(nullability, sendability)

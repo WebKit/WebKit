@@ -23,18 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
+#import "WKWebExtensionTabConfiguration.h"
 
-#import "config.h"
-#import "WKWebExtensionWindowCreationOptionsInternal.h"
+WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-@implementation WKWebExtensionWindowCreationOptions
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)_init
-{
-    return [super init];
-}
+@interface WKWebExtensionTabConfiguration ()
+
+- (instancetype)_init NS_DESIGNATED_INITIALIZER;
+
+@property (readwrite, setter=_setWindow:) id <WKWebExtensionWindow> window;
+@property (readwrite, setter=_setIndex:) NSUInteger index;
+@property (readwrite, setter=_setParentTab:) id <WKWebExtensionTab> parentTab;
+@property (readwrite, setter=_setURL:) NSURL *url;
+@property (readwrite, setter=_setShouldBeActive:) BOOL shouldBeActive;
+@property (readwrite, setter=_setShouldAddToSelection:) BOOL shouldAddToSelection;
+@property (readwrite, setter=_setShouldBePinned:) BOOL shouldBePinned;
+@property (readwrite, setter=_setShouldBeMuted:) BOOL shouldBeMuted;
+@property (readwrite, setter=_setShouldReaderModeBeActive:) BOOL shouldReaderModeBeActive;
 
 @end
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
+WK_HEADER_AUDIT_END(nullability, sendability)

@@ -152,7 +152,7 @@ private:
     bool m_respondsToWindowType : 1 { false };
     bool m_respondsToWindowState : 1 { false };
     bool m_respondsToSetWindowState : 1 { false };
-    bool m_respondsToIsUsingPrivateBrowsing : 1 { false };
+    bool m_respondsToIsPrivate : 1 { false };
     bool m_respondsToFrame : 1 { false };
     bool m_respondsToSetFrame : 1 { false };
     bool m_respondsToScreenFrame : 1 { false };

@@ -29,7 +29,7 @@
 
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
-#import <WebKit/WKWebExtensionWindowCreationOptions.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 
 @interface DummyWebExtensionWindow : NSObject <WKWebExtensionWindow>
 @end
@@ -217,7 +217,7 @@ TEST(WKWebExtensionAPIWindows, GetAll)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
 
     [manager openNewWindowUsingPrivateBrowsing:YES];
 
@@ -267,7 +267,7 @@ TEST(WKWebExtensionAPIWindows, GetAllWithPrivateAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     auto *windowTwo = [manager openNewWindowUsingPrivateBrowsing:YES];
 
@@ -431,27 +431,27 @@ TEST(WKWebExtensionAPIWindows, Create)
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.frame.origin.x, 300);
-        EXPECT_EQ(options.frame.size.height, 400);
-        EXPECT_TRUE(std::isnan(options.frame.origin.y));
-        EXPECT_TRUE(std::isnan(options.frame.size.width));
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.frame.origin.x, 300);
+        EXPECT_EQ(configuration.frame.size.height, 400);
+        EXPECT_TRUE(std::isnan(configuration.frame.origin.y));
+        EXPECT_TRUE(std::isnan(configuration.frame.size.width));
 
-        EXPECT_TRUE(options.focused);
-        EXPECT_FALSE(options.usePrivateBrowsing);
+        EXPECT_TRUE(configuration.shouldBeFocused);
+        EXPECT_FALSE(configuration.shouldBePrivate);
 
-        EXPECT_EQ(options.windowType, WKWebExtensionWindowTypePopup);
-        EXPECT_EQ(options.windowState, WKWebExtensionWindowStateNormal);
+        EXPECT_EQ(configuration.windowType, WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(configuration.windowState, WKWebExtensionWindowStateNormal);
 
-        EXPECT_EQ(options.tabs.count, 0lu);
+        EXPECT_EQ(configuration.tabs.count, 0lu);
 
-        EXPECT_EQ(options.tabURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
+        EXPECT_EQ(configuration.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"http://example.com/"]);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
     [manager loadAndRun];
@@ -476,11 +476,11 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURL)
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.tabURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
@@ -507,12 +507,12 @@ TEST(WKWebExtensionAPIWindows, CreateWithRelativeURLs)
 
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
 
-    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.tabURLs.count, 2lu);
-        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
-        EXPECT_NS_EQUAL(options.tabURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.tabURLs.count, 2lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"one.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+        EXPECT_NS_EQUAL(configuration.tabURLs.lastObject, [NSURL URLWithString:@"two.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
     };
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
@@ -543,7 +543,7 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithoutPrivateAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    EXPECT_FALSE(manager.get().context.hasAccessInPrivateBrowsing);
+    EXPECT_FALSE(manager.get().context.hasAccessToPrivateData);
     EXPECT_EQ(manager.get().windows.count, 1lu);
 
     [manager loadAndRun];
@@ -580,7 +580,7 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithPrivateAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     EXPECT_EQ(manager.get().windows.count, 1lu);
 

@@ -28,9 +28,9 @@
 #endif
 
 #import "config.h"
-#import "WKWebExtensionTabCreationOptionsInternal.h"
+#import "WKWebExtensionWindowConfigurationInternal.h"
 
-@implementation WKWebExtensionTabCreationOptions
+@implementation WKWebExtensionWindowConfiguration
 
 - (instancetype)_init
 {

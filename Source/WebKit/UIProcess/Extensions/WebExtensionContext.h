@@ -329,8 +329,8 @@ public:
     bool requestedOptionalAccessToAllHosts() const { return m_requestedOptionalAccessToAllHosts; }
     void setRequestedOptionalAccessToAllHosts(bool requested) { m_requestedOptionalAccessToAllHosts = requested; }
 
-    bool hasAccessInPrivateBrowsing() const { return m_hasAccessInPrivateBrowsing; }
-    void setHasAccessInPrivateBrowsing(bool);
+    bool hasAccessToPrivateData() const { return m_hasAccessToPrivateData; }
+    void setHasAccessToPrivateData(bool);
 
     void grantPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
     void denyPermissions(PermissionsSet&&, WallTime expirationDate = WallTime::infinity());
@@ -930,7 +930,7 @@ private:
     size_t m_pendingPermissionRequests { 0 };
 
     bool m_requestedOptionalAccessToAllHosts { false };
-    bool m_hasAccessInPrivateBrowsing { false };
+    bool m_hasAccessToPrivateData { false };
 
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;

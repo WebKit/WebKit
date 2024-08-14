@@ -61,12 +61,12 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
 @optional
 
 /*!
- @abstract Called when an array of tabs is needed for the window.
+ @abstract Called when the tabs are needed for the window.
  @param context The context in which the web extension is running.
  @return An array of tabs in the window.
  @discussion Defaults to an empty array if not implemented.
  */
-- (NSArray<id <WKWebExtensionTab>> *)tabsForWebExtensionContext:(WKWebExtensionContext *)context;
+- (NSArray<id <WKWebExtensionTab>> *)tabsForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(tabs(for:));
 
 /*!
  @abstract Called when the active tab is needed for the window.
@@ -74,7 +74,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The active tab in the window, which represents the frontmost tab currently in view.
  @discussion Defaults to `nil` if not implemented.
  */
-- (nullable id <WKWebExtensionTab>)activeTabForWebExtensionContext:(WKWebExtensionContext *)context;
+- (nullable id <WKWebExtensionTab>)activeTabForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(activeTab(for:));
 
 /*!
  @abstract Called when the type of the window is needed.
@@ -82,7 +82,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The type of the window.
  @discussion Defaults to`WKWebExtensionWindowTypeNormal` if not implemented.
  */
-- (WKWebExtensionWindowType)windowTypeForWebExtensionContext:(WKWebExtensionContext *)context;
+- (WKWebExtensionWindowType)windowTypeForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(windowType(for:));
 
 /*!
  @abstract Called when the state of the window is needed.
@@ -90,7 +90,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The state of the window.
  @discussion Defaults to`WKWebExtensionWindowStateNormal` if not implemented.
  */
-- (WKWebExtensionWindowState)windowStateForWebExtensionContext:(WKWebExtensionContext *)context;
+- (WKWebExtensionWindowState)windowStateForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(windowState(for:));
 
 /*!
  @abstract Called to set the state of the window.
@@ -102,18 +102,18 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  Without it, this method will not be called.
  @seealso windowStateForWebExtensionContext:
  */
-- (void)setWindowState:(WKWebExtensionWindowState)state forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)setWindowState:(WKWebExtensionWindowState)state forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(setWindowState(_:for:completionHandler:));
 
 /*!
- @abstract Called when the private browsing state of the window is needed.
+ @abstract Called when the private state of the window is needed.
  @param context The context in which the web extension is running.
  @return `YES` if the window is private, `NO` otherwise.
  @discussion Defaults to `NO` if not implemented. This value is cached and will not change for the duration of the window or its contained tabs.
- @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
- use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ @note To ensure proper isolation between private and non-private data, web views associated with private data must use a
+ different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
  website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
  */
-- (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(WKWebExtensionContext *)context;
+- (BOOL)isPrivateForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isPrivate(for:));
 
 #if TARGET_OS_OSX
 /*!
@@ -122,7 +122,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The frame for the screen containing the window.
  @discussion Defaults to `CGRectNull` if not implemented.
  */
-- (CGRect)screenFrameForWebExtensionContext:(WKWebExtensionContext *)context;
+- (CGRect)screenFrameForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(screenFrame(for:));
 #endif // TARGET_OS_OSX
 
 /*!
@@ -131,7 +131,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The frame of the window, in screen coordinates
  @discussion Defaults to `CGRectNull` if not implemented.
  */
-- (CGRect)frameForWebExtensionContext:(WKWebExtensionContext *)context;
+- (CGRect)frameForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(frame(for:));
 
 /*!
  @abstract Called to set the frame of the window.
@@ -139,13 +139,13 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param frame The new frame of the window, in screen coordinates.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion On macOS, the implementation of both `frameForWebExtensionContext:` and
- `screenFrameForWebExtensionContext:` are prerequisites. On iOS, only `frameForWebExtensionContext:`
- is a prerequisite. Without the respective method(s), this method will not be called.
+ @discussion On macOS, the implementation of both `frameForWebExtensionContext:` and `screenFrameForWebExtensionContext:`
+ are prerequisites. On iOS, iPadOS, and visionOS, only `frameForWebExtensionContext:` is a prerequisite. Without the respective method(s),
+ this method will not be called.
  @seealso frameForWebExtensionContext:
  @seealso screenFrameForWebExtensionContext:
  */
-- (void)setFrame:(CGRect)frame forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)setFrame:(CGRect)frame forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(setFrame(_:for:completionHandler:));
 
 /*!
  @abstract Called to focus the window.
@@ -154,7 +154,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
  */
-- (void)focusForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)focusForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(focus(for:completionHandler:));
 
 /*!
  @abstract Called to close the window.
@@ -163,7 +163,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
  */
-- (void)closeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)closeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(close(for:completionHandler:));
 
 @end
 

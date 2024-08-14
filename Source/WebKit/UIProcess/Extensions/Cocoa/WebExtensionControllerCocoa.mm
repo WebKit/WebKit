@@ -443,7 +443,7 @@ void WebExtensionController::addUserContentController(WebUserContentControllerPr
         return;
 
     for (Ref context : m_extensionContexts) {
-        if (!context->hasAccessInPrivateBrowsing() && forPrivateBrowsing == ForPrivateBrowsing::Yes)
+        if (!context->hasAccessToPrivateData() && forPrivateBrowsing == ForPrivateBrowsing::Yes)
             continue;
 
         context->addInjectedContent(userContentController);

@@ -23,22 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebExtensionWindowCreationOptions.h"
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#import "config.h"
+#import "WKWebExtensionTabConfigurationInternal.h"
 
-@interface WKWebExtensionWindowCreationOptions ()
+@implementation WKWebExtensionTabConfiguration
 
-- (instancetype)_init NS_DESIGNATED_INITIALIZER;
-
-@property (readwrite, setter=_setFrame:) CGRect frame;
-@property (readwrite, setter=_setWindowType:) WKWebExtensionWindowType windowType;
-@property (readwrite, setter=_setWindowState:) WKWebExtensionWindowState windowState;
-@property (readwrite, setter=_setTabURLs:) NSArray<NSURL *> *tabURLs;
-@property (readwrite, setter=_setTabs:) NSArray<id <WKWebExtensionTab>> *tabs;
-@property (readwrite, setter=_setFocused:) BOOL focused;
-@property (readwrite, setter=_setUsePrivateBrowsing:) BOOL usePrivateBrowsing;
+- (instancetype)_init
+{
+    return [super init];
+}
 
 @end
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -92,7 +92,7 @@
 @property (nonatomic, copy) void (^reload)(BOOL);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
-@property (nonatomic, copy) void (^duplicate)(WKWebExtensionTabCreationOptions *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
+@property (nonatomic, copy) void (^duplicate)(WKWebExtensionTabConfiguration *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
 
 @end
 

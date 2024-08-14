@@ -34,7 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "WKWebExtensionControllerDelegatePrivate.h"
-#import "WKWebExtensionTabCreationOptionsInternal.h"
+#import "WKWebExtensionTabConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMessagePort.h"
@@ -65,7 +65,7 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
     auto delegate = extensionController()->delegate();
 
     bool respondsToOpenOptionsPage = [delegate respondsToSelector:@selector(webExtensionController:openOptionsPageForExtensionContext:completionHandler:)];
-    bool respondsToOpenNewTab = [delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)];
+    bool respondsToOpenNewTab = [delegate respondsToSelector:@selector(webExtensionController:openNewTabUsingConfiguration:forExtensionContext:completionHandler:)];
     if (!respondsToOpenOptionsPage && !respondsToOpenNewTab) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
@@ -89,14 +89,14 @@ void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(Expected
 
     auto frontmostWindow = this->frontmostWindow();
 
-    auto *creationOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
-    creationOptions.active = YES;
-    creationOptions.selected = YES;
-    creationOptions.window = frontmostWindow ? frontmostWindow->delegate() : nil;
-    creationOptions.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
-    creationOptions.url = optionsPageURL();
+    auto *configuration = [[WKWebExtensionTabConfiguration alloc] _init];
+    configuration.shouldBeActive = YES;
+    configuration.shouldAddToSelection = YES;
+    configuration.window = frontmostWindow ? frontmostWindow->delegate() : nil;
+    configuration.index = frontmostWindow ? frontmostWindow->tabs().size() : 0;
+    configuration.url = optionsPageURL();
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
@@ -219,7 +219,7 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
     id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
 
     auto delegate = extensionController()->delegate();
-    if (![delegate respondsToSelector:@selector(webExtensionController:sendMessage:toApplicationIdentifier:forExtensionContext:replyHandler:)]) {
+    if (![delegate respondsToSelector:@selector(webExtensionController:sendMessage:toApplicationWithIdentifier:forExtensionContext:replyHandler:)]) {
         // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
         completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
         return;
@@ -227,7 +227,7 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
 
     auto *applicationIdentifier = !applicationID.isNull() ? (NSString *)applicationID : nil;
 
-    [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id replyMessage, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationWithIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id replyMessage, NSError *error) mutable {
         if (error) {
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;

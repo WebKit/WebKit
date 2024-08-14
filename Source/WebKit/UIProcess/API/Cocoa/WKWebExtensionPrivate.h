@@ -77,10 +77,10 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (nullable instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
 /*! @abstract A Boolean value indicating whether the extension background content is a service worker. */
-@property (readonly, nonatomic) BOOL _backgroundContentIsServiceWorker;
+@property (readonly, nonatomic) BOOL _hasServiceWorkerBackgroundContent;
 
 /*! @abstract A Boolean value indicating whether the extension use modules for the background content. */
-@property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
+@property (readonly, nonatomic) BOOL _hasModularBackgroundContent;
 
 @end
 

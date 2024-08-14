@@ -158,7 +158,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  @seealso didCloseWindow:
  */
-- (void)didOpenWindow:(id <WKWebExtensionWindow>)newWindow;
+- (void)didOpenWindow:(id <WKWebExtensionWindow>)newWindow NS_SWIFT_NAME(didOpenWindow(_:));
 
 /*!
  @abstract Should be called by the app when a window is closed to fire appropriate events with all loaded web extensions.
@@ -167,7 +167,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  @seealso didOpenWindow:
  */
-- (void)didCloseWindow:(id <WKWebExtensionWindow>)closedWindow;
+- (void)didCloseWindow:(id <WKWebExtensionWindow>)closedWindow NS_SWIFT_NAME(didCloseWindow(_:));
 
 /*!
  @abstract Should be called by the app when a window gains focus to fire appropriate events with all loaded web extensions.
@@ -175,7 +175,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs all loaded extensions of the focused window, ensuring consistent understanding across extensions.
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  */
-- (void)didFocusWindow:(nullable id <WKWebExtensionWindow>)focusedWindow;
+- (void)didFocusWindow:(nullable id <WKWebExtensionWindow>)focusedWindow NS_SWIFT_NAME(didFocusWindow(_:));
 
 /*!
  @abstract Should be called by the app when a new tab is opened to fire appropriate events with all loaded web extensions.
@@ -184,7 +184,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  @seealso didCloseTab:
  */
-- (void)didOpenTab:(id <WKWebExtensionTab>)newTab;
+- (void)didOpenTab:(id <WKWebExtensionTab>)newTab NS_SWIFT_NAME(didOpenTab(_:));
 
 /*!
  @abstract Should be called by the app when a tab is closed to fire appropriate events with all loaded web extensions.
@@ -194,7 +194,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  @seealso didOpenTab:
  */
-- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing;
+- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing NS_SWIFT_NAME(didCloseTab(_:windowIsClosing:));
 
 /*!
  @abstract Should be called by the app when a tab is activated to notify all loaded web extensions.
@@ -203,7 +203,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs all loaded extensions of the tab activation, ensuring consistent state awareness across extensions.
  If the intention is to inform only a specific extension, use the respective method on that extension's context instead.
  */
-- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab;
+- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab NS_SWIFT_NAME(didActivateTab(_:previousActiveTab:));
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with all loaded web extensions.
@@ -211,7 +211,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs all loaded extensions that tabs have been selected, ensuring consistent understanding across extensions.
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  */
-- (void)didSelectTabs:(NSSet<id <WKWebExtensionTab>> *)selectedTabs;
+- (void)didSelectTabs:(NSSet<id <WKWebExtensionTab>> *)selectedTabs NS_SWIFT_NAME(didSelectTabs(_:));
 
 /*!
  @abstract Should be called by the app when tabs are deselected to fire appropriate events with all loaded web extensions.
@@ -219,7 +219,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs all loaded extensions that tabs have been deselected, ensuring consistent understanding across extensions.
  If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
  */
-- (void)didDeselectTabs:(NSSet<id <WKWebExtensionTab>> *)deselectedTabs;
+- (void)didDeselectTabs:(NSSet<id <WKWebExtensionTab>> *)deselectedTabs NS_SWIFT_NAME(didDeselectTabs(_:));
 
 /*!
  @abstract Should be called by the app when a tab is moved to fire appropriate events with all loaded web extensions.

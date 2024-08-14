@@ -477,12 +477,12 @@
 		1C56557F2745C5A1006300AF /* UnifiedSource101.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */; };
 		1C5655802745C5A1006300AF /* UnifiedSource102.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */; };
 		1C5655812745C5A1006300AF /* UnifiedSource103.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */; };
-		1C5ACF8C2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C5ACF8D2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		1C5ACF902A955CB000C041C0 /* WKWebExtensionTabCreationOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabCreationOptions.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
-		1C5ACF912A955CB000C041C0 /* WKWebExtensionTabCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabCreationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C5ACF932A965C4000C041C0 /* WKWebExtensionTabCreationOptionsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF922A965C4000C041C0 /* WKWebExtensionTabCreationOptionsInternal.h */; };
-		1C5ACF952A965C4C00C041C0 /* WKWebExtensionWindowCreationOptionsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowCreationOptionsInternal.h */; };
+		1C5ACF8C2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C5ACF8D2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C5ACF902A955CB000C041C0 /* WKWebExtensionTabConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabConfiguration.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C5ACF912A955CB000C041C0 /* WKWebExtensionTabConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C5ACF932A965C4000C041C0 /* WKWebExtensionTabConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF922A965C4000C041C0 /* WKWebExtensionTabConfigurationInternal.h */; };
+		1C5ACF952A965C4C00C041C0 /* WKWebExtensionWindowConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowConfigurationInternal.h */; };
 		1C5ACFA52A96F8C400C041C0 /* JSWebExtensionAPIWindows.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACFA12A96F8C200C041C0 /* JSWebExtensionAPIWindows.h */; };
 		1C5ACFA62A96F8C400C041C0 /* JSWebExtensionAPIWindows.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACFA22A96F8C300C041C0 /* JSWebExtensionAPIWindows.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C5ACFA72A96F8C400C041C0 /* JSWebExtensionAPIWindowsEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACFA32A96F8C300C041C0 /* JSWebExtensionAPIWindowsEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -3947,12 +3947,12 @@
 		1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource103.cpp; sourceTree = "<group>"; };
 		1C5A104E287BB1E90034FDA4 /* OverrideLanguages.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OverrideLanguages.cpp; sourceTree = "<group>"; };
 		1C5A104F287BB1E90034FDA4 /* OverrideLanguages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverrideLanguages.h; sourceTree = "<group>"; };
-		1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionWindowCreationOptions.h; sourceTree = "<group>"; };
-		1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionWindowCreationOptions.mm; sourceTree = "<group>"; };
-		1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabCreationOptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionTabCreationOptions.mm; sourceTree = "<group>"; };
-		1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabCreationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionTabCreationOptions.h; sourceTree = "<group>"; };
-		1C5ACF922A965C4000C041C0 /* WKWebExtensionTabCreationOptionsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionTabCreationOptionsInternal.h; sourceTree = "<group>"; };
-		1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowCreationOptionsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionWindowCreationOptionsInternal.h; sourceTree = "<group>"; };
+		1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionWindowConfiguration.h; sourceTree = "<group>"; };
+		1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionWindowConfiguration.mm; sourceTree = "<group>"; };
+		1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionTabConfiguration.mm; sourceTree = "<group>"; };
+		1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionTabConfiguration.h; sourceTree = "<group>"; };
+		1C5ACF922A965C4000C041C0 /* WKWebExtensionTabConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionTabConfigurationInternal.h; sourceTree = "<group>"; };
+		1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionWindowConfigurationInternal.h; sourceTree = "<group>"; };
 		1C5ACF9D2A96E15400C041C0 /* WebExtensionAPIWindowsEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWindowsEvent.idl; sourceTree = "<group>"; };
 		1C5ACF9E2A96E15400C041C0 /* WebExtensionAPIWindows.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWindows.idl; sourceTree = "<group>"; };
 		1C5ACF9F2A96E15E00C041C0 /* WebExtensionAPITabs.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPITabs.idl; sourceTree = "<group>"; };
@@ -11742,13 +11742,13 @@
 				1C6C665E2BA4030E001CAB38 /* WKWebExtensionPermissionPrivate.h */,
 				1C3BEB6F288883E300E66E38 /* WKWebExtensionPrivate.h */,
 				1C04983C289AFF9B0010308B /* WKWebExtensionTab.h */,
-				1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabCreationOptions.h */,
-				1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabCreationOptions.mm */,
-				1C5ACF922A965C4000C041C0 /* WKWebExtensionTabCreationOptionsInternal.h */,
+				1C5ACF8F2A955CB000C041C0 /* WKWebExtensionTabConfiguration.h */,
+				1C5ACF8E2A955CAF00C041C0 /* WKWebExtensionTabConfiguration.mm */,
+				1C5ACF922A965C4000C041C0 /* WKWebExtensionTabConfigurationInternal.h */,
 				1C04983D289AFF9B0010308B /* WKWebExtensionWindow.h */,
-				1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.h */,
-				1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.mm */,
-				1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowCreationOptionsInternal.h */,
+				1C5ACF8A2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.h */,
+				1C5ACF8B2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.mm */,
+				1C5ACF942A965C4B00C041C0 /* WKWebExtensionWindowConfigurationInternal.h */,
 				F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */,
 				F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */,
 				F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */,
@@ -17663,11 +17663,11 @@
 				1C6C665F2BA4030F001CAB38 /* WKWebExtensionPermissionPrivate.h in Headers */,
 				1C3BEB712888842A00E66E38 /* WKWebExtensionPrivate.h in Headers */,
 				1C049840289AFF9B0010308B /* WKWebExtensionTab.h in Headers */,
-				1C5ACF912A955CB000C041C0 /* WKWebExtensionTabCreationOptions.h in Headers */,
-				1C5ACF932A965C4000C041C0 /* WKWebExtensionTabCreationOptionsInternal.h in Headers */,
+				1C5ACF912A955CB000C041C0 /* WKWebExtensionTabConfiguration.h in Headers */,
+				1C5ACF932A965C4000C041C0 /* WKWebExtensionTabConfigurationInternal.h in Headers */,
 				1C049841289AFF9B0010308B /* WKWebExtensionWindow.h in Headers */,
-				1C5ACF8C2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.h in Headers */,
-				1C5ACF952A965C4C00C041C0 /* WKWebExtensionWindowCreationOptionsInternal.h in Headers */,
+				1C5ACF8C2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.h in Headers */,
+				1C5ACF952A965C4C00C041C0 /* WKWebExtensionWindowConfigurationInternal.h in Headers */,
 				46301002298477B100715DB1 /* WKWebGeolocationPolicyDecider.h in Headers */,
 				F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */,
 				F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */,
@@ -20062,8 +20062,8 @@
 				1C1CE972288DF5030098D3A1 /* WKWebExtensionMatchPattern.mm in Sources */,
 				1C7316752AC1D658007FADA4 /* WKWebExtensionMessagePort.mm in Sources */,
 				1C049838289AF5AD0010308B /* WKWebExtensionPermission.mm in Sources */,
-				1C5ACF902A955CB000C041C0 /* WKWebExtensionTabCreationOptions.mm in Sources */,
-				1C5ACF8D2A955CA700C041C0 /* WKWebExtensionWindowCreationOptions.mm in Sources */,
+				1C5ACF902A955CB000C041C0 /* WKWebExtensionTabConfiguration.mm in Sources */,
+				1C5ACF8D2A955CA700C041C0 /* WKWebExtensionWindowConfiguration.mm in Sources */,
 				C14D306924B79BE000480387 /* XPCEndpoint.mm in Sources */,
 				C14D306A24B79BE400480387 /* XPCEndpointClient.mm in Sources */,
 			);

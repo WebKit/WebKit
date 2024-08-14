@@ -221,7 +221,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The URL of the extension's options page, if the extension has one.
- @discussion This property holds the URL for the dedicated options page, if provided by the extension; otherwise `nil` if no page is defined.
+ @discussion Provides the URL for the dedicated options page, if provided by the extension; otherwise `nil` if no page is defined.
  The app should provide access to this page through a user interface element.
  @note Navigation to the options page is only possible after this extension has been loaded.
  @seealso webViewConfiguration
@@ -230,7 +230,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The URL to use as an alternative to the default new tab page, if the extension has one.
- @discussion This property holds the URL for a new tab page, if provided by the extension; otherwise `nil` if no page is defined.
+ @discussion Provides the URL for a new tab page, if provided by the extension; otherwise `nil` if no page is defined.
  The app should prompt the user for permission to use the extension's new tab page as the default.
  @note Navigation to the override new tab page is only possible after this extension has been loaded.
  @seealso webViewConfiguration
@@ -242,7 +242,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
  Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
- presented for approval again until they expire.
+ presented for approval again until they expire. This value should be saved and restored as needed by the app.
  @seealso setPermissionStatus:forPermission:
  @seealso setPermissionStatus:forPermission:expirationDate:
  */
@@ -253,7 +253,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
  Match patterns in this dictionary should be explicitly granted by the user before being added. Any match pattern in this collection will not be
- presented for approval again until they expire.
+ presented for approval again until they expire. This value should be saved and restored as needed by the app.
  @seealso setPermissionStatus:forMatchPattern:
  @seealso setPermissionStatus:forMatchPattern:expirationDate:
  */
@@ -264,7 +264,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
  Permissions in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
- presented for approval again until they expire.
+ presented for approval again until they expire. This value should be saved and restored as needed by the app.
  @seealso setPermissionStatus:forPermission:
  @seealso setPermissionStatus:forPermission:expirationDate:
  */
@@ -275,7 +275,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
  Match patterns in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
- presented for approval again until they expire.
+ presented for approval again until they expire. This value should be saved and restored as needed by the app.
  @seealso setPermissionStatus:forMatchPattern:
  @seealso setPermissionStatus:forMatchPattern:expirationDate:
  */
@@ -283,20 +283,20 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract A Boolean value indicating if the extension has requested optional access to all hosts.
- @discussion When this value is `YES` the extension has asked for access to all hosts in a call to `browser.runtime.permissions.request()`
- and future permission checks will present discrete hosts for approval as being implicitly requested. This value should be saved and restored as needed.
+ @discussion If this property is `YES`, the extension has asked for access to all hosts in a call to `browser.runtime.permissions.request()`,
+ and future permission checks will present discrete hosts for approval as being implicitly requested. This value should be saved and restored as needed by the app.
  */
-@property (nonatomic) BOOL requestedOptionalAccessToAllHosts;
+@property (nonatomic) BOOL hasRequestedOptionalAccessToAllHosts;
 
 /*!
- @abstract A Boolean value indicating if the extension has access to private browsing windows and tabs.
- @discussion When this value is `YES`, the extension is granted permission to interact with private browsing windows and tabs.
- This value should be saved and restored as needed. Access to private browsing should be explicitly allowed by the user before setting this property.
- @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
- use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ @abstract A Boolean value indicating if the extension has access to private data.
+ @discussion If this property is `YES`, the extension is granted permission to interact with private windows, tabs, and cookies. Access to private data
+ should be explicitly allowed by the user before setting this property. This value should be saved and restored as needed by the app.
+ @note To ensure proper isolation between private and non-private data, web views associated with private data must use a
+ different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
  website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
  */
-@property (nonatomic) BOOL hasAccessInPrivateBrowsing;
+@property (nonatomic) BOOL hasAccessToPrivateData;
 
 /*!
  @abstract The currently granted permissions that have not expired.
@@ -386,7 +386,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @result Returns `YES` if the extension has content that can be injected by matching the `url` against the extension's requested match patterns.
  @discussion The extension context will still need to be loaded and have granted website permissions for its content to actually be injected.
  */
-- (BOOL)hasInjectedContentForURL:(NSURL *)url;
+- (BOOL)hasInjectedContentForURL:(NSURL *)url NS_SWIFT_NAME(hasInjectedContent(for:));
 
 /*!
  @abstract A boolean value indicating whether the extension includes rules used for content modification or blocking.
@@ -533,7 +533,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  It is useful when the app requires the background content to be loaded for other reasons. If the background content is already loaded, the completion handler
  will be called immediately. An error will occur if the extension does not have any background content to load or loading fails.
  */
-- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)loadBackgroundContentWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(loadBackgroundContent(completionHandler:));
 
 /*!
  @abstract Retrieves the extension action for a given tab, or the default action if `nil` is passed.
@@ -555,9 +555,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 - (void)performActionForTab:(nullable id <WKWebExtensionTab>)tab NS_SWIFT_NAME(performAction(for:));
 
 /*!
- @abstract An array of commands associated with the extension context.
- @discussion This property holds an array of all the commands currently available within the extension context. It allows for inspection of the
- commands that have been registered and their current configuration.
+ @abstract The commands associated with the extension.
+ @discussion Provides all commands registered within the extension. Each command represents an action or behavior available for the web extension.
  @seealso performCommand:
  */
 @property (nonatomic, readonly, copy) NSArray<WKWebExtensionCommand *> *commands;
@@ -567,7 +566,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param command The command to be performed.
  @discussion This method performs the given command as if it was triggered by a user gesture within the context of the focused window and active tab.
  */
-- (void)performCommand:(WKWebExtensionCommand *)command;
+- (void)performCommand:(WKWebExtensionCommand *)command NS_SWIFT_NAME(performCommand(_:));
 
 #if TARGET_OS_IPHONE
 /*!
@@ -577,7 +576,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param event The UIKeyCommand received by the first responder.
  @result Returns `YES` if a command corresponding to the UIKeyCommand was found and performed, `NO` otherwise.
  */
-- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand;
+- (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand NS_SWIFT_NAME(performCommand(for:));
 #endif
 
 #if TARGET_OS_OSX
@@ -588,30 +587,30 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param event The event representing the user input.
  @result Returns `YES` if a command corresponding to the event was found and performed, `NO` otherwise.
  */
-- (BOOL)performCommandForEvent:(NSEvent *)event;
+- (BOOL)performCommandForEvent:(NSEvent *)event NS_SWIFT_NAME(performCommand(for:));
 
 /*!
  @abstract Retrieves the command associated with the given event without performing it.
- @discussion This method returns the command that corresponds to the provided event, if such a command exists. This provides a way to programmatically
+ @discussion Returns the command that corresponds to the provided event, if such a command exists. This provides a way to programmatically
  determine what action would occur for a given event, without triggering the command.
  @param event The event for which to retrieve the corresponding command.
  @result The command associated with the event, or `nil` if there is no such command.
  */
-- (nullable WKWebExtensionCommand *)commandForEvent:(NSEvent *)event;
+- (nullable WKWebExtensionCommand *)commandForEvent:(NSEvent *)event NS_SWIFT_NAME(command(for:));
 #endif // TARGET_OS_OSX
 
 /*!
- @abstract Retrieves an array of menu items for a given tab.
+ @abstract Retrieves the menu items for a given tab.
  @param tab The tab for which to retrieve the menu items.
- @discussion This method returns an array of menu items provided by the extension, allowing the user to perform extension-defined actions on the tab.
+ @discussion Returns menu items provided by the extension, allowing the user to perform extension-defined actions on the tab.
  The app is responsible for displaying these menu items, typically in a context menu or a long-press menu on the tab.
  @note The properties of the menu items, including the items themselves, can change dynamically. Therefore, the app should fetch the menu items immediately
  before showing them, to ensure that the most current and relevant items are presented.
  */
 #if TARGET_OS_IPHONE
-- (NSArray<UIMenuElement *> *)menuItemsForTab:(id <WKWebExtensionTab>)tab;
+- (NSArray<UIMenuElement *> *)menuItemsForTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(menuItems(for:));
 #else
-- (NSArray<NSMenuItem *> *)menuItemsForTab:(id <WKWebExtensionTab>)tab;
+- (NSArray<NSMenuItem *> *)menuItemsForTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(menuItems(for:));
 #endif
 
 /*!
@@ -645,8 +644,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 - (void)clearUserGestureInTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(clearUserGesture(in:));
 
 /*!
- @abstract An array of open windows that are exposed to this extension.
- @discussion This property holds an array of window objects that are open and visible to the extension, as updated by the `didOpenWindow:` and `didCloseWindow:` methods.
+ @abstract The open windows that are exposed to this extension.
+ @discussion Provides the windows that are open and visible to the extension, as updated by the `didOpenWindow:` and `didCloseWindow:` methods.
  Initially populated by the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
  @seealso didOpenWindow:
  @seealso didCloseWindow:
@@ -655,8 +654,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The window that currently has focus for this extension.
- @discussion This property holds the window object that currently has focus, as set by the `didFocusWindow:` method.
- It will be \c nil if no window has focus or if a window has focus that is not visible to the extension.  Initially populated by the window
+ @discussion Provides the window that currently has focus, as set by the `didFocusWindow:` method.
+ It will be \c nil if no window has focus or if a window has focus that is not visible to the extension. Initially populated by the window
  returned by the extension controller delegate method `webExtensionController:focusedWindowForExtensionContext:`.
  @seealso didFocusWindow:
  */
@@ -664,7 +663,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract A set of open tabs in all open windows that are exposed to this extension.
- @discussion This property holds a set of tabs in all open windows that are visible to the extension, as updated by the `didOpenTab:` and `didCloseTab:` methods.
+ @discussion Provides a set of tabs in all open windows that are visible to the extension, as updated by the `didOpenTab:` and `didCloseTab:` methods.
  Initially populated by the tabs in the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
  @seealso didOpenTab:
  @seealso didCloseTab:
@@ -679,7 +678,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso didCloseWindow:
  @seealso openWindows
  */
-- (void)didOpenWindow:(id <WKWebExtensionWindow>)newWindow;
+- (void)didOpenWindow:(id <WKWebExtensionWindow>)newWindow NS_SWIFT_NAME(didOpenWindow(_:));
 
 /*!
  @abstract Should be called by the app when a window is closed to fire appropriate events with only this extension.
@@ -689,7 +688,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso didOpenWindow:
  @seealso openWindows
  */
-- (void)didCloseWindow:(id <WKWebExtensionWindow>)closedWindow;
+- (void)didCloseWindow:(id <WKWebExtensionWindow>)closedWindow NS_SWIFT_NAME(didCloseWindow(_:));
 
 /*!
  @abstract Should be called by the app when a window gains focus to fire appropriate events with only this extension.
@@ -697,7 +696,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension that a window has gained focus. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didFocusWindow:(nullable id <WKWebExtensionWindow>)focusedWindow;
+- (void)didFocusWindow:(nullable id <WKWebExtensionWindow>)focusedWindow NS_SWIFT_NAME(didFocusWindow(_:));
 
 /*!
  @abstract Should be called by the app when a new tab is opened to fire appropriate events with only this extension.
@@ -707,7 +706,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso didCloseTab:
  @seealso openTabs
  */
-- (void)didOpenTab:(id <WKWebExtensionTab>)newTab;
+- (void)didOpenTab:(id <WKWebExtensionTab>)newTab NS_SWIFT_NAME(didOpenTab(_:));
 
 /*!
  @abstract Should be called by the app when a tab is closed to fire appropriate events with only this extension.
@@ -718,7 +717,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso didOpenTab:
  @seealso openTabs
  */
-- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing;
+- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing NS_SWIFT_NAME(didCloseTab(_:windowIsClosing:));
 
 /*!
  @abstract Should be called by the app when a tab is activated to notify only this specific extension.
@@ -727,7 +726,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension of the tab activation. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab;
+- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab NS_SWIFT_NAME(didActivateTab(_:previousActiveTab:));
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with only this extension.
@@ -735,7 +734,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension that tabs have been selected. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didSelectTabs:(NSSet<id <WKWebExtensionTab>> *)selectedTabs;
+- (void)didSelectTabs:(NSSet<id <WKWebExtensionTab>> *)selectedTabs NS_SWIFT_NAME(didSelectTabs(_:));
 
 /*!
  @abstract Should be called by the app when tabs are deselected to fire appropriate events with only this extension.
@@ -743,7 +742,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension that tabs have been deselected. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didDeselectTabs:(NSSet<id <WKWebExtensionTab>> *)deselectedTabs;
+- (void)didDeselectTabs:(NSSet<id <WKWebExtensionTab>> *)deselectedTabs NS_SWIFT_NAME(didDeselectTabs(_:));
 
 /*!
  @abstract Should be called by the app when a tab is moved to fire appropriate events with only this extension.

@@ -496,10 +496,13 @@
 /* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
 "Easy Reader (text track)" = "Easy Reader";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path */
+/* Fallback label text for unlabeled email address field. */
+"Email address" = "Email address";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path */
 "Empty `declarative_net_request` JSON path." = "Empty `declarative_net_request` JSON path.";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id */
 "Empty `declarative_net_request` ruleset id." = "Empty `declarative_net_request` ruleset id.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for background */
@@ -565,28 +568,16 @@
 /* Validation message for input form controls of type 'email' that have an invalid value */
 "Enter an email address" = "Enter an email address";
 
-/* Fallback label text for unlabeled telephone number input field. */
-"Phone number" = "Phone number";
-
-/* Fallback label text for unlabeled email address field. */
-"Email address" = "Email address";
-
-/* Fallback label text for unlabeled URL input field. */
-"URL" = "URL";
-
 /* Fallback label text for unlabeled text field. */
 "Enter text" = "Enter text";
-
-/* Fallback label text for password field. */
-"Password" = "Password";
 
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
 "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
 "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
 /* Button for exiting full screen when in full screen media playback */
@@ -762,6 +753,9 @@
 
 /* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
 "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS */
+"Invalid `persistent` manifest entry. A non-persistent background is required on visionOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut */
 "Invalid `suggested_key` in the `commands` manifest entry." = "Invalid `suggested_key` in the `commands` manifest entry.";
@@ -997,7 +991,7 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value */
 "Manifest `content_scripts` entry has unknown `world` value." = "Manifest `content_scripts` entry has unknown `world` value.";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
 "Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
 
 /* Validation message for input form controls requiring a constrained value according to pattern */
@@ -1144,6 +1138,9 @@
 /* Paragraph direction context sub-menu item */
 "Paragraph Direction" = "Paragraph Direction";
 
+/* Fallback label text for unlabeled password field. */
+"Password" = "Password";
+
 /* Paste context menu item */
 "Paste" = "Paste";
 
@@ -1164,6 +1161,9 @@
 
 /* Title for pause animation action button or context menu item */
 "Pause Animation" = "Pause Animation";
+
+/* Fallback label text for unlabeled telephone number input field. */
+"Phone number" = "Phone number";
 
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
@@ -1438,9 +1438,6 @@
 /* Label for the support with Apple Pay button. */
 "Support with Apple Pay" = "Support with Apple Pay";
 
-/* Writing Tools context menu item */
-"Writing Tools" = "Writing Tools";
-
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";
 
@@ -1588,6 +1585,9 @@
 /* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
 
+/* Fallback label text for unlabeled URL input field. */
+"URL" = "URL";
+
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
 
@@ -1714,6 +1714,9 @@
 /* Week label for week of year input type */
 "Week" = "Week";
 
+/* Writing Tools context menu item */
+"Writing Tools" = "Writing Tools";
+
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
 
@@ -1729,7 +1732,7 @@
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
 
-/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
 "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";
 
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */

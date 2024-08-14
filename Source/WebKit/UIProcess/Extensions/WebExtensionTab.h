@@ -69,24 +69,24 @@ public:
     explicit WebExtensionTab(const WebExtensionContext&, WKWebExtensionTab *);
 
     enum class ChangedProperties : uint16_t {
-        Audible    = 1 << 1,
-        Loading    = 1 << 2,
-        Muted      = 1 << 3,
-        Pinned     = 1 << 4,
-        ReaderMode = 1 << 5,
-        Size       = 1 << 6,
-        Title      = 1 << 7,
-        URL        = 1 << 8,
-        ZoomFactor = 1 << 9,
+        Loading      = 1 << 1,
+        Muted        = 1 << 2,
+        Pinned       = 1 << 3,
+        PlayingAudio = 1 << 4,
+        ReaderMode   = 1 << 5,
+        Size         = 1 << 6,
+        Title        = 1 << 7,
+        URL          = 1 << 8,
+        ZoomFactor   = 1 << 9,
     };
 
     static constexpr OptionSet<ChangedProperties> allChangedProperties()
     {
         return {
-            ChangedProperties::Audible,
             ChangedProperties::Loading,
             ChangedProperties::Muted,
             ChangedProperties::Pinned,
+            ChangedProperties::PlayingAudio,
             ChangedProperties::ReaderMode,
             ChangedProperties::Size,
             ChangedProperties::Title,
@@ -149,12 +149,12 @@ public:
 
     bool isReaderModeAvailable() const;
 
-    bool isReaderModeShowing() const;
-    void setReaderModeShowing(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    bool isReaderModeActive() const;
+    void setReaderModeActive(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeShowing(!isReaderModeShowing(), WTFMove(completionHandler)); }
+    void toggleReaderMode(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler) { setReaderModeActive(!isReaderModeActive(), WTFMove(completionHandler)); }
 
-    bool isAudible() const;
+    bool isPlayingAudio() const;
 
     bool isMuted() const;
     void setMuted(bool, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
@@ -195,7 +195,7 @@ public:
 
     void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
-    bool shouldGrantTabPermissionsOnUserGesture() const;
+    bool shouldGrantPermissionsOnUserGesture() const;
 
     WebProcessProxySet processes(WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
@@ -223,9 +223,9 @@ private:
     bool m_respondsToIsPinned : 1 { false };
     bool m_respondsToSetPinned : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
-    bool m_respondsToIsReaderModeShowing : 1 { false };
-    bool m_respondsToSetReaderModeShowing : 1 { false };
-    bool m_respondsToIsAudible : 1 { false };
+    bool m_respondsToIsReaderModeActive : 1 { false };
+    bool m_respondsToSetReaderModeActive : 1 { false };
+    bool m_respondsToIsPlayingAudio : 1 { false };
     bool m_respondsToIsMuted : 1 { false };
     bool m_respondsToSetMuted : 1 { false };
     bool m_respondsToSize : 1 { false };
@@ -234,7 +234,7 @@ private:
     bool m_respondsToURL : 1 { false };
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
-    bool m_respondsToWebpageLocale : 1 { false };
+    bool m_respondsToDetectWebpageLocale : 1 { false };
     bool m_respondsToTakeSnapshot : 1 { false };
     bool m_respondsToLoadURL : 1 { false };
     bool m_respondsToReload : 1 { false };

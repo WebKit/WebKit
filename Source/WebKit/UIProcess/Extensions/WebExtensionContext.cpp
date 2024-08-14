@@ -87,7 +87,7 @@ const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::u
 {
     ASSERT(isLoaded());
 
-    if (hasAccessInPrivateBrowsing())
+    if (hasAccessToPrivateData())
         return extensionController()->allUserContentControllers();
     return extensionController()->allNonPrivateUserContentControllers();
 }
@@ -97,7 +97,7 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
     if (!isLoaded())
         return false;
 
-    if (!hasAccessInPrivateBrowsing() && page.sessionID().isEphemeral())
+    if (!hasAccessToPrivateData() && page.sessionID().isEphemeral())
         return false;
 
     auto findAndCheckPage = [&](WebExtensionContentWorldType worldType) {
@@ -142,7 +142,7 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
                 continue;
 
             for (auto entry : pagesEntry->value) {
-                if (!hasAccessInPrivateBrowsing() && entry.key.sessionID().isEphemeral())
+                if (!hasAccessToPrivateData() && entry.key.sessionID().isEphemeral())
                     continue;
 
                 Ref process = entry.key.legacyMainFrameProcess();

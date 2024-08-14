@@ -84,7 +84,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Action)
 
 /*!
  @abstract The badge text for the action.
- @discussion This property represents the text that appears on the badge for the action. An empty string signifies that no badge should be shown.
+ @discussion Provides the text that appears on the badge for the action. An empty string signifies that no badge should be shown.
  */
 @property (nonatomic, readonly, copy) NSString *badgeText;
 
@@ -106,8 +106,8 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Action)
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
 
 /*!
- @abstract An array of menu items provided by the extension for this action.
- @discussion This property holds an array of menu items supplied by the extension, allowing the user to perform extension-defined actions.
+ @abstract The menu items provided by the extension for this action.
+ @discussion Provides menu items supplied by the extension, allowing the user to perform extension-defined actions.
  The app is responsible for displaying these menu items, typically in a context menu or a long-press menu on the action in action sheets or toolbars.
  @note The properties of the menu items, including the items themselves, can change dynamically. Therefore, the app should fetch the menu items
  on demand immediately before showing them, to ensure that the most current and relevant items are presented.
