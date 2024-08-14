@@ -65,7 +65,7 @@ WebPermissionController::~WebPermissionController()
     WebProcess::singleton().removeMessageReceiver(Messages::WebPermissionController::messageReceiverName());
 }
 
-void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const SingleThreadWeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const WeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == PermissionName::Notifications || descriptor.name == PermissionName::Push)) {

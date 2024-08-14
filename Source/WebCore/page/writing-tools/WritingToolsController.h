@@ -170,7 +170,7 @@ private:
 
     RefPtr<Document> document() const;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
 
     std::variant<std::monostate, ProofreadingState, CompositionState> m_state;
 };

@@ -255,7 +255,7 @@ protected:
 
     ~PageLevelForbidScope() = default;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
 };
 
 struct ForbidPromptsScope : public PageLevelForbidScope {
