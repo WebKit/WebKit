@@ -3958,25 +3958,6 @@ void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSigna
                     ASSERT(m_validFPRs.contains(returnLocation.asFPR(), Width::Width128));
                     m_fprSet.add(returnLocation.asFPR(), Width::Width128);
                 }
-            } else {
-                ASSERT(returnLocation.isStackArgument());
-                // FIXME: Ideally, we would leave these values where they are but a subsequent call could clobber them before they are used.
-                // That said, stack results are very rare so this isn't too painful.
-                // Even if we did leave them where they are, we'd need to flush them to their canonical location at the next branch otherwise
-                // we could have something like (assume no result regs for simplicity):
-                // call (result i32 i32) $foo
-                // if (result i32) // Stack: i32(StackArgument:8) i32(StackArgument:0)
-                //   // Stack: i32(StackArgument:8)
-                // else
-                //   call (result i32 i32) $bar // Stack: i32(StackArgument:8) we have to flush the stack argument to make room for the result of bar
-                //   drop // Stack: i32(Stack:X) i32(StackArgument:8) i32(StackArgument:0)
-                //   drop // Stack: i32(Stack:X) i32(StackArgument:8)
-                // end
-                // return // Stack i32(*Conflicting locations*)
-
-                Location canonicalLocation = canonicalSlot(result);
-                emitMoveMemory(result.type(), returnLocation, canonicalLocation);
-                returnLocation = canonicalLocation;
             }
         }
         bind(result, returnLocation);
