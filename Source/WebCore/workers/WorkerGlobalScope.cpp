@@ -167,7 +167,8 @@ void WorkerGlobalScope::prepareForDestruction()
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
 
-    stopIndexedDatabase();
+    if (m_connectionProxy)
+        m_connectionProxy->abortActivitiesForCurrentThread();
 
     if (m_storageConnection)
         m_storageConnection->scopeClosed();
@@ -237,12 +238,6 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 GraphicsClient* WorkerGlobalScope::graphicsClient()
 {
     return workerClient();
-}
-
-void WorkerGlobalScope::stopIndexedDatabase()
-{
-    if (m_connectionProxy)
-        m_connectionProxy->forgetActivityForCurrentThread();
 }
 
 void WorkerGlobalScope::suspend()

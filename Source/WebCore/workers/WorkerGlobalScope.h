@@ -209,8 +209,6 @@ private:
     std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>& key) final;
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) final;
 
-    void stopIndexedDatabase();
-
     // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
