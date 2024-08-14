@@ -74,7 +74,7 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::Make(backendSize.width(), backendSize.height(), kRGBA_8888_SkColorType, kPremul_SkAlphaType, parameters.colorSpace.platformColorSpace());
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
-    auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, &properties);
+    auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, PlatformDisplay::sharedDisplay().msaaSampleCount(), kTopLeft_GrSurfaceOrigin, &properties);
     if (!surface || !surface->getCanvas())
         return nullptr;
 
@@ -107,14 +107,30 @@ ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
 #endif
 }
 
+void flushSurfaceIfNeeded(SkSurface* surface)
+{
+    // If we're using MSAA, we need to flush the surface before calling makeImageSnapshot(),
+    // because that call doesn't force the MSAA resolution, which can produce outdated results
+    // in the resulting SkImage.
+    auto& display = PlatformDisplay::sharedDisplay();
+    if (display.msaaSampleCount() > 0) {
+        auto* glContext = display.skiaGLContext();
+        if (!glContext || !glContext->makeContextCurrent())
+            return;
+        display.skiaGrContext()->flush(surface);
+    }
+}
+
 RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::copyNativeImage()
 {
     // FIXME: do we have to do a explicit copy here?
+    flushSurfaceIfNeeded(m_surface.get());
     return NativeImage::create(m_surface->makeImageSnapshot());
 }
 
 RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::createNativeImageReference()
 {
+    flushSurfaceIfNeeded(m_surface.get());
     return NativeImage::create(m_surface->makeImageSnapshot());
 }
 
