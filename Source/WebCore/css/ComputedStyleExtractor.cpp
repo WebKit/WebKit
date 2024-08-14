@@ -4814,6 +4814,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
     // @view-transition descriptors.
     case CSSPropertyNavigation:
+    case CSSPropertyTypes:
         return nullptr;
 
     // @font-palette-values descriptors.

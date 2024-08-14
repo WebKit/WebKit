@@ -2498,7 +2498,7 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
 {
     // FIXME: Consider adding implementation-defined navigation experience step.
 
-    if (!oldDocument.resolveViewTransitionRule())
+    if (std::holds_alternative<Document::SkipTransition>(oldDocument.resolveViewTransitionRule()))
         return false;
 
     if (!m_triggeringAction.navigationAPIType() || *m_triggeringAction.navigationAPIType() == NavigationNavigationType::Reload)

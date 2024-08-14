@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ typedef USVString CSSOMString;
+
 // https://www.w3.org/TR/css-view-transitions-2/#view-transition-rule
 enum ViewTransitionNavigation { "auto", "none" };
 
@@ -32,4 +34,5 @@ enum ViewTransitionNavigation { "auto", "none" };
 ]
 interface CSSViewTransitionRule : CSSRule {
   readonly attribute ViewTransitionNavigation navigation;
+  readonly attribute FrozenArray<[AtomString] CSSOMString> types;
 };

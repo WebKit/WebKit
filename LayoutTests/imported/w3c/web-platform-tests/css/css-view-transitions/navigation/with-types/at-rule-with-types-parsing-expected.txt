@@ -1,14 +1,14 @@
 
-FAIL types: none shoud result in [] assert_array_equals: value is undefined, expected array
-FAIL types: abc shoud result in ["abc"] assert_array_equals: value is undefined, expected array
-FAIL types: abc xyz shoud result in ["abc","xyz"] assert_array_equals: value is undefined, expected array
-FAIL types:    abc 	xyz  shoud result in ["abc","xyz"] assert_array_equals: value is undefined, expected array
-FAIL types: abc none shoud result in [] assert_array_equals: value is undefined, expected array
-FAIL types: abc -ua-something shoud result in [] assert_array_equals: value is undefined, expected array
-FAIL types: abc -ok-something shoud result in ["abc","-ok-something"] assert_array_equals: value is undefined, expected array
-FAIL types: abc abc shoud result in ["abc","abc"] assert_array_equals: value is undefined, expected array
-FAIL types: abc ABC shoud result in ["abc","ABC"] assert_array_equals: value is undefined, expected array
-FAIL types: 123 shoud result in [] assert_array_equals: value is undefined, expected array
-FAIL types: * shoud result in [] assert_array_equals: value is undefined, expected array
-FAIL types: *11 abc shoud result in [] assert_array_equals: value is undefined, expected array
+PASS types: none shoud result in []
+PASS types: abc shoud result in ["abc"]
+PASS types: abc xyz shoud result in ["abc","xyz"]
+PASS types:    abc 	xyz  shoud result in ["abc","xyz"]
+PASS types: abc none shoud result in []
+PASS types: abc -ua-something shoud result in []
+PASS types: abc -ok-something shoud result in ["abc","-ok-something"]
+PASS types: abc abc shoud result in ["abc","abc"]
+PASS types: abc ABC shoud result in ["abc","ABC"]
+PASS types: 123 shoud result in []
+PASS types: * shoud result in []
+PASS types: *11 abc shoud result in []
 

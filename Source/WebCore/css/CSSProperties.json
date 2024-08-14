@@ -9972,6 +9972,21 @@
                      "category": "css-view-transitions",
                      "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
                  }
+            },
+            "types": {
+                "values": [
+                    "none"
+                ],
+                "codegen-properties": {
+                    "settings-flag": "crossDocumentViewTransitionsEnabled",
+                    "parser-grammar-unused": "none | <custom-ident>+",
+                    "parser-grammar-unused-reason": "Needs support for space separated idents",
+                    "parser-function": "consumeViewTransitionTypes"
+                },
+                 "specification": {
+                     "category": "css-view-transitions",
+                     "url": "https://www.w3.org/TR/css-view-transitions-2/#view-transition-navigation-descriptor"
+                 }
             }
         }
     },

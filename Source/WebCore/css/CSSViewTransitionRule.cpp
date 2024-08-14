@@ -54,6 +54,18 @@ StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properti
     : StyleRuleBase(StyleRuleType::ViewTransition)
 {
     m_navigation = toViewTransitionNavigationEnum(properties->getPropertyCSSValue(CSSPropertyNavigation));
+
+    if (auto value = properties->getPropertyCSSValue(CSSPropertyTypes)) {
+        auto processSingleValue = [&](const CSSValue& currentValue) {
+            if (currentValue.isCustomIdent())
+                m_types.append(currentValue.customIdent());
+        };
+        if (auto* list = dynamicDowncast<CSSValueList>(*value)) {
+            for (auto& currentValue : *list)
+                processSingleValue(currentValue);
+        } else
+            processSingleValue(*value);
+    }
 }
 
 Ref<StyleRuleViewTransition> StyleRuleViewTransition::create(Ref<StyleProperties>&& properties)
@@ -89,6 +101,15 @@ String CSSViewTransitionRule::cssText() const
             builder.append("none"_s);
         builder.append("; "_s);
     }
+
+    if (!types().isEmpty())
+        builder.append("types:"_s);
+    for (auto& type : types()) {
+        builder.append(' ');
+        builder.append(type);
+    }
+    if (!types().isEmpty())
+        builder.append('}');
 
     builder.append('}');
     return builder.toString();

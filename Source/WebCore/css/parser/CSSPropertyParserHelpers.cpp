@@ -4799,5 +4799,24 @@ RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, CSSParserMod
     return CSSPrimitiveValue::create(anchor);
 }
 
+RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    CSSValueListBuilder list;
+    do {
+        if (range.peek().id() == CSSValueNone)
+            return nullptr;
+        auto type = consumeCustomIdent(range);
+        if (!type)
+            return nullptr;
+        if (type->customIdent().startsWith("-ua-"_s))
+            return nullptr;
+        list.append(type.releaseNonNull());
+    } while (!range.atEnd());
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

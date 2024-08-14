@@ -8054,15 +8054,15 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
 }
 
 // https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
-bool Document::resolveViewTransitionRule()
+std::variant<Document::SkipTransition, Vector<AtomString>> Document::resolveViewTransitionRule()
 {
     if (visibilityState() == VisibilityState::Hidden)
-        return false;
+        return SkipTransition { };
 
     auto rule = styleScope().resolver().viewTransitionRule();
-    if (rule)
-        return rule->computedNavigation() == ViewTransitionNavigation::Auto;
-    return false;
+    if (rule && rule->computedNavigation() == ViewTransitionNavigation::Auto)
+        return rule->types();
+    return SkipTransition { };
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#revealing-the-document
@@ -8077,12 +8077,9 @@ void Document::reveal()
 
     PageRevealEvent::Init init;
 
-    // FIXME: This should implement more of https://drafts.csswg.org/css-view-transitions-2/#resolve-inbound-cross-document-view-transition
-    RefPtr<ViewTransition> inboundTransition;
-    if (m_inboundViewTransitionParams && resolveViewTransitionRule()) {
-        inboundTransition = ViewTransition::createInbound(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    RefPtr<ViewTransition> inboundTransition = ViewTransition::resolveInboundCrossDocumentViewTransition(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    if (inboundTransition)
         init.viewTransition = inboundTransition;
-    }
 
     dispatchWindowEvent(PageRevealEvent::create(eventNames().pagerevealEvent, WTFMove(init)), this);
 
@@ -8110,7 +8107,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition)
 
     PageSwapEvent::Init swapInit;
     if (canTriggerCrossDocumentViewTransition && globalObject()) {
-        oldViewTransition = ViewTransition::createOutbound(*this);
+        oldViewTransition = ViewTransition::setupCrossDocumentViewTransition(*this);
         swapInit.viewTransition = oldViewTransition;
     }
 
