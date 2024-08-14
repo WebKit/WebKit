@@ -1,5 +1,5 @@
 
-PASS e.style['text-box-edge'] = "leading" should set the property value
+PASS e.style['text-box-edge'] = "auto" should set the property value
 PASS e.style['text-box-edge'] = "text" should set the property value
 PASS e.style['text-box-edge'] = "ex" should set the property value
 PASS e.style['text-box-edge'] = "cap" should set the property value

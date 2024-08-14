@@ -45,6 +45,7 @@
 #include "StyleContentAlignmentData.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "StyleTextEdge.h"
 #include "TextDecorationThickness.h"
 #include "TouchAction.h"
 #include "TranslateTransformOperation.h"
@@ -190,6 +191,8 @@ public:
 
     Vector<AtomString> anchorNames;
     AtomString positionAnchor;
+
+    TextEdge textBoxEdge;
 
     std::optional<Length> blockStepSize;
     unsigned blockStepInsert : 1; // BlockStepInsert

@@ -309,9 +309,9 @@ PASS text-autospace uses discrete animation when animating between "normal" and 
 PASS text-autospace uses discrete animation when animating between "normal" and "no-autospace" with effect easing
 PASS text-autospace uses discrete animation when animating between "normal" and "no-autospace" with keyframe easing
 PASS text-box-edge (type: discrete) has testInterpolation function
-PASS text-box-edge uses discrete animation when animating between "leading" and "text" with linear easing
-PASS text-box-edge uses discrete animation when animating between "leading" and "text" with effect easing
-PASS text-box-edge uses discrete animation when animating between "leading" and "text" with keyframe easing
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with linear easing
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with effect easing
+PASS text-box-edge uses discrete animation when animating between "auto" and "text" with keyframe easing
 PASS text-box-trim (type: discrete) has testInterpolation function
 PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with linear easing
 PASS text-box-trim uses discrete animation when animating between "none" and "trim-start" with effect easing

@@ -254,8 +254,8 @@ PASS text-autospace (type: discrete) has testAccumulation function
 PASS text-autospace: "no-autospace" onto "normal"
 PASS text-autospace: "normal" onto "no-autospace"
 PASS text-box-edge (type: discrete) has testAccumulation function
-PASS text-box-edge: "text" onto "leading"
-PASS text-box-edge: "leading" onto "text"
+PASS text-box-edge: "text" onto "auto"
+PASS text-box-edge: "auto" onto "text"
 PASS text-box-trim (type: discrete) has testAccumulation function
 PASS text-box-trim: "trim-start" onto "none"
 PASS text-box-trim: "none" onto "trim-start"

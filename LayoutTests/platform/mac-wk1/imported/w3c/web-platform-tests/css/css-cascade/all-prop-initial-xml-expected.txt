@@ -185,6 +185,7 @@ PASS left
 PASS letter-spacing
 PASS lighting-color
 PASS line-break
+PASS line-fit-edge
 PASS line-height
 PASS list-style-image
 PASS list-style-position

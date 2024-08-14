@@ -653,9 +653,9 @@
             }
         },
         "text-box-edge": {
-            "inherited": true,
+            "inherited": false,
             "values": [
-                "leading",
+                "auto",
                 "text",
                 "ex",
                 "ideographic",
@@ -664,15 +664,16 @@
                 "cap"
             ],
             "codegen-properties": {
-                "converter": "TextBoxEdge",
+                "converter": "TextEdge",
                 "settings-flag": "cssTextBoxTrimEnabled",
-                "parser-function": "consumeTextBoxEdge",
-                "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
+                "parser-function": "consumeTextEdge",
+                "parser-function-requires-current-property": true,
+                "parser-grammar-unused": "auto | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
                 "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."
             },
             "specification": {
                 "category": "css-inline",
-                "url": "https://www.w3.org/TR/css-inline-3/#text-edges"
+                "url": "https://www.w3.org/TR/css-inline-3/#text-box-edge"
             },
             "status": "experimental"
         },
@@ -3857,6 +3858,31 @@
                 "color-property": true,
                 "parser-grammar": "<color>"
             }
+        },
+        "line-fit-edge": {
+            "inherited": true,
+            "values": [
+                "leading",
+                "text",
+                "ex",
+                "ideographic",
+                "ideographic-ink",
+                "alphabetic",
+                "cap"
+            ],
+            "codegen-properties": {
+                "converter": "TextEdge",
+                "settings-flag": "cssTextBoxTrimEnabled",
+                "parser-function": "consumeTextEdge",
+                "parser-function-requires-current-property": true,
+                "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
+                "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline-3/#text-edges"
+            },
+            "status": "experimental"
         },
         "line-height": {
             "inherited": true,

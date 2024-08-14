@@ -1,5 +1,5 @@
 
-PASS Property text-box-edge value 'leading'
+PASS Property text-box-edge value 'auto'
 PASS Property text-box-edge value 'text'
 PASS Property text-box-edge value 'ex'
 PASS Property text-box-edge value 'cap'

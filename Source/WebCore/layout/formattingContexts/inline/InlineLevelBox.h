@@ -30,7 +30,7 @@
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
 #include "LengthFunctions.h"
-#include "StyleTextBoxEdge.h"
+#include "StyleTextEdge.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -83,7 +83,8 @@ public:
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
 
     // FIXME: Maybe it's time to subclass inline box types.
-    TextBoxEdge textBoxEdge() const { return m_style.textBoxEdge; }
+    TextEdge textBoxEdge() const { return m_style.textBoxEdge; }
+    TextEdge lineFitEdge() const { return m_style.lineFitEdge; }
     TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
@@ -166,7 +167,8 @@ private:
     struct Style {
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
-        TextBoxEdge textBoxEdge;
+        TextEdge textBoxEdge;
+        TextEdge lineFitEdge;
         TextBoxTrim textBoxTrim;
         OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };

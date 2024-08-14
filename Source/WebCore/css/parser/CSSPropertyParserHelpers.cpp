@@ -2484,9 +2484,12 @@ RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextEdge(CSSPropertyID property, CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueLeading)
+    if (property == CSSPropertyTextBoxEdge && range.peek().id() == CSSValueAuto)
+        return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
+
+    if (property == CSSPropertyLineFitEdge && range.peek().id() == CSSValueLeading)
         return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
 
     auto firstGroupValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);

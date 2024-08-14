@@ -3,7 +3,7 @@ Test parsing of the CSS text-box-edge property.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS test("text-box-edge: leading") is "leading"
+PASS test("text-box-edge: auto") is "auto"
 PASS test("text-box-edge: text") is "text"
 PASS test("text-box-edge: cap") is "cap"
 PASS test("text-box-edge: ex") is "ex"

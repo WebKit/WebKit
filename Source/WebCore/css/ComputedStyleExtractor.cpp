@@ -1280,16 +1280,28 @@ static Ref<CSSValue> valueForScrollbarGutter(const ScrollbarGutter& gutter)
     return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueStable), CSSPrimitiveValue::create(CSSValueBothEdges));
 }
 
-static Ref<CSSValue> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
+static Ref<CSSValue> valueForTextBoxEdge(const TextEdge& textBoxEdge)
 {
-    if (textBoxEdge.over == TextBoxEdgeType::Leading && textBoxEdge.under == TextBoxEdgeType::Leading)
+    if (textBoxEdge.over == TextEdgeType::Auto && textBoxEdge.under == TextEdgeType::Auto)
         return createConvertingToCSSValueID(textBoxEdge.over);
 
-    if (textBoxEdge.under == TextBoxEdgeType::Text)
+    if (textBoxEdge.under == TextEdgeType::Text)
         return createConvertingToCSSValueID(textBoxEdge.over);
 
     return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
         createConvertingToCSSValueID(textBoxEdge.under));
+}
+
+static Ref<CSSValue> valueForLineFitEdge(const TextEdge& lineFitEdge)
+{
+    if (lineFitEdge.over == TextEdgeType::Leading && lineFitEdge.under == TextEdgeType::Leading)
+        return createConvertingToCSSValueID(lineFitEdge.over);
+
+    if (lineFitEdge.under == TextEdgeType::Text)
+        return createConvertingToCSSValueID(lineFitEdge.over);
+
+    return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(lineFitEdge.over),
+        createConvertingToCSSValueID(lineFitEdge.under));
 }
 
 static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeData)
@@ -4648,6 +4660,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.overflowAnchor());
     case CSSPropertyTextBoxEdge:
         return valueForTextBoxEdge(style.textBoxEdge());
+    case CSSPropertyLineFitEdge:
+        return valueForLineFitEdge(style.lineFitEdge());
 
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:

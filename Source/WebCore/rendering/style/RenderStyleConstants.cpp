@@ -1250,16 +1250,17 @@ TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextBoxEdgeType textBoxEdgeType)
+TextStream& operator<<(TextStream& ts, TextEdgeType textEdgeType)
 {
-    switch (textBoxEdgeType) {
-    case TextBoxEdgeType::Leading: ts << "half-leading"; break;
-    case TextBoxEdgeType::Text: ts << "text-over/under baseline"; break;
-    case TextBoxEdgeType::CapHeight: ts << "cap-height baseline"; break;
-    case TextBoxEdgeType::ExHeight: ts << "x-height baseline"; break;
-    case TextBoxEdgeType::Alphabetic: ts << "alphabetic baseline"; break;
-    case TextBoxEdgeType::CJKIdeographic: ts << "ideographic-over baseline"; break;
-    case TextBoxEdgeType::CJKIdeographicInk: ts << "ideographic-ink-over/ink-under baseline"; break;
+    switch (textEdgeType) {
+    case TextEdgeType::Auto: ts << "auto"; break;
+    case TextEdgeType::Leading: ts << "half-leading"; break;
+    case TextEdgeType::Text: ts << "text-over/under baseline"; break;
+    case TextEdgeType::CapHeight: ts << "cap-height baseline"; break;
+    case TextEdgeType::ExHeight: ts << "x-height baseline"; break;
+    case TextEdgeType::Alphabetic: ts << "alphabetic baseline"; break;
+    case TextEdgeType::CJKIdeographic: ts << "ideographic-over baseline"; break;
+    case TextEdgeType::CJKIdeographicInk: ts << "ideographic-ink-over/ink-under baseline"; break;
     }
     return ts;
 }
