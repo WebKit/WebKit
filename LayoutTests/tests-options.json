@@ -3299,9 +3299,6 @@
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-redirects.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/shared-worker.html": [
         "slow"
     ],
@@ -3312,6 +3309,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/pushstate.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-client-postmessage.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html": [
