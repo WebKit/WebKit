@@ -244,7 +244,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 
         RefPtr pushConnection = PushClientConnection::create(xpcConnection.get(), *decoder);
         if (!pushConnection) {
-            RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Could not initialize PushClientConnection");
+            RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Could not initialize PushClientConnection from xpc connection %p", xpcConnection.get());
             tryCloseRequestConnection(request);
             return;
         }
@@ -288,7 +288,13 @@ void WebPushDaemon::connectionRemoved(xpc_connection_t connection)
         return;
     }
 
-    auto clientConnection = m_connectionMap.take(connection);
+    auto it = m_connectionMap.find(connection);
+    if (it == m_connectionMap.end()) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionRemoved: couldn't find XPC connection %p in pending connection set or connection map", connection);
+        return;
+    }
+
+    auto clientConnection = m_connectionMap.take(it);
     clientConnection->connectionClosed();
 }
 
