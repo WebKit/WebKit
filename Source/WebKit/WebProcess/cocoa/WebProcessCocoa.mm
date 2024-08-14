@@ -887,7 +887,8 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    if (isLockdownModeEnabled()) {
+    // We cannot use isLockdownModeEnabled() here, since it has not been set to the correct value yet.
+    if (WTF::processHasEntitlement("com.apple.private.webkit.lockdown-mode"_s)) {
 #if PLATFORM(IOS_FAMILY)
         prewarmLogs();
 #endif
