@@ -1448,20 +1448,45 @@ RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
     if (auto ident = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueManipulation>(range))
         return ident;
 
-    Vector<CSSValueID, 3> list;
+    bool hasPanX = false;
+    bool hasPanY = false;
+    bool hasPinchZoom = false;
     while (true) {
         auto ident = consumeIdentRaw<CSSValuePanX, CSSValuePanY, CSSValuePinchZoom>(range);
         if (!ident)
             break;
-        if (list.contains(*ident))
+        switch (*ident) {
+        case CSSValuePanX:
+            if (hasPanX)
+                return nullptr;
+            hasPanX = true;
+            break;
+        case CSSValuePanY:
+            if (hasPanY)
+                return nullptr;
+            hasPanY = true;
+            break;
+        case CSSValuePinchZoom:
+            if (hasPinchZoom)
+                return nullptr;
+            hasPinchZoom = true;
+            break;
+        default:
             return nullptr;
-        list.append(*ident);
+        }
     }
-    if (list.isEmpty())
+
+    if (!hasPanX && !hasPanY && !hasPinchZoom)
         return nullptr;
+
     CSSValueListBuilder builder;
-    for (auto ident : list)
-        builder.append(CSSPrimitiveValue::create(ident));
+    if (hasPanX)
+        builder.append(CSSPrimitiveValue::create(CSSValuePanX));
+    if (hasPanY)
+        builder.append(CSSPrimitiveValue::create(CSSValuePanY));
+    if (hasPinchZoom)
+        builder.append(CSSPrimitiveValue::create(CSSValuePinchZoom));
+
     return CSSValueList::createSpaceSeparated(WTFMove(builder));
 }
 
