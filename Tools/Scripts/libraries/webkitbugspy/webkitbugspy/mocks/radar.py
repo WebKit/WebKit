@@ -121,8 +121,8 @@ class RadarModel(object):
             self.name = name
 
     class Tentpole(object):
-        def __init__(self, name):
-            self.name = name
+        def __init__(self, args):
+            self.name = args['name']
 
     class MilestoneAssociations(object):
         def __init__(self, milestone):
@@ -182,7 +182,7 @@ class RadarModel(object):
         event = issue.get('event')
         self.event = RadarModel.Event(event) if event else None
         tentpole = issue.get('tentpole')
-        self.tentpole = RadarModel.Tentpole(tentpole) if tentpole else None
+        self.tentpole = RadarModel.Tentpole(dict(name=tentpole)) if tentpole else None
 
         components = []
         if issue.get('project') and issue.get('component') and issue.get('version'):
@@ -437,6 +437,7 @@ class Radar(Base, ContextStack):
     top = None
 
     Person = RadarModel.Person
+    Tentpole = RadarModel.Tentpole
 
     class AuthenticationStrategySystemAccount(object):
         def __init__(self, username, __, ___, ____):
@@ -536,7 +537,7 @@ class Radar(Base, ContextStack):
             self._events = [RadarModel.Event(event) for event in (events or [])]
 
             self._isTentpoleRequired = isTentpoleRequired
-            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
+            self._tentpoles = [RadarModel.Tentpole(dict(name=tentpole)) for tentpole in (tentpoles or [])]
 
     class Category(object):
         def __init__(self, name):
