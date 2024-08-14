@@ -6704,6 +6704,9 @@
     "imported/w3c/web-platform-tests/webstorage/event_setattribute.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm": [
         "slow"
     ],

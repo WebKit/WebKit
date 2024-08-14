@@ -582,6 +582,31 @@ imported/w3c/web-platform-tests/x-frame-options/multiple.html [ DumpJSConsoleLog
 imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cookie-store/cookieStore_event_basic.https.window.html [ DumpJSConsoleLogInStdErr ]
 
+# We need to fix our WebVTT implementation to pass most of the WebVTT rendering WPT (https://bugs.webkit.org/show_bug.cgi?id=277975).
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video [ ImageOnlyFailure ]
+
+# These are the WebVTT rendering WPT we are already passing.
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/dom_override_remove_cue_while_paused.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_cascade_priority.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_cascade_priority_layer.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_imports_blocked.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_invalid_format.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_selectors.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_urls.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_404_omit_subtitles.html [ Pass ]
+
+# These WebVTT rendering WPT are flaky.
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements.html [ ImageOnlyFailure Pass Failure ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/audio_has_no_subtitles.html [ ImageOnlyFailure Pass Failure ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_white-space_pre-line_wrapped.html [ Crash ImageOnlyFailure ]
+
+# These WebVTT rendering WPT occasionally time out.
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_tracks.html [ Skip ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/3_tracks.html [ Skip ]
+
+# Flaky crashing test.
+media/modern-media-controls/tracks-support/no-tracks.html [ Crash Pass Failure ]
+
 # Timing out tests.
 imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch/update-ui.https.window.html [ Skip ]
