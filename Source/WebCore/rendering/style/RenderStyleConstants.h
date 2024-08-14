@@ -719,6 +719,8 @@ enum class MarginTrimType : uint8_t {
 };
 
 enum class TextEdgeType : uint8_t {
+    // Note that TextEdgeType is shared between text-box-edge and line-fit-edge,
+    // where text-box-edge's default value is auto, and line-fit-edge has leading.
     Auto,
     Leading,
     Text,
