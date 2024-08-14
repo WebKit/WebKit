@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/200-200-green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/all-green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/cap-unit-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ch-unit-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ex-unit-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ex-unit-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ex-unit-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/ic-unit-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/vh-support-atviewport-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/vh_not_refreshing_on_chrome-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/vh_not_refreshing_on_chrome_iframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/reference/viewport-unit-011-ref.html

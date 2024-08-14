@@ -2198,6 +2198,12 @@
     "imported/w3c/web-platform-tests/css/css-typed-om/idlharness.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-values/calc-size/animation/calc-size-height-interpolation.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-values/calc-size/animation/calc-size-width-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],

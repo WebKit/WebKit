@@ -6301,6 +6301,7 @@ webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-016.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-sizing/thin-element-render.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
+webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-all-types.html [ Failure ]
 
 webkit.org/b/229874 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
 

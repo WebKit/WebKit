@@ -1,0 +1,272 @@
+
+FAIL CSS Transitions: property <width> from [initial] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions: property <width> from [initial] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions: property <width> from [initial] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions: property <width> from [initial] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions: property <width> from [initial] to [50px] at (1) should be [50px]
+FAIL CSS Transitions: property <width> from [initial] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [initial] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [initial] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [initial] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [initial] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions with transition: all: property <width> from [initial] to [50px] at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <width> from [initial] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Animations: property <width> from [initial] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS CSS Animations: property <width> from [initial] to [50px] at (0) should be [150px]
+FAIL CSS Animations: property <width> from [initial] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL CSS Animations: property <width> from [initial] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Animations: property <width> from [initial] to [50px] at (1) should be [50px]
+FAIL CSS Animations: property <width> from [initial] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL Web Animations: property <width> from [initial] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS Web Animations: property <width> from [initial] to [50px] at (0) should be [150px]
+FAIL Web Animations: property <width> from [initial] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL Web Animations: property <width> from [initial] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS Web Animations: property <width> from [initial] to [50px] at (1) should be [50px]
+FAIL Web Animations: property <width> from [initial] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions: property <width> from [unset] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions: property <width> from [unset] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions: property <width> from [unset] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions: property <width> from [unset] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions: property <width> from [unset] to [50px] at (1) should be [50px]
+FAIL CSS Transitions: property <width> from [unset] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [unset] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [unset] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [unset] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [unset] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions with transition: all: property <width> from [unset] to [50px] at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <width> from [unset] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Animations: property <width> from [unset] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS CSS Animations: property <width> from [unset] to [50px] at (0) should be [150px]
+FAIL CSS Animations: property <width> from [unset] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL CSS Animations: property <width> from [unset] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Animations: property <width> from [unset] to [50px] at (1) should be [50px]
+FAIL CSS Animations: property <width> from [unset] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL Web Animations: property <width> from [unset] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS Web Animations: property <width> from [unset] to [50px] at (0) should be [150px]
+FAIL Web Animations: property <width> from [unset] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL Web Animations: property <width> from [unset] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS Web Animations: property <width> from [unset] to [50px] at (1) should be [50px]
+FAIL Web Animations: property <width> from [unset] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions: property <width> from [auto] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions: property <width> from [auto] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions: property <width> from [auto] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions: property <width> from [auto] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions: property <width> from [auto] to [50px] at (1) should be [50px]
+FAIL CSS Transitions: property <width> from [auto] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [auto] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [auto] to [50px] at (0) should be [150px] assert_equals: expected "150px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [auto] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [auto] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Transitions with transition: all: property <width> from [auto] to [50px] at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <width> from [auto] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL CSS Animations: property <width> from [auto] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS CSS Animations: property <width> from [auto] to [50px] at (0) should be [150px]
+FAIL CSS Animations: property <width> from [auto] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL CSS Animations: property <width> from [auto] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS CSS Animations: property <width> from [auto] to [50px] at (1) should be [50px]
+FAIL CSS Animations: property <width> from [auto] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+FAIL Web Animations: property <width> from [auto] to [50px] at (-0.3) should be [180px] assert_equals: expected "180px " but got "150px "
+PASS Web Animations: property <width> from [auto] to [50px] at (0) should be [150px]
+FAIL Web Animations: property <width> from [auto] to [50px] at (0.3) should be [120px] assert_equals: expected "120px " but got "150px "
+FAIL Web Animations: property <width> from [auto] to [50px] at (0.6) should be [90px] assert_equals: expected "90px " but got "50px "
+PASS Web Animations: property <width> from [auto] to [50px] at (1) should be [50px]
+FAIL Web Animations: property <width> from [auto] to [50px] at (1.5) should be [0px] assert_equals: expected "0px " but got "50px "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (-0.3) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (0) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (0.3) should be [auto]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (-0.3) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (0) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (0.3) should be [auto]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (-0.3) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (0) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (0.3) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (-0.3) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (0) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (0.3) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (-0.3) should be [auto]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (0) should be [auto]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (0.3) should be [auto]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS CSS Animations: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (-0.3) should be [auto]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (0) should be [auto]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (0.3) should be [auto]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (0.5) should be [fit-content]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (0.6) should be [fit-content]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (1) should be [fit-content]
+PASS Web Animations: property <width> from [auto] to [fit-content] at (1.5) should be [fit-content]
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (-0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (0) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (-0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (0) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (-0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (0) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (-0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (0) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (0.3) should be [stretch] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <width> from [stretch] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <width> from [200px] to [fit-content] at (-0.3) should be [230px] assert_equals: expected "230px " but got "100px "
+FAIL CSS Transitions: property <width> from [200px] to [fit-content] at (0) should be [200px] assert_equals: expected "200px " but got "100px "
+FAIL CSS Transitions: property <width> from [200px] to [fit-content] at (0.3) should be [170px] assert_equals: expected "170px " but got "100px "
+FAIL CSS Transitions: property <width> from [200px] to [fit-content] at (0.6) should be [140px] assert_equals: expected "140px " but got "100px "
+PASS CSS Transitions: property <width> from [200px] to [fit-content] at (1) should be [100px]
+FAIL CSS Transitions: property <width> from [200px] to [fit-content] at (1.5) should be [50px] assert_equals: expected "50px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (-0.3) should be [230px] assert_equals: expected "230px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (0) should be [200px] assert_equals: expected "200px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (0.3) should be [170px] assert_equals: expected "170px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (0.6) should be [140px] assert_equals: expected "140px " but got "100px "
+PASS CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (1) should be [100px]
+FAIL CSS Transitions with transition: all: property <width> from [200px] to [fit-content] at (1.5) should be [50px] assert_equals: expected "50px " but got "100px "
+FAIL CSS Animations: property <width> from [200px] to [fit-content] at (-0.3) should be [230px] assert_equals: expected "230px " but got "200px "
+PASS CSS Animations: property <width> from [200px] to [fit-content] at (0) should be [200px]
+FAIL CSS Animations: property <width> from [200px] to [fit-content] at (0.3) should be [170px] assert_equals: expected "170px " but got "200px "
+FAIL CSS Animations: property <width> from [200px] to [fit-content] at (0.6) should be [140px] assert_equals: expected "140px " but got "100px "
+PASS CSS Animations: property <width> from [200px] to [fit-content] at (1) should be [100px]
+FAIL CSS Animations: property <width> from [200px] to [fit-content] at (1.5) should be [50px] assert_equals: expected "50px " but got "100px "
+FAIL Web Animations: property <width> from [200px] to [fit-content] at (-0.3) should be [230px] assert_equals: expected "230px " but got "200px "
+PASS Web Animations: property <width> from [200px] to [fit-content] at (0) should be [200px]
+FAIL Web Animations: property <width> from [200px] to [fit-content] at (0.3) should be [170px] assert_equals: expected "170px " but got "200px "
+FAIL Web Animations: property <width> from [200px] to [fit-content] at (0.6) should be [140px] assert_equals: expected "140px " but got "100px "
+PASS Web Animations: property <width> from [200px] to [fit-content] at (1) should be [100px]
+FAIL Web Animations: property <width> from [200px] to [fit-content] at (1.5) should be [50px] assert_equals: expected "50px " but got "100px "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (-0.3) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (0) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (0.3) should be [max-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (-0.3) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (0) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (0.3) should be [max-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (-0.3) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (0) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (0.3) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (-0.3) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (0) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (0.3) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS CSS Transitions with transition: all: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (-0.3) should be [max-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (0) should be [max-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (0.3) should be [max-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS CSS Animations: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (-0.3) should be [max-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (0) should be [max-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (0.3) should be [max-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (0.5) should be [min-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (0.6) should be [min-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (1) should be [min-content]
+PASS Web Animations: property <width> from [max-content] to [min-content] at (1.5) should be [min-content]
+FAIL CSS Transitions: property <width> from [max-content] to neutral at (-0.3) should be [115px] assert_equals: expected "115px " but got "50px "
+FAIL CSS Transitions: property <width> from [max-content] to neutral at (0) should be [100px] assert_equals: expected "100px " but got "50px "
+FAIL CSS Transitions: property <width> from [max-content] to neutral at (0.3) should be [85px] assert_equals: expected "85px " but got "50px "
+FAIL CSS Transitions: property <width> from [max-content] to neutral at (0.6) should be [70px] assert_equals: expected "70px " but got "50px "
+PASS CSS Transitions: property <width> from [max-content] to neutral at (1) should be [50px]
+FAIL CSS Transitions: property <width> from [max-content] to neutral at (1.5) should be [25px] assert_equals: expected "25px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [max-content] to neutral at (-0.3) should be [115px] assert_equals: expected "115px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [max-content] to neutral at (0) should be [100px] assert_equals: expected "100px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [max-content] to neutral at (0.3) should be [85px] assert_equals: expected "85px " but got "50px "
+FAIL CSS Transitions with transition: all: property <width> from [max-content] to neutral at (0.6) should be [70px] assert_equals: expected "70px " but got "50px "
+PASS CSS Transitions with transition: all: property <width> from [max-content] to neutral at (1) should be [50px]
+FAIL CSS Transitions with transition: all: property <width> from [max-content] to neutral at (1.5) should be [25px] assert_equals: expected "25px " but got "50px "
+FAIL CSS Animations: property <width> from [max-content] to neutral at (-0.3) should be [115px] assert_equals: expected "115px " but got "100px "
+PASS CSS Animations: property <width> from [max-content] to neutral at (0) should be [100px]
+FAIL CSS Animations: property <width> from [max-content] to neutral at (0.3) should be [85px] assert_equals: expected "85px " but got "100px "
+FAIL CSS Animations: property <width> from [max-content] to neutral at (0.6) should be [70px] assert_equals: expected "70px " but got "50px "
+PASS CSS Animations: property <width> from [max-content] to neutral at (1) should be [50px]
+FAIL CSS Animations: property <width> from [max-content] to neutral at (1.5) should be [25px] assert_equals: expected "25px " but got "50px "
+FAIL Web Animations: property <width> from [max-content] to neutral at (-0.3) should be [115px] assert_equals: expected "115px " but got "100px "
+PASS Web Animations: property <width> from [max-content] to neutral at (0) should be [100px]
+FAIL Web Animations: property <width> from [max-content] to neutral at (0.3) should be [85px] assert_equals: expected "85px " but got "100px "
+FAIL Web Animations: property <width> from [max-content] to neutral at (0.6) should be [70px] assert_equals: expected "70px " but got "50px "
+PASS Web Animations: property <width> from [max-content] to neutral at (1) should be [50px]
+FAIL Web Animations: property <width> from [max-content] to neutral at (1.5) should be [25px] assert_equals: expected "25px " but got "50px "
+FAIL CSS Transitions: property <width> from neutral to [min-content] at (-0.3) should be [35px] assert_equals: expected "35px " but got "100px "
+FAIL CSS Transitions: property <width> from neutral to [min-content] at (0) should be [50px] assert_equals: expected "50px " but got "100px "
+FAIL CSS Transitions: property <width> from neutral to [min-content] at (0.3) should be [65px] assert_equals: expected "65px " but got "100px "
+FAIL CSS Transitions: property <width> from neutral to [min-content] at (0.6) should be [80px] assert_equals: expected "80px " but got "100px "
+PASS CSS Transitions: property <width> from neutral to [min-content] at (1) should be [100px]
+FAIL CSS Transitions: property <width> from neutral to [min-content] at (1.5) should be [125px] assert_equals: expected "125px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from neutral to [min-content] at (-0.3) should be [35px] assert_equals: expected "35px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from neutral to [min-content] at (0) should be [50px] assert_equals: expected "50px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from neutral to [min-content] at (0.3) should be [65px] assert_equals: expected "65px " but got "100px "
+FAIL CSS Transitions with transition: all: property <width> from neutral to [min-content] at (0.6) should be [80px] assert_equals: expected "80px " but got "100px "
+PASS CSS Transitions with transition: all: property <width> from neutral to [min-content] at (1) should be [100px]
+FAIL CSS Transitions with transition: all: property <width> from neutral to [min-content] at (1.5) should be [125px] assert_equals: expected "125px " but got "100px "
+FAIL CSS Animations: property <width> from neutral to [min-content] at (-0.3) should be [35px] assert_equals: expected "35px " but got "50px "
+PASS CSS Animations: property <width> from neutral to [min-content] at (0) should be [50px]
+FAIL CSS Animations: property <width> from neutral to [min-content] at (0.3) should be [65px] assert_equals: expected "65px " but got "50px "
+FAIL CSS Animations: property <width> from neutral to [min-content] at (0.6) should be [80px] assert_equals: expected "80px " but got "100px "
+PASS CSS Animations: property <width> from neutral to [min-content] at (1) should be [100px]
+FAIL CSS Animations: property <width> from neutral to [min-content] at (1.5) should be [125px] assert_equals: expected "125px " but got "100px "
+FAIL Web Animations: property <width> from neutral to [min-content] at (-0.3) should be [35px] assert_equals: expected "35px " but got "50px "
+PASS Web Animations: property <width> from neutral to [min-content] at (0) should be [50px]
+FAIL Web Animations: property <width> from neutral to [min-content] at (0.3) should be [65px] assert_equals: expected "65px " but got "50px "
+FAIL Web Animations: property <width> from neutral to [min-content] at (0.6) should be [80px] assert_equals: expected "80px " but got "100px "
+PASS Web Animations: property <width> from neutral to [min-content] at (1) should be [100px]
+FAIL Web Animations: property <width> from neutral to [min-content] at (1.5) should be [125px] assert_equals: expected "125px " but got "100px "
+

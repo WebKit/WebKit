@@ -1,0 +1,37 @@
+
+FAIL resolved height for height in auto height container: calc-size(any, 357px) assert_equals: expected "357px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(any, 357px) assert_equals: expected "357px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(any, 31%) assert_equals: expected "0px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(any, 31%) assert_equals: expected "31px" but got "10px"
+PASS resolved height for height in auto height container: calc-size(31%, size)
+FAIL resolved height for height in definite height container: calc-size(31%, size) assert_equals: expected "31px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(max-content, 31%) assert_equals: expected "0px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(max-content, 31%) assert_equals: expected "31px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(fit-content, 72px) assert_equals: expected "72px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(fit-content, 72px) assert_equals: expected "72px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(37px, 93px) assert_equals: expected "93px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(37px, 93px) assert_equals: expected "93px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(83px, size * 3) assert_equals: expected "249px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(83px, size * 3) assert_equals: expected "249px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(min-content, size / 2) assert_equals: expected "5px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(min-content, size / 2) assert_equals: expected "5px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(max-content, size * 1.2) assert_equals: expected "12px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(max-content, size * 1.2) assert_equals: expected "12px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(fit-content, size / 2 + 30px) assert_equals: expected "35px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(fit-content, size / 2 + 30px) assert_equals: expected "35px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(30px, 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(30px, 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(calc-size(any, 30px), 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(calc-size(any, 30px), 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(calc-size(2in, 30px), 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(calc-size(2in, 30px), 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(calc-size(min-content, 30px), 15em) assert_equals: expected "300px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(calc-size(min-content, 30px), 15em) assert_equals: expected "300px" but got "10px"
+PASS resolved height for height in auto height container: calc-size(calc-size(min-content, size), size)
+PASS resolved height for height in definite height container: calc-size(calc-size(min-content, size), size)
+FAIL resolved height for height in auto height container: calc-size(any, 31% + 12px) assert_equals: expected "12px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(any, 31% + 12px) assert_equals: expected "43px" but got "10px"
+FAIL resolved height for height in auto height container: calc-size(auto, size * 1.5) assert_equals: expected "15px" but got "10px"
+FAIL resolved height for height in definite height container: calc-size(auto, size * 1.5) assert_equals: expected "15px" but got "10px"
+PASS calc-size() is indefinite when the intrinsic size is indefinite
+

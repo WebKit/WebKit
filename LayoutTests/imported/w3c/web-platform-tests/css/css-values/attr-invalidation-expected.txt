@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: assert_not_equals: got disallowed value "784px"
+
+FAIL CSS Values and Units Test: attr() invalidation Error: assert_not_equals: got disallowed value "784px"
+

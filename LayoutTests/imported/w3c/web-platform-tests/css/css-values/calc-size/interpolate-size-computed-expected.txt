@@ -1,0 +1,4 @@
+
+FAIL Property interpolate-size value 'numeric-only' assert_true: interpolate-size doesn't seem to be supported in the computed style expected true got false
+FAIL Property interpolate-size value 'allow-keywords' assert_true: interpolate-size doesn't seem to be supported in the computed style expected true got false
+

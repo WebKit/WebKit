@@ -924,9 +924,10 @@ webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round.xht [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
-webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
+webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-all-types.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-001p.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-003p.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-005i.html [ ImageOnlyFailure ]
