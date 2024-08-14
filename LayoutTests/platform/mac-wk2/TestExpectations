@@ -1815,5 +1815,3 @@ tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass 
 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Pass Failure ]
 
 webkit.org/b/278041 [ Debug ] workers/worker-to-worker.html [ Pass Crash ]
-
-webkit.org/b/278051 http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html [ Pass Failure ]

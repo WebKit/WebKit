@@ -7511,8 +7511,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/stretch-along-bl
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Pass Failure ]
 
-webkit.org/b/278051 http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html [ Pass Failure ]
-
 # webkit.org/b/278080 (6+ fast/forms/ios/* layout tests are flakily timing out (<20%).)
 fast/forms/ios/focus-button.html [ Pass Timeout ]
 fast/forms/ios/focus-checkbox.html [ Pass Timeout ]
