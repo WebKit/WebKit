@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class DOMImplementation final : public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(DOMImplementation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMImplementation);
 public:
     explicit DOMImplementation(Document&);
 

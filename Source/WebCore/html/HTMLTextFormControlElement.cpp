@@ -62,13 +62,13 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTextFormControlElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTextFormControlElement);
 
 using namespace HTMLNames;
 

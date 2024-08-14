@@ -40,7 +40,7 @@ class ArrayBuffer;
 namespace WebCore {
 
 class MediaEncryptedEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MediaEncryptedEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaEncryptedEvent);
 public:
     using Init = MediaEncryptedEventInit;
 

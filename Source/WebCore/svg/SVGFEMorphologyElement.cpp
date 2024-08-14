@@ -27,11 +27,11 @@
 #include "SVGFilter.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEMorphologyElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEMorphologyElement);
 
 inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

@@ -31,12 +31,12 @@
 #include "ThreadableBlobRegistry.h"
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(File);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(File);
 
 Ref<File> File::createWithRelativePath(ScriptExecutionContext* context, const String& path, const String& relativePath)
 {

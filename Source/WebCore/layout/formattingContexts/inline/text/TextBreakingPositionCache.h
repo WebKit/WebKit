@@ -29,7 +29,7 @@
 #include "SecurityOriginData.h"
 #include "TextBreakingPositionContext.h"
 #include "Timer.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

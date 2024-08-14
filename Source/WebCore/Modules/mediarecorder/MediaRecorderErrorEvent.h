@@ -32,7 +32,7 @@ namespace WebCore {
 class DOMException;
 
 class MediaRecorderErrorEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MediaRecorderErrorEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaRecorderErrorEvent);
 public:
     struct Init : EventInit {
         RefPtr<DOMException> error;

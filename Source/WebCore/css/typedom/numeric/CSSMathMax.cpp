@@ -31,12 +31,12 @@
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathMax);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathMax);
 
 ExceptionOr<Ref<CSSMathMax>> CSSMathMax::create(FixedVector<CSSNumberish>&& numberishes)
 {

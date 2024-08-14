@@ -36,14 +36,14 @@
 #include "RenderProgress.h"
 #include "RenderStyleInlines.h"
 #include "UserAgentParts.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ProgressShadowElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(ProgressInnerElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(ProgressBarElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(ProgressValueElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressShadowElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressInnerElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressBarElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressValueElement);
 
 using namespace HTMLNames;
 

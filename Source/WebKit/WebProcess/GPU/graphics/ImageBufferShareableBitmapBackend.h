@@ -27,7 +27,7 @@
 
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBuffer.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 #include <WebCore/ImageBufferCGBackend.h>
@@ -53,7 +53,7 @@ using ImageBufferShareableBitmapBackendBase = WebCore::ImageBufferSkiaBackend;
 #endif
 
 class ImageBufferShareableBitmapBackend final : public ImageBufferShareableBitmapBackendBase, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 
 public:

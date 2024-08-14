@@ -45,12 +45,12 @@
 #include "SVGPathData.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGShape);
 
 RenderSVGShape::RenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGModelObject(type, element, WTFMove(style), SVGModelObjectFlag::IsShape)

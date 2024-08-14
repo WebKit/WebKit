@@ -58,7 +58,7 @@ struct StructuredSerializeOptions;
 struct WorkerOptions;
 
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
-    WTF_MAKE_ISO_ALLOCATED(Worker);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worker);
 public:
     using AbstractWorker::weakPtrFactory;
     using AbstractWorker::WeakValueType;

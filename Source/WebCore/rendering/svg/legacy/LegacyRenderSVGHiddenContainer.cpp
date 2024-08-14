@@ -20,12 +20,12 @@
 #include "config.h"
 #include "LegacyRenderSVGHiddenContainer.h"
 
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGHiddenContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGHiddenContainer);
 
 LegacyRenderSVGHiddenContainer::LegacyRenderSVGHiddenContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : LegacyRenderSVGContainer(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsHiddenContainer)

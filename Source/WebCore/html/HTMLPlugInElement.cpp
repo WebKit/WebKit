@@ -51,7 +51,7 @@
 #include "ShadowRoot.h"
 #include "SubframeLoader.h"
 #include "Widget.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "YouTubePluginReplacement.h"
@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
 
 using namespace HTMLNames;
 

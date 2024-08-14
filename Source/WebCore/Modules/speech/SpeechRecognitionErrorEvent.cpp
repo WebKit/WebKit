@@ -27,11 +27,11 @@
 #include "SpeechRecognitionErrorEvent.h"
 
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechRecognitionErrorEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionErrorEvent);
 
 Ref<SpeechRecognitionErrorEvent> SpeechRecognitionErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {

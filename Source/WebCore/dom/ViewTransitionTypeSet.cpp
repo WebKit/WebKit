@@ -27,11 +27,11 @@
 #include "ViewTransitionTypeSet.h"
 
 #include "Document.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ViewTransitionTypeSet);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ViewTransitionTypeSet);
 
 ViewTransitionTypeSet::ViewTransitionTypeSet(Document& document, Vector<AtomString>&& initialActiveTypes)
     : m_typeSet()

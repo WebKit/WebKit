@@ -40,7 +40,7 @@ namespace WebCore {
 class Element;
 
 class IntersectionObserverEntry : public RefCounted<IntersectionObserverEntry> {
-    WTF_MAKE_ISO_ALLOCATED(IntersectionObserverEntry);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IntersectionObserverEntry);
 public:
 
     struct Init {

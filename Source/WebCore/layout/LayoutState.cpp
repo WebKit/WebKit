@@ -35,12 +35,12 @@
 #include "LayoutInitialContainingBlock.h"
 #include "RenderBox.h"
 #include "TableFormattingState.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutState);
 
 LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction)
     : m_type(type)

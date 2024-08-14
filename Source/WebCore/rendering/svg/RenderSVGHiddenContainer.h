@@ -29,7 +29,7 @@ class SVGElement;
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class RenderSVGHiddenContainer : public RenderSVGContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGHiddenContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGHiddenContainer);
 public:
     RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });

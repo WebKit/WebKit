@@ -40,7 +40,7 @@ class RTCDTMFSenderBackend;
 class RTCRtpSender;
 
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(RTCDTMFSender);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDTMFSender);
 public:
     static Ref<RTCDTMFSender> create(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);
     virtual ~RTCDTMFSender();

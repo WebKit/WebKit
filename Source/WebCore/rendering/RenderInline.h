@@ -31,7 +31,7 @@ class Position;
 class RenderFragmentContainer;
 
 class RenderInline : public RenderBoxModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderInline);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderInline);
 public:
     RenderInline(Type, Element&, RenderStyle&&);

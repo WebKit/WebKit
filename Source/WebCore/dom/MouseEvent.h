@@ -49,7 +49,7 @@ bool isAnyClick(const AtomString& eventType);
 bool isAnyClick(const Event&);
 
 class MouseEvent : public MouseRelatedEvent {
-    WTF_MAKE_ISO_ALLOCATED(MouseEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MouseEvent);
 public:
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,

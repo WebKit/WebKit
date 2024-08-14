@@ -33,12 +33,12 @@
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageType.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Storage);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Storage);
 
 Ref<Storage> Storage::create(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
 {

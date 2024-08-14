@@ -43,12 +43,12 @@
 #include "TextTrackList.h"
 #include "VTTRegion.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrack);
 
 static const AtomString& descriptionsKeyword()
 {

@@ -45,7 +45,7 @@ enum class ImageBufferPixelFormat : uint8_t;
 enum class RenderingMode : bool;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
-    WTF_MAKE_ISO_ALLOCATED(HTMLVideoElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLVideoElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLVideoElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLVideoElement> create(Document&);

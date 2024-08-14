@@ -28,11 +28,12 @@
 #include "Event.h"
 #include "NavigationActivation.h"
 #include "ViewTransition.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PageSwapEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(PageSwapEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PageSwapEvent);
 public:
     struct Init : EventInit {
         RefPtr<NavigationActivation> activation;

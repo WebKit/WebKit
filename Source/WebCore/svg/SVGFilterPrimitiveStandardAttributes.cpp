@@ -28,12 +28,12 @@
 #include "NodeName.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElementInlines.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
 
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGElement(tagName, document, WTFMove(propertyRegistry))

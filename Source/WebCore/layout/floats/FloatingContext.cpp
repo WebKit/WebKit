@@ -35,12 +35,12 @@
 #include "LayoutElementBox.h"
 #include "RenderStyleInlines.h"
 #include "Shape.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FloatingContext);
 
 // Finding the top/left position for a new floating(F)
 //  ____  ____  _____               _______

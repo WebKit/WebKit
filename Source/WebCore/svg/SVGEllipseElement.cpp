@@ -27,11 +27,11 @@
 #include "NodeName.h"
 #include "RenderSVGEllipse.h"
 #include "SVGElementInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGEllipseElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGEllipseElement);
 
 inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

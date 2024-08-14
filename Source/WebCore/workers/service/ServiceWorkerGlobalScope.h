@@ -57,7 +57,7 @@ enum class NotificationEventType : bool;
 struct ServiceWorkerClientData;
 
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
     static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, std::unique_ptr<WorkerClient>&&);
 

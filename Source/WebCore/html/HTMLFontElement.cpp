@@ -32,13 +32,13 @@
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFontElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFontElement);
 
 using namespace HTMLNames;
 

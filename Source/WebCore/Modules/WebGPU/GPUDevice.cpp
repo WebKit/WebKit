@@ -70,11 +70,11 @@
 #include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
 #include "RequestAnimationFrameCallback.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUDevice);
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     : ActiveDOMObject { scriptExecutionContext }

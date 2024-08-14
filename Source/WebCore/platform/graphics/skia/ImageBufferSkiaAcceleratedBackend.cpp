@@ -38,7 +38,7 @@
 #include <skia/core/SkPixmap.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/gl/GrGLTypes.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(NICOSIA)
 #include "BitmapTexture.h"
@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferSkiaAcceleratedBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferSkiaAcceleratedBackend);
 
 std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {

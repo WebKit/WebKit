@@ -47,11 +47,11 @@
 #include "SharedBuffer.h"
 #include "WritableStream.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
 
 Ref<RTCRtpSFrameTransform> RTCRtpSFrameTransform::create(ScriptExecutionContext& context, Options options)
 {

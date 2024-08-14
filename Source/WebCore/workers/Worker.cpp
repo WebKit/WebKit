@@ -50,15 +50,15 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/HashSet.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Worker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Worker);
 
 static Lock allWorkersLock;
 static HashSet<ScriptExecutionContextIdentifier>& allWorkerContexts() WTF_REQUIRES_LOCK(allWorkersLock)

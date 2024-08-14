@@ -34,7 +34,7 @@ namespace WebCore {
 class StorageArea;
 
 class Storage final : public ScriptWrappable, public RefCounted<Storage>, public LocalDOMWindowProperty {
-    WTF_MAKE_ISO_ALLOCATED(Storage);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Storage);
 public:
     static Ref<Storage> create(LocalDOMWindow&, Ref<StorageArea>&&);
     ~Storage();

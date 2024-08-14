@@ -31,11 +31,11 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "OffscreenCanvas.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmapRenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBitmapRenderingContext);
 
 std::unique_ptr<ImageBitmapRenderingContext> ImageBitmapRenderingContext::create(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
 {

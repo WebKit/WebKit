@@ -28,11 +28,11 @@
 
 #include "Exception.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSHWB);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSHWB);
 
 ExceptionOr<Ref<CSSHWB>> CSSHWB::create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha)
 {

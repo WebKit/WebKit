@@ -27,13 +27,13 @@
 
 #include "WebGLExtension.h"
 #include "WebGLRenderingContextBase.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EXTClipControl final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_ISO_ALLOCATED(EXTClipControl);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EXTClipControl);
     WTF_MAKE_NONCOPYABLE(EXTClipControl);
 public:
     explicit EXTClipControl(WebGLRenderingContextBase&);

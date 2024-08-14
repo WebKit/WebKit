@@ -42,11 +42,11 @@
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
 #include "SubscriptionObserver.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Observable);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Observable);
 
 Ref<Observable> Observable::create(Ref<SubscriberCallback> callback)
 {

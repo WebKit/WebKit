@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class SVGEllipseElement final : public SVGGeometryElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGEllipseElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGEllipseElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGEllipseElement);
 public:
     static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);

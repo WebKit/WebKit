@@ -45,8 +45,8 @@
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
@@ -57,7 +57,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableCell);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTableCell);
 
 struct SameSizeAsRenderTableCell : public RenderBlockFlow {
     unsigned bitfields;

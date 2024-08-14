@@ -36,13 +36,13 @@
 #include "SVGContainerLayout.h"
 #include "SVGLayerTransformUpdater.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGContainer);
 
 RenderSVGContainer::RenderSVGContainer(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : RenderSVGModelObject(type, document, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)

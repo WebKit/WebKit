@@ -36,12 +36,12 @@
 #include "LengthFunctions.h"
 #include "RenderStyleInlines.h"
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
 FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& layoutState)
     : m_flexBox(flexBox)

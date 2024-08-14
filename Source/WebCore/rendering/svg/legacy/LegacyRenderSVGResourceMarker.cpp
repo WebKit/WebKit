@@ -27,12 +27,12 @@
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGResourceMarkerInlines.h"
 #include "LegacyRenderSVGRoot.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceMarker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceMarker);
 
 LegacyRenderSVGResourceMarker::LegacyRenderSVGResourceMarker(SVGMarkerElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::LegacySVGResourceMarker, element, WTFMove(style))

@@ -35,7 +35,7 @@ namespace WebCore {
 // OscillatorNode is an audio generator of periodic waveforms.
 
 class OscillatorNode final : public AudioScheduledSourceNode {
-    WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OscillatorNode);
 public:
     static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
 

@@ -59,7 +59,7 @@ struct InputElementClickState {
 enum class WasSetByJavaScript : bool { No, Yes };
 
 class HTMLInputElement final : public HTMLTextFormControlElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLInputElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);

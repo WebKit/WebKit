@@ -40,12 +40,12 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptCallStack.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace Inspector;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 

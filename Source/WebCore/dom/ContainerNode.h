@@ -33,7 +33,7 @@ class RadioNodeList;
 class RenderElement;
 
 class ContainerNode : public Node {
-    WTF_MAKE_ISO_ALLOCATED(ContainerNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContainerNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContainerNode);
 public:
     virtual ~ContainerNode();

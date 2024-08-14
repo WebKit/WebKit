@@ -36,11 +36,11 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSCast.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbortSignal);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbortSignal);
 
 Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext* context)
 {

@@ -34,6 +34,7 @@
 #include <WebCore/PlatformLayer.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CAPresentationModifierGroup;
 OBJC_CLASS CAPresentationModifier;
@@ -41,7 +42,7 @@ OBJC_CLASS CAPresentationModifier;
 namespace WebKit {
 
 class RemoteAcceleratedEffectStack final : public WebCore::AcceleratedEffectStack {
-    WTF_MAKE_ISO_ALLOCATED(RemoteAcceleratedEffectStack);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemoteAcceleratedEffectStack);
 public:
     static Ref<RemoteAcceleratedEffectStack> create(WebCore::FloatRect, Seconds);
 

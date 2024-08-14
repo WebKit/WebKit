@@ -54,10 +54,10 @@
 #include "ShareData.h"
 #include "ShareDataReader.h"
 #include "SharedBuffer.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -66,7 +66,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Navigator);
 
 Navigator::Navigator(ScriptExecutionContext* context, LocalDOMWindow& window)
     : NavigatorBase(context)

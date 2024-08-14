@@ -33,7 +33,7 @@
 #include "RenderStyleInlines.h"
 #include "TextFlags.h"
 #include "TextUtil.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {

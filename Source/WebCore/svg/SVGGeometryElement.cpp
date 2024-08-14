@@ -31,11 +31,11 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGeometryElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGGeometryElement);
 
 SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))

@@ -140,13 +140,13 @@
 #include <limits>
 #include <pal/SessionID.h>
 #include <wtf/Algorithms.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
@@ -232,7 +232,7 @@ struct LogArgument<URL> {
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMediaElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLMediaElement);
 
 static const Seconds SeekRepeatDelay { 100_ms };
 static const double SeekTime = 0.2;

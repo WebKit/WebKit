@@ -39,15 +39,15 @@
 #include "RenderObject.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);

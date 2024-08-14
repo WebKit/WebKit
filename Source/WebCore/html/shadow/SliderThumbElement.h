@@ -41,7 +41,7 @@ class HTMLInputElement;
 class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(SliderThumbElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderThumbElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderThumbElement);
 public:
     static Ref<SliderThumbElement> create(Document&);
@@ -107,7 +107,7 @@ private:
 // --------------------------------
 
 class SliderContainerElement final : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(SliderContainerElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SliderContainerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SliderContainerElement);
 public:
     static Ref<SliderContainerElement> create(Document&);

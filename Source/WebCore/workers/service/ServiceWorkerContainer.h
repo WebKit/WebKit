@@ -54,7 +54,7 @@ enum class WorkerType : bool;
 
 class ServiceWorkerContainer final : public EventTarget, public ActiveDOMObject, public ServiceWorkerJobClient {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
-    WTF_MAKE_ISO_ALLOCATED(ServiceWorkerContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ServiceWorkerContainer);
 public:
     static UniqueRef<ServiceWorkerContainer> create(ScriptExecutionContext*, NavigatorBase&);
 

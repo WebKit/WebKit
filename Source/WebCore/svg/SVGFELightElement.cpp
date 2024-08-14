@@ -36,11 +36,11 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFELightElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFELightElement);
 
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

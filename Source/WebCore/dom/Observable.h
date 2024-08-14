@@ -42,7 +42,7 @@ struct SubscriptionObserver;
 struct SubscribeOptions;
 
 class Observable final : public ScriptWrappable, public RefCounted<Observable> {
-    WTF_MAKE_ISO_ALLOCATED(Observable);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Observable);
 
 public:
     using ObserverUnion = std::variant<RefPtr<JSSubscriptionObserverCallback>, SubscriptionObserver>;

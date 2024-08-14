@@ -315,11 +315,11 @@
 #include <ctime>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
@@ -402,7 +402,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Document);
 
 using namespace HTMLNames;
 using namespace WTF::Unicode;

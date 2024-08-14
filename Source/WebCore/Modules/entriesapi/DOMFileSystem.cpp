@@ -32,14 +32,14 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMFileSystem);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMFileSystem);
 
 struct ListedChild {
     String filename;

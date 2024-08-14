@@ -43,7 +43,7 @@ struct BackgroundFetchRecordInformation;
 struct CacheQueryOptions;
 
 class BackgroundFetchRegistration final : public RefCounted<BackgroundFetchRegistration>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(BackgroundFetchRegistration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BackgroundFetchRegistration);
 public:
     static Ref<BackgroundFetchRegistration> create(ScriptExecutionContext&, BackgroundFetchInformation&&);
     ~BackgroundFetchRegistration();

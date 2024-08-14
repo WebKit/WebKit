@@ -59,7 +59,7 @@
 #include "Settings.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -70,7 +70,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAnchorElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAnchorElement);
 
 using namespace HTMLNames;
 

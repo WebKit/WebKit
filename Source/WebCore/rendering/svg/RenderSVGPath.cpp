@@ -40,11 +40,11 @@
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGPath, element, WTFMove(style))

@@ -27,8 +27,8 @@
 
 #include "ExtendableCookieChangeEventInit.h"
 #include "ExtendableEvent.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
 struct CookieListItem;
 
 class ExtendableCookieChangeEvent final : public ExtendableEvent {
-    WTF_MAKE_ISO_ALLOCATED(ExtendableCookieChangeEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ExtendableCookieChangeEvent);
 public:
     static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted = IsTrusted::No);
     ~ExtendableCookieChangeEvent();

@@ -37,11 +37,11 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilterPrimitive);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilterPrimitive);
 
 LegacyRenderSVGResourceFilterPrimitive::LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(Type::LegacySVGResourceFilterPrimitive, filterPrimitiveElement, WTFMove(style))

@@ -48,7 +48,7 @@ namespace WebCore {
 class RTCPeerConnection;
 
 class RTCIceTransport : public RefCounted<RTCIceTransport>, public ActiveDOMObject, public EventTarget, public RTCIceTransportBackendClient {
-    WTF_MAKE_ISO_ALLOCATED(RTCIceTransport);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCIceTransport);
 public:
     static Ref<RTCIceTransport> create(ScriptExecutionContext&, UniqueRef<RTCIceTransportBackend>&&, RTCPeerConnection&);
     ~RTCIceTransport();

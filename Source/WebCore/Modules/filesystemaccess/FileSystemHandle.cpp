@@ -28,11 +28,11 @@
 
 #include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemHandle);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemHandle);
 
 FileSystemHandle::FileSystemHandle(ScriptExecutionContext& context, FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
     : ActiveDOMObject(&context)

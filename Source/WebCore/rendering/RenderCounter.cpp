@@ -35,8 +35,8 @@
 #include "RenderListItem.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
@@ -46,7 +46,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCounter);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderCounter);
 
 using CounterMap = HashMap<AtomString, Ref<CounterNode>>;
 using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<CounterMap>>;

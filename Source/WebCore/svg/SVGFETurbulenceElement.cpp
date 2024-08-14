@@ -25,12 +25,12 @@
 #include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFETurbulenceElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
 inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

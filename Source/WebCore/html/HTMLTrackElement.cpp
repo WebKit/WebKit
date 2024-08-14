@@ -38,14 +38,14 @@
 #include "LoadableTextTrack.h"
 #include "Logging.h"
 #include "NodeName.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTrackElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTrackElement);
 
 using namespace HTMLNames;
 

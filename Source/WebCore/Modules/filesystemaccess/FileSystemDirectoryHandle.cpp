@@ -32,11 +32,11 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "JSFileSystemFileHandle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
 
 Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(ScriptExecutionContext& context, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
 {

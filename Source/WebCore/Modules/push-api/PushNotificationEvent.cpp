@@ -28,11 +28,11 @@
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushNotificationEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushNotificationEvent);
 
 PushNotificationEvent::PushNotificationEvent(const AtomString& type, ExtendableEventInit&& eventInit, Notification* proposedNotification, std::optional<uint64_t> proposedAppBadge, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::PushNotificationEvent, type, WTFMove(eventInit), isTrusted)

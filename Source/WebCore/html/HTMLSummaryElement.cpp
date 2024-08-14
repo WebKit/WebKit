@@ -35,11 +35,11 @@
 #include "SVGElementTypeHelpers.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSummaryElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSummaryElement);
 
 using namespace HTMLNames;
 

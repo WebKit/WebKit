@@ -33,7 +33,7 @@ class RenderImageResource;
 class SVGImageElement;
 
 class LegacyRenderSVGImage final : public LegacyRenderSVGModelObject {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGImage);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGImage);
 public:
     LegacyRenderSVGImage(SVGImageElement&, RenderStyle&&);

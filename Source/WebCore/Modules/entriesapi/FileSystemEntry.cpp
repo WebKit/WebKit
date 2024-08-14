@@ -35,11 +35,11 @@
 #include "ScriptExecutionContext.h"
 #include "WindowEventLoop.h"
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemEntry);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemEntry);
 
 FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
     : ActiveDOMObject(&context)

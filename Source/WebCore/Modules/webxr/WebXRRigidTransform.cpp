@@ -31,7 +31,7 @@
 #include "DOMPointReadOnly.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ static bool normalizeQuaternion(DOMPointInit& q)
     return true;
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRRigidTransform);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRigidTransform);
 
 Ref<WebXRRigidTransform> WebXRRigidTransform::create()
 {

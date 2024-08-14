@@ -55,12 +55,12 @@
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include "WillChangeData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderInline);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderInline);
 
 RenderInline::RenderInline(Type type, Element& element, RenderStyle&& style)
     : RenderBoxModelObject(type, element, WTFMove(style), TypeFlag::IsRenderInline, { })

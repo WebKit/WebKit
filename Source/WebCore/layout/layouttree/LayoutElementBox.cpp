@@ -28,12 +28,12 @@
 
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ElementBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ElementBox);
 
 ElementBox::ElementBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ElementBoxFlag)

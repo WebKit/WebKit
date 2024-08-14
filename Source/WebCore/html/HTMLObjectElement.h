@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLFormElement;
 
 class HTMLObjectElement final : public HTMLPlugInImageElement, public FormListedElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLObjectElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLObjectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLObjectElement);
 public:
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);

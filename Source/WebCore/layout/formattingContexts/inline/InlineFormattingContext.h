@@ -31,7 +31,7 @@
 #include "InlineLayoutState.h"
 #include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -53,7 +53,7 @@ struct InlineLayoutResult {
 // This class implements the layout logic for inline formatting context.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
 class InlineFormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 

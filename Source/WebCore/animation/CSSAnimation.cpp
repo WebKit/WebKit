@@ -31,11 +31,11 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSAnimation);
 
 Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {

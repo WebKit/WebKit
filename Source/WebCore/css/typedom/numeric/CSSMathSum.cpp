@@ -32,11 +32,11 @@
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathSum);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathSum);
 
 ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(FixedVector<CSSNumberish> numberishes)
 {

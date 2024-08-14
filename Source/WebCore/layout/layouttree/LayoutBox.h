@@ -29,7 +29,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ class LayoutState;
 class TreeBuilder;
 
 class Box : public CanMakeCheckedPtr<Box> {
-    WTF_MAKE_ISO_ALLOCATED(Box);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Box);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
 public:
     enum class NodeType : uint8_t {

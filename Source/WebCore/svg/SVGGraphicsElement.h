@@ -33,7 +33,7 @@ class SVGRect;
 class SVGMatrix;
 
 class SVGGraphicsElement : public SVGElement, public SVGTransformable, public SVGTests {
-    WTF_MAKE_ISO_ALLOCATED(SVGGraphicsElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGGraphicsElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGraphicsElement);
 public:
     virtual ~SVGGraphicsElement();

@@ -30,7 +30,7 @@ namespace WebCore {
 class DataTransfer;
 
 class ClipboardEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(ClipboardEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ClipboardEvent);
 public:
     virtual ~ClipboardEvent();
 

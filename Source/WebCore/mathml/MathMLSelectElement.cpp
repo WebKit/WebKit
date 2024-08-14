@@ -38,11 +38,11 @@
 #include "RenderMathMLRow.h"
 #include "RenderTreeUpdater.h"
 #include "SVGElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLSelectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLSelectElement);
 
 using namespace MathMLNames;
 

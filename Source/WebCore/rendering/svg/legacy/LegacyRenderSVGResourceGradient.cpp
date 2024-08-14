@@ -30,11 +30,11 @@
 #include "RenderStyleInlines.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
 LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(type, node, WTFMove(style))

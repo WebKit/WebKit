@@ -49,12 +49,12 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSString.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSystem);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRSystem);
 
 Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 {

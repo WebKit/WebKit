@@ -25,7 +25,7 @@
 namespace WebCore {
 
 class SVGFEFuncAElement final : public SVGComponentTransferFunctionElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEFuncAElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEFuncAElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEFuncAElement);
 public:
     static Ref<SVGFEFuncAElement> create(const QualifiedName&, Document&);

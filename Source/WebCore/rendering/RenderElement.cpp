@@ -97,9 +97,9 @@
 #include "Styleable.h"
 #include "TextAutoSizing.h"
 #include "ViewTransition.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
@@ -107,7 +107,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
     SingleThreadPackedWeakPtr<RenderObject> firstChild;

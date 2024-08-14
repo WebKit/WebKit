@@ -28,13 +28,13 @@
 #include "CollectionTraversal.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
 class CachedHTMLCollection : public HTMLCollection {
-    WTF_MAKE_ISO_NONALLOCATABLE(CachedHTMLCollection);
+    WTF_MAKE_TZONE_OR_ISO_NONALLOCATABLE(CachedHTMLCollection);
 public:
     CachedHTMLCollection(ContainerNode& base, CollectionType);
     

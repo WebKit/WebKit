@@ -41,7 +41,7 @@ class HTMLOptionElement;
 class HTMLSelectElement;
 
 class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
-    WTF_MAKE_ISO_ALLOCATED(RenderListBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListBox);
 public:
     RenderListBox(HTMLSelectElement&, RenderStyle&&);

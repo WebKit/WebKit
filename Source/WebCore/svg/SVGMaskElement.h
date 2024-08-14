@@ -30,7 +30,7 @@ namespace WebCore {
 enum class RepaintRectCalculation : bool;
 
 class SVGMaskElement final : public SVGElement, public SVGTests {
-    WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGMaskElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMaskElement);
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);

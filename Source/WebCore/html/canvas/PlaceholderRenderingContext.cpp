@@ -31,7 +31,7 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
 #include "OffscreenCanvas.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -98,7 +98,7 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
     });
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
 std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create(HTMLCanvasElement& element)
 {

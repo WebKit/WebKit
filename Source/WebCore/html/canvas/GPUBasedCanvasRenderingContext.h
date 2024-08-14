@@ -27,14 +27,14 @@
 
 #include "ActiveDOMObject.h"
 #include "CanvasRenderingContext.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HTMLCanvasElement;
 
 class GPUBasedCanvasRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
-    WTF_MAKE_ISO_NONALLOCATABLE(GPUBasedCanvasRenderingContext);
+    WTF_MAKE_TZONE_OR_ISO_NONALLOCATABLE(GPUBasedCanvasRenderingContext);
 public:
     // ActiveDOMObject.
     void ref() const final { CanvasRenderingContext::ref(); }

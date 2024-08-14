@@ -45,7 +45,7 @@ class EventTarget;
 class ScriptExecutionContext;
 
 class Event : public ScriptWrappable, public RefCounted<Event> {
-    WTF_MAKE_ISO_ALLOCATED(Event);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Event);
 public:
     using IsTrusted = EventIsTrusted;
     using CanBubble = EventCanBubble;

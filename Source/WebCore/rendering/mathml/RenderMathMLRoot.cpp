@@ -39,13 +39,13 @@
 #include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLOperator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 static const UChar gRadicalCharacter = 0x221A;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLRoot);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLRoot);
 
 RenderMathMLRoot::RenderMathMLRoot(MathMLRootElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLRoot, element, WTFMove(style))

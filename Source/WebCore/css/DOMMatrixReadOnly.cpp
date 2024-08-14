@@ -37,13 +37,13 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DOMMatrixReadOnly);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMMatrixReadOnly);
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
 ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<std::variant<String, Vector<double>>>&& init)

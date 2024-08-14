@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "WebGLRenderSharedExponent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderSharedExponent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderSharedExponent);
 
 WebGLRenderSharedExponent::WebGLRenderSharedExponent(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLRenderSharedExponent)

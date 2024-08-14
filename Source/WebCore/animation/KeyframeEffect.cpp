@@ -69,7 +69,7 @@
 #include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TranslateTransformOperation.h"
 #include <JavaScriptCore/Exception.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
 
@@ -81,7 +81,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(KeyframeEffect);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(KeyframeEffect);
 
 KeyframeEffect::ParsedKeyframe::ParsedKeyframe()
     : style(MutableStyleProperties::create())

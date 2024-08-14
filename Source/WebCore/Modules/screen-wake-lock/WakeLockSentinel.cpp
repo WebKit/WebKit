@@ -31,11 +31,11 @@
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WakeLockManager.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WakeLockSentinel);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WakeLockSentinel);
 
 WakeLockSentinel::WakeLockSentinel(Document& document, WakeLockType type)
     : ActiveDOMObject(&document)

@@ -41,7 +41,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 
 class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
-    WTF_MAKE_ISO_ALLOCATED(AbortController);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AbortController);
 public:
     static Ref<AbortController> create(ScriptExecutionContext&);
     ~AbortController();

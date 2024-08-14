@@ -64,10 +64,10 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -78,7 +78,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebSocket);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebSocket);
 
 Lock WebSocket::s_allActiveWebSocketsLock;
 

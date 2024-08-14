@@ -49,11 +49,11 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(StyledElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyledElement);
 
 static_assert(sizeof(StyledElement) == sizeof(Element), "styledelement should remain same size as element");
 

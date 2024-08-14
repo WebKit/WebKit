@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class HTMLLabelElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLLabelElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLLabelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLabelElement);
 public:
     static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);

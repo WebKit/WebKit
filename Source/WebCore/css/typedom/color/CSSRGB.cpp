@@ -28,11 +28,11 @@
 
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSRGB);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSRGB);
 
 static CSSColorRGBComp toCSSColorRGBComp(const RectifiedCSSColorRGBComp& component)
 {

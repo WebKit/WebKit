@@ -30,11 +30,11 @@
 #include "ImageQualityController.h"
 #include "PaintInfo.h"
 #include "RenderBoxModelObjectInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderViewTransitionCapture);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderViewTransitionCapture);
 
 RenderViewTransitionCapture::RenderViewTransitionCapture(Type type, Document& document, RenderStyle&& style)
     : RenderReplaced(type, document, WTFMove(style), { }, ReplacedFlag::IsViewTransitionCapture)

@@ -40,16 +40,16 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStringList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimationElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimationElement);
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document& document)
     : SVGSMILElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

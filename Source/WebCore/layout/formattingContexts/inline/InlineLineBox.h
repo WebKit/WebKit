@@ -29,7 +29,7 @@
 #include "InlineLine.h"
 #include "InlineRect.h"
 #include "LayoutElementBox.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

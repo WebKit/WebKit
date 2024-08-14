@@ -36,12 +36,12 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "TestReportBody.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ReportingScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingScope);
 
 Ref<ReportingScope> ReportingScope::create(ScriptExecutionContext& scriptExecutionContext)
 {

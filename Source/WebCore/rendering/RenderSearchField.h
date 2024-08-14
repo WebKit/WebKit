@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLInputElement;
 
 class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
-    WTF_MAKE_ISO_ALLOCATED(RenderSearchField);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSearchField);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSearchField);
 public:
     RenderSearchField(HTMLInputElement&, RenderStyle&&);

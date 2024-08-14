@@ -49,7 +49,7 @@ class AudioContext final
     , public MediaProducer
     , public MediaCanStartListener
     , private PlatformMediaSessionClient {
-    WTF_MAKE_ISO_ALLOCATED(AudioContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);

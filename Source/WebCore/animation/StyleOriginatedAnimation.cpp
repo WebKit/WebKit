@@ -36,12 +36,12 @@
 #include "Logging.h"
 #include "RenderStyle.h"
 #include "StyleOriginatedAnimationEvent.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(StyleOriginatedAnimation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleOriginatedAnimation);
 
 StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable, const Animation& backingAnimation)
     : WebAnimation(styleable.element.document())

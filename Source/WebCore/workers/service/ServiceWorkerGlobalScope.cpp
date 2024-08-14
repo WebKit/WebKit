@@ -49,11 +49,11 @@
 #include "ServiceWorkerWindowClient.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerNavigator.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorkerGlobalScope);
 
 Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, std::unique_ptr<WorkerClient>&& workerClient)
 {

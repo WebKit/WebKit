@@ -33,7 +33,7 @@ class HitTestResult;
 class Path;
 
 class HTMLAreaElement final : public HTMLAnchorElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLAreaElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAreaElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAreaElement);
 public:
     static Ref<HTMLAreaElement> create(const QualifiedName&, Document&);

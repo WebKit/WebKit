@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CORPViolationReportBody : public ReportBody {
-    WTF_MAKE_ISO_ALLOCATED(CORPViolationReportBody);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CORPViolationReportBody);
 public:
     WEBCORE_EXPORT static Ref<CORPViolationReportBody> create(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 

@@ -49,7 +49,7 @@ class JSAudioWorkletProcessorConstructor;
 struct WorkletParameters;
 
 class AudioWorkletGlobalScope final : public WorkletGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(AudioWorkletGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioWorkletGlobalScope);
 public:
     static RefPtr<AudioWorkletGlobalScope> tryCreate(AudioWorkletThread&, const WorkletParameters&);
     ~AudioWorkletGlobalScope();

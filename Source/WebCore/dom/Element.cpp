@@ -158,16 +158,16 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "markup.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Element);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Element);
 
 struct SameSizeAsElement : public ContainerNode {
     QualifiedName tagName;

@@ -48,7 +48,7 @@ class RemotePlayback final
     , public ActiveDOMObject
     , public EventTarget
 {
-    WTF_MAKE_ISO_ALLOCATED(RemotePlayback);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemotePlayback);
 public:
     static Ref<RemotePlayback> create(HTMLMediaElement&);
     ~RemotePlayback();

@@ -33,11 +33,11 @@
 #include "EventNames.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
 
 Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
 {

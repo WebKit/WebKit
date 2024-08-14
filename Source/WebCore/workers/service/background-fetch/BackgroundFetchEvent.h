@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class BackgroundFetchEvent : public ExtendableEvent {
-    WTF_MAKE_ISO_ALLOCATED(BackgroundFetchEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BackgroundFetchEvent);
 public:
     ~BackgroundFetchEvent();
 

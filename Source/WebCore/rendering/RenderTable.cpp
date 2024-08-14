@@ -57,15 +57,15 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTable);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTable);
 
 RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
     : RenderBlock(type, element, WTFMove(style), { })

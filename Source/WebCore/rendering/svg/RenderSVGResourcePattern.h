@@ -29,7 +29,7 @@ class Pattern;
 namespace WebCore {
 
 class RenderSVGResourcePattern final : public RenderSVGResourcePaintServer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePattern);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourcePattern);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourcePattern);
 public:
     RenderSVGResourcePattern(SVGElement&, RenderStyle&&);

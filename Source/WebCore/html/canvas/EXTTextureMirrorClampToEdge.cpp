@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "EXTTextureMirrorClampToEdge.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureMirrorClampToEdge);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTTextureMirrorClampToEdge);
 
 EXTTextureMirrorClampToEdge::EXTTextureMirrorClampToEdge(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTTextureMirrorClampToEdge)

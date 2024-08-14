@@ -37,11 +37,11 @@
 #include "FloatConversion.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
 
 constexpr double DefaultGrainDuration = 0.020; // 20ms
 

@@ -27,13 +27,13 @@
 
 #include "WebGLExtension.h"
 #include "WebGLRenderingContextBase.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class KHRParallelShaderCompile final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_ISO_ALLOCATED(KHRParallelShaderCompile);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(KHRParallelShaderCompile);
 public:
     explicit KHRParallelShaderCompile(WebGLRenderingContextBase&);
     ~KHRParallelShaderCompile();

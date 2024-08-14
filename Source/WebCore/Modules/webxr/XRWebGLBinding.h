@@ -30,9 +30,9 @@
 #include "XREye.h"
 
 #include <ExceptionOr.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ struct XRQuadLayerInit;
 
 // https://immersive-web.github.io/layers/#XRWebGLBindingtype
 class XRWebGLBinding : public RefCounted<XRWebGLBinding> {
-    WTF_MAKE_ISO_ALLOCATED(XRWebGLBinding);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRWebGLBinding);
 public:
 
     using WebXRWebGLRenderingContext = std::variant<

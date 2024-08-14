@@ -24,11 +24,11 @@
 #include "HTMLModElement.h"
 
 #include "HTMLNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLModElement);
 
 using namespace HTMLNames;
 

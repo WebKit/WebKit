@@ -68,13 +68,13 @@
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))

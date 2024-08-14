@@ -34,12 +34,12 @@
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
     : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)

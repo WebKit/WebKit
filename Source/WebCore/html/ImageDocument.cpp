@@ -49,12 +49,12 @@
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageDocument);
 
 using namespace HTMLNames;
 
@@ -97,7 +97,7 @@ private:
 };
 
 class ImageDocumentElement final : public HTMLImageElement {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(ImageDocumentElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(ImageDocumentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);

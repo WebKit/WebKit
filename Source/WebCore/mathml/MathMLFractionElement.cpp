@@ -33,11 +33,11 @@
 #include "NodeName.h"
 #include "RenderMathMLFraction.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLFractionElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLFractionElement);
 
 using namespace MathMLNames;
 

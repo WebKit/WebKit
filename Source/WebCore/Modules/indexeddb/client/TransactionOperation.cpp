@@ -28,13 +28,13 @@
 
 #include "IDBCursor.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TransactionOperation);
-WTF_MAKE_ISO_ALLOCATED_IMPL(TransactionOperationImpl);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TransactionOperationImpl);
 
 TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBRequest& request)
     : TransactionOperation(transaction)

@@ -28,8 +28,8 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRReferenceSpace.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,7 +37,7 @@ namespace WebCore {
 class DOMPointReadOnly;
 
 class WebXRBoundedReferenceSpace final : public WebXRReferenceSpace {
-    WTF_MAKE_ISO_ALLOCATED(WebXRBoundedReferenceSpace);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRBoundedReferenceSpace);
 public:
     static Ref<WebXRBoundedReferenceSpace> create(Document&, WebXRSession&, XRReferenceSpaceType);
     static Ref<WebXRBoundedReferenceSpace> create(Document&, WebXRSession&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);

@@ -35,7 +35,7 @@ namespace WebCore {
 class PaymentSessionError;
 
 class ApplePayCancelEvent : public Event {
-    WTF_MAKE_ISO_ALLOCATED(ApplePayCancelEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ApplePayCancelEvent);
 public:
     static Ref<ApplePayCancelEvent> create(const AtomString& type, PaymentSessionError&& sessionError)
     {

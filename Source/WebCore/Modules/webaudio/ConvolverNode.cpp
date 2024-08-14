@@ -35,7 +35,7 @@
 #include "AudioUtilities.h"
 #include "Reverb.h"
 #include <JavaScriptCore/TypedArrays.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // Note about empirical tuning:
 // The maximum FFT size affects reverb performance and accuracy.
@@ -47,7 +47,7 @@ constexpr size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ConvolverNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConvolverNode);
 
 static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
 {

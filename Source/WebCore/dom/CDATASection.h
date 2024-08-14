@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class CDATASection final : public Text {
-    WTF_MAKE_ISO_ALLOCATED(CDATASection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CDATASection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDATASection);
 public:
     static Ref<CDATASection> create(Document&, String&&);

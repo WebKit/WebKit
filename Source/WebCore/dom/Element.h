@@ -156,7 +156,7 @@ struct ResolvedStyle;
 }
 
 class Element : public ContainerNode {
-    WTF_MAKE_ISO_ALLOCATED(Element);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Element);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Element);
 public:
     static Ref<Element> create(const QualifiedName&, Document&);

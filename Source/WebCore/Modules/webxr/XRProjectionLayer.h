@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class XRProjectionLayer : public XRCompositionLayer {
-    WTF_MAKE_ISO_ALLOCATED(XRProjectionLayer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRProjectionLayer);
 public:
     virtual ~XRProjectionLayer();
 

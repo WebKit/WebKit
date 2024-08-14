@@ -32,13 +32,13 @@
 #include "WebXRFrame.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 static constexpr double DefaultUserHeightInMeters = 1.65;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
 
 Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, XRReferenceSpaceType type)
 {

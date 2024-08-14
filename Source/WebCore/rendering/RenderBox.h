@@ -48,7 +48,7 @@ enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 enum class StretchingMode { Any, Explicit };
 
 class RenderBox : public RenderBoxModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBox);
 public:
     virtual ~RenderBox();

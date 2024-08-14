@@ -28,9 +28,9 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ class MediaSourcePrivateClient;
 
 class MediaSourceHandle
     : public RefCounted<MediaSourceHandle> {
-    WTF_MAKE_ISO_ALLOCATED(MediaSourceHandle);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSourceHandle);
 public:
     static Ref<MediaSourceHandle> create(Ref<MediaSourceHandle>&&);
     Ref<MediaSourceHandle> detach();

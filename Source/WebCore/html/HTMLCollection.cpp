@@ -26,13 +26,13 @@
 #include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
 #include "NodeRareDataInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCollection);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLCollection);
 
 inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> RootType
 {

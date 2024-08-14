@@ -36,11 +36,11 @@
 #include "ReportingScope.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ReportingObserver);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingObserver);
 
 static bool isVisibleToReportingObservers(const String& type)
 {

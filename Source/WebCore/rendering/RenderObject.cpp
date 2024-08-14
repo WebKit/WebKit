@@ -81,8 +81,8 @@
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -93,7 +93,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(RenderObject);
+WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(RenderObject);
 
 #if ASSERT_ENABLED
 

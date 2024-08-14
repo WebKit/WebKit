@@ -35,7 +35,7 @@ namespace WebCore {
 class MathMLRowElement;
 
 class RenderMathMLRow : public RenderMathMLBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLRow);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLRow);
 public:
     RenderMathMLRow(Type, MathMLRowElement&, RenderStyle&&);

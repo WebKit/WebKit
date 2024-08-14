@@ -36,11 +36,11 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VisualViewport);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VisualViewport);
 
 VisualViewport::VisualViewport(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

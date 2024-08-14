@@ -32,11 +32,11 @@
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
 
 RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGEllipse, element, WTFMove(style))

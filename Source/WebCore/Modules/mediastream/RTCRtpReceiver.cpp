@@ -37,7 +37,7 @@
 #include "Logging.h"
 #include "PeerConnectionBackend.h"
 #include "RTCRtpCapabilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ namespace WebCore {
 #define LOGIDENTIFIER_RECEIVER
 #endif
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpReceiver);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpReceiver);
 
 RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     : m_track(WTFMove(track))

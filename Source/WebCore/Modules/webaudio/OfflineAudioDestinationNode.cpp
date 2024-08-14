@@ -41,13 +41,13 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/threads/BinarySemaphore.h>
  
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
 OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context, sampleRate)

@@ -32,11 +32,11 @@
 #include "Chrome.h"
 #include "LocalFrame.h"
 #include "Page.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BarProp);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BarProp);
 
 BarProp::BarProp(LocalDOMWindow& window, Type type)
     : LocalDOMWindowProperty(&window)

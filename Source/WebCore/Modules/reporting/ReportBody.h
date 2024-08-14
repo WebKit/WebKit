@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class ViolationReportType : uint8_t;
 
 class WEBCORE_EXPORT ReportBody : public RefCounted<ReportBody> {
-    WTF_MAKE_ISO_ALLOCATED(ReportBody);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReportBody);
 public:
     virtual ~ReportBody();
 

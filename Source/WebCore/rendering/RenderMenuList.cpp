@@ -55,7 +55,7 @@
 #include "StyleResolver.h"
 #include "TextRun.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "LocalizedStrings.h"
@@ -66,7 +66,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMenuList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMenuList);
 
 #if PLATFORM(IOS_FAMILY)
 static size_t selectedOptionCount(const RenderMenuList& renderMenuList)

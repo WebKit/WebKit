@@ -42,13 +42,13 @@
 #include "PlacedFloats.h"
 #include "RenderStyleInlines.h"
 #include "TableWrapperBlockFormattingContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BlockFormattingContext);
 
 BlockFormattingContext::BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState& blockFormattingState)
     : FormattingContext(formattingContextRoot, blockFormattingState.layoutState())

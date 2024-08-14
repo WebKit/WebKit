@@ -31,12 +31,12 @@
 #include "IDBKeyPath.h"
 #include "IDBValue.h"
 #include "SharedBuffer.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class IDBGetResult {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
 public:
     IDBGetResult()
         : m_isDefined(false)

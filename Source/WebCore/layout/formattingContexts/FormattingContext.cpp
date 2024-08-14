@@ -40,13 +40,13 @@
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormattingContext);
 
 FormattingContext::FormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState)
     : m_root(formattingContextRoot)

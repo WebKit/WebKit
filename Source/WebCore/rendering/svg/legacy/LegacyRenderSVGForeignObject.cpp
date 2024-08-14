@@ -35,12 +35,12 @@
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGForeignObject);
 
 LegacyRenderSVGForeignObject::LegacyRenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::LegacySVGForeignObject, element, WTFMove(style))

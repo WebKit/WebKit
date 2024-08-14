@@ -67,8 +67,8 @@
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionInit.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
@@ -80,7 +80,7 @@ namespace WebCore {
 
 using namespace PeerConnection;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCPeerConnection);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCPeerConnection);
 
 ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document, RTCConfiguration&& configuration)
 {

@@ -28,14 +28,14 @@
 #if ENABLE(WEBXR)
 
 #include "IntRect.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebXRViewport : public RefCounted<WebXRViewport> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRViewport);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRViewport);
 public:
     static Ref<WebXRViewport> create(const IntRect&);
 

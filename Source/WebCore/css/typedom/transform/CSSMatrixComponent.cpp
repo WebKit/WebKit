@@ -38,12 +38,12 @@
 #include "DOMMatrix.h"
 #include "DOMMatrixInit.h"
 #include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMatrixComponent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMatrixComponent);
 
 Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& matrix, CSSMatrixComponentOptions&& options)
 {

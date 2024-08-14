@@ -42,14 +42,14 @@
 #include "ScriptDisallowedScope.h"
 #include "Text.h"
 #include "UserAgentParts.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeEditElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeEditElement);
 
 class DateTimeEditBuilder final : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeEditBuilder);

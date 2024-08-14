@@ -34,7 +34,7 @@ class CSSStyleDeclaration;
 class MutableStyleProperties;
 
 class Attr final : public Node {
-    WTF_MAKE_ISO_ALLOCATED(Attr);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Attr);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Attr);
 public:
     static Ref<Attr> create(Element&, const QualifiedName&);

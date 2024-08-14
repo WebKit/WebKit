@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSAnimationEvent final : public StyleOriginatedAnimationEvent {
-    WTF_MAKE_ISO_ALLOCATED(CSSAnimationEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSAnimationEvent);
 public:
     static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
     {

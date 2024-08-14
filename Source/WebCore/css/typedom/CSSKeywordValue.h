@@ -36,7 +36,7 @@ class CSSKeywordValue;
 using CSSKeywordish = std::variant<String, RefPtr<CSSKeywordValue>>;
 
 class CSSKeywordValue final : public CSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSKeywordValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSKeywordValue);
 public:
     static ExceptionOr<Ref<CSSKeywordValue>> create(const String&);
     

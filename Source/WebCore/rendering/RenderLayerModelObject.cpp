@@ -59,12 +59,12 @@
 #include "StyleScrollSnapPoints.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLayerModelObject);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderLayerModelObject);
 
 bool RenderLayerModelObject::s_wasFloating = false;
 bool RenderLayerModelObject::s_hadLayer = false;

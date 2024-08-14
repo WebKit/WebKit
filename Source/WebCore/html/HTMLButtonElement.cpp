@@ -34,9 +34,9 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLButtonElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLButtonElement);
 
 using namespace HTMLNames;
 

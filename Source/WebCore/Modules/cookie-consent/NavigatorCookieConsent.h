@@ -27,8 +27,8 @@
 
 #include "Supplementable.h"
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

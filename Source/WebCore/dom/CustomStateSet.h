@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class CustomStateSet final : public ScriptWrappable, public RefCounted<CustomStateSet> {
-    WTF_MAKE_ISO_ALLOCATED(CustomStateSet);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomStateSet);
 
 public:
     static Ref<CustomStateSet> create(Element& element)

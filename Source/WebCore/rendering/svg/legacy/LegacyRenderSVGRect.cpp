@@ -30,11 +30,11 @@
 
 #include "LegacyRenderSVGShapeInlines.h"
 #include "SVGElementTypeHelpers.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
 LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTFMove(style))

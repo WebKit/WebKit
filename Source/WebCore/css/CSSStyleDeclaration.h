@@ -38,7 +38,7 @@ class StyledElement;
 
 class CSSStyleDeclaration : public ScriptWrappable, public CanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
-    WTF_MAKE_ISO_ALLOCATED(CSSStyleDeclaration);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration() = default;
 

@@ -30,8 +30,8 @@
 #include "IDBResourceIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class IDBConnectionProxy;
 }
 
 class WEBCORE_EXPORT IDBDatabaseNameAndVersionRequest final : public ThreadSafeRefCounted<IDBDatabaseNameAndVersionRequest>, public IDBActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(IDBDatabaseNameAndVersionRequest);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBDatabaseNameAndVersionRequest);
 public:
     using InfoCallback = Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>;
 

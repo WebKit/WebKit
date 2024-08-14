@@ -31,13 +31,13 @@
 #include "WebXRPose.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebXRJointPose : public WebXRPose {
-    WTF_MAKE_ISO_ALLOCATED(WebXRJointPose);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRJointPose);
 public:
     static Ref<WebXRJointPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition, float radius);
     ~WebXRJointPose() = default;

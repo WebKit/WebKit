@@ -30,11 +30,11 @@
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PaintRenderingContext2D);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaintRenderingContext2D);
 
 std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CustomPaintCanvas& canvas)
 {

@@ -49,7 +49,7 @@ class WebCodecsAudioEncoder
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
     , public ActiveDOMObject
     , public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(WebCodecsAudioEncoder);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioEncoder);
 public:
     ~WebCodecsAudioEncoder();
 

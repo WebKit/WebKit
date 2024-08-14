@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSOKLab final : public CSSColorValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSOKLab);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSOKLab);
 public:
     static ExceptionOr<Ref<CSSOKLab>> create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha);
 

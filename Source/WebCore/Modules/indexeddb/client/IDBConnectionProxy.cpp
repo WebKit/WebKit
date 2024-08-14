@@ -39,13 +39,13 @@
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBConnectionProxy);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionProxy);
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)

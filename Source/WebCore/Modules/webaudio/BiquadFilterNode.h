@@ -33,7 +33,7 @@ namespace WebCore {
 class AudioParam;
 
 class BiquadFilterNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_ISO_ALLOCATED(BiquadFilterNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BiquadFilterNode);
 public:
     static ExceptionOr<Ref<BiquadFilterNode>> create(BaseAudioContext& context, const BiquadFilterOptions& = { });
 

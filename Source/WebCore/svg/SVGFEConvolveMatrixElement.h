@@ -61,7 +61,7 @@ struct SVGPropertyTraits<EdgeModeType> {
 };
 
 class SVGFEConvolveMatrixElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEConvolveMatrixElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEConvolveMatrixElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEConvolveMatrixElement);
 public:
     static Ref<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document&);

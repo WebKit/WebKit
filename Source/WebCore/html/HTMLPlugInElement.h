@@ -40,7 +40,7 @@ class PluginViewBase;
 class RenderWidget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLPlugInElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLPlugInElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLPlugInElement);
 public:
     virtual ~HTMLPlugInElement();

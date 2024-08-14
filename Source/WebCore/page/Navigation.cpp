@@ -56,11 +56,11 @@
 #include "UserGestureIndicator.h"
 #include <optional>
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Navigation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Navigation);
 
 Navigation::Navigation(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

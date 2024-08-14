@@ -33,7 +33,7 @@ namespace WebCore {
 class CSSNumericArray;
 
 class CSSMathMin final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathMin);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathMin);
 public:
     static ExceptionOr<Ref<CSSMathMin>> create(FixedVector<CSSNumberish>&&);
     static ExceptionOr<Ref<CSSMathMin>> create(Vector<Ref<CSSNumericValue>>&&);

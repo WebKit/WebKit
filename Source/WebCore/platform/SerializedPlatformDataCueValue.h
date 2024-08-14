@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO)
 
-#include <wtf/IsoMalloc.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 OBJC_CLASS AVMetadataItem;
@@ -42,7 +42,7 @@ OBJC_CLASS NSString;
 namespace WebCore {
 
 class SerializedPlatformDataCueValue {
-    WTF_MAKE_ISO_ALLOCATED(SerializedPlatformDataCueValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SerializedPlatformDataCueValue);
 public:
     struct Data {
 #if PLATFORM(COCOA)

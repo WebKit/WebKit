@@ -36,7 +36,7 @@ template<typename T, typename Counter> class EventSender;
 using StyleEventSender = EventSender<HTMLStyleElement, WeakPtrImplWithEventTargetData>;
 
 class HTMLStyleElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLStyleElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLStyleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLStyleElement);
 public:
     static Ref<HTMLStyleElement> create(Document&);

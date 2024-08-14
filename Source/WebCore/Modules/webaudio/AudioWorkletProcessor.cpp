@@ -41,11 +41,11 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 

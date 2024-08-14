@@ -34,7 +34,7 @@ namespace WebCore {
 enum class CSSUnitType : uint8_t;
 
 class CSSUnitValue final : public CSSNumericValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSUnitValue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSUnitValue);
 public:
     static ExceptionOr<Ref<CSSUnitValue>> create(double value, const String& unit);
     static Ref<CSSUnitValue> create(double value, CSSUnitType unit) { return adoptRef(*new CSSUnitValue(value, unit)); }

@@ -29,15 +29,15 @@
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
 #include "LineLayoutResult.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(InlineContentCache);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(InlineContentCache);
 public:
     struct InlineItems {
         InlineItemList& content() { return m_inlineItemList; }

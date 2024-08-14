@@ -42,12 +42,12 @@
 #include "TrustedType.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SharedWorker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SharedWorker);
 
 #define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
 #define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)

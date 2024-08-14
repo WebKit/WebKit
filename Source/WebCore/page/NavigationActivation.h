@@ -34,7 +34,7 @@ class NavigationHistoryEntry;
 enum class NavigationNavigationType : uint8_t;
 
 class NavigationActivation final : public RefCounted<NavigationActivation>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(NavigationActivation);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationActivation);
 public:
     static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
     {

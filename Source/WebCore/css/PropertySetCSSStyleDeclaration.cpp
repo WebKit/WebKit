@@ -38,13 +38,13 @@
 #include "StyleProperties.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
-WTF_MAKE_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
 
 void PropertySetCSSStyleDeclaration::ref()
 { 

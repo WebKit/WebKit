@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 
 class AbortSignal final : public RefCounted<AbortSignal>, public EventTarget, private ContextDestructionObserver {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~AbortSignal();

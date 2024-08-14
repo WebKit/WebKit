@@ -40,12 +40,12 @@
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include "TransformOperationData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGraphicsElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGGraphicsElement);
 
 SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, OptionSet<TypeFlag> typeFlags)
     : SVGElement(tagName, document, WTFMove(propertyRegistry), typeFlags)

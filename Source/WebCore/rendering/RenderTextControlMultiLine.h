@@ -27,7 +27,7 @@
 namespace WebCore {
 
 class RenderTextControlMultiLine final : public RenderTextControl {
-    WTF_MAKE_ISO_ALLOCATED(RenderTextControlMultiLine);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextControlMultiLine);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextControlMultiLine);
 public:
     RenderTextControlMultiLine(HTMLTextAreaElement&, RenderStyle&&);

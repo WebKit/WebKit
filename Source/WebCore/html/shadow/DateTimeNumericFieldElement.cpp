@@ -36,7 +36,7 @@
 #include "PlatformLocale.h"
 #include "RenderBlock.h"
 #include "RenderStyleSetters.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -54,7 +54,7 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
     return value >= minimum && value <= maximum;
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
 
 DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Range& range, int placeholder)
     : DateTimeFieldElement(document, fieldOwner)

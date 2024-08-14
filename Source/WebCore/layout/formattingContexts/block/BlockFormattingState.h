@@ -28,14 +28,14 @@
 #include "FormattingState.h"
 #include "PlacedFloats.h"
 #include <wtf/HashSet.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
 // BlockFormattingState holds the state for a particular block formatting context tree.
 class BlockFormattingState : public FormattingState {
-    WTF_MAKE_ISO_ALLOCATED(BlockFormattingState);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BlockFormattingState);
 public:
     BlockFormattingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
     ~BlockFormattingState();

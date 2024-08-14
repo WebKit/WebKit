@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class XRLayerEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(XRLayerEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRLayerEvent);
 public:
     struct Init : EventInit {
         Init() = default;

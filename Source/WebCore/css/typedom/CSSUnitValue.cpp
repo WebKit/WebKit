@@ -37,11 +37,11 @@
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
 #include <cmath>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnitValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnitValue);
 
 CSSUnitType CSSUnitValue::parseUnit(const String& unit)
 {

@@ -39,11 +39,11 @@
 #include "JSFontFaceSet.h"
 #include "Quirks.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FontFaceSet);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FontFaceSet);
 
 Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
 {

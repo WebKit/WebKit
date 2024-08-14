@@ -40,11 +40,11 @@
 #include "WebCodecsVideoFrame.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebCodecsVideoDecoder);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsVideoDecoder);
 
 Ref<WebCodecsVideoDecoder> WebCodecsVideoDecoder::create(ScriptExecutionContext& context, Init&& init)
 {

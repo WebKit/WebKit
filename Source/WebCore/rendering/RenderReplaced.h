@@ -26,7 +26,7 @@
 namespace WebCore {
 
 class RenderReplaced : public RenderBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderReplaced);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderReplaced);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplaced);
 public:
     virtual ~RenderReplaced();

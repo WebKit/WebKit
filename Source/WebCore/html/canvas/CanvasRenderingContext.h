@@ -31,9 +31,9 @@
 #include "ScriptWrappable.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ enum class ImageBufferPixelFormat : uint8_t;
 
 class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext> {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext);
-    WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CanvasRenderingContext);
 public:
     virtual ~CanvasRenderingContext();
 

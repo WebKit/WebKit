@@ -29,7 +29,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLineBreak.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyInlineBox);
 
 struct SameSizeAsLegacyInlineBox {
     virtual ~SameSizeAsLegacyInlineBox() = default;

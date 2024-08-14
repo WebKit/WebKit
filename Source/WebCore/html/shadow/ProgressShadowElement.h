@@ -39,7 +39,7 @@ namespace WebCore {
 class HTMLProgressElement;
 
 class ProgressShadowElement : public HTMLDivElement {
-    WTF_MAKE_ISO_ALLOCATED(ProgressShadowElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressShadowElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressShadowElement);
 public:
     HTMLProgressElement* progressElement() const;
@@ -55,7 +55,7 @@ private:
 // fields to the class.
 
 class ProgressInnerElement final : public ProgressShadowElement {
-    WTF_MAKE_ISO_ALLOCATED(ProgressInnerElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressInnerElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressInnerElement);
 public:
     static Ref<ProgressInnerElement> create(Document&);
@@ -69,7 +69,7 @@ private:
 static_assert(sizeof(ProgressInnerElement) == sizeof(ProgressShadowElement));
 
 class ProgressBarElement final : public ProgressShadowElement {
-    WTF_MAKE_ISO_ALLOCATED(ProgressBarElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressBarElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressBarElement);
 public:
     static Ref<ProgressBarElement> create(Document&);
@@ -80,7 +80,7 @@ private:
 static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
 
 class ProgressValueElement final : public ProgressShadowElement {
-    WTF_MAKE_ISO_ALLOCATED(ProgressValueElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProgressValueElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProgressValueElement);
 public:
     static Ref<ProgressValueElement> create(Document&);

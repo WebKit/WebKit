@@ -29,11 +29,11 @@
 #include "JSDOMGlobalObject.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationDestination);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationDestination);
 
 NavigationDestination::NavigationDestination(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument)
     : m_entry(WTFMove(entry))

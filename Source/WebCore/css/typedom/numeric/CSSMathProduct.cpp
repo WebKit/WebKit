@@ -31,11 +31,11 @@
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathProduct);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSMathProduct);
 
 ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(FixedVector<CSSNumberish> numberishes)
 {

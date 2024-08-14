@@ -31,7 +31,7 @@
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

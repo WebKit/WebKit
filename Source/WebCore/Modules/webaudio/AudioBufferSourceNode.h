@@ -39,7 +39,7 @@ struct AudioBufferSourceOptions;
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
-    WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
     static ExceptionOr<Ref<AudioBufferSourceNode>> create(BaseAudioContext&, AudioBufferSourceOptions&& = { });
 

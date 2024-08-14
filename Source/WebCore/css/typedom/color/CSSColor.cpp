@@ -26,11 +26,11 @@
 #include "config.h"
 #include "CSSColor.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSColor);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSColor);
 
 void CSSColor::setColorSpace(CSSKeywordish)
 {

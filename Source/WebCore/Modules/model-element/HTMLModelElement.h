@@ -56,7 +56,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(HTMLModelElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
 public:
     using HTMLElement::weakPtrFactory;

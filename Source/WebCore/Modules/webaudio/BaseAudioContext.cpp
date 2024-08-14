@@ -82,11 +82,11 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Atomics.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
@@ -99,7 +99,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BaseAudioContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BaseAudioContext);
 
 bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
 {

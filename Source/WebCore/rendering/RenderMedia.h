@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class RenderMedia : public RenderImage {
-    WTF_MAKE_ISO_ALLOCATED(RenderMedia);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMedia);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMedia);
 public:
     RenderMedia(Type, HTMLMediaElement&, RenderStyle&&);

@@ -71,11 +71,11 @@
 #include "Settings.h"
 #include "TextAutoSizing.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlockFlow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBlockFlow);
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
 

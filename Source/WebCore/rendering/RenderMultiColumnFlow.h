@@ -34,7 +34,7 @@ class RenderMultiColumnSet;
 class RenderMultiColumnSpannerPlaceholder;
 
 class RenderMultiColumnFlow final : public RenderFragmentedFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnFlow);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMultiColumnFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnFlow);
 public:
     RenderMultiColumnFlow(Document&, RenderStyle&&);

@@ -33,11 +33,11 @@
 #include "RTCDtlsTransport.h"
 #include "RTCSctpTransportBackend.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RTCSctpTransport);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCSctpTransport);
 
 Ref<RTCSctpTransport> RTCSctpTransport::create(ScriptExecutionContext& context, UniqueRef<RTCSctpTransportBackend>&& backend, Ref<RTCDtlsTransport>&& transport)
 {
