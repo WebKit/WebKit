@@ -114,6 +114,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setNaturalSize(const FloatSize&);
     void flushPendingSizeChanges();
     void characteristicsChanged();
+    void setVideoPlaybackConfiguration(VideoPlaybackConfiguration);
+    VideoPlaybackConfiguration videoPlaybackConfiguration() const final { return m_cachedVideoConfiguration; }
 
     MediaTime currentTime() const override;
     bool timeIsProgressing() const final;
@@ -414,6 +416,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_usingLinearMediaPlayer { false };
     RetainPtr<FigVideoTargetRef> m_videoTarget;
 #endif
+    VideoPlaybackConfiguration m_cachedVideoConfiguration;
 };
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);

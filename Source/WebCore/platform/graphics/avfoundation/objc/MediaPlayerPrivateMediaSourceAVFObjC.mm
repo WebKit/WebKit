@@ -1572,6 +1572,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
         player->characteristicChanged();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoPlaybackConfiguration(VideoPlaybackConfiguration configuration)
+{
+    if (std::exchange(m_cachedVideoConfiguration, configuration) == configuration)
+        return;
+    if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
+        return;
+    if (auto player = m_player.get(); player)
+        player->videoPlaybackConfigurationChanged();
+}
+
 RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullscreenLayer()
 {
     return adoptNS([[CALayer alloc] init]);

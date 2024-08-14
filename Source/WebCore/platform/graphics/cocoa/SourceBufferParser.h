@@ -114,6 +114,14 @@ public:
     }
 
     // Will be called on the main thread.
+    using VideoPlaybackConfiguration = MediaPlayerVideoPlaybackConfiguration;
+    using DidParseVideoPlaybackConfigurationCallback = Function<void(VideoPlaybackConfiguration)>;
+    void setDidParseVideoPlaybackConfigurationCallback(DidParseVideoPlaybackConfigurationCallback&& callback)
+    {
+        m_didParseVideoPlaybackConfigurationCallback = WTFMove(callback);
+    }
+
+    // Will be called on the main thread.
     using DidProvideMediaDataCallback = Function<void(Ref<MediaSampleAVFObjC>&&, uint64_t trackID, const String& mediaType)>;
     void setDidProvideMediaDataCallback(DidProvideMediaDataCallback&& callback)
     {
@@ -153,6 +161,7 @@ protected:
 
     CallOnClientThreadCallback m_callOnClientThreadCallback;
     DidParseInitializationDataCallback m_didParseInitializationDataCallback;
+    DidParseVideoPlaybackConfigurationCallback m_didParseVideoPlaybackConfigurationCallback;
     DidProvideMediaDataCallback m_didProvideMediaDataCallback;
     WillProvideContentKeyRequestInitializationDataForTrackIDCallback m_willProvideContentKeyRequestInitializationDataForTrackIDCallback;
     DidProvideContentKeyRequestInitializationDataForTrackIDCallback m_didProvideContentKeyRequestInitializationDataForTrackIDCallback;

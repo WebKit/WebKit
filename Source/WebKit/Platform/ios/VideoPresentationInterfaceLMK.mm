@@ -89,6 +89,11 @@ WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
     return playbackSessionInterface().linearMediaPlayer();
 }
 
+void VideoPresentationInterfaceLMK::setVideoSpatial(bool isSpatial)
+{
+    linearMediaPlayer().isSpatial = isSpatial;
+}
+
 void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView* parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     linearMediaPlayer().contentDimensions = videoDimensions;
