@@ -86,14 +86,13 @@ void TZoneHeapManager::init()
     // Use the boot UUID and the process' name to seed the key.
     static const size_t rawSeedLength = 128;
     char rawSeed[rawSeedLength] = { };
-    char bootDevUUID[NAME_MAX] = { };
-    size_t bootDevUUIDLen = sizeof(bootDevUUID);
+    char bootUUID[NAME_MAX] = { };
+    size_t bootUUIDLen = sizeof(bootUUID);
 
-    // try using "kern.bootuuid" sysctl to obtain boot volume UUID
-    RELEASE_BASSERT(!sysctlbyname("kern.bootuuid", bootDevUUID, &bootDevUUIDLen, nullptr, 0));
+    RELEASE_BASSERT(!sysctlbyname("kern.bootsessionuuid", bootUUID, &bootUUIDLen, nullptr, 0));
 
     if (verbose)
-        TZONE_LOG_DEBUG("kern.bootuuid: %s\n", bootDevUUID);
+        TZONE_LOG_DEBUG("kernel bootuuid: %s\n", bootUUID);
 
     const char* procName = processNameString();
 
@@ -103,8 +102,8 @@ void TZoneHeapManager::init()
     // Convert bootTime to hex values.
     unsigned byteIdx = 0;
 
-    for (unsigned i = 0; i < bootDevUUIDLen && byteIdx < rawSeedLength; byteIdx++, i++)
-        rawSeed[byteIdx] = bootDevUUID[i];
+    for (unsigned i = 0; i < bootUUIDLen && byteIdx < rawSeedLength; byteIdx++, i++)
+        rawSeed[byteIdx] = bootUUID[i];
 
     auto procNameLen = strlen(procName);
 
