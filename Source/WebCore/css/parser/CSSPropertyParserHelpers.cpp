@@ -2941,7 +2941,7 @@ static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, con
 
     std::array<RefPtr<CSSValue>, 2> dimensions;
     for (auto& dimension : dimensions) {
-        dimension = consumeLengthOrPercent(args, context.mode);
+        dimension = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
         if (!dimension)
             return nullptr;
     }
