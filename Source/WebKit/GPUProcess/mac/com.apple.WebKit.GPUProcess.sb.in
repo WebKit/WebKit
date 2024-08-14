@@ -215,6 +215,7 @@
         "hw.target"
         "hw.vectorunit"
         "kern.bootargs"
+        "kern.boottime"
         "kern.hostname"
         "kern.hv_vmm_present"
         "kern.iossupportversion"

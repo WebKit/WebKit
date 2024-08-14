@@ -1,4 +1,4 @@
-; Copyright (C) 2022 Apple Inc. All rights reserved.
+; Copyright (C) 2022-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -132,6 +132,7 @@
         "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
+        "kern.boottime"
         "kern.hostname"
         "kern.hv_vmm_present"
         "kern.maxfilesperproc"

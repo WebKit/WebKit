@@ -50,7 +50,7 @@ class TZoneHeapManager {
         TypesRegistered
     };
 
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     static const unsigned typeNameLen = 12;
 
     typedef uint64_t SHA256ResultAsUnsigned[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];

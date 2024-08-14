@@ -555,6 +555,7 @@
         "hw.ncpu"
         "hw.pagesize_compat"
         "kern.bootargs"
+        "kern.boottime"
         "kern.hostname"
         "kern.maxfilesperproc"
         "kern.osproductversion"
