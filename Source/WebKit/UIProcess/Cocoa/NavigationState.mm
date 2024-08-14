@@ -877,7 +877,7 @@ void NavigationState::NavigationClient::didCancelClientRedirect(WebPageProxy& pa
     [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidCancelClientRedirect:m_navigationState->webView().get()];
 }
 
-static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError, const URL& url, bool isHTTPSOnlyError = false)
+static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError, const URL& url)
 {
     auto frameHandle = API::FrameHandle::create(frameInfo.frameID);
     auto recoveryAttempter = adoptNS([[WKReloadFrameErrorRecoveryAttempter alloc] initWithWebView:webView frameHandle:wrapper(frameHandle.get()) urlString:url.string()]);
@@ -886,11 +886,6 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, c
 
     if (NSDictionary *originalUserInfo = originalError.userInfo)
         [userInfo addEntriesFromDictionary:originalUserInfo];
-
-    if (isHTTPSOnlyError) {
-        RELEASE_LOG(Loading, "NavigationState: Including HTTPS Only HTTP fallback signal.");
-        [userInfo setValue:@"HTTPSOnlyHTTPFallback" forKey:@"errorRecoveryMethod"];
-    }
 
     return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
 }
@@ -904,9 +899,7 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
     if (!navigationDelegate)
         return;
 
-    bool isHTTPSOnlyEnabled = navigation && navigation->websitePolicies() && navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnly) && !navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
-    bool isHTTPSOnlyError = isHTTPSOnlyEnabled && error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && frameInfo.isMainFrame;
-    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->webView().get(), frameInfo, error, url, isHTTPSOnlyError);
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->webView().get(), frameInfo, error, url);
 
     if (frameInfo.isMainFrame) {
         // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.

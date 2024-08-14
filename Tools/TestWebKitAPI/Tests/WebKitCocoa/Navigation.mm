@@ -1823,8 +1823,6 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackGoBack)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         errorCode = error.code;
         failedNavigation = true;
     };
@@ -1899,8 +1897,6 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackContinue)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         errorCode = error.code;
         failedNavigation = true;
     };
@@ -1969,8 +1965,6 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabledCertificateError)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"", error.userInfo[@"errorRecoveryMethod"]);
         errorCode = error.code;
     };
 
@@ -2040,8 +2034,6 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
@@ -2131,8 +2123,6 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     // Step 4: Attempt cross-site http load with HTTPS-bypass enabled
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site2.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
@@ -2220,8 +2210,6 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_NOT_NULL(error);
-        EXPECT_NOT_NULL(error.userInfo[@"errorRecoveryMethod"]);
-        EXPECT_WK_STREQ(@"HTTPSOnlyHTTPFallback", error.userInfo[@"errorRecoveryMethod"]);
         EXPECT_NOT_NULL(error.userInfo[@"NSErrorFailingURLKey"]);
         EXPECT_WK_STREQ(@"https://site.example/secure", ((NSURL *)error.userInfo[@"NSErrorFailingURLKey"]).absoluteString);
         errorCode = error.code;
