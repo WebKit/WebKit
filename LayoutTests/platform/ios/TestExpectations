@@ -259,6 +259,7 @@ webaudio/audiocontext-restriction.html [ Skip ]
 webaudio/suspend-context-while-interrupted.html [ Skip ]
 webaudio/codec-tests/vorbis [ Skip ]
 webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
+media/track/audio-track-configuration-webm.html
 
 # No wheel events on iOS
 fast/events/wheel [ Skip ]

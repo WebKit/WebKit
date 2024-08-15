@@ -42,6 +42,7 @@ AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
 {
     if (m_track.is_enabled.is_present())
         setEnabled(m_track.is_enabled.value());
+    updateConfiguration();
 }
 
 TrackID AudioTrackPrivateWebM::id() const
