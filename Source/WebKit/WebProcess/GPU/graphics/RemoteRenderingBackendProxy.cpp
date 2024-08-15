@@ -102,8 +102,8 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
     if (m_connection)
         return;
-    static constexpr auto connectionBufferSizeLog2 = 21;
-    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, defaultTimeout);
+    constexpr unsigned connectionBufferSizeLog2 = 21u;
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, WebProcess::singleton().gpuProcessTimeoutDuration());
     if (!connectionPair)
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);

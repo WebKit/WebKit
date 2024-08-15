@@ -1377,6 +1377,12 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     return *m_gpuProcessConnection;
 }
 
+Seconds WebProcess::gpuProcessTimeoutDuration() const
+{
+    constexpr Seconds defaultTimeoutDuration = 15_s;
+    return m_childProcessDebuggabilityEnabled ? Seconds::infinity() : defaultTimeoutDuration;
+}
+
 void WebProcess::gpuProcessConnectionClosed()
 {
     ASSERT(m_gpuProcessConnection);
@@ -2210,6 +2216,11 @@ void WebProcess::updateDomainsWithStorageAccessQuirks(HashSet<WebCore::Registrab
     m_domainsWithStorageAccessQuirks.clear();
     for (auto&& domain : domainsWithStorageAccessQuirks)
         m_domainsWithStorageAccessQuirks.add(domain);
+}
+
+void WebProcess::setChildProcessDebuggabilityEnabled(bool childProcessDebuggabilityEnabled)
+{
+    m_childProcessDebuggabilityEnabled = childProcessDebuggabilityEnabled;
 }
 
 #if ENABLE(GPU_PROCESS)

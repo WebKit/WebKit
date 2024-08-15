@@ -81,10 +81,9 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(const 
 {
     constexpr unsigned defaultConnectionBufferSizeLog2 = 21;
     unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
-    constexpr Seconds defaultTimeoutDuration = 30_s;
     if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::IPCBufferOOM)
         connectionBufferSizeLog2 = 50; // Expect this to fail.
-    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, defaultTimeoutDuration);
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, WebProcess::singleton().gpuProcessTimeoutDuration());
     if (!connectionPair)
         return nullptr;
     auto [clientConnection, serverConnectionHandle] = WTFMove(*connectionPair);

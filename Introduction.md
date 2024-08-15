@@ -202,6 +202,10 @@ When debugging a debug build in LLDB, there are also a few functions that can be
     * showTreeForThis()
     * showNodePathForThis()
 
+Debugging child processes such as GPU process, "Child Process Debuggability" internal feature must be in use. For the test runner, you can
+specify `run-webkit-tests --internal-feature=ChildProcessDebuggabilityEnabled`. For MiniBrowser, set the Debug > Internal > Child Process Debuggability
+menu item and restart.
+
 ## Correctness Testing in WebKit
 
 WebKit is really big on test driven development, we have many types of tests.
@@ -1759,7 +1763,8 @@ You may want to specify OS_ACTIVITY_MODE environmental variable to “disable”
 in order to suppress all the system logging that happens during the debugging session.
 
 You may also want to specify `--no-timeout` option to prevent WebKitTestRunner or DumpRenderTree
-to stop the test after 30 seconds if you’re stepping through code.
+to stop the test after 30 seconds if you’re stepping through code. Specify additional
+`--internal-feature=ChildProcessDebuggabilityEnabled` when stepping through child process such as GPU process.
 
 Once this is done, you can run WebKitTestRunner or DumpRenderTree by going to Product > Perform Action > Run without Building.
 
