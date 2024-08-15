@@ -350,6 +350,10 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     if (builderState.style().pseudoElementType() != PseudoId::None)
         return Length(0, LengthType::Fixed);
 
+    // FIXME: Support animations and transitions.
+    if (builderState.style().hasAnimationsOrTransitions())
+        return Length(0, LengthType::Fixed);
+
     // In-flow elements cannot be anchor-positioned.
     // FIXME: Should attempt to resolve the fallback value.
     if (!builderState.style().hasOutOfFlowPosition())
