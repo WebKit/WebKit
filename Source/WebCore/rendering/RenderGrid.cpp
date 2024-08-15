@@ -2299,23 +2299,23 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForGridItem(const 
     return gridAreaPositionForInFlowGridItem(gridItem, direction);
 }
 
-ContentPosition static resolveContentDistributionFallback(ContentDistribution distribution)
+std::pair<OverflowAlignment, ContentPosition> static resolveContentDistributionFallback(ContentDistribution distribution)
 {
     switch (distribution) {
     case ContentDistribution::SpaceBetween:
-        return ContentPosition::Start;
+        return { OverflowAlignment::Default, ContentPosition::Start };
     case ContentDistribution::SpaceAround:
-        return ContentPosition::Center;
+        return { OverflowAlignment::Safe, ContentPosition::Center };
     case ContentDistribution::SpaceEvenly:
-        return ContentPosition::Center;
+        return { OverflowAlignment::Safe, ContentPosition::Center };
     case ContentDistribution::Stretch:
-        return ContentPosition::Start;
+        return { OverflowAlignment::Default, ContentPosition::Start };
     case ContentDistribution::Default:
-        return ContentPosition::Normal;
+        return { OverflowAlignment::Default, ContentPosition::Normal };
     }
 
     ASSERT_NOT_REACHED();
-    return ContentPosition::Normal;
+    return { OverflowAlignment::Default, ContentPosition::Normal };
 }
 
 StyleContentAlignmentData RenderGrid::contentAlignment(GridTrackSizingDirection direction) const
@@ -2337,15 +2337,12 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
         return;
 
     auto contentAlignmentData = contentAlignment(direction);
-    auto distribution = contentAlignmentData.distribution();
-    auto position = contentAlignmentData.position();
+    auto contentAlignmentDistribution = contentAlignmentData.distribution();
 
     // Apply <content-distribution> and return, or continue to fallback positioning if we can't distribute.
-    if (distribution != ContentDistribution::Default) {
-        if (position == ContentPosition::Normal)
-            position = resolveContentDistributionFallback(distribution);
+    if (contentAlignmentDistribution != ContentDistribution::Default) {
         if (availableFreeSpace > 0) {
-            switch (distribution) {
+            switch (contentAlignmentDistribution) {
             case ContentDistribution::SpaceBetween:
                 if (numberOfGridTracks < 2)
                     break;
@@ -2369,12 +2366,16 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
         }
     }
 
+    auto [fallbackOverflow, fallbackContentPosition] = resolveContentDistributionFallback(contentAlignmentDistribution);
+    auto contentAlignmentOverflow = contentAlignmentData.overflow();
+
     // Apply alignment safety.
-    if (availableFreeSpace <= 0 && contentAlignmentData.overflow() == OverflowAlignment::Safe)
+    if (availableFreeSpace <= 0 && (contentAlignmentOverflow == OverflowAlignment::Safe || fallbackOverflow == OverflowAlignment::Safe))
         return;
 
+    auto usedContentPosition = contentAlignmentDistribution == ContentDistribution::Default ? contentAlignmentData.position() : fallbackContentPosition;
     // Apply <content-position> / fallback positioning.
-    switch (position) {
+    switch (usedContentPosition) {
     case ContentPosition::Left:
         ASSERT(isRowAxis);
         if (!style().isLeftToRightDirection())
