@@ -1806,7 +1806,9 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     auto mouseEventType = event.type();
     // Context menu events always call handleContextMenuEvent as well.
     if (mouseEventType == WebEventType::MouseDown && isContextMenuEvent(event)) {
-        beginTrackingSelection(pageIndex, pointInPageSpace, event);
+        bool contextMenuEventIsInsideDocumentBounds = m_presentationController->pageIndexForDocumentPoint(pointInDocumentSpace).has_value();
+        if (contextMenuEventIsInsideDocumentBounds)
+            beginTrackingSelection(pageIndex, pointInPageSpace, event);
         return true;
     }
 
