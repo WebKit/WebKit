@@ -62,7 +62,10 @@ namespace GridLayoutFunctions {
 
 LayoutUnit computeMarginLogicalSizeForGridItem(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 LayoutUnit marginLogicalSizeForGridItem(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
+void setOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, LayoutUnit, GridTrackSizingDirection);
+void clearOverridingContentSizeForGridItem(const RenderGrid&, RenderBox& gridItem, GridTrackSizingDirection);
 bool isOrthogonalGridItem(const RenderGrid&, const RenderBox&);
+bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, const RenderGrid& parentGrid, ItemPosition gridItemAlignSelf);
 bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent);
 bool isAspectRatioBlockSizeDependentGridItem(const RenderBox&);
 GridTrackSizingDirection flowAwareDirectionForGridItem(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);

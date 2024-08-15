@@ -30,6 +30,7 @@
 #include "LengthFunctions.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
@@ -140,6 +141,44 @@ bool isAspectRatioBlockSizeDependentGridItem(const RenderBox& gridItem)
     return (gridItem.style().hasAspectRatio() || gridItem.hasIntrinsicAspectRatio()) && (gridItem.hasRelativeLogicalHeight() || gridItem.hasStretchedLogicalHeight());
 }
 
+bool isGridItemInlineSizeDependentOnBlockConstraints(const RenderBox& gridItem, const RenderGrid& parentGrid, ItemPosition gridItemAlignSelf)
+{
+    ASSERT(gridItem.parent() == &parentGrid);
+
+    if (isOrthogonalGridItem(parentGrid, gridItem))
+        return true;
+
+    auto& gridItemStyle = gridItem.style();
+    auto gridItemFlexWrap = gridItemStyle.flexWrap();
+    if (gridItem.isRenderFlexibleBox() && gridItem.style().isColumnFlexDirection() && (gridItemFlexWrap == FlexWrap::Wrap || gridItemFlexWrap == FlexWrap::Reverse))
+        return true;
+
+    if (gridItem.isRenderMultiColumnFlow())
+        return true;
+
+    if (isAspectRatioBlockSizeDependentGridItem(gridItem))
+        return true;
+
+
+    auto hasAspectRatioAndInlineSizeDependsOnBlockSize = [](const RenderObject& renderer) {
+        auto& rendererStyle = renderer.style();
+        bool rendererHasAspectRatio = renderer.hasIntrinsicAspectRatio() || rendererStyle.hasAspectRatio();
+
+        return rendererHasAspectRatio && rendererStyle.logicalWidth().isAuto() && !rendererStyle.logicalHeight().isIntrinsicOrAuto();
+    };
+
+    // Stretch alignment allows the grid item content to resolve against the stretched size.
+    if (gridItemAlignSelf != ItemPosition::Stretch)
+        return false;
+
+    for (auto& gridItemChild : childrenOfType<RenderObject>(gridItem)) {
+        if (hasAspectRatioAndInlineSizeDependsOnBlockSize(gridItemChild))
+            return true;
+    }
+
+    return false;
+}
+
 GridTrackSizingDirection flowAwareDirectionForGridItem(const RenderGrid& grid, const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
     return !isOrthogonalGridItem(grid, gridItem) ? direction : (direction == GridTrackSizingDirection::ForColumns ? GridTrackSizingDirection::ForRows : GridTrackSizingDirection::ForColumns);
@@ -175,6 +214,22 @@ unsigned alignmentContextForBaselineAlignment(const GridSpan& span, const ItemPo
     if (alignment == ItemPosition::Baseline)
         return span.startLine();
     return span.endLine() - 1;
+}
+
+void setOverridingContentSizeForGridItem(const RenderGrid& renderGrid, RenderBox& gridItem, LayoutUnit logicalSize, GridTrackSizingDirection direction)
+{
+    if (!isOrthogonalGridItem(renderGrid, gridItem))
+        direction == GridTrackSizingDirection::ForColumns ? gridItem.setOverridingLogicalWidth(logicalSize) : gridItem.setOverridingLogicalHeight(logicalSize);
+    else
+        direction == GridTrackSizingDirection::ForColumns ? gridItem.setOverridingLogicalHeight(logicalSize) : gridItem.setOverridingLogicalWidth(logicalSize);
+}
+
+void clearOverridingContentSizeForGridItem(const RenderGrid& renderGrid, RenderBox &gridItem, GridTrackSizingDirection direction)
+{
+    if (!isOrthogonalGridItem(renderGrid, gridItem))
+        direction == GridTrackSizingDirection::ForColumns ? gridItem.clearOverridingLogicalWidth() : gridItem.clearOverridingLogicalHeight();
+    else
+        direction == GridTrackSizingDirection::ForColumns ? gridItem.clearOverridingLogicalHeight() : gridItem.clearOverridingLogicalWidth();
 }
 
 } // namespace GridLayoutFunctions

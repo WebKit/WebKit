@@ -30,7 +30,10 @@
 
 namespace WebCore {
 
-enum class ItemLayoutRequirement : uint8_t { NeedsColumnAxisStretchAlignment = 1 << 0 };
+enum class ItemLayoutRequirement : uint8_t {
+    NeedsColumnAxisStretchAlignment = 1 << 0,
+    MinContentContributionForSecondColumnPass = 1 << 1,
+};
 using ItemsLayoutRequirements = SingleThreadWeakHashMap<RenderBox, OptionSet<ItemLayoutRequirement>>;
 
 class GridLayoutState {
@@ -38,8 +41,12 @@ public:
     bool containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
     void setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
 
+    bool needsSecondTrackSizingPass() const { return m_needsSecondTrackSizingPass; }
+    void setNeedsSecondTrackSizingPass() { m_needsSecondTrackSizingPass = true; }
+
 private:
     ItemsLayoutRequirements m_itemsLayoutRequirements;
+    bool m_needsSecondTrackSizingPass { false };
 };
 
 } // namespace WebCore
