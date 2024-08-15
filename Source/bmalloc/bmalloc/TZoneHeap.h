@@ -84,7 +84,7 @@ struct TZoneHeapBase {
         static pas_heap_ref* heap = nullptr;
 
         if (!heap)
-            heap = TZoneHeapManager::getInstance().heapRefForTZoneType(&type);
+            heap = TZoneHeapManager::singleton().heapRefForTZoneType(&type);
 
         return *heap;
     }
@@ -96,7 +96,7 @@ struct TZoneHeapBase {
         TZONE_LOG_DEBUG("Unannotated TZone type %s:%d:%s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);
 
         //  &&&& Should we figure out a way to cache this different sized heap?
-        return *TZoneHeapManager::getInstance().heapRefForTZoneType(&type);
+        return *TZoneHeapManager::singleton().heapRefForTZoneType(&type);
     }
 };
 

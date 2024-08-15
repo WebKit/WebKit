@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VMInspector);
 
 VM* VMInspector::m_recentVM { nullptr };
 
-VMInspector& VMInspector::instance()
+VMInspector& VMInspector::singleton()
 {
     static VMInspector* manager;
     static std::once_flag once;
@@ -109,7 +109,7 @@ void VMInspector::dumpVMs()
 
 void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
 {
-    VMInspector& inspector = instance();
+    VMInspector& inspector = singleton();
     Locker lock { inspector.getLock() };
     inspector.iterate(func);
 }
@@ -117,7 +117,7 @@ void VMInspector::forEachVM(Function<IterationStatus(VM&)>&& func)
 // Returns null if the callFrame doesn't actually correspond to any active VM.
 VM* VMInspector::vmForCallFrame(CallFrame* callFrame)
 {
-    VMInspector& inspector = instance();
+    VMInspector& inspector = singleton();
     Locker lock { inspector.getLock() };
 
     auto isOnVMStack = [] (VM& vm, CallFrame* callFrame) -> bool {

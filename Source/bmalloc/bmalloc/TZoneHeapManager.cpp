@@ -72,7 +72,7 @@ static TypeNameTemplate typeNameTemplate;
 
 static void dumpRegisterdTypesAtExit(void)
 {
-    TZoneHeapManager::getInstance().dumpRegisterdTypes();
+    TZoneHeapManager::singleton().dumpRegisterdTypes();
 }
 
 void TZoneHeapManager::init()
@@ -248,7 +248,7 @@ void TZoneHeapManager::dumpRegisterdTypes()
     }
 }
 
-void TZoneHeapManager::ensureInstance()
+void TZoneHeapManager::ensureSingleton()
 {
     static std::once_flag onceFlag;
     std::call_once(

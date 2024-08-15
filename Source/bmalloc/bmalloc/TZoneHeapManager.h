@@ -144,10 +144,10 @@ public:
 
     BEXPORT bool isReady();
 
-    BINLINE static TZoneHeapManager& getInstance()
+    BINLINE static TZoneHeapManager& singleton()
     {
         if (!theTZoneHeapManager)
-            ensureInstance();
+            ensureSingleton();
         BASSERT(theTZoneHeapManager);
         return *theTZoneHeapManager;
     }
@@ -156,7 +156,7 @@ public:
     BEXPORT void dumpRegisterdTypes();
 
 private:
-    BEXPORT static void ensureInstance();
+    BEXPORT static void ensureSingleton();
 
     BEXPORT void init();
 

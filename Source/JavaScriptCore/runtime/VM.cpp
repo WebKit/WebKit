@@ -240,7 +240,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     if (UNLIKELY(vmCreationShouldCrash || g_jscConfig.vmCreationDisallowed))
         CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMCreationDisallowed, "VM creation disallowed"_s, 0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
 
-    VMInspector::instance().add(this);
+    VMInspector::singleton().add(this);
 
     // Set up lazy initializers.
     {
@@ -496,7 +496,7 @@ VM::~VM()
 
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
 
-    VMInspector::instance().remove(this);
+    VMInspector::singleton().remove(this);
 
     delete emptyList;
 

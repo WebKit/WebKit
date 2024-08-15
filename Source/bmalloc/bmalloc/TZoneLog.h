@@ -55,11 +55,11 @@ public:
     TZoneLog(TZoneLog &other) = delete;
     void operator=(const TZoneLog &) = delete;
 
-    BEXPORT static TZoneLog& getInstance();
+    BEXPORT static TZoneLog& singleton();
     BEXPORT void log(const char* format, ...) BATTRIBUTE_PRINTF(2, 3);
 
 private:
-    static void ensureInstance();
+    static void ensureSingleton();
     void init();
     static TZoneLog* theTZoneLog;
 
@@ -82,7 +82,7 @@ private:
 
 } } // namespace bmalloc::api
 
-#define TZONE_LOG_DEBUG(...) TZoneLog::getInstance().log(__VA_ARGS__)
+#define TZONE_LOG_DEBUG(...) TZoneLog::singleton().log(__VA_ARGS__)
 
 #else // not BUSE(TZONE)
 #define TZONE_LOG_DEBUG(...)
