@@ -79,7 +79,7 @@ shouldThrow(() => Temporal.Duration.from({}), TypeError);
         'PT1.1111111111H', 'PT1.1111111111M', 'PT1.1111111111S',
         `P${Array(309).fill(9).join('')}Y`
     ];
-    for (const badString in badStrings)
+    for (const badString of badStrings)
         shouldThrow(() => Temporal.Duration.from(badString), RangeError);
     
     const fromString = Temporal.Duration.from('P1Y2M3W4DT5H6M7.008009010S');
