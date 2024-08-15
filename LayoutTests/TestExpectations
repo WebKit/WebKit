@@ -2525,9 +2525,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 # Imported w3c tests for clip-path that don't pass yet
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-003.html [ ImageOnlyFailure ]
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-element-userSpaceOnUse-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-reference-box-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a.html [ ImageOnlyFailure ]
@@ -2537,9 +2534,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1c.h
 webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html [ ImageOnlyFailure ]
 webkit.org/b/229510 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-scaled-video.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-007.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-010.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html [ ImageOnlyFailure ]
@@ -2560,15 +2554,18 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-2-svg.htm
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-3-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg [ ImageOnlyFailure ]
 
-# CSS shape()
+# webkit.org/b/129047
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-010.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-css.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-003.svg [ ImageOnlyFailure ]
