@@ -636,6 +636,19 @@ RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderSt
     return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrapMode));
 }
 
+RefPtr<CSSValue> ComputedStyleExtractor::textBoxShorthandValue(const RenderStyle& style) const
+{
+    auto textBoxTrim = style.textBoxTrim();
+    auto textBoxEdge = style.textBoxEdge();
+
+    if (textBoxTrim == TextBoxTrim::None)
+        return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over), createConvertingToCSSValueID(textBoxEdge.under));
+    if (textBoxEdge == TextEdge { TextEdgeType::Auto, TextEdgeType::Auto })
+        return createConvertingToCSSValueID(textBoxTrim);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(textBoxTrim), CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over), createConvertingToCSSValueID(textBoxEdge.under)));
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
@@ -4111,6 +4124,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return currentColorOrValidColor(style, style.textStrokeColor());
     case CSSPropertyWebkitTextStrokeWidth:
         return zoomAdjustedPixelValue(style.textStrokeWidth(), style);
+    case CSSPropertyTextBox:
+        return textBoxShorthandValue(style);
     case CSSPropertyTextTransform:
         return renderTextTransformFlagsToCSSValue(style.textTransform());
     case CSSPropertyTextWrap:

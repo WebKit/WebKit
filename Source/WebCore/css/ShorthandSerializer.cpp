@@ -126,6 +126,7 @@ private:
     String serializeGridTemplate() const;
     String serializeOffset() const;
     String serializePageBreak() const;
+    String serializeTextBox() const;
     String serializeTextWrap() const;
     String serializeWhiteSpace() const;
 
@@ -402,6 +403,8 @@ String ShorthandSerializer::serialize()
         return serializeLonghandsOmittingTrailingInitialValue();
     case CSSPropertyTextWrap:
         return serializeTextWrap();
+    case CSSPropertyTextBox:
+        return serializeTextBox();
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
         return serializeColumnBreak();
@@ -1251,6 +1254,26 @@ String ShorthandSerializer::serializePageBreak() const
     default:
         return String();
     }
+}
+
+String ShorthandSerializer::serializeTextBox() const
+{
+    auto textBoxTrim = longhandValueID(0);
+    auto& textBoxEdgeValue = longhandValue(longhandIndex(1, CSSPropertyTextBoxEdge));
+
+    if (textBoxTrim == CSSValueNone && is<CSSPrimitiveValue>(textBoxEdgeValue)) {
+        ASSERT(downcast<CSSPrimitiveValue>(textBoxEdgeValue).isValueID() && downcast<CSSPrimitiveValue>(textBoxEdgeValue).valueID() == CSSValueAuto);
+        return nameString(CSSValueNormal);
+    }
+
+    if (auto* valueList = dynamicDowncast<CSSValueList>(textBoxEdgeValue)) {
+        StringBuilder builder;
+        valueList->serializeItems(builder);
+        return makeString(nameLiteral(textBoxTrim), ' ', builder.toString());
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 String ShorthandSerializer::serializeTextWrap() const

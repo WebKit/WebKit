@@ -972,6 +972,15 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
 
 inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value)) {
+        if (value.valueID() == CSSValueAuto)
+            return { TextEdgeType::Auto, TextEdgeType::Auto };
+        if (value.valueID() == CSSValueLeading)
+            return { TextEdgeType::Leading, TextEdgeType::Leading };
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     auto& values = downcast<CSSValueList>(value);
     auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
 

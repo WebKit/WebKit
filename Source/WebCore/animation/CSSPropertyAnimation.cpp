@@ -4121,6 +4121,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyFontVariant,
         CSSPropertyFontSynthesis,
         CSSPropertyContainIntrinsicSize,
+        CSSPropertyTextBox,
         CSSPropertyTextWrap,
         CSSPropertyWhiteSpace
     };
