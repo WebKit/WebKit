@@ -67,16 +67,7 @@ using namespace WebCore;
 #define SWSERVERCONNECTION_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 #define SWSERVERCONNECTION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 
-#define CONNECTION_MESSAGE_CHECK(assertion) CONNECTION_MESSAGE_CHECK_COMPLETION(assertion, (void)0)
-#define CONNECTION_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
-    ASSERT(assertion); \
-    if (UNLIKELY(!(assertion))) { \
-        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(identifier()), 0); \
-        { completion; } \
-        return; \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_contentConnection.ptr())
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerConnection);
 
@@ -353,7 +344,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    CONNECTION_MESSAGE_CHECK(networkProcess().allowsFirstPartyForCookies(identifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(jobData.topOrigin.host())));
+    MESSAGE_CHECK(networkProcess().allowsFirstPartyForCookies(identifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(jobData.topOrigin.host())));
 
     ASSERT(!jobData.scopeURL.isNull());
     if (jobData.scopeURL.isNull()) {
@@ -428,8 +419,8 @@ void WebSWServerConnection::getRegistrations(const SecurityOriginData& topOrigin
 
 void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
-    CONNECTION_MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
-    CONNECTION_MESSAGE_CHECK(!clientOrigin.topOrigin.isNull());
+    MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
+    MESSAGE_CHECK(!clientOrigin.topOrigin.isNull());
 
     registerServiceWorkerClientInternal(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent), SWServer::IsBeingCreatedClient::No);
 }
@@ -443,7 +434,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
             return;
     }
 
-    CONNECTION_MESSAGE_CHECK(!contextOrigin.isNull());
+    MESSAGE_CHECK(!contextOrigin.isNull());
 
     bool isNewOrigin = WTF::allOf(m_clientOrigins.values(), [&contextOrigin](auto& origin) {
         return contextOrigin != origin.clientOrigin;
@@ -471,7 +462,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
 
 void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionContextIdentifier& clientIdentifier)
 {
-    CONNECTION_MESSAGE_CHECK(clientIdentifier.processIdentifier() == identifier());
+    MESSAGE_CHECK(clientIdentifier.processIdentifier() == identifier());
     auto iterator = m_clientOrigins.find(clientIdentifier);
     if (iterator == m_clientOrigins.end())
         return;
@@ -779,7 +770,6 @@ void WebSWServerConnection::getNotifications(const URL& registrationURL, const S
 
 } // namespace WebKit
 
-#undef CONNECTION_MESSAGE_CHECK_COMPLETION
-#undef CONNECTION_MESSAGE_CHECK
+#undef MESSAGE_CHECK
 #undef SWSERVERCONNECTION_RELEASE_LOG
 #undef SWSERVERCONNECTION_RELEASE_LOG_ERROR
