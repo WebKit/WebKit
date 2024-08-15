@@ -39,31 +39,11 @@ struct CookieListItem {
     CookieListItem(Cookie&& cookie)
         : name(WTFMove(cookie.name))
         , value(WTFMove(cookie.value))
-        , domain(WTFMove(cookie.domain))
-        , path(WTFMove(cookie.path))
-        , expires(cookie.expires)
-        , secure(cookie.secure)
     {
-        switch (cookie.sameSite) {
-        case Cookie::SameSitePolicy::Strict:
-            sameSite = CookieSameSite::Strict;
-            break;
-        case Cookie::SameSitePolicy::Lax:
-            sameSite = CookieSameSite::Lax;
-            break;
-        case Cookie::SameSitePolicy::None:
-            sameSite = CookieSameSite::None;
-            break;
-        }
     }
 
     String name;
     String value;
-    String domain;
-    String path;
-    std::optional<DOMHighResTimeStamp> expires;
-    bool secure { false };
-    CookieSameSite sameSite { CookieSameSite::Strict };
 };
 
 }

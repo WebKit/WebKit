@@ -16,7 +16,7 @@ FAIL cookieStore.set default domain is null and differs from current hostname as
 PASS cookieStore.set with path set to the current directory
 PASS cookieStore.set with path set to a subdirectory of the current directory
 PASS cookieStore.set default path is /
-PASS cookieStore.set adds / to path that does not end with /
+FAIL cookieStore.set adds / to path that does not end with / assert_equals: expected (string) "/cookie-store/" but got (undefined) undefined
 PASS cookieStore.set with path that does not start with /
 PASS cookieStore.set with get result
 PASS cookieStore.set checks if the path is too long
