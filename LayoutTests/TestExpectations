@@ -5942,9 +5942,6 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path: misc xywh bug.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
-
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
 webkit.org/b/272000 [ Debug ] ipc/send-filter.html [ Crash ]

@@ -516,7 +516,7 @@ Path BasicShapeXywh::path(const FloatRect& boundingBox) const
     auto width = floatValueForLength(m_width, boundingBox.width());
     auto height = floatValueForLength(m_height, boundingBox.height());
 
-    auto rect = FloatRect(insetX, insetY, width, height);
+    auto rect = FloatRect(boundingBox.x() + insetX, boundingBox.y() + insetY, width, height);
     auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox.size()),
         floatSizeForLengthSize(m_topRightRadius, boundingBox.size()),
         floatSizeForLengthSize(m_bottomLeftRadius, boundingBox.size()),
