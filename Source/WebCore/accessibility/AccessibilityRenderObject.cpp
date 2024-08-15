@@ -2490,15 +2490,26 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
     auto role = roleValue();
     if (role == AccessibilityRole::Menu) {
         // Elements marked as menus must have at least one menu item child.
-        size_t menuItemCount = 0;
+        bool hasMenuItemDescendant = false;
         for (const auto& child : children()) {
             if (child->isMenuItem()) {
-                menuItemCount++;
+                hasMenuItemDescendant = true;
                 break;
+            }
+
+            // Per the ARIA spec, groups with menuitem children are allowed as children of menus.
+            // https://w3c.github.io/aria/#menu
+            if (child->isGroup()) {
+                for (const auto& grandchild : child->children()) {
+                    if (grandchild->isMenuItem()) {
+                        hasMenuItemDescendant = true;
+                        break;
+                    }
+                }
             }
         }
 
-        if (!menuItemCount)
+        if (!hasMenuItemDescendant)
             m_role = AccessibilityRole::Generic;
     }
     if (role == AccessibilityRole::SVGRoot && !children().size())
