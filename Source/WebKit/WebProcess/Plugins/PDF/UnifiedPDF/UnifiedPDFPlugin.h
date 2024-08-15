@@ -136,7 +136,8 @@ public:
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
-    void handlePDFActionForAnnotation(PDFAnnotation *, PDFDocumentLayout::PageIndex currentPageIndex);
+    enum class ShouldPerformGoToAction : bool { No, Yes };
+    void handlePDFActionForAnnotation(PDFAnnotation *, PDFDocumentLayout::PageIndex currentPageIndex, ShouldPerformGoToAction);
 #endif
     enum class IsAnnotationCommit : bool { No, Yes };
     static RepaintRequirements repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);

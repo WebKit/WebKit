@@ -64,6 +64,7 @@
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GeometryUtilities.h>
@@ -74,6 +75,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ImmediateActionStage.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -1886,12 +1888,19 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 RetainPtr annotationUnderMouse = annotationForRootViewPoint(event.position());
                 finishTrackingAnnotation(annotationUnderMouse.get(), mouseEventType, mouseEventButton);
 
-                if (annotationIsLinkWithDestination(trackedAnnotation.get()))
+                bool shouldFollowLinkAnnotation = [frame = m_frame] {
+                    if (!frame || !frame->coreLocalFrame())
+                        return true;
+                    auto immediateActionStage = frame->protectedCoreLocalFrame()->checkedEventHandler()->immediateActionStage();
+                    return !immediateActionBeganOrWasCompleted(immediateActionStage);
+                }();
+
+                if (shouldFollowLinkAnnotation && annotationIsLinkWithDestination(trackedAnnotation.get()))
                     followLinkAnnotation(trackedAnnotation.get());
 
 #if PLATFORM(MAC)
                 if (RetainPtr pdfAction = [trackedAnnotation action])
-                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex);
+                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex, shouldFollowLinkAnnotation ? ShouldPerformGoToAction::Yes : ShouldPerformGoToAction::No);
 #endif
             }
 
@@ -3422,7 +3431,7 @@ void UnifiedPDFPlugin::revealAnnotation(PDFAnnotation *annotation)
 }
 
 #if PLATFORM(MAC)
-void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, PDFDocumentLayout::PageIndex currentPageIndex)
+void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, PDFDocumentLayout::PageIndex currentPageIndex, ShouldPerformGoToAction shouldPerformGoToAction)
 {
     if (!annotation)
         return;
@@ -3433,7 +3442,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
         return;
 
     using PDFActionList = Vector<RetainPtr<PDFAction>>;
-    auto performPDFAction = [this, currentPageIndex, annotation](PDFAction *action) {
+    auto performPDFAction = [this, currentPageIndex, annotation, shouldPerformGoToAction](PDFAction *action) {
         if (!action)
             return;
 
@@ -3471,7 +3480,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
                 LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: unhandled action " << actionName);
                 break;
             }
-        } else if ([actionType isEqualToString:@"GoTo"])
+        } else if ([actionType isEqualToString:@"GoTo"] && shouldPerformGoToAction == ShouldPerformGoToAction::Yes)
             revealPDFDestination([annotation destination]);
     };
 

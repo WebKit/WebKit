@@ -29,6 +29,7 @@
 #include "DragActions.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
+#include "ImmediateActionStage.h"
 #include "LayoutPoint.h"
 #include "PlatformMouseEvent.h"
 #include "RenderObject.h"
@@ -123,15 +124,6 @@ extern const unsigned InvalidTouchIdentifier;
 
 enum AppendTrailingWhitespace { ShouldAppendTrailingWhitespace, DontAppendTrailingWhitespace };
 enum CheckDragHysteresis { ShouldCheckDragHysteresis, DontCheckDragHysteresis };
-
-enum class ImmediateActionStage : uint8_t {
-    None,
-    PerformedHitTest,
-    ActionUpdated,
-    ActionCancelledWithoutUpdate,
-    ActionCancelledAfterUpdate,
-    ActionCompleted
-};
 
 class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_FAST_ALLOCATED;

@@ -1558,6 +1558,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/GlobalWindowIdentifier.h
     page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
+    page/ImmediateActionStage.h
     page/InteractionRegion.h
     page/IsLoggedIn.h
     page/LayoutMilestone.h
