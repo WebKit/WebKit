@@ -38,7 +38,7 @@ struct UGPRPair {
     UCPURegister first;
     UCPURegister second;
 };
-static_assert(sizeof(UGPRPair) >= sizeof(void*) * 2, "UGPRPair should fit in two machine registers");
+static_assert(sizeof(UGPRPair) == sizeof(UCPURegister) * 2, "UGPRPair should fit in two machine registers");
 
 constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return { first, second }; }
 
