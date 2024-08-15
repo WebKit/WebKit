@@ -145,6 +145,7 @@ class Frame;
 class GPUCanvasContext;
 class GraphicsClient;
 class HTMLAllCollection;
+class HTMLAnchorElement;
 class HTMLAttachmentElement;
 class HTMLBaseElement;
 class HTMLBodyElement;
@@ -1824,6 +1825,12 @@ public:
     void updateServiceWorkerClientData() final;
     WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(ScheduleLocationChangeResult)>&&);
 
+    bool allowsAddingRenderBlockedElements() const;
+    bool isRenderBlocked() const;
+    void blockRenderingOn(Element&);
+    void unblockRenderingOn(Element&);
+    void processInternalResourceLinks(HTMLAnchorElement&);
+
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
 #endif
@@ -2061,8 +2068,9 @@ private:
         Client         = 1 << 0,
         ReadyState     = 1 << 1,
         Suspension     = 1 << 2,
+        RenderBlocking = 1 << 3,
     };
-    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState }; }
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState, VisualUpdatesPreventedReason::RenderBlocking }; }
     static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::Client, VisualUpdatesPreventedReason::ReadyState }; }
 
     void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason);
@@ -2451,6 +2459,8 @@ private:
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
+
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
 
     RefPtr<ReportingScope> m_reportingScope;
 

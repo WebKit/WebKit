@@ -260,7 +260,8 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
             m_linkRelations.add(Relation::Opener);
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
-    }
+    } else if (name == nameAttr)
+        document().processInternalResourceLinks(*this);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
@@ -744,6 +745,13 @@ String HTMLAnchorElement::referrerPolicyForBindings() const
 ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 {
     return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+}
+
+Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    document().processInternalResourceLinks(*this);
+    return result;
 }
 
 }

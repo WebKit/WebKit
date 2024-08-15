@@ -83,6 +83,7 @@ axis
 background
 behavior
 bgcolor
+blocking
 border
 bordercolor
 capture

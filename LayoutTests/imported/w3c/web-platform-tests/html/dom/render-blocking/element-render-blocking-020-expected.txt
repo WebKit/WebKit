@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/dom/render-blocking/element-render-blocking-020.html' because non CSS MIME types are not allowed in strict mode.
 
-FAIL changing rel to non-expect in the body makes it non blocking assert_false: expected false got true
+PASS changing rel to non-expect in the body makes it non blocking
 

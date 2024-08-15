@@ -83,6 +83,8 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
+    Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) override;
+
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
 

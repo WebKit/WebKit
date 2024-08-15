@@ -1,3 +1,3 @@
 
-FAIL relative URLs that match this document are OK, regarless of <base> assert_false: expected false got true
+PASS relative URLs that match this document are OK, regarless of <base>
 

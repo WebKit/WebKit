@@ -1917,6 +1917,7 @@ void Document::removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPrevent
 
     if (RefPtr frame = this->frame())
         frame->checkedLoader()->completePageTransitionIfNeeded();
+    scheduleRenderingUpdate({ });
 }
 
 void Document::visualUpdatesSuppressionTimerFired()
@@ -8296,6 +8297,42 @@ void Document::clearScriptedAnimationController()
     // FIXME: consider using ActiveDOMObject.
     if (RefPtr scriptedAnimationController = std::exchange(m_scriptedAnimationController, nullptr))
         scriptedAnimationController->clearDocumentPointer();
+}
+
+// https://html.spec.whatwg.org/multipage/dom.html#render-blocking-mechanism
+bool Document::allowsAddingRenderBlockedElements() const
+{
+    return contentType() == "text/html"_s && !body();
+}
+
+bool Document::isRenderBlocked() const
+{
+    return m_visualUpdatesPreventedReasons.contains(VisualUpdatesPreventedReason::RenderBlocking);
+}
+
+void Document::blockRenderingOn(Element& element)
+{
+    if (allowsAddingRenderBlockedElements()) {
+        m_renderBlockingElements.add(element);
+        addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::RenderBlocking);
+    }
+}
+
+void Document::unblockRenderingOn(Element& element)
+{
+    m_renderBlockingElements.remove(element);
+    if (m_renderBlockingElements.isEmptyIgnoringNullReferences())
+        removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::RenderBlocking);
+}
+
+// https://html.spec.whatwg.org/multipage/links.html#process-internal-resource-links
+void Document::processInternalResourceLinks(HTMLAnchorElement& anchor)
+{
+    auto copy = copyToVector(m_renderBlockingElements);
+    for (auto& element : copy) {
+        if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element.get()))
+            link->processInternalResourceLink(&anchor);
+    }
 }
 
 CheckedRef<FrameSelection> Document::checkedSelection()
