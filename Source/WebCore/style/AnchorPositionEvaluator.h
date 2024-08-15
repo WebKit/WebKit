@@ -27,7 +27,9 @@
 #include "CSSAnchorValue.h"
 #include "EventTarget.h"
 #include <memory>
+#include <wtf/HashMap.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -37,17 +39,18 @@ namespace Style {
 
 class BuilderState;
 
-struct AnchorPositionedElementState {
+struct AnchorPositionedState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    HashMap<String, Ref<Element>> anchorElements;
+    HashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
     HashSet<String> anchorNames;
     bool finishedCollectingAnchorNames { false };
     bool readyToBeResolved { false };
     bool hasBeenResolved { false };
 };
 
-using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPositionedElementState>, WeakPtrImplWithEventTargetData>;
+using AnchorsForAnchorName = HashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
+using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 
 class AnchorPositionEvaluator {
 public:

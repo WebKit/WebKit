@@ -160,10 +160,6 @@ private:
     HashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
     bool m_hasUnresolvedQueryContainers { false };
 
-    AnchorPositionedStateMap m_anchorPositionedStateMap;
-
-    HashSet<Ref<Element>> m_anchorElements;
-    HashMap<String, Vector<Ref<Element>>> m_anchorsForAnchorName;
     bool m_hasUnresolvedAnchorPositionedElements { false };
     bool m_canFindAnchorsForNextAnchorPositionedElement { false };
 

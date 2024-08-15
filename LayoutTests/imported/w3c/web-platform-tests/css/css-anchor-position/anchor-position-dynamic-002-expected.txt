@@ -7,15 +7,11 @@ PASS .target 3
 FAIL .target 4 assert_equals:
 <div class="target" style="width: anchor-size(--a2 width)" data-expected-width="5"></div>
 width expected 5 but got 0
-FAIL .after .target 5 assert_equals:
-<div class="target" style="left: anchor(--a1 right)" data-offset-x="10"></div>
-offsetLeft expected 10 but got 5
+PASS .after .target 5
 FAIL .after .target 6 assert_equals:
 <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="10"></div>
 width expected 10 but got 0
-FAIL .after .target 7 assert_equals:
-<div class="target" style="left: anchor(--a2 right)" data-offset-x="10"></div>
-offsetLeft expected 10 but got 5
+PASS .after .target 7
 FAIL .after .target 8 assert_equals:
 <div class="target" style="width: anchor-size(--a2 width)" data-expected-width="10"></div>
 width expected 10 but got 0

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "AnchorPositionEvaluator.h"
 #include "CSSSelector.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
@@ -79,7 +78,6 @@ struct ResolutionContext {
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
-    AnchorPositionedStateMap* anchorPositionedStateMap { nullptr };
     bool isSVGUseTreeRoot { false };
 };
 

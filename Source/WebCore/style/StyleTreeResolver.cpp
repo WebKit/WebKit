@@ -61,6 +61,7 @@
 #include "ViewTransition.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
+#include "dom/EventTarget.h"
 
 namespace WebCore {
 
@@ -565,8 +566,7 @@ ResolutionContext TreeResolver::makeResolutionContext()
         &parent().style,
         parentBoxStyle(),
         m_documentElementStyle.get(),
-        &scope().selectorMatchingState,
-        &m_anchorPositionedStateMap
+        &scope().selectorMatchingState
     };
 }
 
@@ -1172,7 +1172,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 {
     m_hasUnresolvedQueryContainers = false;
 
-    m_anchorsForAnchorName.clear();
+    m_document.styleScope().anchorsForAnchorName().clear();
     m_hasUnresolvedAnchorPositionedElements = false;
     m_canFindAnchorsForNextAnchorPositionedElement = true;
 
@@ -1211,12 +1211,12 @@ std::unique_ptr<Update> TreeResolver::resolve()
         // During each style resolution, we need to iterate through all anchors
         // to efficiently find the most recent anchor element in DOM tree order
         // at any point in time during style resolution.
-        for (auto& anchorElement : m_anchorElements)
-            anchorElement->invalidateAncestorsForAnchor();
+        for (auto& anchorElement : m_document.styleScope().anchorElements())
+            anchorElement.invalidateAncestorsForAnchor();
 
         // We also need to ensure that style resolution visits any unresolved
         // anchor-positioned elements.
-        for (auto elementAndState : m_anchorPositionedStateMap) {
+        for (auto elementAndState : m_document.styleScope().anchorPositionedStates()) {
             if (!elementAndState.value->hasBeenResolved)
                 elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
         }
@@ -1308,36 +1308,36 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
         return AnchorPositionedElementAction::None;
 
     bool isAnchor = generatesBox(*style) && !style->anchorNames().isEmpty();
-    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(element);
-    bool isAnchorPositioned = !!anchorPositionedElementState;
+    auto* anchorPositionedState = m_document.styleScope().anchorPositionedStates().get(element);
+    bool isAnchorPositioned = !!anchorPositionedState;
     if (!isAnchor && !isAnchorPositioned)
         return AnchorPositionedElementAction::None;
 
     // Maintain the list of anchors (in tree order) used for anchor-positioned elements
     if (!style->anchorNames().isEmpty()) {
         for (auto& anchorName : style->anchorNames()) {
-            m_anchorElements.add(element);
-            m_anchorsForAnchorName.ensure(anchorName, [&] {
-                return Vector<Ref<Element>> { };
+            m_document.styleScope().anchorElements().add(element);
+            m_document.styleScope().anchorsForAnchorName().ensure(anchorName, [&] {
+                return Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> { };
             }).iterator->value.append(element);
         }
     }
 
     // Check if this element is anchor-positioned
-    if (!anchorPositionedElementState)
+    if (!anchorPositionedState)
         return AnchorPositionedElementAction::None;
 
-    if (anchorPositionedElementState->hasBeenResolved)
+    if (anchorPositionedState->hasBeenResolved)
         return AnchorPositionedElementAction::None;
 
     m_hasUnresolvedAnchorPositionedElements = true;
-    if (!anchorPositionedElementState->finishedCollectingAnchorNames) {
+    if (!anchorPositionedState->finishedCollectingAnchorNames) {
         // We are seeing this anchor-positioned element for the first time during
         // style & layout interleaving. Wait until we have relevant render tree
         // information before further processing this anchor-positioned element.
         if (!style->positionAnchor().isNull())
-            anchorPositionedElementState->anchorNames.add(style->positionAnchor());
-        anchorPositionedElementState->finishedCollectingAnchorNames = true;
+            anchorPositionedState->anchorNames.add(style->positionAnchor());
+        anchorPositionedState->finishedCollectingAnchorNames = true;
         return AnchorPositionedElementAction::SkipDescendants;
     }
 
@@ -1355,20 +1355,20 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
 // Precondition: containingBlock is nullptr if and only if containingBlock is the initial containing block.
 void TreeResolver::findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const Element* containingBlock)
 {
-    auto* anchorPositionedElementState = m_anchorPositionedStateMap.get(anchorPositionedElement);
-    ASSERT(anchorPositionedElementState);
+    auto* anchorPositionedState = m_document.styleScope().anchorPositionedStates().get(anchorPositionedElement);
+    ASSERT(anchorPositionedState);
 
     // Check if we have already found the anchors for this anchor-positioned element
-    if (anchorPositionedElementState->readyToBeResolved)
+    if (anchorPositionedState->readyToBeResolved)
         return;
 
-    for (auto& anchorName : anchorPositionedElementState->anchorNames) {
+    for (auto& anchorName : anchorPositionedState->anchorNames) {
         auto anchor = findLastAcceptableAnchorWithName(anchorName, containingBlock);
         if (anchor.has_value())
-            anchorPositionedElementState->anchorElements.add(anchorName, anchor.value());
+            anchorPositionedState->anchorElements.add(anchorName, anchor.value().get());
     }
 
-    anchorPositionedElementState->readyToBeResolved = true;
+    anchorPositionedState->readyToBeResolved = true;
 }
 
 static bool elementIsInContainingBlockChain(const Element& element, const Element& start)
@@ -1385,13 +1385,14 @@ static bool elementIsInContainingBlockChain(const Element& element, const Elemen
 // Precondition: containingBlock is nullptr if and only if containingBlock is the initial containing block.
 std::optional<Ref<Element>> TreeResolver::findLastAcceptableAnchorWithName(String anchorName, const Element* containingBlock)
 {
-    auto anchorsIt = m_anchorsForAnchorName.find(anchorName);
-    if (anchorsIt == m_anchorsForAnchorName.end())
+    auto& anchorsForAnchorName = m_document.styleScope().anchorsForAnchorName();
+    auto anchorsIt = anchorsForAnchorName.find(anchorName);
+    if (anchorsIt == anchorsForAnchorName.end())
         return { };
 
     for (auto& anchor : makeReversedRange(anchorsIt->value)) {
         if (!containingBlock || elementIsInContainingBlockChain(*containingBlock, anchor))
-            return anchor;
+            return anchor.get();
     }
 
     return { };

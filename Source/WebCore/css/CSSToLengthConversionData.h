@@ -32,11 +32,8 @@
 
 #include "CSSPropertyNames.h"
 #include "Element.h"
-#include "EventTarget.h"
-#include <memory>
 #include <optional>
 #include <wtf/Assertions.h>
-#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -47,9 +44,7 @@ class RenderStyle;
 class RenderView;
 
 namespace Style {
-struct AnchorPositionedElementState;
 struct BuilderContext;
-using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPositionedElementState>, WeakPtrImplWithEventTargetData>;
 };
 
 class CSSToLengthConversionData {
@@ -70,7 +65,6 @@ public:
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
     const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
-    Style::AnchorPositionedStateMap* anchorPositionedStateMap() const { return m_anchorPositionedStateMap; }
 
     const FontCascade& fontCascadeForFontUnits() const;
     int computedLineHeightForFontUnits() const;
@@ -115,7 +109,6 @@ private:
     std::optional<CSSPropertyID> m_propertyToCompute;
     // FIXME: Remove this hack.
     RenderStyle* m_viewportDependencyDetectionStyle { nullptr };
-    Style::AnchorPositionedStateMap* m_anchorPositionedStateMap { nullptr };
 };
 
 } // namespace WebCore

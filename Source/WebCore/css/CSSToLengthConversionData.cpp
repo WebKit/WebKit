@@ -45,7 +45,6 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
     , m_renderView(builderContext.document->renderView())
     , m_elementForContainerUnitResolution(builderContext.element)
     , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
-    , m_anchorPositionedStateMap(builderContext.anchorPositionedStateMap)
 {
 }
 

@@ -359,29 +359,27 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     if (!builderState.style().hasOutOfFlowPosition())
         return Length(0, LengthType::Fixed);
 
-    auto* anchorPositionedStateMap = builderState.cssToLengthConversionData().anchorPositionedStateMap();
-    if (!anchorPositionedStateMap)
-        return Length(0, LengthType::Fixed);
-    auto& anchorPositionedElementState = *anchorPositionedStateMap->ensure(anchorPositionedElement, [&] {
-        return WTF::makeUnique<AnchorPositionedElementState>();
+    auto& anchorPositionedStates = anchorPositionedElement->document().styleScope().anchorPositionedStates();
+    auto& anchorPositionedState = *anchorPositionedStates.ensure(anchorPositionedElement, [&] {
+        return WTF::makeUnique<AnchorPositionedState>();
     }).iterator->value.get();
 
     // If we are encountering this anchor() instance for the first time, then we need to collect
     // all the relevant anchor-name strings that are referenced in this anchor function,
     // including the references in the fallback value.
-    if (!anchorPositionedElementState.finishedCollectingAnchorNames)
-        anchorValue.collectAnchorNames(anchorPositionedElementState.anchorNames);
+    if (!anchorPositionedState.finishedCollectingAnchorNames)
+        anchorValue.collectAnchorNames(anchorPositionedState.anchorNames);
 
     // An anchor() instance will be ready to be resolved when all referenced anchor-names
     // have been mapped to an actual anchor element in the DOM tree. At that point, we
     // should also have layout information for the anchor-positioned element alongside
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
-    if (!anchorPositionedElementState.readyToBeResolved)
+    if (!anchorPositionedState.readyToBeResolved)
         return Length(0, LengthType::Fixed);
 
     // Anchor value may now be resolved using layout information
-    anchorPositionedElementState.hasBeenResolved = true;
+    anchorPositionedState.hasBeenResolved = true;
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
@@ -389,8 +387,8 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     String anchorString = anchorValue.anchorElementString();
     if (anchorString.isNull())
         anchorString = anchorPositionedRenderer->style().positionAnchor();
-    auto anchorElementIt = anchorPositionedElementState.anchorElements.find(anchorString);
-    if (anchorElementIt == anchorPositionedElementState.anchorElements.end()) {
+    auto anchorElementIt = anchorPositionedState.anchorElements.find(anchorString);
+    if (anchorElementIt == anchorPositionedState.anchorElements.end()) {
         // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         return Length(0, LengthType::Fixed);
