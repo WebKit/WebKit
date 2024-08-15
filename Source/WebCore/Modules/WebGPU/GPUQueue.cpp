@@ -972,7 +972,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
         auto sizeInBytes = imageBytes.size();
-        if (!imageBytes.data() || !sizeInBytes || !destinationTexture)
+        if (!imageBytes.data() || !sizeInBytes || !destinationTexture || (imageBytes.size() % 4))
             return;
 
         bool supportedFormat;
