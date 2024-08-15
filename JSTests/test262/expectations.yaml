@@ -247,27 +247,15 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Instant/compare/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/from/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/from/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/epochMilliseconds/basic.js:
   default: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
   strict mode: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
-test/built-ins/Temporal/Instant/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/equals/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/since/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
@@ -313,9 +301,6 @@ test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Instant/prototype/until/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15Z" UTC offset without time is not valid for Instant Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
@@ -370,9 +355,6 @@ test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-ins
 test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/compare/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/from/argument-leap-second.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -502,15 +484,9 @@ test/built-ins/Temporal/PlainDate/prototype/calendarId/prop-desc.js:
 test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -577,9 +553,6 @@ test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/until/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDate Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/until/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -643,9 +616,6 @@ test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/compare/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDateTime (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDateTime (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/from/argument-object.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -775,9 +745,6 @@ test/built-ins/Temporal/PlainDateTime/prototype/calendarId/prop-desc.js:
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDateTime Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "2022-09-15+00:00" UTC offset without time is not valid for PlainDateTime Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/round/balance.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'

@@ -186,6 +186,8 @@ const badStrings = [
     "2007-01-09 03:24:30+01:00[u-ca=japanese][Europe/Brussels]",
     "2007-01-09T03:24:30\u221220:20:59",
     "2007-01-09 03:24:30+01:00[\u221201:00]",
+    "2007-01-09Z",
+    "2007-01-09+01:00",
 ];
 for (let s of badStrings)
     shouldThrow(() => Temporal.PlainDateTime.from(s), RangeError);

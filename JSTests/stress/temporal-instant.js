@@ -320,6 +320,9 @@ shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.123456789Zjunk'), R
 // non-ASCII minusSign is invalid
 shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.12\u221202:00'), RangeError);
 shouldThrow(() => Temporal.Instant.from('\u2212009999-11-18T15:23:30.12Z'), RangeError);
+// TimeZone without Time
+shouldThrow(() => Temporal.Instant.from('2022-09-15Z'), RangeError);
+shouldThrow(() => Temporal.Instant.from('2022-09-15+01:00'), RangeError);
 
 // For convenience in several tests
 const epoch = new Temporal.Instant(0n);
