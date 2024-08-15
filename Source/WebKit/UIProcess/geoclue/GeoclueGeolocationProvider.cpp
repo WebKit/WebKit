@@ -29,6 +29,7 @@
 #include <WebCore/GeolocationPositionData.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
@@ -39,6 +40,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GeoclueGeolocationProvider);
 
 GeoclueGeolocationProvider::GeoclueGeolocationProvider()
     : m_destroyLaterTimer(RunLoop::current(), this, &GeoclueGeolocationProvider::destroyState)

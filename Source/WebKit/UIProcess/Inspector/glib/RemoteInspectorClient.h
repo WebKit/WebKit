@@ -28,6 +28,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
@@ -49,7 +50,7 @@ public:
 };
 
 class RemoteInspectorClient {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED(RemoteInspectorClient);
 public:
     RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver&);
     ~RemoteInspectorClient();

@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
@@ -49,7 +50,7 @@ static constexpr Seconds removeAllAssertionsTimeout { 8_min };
 static constexpr Seconds processAssertionCacheLifetime { 1_s };
 
 class ProcessThrottler::ProcessAssertionCache final : public CanMakeCheckedPtr<ProcessThrottler::ProcessAssertionCache> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProcessThrottler::ProcessAssertionCache);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessAssertionCache);
 public:
     void add(Ref<ProcessAssertion>&& assertion)
@@ -84,7 +85,7 @@ public:
 
 private:
     class CachedAssertion {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(CachedAssertion);
     public:
         CachedAssertion(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
             : m_cache(cache)
@@ -112,6 +113,9 @@ private:
     HashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
     bool m_isEnabled { true };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCache, ProcessThrottler::ProcessAssertionCache);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCacheCachedAssertion, ProcessThrottler::ProcessAssertionCache::CachedAssertion);
 
 static uint64_t generatePrepareToSuspendRequestID()
 {
@@ -526,6 +530,8 @@ bool ProcessThrottler::isSuspended() const
     return m_isConnectedToProcess && !m_assertion;
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
+
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
     : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
@@ -560,6 +566,8 @@ void ProcessThrottlerTimedActivity::updateTimer()
 }
 
 #define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler ? m_throttler->m_process->processID() : 0, m_throttler.get(), ##__VA_ARGS__)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerActivity);
 
 ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type, IsQuietActivity isQuiet)
     : m_throttler(&throttler)

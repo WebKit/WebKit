@@ -28,12 +28,15 @@
 #include "Logging.h"
 #include "WebProcessProxy.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ROUTING_ARBITRATION)
 
 #include "AudioSessionRoutingArbitratorProxyMessages.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionRoutingArbitratorProxy);
 
 #if !HAVE(AVAUDIO_ROUTING_ARBITER)
 

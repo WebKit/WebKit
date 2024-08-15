@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct ExceptionData;
@@ -45,7 +46,7 @@ class RemoteMediaSessionCoordinatorProxy
     : private IPC::MessageReceiver
     , public RefCounted<RemoteMediaSessionCoordinatorProxy>
     , public WebCore::MediaSessionCoordinatorClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionCoordinatorProxy);
 public:
     static Ref<RemoteMediaSessionCoordinatorProxy> create(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
     ~RemoteMediaSessionCoordinatorProxy();

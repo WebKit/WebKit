@@ -32,11 +32,14 @@
 #include "WebProcessProxy.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 static const Seconds loggingInterval { 60_min };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerActivityStateCPUUsageSampler);
 
 PerActivityStateCPUUsageSampler::PerActivityStateCPUUsageSampler(WebProcessPool& processPool)
     : m_processPool(processPool)

@@ -34,6 +34,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSArray;
@@ -57,7 +58,7 @@ enum class WebExtensionTabImageFormat : uint8_t {
 
 class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab>, public Identified<WebExtensionTabIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionTab);
 
 public:
     template<typename... Args>

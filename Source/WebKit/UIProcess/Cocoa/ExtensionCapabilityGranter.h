@@ -31,6 +31,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -62,7 +63,7 @@ struct ExtensionCapabilityGranterClient : public CanMakeWeakPtr<ExtensionCapabil
 };
 
 class ExtensionCapabilityGranter : public CanMakeWeakPtr<ExtensionCapabilityGranter> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ExtensionCapabilityGranter);
     WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
     static UniqueRef<ExtensionCapabilityGranter> create(ExtensionCapabilityGranterClient&);

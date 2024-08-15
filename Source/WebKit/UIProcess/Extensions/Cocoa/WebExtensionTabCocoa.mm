@@ -48,8 +48,11 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionTab);
 
 WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtensionTab *delegate)
     : m_extensionContext(context)

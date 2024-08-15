@@ -31,6 +31,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -67,7 +68,7 @@ enum class ProcessThrottleState : uint8_t { Suspended, Background, Foreground };
 enum class ProcessThrottlerActivityType : bool { Background, Foreground };
 
 class ProcessThrottlerActivity : public CanMakeWeakPtr<ProcessThrottlerActivity> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProcessThrottlerActivity);
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerActivity);
 public:
     ProcessThrottlerActivity(ProcessThrottler&, ASCIILiteral name, ProcessThrottlerActivityType, IsQuietActivity);
@@ -97,7 +98,7 @@ private:
 };
 
 class ProcessThrottlerTimedActivity {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProcessThrottlerTimedActivity);
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;

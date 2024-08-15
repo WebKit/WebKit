@@ -39,6 +39,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -72,6 +73,8 @@ static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGest
     static NeverDestroyed<HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>> viewGestureControllers;
     return viewGestureControllers.get();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewGestureController);
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)

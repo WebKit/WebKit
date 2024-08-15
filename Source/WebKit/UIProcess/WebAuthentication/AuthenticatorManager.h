@@ -37,6 +37,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS LAContext;
@@ -57,7 +58,7 @@ class WebAuthenticationPanel;
 namespace WebKit {
 
 class AuthenticatorManager : public AuthenticatorTransportServiceObserver, public AuthenticatorObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorManager);
     WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
 public:
     using Respond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;

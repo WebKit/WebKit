@@ -32,6 +32,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_PROTOCOL(WKWebExtensionWindow);
@@ -62,7 +63,7 @@ static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTy
 
 class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow>, public Identified<WebExtensionWindowIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionWindow);
 
 public:
     template<typename... Args>

@@ -28,6 +28,7 @@
 #include "APIClient.h"
 #include "WKPage.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 class Object;
@@ -42,7 +43,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebPageInjectedBundleClient : public API::Client<WKPageInjectedBundleClientBase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInjectedBundleClient);
 public:
     void didReceiveMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*);
     void didReceiveSynchronousMessageFromInjectedBundle(WebPageProxy*, const String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&&);

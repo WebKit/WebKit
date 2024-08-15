@@ -28,11 +28,12 @@
 #include "InspectorExtensionTypes.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace API {
 
 class InspectorExtensionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorExtensionClient);
 public:
     virtual ~InspectorExtensionClient() = default;
 

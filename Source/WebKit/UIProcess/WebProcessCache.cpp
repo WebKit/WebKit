@@ -33,11 +33,15 @@
 #include "WebProcessPool.h"
 #include <wtf/RAMSize.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define WEBPROCESSCACHE_RELEASE_LOG(fmt, ...) RELEASE_LOG(ProcessSwapping, "%p - [PID=%d] WebProcessCache::" fmt, this, ##__VA_ARGS__)
 #define WEBPROCESSCACHE_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ProcessSwapping, "%p - [PID=%d] WebProcessCache::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessCache);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebProcessCacheCachedProcess, WebProcessCache::CachedProcess);
 
 #if PLATFORM(COCOA)
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };

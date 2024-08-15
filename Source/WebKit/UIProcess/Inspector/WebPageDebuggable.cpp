@@ -31,10 +31,13 @@
 #include "WebFrameProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageDebuggable);
 
 WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
     : m_page(page)

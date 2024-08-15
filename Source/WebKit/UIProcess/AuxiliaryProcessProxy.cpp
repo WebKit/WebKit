@@ -37,6 +37,7 @@
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "CoreIPCSecureCoding.h"
@@ -73,6 +74,8 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
     return timeout;
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuxiliaryProcessProxy);
 
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion shouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(*this, adjustedTimeoutForThermalState(responsivenessTimeout))

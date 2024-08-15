@@ -28,6 +28,7 @@
 #include <WebCore/Page.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -35,7 +36,7 @@ class WebPageProxy;
 class WebProcessPool;
 
 class PerActivityStateCPUUsageSampler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerActivityStateCPUUsageSampler);
 public:
     explicit PerActivityStateCPUUsageSampler(WebProcessPool&);
     ~PerActivityStateCPUUsageSampler();

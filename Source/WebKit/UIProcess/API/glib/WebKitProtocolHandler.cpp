@@ -40,6 +40,7 @@
 #include <epoxy/gl.h>
 #include <fcntl.h>
 #include <gio/gio.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
@@ -87,6 +88,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitProtocolHandler);
 
 WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
 {

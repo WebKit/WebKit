@@ -27,6 +27,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -39,7 +40,8 @@ class GeolocationPositionData;
 namespace WebKit {
 
 class GeoclueGeolocationProvider {
-    WTF_MAKE_NONCOPYABLE(GeoclueGeolocationProvider); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GeoclueGeolocationProvider);
+    WTF_MAKE_NONCOPYABLE(GeoclueGeolocationProvider);
 public:
     GeoclueGeolocationProvider();
     ~GeoclueGeolocationProvider();

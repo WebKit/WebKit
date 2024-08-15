@@ -37,6 +37,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 #include "LayerHostingContext.h"
@@ -67,7 +68,7 @@ struct GPUProcessCreationParameters;
 struct SharedPreferencesForWebProcess;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GPUProcessProxy);
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;

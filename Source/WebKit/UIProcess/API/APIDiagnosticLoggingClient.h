@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 enum DiagnosticLoggingResultType : uint8_t;
@@ -41,7 +42,7 @@ namespace API {
 class Dictionary;
 
 class DiagnosticLoggingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DiagnosticLoggingClient);
 public:
     virtual ~DiagnosticLoggingClient() { }
 

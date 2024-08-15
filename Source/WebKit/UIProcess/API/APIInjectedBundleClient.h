@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebProcessPool;
@@ -37,7 +38,7 @@ class WebProcessPool;
 namespace API {
 
 class InjectedBundleClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InjectedBundleClient);
 public:
     virtual ~InjectedBundleClient() = default;
 

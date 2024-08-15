@@ -36,6 +36,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "WebInspectorUIExtensionControllerProxy.h"
@@ -43,6 +44,9 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWebInspectorUIProxyClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWebInspectorUIProxy);
 
 RemoteWebInspectorUIProxy::RemoteWebInspectorUIProxy()
     : m_debuggableInfo(API::DebuggableInfo::create(DebuggableInfoData::empty()))

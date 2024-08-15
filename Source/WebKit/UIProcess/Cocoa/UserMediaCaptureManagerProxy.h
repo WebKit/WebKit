@@ -38,6 +38,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <pal/spi/cocoa/TCCSPI.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -61,7 +62,7 @@ class WebProcessProxy;
 class UserMediaCaptureManagerProxySourceProxy;
 
 class UserMediaCaptureManagerProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaCaptureManagerProxy);
 public:
     class ConnectionProxy {
     public:

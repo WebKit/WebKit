@@ -153,6 +153,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/OSVariantSPI.h>
@@ -1216,6 +1217,8 @@ static bool isInRecoveryOS()
 {
     return os_variant_is_basesystem("WebKit");
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewImpl);
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)

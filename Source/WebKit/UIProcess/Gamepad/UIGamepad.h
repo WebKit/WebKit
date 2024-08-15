@@ -30,6 +30,7 @@
 #include <WebCore/GamepadHapticEffectType.h>
 #include <WebCore/SharedGamepadValue.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +43,7 @@ namespace WebKit {
 class GamepadData;
 
 class UIGamepad {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UIGamepad);
 public:
     UIGamepad(WebCore::PlatformGamepad&);
 

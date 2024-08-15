@@ -28,12 +28,13 @@
 #include "CacheModel.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class LegacyGlobalSettings {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyGlobalSettings);
 public:
     static LegacyGlobalSettings& singleton();
 

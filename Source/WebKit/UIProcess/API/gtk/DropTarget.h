@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkWidget GtkWidget;
@@ -49,7 +50,8 @@ using PlatformDropContext = GdkDragContext;
 namespace WebKit {
 
 class DropTarget {
-    WTF_MAKE_NONCOPYABLE(DropTarget); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DropTarget);
+    WTF_MAKE_NONCOPYABLE(DropTarget);
 public:
     explicit DropTarget(GtkWidget*);
     ~DropTarget();

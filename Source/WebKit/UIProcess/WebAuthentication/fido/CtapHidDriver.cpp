@@ -30,12 +30,15 @@
 
 #include <WebCore/FidoConstants.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
 using namespace fido;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CtapHidDriverWorker);
 
 CtapHidDriverWorker::CtapHidDriverWorker(UniqueRef<HidConnection>&& connection)
     : m_connection(WTFMove(connection))

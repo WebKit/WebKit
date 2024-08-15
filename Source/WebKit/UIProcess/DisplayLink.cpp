@@ -32,6 +32,7 @@
 #include <WebCore/AnimationFrameRate.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -39,6 +40,9 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr unsigned maxFireCountWithoutObservers { 20 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLink);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DisplayLinkClient, DisplayLink::Client);
 
 DisplayLink::DisplayLink(PlatformDisplayID displayID)
     : m_displayID(displayID)

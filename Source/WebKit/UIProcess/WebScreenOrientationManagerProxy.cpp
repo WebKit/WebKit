@@ -35,8 +35,11 @@
 #include "WebScreenOrientationManagerMessages.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
 #include <WebCore/Exception.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebScreenOrientationManagerProxy);
 
 WebScreenOrientationManagerProxy::WebScreenOrientationManagerProxy(WebPageProxy& page, WebCore::ScreenOrientationType orientation)
     : m_page(page)

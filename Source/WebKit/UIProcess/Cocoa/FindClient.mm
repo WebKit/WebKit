@@ -27,8 +27,11 @@
 #import "FindClient.h"
 
 #import "_WKFindDelegate.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FindClient);
 
 FindClient::FindClient(WKWebView *webView)
     : m_webView(webView)

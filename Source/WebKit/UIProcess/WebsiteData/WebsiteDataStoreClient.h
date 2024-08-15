@@ -32,6 +32,7 @@
 #include <WebCore/NotificationData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 enum class WasPrivateRelayed : bool;
@@ -47,7 +48,7 @@ class WebPageProxy;
 class WebsiteDataStore;
 
 class WebsiteDataStoreClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
 public:
     virtual ~WebsiteDataStoreClient() { }
 

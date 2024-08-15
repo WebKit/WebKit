@@ -36,10 +36,13 @@
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
 #include <wtf/GetPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPermissionControllerProxy);
 
 WebPermissionControllerProxy::WebPermissionControllerProxy(WebProcessProxy& process)
     : m_process(process)

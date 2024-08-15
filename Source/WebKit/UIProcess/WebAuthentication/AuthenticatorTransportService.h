@@ -29,6 +29,7 @@
 
 #include "WebAuthenticationFlags.h"
 #include <WebCore/AuthenticatorTransport.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,7 @@ public:
 };
 
 class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorTransportService);
     WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
 public:
     static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&);

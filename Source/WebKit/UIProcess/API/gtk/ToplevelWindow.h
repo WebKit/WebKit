@@ -26,16 +26,17 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
 namespace WebKit {
 
 class ToplevelWindow {
-    WTF_MAKE_NONCOPYABLE(ToplevelWindow); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ToplevelWindow);
+    WTF_MAKE_NONCOPYABLE(ToplevelWindow);
 public:
     static ToplevelWindow* forGtkWindow(GtkWindow*);
     explicit ToplevelWindow(GtkWindow*);

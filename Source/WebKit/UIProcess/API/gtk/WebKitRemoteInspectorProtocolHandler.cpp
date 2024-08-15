@@ -30,6 +30,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -38,7 +39,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class ScriptMessageClient final : public WebScriptMessageHandler::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScriptMessageClient);
 public:
     ScriptMessageClient(RemoteInspectorProtocolHandler& inspectorProtocolHandler)
         : m_inspectorProtocolHandler(inspectorProtocolHandler)
@@ -70,6 +71,8 @@ public:
 private:
     RemoteInspectorProtocolHandler& m_inspectorProtocolHandler;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteInspectorProtocolHandler);
 
 RemoteInspectorProtocolHandler::RemoteInspectorProtocolHandler(WebKitWebContext* context)
 {

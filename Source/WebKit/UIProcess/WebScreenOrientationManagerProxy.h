@@ -29,6 +29,7 @@
 #include <WebCore/ScreenOrientationLockType.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class Exception;
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebScreenOrientationManagerProxy);
 public:
     WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
     ~WebScreenOrientationManagerProxy();

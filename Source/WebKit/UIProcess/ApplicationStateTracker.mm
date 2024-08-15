@@ -36,6 +36,7 @@
 #import <WebCore/UIViewControllerUtilities.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -155,6 +156,8 @@ ApplicationType applicationType(UIWindow *window)
 
     return ApplicationType::Application;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplicationStateTracker);
 
 ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
     : m_view(view)

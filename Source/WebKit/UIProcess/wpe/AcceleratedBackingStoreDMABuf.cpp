@@ -33,6 +33,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/ShareableBitmap.h>
 #include <wpe/wpe-platform.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(LIBDRM)
@@ -40,6 +41,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedBackingStoreDMABuf);
 
 std::unique_ptr<AcceleratedBackingStoreDMABuf> AcceleratedBackingStoreDMABuf::create(WebPageProxy& webPage, WPEView* view)
 {

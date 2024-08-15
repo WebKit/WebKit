@@ -24,6 +24,7 @@
 #include "WebInspectorUIProxyClient.h"
 #include "WebKitWebInspectorPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -282,7 +283,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
 }
 
 class WebKitInspectorClient final : public WebInspectorUIProxyClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitInspectorClient);
 public:
     explicit WebKitInspectorClient(WebKitWebInspector* inspector)
         : m_inspector(inspector)

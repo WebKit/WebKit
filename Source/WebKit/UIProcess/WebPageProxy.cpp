@@ -251,6 +251,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
 #include <wtf/WeakPtr.h>
@@ -444,7 +445,8 @@ static WorkQueue& sharedFileQueue()
 #endif
 
 class StorageRequests {
-    WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StorageRequests);
+    WTF_MAKE_NONCOPYABLE(StorageRequests);
     friend NeverDestroyed<StorageRequests>;
 public:
     static StorageRequests& singleton();
@@ -476,6 +478,8 @@ private:
     bool m_requestsAreBeingProcessed { false };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageRequests);
+
 StorageRequests& StorageRequests::singleton()
 {
     static NeverDestroyed<StorageRequests> requests;
@@ -486,7 +490,7 @@ StorageRequests& StorageRequests::singleton()
 
 class WebPageProxyFrameLoadStateObserver final : public FrameLoadStateObserver {
     WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageProxyFrameLoadStateObserver);
 public:
     static constexpr size_t maxVisitedDomainsSize = 6;
 
@@ -529,6 +533,8 @@ private:
     Vector<URL> m_provisionalURLs;
     ListHashSet<RegistrableDomain> m_visitedDomains;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageProxyFrameLoadStateObserver);
 
 #endif // #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 

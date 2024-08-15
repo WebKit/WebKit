@@ -28,6 +28,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class ResourceError;
@@ -46,7 +47,7 @@ namespace API {
 class Object;
 
 class PolicyClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PolicyClient);
 public:
     virtual ~PolicyClient() { }
 

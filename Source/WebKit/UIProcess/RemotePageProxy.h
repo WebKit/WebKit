@@ -34,6 +34,7 @@
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class RemotePageProxy;
@@ -77,7 +78,7 @@ struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
 class RemotePageProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();

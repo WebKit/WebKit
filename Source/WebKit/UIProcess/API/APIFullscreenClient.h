@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS NSError;
 OBJC_CLASS UIViewController;
@@ -37,7 +38,7 @@ class WebPageProxy;
 namespace API {
 
 class FullscreenClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FullscreenClient);
 public:
     enum Type {
         APIType,

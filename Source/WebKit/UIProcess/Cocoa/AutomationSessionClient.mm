@@ -33,8 +33,11 @@
 #import "_WKAutomationSessionDelegate.h"
 #import "_WKAutomationSessionInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AutomationSessionClient);
 
 AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegate> delegate)
     : m_delegate(delegate)
