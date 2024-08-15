@@ -3113,6 +3113,28 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(PDFSelection *
     return TextIndicator::create(data);
 }
 
+WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (!selection.string.length)
+        return dictionaryPopupInfo;
+
+    NSAttributedString *nsAttributedString = [selection] {
+        static constexpr unsigned maximumSelectionLength = 250;
+        if (selection.string.length > maximumSelectionLength)
+            return [selection.attributedString attributedSubstringFromRange:NSMakeRange(0, maximumSelectionLength)];
+        return selection.attributedString;
+    }();
+
+    dictionaryPopupInfo.origin = rectForSelectionInRootView(selection).location();
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(nsAttributedString);
+
+    if (auto textIndicator = textIndicatorForSelection(selection, { }, presentationTransition))
+        dictionaryPopupInfo.textIndicator = textIndicator->data();
+
+    return dictionaryPopupInfo;
+}
+
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
 {
     auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
@@ -3125,15 +3147,6 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootV
     auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
     RetainPtr lookupSelection = [page selectionForWordAtPoint:pagePoint];
     return showDefinitionForSelection(lookupSelection.get());
-}
-
-WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition transition)
-{
-    DictionaryPopupInfo dictionaryPopupInfo = PDFPluginBase::dictionaryPopupInfoForSelection(selection, transition);
-    if (auto textIndicator = textIndicatorForSelection(selection, { }, transition))
-        dictionaryPopupInfo.textIndicator = textIndicator->data();
-
-    return dictionaryPopupInfo;
 }
 
 bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
