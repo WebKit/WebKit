@@ -142,8 +142,15 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO)
-        if (component->match() == CSSSelector::Match::PseudoElement && (component->pseudoElement() == CSSSelector::PseudoElement::Cue || component->value() == UserAgentParts::cue()))
+        // Property allow-list for `::cue`:
+        if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::UserAgentPart && component->value() == UserAgentParts::cue())
             return PropertyAllowlist::Cue;
+        // Property allow-list for `::cue(selector)`:
+        if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::Cue)
+            return PropertyAllowlist::CueSelector;
+        // Property allow-list for '::-internal-cue-background':
+        if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::UserAgentPart && component->value() == UserAgentParts::internalCueBackground())
+            return PropertyAllowlist::CueBackground;
 #endif
         if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::Marker)
             return propertyAllowlistForPseudoId(PseudoId::Marker);

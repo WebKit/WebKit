@@ -955,7 +955,8 @@ void VTTCue::obtainCSSBoxes()
     // background box.
 
     // Note: This is contained by default in m_cueHighlightBox.
-    m_cueHighlightBox->setUserAgentPart(UserAgentParts::cue());
+    displayTree->setUserAgentPart(UserAgentParts::cue());
+    m_cueHighlightBox->setUserAgentPart(UserAgentParts::internalCueBackground());
 
     m_cueBackdropBox->setUserAgentPart(UserAgentParts::webkitMediaTextTrackDisplayBackdrop());
     m_cueBackdropBox->appendChild(m_cueHighlightBox);

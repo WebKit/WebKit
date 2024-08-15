@@ -308,6 +308,29 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         }
 
         addToRuleSet(customPseudoElementSelector->value(), m_userAgentPartRules, ruleData);
+
+#if ENABLE(VIDEO)
+        // <https://w3c.github.io/webvtt/#the-cue-pseudo-element>
+        // * 8.2.1. The ::cue pseudo-element:
+        //     As a special exception, the properties corresponding to the background shorthand,
+        //     when they would have been applied to the list of WebVTT Node Objects, must instead
+        //     be applied to the WebVTT cue background box.
+        // To implement this exception, clone rules whose selector matches the `::cue` (a.k.a,
+        // `user-agent-part="cue"`), and replace the selector with one that matches the cue background
+        // box (a.k.a. `user-agent-part="internal-cue-background"`).
+        if (customPseudoElementSelector->value() == UserAgentParts::cue()
+            && customPseudoElementSelector->argument() == nullAtom()) {
+            std::unique_ptr cueBackgroundSelector = makeUnique<MutableCSSSelector>(*customPseudoElementSelector);
+            cueBackgroundSelector->setMatch(CSSSelector::Match::PseudoElement);
+            cueBackgroundSelector->setPseudoElement(CSSSelector::PseudoElement::UserAgentPart);
+            cueBackgroundSelector->setValue(UserAgentParts::internalCueBackground());
+
+            Ref cueBackgroundStyleRule = StyleRule::create(ruleData.styleRule().properties().immutableCopyIfNeeded(), ruleData.styleRule().hasDocumentSecurityOrigin(), CSSSelectorList { MutableCSSSelectorList::from(WTFMove(cueBackgroundSelector)) });
+
+            // Warning: Recursion!
+            addRule(WTFMove(cueBackgroundStyleRule), 0, 0);
+        }
+#endif
         return;
     }
 

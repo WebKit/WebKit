@@ -514,6 +514,11 @@
             "conditional": "ENABLE(VIDEO)",
             "user-agent-part-string": true
         },
+        "-internal-cue-background": {
+            "conditional": "ENABLE(VIDEO)",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
         "file-selector-button": {
             "aliases": [
                 "-webkit-file-upload-button"

@@ -115,6 +115,47 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
 bool isValidCueStyleProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyColor:
+    case CSSPropertyCustom:
+    case CSSPropertyFont:
+    case CSSPropertyFontFamily:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontWeight:
+    case CSSPropertyLineHeight:
+    case CSSPropertyOpacity:
+    case CSSPropertyOutline:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyOutlineOffset:
+    case CSSPropertyOutlineStyle:
+    case CSSPropertyOutlineWidth:
+    case CSSPropertyVisibility:
+    case CSSPropertyWhiteSpace:
+    case CSSPropertyWhiteSpaceCollapse:
+    case CSSPropertyTextCombineUpright:
+    case CSSPropertyTextDecorationLine:
+    case CSSPropertyTextShadow:
+    case CSSPropertyTextWrapMode:
+    case CSSPropertyTextWrapStyle:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyPaintOrder:
+    case CSSPropertyStrokeLinejoin:
+    case CSSPropertyStrokeLinecap:
+    case CSSPropertyStrokeColor:
+    case CSSPropertyStrokeWidth:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+#endif
+
+#if ENABLE(VIDEO)
+bool isValidCueSelectorStyleProperty(CSSPropertyID id)
+{
+    switch (id) {
     case CSSPropertyBackground:
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
@@ -144,6 +185,7 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyVisibility:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWhiteSpaceCollapse:
+    case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationLine:
     case CSSPropertyTextShadow:
     case CSSPropertyTextWrapMode:
@@ -154,6 +196,27 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyStrokeLinecap:
     case CSSPropertyStrokeColor:
     case CSSPropertyStrokeWidth:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+bool isValidCueBackgroundStyleProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyBackground:
+    case CSSPropertyBackgroundAttachment:
+    case CSSPropertyBackgroundClip:
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBackgroundImage:
+    case CSSPropertyBackgroundOrigin:
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyBackgroundPositionX:
+    case CSSPropertyBackgroundPositionY:
+    case CSSPropertyBackgroundRepeat:
+    case CSSPropertyBackgroundSize:
         return true;
     default:
         break;

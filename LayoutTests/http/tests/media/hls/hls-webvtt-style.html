@@ -15,7 +15,7 @@
             await waitFor(video.textTracks[0], 'cuechange');
 
             run('textTrackContainer = window.internals.shadowRoot(video).querySelector("div[useragentpart=-webkit-media-text-track-container]")');
-            run('cue = textTrackContainer.querySelector("span[useragentpart=cue]")')
+            run('cue = textTrackContainer.querySelector("span[useragentpart=-internal-cue-background]")')
 
             testExpected('getComputedStyle(cue).backgroundColor', "rgba(255, 0, 0, 0.5)");
 
