@@ -63,6 +63,10 @@
 #include <wpe/wpe-platform.h>
 #endif
 
+#if !USE(SYSTEM_MALLOC) && OS(LINUX)
+#include <bmalloc/valgrind.h>
+#endif
+
 namespace WebKit {
 
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
@@ -71,6 +75,20 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
+
+#if !ENABLE(2022_GLIB_API)
+    if (const char* forceSandbox = getenv("WEBKIT_FORCE_SANDBOX")) {
+        if (!strcmp(forceSandbox, "1"))
+            setSandboxEnabled(true);
+        else {
+            static bool once = false;
+            if (!once) {
+                g_warning("WEBKIT_FORCE_SANDBOX no longer allows disabling the sandbox. Use WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.");
+                once = true;
+            }
+        }
+    }
+#endif
 
 #if OS(LINUX)
     if (!MemoryPressureMonitor::disabled())
@@ -167,6 +185,35 @@ void WebProcessPool::platformInvalidateContext()
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
 {
+}
+
+void WebProcessPool::setSandboxEnabled(bool enabled)
+{
+    if (m_sandboxEnabled == enabled)
+        return;
+
+    if (!enabled) {
+#if !ENABLE(2022_GLIB_API)
+        if (const char* forceSandbox = getenv("WEBKIT_FORCE_SANDBOX")) {
+            if (!strcmp(forceSandbox, "1"))
+                return;
+        }
+#endif
+        m_sandboxEnabled = false;
+        return;
+    }
+
+#if !USE(SYSTEM_MALLOC)
+    if (RUNNING_ON_VALGRIND)
+        return;
+#endif
+
+    if (const char* disableSandbox = getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {
+        if (strcmp(disableSandbox, "0"))
+            return;
+    }
+
+    m_sandboxEnabled = true;
 }
 
 } // namespace WebKit
