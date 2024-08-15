@@ -1,6 +1,8 @@
 
 PASS Property text-box-edge value 'auto'
 PASS Property text-box-edge value 'text'
+PASS Property text-box-edge value 'ideographic'
+PASS Property text-box-edge value 'ideographic-ink'
 PASS Property text-box-edge value 'ex'
 PASS Property text-box-edge value 'cap'
 PASS Property text-box-edge value 'text alphabetic'
@@ -9,4 +11,6 @@ PASS Property text-box-edge value 'cap alphabetic'
 PASS Property text-box-edge value 'cap text'
 PASS Property text-box-edge value 'ex alphabetic'
 PASS Property text-box-edge value 'ex text'
+PASS Property text-box-edge value 'ex ideographic'
+PASS Property text-box-edge value 'ideographic-ink alphabetic'
 

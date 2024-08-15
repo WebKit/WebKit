@@ -1,0 +1,15 @@
+
+FAIL Property text-box value 'normal' assert_equals: expected "normal" but got "auto auto"
+FAIL Property text-box value 'none' assert_equals: expected "normal" but got "auto auto"
+PASS Property text-box value 'trim-start'
+PASS Property text-box value 'trim-end'
+PASS Property text-box value 'trim-both'
+FAIL Property text-box value 'none auto' assert_equals: expected "normal" but got "auto auto"
+PASS Property text-box value 'trim-start auto'
+PASS Property text-box value 'trim-both auto'
+FAIL Property text-box value 'text' assert_equals: expected "text" but got "trim-both text text"
+FAIL Property text-box value 'cap alphabetic' assert_equals: expected "cap alphabetic" but got "trim-both cap alphabetic"
+FAIL Property text-box value 'trim-both text' assert_equals: expected "text" but got "trim-both text text"
+FAIL Property text-box value 'trim-start text' assert_equals: expected "trim-start text" but got "trim-start text text"
+PASS Property text-box value 'trim-start cap alphabetic'
+

@@ -1,7 +1,7 @@
 A
 
 PASS getBoundingClientRect.top
-PASS getBoundingClientRect.height
-PASS elementFromPoint: 10px above the client rect
+FAIL getBoundingClientRect.height assert_equals: expected 20 but got 200
+FAIL elementFromPoint: 10px above the client rect assert_equals: expected Element node <div id="target">A</div> but got Element node <div class="spacer"></div>
 PASS elementFromPoint: 10px below the client rect
 
