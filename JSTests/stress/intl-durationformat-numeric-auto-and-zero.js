@@ -1,5 +1,3 @@
-//@ requireOptions("--useIntlDurationFormat=1")
-
 function assertSameValue(actual, expected) {
     if (actual !== expected)
         throw new Error(`Expected "${expected}" but got "${actual}"`)

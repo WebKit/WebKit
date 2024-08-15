@@ -3,15 +3,8 @@
 flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
-  Intl.DurationFormat: useIntlDurationFormat
   Temporal: useTemporal
-  array-grouping: useArrayGroupMethod
   ShadowRealm: useShadowRealm
-  resizable-arraybuffer: useResizableArrayBuffer
-  arraybuffer-transfer: useArrayBufferTransfer
-  import-assertions: useImportAttributes
-  json-modules: useImportAttributes
-  promise-with-resolvers: usePromiseWithResolversMethod
   promise-try: usePromiseTryMethod
   uint8array-base64: useUint8ArrayBase64Methods
   RegExp.escape: useRegExpEscape

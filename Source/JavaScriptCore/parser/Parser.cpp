@@ -3721,7 +3721,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
         failIfFalse(moduleName, "Cannot parse the module name");
 
         typename TreeBuilder::ImportAttributesList attributesList = 0;
-        if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
+        if (!m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
             next();
             attributesList = parseImportAttributes(context);
             failIfFalse(attributesList, "Unable to parse import attributes");
@@ -3781,7 +3781,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     // [no LineTerminator here] WithClause ;
     typename TreeBuilder::ImportAttributesList attributesList = 0;
-    if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
+    if (!m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
         next();
         attributesList = parseImportAttributes(context);
         failIfFalse(attributesList, "Unable to parse import attributes");
@@ -3864,7 +3864,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
 
         // [no LineTerminator here] WithClause ;
         typename TreeBuilder::ImportAttributesList attributesList = 0;
-        if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
+        if (!m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
             next();
             attributesList = parseImportAttributes(context);
             failIfFalse(attributesList, "Unable to parse import attributes");
@@ -4011,7 +4011,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             failIfFalse(moduleName, "Cannot parse the 'from' clause");
 
             // [no LineTerminator here] WithClause ;
-            if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
+            if (!m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
                 next();
                 attributesList = parseImportAttributes(context);
                 failIfFalse(attributesList, "Unable to parse import attributes");

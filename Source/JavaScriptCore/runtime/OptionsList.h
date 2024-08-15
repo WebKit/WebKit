@@ -583,21 +583,11 @@ bool hasCapacityToUseLargeGigacage();
     \
     /* Feature Flags */\
     \
-    v(Bool, useArrayBufferTransfer, true, Normal, "Expose ArrayBuffer.transfer feature."_s) \
-    v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync."_s) \
-    v(Bool, useArrayGroupMethod, true, Normal, "Expose the Object.groupBy() and Map.groupBy() methods."_s) \
-    v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics."_s) \
     v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
-    v(Bool, useSetMethods, true, Normal, "Expose the various Set.prototype methods for handling combinations of sets"_s) \
-    v(Bool, useImportAttributes, true, Normal, "Enable import attributes."_s) \
-    v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat."_s) \
-    v(Bool, usePromiseWithResolversMethod, true, Normal, "Expose the Promise.withResolvers() method."_s) \
     v(Bool, usePromiseTryMethod, true, Normal, "Expose the Promise.try() method."_s) \
     v(Bool, useRegExpEscape, true, Normal, "Expose RegExp.escape feature."_s) \
-    v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature."_s) \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \
-    v(Bool, useStringWellFormed, true, Normal, "Expose the String well-formed methods."_s) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
     v(Bool, useTrustedTypes, false, Normal, "Enable trusted types eval protection feature."_s) \
     v(Bool, useUint8ArrayBase64Methods, true, Normal, "Expose methods for converting Uint8Array to/from base64 and hex."_s) \
