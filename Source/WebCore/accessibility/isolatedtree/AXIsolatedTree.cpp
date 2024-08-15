@@ -369,7 +369,8 @@ void AXIsolatedTree::queueRemovalsLocked(Vector<AXID>&& subtreeRemovals)
     ASSERT(m_changeLogLock.isLocked());
 
     m_pendingSubtreeRemovals.appendVector(WTFMove(subtreeRemovals));
-    m_pendingProtectedFromDeletionIDs.formUnion(std::exchange(m_protectedFromDeletionIDs, { }));
+    if (m_protectedFromDeletionIDsIsDirty)
+        m_pendingProtectedFromDeletionIDs.formUnion(m_protectedFromDeletionIDs);
 }
 
 void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRemovals)
@@ -436,6 +437,8 @@ void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vecto
     }
 
     queueRemovalsLocked(WTFMove(subtreeRemovals));
+    m_protectedFromDeletionIDs.clear();
+    m_protectedFromDeletionIDsIsDirty = false;
 }
 
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
@@ -462,7 +465,7 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
         // Protect this object from being deleted. This is important when |axObject| was a child of some other object,
         // but no longer is, and thus the other object will try to queue it for removal. But the fact that we're here
         // indicates this object isn't ready to be removed, just a child of a different parent, so prevent this removal.
-        m_protectedFromDeletionIDs.add(axObject.objectID());
+        protectFromDeletion(axObject.objectID());
         // Update the object's parent if it has changed (but only if we aren't going to create a node change for it,
         // as the act of creating a new node change will correct this as part of creating the new AXIsolatedObject).
         if (axParent && iterator->value.parentID != axParent->objectID() && !m_unresolvedPendingAppends.contains(axObject.objectID()))
@@ -906,7 +909,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     m_nodeMap.set(axAncestor->objectID(), ParentChildrenIDs { oldIDs.parentID, WTFMove(newChildrenIDs) });
     // Since axAncestor is definitively part of the AX tree by way of getting here, protect it from being
     // deleted in case it has been re-parented.
-    m_protectedFromDeletionIDs.add(axAncestor->objectID());
+    protectFromDeletion(axAncestor->objectID());
 
     // What is left in oldChildrenIDs are the IDs that are no longer children of axAncestor.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
@@ -1154,6 +1157,14 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject
         ids.childrenIDs = axParent->childrenIDs();
         m_nodeMap.set(axParentID, WTFMove(ids));
     }
+}
+
+void AXIsolatedTree::protectFromDeletion(AXID axID)
+{
+    ASSERT(isMainThread());
+
+    if (m_protectedFromDeletionIDs.add(axID).isNewEntry)
+        m_protectedFromDeletionIDsIsDirty = true;
 }
 
 std::optional<ListHashSet<AXID>> AXIsolatedTree::relatedObjectIDsFor(const AXIsolatedObject& object, AXRelationType relationType)
