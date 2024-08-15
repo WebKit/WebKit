@@ -2503,10 +2503,10 @@ bool Element::allowsDoubleTapGesture() const
 
 Style::Resolver& Element::styleResolver()
 {
-    if (auto* shadowRoot = containingShadowRoot())
-        return shadowRoot->styleScope().resolver();
+    if (RefPtr shadowRoot = containingShadowRoot())
+        return shadowRoot->checkedStyleScope()->resolver();
 
-    return document().styleScope().resolver();
+    return document().checkedStyleScope()->resolver();
 }
 
 Style::ResolvedStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
@@ -2516,14 +2516,14 @@ Style::ResolvedStyle Element::resolveStyle(const Style::ResolutionContext& resol
 
 void invalidateForSiblingCombinators(Element* sibling)
 {
-    for (; sibling; sibling = sibling->nextElementSibling()) {
-        if (sibling->styleIsAffectedByPreviousSibling())
-            sibling->invalidateStyleInternal();
-        if (sibling->descendantsAffectedByPreviousSibling()) {
-            for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+    for (RefPtr element = sibling; element; element = element->nextElementSibling()) {
+        if (element->styleIsAffectedByPreviousSibling())
+            element->invalidateStyleInternal();
+        if (element->descendantsAffectedByPreviousSibling()) {
+            for (RefPtr siblingChild = element->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
                 siblingChild->invalidateStyleForSubtreeInternal();
         }
-        if (!sibling->affectsNextSiblingElementStyle())
+        if (!element->affectsNextSiblingElementStyle())
             return;
     }
 }
@@ -4464,7 +4464,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle() const
 const RenderStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (pseudoElementIdentifier) {
-        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
+        if (RefPtr pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
             return pseudoElement->renderOrDisplayContentsStyle();
 
         if (auto* style = renderOrDisplayContentsStyle()) {
@@ -4486,7 +4486,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     ASSERT(isConnected());
 
     Ref document = this->document();
-    document->styleScope().flushPendingUpdate();
+    document->checkedStyleScope()->flushPendingUpdate();
 
     bool isInDisplayNoneTree = false;
 
