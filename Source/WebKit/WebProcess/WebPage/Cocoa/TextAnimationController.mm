@@ -78,20 +78,19 @@ RefPtr<WebCore::Document> TextAnimationController::document() const
     return frame->document();
 }
 
-std::optional<WebCore::SimpleRange> TextAnimationController::unreplacedRangeForSessionWithID(const WebCore::WritingTools::Session::ID& sessionID) const
+std::optional<WebCore::SimpleRange> TextAnimationController::unreplacedRangeForActiveWritingToolsSession() const
 {
-    auto sessionRange = contextRangeForSessionWithID(sessionID);
+    auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
-    auto previouslyReplacedRange = m_alreadyReplacedRanges.getOptional(sessionID);
-
+    auto previouslyReplacedRange = m_alreadyReplacedRange;
     if (!previouslyReplacedRange)
         return sessionRange;
 
-    auto replacedRange = WebCore::resolveCharacterRange(*sessionRange, (*previouslyReplacedRange)->range, defaultTextAnimationControllerTextIteratorBehaviors);
+    auto replacedRange = WebCore::resolveCharacterRange(*sessionRange, previouslyReplacedRange->range, defaultTextAnimationControllerTextIteratorBehaviors);
 
     auto remainingRange = *sessionRange;
     remainingRange.start = replacedRange.end;
@@ -100,7 +99,7 @@ std::optional<WebCore::SimpleRange> TextAnimationController::unreplacedRangeForS
 }
 
 // FIXME: This is a layering violation.
-std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForSessionWithID(const WebCore::WritingTools::Session::ID& sessionID) const
+std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForActiveWritingToolsSession() const
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
@@ -113,49 +112,44 @@ std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForSess
         return std::nullopt;
     }
 
-    return corePage->contextRangeForSessionWithID(sessionID);
+    return corePage->contextRangeForActiveWritingToolsSession();
 }
 
 std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForTextAnimationID(const WTF::UUID& animationUUID) const
 {
-    if (auto iterator = m_manuallyEnabledAnimationRanges.find(animationUUID); iterator != m_manuallyEnabledAnimationRanges.end())
-        return WebCore::makeSimpleRange(iterator->value.get());
+    if (RefPtr manuallyEnabledAnimationRange = m_manuallyEnabledAnimationRange; manuallyEnabledAnimationRange)
+        return WebCore::makeSimpleRange(*manuallyEnabledAnimationRange);
 
-    for (auto [sessionID, initialAnimationID] : m_initialAnimations) {
-        if (initialAnimationID == animationUUID)
-            return unreplacedRangeForSessionWithID(sessionID);
-    }
+    if (m_initialAnimationID == animationUUID)
+        return unreplacedRangeForActiveWritingToolsSession();
 
-    for (auto [sessionID, animationRanges] : m_textAnimationRanges) {
-        for (auto animationRange : animationRanges) {
-            if (animationRange.animationUUID == animationUUID) {
-                if (auto fullSessionRange = contextRangeForSessionWithID(sessionID))
-                    return WebCore::resolveCharacterRange(*fullSessionRange, animationRange.range, defaultTextAnimationControllerTextIteratorBehaviors);
-            }
+    for (auto animationRange : m_textAnimationRanges) {
+        if (animationRange.animationUUID == animationUUID) {
+            if (auto fullSessionRange = contextRangeForActiveWritingToolsSession())
+                return WebCore::resolveCharacterRange(*fullSessionRange, animationRange.range, defaultTextAnimationControllerTextIteratorBehaviors);
         }
     }
 
-    for (auto unstyledRangeData : m_unstyledRanges.values()) {
-        if (unstyledRangeData->animationUUID == animationUUID)
-            return unstyledRangeData->range;
-    }
+    if (m_unstyledRange && m_unstyledRange->animationUUID == animationUUID)
+        return m_unstyledRange->range;
 
     return std::nullopt;
 }
 
-void TextAnimationController::removeTransparentMarkersForSessionID(const WebCore::WritingTools::Session::ID& sessionID)
+void TextAnimationController::removeTransparentMarkersForActiveWritingToolsSession()
 {
-    if (auto iterator = m_initialAnimations.find(sessionID); iterator != m_initialAnimations.end())
-        removeTransparentMarkersForTextAnimationID(iterator->value);
+    if (auto initialAnimationID = m_initialAnimationID)
+        removeTransparentMarkersForTextAnimationID(*initialAnimationID);
 
-    auto animationStates = m_textAnimationRanges.take(sessionID);
-    if (animationStates.isEmpty())
+    auto textAnimationRanges = std::exchange(m_textAnimationRanges, { });
+
+    if (textAnimationRanges.isEmpty())
         return;
 
-    for (auto animationState : animationStates)
-        removeTransparentMarkersForTextAnimationID(animationState.animationUUID);
+    for (auto textAnimationRange : textAnimationRanges)
+        removeTransparentMarkersForTextAnimationID(textAnimationRange.animationUUID);
 
-    if (auto rangeData = m_unstyledRanges.get(sessionID))
+    if (auto rangeData = m_unstyledRange)
         removeTransparentMarkersForTextAnimationID(rangeData->animationUUID);
 }
 
@@ -172,10 +166,10 @@ void TextAnimationController::removeTransparentMarkersForTextAnimationID(const W
     });
 }
 
-void TextAnimationController::removeInitialTextAnimation(const WebCore::WritingTools::Session::ID& sessionID)
+void TextAnimationController::removeInitialTextAnimationForActiveWritingToolsSession()
 {
-    if (auto animationID = m_initialAnimations.take(sessionID))
-        m_webPage->removeTextAnimationForAnimationID(animationID);
+    if (auto initialAnimationID = std::exchange(m_initialAnimationID, std::nullopt))
+        m_webPage->removeTextAnimationForAnimationID(*initialAnimationID);
 }
 
 static WebCore::CharacterRange remainingCharacterRange(WebCore::CharacterRange totalRange, WebCore::CharacterRange previousRange)
@@ -189,10 +183,10 @@ static WebCore::CharacterRange remainingCharacterRange(WebCore::CharacterRange t
     return WebCore::CharacterRange { location, length };
 };
 
-void TextAnimationController::addInitialTextAnimation(const WebCore::WritingTools::Session::ID& sessionID)
+void TextAnimationController::addInitialTextAnimationForActiveWritingToolsSession()
 {
-    auto initialAnimationUUID = WTF::UUID::createVersion4();
-    auto animatingRange = unreplacedRangeForSessionWithID(sessionID);
+    auto initialAnimationID = WTF::UUID::createVersion4();
+    auto animatingRange = unreplacedRangeForActiveWritingToolsSession();
 
     if (!animatingRange || animatingRange->collapsed())
         return;
@@ -201,30 +195,31 @@ void TextAnimationController::addInitialTextAnimation(const WebCore::WritingTool
     if (!textIndicatorData)
         return;
 
-    m_webPage->addTextAnimationForAnimationID(initialAnimationUUID, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }, *textIndicatorData);
+    m_webPage->addTextAnimationForAnimationID(initialAnimationID, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }, *textIndicatorData);
 
-    m_initialAnimations.set(sessionID, initialAnimationUUID);
+    m_initialAnimationID = initialAnimationID;
 }
 
-void TextAnimationController::addSourceTextAnimation(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::CharacterRange& replacingRange, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange& replacingRange, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    auto previouslyReplacedRange = m_alreadyReplacedRanges.getOptional(sessionID);
+    auto previouslyReplacedRange = m_alreadyReplacedRange;
     auto replaceCharacterRange = replacingRange;
 
     WebCore::TextAnimationRunMode runMode = WebCore::TextAnimationRunMode::RunAnimation;
     if (previouslyReplacedRange) {
         // If the text is the same as has been replaced before, this is the final replace, so we shouldn't
         // try and run the animation or recalculate the range for the animation.
-        if ((*previouslyReplacedRange)->range.location == replacingRange.location && (*previouslyReplacedRange)->string == string)
+        if (previouslyReplacedRange->range.location == replacingRange.location && previouslyReplacedRange->string == string)
             runMode = WebCore::TextAnimationRunMode::OnlyReplaceText;
         else
-            replaceCharacterRange = remainingCharacterRange(replacingRange, (*previouslyReplacedRange)->range);
+            replaceCharacterRange = remainingCharacterRange(replacingRange, previouslyReplacedRange->range);
     }
 
-    auto sessionRange = contextRangeForSessionWithID(sessionID);
+    auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
         ASSERT_NOT_REACHED();
+        completionHandler(WebCore::TextAnimationRunMode::RunAnimation);
         return;
     }
 
@@ -240,16 +235,11 @@ void TextAnimationController::addSourceTextAnimation(const WebCore::WritingTools
 
     m_webPage->addTextAnimationForAnimationID(sourceTextIndicatorUUID, { WebCore::TextAnimationType::Source, runMode, WTF::UUID(WTF::UUID::emptyValue) }, *textIndicatorData, WTFMove(completionHandler));
 
-    TextAnimationRange animationState = { sourceTextIndicatorUUID, replaceCharacterRange };
-    auto& animationRanges = m_textAnimationRanges.ensure(sessionID, [&] {
-        return Vector<TextAnimationRange> { };
-    }).iterator->value;
-
-    animationRanges.append(animationState);
+    m_textAnimationRanges.append({ sourceTextIndicatorUUID, replaceCharacterRange });
 #endif
 }
 
-void TextAnimationController::addDestinationTextAnimation(const WebCore::WritingTools::Session::ID& sessionID, const std::optional<WebCore::CharacterRange>& characterRangeAfterReplace, const String& string)
+void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<WebCore::CharacterRange>& characterRangeAfterReplace, const String& string)
 {
     if (!characterRangeAfterReplace) {
         m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
@@ -257,7 +247,7 @@ void TextAnimationController::addDestinationTextAnimation(const WebCore::Writing
     }
 
     auto destinationTextIndicatorUUID = WTF::UUID::createVersion4();
-    auto sessionRange = contextRangeForSessionWithID(sessionID);
+    auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
         m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
         ASSERT_NOT_REACHED();
@@ -271,11 +261,11 @@ void TextAnimationController::addDestinationTextAnimation(const WebCore::Writing
         return;
     }
 
-    auto previouslyReplacedRange = m_alreadyReplacedRanges.getOptional(sessionID);
+    auto previouslyReplacedRange = m_alreadyReplacedRange;
 
     auto replacedCharacterRange = *characterRangeAfterReplace;
     if (previouslyReplacedRange)
-        replacedCharacterRange = remainingCharacterRange(*characterRangeAfterReplace, (*previouslyReplacedRange)->range);
+        replacedCharacterRange = remainingCharacterRange(*characterRangeAfterReplace, previouslyReplacedRange->range);
 
     auto replacedRangeAfterReplace = WebCore::resolveCharacterRange(*sessionRange, replacedCharacterRange, defaultTextAnimationControllerTextIteratorBehaviors);
 
@@ -284,8 +274,7 @@ void TextAnimationController::addDestinationTextAnimation(const WebCore::Writing
     unstyledRange.start.offset = replacedRangeAfterReplace.endOffset();
 
     auto unstyledRangeUUID = WTF::UUID::createVersion4();
-    TextAnimationUnstyledRangeData unstyledRangeData = { unstyledRangeUUID, unstyledRange };
-    m_unstyledRanges.set(sessionID, unstyledRangeData);
+    m_unstyledRange = { unstyledRangeUUID, unstyledRange };
 
     auto textIndicatorData = createTextIndicatorForRange(replacedRangeAfterReplace);
     if (!textIndicatorData) {
@@ -293,48 +282,19 @@ void TextAnimationController::addDestinationTextAnimation(const WebCore::Writing
         return;
     }
 
-    m_webPage->addTextAnimationForAnimationID(destinationTextIndicatorUUID, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, unstyledRangeUUID }, *textIndicatorData, [weakWebPage = WeakPtr { *m_webPage }, sessionID](WebCore::TextAnimationRunMode runMode) mutable {
+    m_webPage->addTextAnimationForAnimationID(destinationTextIndicatorUUID, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, unstyledRangeUUID }, *textIndicatorData, [weakWebPage = WeakPtr { *m_webPage }](WebCore::TextAnimationRunMode runMode) mutable {
         if (runMode == WebCore::TextAnimationRunMode::DoNotRun)
             return;
 
         if (!weakWebPage)
             return;
 
-        weakWebPage->addInitialTextAnimation(sessionID);
+        weakWebPage->addInitialTextAnimationForActiveWritingToolsSession();
     });
 
-    TextAnimationRange animationState = { destinationTextIndicatorUUID, replacedCharacterRange };
-    auto& animationRanges = m_textAnimationRanges.ensure(sessionID, [&] {
-        return Vector<TextAnimationRange> { };
-    }).iterator->value;
+    m_textAnimationRanges.append({ destinationTextIndicatorUUID, replacedCharacterRange });
 
-    animationRanges.append(animationState);
-
-    ReplacedRangeAndString replacedRange = { *characterRangeAfterReplace, string };
-    m_alreadyReplacedRanges.set(sessionID, replacedRange);
-}
-
-void TextAnimationController::showSelectionForWritingToolsSessionAssociatedWithAnimationID(const WTF::UUID& animationId)
-{
-    auto sessionIDForAnimationID = [&] -> std::optional<WebCore::WritingTools::Session::ID> {
-        for (auto& [sessionID, animationRanges] : m_textAnimationRanges) {
-            for (auto& animationRange : animationRanges) {
-                if (animationRange.animationUUID == animationId)
-                    return sessionID;
-            }
-        }
-
-        return std::nullopt;
-    }();
-
-    if (!sessionIDForAnimationID) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr corePage = m_webPage->corePage();
-
-    corePage->showSelectionForWritingToolsSessionWithID(*sessionIDForAnimationID);
+    m_alreadyReplacedRange = { *characterRangeAfterReplace, string };
 }
 
 void TextAnimationController::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
@@ -388,19 +348,18 @@ std::optional<WebCore::TextIndicatorData> TextAnimationController::createTextInd
     return textIndicatorData;
 }
 
-void TextAnimationController::clearAnimationsForSessionID(const WebCore::WritingTools::Session::ID& sessionID)
+void TextAnimationController::clearAnimationsForActiveWritingToolsSession()
 {
-    removeTransparentMarkersForSessionID(sessionID);
-    removeInitialTextAnimation(sessionID);
+    removeTransparentMarkersForActiveWritingToolsSession();
+    removeInitialTextAnimationForActiveWritingToolsSession();
 
-    auto animationRanges = m_textAnimationRanges.take(sessionID);
-    if (!animationRanges.isEmpty()) {
-        for (auto animationRange : animationRanges)
-            m_webPage->removeTextAnimationForAnimationID(animationRange.animationUUID);
-    }
+    auto textAnimationRanges = std::exchange(m_textAnimationRanges, { });
 
-    m_alreadyReplacedRanges.take(sessionID);
-    m_unstyledRanges.take(sessionID);
+    for (auto textAnimationRange : textAnimationRanges)
+        m_webPage->removeTextAnimationForAnimationID(textAnimationRange.animationUUID);
+
+    m_alreadyReplacedRange = std::nullopt;
+    m_unstyledRange = std::nullopt;
 }
 
 // FIXME: This shouldn't be called anymore, make sure that that is true, and remove.
@@ -416,7 +375,7 @@ void TextAnimationController::createTextIndicatorForTextAnimationID(const WTF::U
     completionHandler(createTextIndicatorForRange(*sessionRange));
 }
 
-void TextAnimationController::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void TextAnimationController::enableSourceTextAnimationAfterElementWithID(const String& elementID)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -443,10 +402,10 @@ void TextAnimationController::enableSourceTextAnimationAfterElementWithID(const 
             simpleRange->start = elementRange.end;
     }
 
-    m_manuallyEnabledAnimationRanges.add(uuid, createLiveRange(*simpleRange));
+    m_manuallyEnabledAnimationRange = createLiveRange(*simpleRange);
 }
 
-void TextAnimationController::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void TextAnimationController::enableTextAnimationTypeForElementWithID(const String& elementID)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -466,7 +425,7 @@ void TextAnimationController::enableTextAnimationTypeForElementWithID(const Stri
         return;
     }
 
-    m_manuallyEnabledAnimationRanges.add(uuid, createLiveRange(elementRange));
+    m_manuallyEnabledAnimationRange = createLiveRange(elementRange);
 }
 
 } // namespace WebKit

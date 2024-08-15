@@ -1858,14 +1858,14 @@ void WebChromeClient::gamepadsRecentlyAccessed()
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebChromeClient::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
+void WebChromeClient::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {
-    protectedPage()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, selectionBoundsInRootView);
+    protectedPage()->proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(replacementID, selectionBoundsInRootView);
 }
 
-void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(const WritingTools::Session::ID& sessionID, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion::ID& replacementID)
+void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion::ID& replacementID)
 {
-    protectedPage()->proofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID);
+    protectedPage()->proofreadingSessionUpdateStateForSuggestionWithID(state, replacementID);
 }
 
 #endif
@@ -1877,34 +1877,34 @@ void WebChromeClient::removeTextAnimationForAnimationID(const WTF::UUID& animati
     protectedPage()->removeTextAnimationForAnimationID(animationID);
 }
 
-void WebChromeClient::removeTransparentMarkersForSessionID(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::removeTransparentMarkersForActiveWritingToolsSession()
 {
-    protectedPage()->removeTransparentMarkersForSessionID(sessionID);
+    protectedPage()->removeTransparentMarkersForActiveWritingToolsSession();
 }
 
-void WebChromeClient::removeInitialTextAnimation(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::removeInitialTextAnimationForActiveWritingToolsSession()
 {
-    protectedPage()->removeInitialTextAnimation(sessionID);
+    protectedPage()->removeInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebChromeClient::addInitialTextAnimation(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::addInitialTextAnimationForActiveWritingToolsSession()
 {
-    protectedPage()->addInitialTextAnimation(sessionID);
+    protectedPage()->addInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebChromeClient::addSourceTextAnimation(const WritingTools::Session::ID& sessionID, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    protectedPage()->addSourceTextAnimation(sessionID, range, string, WTFMove(completionHandler));
+    protectedPage()->addSourceTextAnimationForActiveWritingToolsSession(range, string, WTFMove(completionHandler));
 }
 
-void WebChromeClient::addDestinationTextAnimation(const WritingTools::Session::ID& sessionID, const std::optional<CharacterRange>& range, const String& string)
+void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>& range, const String& string)
 {
-    protectedPage()->addDestinationTextAnimation(sessionID, range, string);
+    protectedPage()->addDestinationTextAnimationForActiveWritingToolsSession(range, string);
 }
 
-void WebChromeClient::clearAnimationsForSessionID(const WritingTools::Session::ID& sessionID)
+void WebChromeClient::clearAnimationsForActiveWritingToolsSession()
 {
-    protectedPage()->clearAnimationsForSessionID(sessionID);
+    protectedPage()->clearAnimationsForActiveWritingToolsSession();
 }
 
 #endif

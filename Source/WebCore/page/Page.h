@@ -1179,8 +1179,8 @@ public:
     void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
     void respondToReappliedWritingToolsEditing(EditCommandComposition*);
 
-    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::SessionID&) const;
-    WEBCORE_EXPORT void showSelectionForWritingToolsSessionWithID(const WritingTools::SessionID&) const;
+    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForActiveWritingToolsSession() const;
+    WEBCORE_EXPORT void showSelectionForActiveWritingToolsSession() const;
 #endif
 
     bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
