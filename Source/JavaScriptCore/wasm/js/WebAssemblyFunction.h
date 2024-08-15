@@ -76,7 +76,7 @@ public:
 #endif
     }
 
-    static constexpr ptrdiff_t offsetOfInterpreterCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_jsToWasmInterpreterCallee); }
+    static constexpr ptrdiff_t offsetOfJSToWasmCallee() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_jsToWasmCallee); }
 
 private:
     DECLARE_VISIT_CHILDREN;
@@ -97,7 +97,7 @@ private:
     // This is the callee needed by LLInt/IPInt
     uintptr_t m_boxedWasmCallee;
     // This let's the JS->Wasm interpreter find its metadata
-    RefPtr<Wasm::JSEntrypointInterpreterCallee> m_jsToWasmInterpreterCallee;
+    RefPtr<Wasm::JITLessJSEntrypointCallee> m_jsToWasmCallee;
 #if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 #endif

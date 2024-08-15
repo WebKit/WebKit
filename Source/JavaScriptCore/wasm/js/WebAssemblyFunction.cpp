@@ -480,7 +480,7 @@ WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, J
     : Base { vm, executable, globalObject, structure, instance, Wasm::WasmToWasmImportableFunction { typeIndex, wasmToWasmEntrypointLoadLocation, &m_boxedWasmCallee, rtt.get() } }
     , m_jsEntrypoint { jsEntrypoint }
     , m_boxedWasmCallee(reinterpret_cast<uint64_t>(CalleeBits::boxNativeCalleeIfExists(wasmCallee)))
-    , m_jsToWasmInterpreterCallee(jsEntrypoint.compilationMode() == Wasm::CompilationMode::JSEntrypointInterpreterMode ? static_cast<Wasm::JSEntrypointInterpreterCallee*>(&jsEntrypoint) : nullptr)
+    , m_jsToWasmCallee(jsEntrypoint.compilationMode() == Wasm::CompilationMode::JITLessJSEntrypointMode ? static_cast<Wasm::JITLessJSEntrypointCallee*>(&jsEntrypoint) : nullptr)
 { }
 
 template<typename Visitor>

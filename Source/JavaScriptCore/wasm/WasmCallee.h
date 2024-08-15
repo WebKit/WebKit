@@ -176,12 +176,12 @@ private:
 #endif
 };
 
-class JSEntrypointInterpreterCallee final : public JSEntrypointCallee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointInterpreterCallee);
+class JITLessJSEntrypointCallee final : public JSEntrypointCallee {
+    WTF_MAKE_TZONE_ALLOCATED(JITLessJSEntrypointCallee);
 public:
-    static inline Ref<JSEntrypointInterpreterCallee> create(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
+    static inline Ref<JITLessJSEntrypointCallee> create(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
     {
-        return adoptRef(*new JSEntrypointInterpreterCallee(frameSize, typeIndex, usesSIMD));
+        return adoptRef(*new JITLessJSEntrypointCallee(frameSize, typeIndex, usesSIMD));
     }
 
     inline bool hasReplacement() const { return !!m_replacementCallee; }
@@ -200,10 +200,10 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
 
-    static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, ident); }
-    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
-    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
-    static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, frameSize); }
+    static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JITLessJSEntrypointCallee, ident); }
+    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JITLessJSEntrypointCallee, wasmCallee); }
+    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JITLessJSEntrypointCallee, wasmFunctionPrologue); }
+    static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JITLessJSEntrypointCallee, frameSize); }
 
     // Space for callee-saves; Not included in frameSize
     static constexpr unsigned SpillStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(3 * sizeof(UCPURegister));
@@ -221,7 +221,7 @@ public:
     CodePtr<WasmEntryPtrTag> wasmFunctionPrologue;
 
 private:
-    JSEntrypointInterpreterCallee(unsigned frameSize, TypeIndex, bool);
+    JITLessJSEntrypointCallee(unsigned frameSize, TypeIndex, bool);
 
     RefPtr<Wasm::Callee> m_replacementCallee { nullptr };
 };

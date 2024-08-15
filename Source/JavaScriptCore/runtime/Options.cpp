@@ -659,7 +659,7 @@ static inline void disableAllJITOptions()
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
 
-    if (!Options::useInterpretedJSEntryWrappers() && Options::useWasm())
+    if (!Options::useWasmJITLessJSEntrypoint() && Options::useWasm())
         disableAllWasmOptions();
 
     Options::useWasmSIMD() = false;

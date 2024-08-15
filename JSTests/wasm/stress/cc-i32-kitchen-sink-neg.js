@@ -1,4 +1,4 @@
-//@ requireOptions("--useInterpretedJSEntryWrappers=1")
+//@ requireOptions("--useWasmJITLessJSEntrypoint=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

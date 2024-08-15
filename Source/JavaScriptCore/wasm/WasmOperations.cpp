@@ -93,21 +93,21 @@ static constexpr unsigned fprToIndex(FPRReg r)
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void, (void* sp, CallFrame* cfr))
 {
-    ASSERT(Options::useInterpretedJSEntryWrappers());
+    ASSERT(Options::useWasmJITLessJSEntrypoint());
     dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame sp: ", RawPointer(sp), " fp: ", RawPointer(cfr));
 
     uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
 
     auto* function = jsCast<WebAssemblyFunction*>(cfr->callee().asCell());
     ASSERT(function);
-    ASSERT(function->m_jsToWasmInterpreterCallee->ident == 0xBF);
-    ASSERT(function->m_jsToWasmInterpreterCallee->typeIndex == function->typeIndex());
-    ASSERT(function->m_jsToWasmInterpreterCallee->frameSize + JSEntrypointInterpreterCallee::SpillStackSpaceAligned == (reinterpret_cast<uintptr_t>(cfr) - reinterpret_cast<uintptr_t>(sp)));
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame setting callee: ", RawHex(CalleeBits::encodeNativeCallee(function->m_jsToWasmInterpreterCallee.get())));
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame wasm callee: ", RawHex(function->m_jsToWasmInterpreterCallee->wasmCallee));
-    cfr->setCallee(function->m_jsToWasmInterpreterCallee.get());
+    ASSERT(function->m_jsToWasmCallee->ident == 0xBF);
+    ASSERT(function->m_jsToWasmCallee->typeIndex == function->typeIndex());
+    ASSERT(function->m_jsToWasmCallee->frameSize + JITLessJSEntrypointCallee::SpillStackSpaceAligned == (reinterpret_cast<uintptr_t>(cfr) - reinterpret_cast<uintptr_t>(sp)));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame setting callee: ", RawHex(CalleeBits::encodeNativeCallee(function->m_jsToWasmCallee.get())));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame wasm callee: ", RawHex(function->m_jsToWasmCallee->wasmCallee));
+    cfr->setCallee(function->m_jsToWasmCallee.get());
 
-    auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(function->m_jsToWasmInterpreterCallee->frameSize) + JSEntrypointInterpreterCallee::SpillStackSpaceAligned - JSEntrypointInterpreterCallee::RegisterStackSpaceAligned);
+    auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(function->m_jsToWasmCallee->frameSize) + JITLessJSEntrypointCallee::SpillStackSpaceAligned - JITLessJSEntrypointCallee::RegisterStackSpaceAligned);
 
     const TypeDefinition& signature = TypeInformation::get(function->typeIndex()).expand();
     const FunctionSignature& functionSignature = *signature.as<FunctionSignature>();
@@ -157,12 +157,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void,
 // We don't actually return anything, but we can't compile with a ExceptionOperationResult<void> as the return type.
 JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void* sp, CallFrame* cfr))
 {
-    ASSERT(Options::useInterpretedJSEntryWrappers());
+    ASSERT(Options::useWasmJITLessJSEntrypoint());
     dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildReturnFrame sp: ", RawPointer(sp), " fp: ", RawPointer(cfr));
 
     uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
 
-    auto* callee = static_cast<JSEntrypointInterpreterCallee*>(cfr->callee().asNativeCallee());
+    auto* callee = static_cast<JITLessJSEntrypointCallee*>(cfr->callee().asNativeCallee());
     ASSERT(callee->ident == 0xBF);
     auto* instance = cfr->wasmInstance();
     ASSERT(instance);
@@ -228,7 +228,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
         JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, instance->globalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingType), functionSignature.returnCount());
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(callee->frameSize) + JSEntrypointInterpreterCallee::SpillStackSpaceAligned - JSEntrypointInterpreterCallee::RegisterStackSpaceAligned);
+        auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(callee->frameSize) + JITLessJSEntrypointCallee::SpillStackSpaceAligned - JITLessJSEntrypointCallee::RegisterStackSpaceAligned);
 
         for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
             ValueLocation loc = wasmFrameConvention.results[i].location;

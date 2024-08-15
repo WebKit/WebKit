@@ -37,7 +37,7 @@ enum class CompilationMode : uint8_t {
     OMGMode,
     OMGForOSREntryMode,
     JSEntrypointJITMode,
-    JSEntrypointInterpreterMode,
+    JITLessJSEntrypointMode,
     JSToWasmICMode,
     WasmToJSMode,
 };
@@ -52,7 +52,7 @@ constexpr inline bool isOSREntry(CompilationMode compilationMode)
     case CompilationMode::BBQMode:
     case CompilationMode::OMGMode:
     case CompilationMode::JSEntrypointJITMode:
-    case CompilationMode::JSEntrypointInterpreterMode:
+    case CompilationMode::JITLessJSEntrypointMode:
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
         return false;
@@ -74,7 +74,7 @@ constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
     case CompilationMode::IPIntMode:
     case CompilationMode::OMGMode:
     case CompilationMode::JSEntrypointJITMode:
-    case CompilationMode::JSEntrypointInterpreterMode:
+    case CompilationMode::JITLessJSEntrypointMode:
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
         return false;
@@ -93,7 +93,7 @@ constexpr inline bool isAnyOMG(CompilationMode compilationMode)
     case CompilationMode::LLIntMode:
     case CompilationMode::IPIntMode:
     case CompilationMode::JSEntrypointJITMode:
-    case CompilationMode::JSEntrypointInterpreterMode:
+    case CompilationMode::JITLessJSEntrypointMode:
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
         return false;

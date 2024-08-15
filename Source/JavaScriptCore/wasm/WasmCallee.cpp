@@ -44,7 +44,7 @@ namespace JSC::Wasm {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Callee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointInterpreterCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITLessJSEntrypointCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointJITCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
@@ -80,8 +80,8 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::LLIntMode:
         func(static_cast<LLIntCallee*>(this));
         break;
-    case CompilationMode::JSEntrypointInterpreterMode:
-        func(static_cast<JSEntrypointInterpreterCallee*>(this));
+    case CompilationMode::JITLessJSEntrypointMode:
+        func(static_cast<JITLessJSEntrypointCallee*>(this));
         break;
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode:
@@ -416,8 +416,8 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
-    : JSEntrypointCallee(Wasm::CompilationMode::JSEntrypointInterpreterMode)
+JITLessJSEntrypointCallee::JITLessJSEntrypointCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
+    : JSEntrypointCallee(Wasm::CompilationMode::JITLessJSEntrypointMode)
     , frameSize(frameSize)
     , typeIndex(typeIndex)
 {
@@ -438,7 +438,7 @@ JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(unsigned frameSize,
     }
 }
 
-CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
+CodePtr<WasmEntryPtrTag> JITLessJSEntrypointCallee::entrypointImpl() const
 {
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     if (m_replacementCallee)
@@ -458,7 +458,7 @@ CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }
 
-RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
+RegisterAtOffsetList* JITLessJSEntrypointCallee::calleeSaveRegistersImpl()
 {
     // This must be the same to JSToWasm's callee save registers.
     // The reason is that we may use m_replacementCallee which can be set at any time.

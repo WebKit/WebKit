@@ -48,7 +48,7 @@ ASCIILiteral makeString(CompilationMode mode)
         return "OMGForOSREntry"_s;
     case CompilationMode::JSEntrypointJITMode:
         return "JSEntrypoint"_s;
-    case CompilationMode::JSEntrypointInterpreterMode:
+    case CompilationMode::JITLessJSEntrypointMode:
         return "JSEntrypointInterpreter"_s;
     case CompilationMode::JSToWasmICMode:
         return "JSToWasmIC"_s;

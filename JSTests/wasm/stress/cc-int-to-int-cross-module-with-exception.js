@@ -1,5 +1,5 @@
 //@ skip unless $isWasmPlatform
-//@ runDefaultWasm("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useInterpretedJSEntryWrappers=1")
+//@ runDefaultWasm("-m", "--wasmFunctionIndexRangeToCompile=0:5", "--useOMGJIT=0", "--useWasmJITLessJSEntrypoint=1")
 
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"

@@ -649,7 +649,7 @@ if ASSERT_ENABLED
 end
 
     macro saveJSEntrypointInterpreterRegisters()
-        subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+        subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
@@ -674,7 +674,7 @@ end
         else
             loadi -1 * SlotSize[cfr], wasmInstance
         end
-        addp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+        addp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
     end
 
     tagReturnAddress sp
@@ -684,11 +684,11 @@ end
     # Load data from the entry callee
     # This was written by doVMEntry
     loadp Callee[cfr], ws0 # WebAssemblyFunction*
-    loadp WebAssemblyFunction::m_jsToWasmInterpreterCallee[ws0], ws0 # JSEntrypointInterpreterCallee*
+    loadp WebAssemblyFunction::m_jsToWasmCallee[ws0], ws0 # JITLessJSEntrypointCallee*
 
 if ASSERT_ENABLED
     # Check to confirm we have the right kind of callee
-    loadi Wasm::JSEntrypointInterpreterCallee::ident[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::ident[ws0], ws1
     move 0xBF, wa0
     bpeq wa0, ws1, .ident_ok
     break
@@ -696,12 +696,12 @@ if ASSERT_ENABLED
 end
 
     # Allocate stack space (no stack check)
-    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
     subp ws1, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
     end)
 end
 
@@ -751,7 +751,7 @@ else
 end
 
     # Pop argument space values
-    addp constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned, sp
+    addp constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
@@ -759,7 +759,7 @@ if ASSERT_ENABLED
     end)
 end
 
-    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
 if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
@@ -769,36 +769,36 @@ end
 
     # Store Callee's wasm callee
 if JSVALUE64
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
 else
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + PayloadOffset[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + PayloadOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + TagOffset[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + TagOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
 end
 
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmFunctionPrologue[ws0], ws0
+    loadp Wasm::JITLessJSEntrypointCallee::wasmFunctionPrologue[ws0], ws0
     call ws0, WasmEntryPtrTag
 
     clobberVolatileRegisters()
 
     # Restore SP
-    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
 if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
     subp cfr, ws1, ws1
     move ws1, sp
-    subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+    subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
     end)
 end
 
