@@ -198,7 +198,9 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
 
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
+ALLOW_DEPRECATED_DECLARATIONS_END
         [images addObject:strike.get()];
     }
 
