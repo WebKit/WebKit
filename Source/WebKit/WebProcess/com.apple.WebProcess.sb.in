@@ -437,7 +437,6 @@
         "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
-        "kern.boottime"
         "kern.hostname"
         "kern.hv_vmm_present"
         "kern.maxfilesperproc"
@@ -460,6 +459,13 @@
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (webcontent-process-launched))
+    (allow sysctl-read (sysctl-name "kern.boottime")))
+#else
+(allow sysctl-read (sysctl-name "kern.boottime"))
+#endif
 
 (deny sysctl-read (with no-report)
     (sysctl-name

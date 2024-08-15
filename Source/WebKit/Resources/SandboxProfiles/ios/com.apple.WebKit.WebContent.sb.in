@@ -191,10 +191,13 @@
         (iokit-property "MetalPluginName")
     )
 
-    (allow sysctl-read
-        (sysctl-name
-            "kern.bootsessionuuid"
-            "kern.boottime"))
+    (allow sysctl-read (sysctl-name "kern.bootsessionuuid"))
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (with-filter (require-not (webcontent-process-launched))
+        (allow sysctl-read (sysctl-name "kern.boottime")))
+#else
+    (allow sysctl-read (sysctl-name "kern.boottime"))
+#endif
 
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
