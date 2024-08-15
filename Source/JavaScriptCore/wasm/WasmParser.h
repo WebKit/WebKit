@@ -295,10 +295,8 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
     if (peekInt7(kindByte) && isValidTypeKind(kindByte)) {
         TypeKind typeKind = static_cast<TypeKind>(kindByte);
 
-        if (UNLIKELY(Options::useWasmTypedFunctionReferences())) {
-            if ((isValidHeapTypeKind(kindByte) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
-                return parseReftypeSignature(info, result);
-        }
+        if ((isValidHeapTypeKind(kindByte) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
+            return parseReftypeSignature(info, result);
 
         Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
@@ -332,9 +330,6 @@ inline typename ParserBase::PartialResult ParserBase::parseReftypeSignature(cons
 
 ALWAYS_INLINE bool ParserBase::parseHeapType(const ModuleInformation& info, int32_t& result)
 {
-    if (!Options::useWasmTypedFunctionReferences())
-        return false;
-
     int32_t heapType;
     if (!parseVarInt32(heapType))
         return false;
@@ -364,7 +359,7 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     TypeIndex typeIndex = 0;
-    if (Options::useWasmTypedFunctionReferences() && isValidHeapTypeKind(kind)) {
+    if (isValidHeapTypeKind(kind)) {
         typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {

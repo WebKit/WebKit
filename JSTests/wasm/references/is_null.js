@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=false", "--useWasmGC=false")
+//@ runWebAssemblySuite("--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
@@ -13,7 +13,7 @@ function checkRefNullWithI32ImmType() {
   )
   */
   let bytes = Uint8Array.from([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x05, 0x01, 0x60, 0x00, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x05, 0x01, 0x01, 0x72, 0x00, 0x00, 0x0a, 0x07, 0x01, 0x05, 0x00, 0xd0, 0x7f, 0xd1, 0x0b]);
-  assert.throws(() => new WebAssembly.Module(bytes), Error, "WebAssembly.Module doesn't parse at byte 3: ref.null type must be a reference type, in function at index 0 (evaluating 'new WebAssembly.Module(bytes)')");
+  assert.throws(() => new WebAssembly.Module(bytes), Error, `WebAssembly.Module doesn't parse at byte 3: ref.null heaptype must be funcref, externref or type_idx, in function at index 0 (evaluating 'new WebAssembly.Module(bytes)')`);
 }
 
 checkRefNullWithI32ImmType();

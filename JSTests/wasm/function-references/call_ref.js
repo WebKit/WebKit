@@ -1,4 +1,3 @@
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true")
 import * as assert from '../assert.js';
 import { instantiate } from "../wabt-wrapper.js";
 

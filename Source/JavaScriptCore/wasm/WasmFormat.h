@@ -77,10 +77,10 @@ inline bool isValueType(Type type)
         return true;
     case TypeKind::Externref:
     case TypeKind::Funcref:
-        return !Options::useWasmTypedFunctionReferences();
+        return false;
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        return Options::useWasmTypedFunctionReferences() && type.index != TypeDefinition::invalidIndex;
+        return type.index != TypeDefinition::invalidIndex;
     case TypeKind::V128:
         return Options::useWasmSIMD();
     default:
@@ -91,9 +91,7 @@ inline bool isValueType(Type type)
 
 inline bool isRefType(Type type)
 {
-    if (Options::useWasmTypedFunctionReferences())
-        return type.isRef() || type.isRefNull();
-    return type.isFuncref() || type.isExternref();
+    return type.isRef() || type.isRefNull();
 }
 
 // If this is a type, returns true iff it's a ref type; if it's a packed type, returns false
@@ -106,16 +104,12 @@ inline bool isRefType(StorageType type)
 
 inline bool isExternref(Type type)
 {
-    if (Options::useWasmTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
-    return type.kind == TypeKind::Externref;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
 }
 
 inline bool isFuncref(Type type)
 {
-    if (Options::useWasmTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
-    return type.kind == TypeKind::Funcref;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
 }
 
 inline bool isEqref(Type type)
@@ -221,17 +215,12 @@ inline JSString* typeToJSAPIString(VM& vm, Type type)
 
 inline Type funcrefType()
 {
-    if (Options::useWasmTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
-    return Types::Funcref;
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
 }
 
 inline Type externrefType(bool isNullable = true)
 {
-    if (Options::useWasmTypedFunctionReferences())
-        return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
-    ASSERT(isNullable);
-    return Types::Externref;
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
 }
 
 inline Type eqrefType()
@@ -256,9 +245,6 @@ inline Type arrayrefType(bool isNullable = true)
 
 inline bool isRefWithTypeIndex(Type type)
 {
-    if (!Options::useWasmTypedFunctionReferences())
-        return false;
-
     return isRefType(type) && !typeIndexIsType(type.index);
 }
 
@@ -288,9 +274,6 @@ inline bool isRefWithRecursiveReference(StorageType storageType)
 
 inline bool isTypeIndexHeapType(int32_t heapType)
 {
-    if (!Options::useWasmTypedFunctionReferences())
-        return false;
-
     return heapType >= 0;
 }
 
@@ -313,9 +296,6 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
 inline bool isSubtype(Type sub, Type parent)
 {
     // Before the typed funcref proposal there is no non-trivial subtyping.
-    if (!Options::useWasmTypedFunctionReferences())
-        return sub == parent;
-
     if (sub.isNullable() && !parent.isNullable())
         return false;
 

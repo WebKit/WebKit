@@ -145,7 +145,7 @@ public:
 
     void pushLocalInitialized(uint32_t index)
     {
-        if (Options::useWasmTypedFunctionReferences() && !isDefaultableType(typeOfLocal(index)) && !localIsInitialized(index)) {
+        if (!isDefaultableType(typeOfLocal(index)) && !localIsInitialized(index)) {
             m_localInitStack.append(index);
             m_localInitFlags.quickSet(index);
         }
@@ -153,10 +153,8 @@ public:
     uint32_t getLocalInitStackHeight() const { return m_localInitStack.size(); }
     void resetLocalInitStackToHeight(uint32_t height)
     {
-        if (Options::useWasmTypedFunctionReferences()) {
-            for (uint32_t i = height; i < m_localInitStack.size(); i++)
-                m_localInitFlags.quickClear(m_localInitStack.takeLast());
-        }
+        for (uint32_t i = height; i < m_localInitStack.size(); i++)
+            m_localInitFlags.quickClear(m_localInitStack.takeLast());
     };
     bool localIsInitialized(uint32_t localIndex) { return m_localInitFlags.quickGet(localIndex); }
 
@@ -297,7 +295,7 @@ private:
 
     String typeToStringModuleRelative(const Type& type) const
     {
-        if (isRefType(type) && Options::useWasmTypedFunctionReferences()) {
+        if (isRefType(type)) {
             StringPrintStream out;
             out.print("(ref "_s);
             if (type.isNullable())
@@ -429,11 +427,8 @@ auto FunctionParser<Context>::parse() -> Result
         totalNumberOfLocals += numberOfLocals;
         WASM_PARSER_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big "_s, totalNumberOfLocals, " maximum "_s, maxFunctionLocals);
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, typeOfLocal), "can't get Function local's type in group "_s, i);
-        if (UNLIKELY(!isDefaultableType(typeOfLocal))) {
-            if (!Options::useWasmTypedFunctionReferences())
-                return fail("Function locals must have a defaultable type"_s);
+        if (UNLIKELY(!isDefaultableType(typeOfLocal)))
             totalNonDefaultableLocals++;
-        }
 
         if (typeOfLocal.isV128()) {
             m_context.notifyFunctionUsesSIMD();
@@ -447,14 +442,12 @@ auto FunctionParser<Context>::parse() -> Result
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
 
-    if (Options::useWasmTypedFunctionReferences()) {
-        WASM_PARSER_FAIL_IF(!m_localInitStack.tryReserveCapacity(totalNonDefaultableLocals), "can't allocate enough memory for tracking function's local initialization"_s);
-        m_localInitFlags.ensureSize(totalNumberOfLocals);
-        // Param locals are always considered initialized, so we need to pre-set them.
-        for (uint32_t i = 0; i < signature.argumentCount(); ++i) {
-            if (!isDefaultableType(signature.argumentType(i)))
-                m_localInitFlags.quickSet(i);
-        }
+    WASM_PARSER_FAIL_IF(!m_localInitStack.tryReserveCapacity(totalNonDefaultableLocals), "can't allocate enough memory for tracking function's local initialization"_s);
+    m_localInitFlags.ensureSize(totalNumberOfLocals);
+    // Param locals are always considered initialized, so we need to pre-set them.
+    for (uint32_t i = 0; i < signature.argumentCount(); ++i) {
+        if (!isDefaultableType(signature.argumentType(i)))
+            m_localInitFlags.quickSet(i);
     }
 
     m_context.didFinishParsingLocals();
@@ -1616,7 +1609,7 @@ template<typename Context>
 auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialResult
 {
     // If typed funcrefs are off, non-defaultable locals fail earlier.
-    if (!Options::useWasmTypedFunctionReferences() || isDefaultableType(typeOfLocal(index)))
+    if (isDefaultableType(typeOfLocal(index)))
         return { };
 
     WASM_VALIDATOR_FAIL_IF(!localIsInitialized(index), "non-defaultable function local "_s, index, " is accessed before initialization"_s);
@@ -2703,16 +2696,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case RefNull: {
         Type typeOfNull;
-        if (Options::useWasmTypedFunctionReferences()) {
-            int32_t heapType;
-            WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
-            if (isTypeIndexHeapType(heapType)) {
-                TypeIndex typeIndex = TypeInformation::get(m_info.typeSignatures[heapType].get());
-                typeOfNull = Type { TypeKind::RefNull, typeIndex };
-            } else
-                typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
+        int32_t heapType;
+        WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
+        if (isTypeIndexHeapType(heapType)) {
+            TypeIndex typeIndex = TypeInformation::get(m_info.typeSignatures[heapType].get());
+            typeOfNull = Type { TypeKind::RefNull, typeIndex };
         } else
-            WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type"_s);
+            typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
         m_expressionStack.constructAndAppend(typeOfNull, m_context.addConstant(typeOfNull, JSValue::encode(jsNull())));
         return { };
     }
@@ -2739,18 +2729,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefFunc(index, result));
 
-        if (Options::useWasmTypedFunctionReferences()) {
-            TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeIndex }, result);
-            return { };
-        }
-
-        m_expressionStack.constructAndAppend(Types::Funcref, result);
+        TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeIndex }, result);
         return { };
     }
 
     case RefAsNonNull: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmTypedFunctionReferences(), "function references are not enabled"_s);
         TypedExpression ref;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "ref.as_non_null"_s);
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "ref.as_non_null ref to type ", ref.type(), " expected a reference type");
@@ -2763,7 +2747,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case BrOnNull: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmTypedFunctionReferences(), "function references are not enabled"_s);
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
 
@@ -2783,7 +2766,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case BrOnNonNull: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmTypedFunctionReferences(), "function references are not enabled"_s);
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
 
@@ -3036,8 +3018,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case CallRef: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmTypedFunctionReferences(), "function references are not enabled");
-
         uint32_t typeIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get call_ref's signature index"_s);
         WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "call_ref index ", typeIndex, " is out of bounds");
@@ -3613,7 +3593,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case CallRef: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmTypedFunctionReferences(), "function references are not enabled"_s);
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't call_ref's signature index in unreachable context"_s);
         return { };

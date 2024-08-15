@@ -2018,11 +2018,11 @@ def runWebAssemblySpecTest(mode)
 end
 
 def runWebAssemblyFunctionReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil, "--useWasmTypedFunctionReferences=true")
+    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil)
 end
 
 def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWasmTypedFunctionReferences=true", "--useWasmGC=true", "--useWasmExtendedConstantExpressions=true")
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWasmGC=true")
 end
 
 def runWebAssemblyThreadsSpecTest(mode)
@@ -2037,10 +2037,6 @@ end
 
 def runWebAssemblyTailCallSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWasmTailCalls=true")
-end
-
-def runWebAssemblyExtendedConstSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWasmExtendedConstantExpressions=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

@@ -541,9 +541,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
         default:  {
             if (Wasm::isRefType(returnType)) {
                 if (Wasm::isExternref(returnType)) {
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
+                    // Do nothing.
                 } else if (Wasm::isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
                     // operationConvertToFuncref
                     JSValue value = JSValue::decode(bitwise_cast<EncodedJSValue>(returned));
                     WebAssemblyFunction* wasmFunction = nullptr;
@@ -621,10 +620,9 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
                 break;
             default: {
                 if (Wasm::isRefType(returnType)) {
-                    if (isExternref(returnType))
-                        ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
-                    else if (isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
-                        ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
+                    if (isExternref(returnType)) {
+                        // Do nothing.
+                    } else if (isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
                         WebAssemblyFunction* wasmFunction = nullptr;
                         WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                         if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
@@ -1344,10 +1342,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
             break;
         default: {
             if (Wasm::isRefType(returnType)) {
-                if (isExternref(returnType))
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
-                else if (isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
+                if (isExternref(returnType)) {
+                    // Do nothing.
+                } else if (isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
                     WebAssemblyFunction* wasmFunction = nullptr;
                     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                     if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {

@@ -2918,7 +2918,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefEq(Value ref0, Value ref1, Value&
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(uint32_t index, Value& result)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    TypeKind returnType = Options::useWasmTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
+    TypeKind returnType = TypeKind::Ref;
 
     Vector<Value, 8> arguments = {
         instanceValue(),

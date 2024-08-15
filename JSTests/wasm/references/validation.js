@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=false", "--useWasmGC=false")
+//@ runWebAssemblySuite("--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
@@ -44,7 +44,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: table.set value to type I32 expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
 }
 
 {
@@ -68,7 +68,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: table.set value to type Externref expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: table.set value to type (ref null extern) expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
 }
 
 {
@@ -91,7 +91,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')`);
 }
 
 {

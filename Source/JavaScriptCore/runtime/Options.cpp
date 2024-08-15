@@ -637,12 +637,10 @@ static inline void disableAllWasmOptions()
     Options::useWasmFaultSignalHandler() = false;
     Options::numberOfWasmCompilerThreads() = 0;
 
-    Options::useWasmTypedFunctionReferences() = false;
     Options::useWasmGC() = false;
     Options::useWasmSIMD() = false;
     Options::useWasmRelaxedSIMD() = false;
     Options::useWasmTailCalls() = false;
-    Options::useWasmExtendedConstantExpressions() = false;
 }
 
 static inline void disableAllJITOptions()
