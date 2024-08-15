@@ -1192,6 +1192,8 @@ static CGRect snapRectToScrollViewEdges(CGRect rect, CGRect viewport)
 static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollView, const WebKit::RemoteLayerTreeHost& host, const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionsIDs)
 {
     HashSet<WebCore::IntRect> overlayRegionRects;
+    Vector<WebCore::IntRect> fullWidthRects;
+    Vector<WebCore::IntRect> fullHeightRects;
 
     for (auto layerID : overlayRegionsIDs) {
         const auto* node = host.nodeForID(layerID);
@@ -1254,8 +1256,43 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         if (CGRectIsEmpty(snappedRect))
             continue;
 
-        overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
+        constexpr float mergeCandidateEpsilon = 0.5;
+        if (std::abs(CGRectGetWidth(snappedRect) - CGRectGetWidth(viewport)) <= mergeCandidateEpsilon)
+            fullWidthRects.append(WebCore::enclosingIntRect(snappedRect));
+        else if (std::abs(CGRectGetHeight(snappedRect) - CGRectGetHeight(viewport)) <= mergeCandidateEpsilon)
+            fullHeightRects.append(WebCore::enclosingIntRect(snappedRect));
+        else
+            overlayRegionRects.add(WebCore::enclosingIntRect(snappedRect));
     }
+
+    auto mergeAndAdd = [&](auto& vec, const auto& sort, const auto& shouldMerge) {
+        std::sort(vec.begin(), vec.end(), sort);
+
+        std::optional<WebCore::IntRect> current;
+        for (auto rect : vec) {
+            if (!current)
+                current = rect;
+            else if (shouldMerge(rect, *current))
+                current->unite(rect);
+            else
+                overlayRegionRects.add(*std::exchange(current, rect));
+        }
+
+        if (current)
+            overlayRegionRects.add(*current);
+    };
+
+    mergeAndAdd(fullWidthRects, [](const auto& a, const auto& b) {
+        return a.y() < b.y();
+    }, [](const auto& rect, const auto& current) {
+        return rect.y() <= current.maxY();
+    });
+
+    mergeAndAdd(fullHeightRects, [](const auto& a, const auto& b) {
+        return a.x() < b.x();
+    }, [](const auto& rect, const auto& current) {
+        return rect.x() <= current.maxX();
+    });
 
     [scrollView _updateOverlayRegionsBehavior:YES];
     [scrollView _updateOverlayRegionRects:overlayRegionRects];
