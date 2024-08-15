@@ -222,33 +222,19 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullscreen = hasKeyboardAccess;
-        document->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WTFMove(weakThis), promise = WTFMove(promise), element = WTFMove(element), completionHandler = WTFMove(completionHandler), handleError = WTFMove(handleError), identifier, mode] () mutable {
-            if (!weakThis) {
-                if (promise)
-                    promise->reject(Exception { ExceptionCode::TypeError });
-                completionHandler(false);
-                return;
-            }
 
-            auto page = this->page();
-            if (!page || (this->document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
-                handleError("Invalid state when requesting fullscreen."_s, EmitErrorEvent::Yes, WTFMove(element), WTFMove(promise), WTFMove(completionHandler));
-                return;
-            }
+        // Reject previous promise, but continue with current operation.
+        if (m_pendingPromise) {
+            ERROR_LOG(identifier, "Pending operation cancelled by requestFullscreen() call.");
+            m_pendingPromise->reject(Exception { ExceptionCode::TypeError, "Pending operation cancelled by requestFullscreen() call."_s });
+        }
 
-            // Reject previous promise, but continue with current operation.
-            if (m_pendingPromise) {
-                ERROR_LOG(identifier, "Pending operation cancelled by requestFullscreen() call.");
-                m_pendingPromise->reject(Exception { ExceptionCode::TypeError, "Pending operation cancelled by requestFullscreen() call."_s });
-            }
+        m_pendingPromise = WTFMove(promise);
 
-            m_pendingPromise = WTFMove(promise);
+        INFO_LOG(identifier, "task - success");
 
-            INFO_LOG(identifier, "task - success");
-
-            page->chrome().client().enterFullScreenForElement(element, mode);
-            completionHandler(true);
-        });
+        page()->chrome().client().enterFullScreenForElement(element, mode);
+        completionHandler(true);
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.
     });
