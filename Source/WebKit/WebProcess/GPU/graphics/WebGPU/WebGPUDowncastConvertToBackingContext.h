@@ -67,6 +67,10 @@ public:
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRBinding&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRProjectionLayer&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRSubImage&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRView&) final;
 
 private:
     DowncastConvertToBackingContext() = default;

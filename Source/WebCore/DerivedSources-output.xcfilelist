@@ -3443,6 +3443,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXREye.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXREye.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRFrameRequestCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRFrameRequestCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUBinding.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUBinding.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPULayerInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPULayerInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUProjectionLayerInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUProjectionLayerInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUSubImage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRGPUSubImage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRHandJoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRHandJoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXRHandedness.cpp

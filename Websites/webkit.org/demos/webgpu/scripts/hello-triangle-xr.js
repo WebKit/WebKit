@@ -1,4 +1,11 @@
-async function helloTriangle() {
+
+let xrButton = null;
+
+function onSessionEnded(event) {
+    xrButton.setSession(null);
+}
+
+async function onSessionStarted(xrSession) {
     if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
         document.body.className = 'error';
         return;
@@ -9,7 +16,9 @@ async function helloTriangle() {
         return;
     }
     try {
-        const xrSession = await navigator.xr.requestSession('immersive-vr');
+        xrButton.setSession(xrSession);
+        xrSession.addEventListener('end', onSessionEnded);
+
         const adapter = await navigator.gpu.requestAdapter({xrCompatible: true});
         const device = await adapter.requestDevice();
         const xrGpuBinding = new XRGPUBinding(xrSession, device);
@@ -20,6 +29,7 @@ async function helloTriangle() {
 
         xrSession.updateRenderState({ layers: [projectionLayer] });
         xrSession.requestAnimationFrame(onXRFrame);
+        let xrReferenceSpace = xrSession.requestReferenceSpace("viewer");
 
         /*** Vertex Buffer Setup ***/
         
@@ -105,7 +115,7 @@ async function helloTriangle() {
             
             /* GPUCommandEncoder */
             const commandEncoder = device.createCommandEncoder();
-            
+            let xrViewerPose = xrFrame.getViewerPose(xrReferenceSpace);
             for (const view in xrViewerPose.views) {
                 const subImage = xrGpuBinding.getViewSubImage(layer, view);
                 
@@ -148,4 +158,35 @@ async function helloTriangle() {
     }
 }
 
-window.addEventListener("DOMContentLoaded", helloTriangle);
+// Called when the user clicks the 'Exit XR' button. In response we end
+// the session.
+function onEndSession(session) {
+session.end();
+}
+
+function onRequestSession() {
+    return navigator.xr.requestSession('immersive-vr').then(onSessionStarted);
+}
+
+
+function initXR() {
+    // Adds a helper button to the page that indicates if any XRDevices are
+    // available and let's the user pick between them if there's multiple.
+    xrButton = new WebXRButton({
+        onRequestSession: onRequestSession,
+        onEndSession: onEndSession
+    });
+    document.querySelector('header').appendChild(xrButton.domElement);
+
+    // Is WebXR available on this UA?
+    if (navigator.xr) {
+        // If the device allows creation of exclusive sessions set it as the
+        // target of the 'Enter XR' button.
+        navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+        xrButton.enabled = supported;
+    });
+    }
+}
+
+
+window.addEventListener("DOMContentLoaded", initXR);

@@ -51,6 +51,10 @@ Modules/WebGPU/Implementation/WebGPUSamplerImpl.cpp
 Modules/WebGPU/Implementation/WebGPUShaderModuleImpl.cpp
 Modules/WebGPU/Implementation/WebGPUTextureImpl.cpp
 Modules/WebGPU/Implementation/WebGPUTextureViewImpl.cpp
+Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
+Modules/WebGPU/Implementation/WebGPUXRProjectionLayerImpl.cpp
+Modules/WebGPU/Implementation/WebGPUXRSubImageImpl.cpp
+Modules/WebGPU/Implementation/WebGPUXRViewImpl.cpp
 Modules/WebGPU/GPU.cpp
 Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBindGroup.cpp
@@ -523,6 +527,8 @@ Modules/webxr/WebXRViewerPose.cpp
 Modules/webxr/WebXRViewport.cpp
 Modules/webxr/WebXRWebGLLayer.cpp
 Modules/webxr/XRCompositionLayer.cpp
+Modules/webxr/XRGPUBinding.cpp
+Modules/webxr/XRGPUSubImage.cpp
 Modules/webxr/XRInputSourceEvent.cpp
 Modules/webxr/XRInputSourcesChangeEvent.cpp
 Modules/webxr/XRLayerEvent.cpp
@@ -4752,6 +4758,10 @@ JSXREquirectLayerInit.cpp
 JSXREnvironmentBlendMode.cpp
 JSXREye.cpp
 JSXRFrameRequestCallback.cpp
+JSXRGPUBinding.cpp
+JSXRGPULayerInit.cpp
+JSXRGPUProjectionLayerInit.cpp
+JSXRGPUSubImage.cpp
 JSXRHandJoint.cpp
 JSXRHandedness.cpp
 JSXRInputSourceEvent.cpp

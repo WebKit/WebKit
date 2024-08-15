@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/AudioBus.h>
 #include <WebCore/AudioUtilities.h>
+#include <WebCore/SharedMemory.h>
 #include <algorithm>
 
 #if PLATFORM(COCOA)
@@ -155,9 +156,9 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_destinationID = RemoteAudioDestinationIdentifier::generate();
 
         m_lastFrameCount = 0;
-        std::optional<SharedMemory::Handle> frameCountHandle;
-        if ((m_frameCount = SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
-            frameCountHandle = m_frameCount->createHandle(SharedMemory::Protection::ReadWrite);
+        std::optional<WebCore::SharedMemory::Handle> frameCountHandle;
+        if ((m_frameCount = WebCore::SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
+            frameCountHandle = m_frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
         }
         RELEASE_ASSERT(frameCountHandle.has_value());
         gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);

@@ -44,9 +44,9 @@ class Instance;
 class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
     WTF_MAKE_TZONE_ALLOCATED(Adapter);
 public:
-    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
+    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
     {
-        return adoptRef(*new Adapter(device, instance, WTFMove(capabilities)));
+        return adoptRef(*new Adapter(device, instance, xrCompatible, WTFMove(capabilities)));
     }
     static Ref<Adapter> createInvalid(Instance& instance)
     {
@@ -63,12 +63,13 @@ public:
 
     bool isValid() const { return m_device; }
     void makeInvalid() { m_device = nil; }
+    bool isXRCompatible() const;
 
     Instance& instance() const { return m_instance; }
 
 
 private:
-    Adapter(id<MTLDevice>, Instance&, HardwareCapabilities&&);
+    Adapter(id<MTLDevice>, Instance&, bool xrCompatible, HardwareCapabilities&&);
     Adapter(Instance&);
 
     id<MTLDevice> m_device { nil };
@@ -76,6 +77,7 @@ private:
 
     const HardwareCapabilities m_capabilities { };
     bool m_deviceRequested { false };
+    bool m_xrCompatible { false };
 };
 
 } // namespace WebGPU

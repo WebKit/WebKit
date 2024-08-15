@@ -48,6 +48,10 @@
 #import "ShaderModule.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import "XRBinding.h"
+#import "XRProjectionLayer.h"
+#import "XRSubImage.h"
+#import "XRView.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -173,6 +177,26 @@ inline Texture& fromAPI(WGPUTexture texture)
 inline TextureView& fromAPI(WGPUTextureView textureView)
 {
     return static_cast<TextureView&>(*textureView);
+}
+
+inline XRBinding& fromAPI(WGPUXRBinding binding)
+{
+    return static_cast<XRBinding&>(*binding);
+}
+
+inline XRSubImage& fromAPI(WGPUXRSubImage subImage)
+{
+    return static_cast<XRSubImage&>(*subImage);
+}
+
+inline XRProjectionLayer& fromAPI(WGPUXRProjectionLayer layer)
+{
+    return static_cast<XRProjectionLayer&>(*layer);
+}
+
+inline XRView& fromAPI(WGPUXRView view)
+{
+    return static_cast<XRView&>(*view);
 }
 
 inline String fromAPI(const char* string)

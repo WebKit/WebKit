@@ -3291,6 +3291,11 @@
 		0D02BE3129B6D0F7005852BF /* WebGPUInternalError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternalError.h; sourceTree = "<group>"; };
 		0D02BE3229B6D0F8005852BF /* WebGPUInternalError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUInternalError.cpp; sourceTree = "<group>"; };
 		0D25BC912B69D92100916722 /* WebGPUInternalError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUInternalError.serialization.in; sourceTree = "<group>"; };
+		0D6D0AA32C6AD99B0073F63D /* RemoteXRView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRView.h; sourceTree = "<group>"; };
+		0D6D0AA42C6AD99B0073F63D /* RemoteXRView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRView.cpp; sourceTree = "<group>"; };
+		0D6D0AA52C6AD99B0073F63D /* RemoteXRView.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteXRView.messages.in; sourceTree = "<group>"; };
+		0D6D0AB02C6BA0B10073F63D /* RemoteXRViewProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRViewProxy.h; sourceTree = "<group>"; };
+		0D6D0AB12C6BA0B10073F63D /* RemoteXRViewProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRViewProxy.cpp; sourceTree = "<group>"; };
 		0D7A7A78291C3F1600DB4E18 /* RemotePresentationContextProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemotePresentationContextProxy.h; sourceTree = "<group>"; };
 		0D7A7A7B291C3F1600DB4E18 /* RemotePresentationContextProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePresentationContextProxy.cpp; sourceTree = "<group>"; };
 		0D7A7A7C291C449C00DB4E18 /* RemotePresentationContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePresentationContext.cpp; sourceTree = "<group>"; };
@@ -3299,6 +3304,21 @@
 		0D7A7A84291C7E0E00DB4E18 /* WebGPUPresentationContextDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPresentationContextDescriptor.cpp; sourceTree = "<group>"; };
 		0D7A7A86291C7E0F00DB4E18 /* WebGPUPresentationContextDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationContextDescriptor.h; sourceTree = "<group>"; };
 		0D7A7A87291C7E0F00DB4E18 /* WebGPUPresentationContextDescriptor.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUPresentationContextDescriptor.serialization.in; sourceTree = "<group>"; };
+		0D943BF02C65328C00D33BA5 /* RemoteXRBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRBinding.h; sourceTree = "<group>"; };
+		0D943BF12C65328C00D33BA5 /* RemoteXRBinding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRBinding.cpp; sourceTree = "<group>"; };
+		0D943BF22C65328C00D33BA5 /* RemoteXRBinding.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteXRBinding.messages.in; sourceTree = "<group>"; };
+		0D943BF32C65329700D33BA5 /* RemoteXRBindingProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRBindingProxy.h; sourceTree = "<group>"; };
+		0D943BF42C65329700D33BA5 /* RemoteXRBindingProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRBindingProxy.cpp; sourceTree = "<group>"; };
+		0D943BFD2C6546B400D33BA5 /* RemoteXRProjectionLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRProjectionLayer.h; sourceTree = "<group>"; };
+		0D943BFE2C6546B400D33BA5 /* RemoteXRProjectionLayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRProjectionLayer.cpp; sourceTree = "<group>"; };
+		0D943BFF2C6546B400D33BA5 /* RemoteXRProjectionLayer.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteXRProjectionLayer.messages.in; sourceTree = "<group>"; };
+		0D943C002C6546BD00D33BA5 /* RemoteXRProjectionLayerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRProjectionLayerProxy.h; sourceTree = "<group>"; };
+		0D943C012C6546BD00D33BA5 /* RemoteXRProjectionLayerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRProjectionLayerProxy.cpp; sourceTree = "<group>"; };
+		0D943C062C6555DB00D33BA5 /* RemoteXRSubImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRSubImage.h; sourceTree = "<group>"; };
+		0D943C072C6555DB00D33BA5 /* RemoteXRSubImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRSubImage.cpp; sourceTree = "<group>"; };
+		0D943C082C6555DB00D33BA5 /* RemoteXRSubImage.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteXRSubImage.messages.in; sourceTree = "<group>"; };
+		0D943C092C65560E00D33BA5 /* RemoteXRSubImageProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRSubImageProxy.h; sourceTree = "<group>"; };
+		0D943C0A2C65560E00D33BA5 /* RemoteXRSubImageProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRSubImageProxy.cpp; sourceTree = "<group>"; };
 		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
@@ -10037,6 +10057,18 @@
 				1C98C03627446A09002CCB78 /* RemoteTextureView.cpp */,
 				1C98C02E27446A08002CCB78 /* RemoteTextureView.h */,
 				1C98C0882744BD99002CCB78 /* RemoteTextureView.messages.in */,
+				0D943BF12C65328C00D33BA5 /* RemoteXRBinding.cpp */,
+				0D943BF02C65328C00D33BA5 /* RemoteXRBinding.h */,
+				0D943BF22C65328C00D33BA5 /* RemoteXRBinding.messages.in */,
+				0D943BFE2C6546B400D33BA5 /* RemoteXRProjectionLayer.cpp */,
+				0D943BFD2C6546B400D33BA5 /* RemoteXRProjectionLayer.h */,
+				0D943BFF2C6546B400D33BA5 /* RemoteXRProjectionLayer.messages.in */,
+				0D943C072C6555DB00D33BA5 /* RemoteXRSubImage.cpp */,
+				0D943C062C6555DB00D33BA5 /* RemoteXRSubImage.h */,
+				0D943C082C6555DB00D33BA5 /* RemoteXRSubImage.messages.in */,
+				0D6D0AA42C6AD99B0073F63D /* RemoteXRView.cpp */,
+				0D6D0AA32C6AD99B0073F63D /* RemoteXRView.h */,
+				0D6D0AA52C6AD99B0073F63D /* RemoteXRView.messages.in */,
 				1CBD753C2747AA31004FA0FF /* WebGPUObjectHeap.cpp */,
 				1CBD753D2747AA31004FA0FF /* WebGPUObjectHeap.h */,
 			);
@@ -10167,6 +10199,14 @@
 				1CB7463927436EE900F19874 /* RemoteTextureProxy.h */,
 				1CB7462B27436EE700F19874 /* RemoteTextureViewProxy.cpp */,
 				1CB7461A27436EE400F19874 /* RemoteTextureViewProxy.h */,
+				0D943BF42C65329700D33BA5 /* RemoteXRBindingProxy.cpp */,
+				0D943BF32C65329700D33BA5 /* RemoteXRBindingProxy.h */,
+				0D943C012C6546BD00D33BA5 /* RemoteXRProjectionLayerProxy.cpp */,
+				0D943C002C6546BD00D33BA5 /* RemoteXRProjectionLayerProxy.h */,
+				0D943C0A2C65560E00D33BA5 /* RemoteXRSubImageProxy.cpp */,
+				0D943C092C65560E00D33BA5 /* RemoteXRSubImageProxy.h */,
+				0D6D0AB12C6BA0B10073F63D /* RemoteXRViewProxy.cpp */,
+				0D6D0AB02C6BA0B10073F63D /* RemoteXRViewProxy.h */,
 				1CB7464A274380C800F19874 /* WebGPUDowncastConvertToBackingContext.cpp */,
 				1CB7464B274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h */,
 			);

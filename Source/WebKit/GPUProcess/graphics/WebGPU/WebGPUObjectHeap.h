@@ -62,6 +62,10 @@ class Sampler;
 class ShaderModule;
 class Texture;
 class TextureView;
+class XRBinding;
+class XRProjectionLayer;
+class XRSubImage;
+class XRView;
 }
 
 namespace WebKit {
@@ -88,6 +92,10 @@ class RemoteSampler;
 class RemoteShaderModule;
 class RemoteTexture;
 class RemoteTextureView;
+class RemoteXRBinding;
+class RemoteXRProjectionLayer;
+class RemoteXRSubImage;
+class RemoteXRView;
 }
 
 namespace WebKit::WebGPU {
@@ -125,6 +133,10 @@ public:
     void addObject(WebGPUIdentifier, RemoteShaderModule&);
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
+    void addObject(WebGPUIdentifier, RemoteXRBinding&);
+    void addObject(WebGPUIdentifier, RemoteXRSubImage&);
+    void addObject(WebGPUIdentifier, RemoteXRProjectionLayer&);
+    void addObject(WebGPUIdentifier, RemoteXRView&);
 
     void removeObject(WebGPUIdentifier);
 
@@ -153,6 +165,10 @@ public:
     WebCore::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
     WebCore::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
     WebCore::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
+    WebCore::WebGPU::XRBinding* convertXRBindingFromBacking(WebGPUIdentifier) final;
+    WebCore::WebGPU::XRSubImage* convertXRSubImageFromBacking(WebGPUIdentifier) final;
+    WebCore::WebGPU::XRProjectionLayer* convertXRProjectionLayerFromBacking(WebGPUIdentifier) final;
+    WebCore::WebGPU::XRView* createXRViewFromBacking(WebGPUIdentifier) final;
 
     struct ExistsAndValid {
         bool exists { false };
@@ -186,7 +202,11 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
+        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>
     >;
 
     HashMap<WebGPUIdentifier, Object> m_objects;

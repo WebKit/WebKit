@@ -130,6 +130,10 @@ private:
     bool isValid(const WebCore::WebGPU::ShaderModule&) const final;
     bool isValid(const WebCore::WebGPU::Texture&) const final;
     bool isValid(const WebCore::WebGPU::TextureView&) const final;
+    bool isValid(const WebCore::WebGPU::XRBinding&) const final;
+    bool isValid(const WebCore::WebGPU::XRSubImage&) const final;
+    bool isValid(const WebCore::WebGPU::XRProjectionLayer&) const final;
+    bool isValid(const WebCore::WebGPU::XRView&) const final;
 
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();

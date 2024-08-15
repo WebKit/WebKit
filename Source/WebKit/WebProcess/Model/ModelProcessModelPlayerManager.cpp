@@ -31,6 +31,7 @@
 #include "ModelProcessModelPlayer.h"
 #include "ModelProcessModelPlayerManagerProxyMessages.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/ModelPlayerClient.h>
 #include <WebCore/ModelPlayerIdentifier.h>
 #include <wtf/TZoneMallocInlines.h>

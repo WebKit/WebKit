@@ -37,10 +37,11 @@ namespace WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Adapter);
 
-Adapter::Adapter(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
+Adapter::Adapter(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
     : m_device(device)
     , m_instance(instance)
     , m_capabilities(WTFMove(capabilities))
+    , m_xrCompatible(xrCompatible)
 {
 }
 
@@ -138,6 +139,11 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
 }
 
+bool Adapter::isXRCompatible() const
+{
+    return m_xrCompatible;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -186,3 +192,7 @@ void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor
     });
 }
 
+WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter)
+{
+    return WebGPU::fromAPI(adapter).isXRCompatible();
+}

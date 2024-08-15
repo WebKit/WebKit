@@ -326,6 +326,11 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
     wgpuAdapterRequestDevice(m_backing.get(), &backingDescriptor, &requestDeviceCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestDeviceCallback().
 }
 
+bool AdapterImpl::xrCompatible()
+{
+    return wgpuAdapterXRCompatible(m_backing.get());
+}
+
 } // namespace WebCore::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

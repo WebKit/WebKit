@@ -61,6 +61,7 @@
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
 #include "WebGPUValidationError.h"
+#include "WebGPUXRBindingImpl.h"
 #include <CoreGraphics/CGColorSpace.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
@@ -94,6 +95,11 @@ Ref<Queue> DeviceImpl::queue()
 void DeviceImpl::destroy()
 {
     wgpuDeviceDestroy(m_backing.get());
+}
+
+RefPtr<XRBinding> DeviceImpl::createXRBinding()
+{
+    return XRBindingImpl::create(adoptWebGPU(wgpuDeviceCreateXRBinding(m_backing.get())), m_convertToBackingContext);
 }
 
 RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)

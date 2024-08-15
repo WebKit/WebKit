@@ -39,6 +39,7 @@
 #include <JavaScriptCore/HandleTypes.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>

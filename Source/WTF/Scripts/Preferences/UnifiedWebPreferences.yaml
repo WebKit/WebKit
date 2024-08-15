@@ -8373,19 +8373,40 @@ WebXRHandInputModuleEnabled:
       default: true
     WebCore:
       default: true
+
 WebXRLayersAPIEnabled:
   type: bool
-  status: unstable
+  status: Webxr_layers_feature_status
   category: dom
   humanReadableName: "WebXR Layers API"
   humanReadableDescription: "Adds support for the WebXR Layers API"
   condition: ENABLE(WEBXR_LAYERS)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
     WebKit:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
     WebCore:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+
+WebXRWebGPUBindingsEnabled:
+  type: bool
+  status: Webgpu_webxr_feature_status
+  category: dom
+  humanReadableName: "WebGPU Support for WebXR"
+  humanReadableDescription: "Adds WebGPU support for WebXR"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+    WebKit:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+    WebCore:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
 
 WheelEventGesturesBecomeNonBlocking:

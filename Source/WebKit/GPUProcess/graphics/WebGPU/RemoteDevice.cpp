@@ -47,6 +47,7 @@
 #include "RemoteShaderModule.h"
 #include "RemoteTexture.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteXRBinding.h"
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUObjectHeap.h"
@@ -81,6 +82,7 @@
 #include <WebCore/WebGPUShaderModuleDescriptor.h>
 #include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUTextureDescriptor.h>
+#include <WebCore/WebGPUXRBinding.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -137,6 +139,13 @@ void RemoteDevice::destroy()
 void RemoteDevice::destruct()
 {
     m_objectHeap->removeObject(m_identifier);
+}
+
+void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
+{
+    auto binding = m_backing->createXRBinding();
+    auto remoteBinding = RemoteXRBinding::create(*binding, m_objectHeap, m_gpu, m_streamConnection.copyRef(), identifier);
+    m_objectHeap->addObject(identifier, remoteBinding);
 }
 
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)

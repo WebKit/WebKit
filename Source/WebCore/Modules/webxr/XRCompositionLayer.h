@@ -59,6 +59,8 @@ public:
     bool needsRedraw() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     [[noreturn]] void destroy() { RELEASE_ASSERT_NOT_REACHED(); }
+protected:
+    explicit XRCompositionLayer(ScriptExecutionContext*);
 };
 
 } // namespace WebCore

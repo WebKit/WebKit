@@ -231,6 +231,14 @@ Device::~Device()
     }
 }
 
+RefPtr<XRSubImage> Device::getXRViewSubImage(WGPUXREye eye)
+{
+    if (m_xrSubImages.size() < 2)
+        return nullptr;
+
+    return eye == WGPUXREye_Right ? m_xrSubImages[1] : m_xrSubImages[0];
+}
+
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
 {
     m_device = nil;
@@ -905,6 +913,11 @@ WGPUBindGroup wgpuDeviceCreateBindGroup(WGPUDevice device, const WGPUBindGroupDe
 WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGPUBindGroupLayoutDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createBindGroupLayout(*descriptor));
+}
+
+WGPUXRBinding wgpuDeviceCreateXRBinding(WGPUDevice device)
+{
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createXRBinding());
 }
 
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)

@@ -193,7 +193,7 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
     }
 
     // FIXME: this should be asynchronous
-    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this, WTFMove(*deviceCapabilities)), { });
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this, options.xrCompatible, WTFMove(*deviceCapabilities)), { });
 }
 
 } // namespace WebGPU
@@ -363,4 +363,24 @@ WGPUBool wgpuTextureIsValid(WGPUTexture texture)
 WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView)
 {
     return WebGPU::fromAPI(textureView).isValid();
+}
+
+WGPUBool wgpuXRBindingIsValid(WGPUXRBinding binding)
+{
+    return WebGPU::fromAPI(binding).isValid();
+}
+
+WGPUBool wgpuXRSubImageIsValid(WGPUXRSubImage subImage)
+{
+    return WebGPU::fromAPI(subImage).isValid();
+}
+
+WGPUBool wgpuXRProjectionLayerIsValid(WGPUXRProjectionLayer layer)
+{
+    return WebGPU::fromAPI(layer).isValid();
+}
+
+WGPUBool wgpuXRViewIsValid(WGPUXRView view)
+{
+    return WebGPU::fromAPI(view).isValid();
 }

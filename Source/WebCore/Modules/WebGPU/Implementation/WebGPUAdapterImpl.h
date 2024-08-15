@@ -57,6 +57,7 @@ private:
     AdapterImpl& operator=(AdapterImpl&&) = delete;
 
     WGPUAdapter backing() const { return m_backing.get(); }
+    bool xrCompatible() final;
 
     void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) final;
 

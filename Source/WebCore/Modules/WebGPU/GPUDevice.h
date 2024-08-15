@@ -79,6 +79,12 @@ class GPUSupportedFeatures;
 class GPUSupportedLimits;
 class GPUTexture;
 struct GPUTextureDescriptor;
+class WebXRSession;
+class XRGPUBinding;
+
+namespace WebGPU {
+class XRBinding;
+}
 
 class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GPUDevice);
@@ -104,6 +110,7 @@ public:
 
     void destroy(ScriptExecutionContext&);
 
+    RefPtr<WebGPU::XRBinding> createXRBinding(const WebXRSession&);
     ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
     ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
     bool isSupportedFormat(GPUTextureFormat) const;

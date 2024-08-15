@@ -64,7 +64,7 @@ private:
     void setAudioOutputDevice(const String&) final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
-    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
+    void storageChanged(WebCore::SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
 
     void stopThread();
     void startThread();

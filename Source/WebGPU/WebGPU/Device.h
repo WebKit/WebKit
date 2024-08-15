@@ -65,6 +65,10 @@ class RenderPipeline;
 class Sampler;
 class ShaderModule;
 class Texture;
+class XRBinding;
+class XRSubImage;
+class XRProjectionLayer;
+class XRView;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
@@ -80,6 +84,9 @@ public:
 
     Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
     Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
+    Ref<XRBinding> createXRBinding();
+    Ref<XRSubImage> createXRSubImage();
+    Ref<XRView> createXRView();
     Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     std::pair<Ref<ComputePipeline>, NSString*> createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync = false);
@@ -157,6 +164,7 @@ public:
         simd::float4x3 colorSpaceConversionMatrix;
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
+    RefPtr<XRSubImage> getXRViewSubImage(WGPUXREye);
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -189,6 +197,7 @@ private:
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
+    Vector<RefPtr<XRSubImage>> m_xrSubImages;
 
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };

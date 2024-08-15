@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPluginInfoProvider.h"
 
+#include <WebCore/Page.h>
+
 #if ENABLE(PDF_PLUGIN)
 #include "PDFPluginBase.h"
 #endif
