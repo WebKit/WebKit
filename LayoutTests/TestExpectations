@@ -6908,6 +6908,8 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-022.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-036.html [ Failure ]
 
+webkit.org/b/278192 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-033.html [ Failure ]
+
 # AudioDecoder, AudioEncoder and AudioData implementations missing.
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Failure ]
@@ -7605,10 +7607,10 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/a
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ ImageOnlyFailure ]
+
+# prerender not supported.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-cross-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender.html [ Skip ]
 
 # View transitions Level 2 - types.

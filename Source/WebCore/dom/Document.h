@@ -1827,7 +1827,9 @@ public:
 
     bool allowsAddingRenderBlockedElements() const;
     bool isRenderBlocked() const;
-    void blockRenderingOn(Element&);
+
+    enum class ImplicitRenderBlocking : bool { Yes, No };
+    void blockRenderingOn(Element&, ImplicitRenderBlocking = ImplicitRenderBlocking::No);
     void unblockRenderingOn(Element&);
     void processInternalResourceLinks(HTMLAnchorElement&);
 
@@ -2073,7 +2075,8 @@ private:
     static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState, VisualUpdatesPreventedReason::RenderBlocking }; }
     static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::Client, VisualUpdatesPreventedReason::ReadyState }; }
 
-    void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason);
+    enum class CompletePageTransition : bool { Yes, No };
+    void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason, CompletePageTransition = CompletePageTransition::Yes);
     void removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPreventedReason>);
 
     void visualUpdatesSuppressionTimerFired();
@@ -2665,6 +2668,7 @@ private:
 
     bool m_hasBeenRevealed { false };
     bool m_visualUpdatesAllowedChangeRequiresLayoutMilestones { false };
+    bool m_visualUpdatesAllowedChangeCompletesPageTransition { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

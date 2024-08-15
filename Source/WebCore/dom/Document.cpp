@@ -1879,12 +1879,15 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
     }
 }
 
-void Document::addVisualUpdatePreventedReason(VisualUpdatesPreventedReason reason)
+void Document::addVisualUpdatePreventedReason(VisualUpdatesPreventedReason reason, CompletePageTransition completePageTransition)
 {
     m_visualUpdatesPreventedReasons.add(reason);
 
     if (visualUpdatePreventRequiresLayoutMilestones().contains(reason))
         m_visualUpdatesAllowedChangeRequiresLayoutMilestones = true;
+
+    if (completePageTransition == CompletePageTransition::Yes)
+        m_visualUpdatesAllowedChangeCompletesPageTransition = true;
 
     if (!m_visualUpdatesSuppressionTimer.isActive() && visualUpdatePreventReasonsClearedByTimer().contains(reason))
         m_visualUpdatesSuppressionTimer.startOneShot(1_s * settings().incrementalRenderingSuppressionTimeoutInSeconds());
@@ -1915,8 +1918,9 @@ void Document::removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPrevent
     if (CheckedPtr renderView = this->renderView())
         renderView->repaintViewAndCompositedLayers();
 
-    if (RefPtr frame = this->frame())
+    if (RefPtr frame = this->frame(); m_visualUpdatesAllowedChangeCompletesPageTransition)
         frame->checkedLoader()->completePageTransitionIfNeeded();
+    m_visualUpdatesAllowedChangeCompletesPageTransition = false;
     scheduleRenderingUpdate({ });
 }
 
@@ -8314,11 +8318,18 @@ bool Document::isRenderBlocked() const
     return m_visualUpdatesPreventedReasons.contains(VisualUpdatesPreventedReason::RenderBlocking);
 }
 
-void Document::blockRenderingOn(Element& element)
+void Document::blockRenderingOn(Element& element, ImplicitRenderBlocking implicit)
 {
     if (allowsAddingRenderBlockedElements()) {
         m_renderBlockingElements.add(element);
-        addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::RenderBlocking);
+
+        // Only forcibly complete the page transition when blocking ends (and override any
+        // rendering freezing from WebKit) if the document has explictly opted-into render blocking.
+        auto completePageTransition = CompletePageTransition::Yes;
+        if (implicit == ImplicitRenderBlocking::Yes)
+            completePageTransition = CompletePageTransition::No;
+
+        addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::RenderBlocking, completePageTransition);
     }
 }
 

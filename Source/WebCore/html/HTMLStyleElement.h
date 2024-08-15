@@ -53,6 +53,8 @@ public:
 
     void finishParsingChildren() final;
 
+    WEBCORE_EXPORT DOMTokenList& blocking();
+
 private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
@@ -69,6 +71,7 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     InlineStyleSheetOwner m_styleSheetOwner;
+    std::unique_ptr<DOMTokenList> m_blockingList;
     bool m_loadedSheet { false };
 };
 

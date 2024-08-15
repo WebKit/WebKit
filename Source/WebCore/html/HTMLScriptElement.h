@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "DOMTokenList.h"
 #include "HTMLElement.h"
 #include "ScriptElement.h"
 
@@ -71,6 +72,8 @@ public:
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriorityHint() const override;
 
+    WEBCORE_EXPORT DOMTokenList& blocking();
+
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
@@ -79,6 +82,11 @@ private:
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
     void finishParsingChildren() final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
+
+    void potentiallyBlockRendering() final;
+    void unblockRendering() final;
+    bool isImplicitlyPotentiallyRenderBlocking() const;
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
@@ -100,6 +108,9 @@ private:
     bool isScriptPreventedByAttributes() const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+
+    std::unique_ptr<DOMTokenList> m_blockingList;
+    bool m_isRenderBlocking { false };
 };
 
 } //namespace

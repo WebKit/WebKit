@@ -1,4 +1,4 @@
 some text
 
-FAIL Parser-inserted async inline module script elements with "blocking=render" are render-blocking assert_true: Parser-inserted async render-blocking inline module script should execute before rAF callback expected true got false
+PASS Parser-inserted async inline module script elements with "blocking=render" are render-blocking
 

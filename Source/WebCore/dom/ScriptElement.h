@@ -111,6 +111,9 @@ protected:
 
     void setTrustedScriptText(const String&);
 
+    virtual void potentiallyBlockRendering() { }
+    virtual void unblockRendering() { }
+
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 

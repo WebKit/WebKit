@@ -1926,7 +1926,9 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::Reveal, [] (Document& document) {
-        document.reveal();
+        // FIXME: Bug 278193 - Hidden docs should already be excluded.
+        if (document.visibilityState() != VisibilityState::Hidden)
+            document.reveal();
     });
 
     runProcessingStep(RenderingUpdateStep::FlushAutofocusCandidates, [] (Document& document) {
