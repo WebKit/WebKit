@@ -32,7 +32,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `WKWebExtensionTabConfiguration` object encapsulates configuration options for a tab in an extension.
+ @abstract A ``WKWebExtensionTabConfiguration`` object encapsulates configuration options for a tab in an extension.
  @discussion This class holds various options that influence the behavior and initial state of a tab.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a tab.
  */
@@ -75,7 +75,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.TabConfiguration)
 /*!
  @abstract Indicates whether the tab should be added to the current tab selection.
  @discussion If this property is `YES`, the tab should be part of the current selection, but not necessarily
- become the active tab unless `shouldBeActive` is also `YES`. If this property is `NO`, the tab shouldn't
+ become the active tab unless ``shouldBeActive`` is also `YES`. If this property is `NO`, the tab shouldn't
  be part of the current selection.
  */
 @property (nonatomic, readonly) BOOL shouldAddToSelection;

@@ -35,7 +35,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `WKWebExtensionCommand` object encapsulates the properties for an individual web extension command.
+ @abstract A ``WKWebExtensionCommand`` object encapsulates the properties for an individual web extension command.
  @discussion Provides access to command properties such as a unique identifier, a descriptive title, and shortcut keys. Commands
  can be used by a web extension to perform specific actions within a web extension context, such toggling features, or interacting with
  web content. These commands enhance the functionality of the extension by allowing users to invoke actions quickly.
@@ -93,9 +93,9 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
 #if TARGET_OS_IPHONE
 /*!
  @abstract A key command representation of the web extension command for use in the responder chain.
- @discussion Provides a `UIKeyCommand` instance representing the web extension command, ready for integration in the app.
+ @discussion Provides a ``UIKeyCommand`` instance representing the web extension command, ready for integration in the app.
  The property is `nil` if no shortcut is defined. Otherwise, the key command is fully configured with the necessary input key and modifier flags
- to perform the associated command upon activation. It can be included in a view controller or other responder's `keyCommands` property, enabling
+ to perform the associated command upon activation. It can be included in a view controller or other responder's ``keyCommands`` property, enabling
  keyboard activation and discoverability of the web extension command.
  */
 @property (nonatomic, readonly, copy, nullable) UIKeyCommand *keyCommand;

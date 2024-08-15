@@ -28,11 +28,11 @@
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/*! @abstract Indicates a `WKWebExtensionMessagePort` error. */
+/*! @abstract Indicates a ``WKWebExtensionMessagePort`` error. */
 WK_EXTERN NSErrorDomain const WKWebExtensionMessagePortErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by NSError to indicate errors in the `WKWebExtensionMessagePort` domain.
+ @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionMessagePort`` domain.
  @constant WKWebExtensionMessagePortErrorUnknown  Indicates that an unknown error occurred.
  @constant WKWebExtensionMessagePortErrorNotConnected  Indicates that the message port is disconnected.
  @constant WKWebExtensionMessagePortErrorMessageInvalid Indicates that the message is invalid. The message must be an object that is JSON-serializable.
@@ -44,7 +44,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionMessagePortErrorDomain, WKWebExtensionMessag
 } NS_SWIFT_NAME(WKWebExtensionMessagePort.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract A `WKWebExtensionMessagePort` object manages message-based communication with a web extension.
+ @abstract A ``WKWebExtensionMessagePort`` object manages message-based communication with a web extension.
  @discussion Contains properties and methods to handle message exchanges with a web extension.
 */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -80,7 +80,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MessagePort)
  @abstract Sends a message to the connected web extension.
  @param message The JSON-serializable message to be sent.
  @param completionHandler An optional block to be invoked after the message is sent, taking an optional error object.
- @note The message must be JSON-serializable according to `+[NSJSONSerialization isValidJSONObject:]` method.
+ @note The message must be JSON-serializable according to ``NSJSONSerialization``.
  */
 - (void)sendMessage:(nullable id)message completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(sendMessage(_:completionHandler:));
 

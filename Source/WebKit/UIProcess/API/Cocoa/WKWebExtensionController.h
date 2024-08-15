@@ -39,9 +39,9 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `WKWebExtensionController` object manages a set of loaded extension contexts.
+ @abstract A ``WKWebExtensionController`` object manages a set of loaded extension contexts.
  @discussion You can have one or more extension controller instances, allowing different parts of the app to use different sets of extensions.
- A controller is associated with @link WKWebView @/link via the `webExtensionController` property on @link WKWebViewConfiguration @/link.
+ A controller is associated with ``WKWebView`` via the ``webExtensionController`` property on ``WKWebViewConfiguration``.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @interface WKWebExtensionController : NSObject
@@ -49,7 +49,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract Returns a web extension controller initialized with the default configuration.
  @result An initialized web extension controller, or nil if the object could not be initialized.
- @discussion This is a designated initializer. You can use @link -initWithConfiguration: @/link to
+ @discussion This is a designated initializer. You can use ``initWithConfiguration:`` to
  initialize an instance with a configuration.
  @seealso initWithConfiguration:
 */
@@ -59,7 +59,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract Returns a web extension controller initialized with the specified configuration.
  @param configuration The configuration for the new web extension controller.
  @result An initialized web extension controller, or nil if the object could not be initialized.
- @discussion This is a designated initializer. You can use @link -init: @/link to initialize an
+ @discussion This is a designated initializer. You can use ``init:`` to initialize an
  instance with the default configuration. The initializer copies the specified configuration, so mutating
  the configuration after invoking the initializer has no effect on the web extension controller.
  @seealso init
@@ -106,7 +106,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param URL The URL to lookup.
  @result An extension context or `nil` if no match was found.
  @discussion This method is useful for determining the extension context to use when about to navigate to an extension URL. For example,
- you could use this method to retrieve the appropriate extension context and then use its `webViewConfiguration` property to configure a
+ you could use this method to retrieve the appropriate extension context and then use its ``webViewConfiguration`` property to configure a
  web view for loading that URL.
  */
 - (nullable WKWebExtensionContext *)extensionContextForURL:(NSURL *)URL NS_SWIFT_NAME(extensionContext(for:));

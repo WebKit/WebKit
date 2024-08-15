@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-/*! @abstract Constants for specifying permission in a @link WKWebExtensionContext @/link. */
+/*! @abstract Constants for specifying permission in a ``WKWebExtensionContext``. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 typedef NSString * WKWebExtensionPermission NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(WKWebExtension.Permission);
 

@@ -30,17 +30,15 @@
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/*! @abstract Indicates a `WKWebExtensionDataRecord` error. */
+/*! @abstract Indicates a ``WKWebExtensionDataRecord`` error. */
 WK_EXTERN NSErrorDomain const WKWebExtensionDataRecordErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by NSError to indicate errors in the `WKWebExtensionDataRecord` domain.
+ @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionDataRecord`` domain.
  @constant WKWebExtensionDataRecordErrorUnknown  Indicates that an unknown error occurred.
-
- @constant WKWebExtensionDataRecordErrorLocalStorageFailed  Indicates a failure occurred when either deleting or calculating local storage.
- @constant WKWebExtensionDataRecordErrorSessionStorageFailed  Indicates a failure occurred when either deleting or calculating session storage.
- @constant WKWebExtensionDataRecordErrorSyncStorageFailed  Indicates a failure occurred when either deleting or calculating sync storage.
-
+ @constant WKWebExtensionDataRecordErrorLocalStorageFailed  Indicates a failure occurred when either deleting or calculating `local` storage.
+ @constant WKWebExtensionDataRecordErrorSessionStorageFailed  Indicates a failure occurred when either deleting or calculating `session` storage.
+ @constant WKWebExtensionDataRecordErrorSyncStorageFailed  Indicates a failure occurred when either deleting or calculating `sync` storage.
  */
 typedef NS_ERROR_ENUM(WKWebExtensionDataRecordErrorDomain, WKWebExtensionDataRecordError) {
     WKWebExtensionDataRecordErrorUnknown,
@@ -50,7 +48,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionDataRecordErrorDomain, WKWebExtensionDataRec
 } NS_SWIFT_NAME(WKWebExtensionDataRecord.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract A `WKWebExtensionDataRecord` object represents a record of stored data for a specific web extension context.
+ @abstract A ``WKWebExtensionDataRecord`` object represents a record of stored data for a specific web extension context.
  @discussion Contains properties and methods to query the data types and sizes.
 */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))

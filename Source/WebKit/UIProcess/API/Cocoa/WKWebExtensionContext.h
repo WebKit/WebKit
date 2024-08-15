@@ -46,14 +46,14 @@
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/*! @abstract Indicates a @link WKWebExtensionContext @/link error. */
+/*! @abstract Indicates a ``WKWebExtensionContext`` error. */
 WK_EXTERN NSErrorDomain const WKWebExtensionContextErrorDomain NS_SWIFT_NAME(WKWebExtensionContext.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by NSError to indicate errors in the @link WKWebExtensionContext @/link domain.
+ @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionContext`` domain.
  @constant WKWebExtensionContextErrorUnknown  Indicates that an unknown error occurred.
- @constant WKWebExtensionContextErrorAlreadyLoaded  Indicates that the context is already loaded by a @link WKWebExtensionController @/link.
- @constant WKWebExtensionContextErrorNotLoaded  Indicates that the context is not loaded by a @link WKWebExtensionController @/link.
+ @constant WKWebExtensionContextErrorAlreadyLoaded  Indicates that the context is already loaded by a ``WKWebExtensionController``.
+ @constant WKWebExtensionContextErrorNotLoaded  Indicates that the context is not loaded by a ``WKWebExtensionController``.
  @constant WKWebExtensionContextErrorBaseURLAlreadyInUse  Indicates that another context is already using the specified base URL.
  @constant WKWebExtensionContextErrorNoBackgroundContent  Indicates that the extension does not have background content.
  @constant WKWebExtensionContextErrorBackgroundContentFailedToLoad  Indicates that an error occurred loading the background content.
@@ -68,7 +68,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionContextErrorDomain, WKWebExtensionContextErr
 } NS_SWIFT_NAME(WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used to indicate permission status in @link WKWebExtensionContext @/link.
+ @abstract Constants used to indicate permission status in ``WKWebExtensionContext``.
  @constant WKWebExtensionContextPermissionStatusDeniedExplicitly  Indicates that the permission was explicitly denied.
  @constant WKWebExtensionContextPermissionStatusDeniedImplicitly  Indicates that the permission was implicitly denied because of another explicitly denied permission.
  @constant WKWebExtensionContextPermissionStatusRequestedImplicitly  Indicates that the permission was implicitly requested because of another explicitly requested permission.
@@ -87,52 +87,52 @@ typedef NS_ENUM(NSInteger, WKWebExtensionContextPermissionStatus) {
     WKWebExtensionContextPermissionStatusGrantedExplicitly   =  3,
 } NS_SWIFT_NAME(WKWebExtensionContext.PermissionState) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly granted permissions. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly granted permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereGrantedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly denied permissions. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly denied permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereDeniedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed granted permissions. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed granted permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionsWereRemovedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed denied permissions. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed denied permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionsWereRemovedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly granted permission match patterns. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly granted permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereGrantedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly denied permission match patterns. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly denied permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereDeniedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed granted permission match patterns. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed granted permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionMatchPatternsWereRemovedNotification);
 
-/*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed denied permission match patterns. */
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed denied permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionMatchPatternsWereRemovedNotification);
 
-/*! @abstract Constants for specifying @link WKWebExtensionContext @/link information in notifications. */
+/*! @abstract Constants for specifying ``WKWebExtensionContext`` information in notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 typedef NSString * WKWebExtensionContextNotificationUserInfoKey NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(WKWebExtensionContext.NotificationUserInfoKey);
 
-/*! @abstract The corresponding value represents the affected permissions in @link WKWebExtensionContext @/link notifications. */
+/*! @abstract The corresponding value represents the affected permissions in ``WKWebExtensionContext`` notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyPermissions;
 
-/*! @abstract The corresponding value represents the affected permission match patterns in @link WKWebExtensionContext @/link notifications. */
+/*! @abstract The corresponding value represents the affected permission match patterns in ``WKWebExtensionContext`` notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyMatchPatterns;
 
 /*!
- @abstract A `WKWebExtensionContext` object represents the runtime environment for a web extension.
+ @abstract A ``WKWebExtensionContext`` object represents the runtime environment for a web extension.
  @discussion This class provides methods for managing the extension's permissions, allowing it to inject content, run
  background logic, show popovers, and display other web-based UI to the user.
  */
@@ -170,7 +170,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract The base URL the context uses for loading extension resources or injecting content into webpages.
  @discussion The default value is a unique URL using the `webkit-extension` scheme.
  The base URL can be set to any URL, but only the scheme and host will be used. The scheme cannot be a scheme that is
- already supported by @link WKWebView @/link (e.g. http, https, etc.) Setting is only allowed when the context is not loaded.
+ already supported by ``WKWebView`` (e.g. http, https, etc.) Setting is only allowed when the context is not loaded.
  */
 @property (nonatomic, copy) NSURL *baseURL;
 
@@ -183,8 +183,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 @property (nonatomic, copy) NSString *uniqueIdentifier;
 
 /*!
- @abstract Determines whether Web Inspector can inspect the @link WKWebView @/link instances for this context.
- @discussion A context can control multiple `WKWebView` instances, from the background content, to the popover.
+ @abstract Determines whether Web Inspector can inspect the ``WKWebView`` instances for this context.
+ @discussion A context can control multiple ``WKWebView`` instances, from the background content, to the popover.
  You should set this to `YES` when needed for debugging purposes. The default value is `NO`.
 */
 @property (nonatomic, getter=isInspectable) BOOL inspectable;
@@ -293,8 +293,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion If this property is `YES`, the extension is granted permission to interact with private windows, tabs, and cookies. Access to private data
  should be explicitly allowed by the user before setting this property. This value should be saved and restored as needed by the app.
  @note To ensure proper isolation between private and non-private data, web views associated with private data must use a
- different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
- website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
+ different ``WKUserContentController``. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent ``WKWebsiteDataStore``.
  */
 @property (nonatomic) BOOL hasAccessToPrivateData;
 
@@ -360,7 +360,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract A Boolean value indicating if the currently granted permission match patterns set contains the `<all_urls>` pattern.
- @discussion This does not check for any `*` host patterns. In most cases you should use the broader `hasAccessToAllHosts`.
+ @discussion This does not check for any `*` host patterns. In most cases you should use the broader ``hasAccessToAllHosts``.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllHosts
  */
@@ -383,7 +383,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.
  @param url The webpage URL to check.
- @result Returns `YES` if the extension has content that can be injected by matching the `url` against the extension's requested match patterns.
+ @result Returns `YES` if the extension has content that can be injected by matching the URL against the extension's requested match patterns.
  @discussion The extension context will still need to be loaded and have granted website permissions for its content to actually be injected.
  */
 - (BOOL)hasInjectedContentForURL:(NSURL *)url NS_SWIFT_NAME(hasInjectedContent(for:));
@@ -417,8 +417,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract Sets the status of a permission with a distant future expiration date.
  @param status The new permission status to set for the given permission.
  @param permission The permission for which to set the status.
- @discussion This method will update `grantedPermissions` and `deniedPermissions`. Use this method for changing a single permission's status.
- Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`, and `WKWebExtensionContextPermissionStatusGrantedExplicitly`
+ @discussion This method will update ``grantedPermissions`` and ``deniedPermissions``. Use this method for changing a single permission's status.
+ Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``, and ``WKWebExtensionContextPermissionStatusGrantedExplicitly``
  states are allowed to be set using this method.
  @seealso setPermissionStatus:forPermission:expirationDate:
  @seealso setPermissionStatus:forPermission:inTab:
@@ -430,9 +430,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param status The new permission status to set for the given permission.
  @param permission The permission for which to set the status.
  @param expirationDate The expiration date for the new permission status, or \c nil for distant future.
- @discussion This method will update `grantedPermissions` and `deniedPermissions`. Use this method for changing a single permission's status.
- Passing a `nil` expiration date will be treated as a distant future date. Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`,
- and `WKWebExtensionContextPermissionStatusGrantedExplicitly` states are allowed to be set using this method.
+ @discussion This method will update ``grantedPermissions`` and ``deniedPermissions``. Use this method for changing a single permission's status.
+ Passing a `nil` expiration date will be treated as a distant future date. Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``,
+ and ``WKWebExtensionContextPermissionStatusGrantedExplicitly`` states are allowed to be set using this method.
  @seealso setPermissionStatus:forPermission:
  @seealso setPermissionStatus:forPermission:inTab:
 */
@@ -461,8 +461,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract Sets the permission status of a URL with a distant future expiration date.
  @param status The new permission status to set for the given URL.
  @param url The URL for which to set the status.
- @discussion The URL is converted into a match pattern and will update `grantedPermissionMatchPatterns` and `deniedPermissionMatchPatterns`. Use this method for changing a single URL's status.
- Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`, and `WKWebExtensionContextPermissionStatusGrantedExplicitly`
+ @discussion The URL is converted into a match pattern and will update ``grantedPermissionMatchPatterns`` and ``deniedPermissionMatchPatterns``. Use this method for changing a single URL's status.
+ Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``, and ``WKWebExtensionContextPermissionStatusGrantedExplicitly``
  states are allowed to be set using this method.
  @seealso setPermissionStatus:forURL:expirationDate:
  @seealso setPermissionStatus:forURL:inTab:
@@ -474,9 +474,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param status The new permission status to set for the given URL.
  @param url The URL for which to set the status.
  @param expirationDate The expiration date for the new permission status, or \c nil for distant future.
- @discussion The URL is converted into a match pattern and will update `grantedPermissionMatchPatterns` and `deniedPermissionMatchPatterns`. Use this method for changing a single URL's status.
- Passing a `nil` expiration date will be treated as a distant future date. Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`,
- and `WKWebExtensionContextPermissionStatusGrantedExplicitly` states are allowed to be set using this method.
+ @discussion The URL is converted into a match pattern and will update ``grantedPermissionMatchPatterns`` and ``deniedPermissionMatchPatterns``. Use this method for changing a single URL's status.
+ Passing a `nil` expiration date will be treated as a distant future date. Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``,
+ and ``WKWebExtensionContextPermissionStatusGrantedExplicitly`` states are allowed to be set using this method.
  @seealso setPermissionStatus:forURL:
  @seealso setPermissionStatus:forURL:inTab:
 */
@@ -505,8 +505,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract Sets the status of a match pattern with a distant future expiration date.
  @param status The new permission status to set for the given match pattern.
  @param pattern The match pattern for which to set the status.
- @discussion This method will update `grantedPermissionMatchPatterns` and `deniedPermissionMatchPatterns`. Use this method for changing a single match pattern's status.
- Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`, and `WKWebExtensionContextPermissionStatusGrantedExplicitly`
+ @discussion This method will update ``grantedPermissionMatchPatterns`` and ``deniedPermissionMatchPatterns``. Use this method for changing a single match pattern's status.
+ Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``, and ``WKWebExtensionContextPermissionStatusGrantedExplicitly``
  states are allowed to be set using this method.
  @seealso setPermissionStatus:forMatchPattern:expirationDate:
  @seealso setPermissionStatus:forMatchPattern:inTab:
@@ -518,9 +518,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param status The new permission status to set for the given match pattern.
  @param pattern The match pattern for which to set the status.
  @param expirationDate The expiration date for the new permission status, or \c nil for distant future.
- @discussion This method will update `grantedPermissionMatchPatterns` and `deniedPermissionMatchPatterns`. Use this method for changing a single match pattern's status.
- Passing a `nil` expiration date will be treated as a distant future date. Only `WKWebExtensionContextPermissionStatusDeniedExplicitly`, `WKWebExtensionContextPermissionStatusUnknown`,
- and `WKWebExtensionContextPermissionStatusGrantedExplicitly` states are allowed to be set using this method.
+ @discussion This method will update ``grantedPermissionMatchPatterns`` and ``deniedPermissionMatchPatterns``. Use this method for changing a single match pattern's status.
+ Passing a `nil` expiration date will be treated as a distant future date. Only ``WKWebExtensionContextPermissionStatusDeniedExplicitly``, ``WKWebExtensionContextPermissionStatusUnknown``,
+ and ``WKWebExtensionContextPermissionStatusGrantedExplicitly`` states are allowed to be set using this method.
  @seealso setPermissionStatus:forMatchPattern:
  @seealso setPermissionStatus:forMatchPattern:inTab:
 */
@@ -547,7 +547,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract Performs the extension action associated with the specified tab or performs the default action if `nil` is passed.
  @param tab The tab for which to perform the extension action, or `nil` to perform the default action.
- @discussion Performing the action will mark the tab, if specified, as having an active user gesture. When the `tab` parameter is `nil`,
+ @discussion Performing the action will mark the tab, if specified, as having an active user gesture. When the ``tab`` parameter is `nil`,
  the default action is performed. The action can either trigger an event or display a popup, depending on how the extension is configured.
  If the action is configured to display a popup, implementing the appropriate web extension controller delegate method is required; otherwise,
  no action is performed for popup actions.
@@ -570,10 +570,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 #if TARGET_OS_IPHONE
 /*!
- @abstract Performs the command associated with the given UIKeyCommand.
- @discussion This method checks for a command corresponding to the provided UIKeyCommand and performs it, if available. The app should use this method to perform
- any extension commands at an appropriate time in the app's responder object that handles the performWebExtensionCommandForKeyCommand: action.
- @param event The UIKeyCommand received by the first responder.
+ @abstract Performs the command associated with the given key command.
+ @discussion This method checks for a command corresponding to the provided ``UIKeyCommand`` and performs it, if available. The app should use this method to perform
+ any extension commands at an appropriate time in the app's responder object that handles the ``performWebExtensionCommandForKeyCommand:`` action.
+ @param keyCommand The key command received by the first responder.
  @result Returns `YES` if a command corresponding to the UIKeyCommand was found and performed, `NO` otherwise.
  */
 - (BOOL)performCommandForKeyCommand:(UIKeyCommand *)keyCommand NS_SWIFT_NAME(performCommand(for:));
@@ -583,7 +583,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract Performs the command associated with the given event.
  @discussion This method checks for a command corresponding to the provided event and performs it, if available. The app should use this method to perform
- any extension commands at an appropriate time in the app's event handling, like in `sendEvent:` of `NSApplication` or `NSWindow` subclasses.
+ any extension commands at an appropriate time in the app's event handling, like in ``sendEvent:`` of ``NSApplication`` or ``NSWindow`` subclasses.
  @param event The event representing the user input.
  @result Returns `YES` if a command corresponding to the event was found and performed, `NO` otherwise.
  */
@@ -618,7 +618,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param tab The tab in which the user gesture was performed.
  @discussion When a user gesture is performed in a tab, this method should be called to update the extension context.
  This enables the extension to be aware of the user gesture, potentially granting it access to features that require user interaction,
- such as `activeTab`. Not required if using `performActionForTab:`.
+ such as `activeTab`. Not required if using ``performActionForTab:``.
  @seealso hasActiveUserGestureInTab:
  */
 - (void)userGesturePerformedInTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(userGesturePerformed(in:));
@@ -645,8 +645,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The open windows that are exposed to this extension.
- @discussion Provides the windows that are open and visible to the extension, as updated by the `didOpenWindow:` and `didCloseWindow:` methods.
- Initially populated by the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
+ @discussion Provides the windows that are open and visible to the extension, as updated by the ``didOpenWindow:`` and ``didCloseWindow:`` methods.
+ Initially populated by the windows returned by the extension controller delegate method ``webExtensionController:openWindowsForExtensionContext:``.
  @seealso didOpenWindow:
  @seealso didCloseWindow:
  */
@@ -654,17 +654,17 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The window that currently has focus for this extension.
- @discussion Provides the window that currently has focus, as set by the `didFocusWindow:` method.
- It will be \c nil if no window has focus or if a window has focus that is not visible to the extension. Initially populated by the window
- returned by the extension controller delegate method `webExtensionController:focusedWindowForExtensionContext:`.
+ @discussion Provides the window that currently has focus, as set by the ``didFocusWindow:`` method.
+ It will be `nil` if no window has focus or if a window has focus that is not visible to the extension. Initially populated by the window
+ returned by the extension controller delegate method ``webExtensionController:focusedWindowForExtensionContext:``.
  @seealso didFocusWindow:
  */
 @property (nonatomic, readonly, weak, nullable) id <WKWebExtensionWindow> focusedWindow;
 
 /*!
  @abstract A set of open tabs in all open windows that are exposed to this extension.
- @discussion Provides a set of tabs in all open windows that are visible to the extension, as updated by the `didOpenTab:` and `didCloseTab:` methods.
- Initially populated by the tabs in the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
+ @discussion Provides a set of tabs in all open windows that are visible to the extension, as updated by the ``didOpenTab:`` and ``didCloseTab:`` methods.
+ Initially populated by the tabs in the windows returned by the extension controller delegate method ``webExtensionController:openWindowsForExtensionContext:``.
  @seealso didOpenTab:
  @seealso didCloseTab:
  */

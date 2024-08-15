@@ -51,8 +51,8 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @return The array of ordered open windows.
  @discussion This method should be implemented by the app to provide the extension with the ordered open windows. Depending on your
  app's requirements, you may return different windows for each extension or the same windows for all extensions. The first window in the returned
- array must correspond to the currently focused window and match the result of `webExtensionController:focusedWindowForExtensionContext:`.
- If `webExtensionController:focusedWindowForExtensionContext:` returns `nil`, indicating that no window has focus or the focused
+ array must correspond to the currently focused window and match the result of ``webExtensionController:focusedWindowForExtensionContext:``.
+ If ``webExtensionController:focusedWindowForExtensionContext:`` returns `nil`, indicating that no window has focus or the focused
  window is not visible to the extension, the first window in the list returned by this method will be considered the presumed focused window. An empty result
  indicates no open windows are available for the extension. Defaults to an empty array if not implemented.
  @seealso webExtensionController:focusedWindowForExtensionContext:
@@ -63,9 +63,9 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when an extension context requests the currently focused window.
  @param controller The web extension controller that is managing the extension.
  @param extensionContext The context in which the web extension is running.
- @return The window that is currently focused, or \c nil if no window is focused or the focused window is not visible to the extension.
+ @return The window that is currently focused, or `nil` if no window is focused or the focused window is not visible to the extension.
  @discussion This method can be optionally implemented by the app to designate the window currently in focus to the extension.
- If not implemented, the first window in the result of `webExtensionController:openWindowsForExtensionContext:` is used.
+ If not implemented, the first window in the result of ``webExtensionController:openWindowsForExtensionContext:`` is used.
  @seealso webExtensionController:openWindowsForExtensionContext:
  */
 - (nullable id <WKWebExtensionWindow>)webExtensionController:(WKWebExtensionController *)controller focusedWindowForExtensionContext:(WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:focusedWindowFor:));
@@ -104,7 +104,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @discussion This method should be implemented by the app to handle requests to display the extension's options page. The app can decide
  how and where to display the options page (e.g., in a new tab or a separate window). The app should call the completion handler once the options
  page is visible to the user, or with an error if the operation was declined or failed. If not implemented, the options page will be opened in a new tab
- using the `webExtensionController:openNewTabUsingConfiguration:forExtensionContext:completionHandler:` delegate method.
+ using the ``webExtensionController:openNewTabUsingConfiguration:forExtensionContext:completionHandler:`` delegate method.
  */
 - (void)webExtensionController:(WKWebExtensionController *)controller openOptionsPageForExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:openOptionsPageFor:completionHandler:));
 
@@ -156,8 +156,8 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param action The action for which the popup is requested.
  @param context The context within which the web extension is running.
  @param completionHandler A block to be called once the popup display operation is completed.
- @discussion This method is called in response to the extension's scripts or when invoking `performActionForTab:` if the action has a popup.
- The associated tab, if applicable, can be located through the `associatedTab` property of the `action` parameter. This delegate method is
+ @discussion This method is called in response to the extension's scripts or when invoking ``performActionForTab:`` if the action has a popup.
+ The associated tab, if applicable, can be located through the ``associatedTab`` property of the `action` parameter. This delegate method is
  called when the web view for the popup is fully loaded and ready to display. Implementing this method is needed if the app intends to support
  programmatically showing the popup by the extension, although it is recommended for handling both programmatic and user-initiated cases.
  */
@@ -173,7 +173,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @discussion This method should be implemented by the app to handle one-off messages to applications.
  If not implemented, the default behavior is to pass the message to the app extension handler within the extension's bundle,
  if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.
- @note The reply message must be JSON-serializable according to `+[NSJSONSerialization isValidJSONObject:]` method.
+ @note The reply message must be JSON-serializable according to ``NSJSONSerialization``.
  */
 - (void)webExtensionController:(WKWebExtensionController *)controller sendMessage:(id)message toApplicationWithIdentifier:(nullable NSString *)applicationIdentifier forExtensionContext:(WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id WK_NULLABLE_RESULT replyMessage, NSError * _Nullable error))replyHandler NS_SWIFT_NAME(webExtensionController(_:sendMessage:toApplicationWithIdentifier:for:replyHandler:)) WK_SWIFT_ASYNC(5);
 
@@ -185,7 +185,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param completionHandler A block to be called when the connection is ready to use, taking an optional error object
  as a parameter. If the connection is successfully established, the error parameter should be \c nil.
  @discussion This method should be implemented by the app to handle establishing connections to applications.
- The provided `WKWebExtensionPort` object can be used to handle message sending, receiving, and disconnection.
+ The provided ``WKWebExtensionPort`` object can be used to handle message sending, receiving, and disconnection.
  You should retain the port object for as long as the connection remains active. Releasing the port will disconnect it.
  If not implemented, the default behavior is to pass the messages to the app extension handler within the extension's bundle,
  if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.

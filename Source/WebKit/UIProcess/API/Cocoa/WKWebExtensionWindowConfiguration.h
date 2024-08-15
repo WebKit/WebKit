@@ -33,7 +33,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `WKWebExtensionWindowConfiguration` object encapsulates configuration options for a window in an extension.
+ @abstract A ``WKWebExtensionWindowConfiguration`` object encapsulates configuration options for a window in an extension.
  @discussion This class holds various options that influence the behavior and initial state of a window.
  The app retains the discretion to disregard any or all of these options, or even opt not to create a window.
  */
@@ -59,14 +59,14 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.WindowConfiguration)
 
 /*!
  @abstract Indicates the URLs that the window should initially load as tabs.
- @discussion If `tabURLs` and `tabs` are both empty, the app's default "start page" should appear in a tab.
+ @discussion If ``tabURLs`` and ``tabs`` are both empty, the app's default "start page" should appear in a tab.
  @seealso tabs
  */
 @property (nonatomic, readonly, copy) NSArray<NSURL *> *tabURLs;
 
 /*!
  @abstract Indicates the existing tabs that should be moved to the window.
- @discussion If `tabs` and `tabURLs` are both empty, the app's default "start page" should appear in a tab.
+ @discussion If ``tabs`` and ``tabURLs`` are both empty, the app's default "start page" should appear in a tab.
  @seealso tabURLs
  */
 @property (nonatomic, readonly, copy) NSArray<id <WKWebExtensionTab>> *tabs;
@@ -77,8 +77,8 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.WindowConfiguration)
 /*!
  @abstract Indicates whether the window should be private.
  @note To ensure proper isolation between private and non-private data, web views associated with private data must use a
- different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
- website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
+ different ``WKUserContentController``. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent ``WKWebsiteDataStore``.
  */
 @property (nonatomic, readonly) BOOL shouldBePrivate;
 

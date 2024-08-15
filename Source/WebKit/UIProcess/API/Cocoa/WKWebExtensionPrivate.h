@@ -36,7 +36,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
  @param appExtensionBundle The bundle to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  */
 - (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_DESIGNATED_INITIALIZER;
@@ -44,7 +44,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
  @param resourceBaseURL The directory URL to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion The URL must be a file URL that points to a directory containing a `manifest.json` file.
  */

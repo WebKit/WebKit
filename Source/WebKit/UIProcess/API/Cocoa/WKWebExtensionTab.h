@@ -41,7 +41,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract Constants used by @link WKWebExtensionController @/link and @link WKWebExtensionContext @/link to indicate tab changes.
+ @abstract Constants used by ``WKWebExtensionController @/link and @link WKWebExtensionContext`` to indicate tab changes.
  @constant WKWebExtensionTabChangedPropertiesNone  Indicates nothing changed.
  @constant WKWebExtensionTabChangedPropertiesLoading  Indicates the loading state changed.
  @constant WKWebExtensionTabChangedPropertiesMuted  Indicates the muted state changed.
@@ -66,7 +66,7 @@ typedef NS_OPTIONS(NSUInteger, WKWebExtensionTabChangedProperties) {
     WKWebExtensionTabChangedPropertiesZoomFactor   = 1 << 9,
 } NS_SWIFT_NAME(WKWebExtension.TabChangedProperties) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-/*! @abstract A class conforming to the `WKWebExtensionTab` protocol represents a tab to web extensions. */
+/*! @abstract A class conforming to the ``WKWebExtensionTab`` protocol represents a tab to web extensions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
 @protocol WKWebExtensionTab <NSObject>
 @optional
@@ -82,9 +82,9 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
 /*!
  @abstract Called when the index of the tab in the window is needed.
  @param context The context in which the web extension is running.
- @return The index of the tab in the window, or `NSNotFound` if the tab is not currently in a window.
+ @return The index of the tab in the window, or ``NSNotFound`` if the tab is not currently in a window.
  @discussion This method should be implemented for better performance. Defaults to the window's
- `tabsForWebExtensionContext:` method to find the index if not implemented.
+ ``tabsForWebExtensionContext:`` method to find the index if not implemented.
  */
 - (NSUInteger)indexInWindowForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(indexInWindow(for:));
 
@@ -113,7 +113,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the web view for the tab is needed.
  @param context The context in which the web extension is running.
  @return The web view for the tab.
- @discussion The web view's `WKWebViewConfiguration` must have its `webExtensionController` property set to match
+ @discussion The web view's ``WKWebViewConfiguration`` must have its ``webExtensionController`` property set to match
  the controller of the given context; otherwise `nil` will be used. Defaults to `nil` if not implemented. If `nil`, some critical features
  will not be available for this tab, such as content injection or modification.
  */
@@ -123,7 +123,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the title of the tab is needed.
  @param context The context in which the web extension is running.
  @return The title of the tab.
- @discussion Defaults to `title` of the tab's web view if not implemented.
+ @discussion Defaults to ``title`` of the tab's web view if not implemented.
  */
 - (nullable NSString *)titleForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(title(for:));
 
@@ -219,7 +219,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called when the zoom factor of the tab is needed.
  @param context The context in which the web extension is running.
  @return The zoom factor of the tab.
- @discussion Defaults to `pageZoom` of the tab's web view if not implemented.
+ @discussion Defaults to ``pageZoom`` of the tab's web view if not implemented.
  @seealso setZoomFactor:forWebExtensionContext:completionHandler:
  */
 - (double)zoomFactorForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(zoomFactor(for:));
@@ -230,7 +230,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Sets `pageZoom` of the tab's web view if not implemented.
+ @discussion Sets ``pageZoom`` of the tab's web view if not implemented.
  @seealso zoomFactorForWebExtensionContext:
  */
 - (void)setZoomFactor:(double)zoomFactor forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(setZoomFactor(_:for:completionHandler:));
@@ -256,7 +256,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @abstract Called to check if the tab has finished loading.
  @param context The context in which the web extension is running.
  @return `YES` if the tab has finished loading, `NO` otherwise.
- @discussion Defaults to `isLoading` of the tab's web view if not implemented.
+ @discussion Defaults to ``isLoading`` of the tab's web view if not implemented.
  */
 - (BOOL)isLoadingCompleteForWebExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(isLoadingComplete(for:));
 
@@ -290,7 +290,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
  @discussion If the tab is already loading a page, calling this method should stop the current page from loading and start
- loading the new URL. Loads the URL in the tab's web view via `loadRequest:` if not implemented.
+ loading the new URL. Loads the URL in the tab's web view via ``loadRequest:`` if not implemented.
  */
 - (void)loadURL:(NSURL *)url forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(loadURL(_:for:completionHandler:));
 
@@ -300,7 +300,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Reloads the tab's web view via `reload` or `reloadFromOrigin` if not implemented.
+ @discussion Reloads the tab's web view via ``reload`` or ``reloadFromOrigin`` if not implemented.
  */
 - (void)reloadFromOrigin:(BOOL)fromOrigin forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(reload(fromOrigin:for:completionHandler:));
 
@@ -309,7 +309,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Navigates to the previous page in the tab's web view via `goBack` if not implemented.
+ @discussion Navigates to the previous page in the tab's web view via ``goBack`` if not implemented.
  */
 - (void)goBackForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(goBack(for:completionHandler:));
 
@@ -318,7 +318,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion Navigates to the next page in the tab's web view via `goForward` if not implemented.
+ @discussion Navigates to the next page in the tab's web view via ``goForward`` if not implemented.
  */
 - (void)goForwardForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(goForward(for:completionHandler:));
 

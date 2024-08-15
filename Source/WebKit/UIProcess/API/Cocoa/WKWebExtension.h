@@ -37,11 +37,11 @@
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-/*! @abstract Indicates a @link WKWebExtension @/link error. */
+/*! @abstract Indicates a ``WKWebExtension`` error. */
 WK_EXTERN NSErrorDomain const WKWebExtensionErrorDomain NS_SWIFT_NAME(WKWebExtension.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by NSError to indicate errors in the @link WKWebExtension @/link domain.
+ @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtension`` domain.
  @constant WKWebExtensionErrorUnknown  Indicates that an unknown error occurred.
  @constant WKWebExtensionErrorResourceNotFound  Indicates that a specified resource was not found on disk.
  @constant WKWebExtensionErrorInvalidResourceCodeSignature  Indicates that a resource failed the bundle's code signature checks.
@@ -62,12 +62,12 @@ typedef NS_ERROR_ENUM(WKWebExtensionErrorDomain, WKWebExtensionError) {
     WKWebExtensionErrorInvalidBackgroundPersistence,
 } NS_SWIFT_NAME(WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-/*! @abstract This notification is sent whenever a @link WKWebExtension @/link has new errors or errors were cleared. */
+/*! @abstract This notification is sent whenever a ``WKWebExtension`` has new errors or errors were cleared. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 WK_EXTERN NSNotificationName const WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(WKWebExtension.errorsWereUpdatedNotification);
 
 /*!
- @abstract A `WKWebExtension` object encapsulates a web extension’s resources that are defined by a `manifest.json` file.
+ @abstract A ``WKWebExtension`` object encapsulates a web extension’s resources that are defined by a `manifest.json`` file.
  @discussion This class handles the reading and parsing of the manifest file along with the supporting resources like icons and localizations.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_SWIFT_UI_ACTOR
@@ -101,7 +101,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract The parsed manifest version, or `0` if there is no version specified in the manifest.
- @note An `WKWebExtensionErrorUnsupportedManifestVersion` error will be reported if the manifest version isn't specified.
+ @note An ``WKWebExtensionErrorUnsupportedManifestVersion`` error will be reported if the manifest version isn't specified.
  */
 @property (nonatomic, readonly) double manifestVersion;
 
@@ -130,7 +130,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract The default localized extension action label. Returns `nil` if there was no default action label specified.
  @discussion This label serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to
- the extension being loaded into an extension context. Once the extension is loaded, use the `actionForTab:` API to get the tab-specific label.
+ the extension being loaded into an extension context. Once the extension is loaded, use the ``actionForTab:`` API to get the tab-specific label.
  */
 @property (nonatomic, nullable, readonly, copy) NSString *displayActionLabel;
 
@@ -156,7 +156,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @param size The size to use when looking up the action icon.
  @result The action icon, or `nil` if the icon was unable to be loaded.
  @discussion This icon serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to
- the extension being loaded into an extension context. Once the extension is loaded, use the `actionForTab:` API to get the tab-specific icon.
+ the extension being loaded into an extension context. Once the extension is loaded, use the ``actionForTab:`` API to get the tab-specific icon.
  The returned image will be the best match for the specified size that is available in the extension's action icon set. If no matching icon is available,
  the method will fall back to the extension's icon.
  @seealso iconForSize:
@@ -190,7 +190,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract A Boolean value indicating whether the extension has background content that stays in memory as long as the extension is loaded.
- @note Note that extensions are only allowed to have persistent background content on macOS. An `WKWebExtensionErrorInvalidBackgroundPersistence`
+ @note Note that extensions are only allowed to have persistent background content on macOS. An ``WKWebExtensionErrorInvalidBackgroundPersistence``
  error will be reported on iOS, iPadOS, and visionOS if an attempt is made to load a persistent extension.
  */
 @property (nonatomic, readonly) BOOL hasPersistentBackgroundContent;
@@ -198,28 +198,28 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.
  @discussion If this property is `YES`, the extension has content that can be injected by matching against the extension's requested match patterns.
- @note Once the extension is loaded, use the `hasInjectedContent` property on the extension context, as the injectable content can change after the extension is loaded.
+ @note Once the extension is loaded, use the ``hasInjectedContent`` property on the extension context, as the injectable content can change after the extension is loaded.
  */
 @property (nonatomic, readonly) BOOL hasInjectedContent;
 
 /*!
  @abstract A Boolean value indicating whether the extension has an options page.
  @discussion If this property is `YES`, the extension includes a dedicated options page where users can customize settings.
- The app should provide access to this page through a user interface element, which can be accessed via `optionsPageURL` on an extension context.
+ The app should provide access to this page through a user interface element, which can be accessed via ``optionsPageURL`` on an extension context.
  */
 @property (nonatomic, readonly) BOOL hasOptionsPage;
 
 /*!
  @abstract A Boolean value indicating whether the extension provides an alternative to the default new tab page.
  @discussion If this property is `YES`, the extension can specify a custom page that can be displayed when a new tab is opened in the app, instead of the default new tab page.
- The app should prompt the user for permission to use the extension's new tab page as the default, which can be accessed via `overrideNewTabPageURL` on an extension context.
+ The app should prompt the user for permission to use the extension's new tab page as the default, which can be accessed via ``overrideNewTabPageURL`` on an extension context.
  */
 @property (nonatomic, readonly) BOOL hasOverrideNewTabPage;
 
 /*!
  @abstract A Boolean value indicating whether the extension includes commands that users can invoke.
  @discussion If this property is `YES`, the extension contains one or more commands that can be performed by the user. These commands should be accessible via keyboard shortcuts,
- menu items, or other user interface elements provided by the app. The list of commands can be accessed via `commands` on an extension context, and invoked via `performCommand:`.
+ menu items, or other user interface elements provided by the app. The list of commands can be accessed via ``commands`` on an extension context, and invoked via ``performCommand:``.
  */
 @property (nonatomic, readonly) BOOL hasCommands;
 

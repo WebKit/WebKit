@@ -31,7 +31,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
  @abstract Returns a new configuration that is persistent and uses a temporary directory.
- @discussion This method creates a configuration for a `WKWebExtensionController` that is persistent during the session
+ @discussion This method creates a configuration for a ``WKWebExtensionController`` that is persistent during the session
  and uses a temporary directory for storage. This is ideal for scenarios that require temporary data persistence, such as testing.
  Each instance is created with a unique temporary directory.
 */
