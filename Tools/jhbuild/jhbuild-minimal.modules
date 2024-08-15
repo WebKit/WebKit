@@ -15,6 +15,7 @@
       <dep package="libsoup"/>
       <dep package="libvpx"/>
       <dep package="manette"/>
+      <dep package="openssl"/>
       <dep package="wayland"/>
       <dep package="wayland-protocols"/>
       <dep package="wpebackend-fdo"/>
@@ -32,6 +33,7 @@
       <dep package="libjxl"/>
       <dep package="libsoup"/>
       <dep package="libvpx"/>
+      <dep package="openssl"/>
       <dep package="openxr"/>
       <dep package="wayland"/>
       <dep package="wayland-protocols"/>
@@ -160,6 +162,16 @@
             version="0.2.4"
             hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
   </meson>
+
+  <autotools id="openssl" autogenargs="" autogen-sh="./Configure" supports-non-srcdir-builds="no"
+             autogen-template="%(srcdir)s/%(autogen-sh)s enable-ec_nistp_64_gcc_128 --prefix=%(prefix)s --libdir=lib --openssldir=%(prefix)s shared threads"
+             makeinstallargs="install INSTALL_PREFIX='$(DESTDIR)'">
+    <branch repo="github-tarball"
+            module="openssl/openssl/archive/refs/tags/openssl-${version}.tar.gz"
+            version="3.3.1"
+            checkoutdir="openssl-3.3.1"
+            hash="sha256:133bf39b8d1635ac94a8483042cc448251b770a0d12c7af0c05ea895ddd98f1d"/>
+  </autotools>
 
   <!-- OpenXR required for WebXR support -->
   <cmake id="openxr">
