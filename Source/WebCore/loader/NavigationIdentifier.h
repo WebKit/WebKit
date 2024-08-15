@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,11 @@
 
 #pragma once
 
-#include "NetworkResourceLoadIdentifier.h"
-#include "SandboxExtension.h"
-#include "WebsitePoliciesData.h"
-#include <WebCore/BackForwardItemIdentifier.h>
-#include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/NavigationIdentifier.h>
-#include <WebCore/PublicSuffix.h>
-#include <WebCore/ShouldTreatAsContinuingLoad.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/ObjectIdentifier.h>
 
-namespace WebKit {
+namespace WebCore {
 
-struct GoToBackForwardItemParameters {
-    WebCore::NavigationIdentifier navigationID;
-    WebCore::BackForwardItemIdentifier backForwardItemID;
-    WebCore::FrameLoadType backForwardType;
-    WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
-    std::optional<WebsitePoliciesData> websitePolicies;
-    bool lastNavigationWasAppInitiated;
-    std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
-    WebCore::PublicSuffix publicSuffix;
-    SandboxExtension::Handle sandboxExtensionHandle;
-};
+struct NavigationIdentifierType;
+using NavigationIdentifier = ObjectIdentifier<NavigationIdentifierType>;
 
-} // namespace WebKit
+}
