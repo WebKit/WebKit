@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
+#import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
@@ -109,6 +110,42 @@
 
 @end
 
+@interface SetMarkedTextWithNoAttributedStringTestCandidate : NSTextCheckingResult
+@end
+
+@implementation SetMarkedTextWithNoAttributedStringTestCandidate {
+    RetainPtr<NSString> _string;
+    NSRange _range;
+}
+
+- (instancetype)initWithReplacementString:(NSString *)string inRange:(NSRange)range
+{
+    if (self = [super init]) {
+        _string = string;
+        _range = range;
+    }
+    return self;
+}
+
+- (NSString *)replacementString
+{
+    return _string.get();
+}
+
+- (NSTextCheckingType)resultType
+{
+    return NSTextCheckingTypeReplacement;
+}
+
+- (NSRange)range
+{
+    return _range;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
 TEST(WKWebViewMacEditingTests, DoubleClickDoesNotSelectTrailingSpace)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
@@ -119,7 +156,7 @@ TEST(WKWebViewMacEditingTests, DoubleClickDoesNotSelectTrailingSpace)
         finishedSelectingText = true;
     }];
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:2];
-    TestWebKitAPI::Util::run(&finishedSelectingText);
+    Util::run(&finishedSelectingText);
 
     NSString *selectedText = [webView stringByEvaluatingJavaScript:@"getSelection().getRangeAt(0).toString()"];
     EXPECT_STREQ("Hello", selectedText.UTF8String);
@@ -160,7 +197,7 @@ TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocati
         };
     }
 
-    TestWebKitAPI::Util::run(&isDone);
+    Util::run(&isDone);
 }
 
 TEST(WKWebViewMacEditingTests, ProcessSwapAfterSettingMarkedText)
@@ -197,11 +234,39 @@ TEST(WKWebViewMacEditingTests, ProcessSwapAfterSettingMarkedText)
         EXPECT_FALSE(hasMarkedText);
         done = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    Util::run(&done);
+}
+
+TEST(WKWebViewMacEditingTests, DoNotRenderInlinePredictionsForRegularMarkedText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 200, 100)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body style='caret-color: transparent;'></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
+
+    auto string = adoptNS([[NSAttributedString alloc] initWithString:@"xie wen sheng" attributes:@{
+        NSMarkedClauseSegmentAttributeName: @0,
+        NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+        NSUnderlineColorAttributeName: NSColor.controlAccentColor
+    }]);
+
+    [webView setMarkedText:string.get() selectedRange:NSMakeRange(13, 0) replacementRange:NSMakeRange(NSNotFound, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    bool foundNonWhitePixel = false;
+    CGImagePixelReader reader { [webView snapshotAfterScreenUpdates] };
+    for (unsigned x = 0; x < reader.width(); ++x) {
+        for (unsigned y = 0; y < reader.height(); ++y) {
+            if (reader.at(x, y) != WebCore::Color::white)
+                foundNonWhitePixel = true;
+        }
+    }
+    EXPECT_TRUE(foundNonWhitePixel);
 }
 
 #if HAVE(INLINE_PREDICTIONS)
-TEST(WKWebViewMacEditingTests, InlinePredictionsShouldSurpressAutocorrection)
+TEST(WKWebViewMacEditingTests, InlinePredictionsShouldSuppressAutocorrection)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto webView = adoptNS([[TestWKWebView<NSTextInputClient, NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
@@ -239,41 +304,6 @@ TEST(WKWebViewMacEditingTests, InlinePredictionsShouldSurpressAutocorrection)
     NSString *hasSpellingMarker = [webView stringByEvaluatingJavaScript:@"internals.hasSpellingMarker(6, 9) ? 'true' : 'false'"];
     EXPECT_STREQ("false", hasSpellingMarker.UTF8String);
 }
-
-
-@interface SetMarkedTextWithNoAttributedStringTestCandidate : NSTextCheckingResult
-@end
-
-@implementation SetMarkedTextWithNoAttributedStringTestCandidate {
-    RetainPtr<NSString> _string;
-    NSRange _range;
-}
-
-- (instancetype)initWithReplacementString:(NSString *)string inRange:(NSRange)range
-{
-    if (self = [super init]) {
-        _string = string;
-        _range = range;
-    }
-    return self;
-}
-
-- (NSString *)replacementString
-{
-    return _string.get();
-}
-
-- (NSTextCheckingType)resultType
-{
-    return NSTextCheckingTypeReplacement;
-}
-
-- (NSRange)range
-{
-    return _range;
-}
-
-@end
 
 TEST(WKWebViewMacEditingTests, SetMarkedTextWithNoAttributedString)
 {
@@ -370,5 +400,7 @@ TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeInTextArea)
     EXPECT_EQ(rangeAfterTyping.location, 1U);
     EXPECT_EQ(rangeAfterTyping.length, 0U);
 }
+
+} // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)
