@@ -1927,6 +1927,10 @@
 		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; };
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
 		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
+		E32D51AE2C6D0FE900B013D1 /* WasmSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AB0C93231747B7000250BC /* WasmSlowPaths.h */; };
+		E32D51AF2C6D0FF200B013D1 /* WasmCompilationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */; };
+		E32D51B02C6D0FFC00B013D1 /* WasmOpcodeCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A72C6D0FD600B013D1 /* WasmOpcodeCounter.h */; };
+		E32D51B12C6D100300B013D1 /* WasmSourceMappingURLSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A92C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.h */; };
 		E32E1B3128DA8C7A00FCB571 /* IntlDurationFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E319A3E628DA84E900DF18C7 /* IntlDurationFormat.cpp */; };
 		E32EF01E2BD72AEF001675BA /* StableSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E32EF01D2BD72AEF001675BA /* StableSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32F713D281B3C6600AFD21D /* UnifiedSource5-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */; };
@@ -5502,6 +5506,12 @@
 		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
 		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
 		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
+		E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCompilationContext.h; sourceTree = "<group>"; };
+		E32D51A62C6D0FD600B013D1 /* WasmCompilationContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationContext.cpp; sourceTree = "<group>"; };
+		E32D51A72C6D0FD600B013D1 /* WasmOpcodeCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOpcodeCounter.h; sourceTree = "<group>"; };
+		E32D51A82C6D0FD600B013D1 /* WasmOpcodeCounter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOpcodeCounter.cpp; sourceTree = "<group>"; };
+		E32D51A92C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmSourceMappingURLSectionParser.h; sourceTree = "<group>"; };
+		E32D51AA2C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmSourceMappingURLSectionParser.cpp; sourceTree = "<group>"; };
 		E32EF01D2BD72AEF001675BA /* StableSort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StableSort.h; sourceTree = "<group>"; };
 		E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource5-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource5-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource4-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource4-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7703,6 +7713,8 @@
 				E35C88C42984F411005A3CDA /* WasmCallsiteCollection.cpp */,
 				E34D4FA92984F25A00CE5F9F /* WasmCallsiteCollection.h */,
 				E337B966224324E50093A820 /* WasmCapabilities.h */,
+				E32D51A62C6D0FD600B013D1 /* WasmCompilationContext.cpp */,
+				E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */,
 				E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */,
 				E3BD2B7522F275020011765C /* WasmCompilationMode.h */,
 				556872AA2A97BCD100502424 /* WasmConstExprGenerator.cpp */,
@@ -7764,6 +7776,8 @@
 				53F40E921D5A4AB30099A1B6 /* WasmOMGIRGenerator.h */,
 				5311BD481EA581E500525281 /* WasmOMGPlan.cpp */,
 				5311BD491EA581E500525281 /* WasmOMGPlan.h */,
+				E32D51A82C6D0FD600B013D1 /* WasmOpcodeCounter.cpp */,
+				E32D51A72C6D0FD600B013D1 /* WasmOpcodeCounter.h */,
 				53C6FEF01E8AFE0C00B18425 /* WasmOpcodeOrigin.cpp */,
 				53C6FEEE1E8ADFA900B18425 /* WasmOpcodeOrigin.h */,
 				E39D8B2C23021E1E00265852 /* WasmOperations.cpp */,
@@ -7781,6 +7795,8 @@
 				641DF80D2890C7D500F9895F /* WasmSIMDOpcodes.h */,
 				14AB0C92231747B7000250BC /* WasmSlowPaths.cpp */,
 				14AB0C93231747B7000250BC /* WasmSlowPaths.h */,
+				E32D51AA2C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.cpp */,
+				E32D51A92C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.h */,
 				E33BBE0725BFA03C0053690F /* WasmStreamingCompiler.cpp */,
 				E33BBE0825BFA03C0053690F /* WasmStreamingCompiler.h */,
 				E3A0531921342B670022EC14 /* WasmStreamingParser.cpp */,
@@ -11835,6 +11851,7 @@
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				E34D4FAA2984F25B00CE5F9F /* WasmCallsiteCollection.h in Headers */,
 				E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */,
+				E32D51AF2C6D0FF200B013D1 /* WasmCompilationContext.h in Headers */,
 				E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */,
 				556872AD2A97BCD100502424 /* WasmConstExprGenerator.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
@@ -11869,6 +11886,7 @@
 				ADD8FA461EB3079700DF542F /* WasmNameSectionParser.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmOMGIRGenerator.h in Headers */,
 				5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */,
+				E32D51B02C6D0FFC00B013D1 /* WasmOpcodeCounter.h in Headers */,
 				53C6FEEF1E8ADFA900B18425 /* WasmOpcodeOrigin.h in Headers */,
 				E39D8B2E23021E2600265852 /* WasmOperations.h in Headers */,
 				E3369129296EEBFE00324FD7 /* WasmOperationsInlines.h in Headers */,
@@ -11880,6 +11898,8 @@
 				E3A0531C21342B680022EC14 /* WasmSectionParser.h in Headers */,
 				53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */,
 				641DF80E2890C7D500F9895F /* WasmSIMDOpcodes.h in Headers */,
+				E32D51AE2C6D0FE900B013D1 /* WasmSlowPaths.h in Headers */,
+				E32D51B12C6D100300B013D1 /* WasmSourceMappingURLSectionParser.h in Headers */,
 				E33BBE0925BFA0410053690F /* WasmStreamingCompiler.h in Headers */,
 				E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */,
 				E3C73A9125BFA73B00EFE303 /* WasmStreamingPlan.h in Headers */,

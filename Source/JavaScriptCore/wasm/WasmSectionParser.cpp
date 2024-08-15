@@ -36,6 +36,7 @@
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
 #include "WasmSIMDOpcodes.h"
+#include "WasmSourceMappingURLSectionParser.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -1403,18 +1404,19 @@ auto SectionParser::parseCustom() -> PartialResult
         section.payload[byteNumber] = byte;
     }
 
-    Name nameName = { 'n', 'a', 'm', 'e' };
-    Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
-    if (section.name == nameName) {
+    if (WTF::Unicode::equal("name"_span, section.name.span())) {
         NameSectionParser nameSectionParser(section.payload, m_info);
         auto nameSection = nameSectionParser.parse();
         if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
         else
             dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
-    } else if (section.name == branchHintsName) {
+    } else if (WTF::Unicode::equal("metadata.code.branch_hint"_span, section.name.span())) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload, m_info);
         branchHintsSectionParser.parse();
+    } else if (WTF::Unicode::equal("sourceMappingURL"_span, section.name.span())) {
+        SourceMappingURLSectionParser sourceMappingURLSectionParser(section.payload, m_info);
+        sourceMappingURLSectionParser.parse();
     }
 
     m_info->customSections.append(WTFMove(section));
