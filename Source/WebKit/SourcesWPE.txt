@@ -223,6 +223,7 @@ UIProcess/Gamepad/libwpe/UIGamepadProviderLibWPE.cpp
 
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
+UIProcess/glib/DRMDevice.cpp @no-unify
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp
 UIProcess/glib/DisplayVBlankMonitorDRM.cpp

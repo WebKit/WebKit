@@ -29,6 +29,7 @@
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
+#include "DRMDevice.h"
 #include "LayerTreeContext.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -104,7 +105,7 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
             DMABufRendererBufferFormat format;
             format.usage = display.gtkEGLDisplay() ? DMABufRendererBufferFormat::Usage::Rendering : DMABufRendererBufferFormat::Usage::Mapping;
-            format.drmDevice = display.drmRenderNodeFile().utf8();
+            format.drmDevice = drmRenderNodeDevice().utf8();
             uint32_t fourcc = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
             char* endptr = nullptr;
             uint64_t modifier = tokens.size() > 1 ? g_ascii_strtoull(tokens[1].ascii().data(), &endptr, 16) : DRM_FORMAT_MOD_INVALID;
@@ -120,7 +121,7 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
     if (!display.gtkEGLDisplay()) {
         DMABufRendererBufferFormat format;
         format.usage = DMABufRendererBufferFormat::Usage::Mapping;
-        format.drmDevice = display.drmRenderNodeFile().utf8();
+        format.drmDevice = drmRenderNodeDevice().utf8();
         format.formats.append({ DRM_FORMAT_XRGB8888, { DRM_FORMAT_MOD_LINEAR } });
         format.formats.append({ DRM_FORMAT_ARGB8888, { DRM_FORMAT_MOD_LINEAR } });
         return { WTFMove(format) };
@@ -128,7 +129,7 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
 
     DMABufRendererBufferFormat format;
     format.usage = DMABufRendererBufferFormat::Usage::Rendering;
-    format.drmDevice = display.drmRenderNodeFile().utf8();
+    format.drmDevice = drmRenderNodeDevice().utf8();
     format.formats = display.dmabufFormats().map([](const auto& format) -> DMABufRendererBufferFormat::Format {
         return { format.fourcc, format.modifiers };
     });
@@ -422,7 +423,10 @@ void AcceleratedBackingStoreDMABuf::BufferEGLImage::release()
 #if USE(GBM)
 RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferGBM::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const WebCore::IntSize& size, DMABufRendererBufferFormat::Usage usage, uint32_t format, UnixFileDescriptor&& fd, uint32_t stride)
 {
-    auto* device = WebCore::DRMDeviceManager::singleton().mainGBMDeviceNode(WebCore::DRMDeviceManager::NodeType::Render);
+    auto& manager = WebCore::DRMDeviceManager::singleton();
+    if (!manager.isInitialized())
+        manager.initializeMainDevice(drmRenderNodeDevice());
+    auto* device = manager.mainGBMDeviceNode(WebCore::DRMDeviceManager::NodeType::Render);
     if (!device) {
         WTFLogAlways("Failed to get GBM device");
         return nullptr;

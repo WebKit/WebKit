@@ -83,15 +83,7 @@
 #include <EGL/eglext.h>
 #endif
 
-#if USE(LIBDRM)
-#include <xf86drm.h>
-#ifndef EGL_DRM_RENDER_NODE_FILE_EXT
-#define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
-#endif
-#endif
-
 #if USE(GBM)
-#include "DRMDeviceManager.h"
 #include <drm_fourcc.h>
 #endif
 
@@ -400,114 +392,6 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
         return s_eglDestroyImageKHR(m_eglDisplay, image);
     return false;
 }
-
-#if USE(LIBDRM)
-EGLDeviceEXT PlatformDisplay::eglDevice()
-{
-    if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
-        return nullptr;
-
-    if (!m_eglDisplayInitialized)
-        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
-
-    EGLDeviceEXT eglDevice;
-    if (eglQueryDisplayAttribEXT(m_eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
-        return eglDevice;
-
-    return nullptr;
-}
-
-const String& PlatformDisplay::drmDeviceFile()
-{
-    if (!m_drmDeviceFile.has_value()) {
-        if (EGLDeviceEXT device = eglDevice()) {
-            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm")) {
-                m_drmDeviceFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
-                return m_drmDeviceFile.value();
-            }
-        }
-        m_drmDeviceFile = String();
-    }
-
-    return m_drmDeviceFile.value();
-}
-
-static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
-{
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0)
-        return;
-
-    for (int i = 0; i < numDevices; ++i) {
-        if (!functor(devices[i]))
-            break;
-    }
-    drmFreeDevices(devices, numDevices);
-}
-
-static String drmFirstRenderNode()
-{
-    String renderNodeDeviceFile;
-    drmForeachDevice([&](drmDevice* device) {
-        if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
-            return true;
-
-        renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
-        return false;
-    });
-    return renderNodeDeviceFile;
-}
-
-static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
-{
-    if (primaryDeviceFile.isEmpty())
-        return drmFirstRenderNode();
-
-    String renderNodeDeviceFile;
-    drmForeachDevice([&](drmDevice* device) {
-        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
-            return true;
-
-        if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
-            renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
-            return false;
-        }
-
-        return true;
-    });
-    // If we fail to find a render node for the device file, just use the device file as render node.
-    return !renderNodeDeviceFile.isEmpty() ? renderNodeDeviceFile : primaryDeviceFile;
-}
-
-const String& PlatformDisplay::drmRenderNodeFile()
-{
-    if (!m_drmRenderNodeFile.has_value()) {
-        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
-        if (envDeviceFile && *envDeviceFile) {
-            m_drmRenderNodeFile = String::fromUTF8(envDeviceFile);
-            return m_drmRenderNodeFile.value();
-        }
-
-        if (EGLDeviceEXT device = eglDevice()) {
-            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node")) {
-                m_drmRenderNodeFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
-                return m_drmRenderNodeFile.value();
-            }
-
-            // If EGL_EXT_device_drm_render_node is not present, try to get the render node using DRM API.
-            m_drmRenderNodeFile = drmRenderNodeFromPrimaryDeviceFile(drmDeviceFile());
-        } else {
-            // If EGLDevice is not available, just get the first render node returned by DRM.
-            m_drmRenderNodeFile = drmFirstRenderNode();
-        }
-    }
-
-    return m_drmRenderNodeFile.value();
-}
-#endif // USE(LIBDRM)
 
 #if USE(GBM)
 const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()

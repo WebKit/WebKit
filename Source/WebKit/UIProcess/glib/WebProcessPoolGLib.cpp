@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
+#include "DRMDevice.h"
 #include "LegacyGlobalSettings.h"
 #include "MemoryPressureMonitor.h"
 #include "WebMemoryPressureHandler.h"
@@ -62,10 +63,6 @@
 #include <wpe/wpe-platform.h>
 #endif
 
-#if USE(GBM)
-#include <WebCore/DRMDeviceManager.h>
-#endif
-
 namespace WebKit {
 
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
@@ -88,17 +85,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if USE(GBM)
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    if (usingWPEPlatformAPI)
-        parameters.renderDeviceFile = String::fromUTF8(wpe_display_get_drm_render_node(wpe_display_get_primary()));
-    else
-        parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
-#else
-    parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
-#endif
-    auto& manager = WebCore::DRMDeviceManager::singleton();
-    if (!manager.isInitialized())
-        manager.initializeMainDevice(parameters.renderDeviceFile);
+    parameters.renderDeviceFile = drmRenderNodeDevice();
 #endif
 
 #if PLATFORM(GTK)

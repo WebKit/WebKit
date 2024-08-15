@@ -23,6 +23,7 @@
 #include "APIPageConfiguration.h"
 #include "BuildRevision.h"
 #include "DMABufRendererBufferMode.h"
+#include "DRMDevice.h"
 #include "DisplayVBlankMonitor.h"
 #include "WebKitError.h"
 #include "WebKitURISchemeRequestPrivate.h"
@@ -68,7 +69,6 @@
 #endif
 
 #if USE(GBM)
-#include <WebCore/DRMDeviceManager.h>
 #include <WebCore/PlatformDisplayGBM.h>
 #include <gbm.h>
 #endif
@@ -438,29 +438,15 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         }
     }
 
-#if USE(LIBDRM)
     if (policy != "never"_s) {
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-        String deviceFile, renderNode;
-        auto* webView = webkit_uri_scheme_request_get_web_view(request);
-        if (auto* wpeView = webkit_web_view_get_wpe_view(webView)) {
-            auto* display = wpe_view_get_display(wpeView);
-            deviceFile = String::fromUTF8(wpe_display_get_drm_device(display));
-            renderNode = String::fromUTF8(wpe_display_get_drm_render_node(display));
-        } else {
-            deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
-            renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
-        }
-#else
-        auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
-        auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
-#endif
+        auto deviceFile = drmPrimaryDevice();
         if (!deviceFile.isEmpty())
             addTableRow(displayObject, "DRM Device"_s, deviceFile);
+
+        auto renderNode = drmRenderNodeDevice();
         if (!renderNode.isEmpty())
             addTableRow(displayObject, "DRM Render Node"_s, renderNode);
     }
-#endif
 
     stopTable();
     jsonObject->setObject("Display Information"_s, WTFMove(displayObject));
@@ -503,12 +489,23 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     if (policy != "never"_s) {
         std::unique_ptr<PlatformDisplay> platformDisplay;
+#if USE(GBM)
+        UnixFileDescriptor fd;
+        struct gbm_device* device = nullptr;
+#endif
         if (usingDMABufRenderer) {
 #if USE(GBM)
             const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
             if (!disableGBM || !strcmp(disableGBM, "0")) {
-                if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
-                    platformDisplay = PlatformDisplayGBM::create(device);
+                auto renderNode = drmRenderNodeDevice();
+                if (!renderNode.isEmpty()) {
+                    fd = UnixFileDescriptor { open(renderNode.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+                    if (fd) {
+                        device = gbm_create_device(fd.value());
+                        if (device)
+                            platformDisplay = PlatformDisplayGBM::create(device);
+                    }
+                }
             }
 #endif
             if (!platformDisplay)
@@ -524,7 +521,6 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if USE(GBM)
                 if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
-                    auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
                     if (drmVersion* version = drmGetVersion(gbm_device_get_fd(device))) {
                         addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
                         drmFreeVersion(version);
@@ -553,6 +549,11 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
                 platformDisplay->clearSharingGLContext();
             }
         }
+
+#if USE(GBM)
+        if (device)
+            gbm_device_destroy(device);
+#endif
     }
 #endif
 

@@ -70,8 +70,8 @@
 #include <wtf/BlockPtr.h>
 #endif
 
-#if USE(GBM)
-#include <WebCore/PlatformDisplay.h>
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "DRMDevice.h"
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -202,7 +202,7 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 
 #if USE(GBM)
-    parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+    parameters.renderDeviceFile = drmRenderNodeDevice();
 #endif
 
     platformInitializeGPUProcessParameters(parameters);
