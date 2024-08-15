@@ -3943,6 +3943,13 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (auto* renderText = dynamicDowncast<RenderText>(renderer))
             setFullRepaintOnParentInlineBoxLayerIfNeeded(*renderText);
 
+        if (auto* inlineLevelBox = dynamicDowncast<RenderBlock>(renderer)) {
+            // FIXME: Move this to where the actual content change happens and call it on the parent IFC.
+            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && inlineLevelBox->normalChildNeedsLayout() && modernLineLayout();
+            if (shouldTriggerFullLayout)
+                modernLineLayout()->boxContentWillChange(*inlineLevelBox);
+        }
+
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
         if (shouldRunInFlowLayout)
             downcast<RenderElement>(renderer).layoutIfNeeded();

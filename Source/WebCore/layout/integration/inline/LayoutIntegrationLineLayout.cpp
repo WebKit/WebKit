@@ -275,6 +275,14 @@ bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyl
     return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.styleWillChange(*renderer.layoutBox(), newStyle);
 }
 
+bool LineLayout::boxContentWillChange(const RenderBox& renderer)
+{
+    if (!m_inlineContent || !renderer.layoutBox())
+        return false;
+
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.inlineLevelBoxContentWillChange(*renderer.layoutBox());
+}
+
 void LineLayout::updateOverflow()
 {
     InlineContentBuilder { flow(), m_boxTree }.updateLineOverflow(*m_inlineContent);

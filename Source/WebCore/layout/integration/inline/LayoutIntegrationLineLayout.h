@@ -88,6 +88,7 @@ public:
     bool updateTextContent(const RenderText&, size_t offset, int delta);
     bool rootStyleWillChange(const RenderBlockFlow&, const RenderStyle& newStyle);
     bool styleWillChange(const RenderElement&, const RenderStyle& newStyle);
+    bool boxContentWillChange(const RenderBox&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 

@@ -121,6 +121,13 @@ bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle
     return true;
 }
 
+bool InlineInvalidation::inlineLevelBoxContentWillChange(const Box&)
+{
+    // FIXME: Add support for partial layout when inline box content change may trigger size change.
+    m_inlineDamage.resetLayoutPosition();
+    return true;
+}
+
 struct DamagedContent {
     const Box& layoutBox;
     // Only text type of boxes may have offset. No offset also simply points to the end of the layout box.
