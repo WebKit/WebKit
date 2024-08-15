@@ -296,9 +296,6 @@ shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.12345678Z')}`, '1976-11-1
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.123456789Z')}`, '1976-11-18T15:23:30.123456789Z');
 // variant decimal separator
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30,12Z')}`, '1976-11-18T15:23:30.12Z');
-// variant minus sign
-shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.12\u221202:00')}`, '1976-11-18T17:23:30.12Z');
-shouldBe(`${Temporal.Instant.from('\u2212009999-11-18T15:23:30.12Z')}`, '-009999-11-18T15:23:30.12Z');
 // mixture of basic and extended format
 shouldBe(`${Temporal.Instant.from('19761118T15:23:30.1+00:00')}`, '1976-11-18T15:23:30.1Z');
 shouldBe(`${Temporal.Instant.from('1976-11-18T152330.1+00:00')}`, '1976-11-18T15:23:30.1Z');
@@ -320,6 +317,9 @@ shouldBe(`${Temporal.Instant.from('1976-11-18T15Z')}`, '1976-11-18T15:00:00Z');
 shouldBe(`${Temporal.Instant.from('1976-11-18T15:23:30.123456789Z[u-ca=discord]')}`, '1976-11-18T15:23:30.123456789Z');
 // no junk at end of string
 shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.123456789Zjunk'), RangeError);
+// non-ASCII minusSign is invalid
+shouldThrow(() => Temporal.Instant.from('1976-11-18T15:23:30.12\u221202:00'), RangeError);
+shouldThrow(() => Temporal.Instant.from('\u2212009999-11-18T15:23:30.12Z'), RangeError);
 
 // For convenience in several tests
 const epoch = new Temporal.Instant(0n);
