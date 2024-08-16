@@ -483,6 +483,88 @@ index 49eaec47c303c5d7ef368f330ec3009bd8bf8c9f..db8035477778364f59d8f18c138a8de8
          auto *decl = new TIntermDeclaration(var, &newExpr);
          pushStmt(*decl);
          mExprMap[&oldExpr] = new TIntermSymbol(var);
+diff --git a/src/gpu_info_util/SystemInfo_internal.h b/src/gpu_info_util/SystemInfo_internal.h
+index 231a4dcef279444e260217ee5a44ecbc2a182498..1a10a6396993260f8b09531487a78c8bf67019d9 100644
+--- a/src/gpu_info_util/SystemInfo_internal.h
++++ b/src/gpu_info_util/SystemInfo_internal.h
+@@ -36,13 +36,18 @@ bool GetSystemInfo_ios(SystemInfo *info);
+ // Helper to get the active GPU ID from a given Core Graphics display ID.
+ uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
+ 
++#if ANGLE_ENABLE_CGL
+ // Helper to get the active GPU ID from an OpenGL display mask.
+ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
++#endif
+ 
++#if ANGLE_ENABLE_METAL
+ // Get VendorID from metal device's registry ID
+ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
+ #endif
+ 
++#endif
++
+ }  // namespace angle
+ 
+ #endif  // GPU_INFO_UTIL_SYSTEM_INFO_INTERNAL_H_
+diff --git a/src/gpu_info_util/SystemInfo_macos.mm b/src/gpu_info_util/SystemInfo_macos.mm
+index 553c675683fa054c7577cb5199771d10114a07a6..4362f8973679123ea9859120d20981c370dfc4a5 100644
+--- a/src/gpu_info_util/SystemInfo_macos.mm
++++ b/src/gpu_info_util/SystemInfo_macos.mm
+@@ -13,7 +13,10 @@
+ #import <Metal/Metal.h>
+ 
+ #include "common/apple_platform_utils.h"
++
++#if ANGLE_ENABLE_CGL
+ #include "common/gl/cgl/FunctionsCGL.h"
++#endif
+ 
+ #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+ #    define HAVE_MAIN_PORT_DEFAULT 1
+@@ -27,9 +30,6 @@ namespace angle
+ namespace
+ {
+ 
+-constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
+-constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
+-
+ // Extracts one integer property from a registry entry.
+ bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *value)
+ {
+@@ -226,10 +226,14 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID)
+             return registryId;
+         }
+     }
+-
++#if ANGLE_ENABLE_CGL
+     return GetGpuIDFromOpenGLDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
++#else
++    return 0;
++#endif
+ }
+ 
++#if ANGLE_ENABLE_CGL
+ // Code from WebKit to query the GPU ID given an OpenGL display mask.
+ // https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
+ // Used with permission.
+@@ -237,6 +241,9 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
+ {
+     if (@available(macOS 10.13, *))
+     {
++        constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
++        constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
++
+         GLint numRenderers              = 0;
+         CGLRendererInfoObj rendererInfo = nullptr;
+         CGLError error = CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
+@@ -276,6 +283,7 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
+ 
+     return 0;
+ }
++#endif
+ 
+ // Get VendorID from metal device's registry ID
+ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
 index 3ec9be59df1847a4b9e5eef6cbf41f2414fb154a..e3bf9da1bde6124c3aed59de644e6ccca24ca31d 100644
 --- a/src/libANGLE/Context.cpp
