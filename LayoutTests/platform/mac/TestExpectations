@@ -2470,3 +2470,7 @@ http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]
 
 # webkit.org/b/278052 REGRESSION (282158@main): [macOS] inspector/console/webcore-logging.html is a flaky failure
 inspector/console/webcore-logging.html [ Pass Failure ]
+
+# webkit.org/b/278239 [macOS Release] 2 tests in media/video are flaky failure (failing in EWS)
+[ Release ] media/video-playsinline.html [ Pass Failure ]
+[ Release ] media/video-webkit-playsinline.html [ Pass Failure ]
