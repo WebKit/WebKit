@@ -40,7 +40,7 @@ class FileSystemEntry;
 class ScriptExecutionContext;
 
 class DOMFileSystem final : public ScriptWrappable, public RefCounted<DOMFileSystem> {
-    WTF_MAKE_ISO_ALLOCATED(DOMFileSystem);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMFileSystem);
 public:
     static Ref<FileSystemEntry> createEntryForFile(ScriptExecutionContext& context, Ref<File>&& file)
     {

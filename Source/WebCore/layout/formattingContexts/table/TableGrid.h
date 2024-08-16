@@ -29,9 +29,9 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutUnits.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMalloc.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ class ElementBox;
 
 // Cell represents a <td> or <th>. It can span multiple slots in the grid.
 class TableGridCell : public CanMakeWeakPtr<TableGridCell> {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(TableGridCell);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(TableGridCell);
 public:
     TableGridCell(const ElementBox&, SlotPosition, CellSpan);
 
@@ -81,7 +81,7 @@ private:
 };
 
 class TableGrid {
-    WTF_MAKE_ISO_ALLOCATED(TableGrid);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGrid);
 public:
     TableGrid();
 

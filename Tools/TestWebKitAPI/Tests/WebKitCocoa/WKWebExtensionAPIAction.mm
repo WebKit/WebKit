@@ -1282,13 +1282,13 @@ TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
         EXPECT_NOT_NULL(action);
     };
 
-    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.url, localhostRequest.URL);
-        EXPECT_NS_EQUAL(options.window, manager.get().defaultWindow);
-        EXPECT_EQ(options.index, 1ul);
-        EXPECT_EQ(options.active, YES);
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, localhostRequest.URL);
+        EXPECT_NS_EQUAL(configuration.window, manager.get().defaultWindow);
+        EXPECT_EQ(configuration.index, 1ul);
+        EXPECT_EQ(configuration.shouldBeActive, YES);
 
-        originalOpenNewTab(options, context, completionHandler);
+        originalOpenNewTab(configuration, context, completionHandler);
 
         [manager done];
     };
@@ -1324,31 +1324,31 @@ TEST(WKWebExtensionAPIAction, WindowOpenOpensInNewWindow)
 
 #if PLATFORM(MAC)
     auto originalOpenNewWindow = manager.get().internalDelegate.openNewWindow;
-    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
-        EXPECT_EQ(options.tabURLs.count, 1lu);
-        EXPECT_NS_EQUAL(options.tabURLs.firstObject, [NSURL URLWithString:@"https://example.com/"]);
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        EXPECT_EQ(configuration.tabURLs.count, 1lu);
+        EXPECT_NS_EQUAL(configuration.tabURLs.firstObject, [NSURL URLWithString:@"https://example.com/"]);
 
-        EXPECT_EQ(options.windowType, WKWebExtensionWindowTypePopup);
-        EXPECT_EQ(options.windowState, WKWebExtensionWindowStateNormal);
+        EXPECT_EQ(configuration.windowType, WKWebExtensionWindowTypePopup);
+        EXPECT_EQ(configuration.windowState, WKWebExtensionWindowStateNormal);
 
-        EXPECT_EQ(options.frame.size.width, 100);
-        EXPECT_EQ(options.frame.size.height, 50);
-        EXPECT_TRUE(std::isnan(options.frame.origin.x));
-        EXPECT_TRUE(std::isnan(options.frame.origin.y));
+        EXPECT_EQ(configuration.frame.size.width, 100);
+        EXPECT_EQ(configuration.frame.size.height, 50);
+        EXPECT_TRUE(std::isnan(configuration.frame.origin.x));
+        EXPECT_TRUE(std::isnan(configuration.frame.origin.y));
 
-        originalOpenNewWindow(options, context, completionHandler);
+        originalOpenNewWindow(configuration, context, completionHandler);
 
         [manager done];
     };
 #else
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
-    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"https://example.com/"]);
-        EXPECT_NS_EQUAL(options.window, manager.get().defaultWindow);
-        EXPECT_EQ(options.index, 1ul);
-        EXPECT_EQ(options.active, YES);
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"https://example.com/"]);
+        EXPECT_NS_EQUAL(configuration.window, manager.get().defaultWindow);
+        EXPECT_EQ(configuration.index, 1ul);
+        EXPECT_EQ(configuration.shouldBeActive, YES);
 
-        originalOpenNewTab(options, context, completionHandler);
+        originalOpenNewTab(configuration, context, completionHandler);
 
         [manager done];
     };

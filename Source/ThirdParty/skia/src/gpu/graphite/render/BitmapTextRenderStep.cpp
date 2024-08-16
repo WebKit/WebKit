@@ -9,6 +9,7 @@
 
 #include "include/core/SkM44.h"
 #include "include/gpu/graphite/Recorder.h"
+#include "src/gpu/AtlasTypes.h"
 #include "src/gpu/graphite/AtlasProvider.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/DrawParams.h"
@@ -30,14 +31,25 @@ namespace {
 // We are expecting to sample from up to 4 textures
 constexpr int kNumTextAtlasTextures = 4;
 
+std::string variant_name(skgpu::MaskFormat variant) {
+    switch (variant) {
+        case skgpu::MaskFormat::kA8:
+            return "mask";
+        case skgpu::MaskFormat::kA565:
+            return "LCD";
+        case skgpu::MaskFormat::kARGB:
+            return "color";
+        default:
+            SkUNREACHABLE;
+    }
+}
+
 }  // namespace
 
-BitmapTextRenderStep::BitmapTextRenderStep(bool isLCD)
+BitmapTextRenderStep::BitmapTextRenderStep(skgpu::MaskFormat variant)
         : RenderStep("BitmapTextRenderStep",
-                     "",
-                     isLCD ? Flags::kPerformsShading | Flags::kHasTextures | Flags::kEmitsCoverage |
-                             Flags::kLCDCoverage
-                           : Flags::kPerformsShading | Flags::kHasTextures | Flags::kEmitsCoverage,
+                     variant_name(variant),
+                     Flags(variant),
                      /*uniforms=*/{{"subRunDeviceMatrix", SkSLType::kFloat4x4},
                                    {"deviceToLocal"     , SkSLType::kFloat4x4},
                                    {"atlasSizeInv"      , SkSLType::kFloat2}},
@@ -58,6 +70,20 @@ BitmapTextRenderStep::BitmapTextRenderStep(bool isLCD)
                       {"maskFormat", SkSLType::kHalf}}) {}
 
 BitmapTextRenderStep::~BitmapTextRenderStep() {}
+
+SkEnumBitMask<RenderStep::Flags> BitmapTextRenderStep::Flags(skgpu::MaskFormat variant) {
+    switch (variant) {
+        case skgpu::MaskFormat::kA8:
+            return Flags::kPerformsShading | Flags::kHasTextures | Flags::kEmitsCoverage;
+        case skgpu::MaskFormat::kA565:
+            return Flags::kPerformsShading | Flags::kHasTextures | Flags::kEmitsCoverage |
+                   Flags::kLCDCoverage;
+        case skgpu::MaskFormat::kARGB:
+            return Flags::kPerformsShading | Flags::kHasTextures | Flags::kEmitsPrimitiveColor;
+        default:
+            SkUNREACHABLE;
+    }
+}
 
 std::string BitmapTextRenderStep::vertexSkSL() const {
     // Returns the body of a vertex function, which must define a float4 devPosition variable and
@@ -89,6 +115,19 @@ std::string BitmapTextRenderStep::texturesAndSamplersSkSL(
     }
 
     return result;
+}
+
+
+const char* BitmapTextRenderStep::fragmentColorSkSL() const {
+    // The returned SkSL must write its color into a 'half4 primitiveColor' variable
+    // (defined in the calling code).
+    static_assert(kNumTextAtlasTextures == 4);
+    return "primitiveColor = sample_indexed_atlas(textureCoords, "
+                                                 "int(texIndex), "
+                                                 "text_atlas_0, "
+                                                 "text_atlas_1, "
+                                                 "text_atlas_2, "
+                                                 "text_atlas_3);";
 }
 
 const char* BitmapTextRenderStep::fragmentCoverageSkSL() const {
@@ -141,11 +180,11 @@ void BitmapTextRenderStep::writeUniformsAndTextures(const DrawParams& params,
     const SkSamplingOptions kSamplingOptions(SkFilterMode::kNearest);
     constexpr SkTileMode kTileModes[2] = { SkTileMode::kClamp, SkTileMode::kClamp };
     for (unsigned int i = 0; i < numProxies; ++i) {
-        gatherer->add(kSamplingOptions, kTileModes, proxies[i]);
+        gatherer->add(proxies[i], {kSamplingOptions, kTileModes});
     }
     // If the atlas has less than 4 active proxies we still need to set up samplers for the shader.
     for (unsigned int i = numProxies; i < kNumTextAtlasTextures; ++i) {
-        gatherer->add(kSamplingOptions, kTileModes, proxies[0]);
+        gatherer->add(proxies[0], {kSamplingOptions, kTileModes});
     }
 }
 

@@ -48,7 +48,7 @@ struct SVGPropertyTraits<BlendMode> {
 };
 
 class SVGFEBlendElement final : public SVGFilterPrimitiveStandardAttributes {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEBlendElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEBlendElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEBlendElement);
 public:
     static Ref<SVGFEBlendElement> create(const QualifiedName&, Document&);

@@ -44,9 +44,10 @@
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
@@ -56,6 +57,8 @@ namespace WebKit {
 using namespace WebCore;
 
 #define REMOTE_LAYER_TREE_HOST_RELEASE_LOG(...) RELEASE_LOG(ViewState, __VA_ARGS__)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeHost);
 
 RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)

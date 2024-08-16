@@ -30,7 +30,7 @@ namespace WebCore {
 class RenderButton;
 
 class HTMLButtonElement final : public HTMLFormControlElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLButtonElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLButtonElement);
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);

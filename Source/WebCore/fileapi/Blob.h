@@ -40,7 +40,7 @@
 #include "URLKeepingBlobAlive.h"
 #include "URLRegistry.h"
 #include <variant>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace JSC {
@@ -66,7 +66,7 @@ template<typename> class ExceptionOr;
 using BlobPartVariant = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
 public:
     static Ref<Blob> create(ScriptExecutionContext* context)
     {

@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderScrollbar;
 
 class RenderScrollbarPart final : public RenderBlock {
-    WTF_MAKE_ISO_ALLOCATED(RenderScrollbarPart);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderScrollbarPart);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderScrollbarPart);
 public:
     RenderScrollbarPart(Document&, RenderStyle&&, RenderScrollbar* = nullptr, ScrollbarPart = NoPart);

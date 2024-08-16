@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ namespace WebKit {
 class WebPage;
 
 class WebFoundTextRangeController : private WebCore::PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebFoundTextRangeController);
     WTF_MAKE_NONCOPYABLE(WebFoundTextRangeController);
 
 public:

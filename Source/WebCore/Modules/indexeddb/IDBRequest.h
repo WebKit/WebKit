@@ -38,8 +38,8 @@
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -62,7 +62,7 @@ class IDBConnectionToServer;
 }
 
 class IDBRequest : public EventTarget, public IDBActiveDOMObject, public ThreadSafeRefCounted<IDBRequest> {
-    WTF_MAKE_ISO_ALLOCATED(IDBRequest);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBRequest);
 public:
     enum class NullResultType {
         Empty,

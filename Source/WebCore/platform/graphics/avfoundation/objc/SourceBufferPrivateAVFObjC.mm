@@ -374,10 +374,15 @@ Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&&
     return invokeAsync(m_appendQueue, [data = WTFMove(data), parser = m_parser, weakThis = ThreadSafeWeakPtr { *this }, abortSemaphore = m_abortSemaphore]() mutable {
         parser->setDidParseInitializationDataCallback([weakThis] (InitializationSegment&& segment) {
             ASSERT(isMainThread());
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->didReceiveInitializationSegment(WTFMove(segment));
+        });
+
+        parser->setDidParseVideoPlaybackConfigurationCallback([weakThis] (MediaPlayerVideoPlaybackConfiguration configuration) {
+            ASSERT(isMainThread());
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RefPtr player = protectedThis->player())
-                    player->setVideoPlaybackConfiguration(segment.videoPlaybackConfiguration);
-                protectedThis->didReceiveInitializationSegment(WTFMove(segment));
+                    player->setVideoPlaybackConfiguration(configuration);
             }
         });
 

@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
@@ -50,7 +51,7 @@ class GPUConnectionToWebProcess;
 class RemoteMediaRecorder;
 
 class RemoteMediaRecorderManager : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaRecorderManager);
 public:
     explicit RemoteMediaRecorderManager(GPUConnectionToWebProcess&);
     ~RemoteMediaRecorderManager();

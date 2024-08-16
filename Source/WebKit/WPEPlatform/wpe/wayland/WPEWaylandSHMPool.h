@@ -26,13 +26,13 @@
 #pragma once
 
 #include <wayland-client.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WPE {
 
 class WaylandSHMPool {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WaylandSHMPool);
 public:
     static std::unique_ptr<WaylandSHMPool> create(struct wl_shm*, size_t);
 

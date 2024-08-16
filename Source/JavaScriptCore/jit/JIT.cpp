@@ -38,6 +38,8 @@
 #include "JITOperations.h"
 #include "JITSizeStatistics.h"
 #include "JITThunks.h"
+#include "LLIntEntrypoint.h"
+#include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -788,8 +790,6 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
     jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
 
-    Label beginLabel(this);
-
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
@@ -841,36 +841,41 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
 #endif
 
     // If the number of parameters is 1, we never require arity fixup.
+    JumpList stackOverflowWithEntry;
     bool requiresArityFixup = m_unlinkedCodeBlock->numParameters() != 1;
     if (m_unlinkedCodeBlock->codeType() == FunctionCode && requiresArityFixup) {
         m_arityCheck = label();
-
-        emitFunctionPrologue();
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
-        jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
-        jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
-        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
-        store8(TrustedImm32(0), Address(regT0, CodeBlock::offsetOfShouldAlwaysBeInlined()));
 
         unsigned numberOfParameters = m_unlinkedCodeBlock->numParameters();
-        load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT1);
-        branch32(AboveOrEqual, regT1, TrustedImm32(numberOfParameters)).linkTo(beginLabel, this);
-
+        load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+        branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
         m_bytecodeIndex = BytecodeIndex(0);
+        getArityPadding(*m_vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
 
-        getArityPadding(*m_vm, numberOfParameters, regT1, regT0, regT2, regT3, stackOverflow);
-
-        move(regT0, GPRInfo::argumentGPR0);
-        nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
-
+#if CPU(X86_64)
+        pop(GPRInfo::argumentGPR1);
+#else
+        tagPtr(NoPtrTag, linkRegister);
+        move(linkRegister, GPRInfo::argumentGPR1);
+#endif
+        nearCallThunk(CodeLocationLabel { LLInt::arityFixup() });
+#if CPU(X86_64)
+        push(GPRInfo::argumentGPR1);
+#else
+        move(GPRInfo::argumentGPR1, linkRegister);
+        untagPtr(NoPtrTag, linkRegister);
+        validateUntaggedPtr(linkRegister, GPRInfo::argumentGPR0);
+#endif
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
 #endif
-
-        jump(beginLabel);
+        jump(entryLabel);
     } else
         m_arityCheck = entryLabel; // Never require arity fixup.
 
+    stackOverflowWithEntry.link(this);
+    emitFunctionPrologue();
     stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
     if (maxFrameExtentForSlowPathCall)

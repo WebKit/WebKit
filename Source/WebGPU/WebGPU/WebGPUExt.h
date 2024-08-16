@@ -49,6 +49,12 @@ typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
 
+typedef enum WGPUXREye {
+    WGPUXREye_None,
+    WGPUXREye_Left,
+    WGPUXREye_Right
+} WGPUXREye;
+
 typedef enum WGPUBufferBindingTypeExtended {
     WGPUBufferBindingType_Float3x2 = WGPUBufferBindingType_Force32 - 1,
     WGPUBufferBindingType_Float4x3 = WGPUBufferBindingType_Force32 - 2,
@@ -134,6 +140,13 @@ WGPU_EXPORT void wgpuExternalTextureUndestroy(WGPUExternalTexture texture) WGPU_
 WGPU_EXPORT void wgpuExternalTextureUpdate(WGPUExternalTexture texture, CVPixelBufferRef) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPULimits wgpuDefaultLimits() WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture) WGPU_FUNCTION_ATTRIBUTE;
+
+WGPU_EXPORT WGPUXRBinding wgpuDeviceCreateXRBinding(WGPUDevice device) WGPU_FUNCTION_ATTRIBUTE;
+
+WGPU_EXPORT WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXREye eye) WGPU_FUNCTION_ATTRIBUTE;
+
+WGPU_EXPORT WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter) WGPU_FUNCTION_ATTRIBUTE;
 
 #ifdef __cplusplus
 WGPU_EXPORT RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex);

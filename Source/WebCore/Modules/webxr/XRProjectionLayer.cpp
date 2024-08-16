@@ -30,18 +30,79 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(XRProjectionLayer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRProjectionLayer);
+
+XRProjectionLayer::XRProjectionLayer(ScriptExecutionContext& scriptExecutionContext, Ref<WebCore::WebGPU::XRProjectionLayer>&& backing)
+    : XRCompositionLayer(&scriptExecutionContext)
+    , m_backing(WTFMove(backing))
+{
+}
 
 XRProjectionLayer::~XRProjectionLayer() = default;
 
 void XRProjectionLayer::startFrame(const PlatformXR::FrameData&)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    m_backing->startFrame();
 }
 
 PlatformXR::Device::Layer XRProjectionLayer::endFrame()
 {
+    m_backing->endFrame();
+    return PlatformXR::Device::Layer {
+        .handle = 0,
+        .visible = true,
+        .views = { },
+    };
+}
+
+uint32_t XRProjectionLayer::textureWidth() const
+{
+    return m_backing->textureWidth();
+}
+
+uint32_t XRProjectionLayer::textureHeight() const
+{
+    return m_backing->textureHeight();
+}
+
+uint32_t XRProjectionLayer::textureArrayLength() const
+{
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    ASSERT(m_backing->textureArrayLength() == 1);
+#else
+    ASSERT(m_backing->textureArrayLength() == 2);
+#endif
+    return m_backing->textureArrayLength();
+}
+
+bool XRProjectionLayer::ignoreDepthValues() const
+{
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::optional<float> XRProjectionLayer::fixedFoveation() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void XRProjectionLayer::setFixedFoveation(std::optional<float>)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+WebXRRigidTransform* XRProjectionLayer::deltaPose() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void XRProjectionLayer::setDeltaPose(WebXRRigidTransform*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+WebCore::WebGPU::XRProjectionLayer& XRProjectionLayer::backing()
+{
+    return m_backing;
 }
 
 } // namespace WebCore

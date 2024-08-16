@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class WaveShaperNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_ISO_ALLOCATED(WaveShaperNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WaveShaperNode);
 public:
     static ExceptionOr<Ref<WaveShaperNode>> create(BaseAudioContext&, const WaveShaperOptions& = { });
 

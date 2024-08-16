@@ -76,36 +76,42 @@ public:
     void respondToReappliedEditing(EditCommandComposition*);
 
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
-    // and then remove this method after doing so.
-    std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::Session::ID&) const;
+    // and then remove these methods after doing so.
+    std::optional<SimpleRange> activeSessionRange() const;
+    void showSelection() const;
 
 private:
     struct CompositionState : CanMakeCheckedPtr<CompositionState> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CompositionState);
 
-        CompositionState(const Vector<Ref<WritingToolsCompositionCommand>>& unappliedCommands, const Vector<Ref<WritingToolsCompositionCommand>>& reappliedCommands)
+        CompositionState(const Vector<Ref<WritingToolsCompositionCommand>>& unappliedCommands, const Vector<Ref<WritingToolsCompositionCommand>>& reappliedCommands, const WritingTools::Session& session)
             : unappliedCommands(unappliedCommands)
             , reappliedCommands(reappliedCommands)
+            , session(session)
         {
         }
 
         // These two vectors should never have the same command in both of them.
         Vector<Ref<WritingToolsCompositionCommand>> unappliedCommands;
         Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
+        WritingTools::Session session;
+        std::optional<SimpleRange> currentRange;
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProofreadingState);
 
-        ProofreadingState(const Ref<Range>& contextRange, int replacementLocationOffset)
+        ProofreadingState(const Ref<Range>& contextRange, const WritingTools::Session& session, int replacementLocationOffset)
             : contextRange(contextRange)
+            , session(session)
             , replacementLocationOffset(replacementLocationOffset)
         {
         }
 
         Ref<Range> contextRange;
+        WritingTools::Session session;
         int replacementLocationOffset { 0 };
     };
 
@@ -139,7 +145,7 @@ private:
     static String plainText(const SimpleRange&);
 
     template<WritingTools::Session::Type Type>
-    StateFromSessionType<Type>::Value* stateForSession(const WritingTools::Session&);
+    StateFromSessionType<Type>::Value* currentState();
 
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
@@ -147,23 +153,26 @@ private:
     void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
 
-    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
+    void compositionSessionDidFinishReplacement();
+    void compositionSessionDidFinishReplacement(const CharacterRange&, const String&);
 
-    void showOriginalCompositionForSession(const WritingTools::Session&);
-    void showRewrittenCompositionForSession(const WritingTools::Session&);
-    void restartCompositionForSession(const WritingTools::Session&);
+    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
+
+    void showOriginalCompositionForSession();
+    void showRewrittenCompositionForSession();
+    void restartCompositionForSession();
 
     template<WritingTools::Session::Type Type>
-    void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
+    void writingToolsSessionDidReceiveAction(WritingTools::Action);
 
     template<WritingTools::Session::Type Type>
-    void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+    void didEndWritingToolsSession(bool accepted);
 
     RefPtr<Document> document() const;
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
 
-    HashMap<WritingTools::Session::ID, std::variant<std::monostate, ProofreadingState, CompositionState>> m_states;
+    std::variant<std::monostate, ProofreadingState, CompositionState> m_state;
 };
 
 } // namespace WebKit

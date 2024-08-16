@@ -7,6 +7,7 @@
 
 #include "tests/Test.h"
 
+#include "include/core/SkBlender.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/DrawList.h"
 #include "src/gpu/graphite/DrawPass.h"
@@ -19,7 +20,7 @@ namespace skgpu::graphite {
 DEF_GRAPHITE_TEST_FOR_ALL_CONTEXTS(DrawPassTestFailedDstCopy,
                                    reporter,
                                    context,
-                                   CtsEnforcement::kNextRelease) {
+                                   CtsEnforcement::kApiLevel_V) {
     const Caps* caps = context->priv().caps();
     std::unique_ptr<Recorder> recorder = context->makeRecorder();
 

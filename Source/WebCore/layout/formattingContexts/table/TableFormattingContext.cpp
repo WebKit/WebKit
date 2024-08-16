@@ -36,12 +36,12 @@
 #include "RenderStyleInlines.h"
 #include "TableFormattingConstraints.h"
 #include "TableFormattingState.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableFormattingContext);
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const ElementBox& formattingContextRoot, TableFormattingState& tableFormattingState)

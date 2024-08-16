@@ -45,9 +45,11 @@ namespace LayoutIntegration {
 class BoxGeometryUpdater {
 public:
     BoxGeometryUpdater(BoxTree&, Layout::LayoutState&);
+    BoxGeometryUpdater(Layout::LayoutState&);
 
     void setGeometriesForLayout();
     void setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode);
+    void updateGeometryAfterLayout(const Layout::ElementBox&);
 
     Layout::ConstraintsForInlineContent updateInlineContentConstraints();
     HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
@@ -57,6 +59,7 @@ private:
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateListMarkerDimensions(const RenderListMarker&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
+    void updateGeometryAfterLayout(const RenderElement&);
 
     BoxTree& boxTree() { return *m_boxTree; }
     const BoxTree& boxTree() const { return *m_boxTree; }

@@ -29,8 +29,8 @@
 
 /*!
  @abstract Represents the shortcut for the web extension, formatted according to web extension specification.
- @discussion This property provides a string representation of the shortcut, incorporating any customizations made to the `activationKey`
- and `modifierFlags` properties. It will be empty if no shortcut is defined for the command.
+ @discussion Provides a string representation of the shortcut, incorporating any customizations made to the ``activationKey``
+ and ``modifierFlags`` properties. It will be empty if no shortcut is defined for the command.
  */
 @property (nonatomic, readonly, copy) NSString *_shortcut;
 

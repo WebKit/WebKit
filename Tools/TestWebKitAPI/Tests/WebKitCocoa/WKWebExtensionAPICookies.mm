@@ -160,7 +160,7 @@ TEST(WKWebExtensionAPICookies, GetAllCookieStoresWithPrivateAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     [manager openNewWindowUsingPrivateBrowsing:YES];
 
@@ -336,7 +336,7 @@ TEST(WKWebExtensionAPICookies, GetAllIncognitoWithPrivateAccess)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.private.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     auto *privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
     auto *cookieStore = privateWindow.activeTab.webView.configuration.websiteDataStore.httpCookieStore;

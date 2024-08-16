@@ -47,7 +47,7 @@ class WebCodecsVideoDecoder
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoDecoder>
     , public ActiveDOMObject
     , public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(WebCodecsVideoDecoder);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoDecoder);
 public:
     ~WebCodecsVideoDecoder();
 

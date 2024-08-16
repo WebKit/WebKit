@@ -34,11 +34,15 @@
 #include "WebProcess.h"
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/NotificationController.h>
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageTesting);
 
 WebPageTesting::WebPageTesting(WebPage& page)
     : m_page(page)
@@ -110,6 +114,15 @@ void WebPageTesting::clearWheelEventTestMonitor()
 void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<void()>&& completionHandler)
 {
     protectedPage()->setTopContentInset(contentInset);
+    completionHandler();
+}
+
+void WebPageTesting::setPageScaleFactor(double scale, IntPoint origin, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return completionHandler();
+    page->setPageScaleFactor(scale, origin);
     completionHandler();
 }
 

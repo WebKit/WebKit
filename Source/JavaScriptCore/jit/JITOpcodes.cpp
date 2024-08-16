@@ -176,7 +176,7 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
         protoJSR.payloadGPR(),
         stubInfoGPR);
 
-    gen.generateBaselineDataICFastPath(*this);
+    gen.generateDataICFastPath(*this);
 #if USE(JSVALUE32_64)
     boxBoolean(resultJSR.payloadGPR(), resultJSR);
 #endif

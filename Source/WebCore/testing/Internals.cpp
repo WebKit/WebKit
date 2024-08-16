@@ -3724,16 +3724,6 @@ ExceptionOr<float> Internals::pageScaleFactor() const
     return document->page()->pageScaleFactor();
 }
 
-ExceptionOr<void> Internals::setPageScaleFactor(float scaleFactor, int x, int y)
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Exception { ExceptionCode::InvalidAccessError };
-
-    document->page()->setPageScaleFactor(scaleFactor, IntPoint(x, y));
-    return { };
-}
-
 ExceptionOr<void> Internals::setPageZoomFactor(float zoomFactor)
 {
     Document* document = contextDocument();

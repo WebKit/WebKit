@@ -299,6 +299,13 @@ enum class WebCore::WebGPU::VertexStepMode : uint8_t {
     Instance,
 };
 
+header: <WebCore/WebGPUXREye.h>
+enum class WebCore::WebGPU::XREye : uint8_t {
+    None,
+    Left,
+    Right,
+};
+
 header: <WebCore/WebGPUBufferUsage.h>
 enum class WebCore::WebGPU::BufferUsage : uint16_t {
     MapRead,

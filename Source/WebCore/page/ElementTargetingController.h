@@ -91,7 +91,7 @@ private:
 
     void recomputeAdjustedElementsIfNeeded();
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
     WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_documentsAffectedByVisibilityAdjustment;
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;

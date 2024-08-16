@@ -35,6 +35,7 @@
 #include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakRef.h>
 
@@ -48,7 +49,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 
 class RemoteSampleBufferDisplayLayer : public RefCounted<RemoteSampleBufferDisplayLayer>, public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayer);
 public:
     static RefPtr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();

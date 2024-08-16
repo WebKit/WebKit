@@ -8,20 +8,21 @@
 #ifndef skgpu_VulkanMemory_DEFINED
 #define skgpu_VulkanMemory_DEFINED
 
-#include "include/gpu/GpuTypes.h"
 #include "include/gpu/vk/VulkanMemoryAllocator.h"
-#include "include/gpu/vk/VulkanTypes.h"
-#include "include/private/base/SkTArray.h"
+#include "include/private/gpu/vk/SkiaVulkan.h"
 
 #include <functional>
 
 namespace skgpu {
+enum class Protected : bool;
+struct VulkanAlloc;
 
 namespace VulkanMemory {
     using CheckResult = bool(VkResult);
 
     bool AllocBufferMemory(VulkanMemoryAllocator*,
                            VkBuffer buffer,
+                           skgpu::Protected isProtected,
                            skgpu::VulkanMemoryAllocator::BufferUsage,
                            bool shouldPersistentlyMapCpuToGpu,
                            const std::function<CheckResult>&,

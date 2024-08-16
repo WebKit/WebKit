@@ -460,6 +460,19 @@ int main() {
     unset(CMAKE_REQUIRED_FLAGS)
 endif ()
 
+if (NOT WTF_PLATFORM_COCOA)
+  set(FLOAT16_TEST_SOURCE "
+int main() {
+  _Float16 f;
+
+  f += static_cast<_Float16>(1.0);
+
+  return 0;
+}
+  ")
+  check_cxx_source_compiles("${FLOAT16_TEST_SOURCE}" HAVE_FLOAT16)
+endif ()
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
     # Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78176.
     # This only manifests when executing 32-bit code on a 64-bit

@@ -58,11 +58,11 @@
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInImageElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLPlugInImageElement);
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document)
     : HTMLPlugInElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)

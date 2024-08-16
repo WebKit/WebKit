@@ -45,7 +45,7 @@ enum class Relation : uint8_t {
 };
 
 class HTMLAnchorElement : public HTMLElement, public URLDecomposition {
-    WTF_MAKE_ISO_ALLOCATED(HTMLAnchorElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAnchorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAnchorElement);
 public:
     static Ref<HTMLAnchorElement> create(Document&);
@@ -82,6 +82,8 @@ public:
     void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
+
+    Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) override;
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);

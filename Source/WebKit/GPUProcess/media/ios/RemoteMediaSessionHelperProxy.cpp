@@ -33,9 +33,12 @@
 #include "MediaPlaybackTargetContextSerialized.h"
 #include "RemoteMediaSessionHelperMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionHelperProxy);
 
 RemoteMediaSessionHelperProxy::RemoteMediaSessionHelperProxy(GPUConnectionToWebProcess& gpuConnection)
     : m_gpuConnection(gpuConnection)

@@ -1004,7 +1004,7 @@ static std::unique_ptr<Expression> optimize_intrinsic_call(const Context& contex
 
 std::unique_ptr<Expression> FunctionCall::clone(Position pos) const {
     return std::make_unique<FunctionCall>(pos, &this->type(), &this->function(),
-                                          this->arguments().clone());
+                                          this->arguments().clone(), this->stablePointer());
 }
 
 std::string FunctionCall::description(OperatorPrecedence) const {
@@ -1261,7 +1261,8 @@ std::unique_ptr<Expression> FunctionCall::Make(const Context& context,
         }
     }
 
-    return std::make_unique<FunctionCall>(pos, returnType, &function, std::move(arguments));
+    return std::make_unique<FunctionCall>(pos, returnType, &function, std::move(arguments),
+                                          /*stablePointer=*/nullptr);
 }
 
 }  // namespace SkSL

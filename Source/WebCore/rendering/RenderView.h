@@ -45,7 +45,7 @@ class LayoutState;
 }
 
 class RenderView final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderView);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderView);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderView);
 public:
     RenderView(Document&, RenderStyle&&);

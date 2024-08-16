@@ -48,13 +48,13 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <optional>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Permissions);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Permissions);
 
 Ref<Permissions> Permissions::create(NavigatorBase& navigator)
 {

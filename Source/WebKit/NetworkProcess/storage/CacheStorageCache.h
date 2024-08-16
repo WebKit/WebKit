@@ -30,6 +30,7 @@
 #include "NetworkCacheKey.h"
 #include <WebCore/RetrieveRecordsOptions.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -46,7 +47,7 @@ namespace WebKit {
 class CacheStorageManager;
 
 class CacheStorageCache : public CanMakeWeakPtr<CacheStorageCache>, public Identified<WebCore::DOMCacheIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CacheStorageCache);
 public:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
     ~CacheStorageCache();

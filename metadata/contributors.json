@@ -1078,6 +1078,13 @@
    },
    {
       "emails" : [
+         "ablackwood@apple.com"
+      ],
+      "github" : "morthaur",
+      "name" : "Austin Blackwood"
+   },
+   {
+      "emails" : [
          "ayumi_kojima@apple.com"
       ],
       "name" : "Ayumi Kojima",
@@ -2894,6 +2901,16 @@
       "name" : "Evan Stade",
       "nicks" : [
          "estade"
+      ]
+   },
+   {
+      "emails" : [
+         "com.idmsa@gmail.com"
+      ],
+      "github" : "iidmsa",
+      "name" : "Fady Farag",
+      "nicks" : [
+         "ffarag"
       ]
    },
    {
@@ -8278,7 +8295,6 @@
    },
    {
       "emails" : [
-         "z_ridouh@apple.com",
          "zakr@apple.com"
       ],
       "github" : "zakariaridouh",

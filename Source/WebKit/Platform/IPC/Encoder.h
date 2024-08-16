@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -42,7 +43,7 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 template<typename, typename> struct ArgumentCoder;
 
 class Encoder final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Encoder);
 public:
     Encoder(MessageName, uint64_t destinationID);
     ~Encoder();

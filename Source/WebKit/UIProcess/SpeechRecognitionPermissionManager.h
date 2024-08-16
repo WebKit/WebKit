@@ -27,6 +27,7 @@
 
 #include "SpeechRecognitionPermissionRequest.h"
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -43,7 +44,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class SpeechRecognitionPermissionManager : public CanMakeWeakPtr<SpeechRecognitionPermissionManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionPermissionManager);
 public:
     enum class CheckResult { Denied, Granted, Unknown };
     explicit SpeechRecognitionPermissionManager(WebPageProxy&);

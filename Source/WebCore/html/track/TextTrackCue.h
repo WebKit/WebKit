@@ -46,7 +46,7 @@ class TextTrack;
 class TextTrackCue;
 
 class TextTrackCueBox : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(TextTrackCueBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrackCueBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueBox);
 public:
     static Ref<TextTrackCueBox> create(Document&, TextTrackCue&);
@@ -66,7 +66,7 @@ private:
 };
 
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(TextTrackCue);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrackCue);
 public:
     static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
 

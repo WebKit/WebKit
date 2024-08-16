@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include <WebCore/AudioHardwareListener.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -43,7 +44,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 
 class RemoteAudioHardwareListenerProxy final : private WebCore::AudioHardwareListener::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioHardwareListenerProxy);
 public:
     RemoteAudioHardwareListenerProxy(GPUConnectionToWebProcess&, RemoteAudioHardwareListenerIdentifier&&);
     virtual ~RemoteAudioHardwareListenerProxy();

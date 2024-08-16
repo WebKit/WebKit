@@ -284,24 +284,24 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
     _webExtensionContext->setDeniedPermissionMatchPatterns(toImpl(deniedPermissionMatchPatterns));
 }
 
-- (BOOL)requestedOptionalAccessToAllHosts
+- (BOOL)hasRequestedOptionalAccessToAllHosts
 {
     return _webExtensionContext->requestedOptionalAccessToAllHosts();
 }
 
-- (void)setRequestedOptionalAccessToAllHosts:(BOOL)requested
+- (void)setHasRequestedOptionalAccessToAllHosts:(BOOL)requested
 {
     return _webExtensionContext->setRequestedOptionalAccessToAllHosts(requested);
 }
 
-- (BOOL)hasAccessInPrivateBrowsing
+- (BOOL)hasAccessToPrivateData
 {
-    return _webExtensionContext->hasAccessInPrivateBrowsing();
+    return _webExtensionContext->hasAccessToPrivateData();
 }
 
-- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
+- (void)setHasAccessToPrivateData:(BOOL)hasAccess
 {
-    return _webExtensionContext->setHasAccessInPrivateBrowsing(hasAccess);
+    return _webExtensionContext->setHasAccessToPrivateData(hasAccess);
 }
 
 static inline NSSet<WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionContext::PermissionsMap::KeysConstIteratorRange& permissions)
@@ -789,9 +789,6 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 
     OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 
-    if (properties & WKWebExtensionTabChangedPropertiesAudible)
-        result.add(WebKit::WebExtensionTab::ChangedProperties::Audible);
-
     if (properties & WKWebExtensionTabChangedPropertiesLoading)
         result.add(WebKit::WebExtensionTab::ChangedProperties::Loading);
 
@@ -800,6 +797,9 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 
     if (properties & WKWebExtensionTabChangedPropertiesPinned)
         result.add(WebKit::WebExtensionTab::ChangedProperties::Pinned);
+
+    if (properties & WKWebExtensionTabChangedPropertiesPlayingAudio)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::PlayingAudio);
 
     if (properties & WKWebExtensionTabChangedPropertiesReaderMode)
         result.add(WebKit::WebExtensionTab::ChangedProperties::ReaderMode);
@@ -971,21 +971,21 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 {
 }
 
-- (BOOL)requestedOptionalAccessToAllHosts
+- (BOOL)hasRequestedOptionalAccessToAllHosts
 {
     return NO;
 }
 
-- (void)setRequestedOptionalAccessToAllHosts:(BOOL)requested
+- (void)setHasRequestedOptionalAccessToAllHosts:(BOOL)requested
 {
 }
 
-- (BOOL)hasAccessInPrivateBrowsing
+- (BOOL)hasAccessToPrivateData
 {
     return NO;
 }
 
-- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
+- (void)setHasAccessToPrivateData:(BOOL)hasAccess
 {
 }
 

@@ -2,6 +2,88 @@ Skia Graphics Release Notes
 
 This file includes a list of high level updates for each milestone release.
 
+Milestone 128
+-------------
+  * SkSL now properly reports an error if user code includes various GLSL reserved keywords.
+    Previously, Skia would correctly reject keywords that were included in "The OpenGL ES
+    Shading Language, Version 1.00," but did not detect reserved keywords added in more modern
+    GLSL versions. Instead, Skia would allow such code to compile during the construction of a
+    runtime effect, but actually rendering the effect using a modern version of OpenGL would
+    silently fail (or assert) due to the presence of the reserved name in the the code.
+
+    Examples of reserved names which SkSL will now reject include `dmat3x3`, `atomic_uint`,
+    `isampler2D`, or `imageCubeArray`.
+
+    For a more thorough list of reserved keywords, see the "3.6 Keywords" section of the
+    OpenGL Shading Language documentation.
+  * The following symbols (and their files) have been deleted in favor of their
+    GPU-backend-agnostic form:
+     - `GrVkBackendContext` -> `skgpu::VulkanBackendContext`
+     - `GrVkExtensions` -> `skgpu::VulkanExtensions`
+     - `GrVkMemoryAllocator` = `skgpu::VulkanMemoryAllocator`
+     - `GrVkBackendMemory` = `skgpu::VulkanBackendMemory`
+     - `GrVkAlloc` = `skgpu::VulkanAlloc`
+     - `GrVkYcbcrConversionInfo` = `skgpu::VulkanYcbcrConversionInfo`
+     - `GrVkGetProc` = `skgpu::VulkanGetProc`
+  * The Metal-specific constructors and methods on `skgpu::graphite::TextureInfo`,
+    `skgpu::graphite::BackendTexture`, `skgpu::graphite::BackendSemaphore` have been deprecated and
+    moved to be functions in `MtlGraphiteTypes.h`
+  * SkImage now has a method makeScaled(...) which returns a scaled version of
+    the image, retaining its original "domain"
+    - raster stays raster
+    - ganesh stays ganesh
+    - graphite stays graphite
+    - lazy images become raster (just like with makeSubset)
+
+* * *
+
+Milestone 127
+-------------
+  * SkSL now properly recognizes the types `uvec2`, `uvec3` or `uvec4`.
+
+    Unsigned types are not supported in Runtime Effects, as they did not exist in GLSL ES2; however,
+    SkSL should still recognize these typenames and reject them if they are used in a program.
+    That is, we should not allow `uvec3` to be used as a variable or function name. We will now properly
+    detect and reject this as an error.
+  * The following deprecated fields have been removed from `GrVkBackendContext`:
+     - `fMinAPIVersion`. Use `fMaxAPIVersion` instead.
+     - `fInstanceVersion`. Use `fMaxAPIVersion` instead.
+     - `fFeatures`. Use `fDeviceFeatures` or `fDeviceFeatures2` instead.
+     - `fOwnsInstanceAndDevice`. No replacement, as it had no effect.
+
+    `GrVkBackendContext` is now an alias for `skgpu::VulkanBackendContext`. Clients should use the latter, as the former will be eventually removed.
+  * SkShaderMaskFilters and SkTableMaskFilters have been deprecated. They will be removed entirely in an upcoming Skia release.
+
+* * *
+
+Milestone 126
+-------------
+  * Skia's internal array class (`skia_private::TArray<T>`) now protects its unused capacity when
+    [Address Sanitizer (ASAN)](https://clang.llvm.org/docs/AddressSanitizer.html) is enabled. Code which
+    inadvertently writes past the end of a Skia internal structure is now more likely to trigger an ASAN
+    error.
+  * `SkFloat2Bits` and `SkBits2Float` have been removed from the Skia public headers. These were always
+    private API (since they lived in `/include/private`) but they had leaked into some example code, and
+    tended to be available once a handful of Skia headers were #included.
+  * SkSL now allows the ++ and -- operators on vector and matrix variables.
+
+    Previously, attempting to use these operators on a vector or matrix would lead to an error. This was
+    a violation of the GLSL expression rules (5.9): "The arithmetic unary operators negate (-), post-
+    and pre-increment and decrement (-- and ++) operate on integer or floating-point values (including
+    vectors and matrices)."
+  * `SkScalarIsFinite`, `SkScalarsAreFinite`, and `SkScalarIsNaN` have been removed from the Skia API.
+    These calls can be replaced with the functionally-equivalent `std::isfinite` and `std::isnan`.
+  * Clients can explicitly make a Ganesh GL backend for iOS with
+    `GrGLInterfaces::MakeIOS` from `include/gpu/ganesh/gl/ios/GrGLMakeIOSInterface.h`
+  * Clients can explicitly make a Ganesh GL backend for Mac with
+    `GrGLInterfaces::MakeMac` from `include/gpu/ganesh/gl/mac/GrGLMakeMacInterface.h`
+  * The following headers have been relocated (notice "ganesh" in the filepath):
+     - include/gpu/gl/egl/GrGLMakeEGLInterface.h -> include/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.h
+     - include/gpu/gl/glx/GrGLMakeGLXInterface.h -> include/gpu/ganesh/gl/glx/GrGLMakeGLXInterface.h
+     - include/gpu/gl/epoxy/GrGLMakeEpoxyEGLInterface.h -> include/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.h
+
+* * *
+
 Milestone 125
 -------------
   * The size of the GPU memory cache budget can now be queried using member `maxBudgetedBytes` of `skgpu::graphite::Context` and `skgpu::graphite::Recorder`.

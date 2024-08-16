@@ -31,8 +31,11 @@
 #include "RemoteRenderBundleEncoderMessages.h"
 #include "RemoteRenderBundleProxy.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderBundleEncoderProxy);
 
 RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)

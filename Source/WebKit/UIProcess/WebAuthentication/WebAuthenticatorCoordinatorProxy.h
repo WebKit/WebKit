@@ -34,6 +34,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(WEB_AUTHN_AS_MODERN)
 OBJC_CLASS _WKASDelegate;
@@ -81,7 +82,7 @@ using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair
 using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
 
 class WebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebAuthenticatorCoordinatorProxy);
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
 public:
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);

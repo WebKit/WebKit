@@ -244,12 +244,14 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         if (hasSourceAttribute()) {
             if (!requestClassicScript(sourceAttributeValue()))
                 return false;
+            potentiallyBlockRendering();
         }
         break;
     }
     case ScriptType::Module: {
         if (!requestModuleScript(scriptStartPosition))
             return false;
+        potentiallyBlockRendering();
         break;
     }
     case ScriptType::ImportMap: {
@@ -265,6 +267,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         if (hasSourceAttribute()) {
             if (!requestImportMap(*frame, sourceAttributeValue()))
                 return false;
+            potentiallyBlockRendering();
         } else
             frame->script().setPendingImportMaps();
         break;
@@ -582,6 +585,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
 
 void ScriptElement::executePendingScript(PendingScript& pendingScript)
 {
+    unblockRendering();
     auto* loadableScript = pendingScript.loadableScript();
     RefPtr<Document> document { &element().document() };
     if (document->identifier() != m_preparationTimeDocumentIdentifier) {

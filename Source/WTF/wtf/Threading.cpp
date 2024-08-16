@@ -56,7 +56,14 @@
 #define USE_LIBPAS_THREAD_SUSPEND_LOCK 1
 #include <bmalloc/pas_thread_suspend_lock.h>
 #endif
+#if USE(TZONE_MALLOC)
+#if BUSE(TZONE)
+#include <bmalloc/TZoneHeapManager.h>
+#else
+#error USE(TZONE_MALLOC) requires BUSE(TZONE)
 #endif
+#endif // USE(TZONE_MALLOC)
+#endif // !USE(SYSTEM_MALLOC)
 
 namespace WTF {
 
@@ -495,6 +502,9 @@ void initialize()
     std::call_once(onceKey, [] {
         setPermissionsOfConfigPage();
         Config::initialize();
+#if USE(TZONE_MALLOC)
+        bmalloc::api::TZoneHeapManager::singleton(); // Force initialization.
+#endif
         Gigacage::ensureGigacage();
         Config::AssertNotFrozenScope assertScope;
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)

@@ -218,7 +218,7 @@ void BBQPlan::work(CompilationEffort effort)
     // Replace the LLInt interpreted entry callee. Note that we can do this after we publish our
     // callee because calling into the LLInt should still work.
     auto* jsEntrypointCallee = m_calleeGroup->m_jsEntrypointCallees.get(m_functionIndex);
-    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode && !static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->hasReplacement()) {
+    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JITLessJSEntrypointMode && !static_cast<JITLessJSEntrypointCallee*>(jsEntrypointCallee)->hasReplacement()) {
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
@@ -248,7 +248,7 @@ void BBQPlan::work(CompilationEffort effort)
             Locker locker { m_calleeGroup->m_lock };
             // Note that we can compile the same function with multiple memory modes, which can cause this
             // race. That's fine, both stubs should do the same thing.
-            static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
+            static_cast<JITLessJSEntrypointCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
 
             auto result = m_jsToWasmInternalFunctions.add(m_functionIndex, std::tuple { WTFMove(callee), WTFMove(linkBuffer), WTFMove(jsToWasmInternalFunction) });
             ASSERT_UNUSED(result, result.isNewEntry);

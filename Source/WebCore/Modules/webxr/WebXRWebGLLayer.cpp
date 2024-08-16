@@ -42,12 +42,12 @@
 #include "WebXRView.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRWebGLLayer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRWebGLLayer);
 
 // Arbitrary value for minimum framebuffer scaling.
 // Below this threshold the resulting framebuffer would be too small to see.

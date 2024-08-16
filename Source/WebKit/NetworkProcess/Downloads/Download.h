@@ -37,10 +37,11 @@
 #include <pal/SessionID.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-OBJC_CLASS WKDownloadProgress;
+OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
 
@@ -70,7 +71,8 @@ class NetworkSession;
 class WebPage;
 
 class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download> {
-    WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Download);
+    WTF_MAKE_NONCOPYABLE(Download);
 public:
     Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
@@ -124,7 +126,11 @@ private:
     RefPtr<NetworkDataTask> m_download;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
-    RetainPtr<WKDownloadProgress> m_progress;
+    RetainPtr<NSProgress> m_progress;
+#endif
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    RetainPtr<NSData> m_bookmarkData;
+    RetainPtr<NSURL> m_bookmarkURL;
 #endif
     PAL::SessionID m_sessionID;
     bool m_hasReceivedData { false };

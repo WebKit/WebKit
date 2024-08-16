@@ -36,11 +36,16 @@ bool GetSystemInfo_ios(SystemInfo *info);
 // Helper to get the active GPU ID from a given Core Graphics display ID.
 uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
 
+#if ANGLE_ENABLE_CGL
 // Helper to get the active GPU ID from an OpenGL display mask.
 uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
+#endif
 
+#if ANGLE_ENABLE_METAL
 // Get VendorID from metal device's registry ID
 VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
+#endif
+
 #endif
 
 }  // namespace angle

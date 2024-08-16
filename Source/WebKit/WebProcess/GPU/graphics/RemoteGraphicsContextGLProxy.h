@@ -67,7 +67,7 @@ public:
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didClose(IPC::Connection&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final { }
 
     // WebCore::GraphicsContextGL overrides.
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
@@ -370,7 +370,7 @@ public:
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
     bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void enableFoveation(GCGLuint) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    void enableFoveation(PlatformGLObject arg0) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
     void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
@@ -385,16 +385,15 @@ protected:
     bool isContextLost() const { return !m_streamConnection; }
     void markContextLost();
 
-    static inline Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return m_streamConnection->send(std::forward<T>(message), m_identifier, defaultSendTimeout);
+        return m_streamConnection->send(std::forward<T>(message), m_identifier);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return m_streamConnection->sendSync(std::forward<T>(message), m_identifier, defaultSendTimeout);
+        return m_streamConnection->sendSync(std::forward<T>(message), m_identifier);
     }
 
     GraphicsContextGLIdentifier m_identifier { GraphicsContextGLIdentifier::generate() };

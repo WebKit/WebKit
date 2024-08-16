@@ -39,6 +39,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -166,7 +167,7 @@ public:
         Storage::Timings storageTimings;
         bool wasSpeculativeLoad { false };
 
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(RetrieveInfo);
     };
     using RetrieveCompletionHandler = Function<void(std::unique_ptr<Entry>, const RetrieveInfo&)>;
     void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, RetrieveCompletionHandler&&);

@@ -76,6 +76,7 @@
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
+#import <WebCore/ImmediateActionStage.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>

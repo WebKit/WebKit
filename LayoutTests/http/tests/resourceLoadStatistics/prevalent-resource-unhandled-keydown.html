@@ -36,11 +36,12 @@ onload = function() {
                     });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
-                    await testRunner.statisticsProcessStatisticsAndDataRecords();
 
                     debug("Simulate an unhandled user key press.");
                     if (window.eventSender)
                         eventSender.keyDown("a", ["metaKey"]);
+
+                    await testRunner.statisticsProcessStatisticsAndDataRecords();
                 });
             });
         });

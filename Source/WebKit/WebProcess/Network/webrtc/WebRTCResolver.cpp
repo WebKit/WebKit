@@ -32,8 +32,11 @@
 #include "LibWebRTCSocketFactory.h"
 #include <WebCore/LibWebRTCProvider.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCResolver);
 
 WebRTCResolver::WebRTCResolver(LibWebRTCSocketFactory& socketFactory, LibWebRTCResolverIdentifier identifier)
     : m_socketFactory(socketFactory)

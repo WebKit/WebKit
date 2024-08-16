@@ -27,11 +27,13 @@
   if (window.internals) {
     window.internals.settings.setVisualViewportEnabled(false);
     window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-    window.internals.setPageScaleFactor(0.5, 0, 0);
+  }
+  async function runTest() {
+    await window.testRunner.setPageScaleFactor(0.5, 0, 0);
   }
 </script>
 </head>
-<body>
+<body onload="runTest();">
   On success, the blue reference box should be invisible (covered by the fixed box).
   <div class="reference"></div>
   <div class="fixed"></div>

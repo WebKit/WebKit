@@ -62,6 +62,8 @@
 		075A9CF526177218006DFA3A /* MediaSessionCoordinatorTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */; };
 		076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076E507E1F45031E006E9F5A /* Logging.cpp */; };
 		077A5AF3230638A600A7105C /* AccessibilityTestPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */; };
+		07843EC22C652A3E00452A9B /* WebViewSnapshot.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07843EC12C652A3E00452A9B /* WebViewSnapshot.mm */; };
+		07843EE62C664B2C00452A9B /* checkered-background.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07843EE52C664A3400452A9B /* checkered-background.html */; };
 		0794742D25CB33FD00C597EB /* media-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EB /* media-remote.html */; };
 		0794742D25CB33FD00C597EC /* webrtc-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EC /* webrtc-remote.html */; };
 		0794742D25CB33FD00C597ED /* webrtc-remote-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */; };
@@ -1582,6 +1584,7 @@
 				F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */,
 				2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */,
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
+				07843EE62C664B2C00452A9B /* checkered-background.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
 				F4C3F2AB2C4488730029A47D /* click-targets.html in Copy Resources */,
 				839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */,
@@ -2070,6 +2073,8 @@
 		075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionCoordinatorTest.mm; sourceTree = "<group>"; };
 		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
 		076E507E1F45031E006E9F5A /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
+		07843EC12C652A3E00452A9B /* WebViewSnapshot.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewSnapshot.mm; sourceTree = "<group>"; };
+		07843EE52C664A3400452A9B /* checkered-background.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "checkered-background.html"; sourceTree = "<group>"; };
 		0794740C25CA0BDE00C597EB /* MediaSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSession.mm; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EB /* media-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "media-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EC /* webrtc-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote.html"; sourceTree = "<group>"; };
@@ -5790,6 +5795,7 @@
 				37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */,
 				51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */,
 				5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */,
+				07843EC12C652A3E00452A9B /* WebViewSnapshot.mm */,
 				CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */,
 				1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */,
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
@@ -5809,6 +5815,7 @@
 				F42BD7D8245CC4E6001E207A /* attributedStringNewlineAtEndOfDocument.html */,
 				7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */,
 				26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */,
+				07843EE52C664A3400452A9B /* checkered-background.html */,
 				5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */,
 				7AEAD47D1E20114E00416EFE /* CrossPartitionFileSchemeAccess.html */,
 				C07E6CB113FD738A0038B22B /* devicePixelRatio.html */,
@@ -6995,6 +7002,7 @@
 				7CCE7ED61A411A7E00447C4C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
 				51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */,
 				5C7C74CB1FB529BA002F9ABE /* WebViewScheduleInRunLoop.mm in Sources */,
+				07843EC22C652A3E00452A9B /* WebViewSnapshot.mm in Sources */,
 				7CCE7F1B1A411AE600447C4C /* WillLoad.cpp in Sources */,
 				7CCE7ED71A411A7E00447C4C /* WillPerformClientRedirectToURLCrash.mm in Sources */,
 				7CCE7F1C1A411AE600447C4C /* WillSendSubmitEvent.cpp in Sources */,

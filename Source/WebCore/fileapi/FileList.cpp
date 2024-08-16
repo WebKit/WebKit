@@ -26,11 +26,11 @@
 #include "config.h"
 #include "FileList.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FileList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileList);
 
 File* FileList::item(unsigned index) const
 {

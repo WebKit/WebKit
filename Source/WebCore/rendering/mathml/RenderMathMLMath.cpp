@@ -33,13 +33,13 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderStyleInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLMath);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLMath, element, WTFMove(style))

@@ -47,10 +47,6 @@
 #include "ProcessProviderLibWPE.h"
 #endif
 
-#if !USE(SYSTEM_MALLOC) && OS(LINUX)
-#include <bmalloc/valgrind.h>
-#endif
-
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
@@ -93,34 +89,6 @@ static int connectionOptions()
     // an extra subprocess, WebKit won't notice when its child process crashes. We can ensure it
     // gets leaked into only the correct subprocess by using g_subprocess_launcher_take_fd() later.
     return IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer;
-}
-
-static bool isSandboxEnabled(const ProcessLauncher::LaunchOptions& launchOptions)
-{
-#if !USE(SYSTEM_MALLOC)
-    if (RUNNING_ON_VALGRIND)
-        return false;
-#endif
-
-    if (const char* sandboxEnv = g_getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {
-        if (!strcmp(sandboxEnv, "1"))
-            return false;
-    }
-
-#if !ENABLE(2022_GLIB_API)
-    if (const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX")) {
-        if (!strcmp(sandboxEnv, "1"))
-            return true;
-
-        static bool once = false;
-        if (!once) {
-            g_warning("WEBKIT_FORCE_SANDBOX no longer allows disabling the sandbox. Use WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 instead.");
-            once = true;
-        }
-    }
-#endif
-
-    return launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 }
 
 void ProcessLauncher::launchProcess()
@@ -248,7 +216,7 @@ void ProcessLauncher::launchProcess()
     GRefPtr<GSubprocess> process;
 
 #if OS(LINUX)
-    bool sandboxEnabled = isSandboxEnabled(m_launchOptions);
+    bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
     if (sandboxEnabled && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitSocketPair.client, pidSocketPair.client, &error.outPtr());

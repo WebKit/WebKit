@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/AudioSession.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -52,7 +53,7 @@ class WebProcessProxy;
 
 class AudioSessionRoutingArbitratorProxy
     : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionRoutingArbitratorProxy);
 public:
     AudioSessionRoutingArbitratorProxy(WebProcessProxy&);
     virtual ~AudioSessionRoutingArbitratorProxy();

@@ -29,7 +29,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Uint8Array.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 
 class PushMessageData final : public RefCounted<PushMessageData> {
-    WTF_MAKE_ISO_ALLOCATED(PushMessageData);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushMessageData);
 public:
     static Ref<PushMessageData> create(Vector<uint8_t>&& data) { return adoptRef(*new PushMessageData(WTFMove(data))); }
 

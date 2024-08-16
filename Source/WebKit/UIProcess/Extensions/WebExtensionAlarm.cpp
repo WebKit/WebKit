@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebExtensionAlarm.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -33,6 +34,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionAlarm);
 
 void WebExtensionAlarm::schedule()
 {

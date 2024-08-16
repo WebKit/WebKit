@@ -18,7 +18,6 @@ license(
 
 licenses(["notice"])
 
-# Note, we do not need exports_files_legacy() because this file is not synced into G3.
 exports_files(["LICENSE"])
 
 # All the mm files from the Skia library are rolled up to this objc library since cc_library
@@ -164,6 +163,20 @@ alias(
 ###
 
 alias(
+    name = "graphite_native_metal",
+    actual = "//src/gpu/graphite/mtl:graphite_native_metal",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "graphite_native_vulkan",
+    actual = "//src/gpu/graphite/vk:graphite_native_vulkan",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
     name = "bmp_decode_codec",
     actual = "//src/codec:bmp_decode",
     visibility = ["//visibility:public"],
@@ -270,8 +283,16 @@ alias(
 ###
 
 alias(
-    name = "skparagraph_harfbuzz_unicode",
-    actual = "//modules/skparagraph:skparagraph_harfbuzz_unicode",
+    name = "pdf_writer",
+    actual = "//src/pdf:pdf",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skparagraph_harfbuzz_skunicode",
+    actual = "//modules/skparagraph:skparagraph_harfbuzz_skunicode",
     visibility = ["//visibility:public"],
 )
 
@@ -311,9 +332,17 @@ alias(
 
 ###
 
+# Allows Skia to take an SVG in as an input
 alias(
     name = "svg_renderer",
     actual = "//modules/svg:svg_renderer",
+    visibility = ["//visibility:public"],
+)
+
+# Allows Skia to draw to an SVG
+alias(
+    name = "svg_writer",
+    actual = "//src/svg:svg",
     visibility = ["//visibility:public"],
 )
 

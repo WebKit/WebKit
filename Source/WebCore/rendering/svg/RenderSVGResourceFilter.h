@@ -27,14 +27,14 @@
 
 #include "RenderSVGResourcePaintServer.h"
 #include "SVGUnitTypes.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGFilterElement;
 
 class RenderSVGResourceFilter final : public RenderSVGResourcePaintServer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilter);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceFilter);
 
 public:
     RenderSVGResourceFilter(SVGElement&, RenderStyle&&);

@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=false", "--useWasmGC=false")
+//@ runWebAssemblySuite("--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
@@ -123,7 +123,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
             .GetLocal(1)
             .TableGrow(0)
         .End()
-      .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.grow expects fill value of type Externref got I32, in function at index 0 (evaluating 'new WebAssembly.Module")
+      .End().WebAssembly().get()), Error, `WebAssembly.Module doesn't validate: table.grow expects fill value of type (ref null extern) got I32, in function at index 0 (evaluating 'new WebAssembly.Module((new Builder())`)
 
 {
     const $1 = new WebAssembly.Instance(new WebAssembly.Module((new Builder())

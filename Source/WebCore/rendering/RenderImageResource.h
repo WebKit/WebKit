@@ -30,7 +30,7 @@
 #include "StyleImage.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class RenderElement;
 
 class RenderImageResource : public CanMakeCheckedPtr<RenderImageResource> {
     WTF_MAKE_NONCOPYABLE(RenderImageResource);
-    WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderImageResource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImageResource);
 public:
     RenderImageResource();

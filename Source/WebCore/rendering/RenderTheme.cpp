@@ -484,11 +484,15 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
         trackBounds.moveBy(-sliderBounds.location());
     }
 
+    double minimum = input.minimum();
+    double maximum = input.maximum();
+    double thumbPosition = 0;
+    if (maximum > minimum)
+        thumbPosition = (input.valueAsNumber() - minimum) / (maximum - minimum);
+
     Vector<double> tickRatios;
 #if ENABLE(DATALIST_ELEMENT)
     if (auto dataList = input.dataList()) {
-        double minimum = input.minimum();
-        double maximum = input.maximum();
 
         for (auto& optionElement : dataList->suggestions()) {
             auto optionValue = input.listOptionValueAsDouble(optionElement);
@@ -502,6 +506,7 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
 
     sliderTrackPart.setThumbSize(thumbSize);
     sliderTrackPart.setTrackBounds(trackBounds);
+    sliderTrackPart.setThumbPosition(thumbPosition);
     sliderTrackPart.setTickRatios(WTFMove(tickRatios));
 }
 

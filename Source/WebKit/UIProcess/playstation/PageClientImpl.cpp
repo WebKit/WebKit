@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"
@@ -41,6 +42,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageClientImpl);
 
 PageClientImpl::PageClientImpl(PlayStationWebView& view)
     : m_view(view)

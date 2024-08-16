@@ -45,7 +45,7 @@ namespace WebCore {
 class Node;
 
 class PointerEvent final : public MouseEvent {
-    WTF_MAKE_ISO_ALLOCATED(PointerEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
         PointerID pointerId { mousePointerID };
@@ -150,6 +150,19 @@ private:
         // https://www.w3.org/TR/pointerevents/#dom-pointerevent-pressure
         return isInActiveButtonsState ? 0.5 : 0;
     }
+
+    struct PointerEventTilt {
+        long tiltX;
+        long tiltY;
+    };
+
+    struct PointerEventAngle {
+        double altitudeAngle;
+        double azimuthAngle;
+    };
+
+    static PointerEventAngle angleFromTilt(long tiltX, long tiltY);
+    static PointerEventTilt tiltFromAngle(double altitudeAngle, double azimuthAngle);
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&, IsTrusted);

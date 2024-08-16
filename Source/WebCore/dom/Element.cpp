@@ -158,16 +158,16 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "markup.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Element);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Element);
 
 struct SameSizeAsElement : public ContainerNode {
     QualifiedName tagName;
@@ -2300,6 +2300,28 @@ ExplicitlySetAttrElementsMap* Element::explicitlySetAttrElementsMapIfExists() co
     return hasRareData() ? &elementRareData()->explicitlySetAttrElementsMap() : nullptr;
 }
 
+static RefPtr<Element> getElementByIdIncludingDisconnected(const Element& startElement, const AtomString& id)
+{
+    if (id.isEmpty())
+        return nullptr;
+
+    if (LIKELY(startElement.isInTreeScope()))
+        return startElement.treeScope().getElementById(id);
+
+    // https://html.spec.whatwg.org/#attr-associated-element
+    // Attr associated element lookup does not depend on whether the element
+    // is connected. However, the TreeScopeOrderedMap that is used for
+    // TreeScope::getElementById() only stores connected elements.
+    if (RefPtr root = startElement.rootElement()) {
+        for (auto& element : descendantsOfType<Element>(*root)) {
+            if (element.getIdAttribute() == id)
+                return const_cast<Element*>(&element);
+        }
+    }
+
+    return nullptr;
+}
+
 RefPtr<Element> Element::getElementAttribute(const QualifiedName& attributeName) const
 {
     ASSERT(isElementReflectionAttribute(document().settings(), attributeName));
@@ -2319,7 +2341,7 @@ RefPtr<Element> Element::getElementAttribute(const QualifiedName& attributeName)
     if (id.isNull())
         return nullptr;
 
-    return treeScope().getElementById(id);
+    return getElementByIdIncludingDisconnected(*this, id);
 }
 
 void Element::setElementAttribute(const QualifiedName& attributeName, Element* element)
@@ -2365,7 +2387,7 @@ std::optional<Vector<Ref<Element>>> Element::getElementsArrayAttribute(const Qua
 
     SpaceSplitString ids(getAttribute(attr), SpaceSplitString::ShouldFoldCase::No);
     return WTF::compactMap(ids, [&](auto& id) {
-        return treeScope().getElementById(id);
+        return getElementByIdIncludingDisconnected(*this, id);
     });
 }
 
@@ -2481,10 +2503,10 @@ bool Element::allowsDoubleTapGesture() const
 
 Style::Resolver& Element::styleResolver()
 {
-    if (auto* shadowRoot = containingShadowRoot())
-        return shadowRoot->styleScope().resolver();
+    if (RefPtr shadowRoot = containingShadowRoot())
+        return shadowRoot->checkedStyleScope()->resolver();
 
-    return document().styleScope().resolver();
+    return document().checkedStyleScope()->resolver();
 }
 
 Style::ResolvedStyle Element::resolveStyle(const Style::ResolutionContext& resolutionContext)
@@ -2494,14 +2516,14 @@ Style::ResolvedStyle Element::resolveStyle(const Style::ResolutionContext& resol
 
 void invalidateForSiblingCombinators(Element* sibling)
 {
-    for (; sibling; sibling = sibling->nextElementSibling()) {
-        if (sibling->styleIsAffectedByPreviousSibling())
-            sibling->invalidateStyleInternal();
-        if (sibling->descendantsAffectedByPreviousSibling()) {
-            for (RefPtr siblingChild = sibling->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
+    for (RefPtr element = sibling; element; element = element->nextElementSibling()) {
+        if (element->styleIsAffectedByPreviousSibling())
+            element->invalidateStyleInternal();
+        if (element->descendantsAffectedByPreviousSibling()) {
+            for (RefPtr siblingChild = element->firstElementChild(); siblingChild; siblingChild = siblingChild->nextElementSibling())
                 siblingChild->invalidateStyleForSubtreeInternal();
         }
-        if (!sibling->affectsNextSiblingElementStyle())
+        if (!element->affectsNextSiblingElementStyle())
             return;
     }
 }
@@ -3463,12 +3485,12 @@ CustomElementReactionQueue* Element::reactionQueue() const
 CustomElementDefaultARIA& Element::customElementDefaultARIA()
 {
     ASSERT(isPrecustomizedOrDefinedCustomElement());
-    auto* deafultARIA = elementRareData()->customElementDefaultARIA();
-    if (!deafultARIA) {
+    auto* defaultARIA = elementRareData()->customElementDefaultARIA();
+    if (!defaultARIA) {
         elementRareData()->setCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
-        deafultARIA = elementRareData()->customElementDefaultARIA();
+        defaultARIA = elementRareData()->customElementDefaultARIA();
     }
-    return *deafultARIA;
+    return *defaultARIA;
 }
 
 CheckedRef<CustomElementDefaultARIA> Element::checkedCustomElementDefaultARIA()
@@ -4442,7 +4464,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle() const
 const RenderStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (pseudoElementIdentifier) {
-        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
+        if (RefPtr pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
             return pseudoElement->renderOrDisplayContentsStyle();
 
         if (auto* style = renderOrDisplayContentsStyle()) {
@@ -4464,7 +4486,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     ASSERT(isConnected());
 
     Ref document = this->document();
-    document->styleScope().flushPendingUpdate();
+    document->checkedStyleScope()->flushPendingUpdate();
 
     bool isInDisplayNoneTree = false;
 

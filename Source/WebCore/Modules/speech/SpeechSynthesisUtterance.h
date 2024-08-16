@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisUtterance);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechSynthesisUtterance);
 public:
     using UtteranceCompletionHandler = Function<void(const SpeechSynthesisUtterance&)>;
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);

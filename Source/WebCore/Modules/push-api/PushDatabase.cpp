@@ -56,6 +56,9 @@
 
 namespace WebCore {
 
+// In the database, the state column in the SubscriptionSets table uses 0 for enabled and 1 for ignored.
+enum class SubscriptionSetsStateColumn { Enabled, Ignored };
+
 static constexpr ASCIILiteral pushDatabaseSchemaV1Statements[] = {
     "PRAGMA auto_vacuum=INCREMENTAL"_s,
 };
@@ -162,6 +165,16 @@ RemovedPushRecord RemovedPushRecord::isolatedCopy() const &
 RemovedPushRecord RemovedPushRecord::isolatedCopy() &&
 {
     return { identifier, WTFMove(topic).isolatedCopy(), WTFMove(serverVAPIDPublicKey) };
+}
+
+PushSubscriptionSetRecord PushSubscriptionSetRecord::isolatedCopy() const &
+{
+    return { identifier.isolatedCopy(), securityOrigin.isolatedCopy(), enabled };
+}
+
+PushSubscriptionSetRecord PushSubscriptionSetRecord::isolatedCopy() &&
+{
+    return { WTFMove(identifier).isolatedCopy(), WTFMove(securityOrigin).isolatedCopy(), enabled };
 }
 
 PushTopics PushTopics::isolatedCopy() const &
@@ -639,17 +652,41 @@ void PushDatabase::getTopics(CompletionHandler<void(PushTopics&&)>&& completionH
             return completeOnMainQueue(WTFMove(completionHandler), topics);
 
         while (sql->step() == SQLITE_ROW) {
-            switch (static_cast<SubscriptionSetState>(sql->columnInt(1))) {
-            case SubscriptionSetState::Enabled:
+            switch (static_cast<SubscriptionSetsStateColumn>(sql->columnInt(1))) {
+            case SubscriptionSetsStateColumn::Enabled:
                 topics.enabledTopics.append(sql->columnText(0));
                 break;
-            case SubscriptionSetState::Ignored:
+            case SubscriptionSetsStateColumn::Ignored:
                 topics.ignoredTopics.append(sql->columnText(0));
                 break;
             }
         }
 
         completeOnMainQueue(WTFMove(completionHandler), WTFMove(topics));
+    });
+}
+
+void PushDatabase::getPushSubscriptionSetRecords(CompletionHandler<void(Vector<PushSubscriptionSetRecord>&&)>&& completionHandler)
+{
+    dispatchOnWorkQueue([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        Vector<PushSubscriptionSetRecord> result;
+
+        auto sql = cachedStatementOnQueue("SELECT bundleID, pushPartition, dataStoreUUID, securityOrigin, state FROM SubscriptionSets"_s);
+        if (!sql)
+            return completeOnMainQueue(WTFMove(completionHandler), result);
+
+        while (sql->step() == SQLITE_ROW) {
+            PushSubscriptionSetIdentifier identifier {
+                .bundleIdentifier = sql->columnText(0),
+                .pushPartition = sql->columnText(1),
+                .dataStoreIdentifier = uuidFromSpan(sql->columnBlobAsSpan(2))
+            };
+            String securityOrigin = sql->columnText(3);
+            bool enabled = static_cast<SubscriptionSetsStateColumn>(sql->columnInt(4)) == SubscriptionSetsStateColumn::Enabled;
+            result.append(PushSubscriptionSetRecord { WTFMove(identifier), WTFMove(securityOrigin), enabled });
+        }
+
+        completeOnMainQueue(WTFMove(completionHandler), WTFMove(result));
     });
 }
 
@@ -803,6 +840,51 @@ void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSub
     });
 }
 
+void PushDatabase::setPushesEnabled(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, bool enabled, CompletionHandler<void(bool recordsChanged)>&& completionHandler)
+{
+    dispatchOnWorkQueue([this, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), enabled, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto scope = makeScopeExit([&completionHandler] {
+            completeOnMainQueue(WTFMove(completionHandler), false);
+        });
+
+        SQLiteTransaction transaction(m_db);
+        transaction.begin();
+
+        Vector<int64_t> subscriptionSetIDs;
+        auto newState = enabled ? SubscriptionSetsStateColumn::Enabled : SubscriptionSetsStateColumn::Ignored;
+
+        {
+            auto sql = bindStatementOnQueue(
+                "SELECT rowid, state "
+                "FROM SubscriptionSets "
+                "WHERE bundleID = ? AND pushPartition = ? AND dataStoreUUID = ?"_s,
+                bindSubscriptionSetParameters(subscriptionSetIdentifier));
+            if (!sql)
+                return;
+
+            while (sql->step() == SQLITE_ROW) {
+                auto currentState = static_cast<SubscriptionSetsStateColumn>(sql->columnInt(1));
+                if (currentState != newState)
+                    subscriptionSetIDs.append(sql->columnInt64(0));
+            }
+        }
+
+        if (subscriptionSetIDs.isEmpty())
+            return;
+
+        for (auto subscriptionSetID : subscriptionSetIDs) {
+            auto sql = bindStatementOnQueue("UPDATE SubscriptionSets SET state = ? WHERE rowid = ?"_s, static_cast<int>(newState), subscriptionSetID);
+            if (!sql || sql->step() != SQLITE_DONE)
+                return;
+        }
+
+        transaction.commit();
+
+        scope.release();
+        completeOnMainQueue(WTFMove(completionHandler), true);
+    });
+}
+
 void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin, bool enabled, CompletionHandler<void(bool recordsChanged)>&& completionHandler)
 {
     dispatchOnWorkQueue([this, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), securityOrigin = crossThreadCopy(securityOrigin), enabled, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -814,7 +896,7 @@ void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier
         transaction.begin();
 
         int64_t subscriptionSetID = 0;
-        auto newState = enabled ? SubscriptionSetState::Enabled : SubscriptionSetState::Ignored;
+        auto newState = enabled ? SubscriptionSetsStateColumn::Enabled : SubscriptionSetsStateColumn::Ignored;
 
         {
             auto sql = bindStatementOnQueue(
@@ -823,7 +905,7 @@ void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier
                 "WHERE bundleID = ? AND pushPartition = ? AND dataStoreUUID = ? AND securityOrigin = ?"_s,
                 bindSubscriptionSetParameters(subscriptionSetIdentifier),
                 securityOrigin);
-            if (!sql || sql->step() != SQLITE_ROW || static_cast<SubscriptionSetState>(sql->columnInt(1)) == newState)
+            if (!sql || sql->step() != SQLITE_ROW || static_cast<SubscriptionSetsStateColumn>(sql->columnInt(1)) == newState)
                 return;
 
             subscriptionSetID = sql->columnInt64(0);

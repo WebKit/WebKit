@@ -32,13 +32,14 @@
 #include <OleAcc.h>
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/Scrollbar.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebView;
 
 class WebPopupMenuProxyWin final : public CanMakeCheckedPtr<WebPopupMenuProxyWin>, public WebPopupMenuProxy, private WebCore::ScrollableArea {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPopupMenuProxyWin);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPopupMenuProxyWin);
 public:
     static Ref<WebPopupMenuProxyWin> create(WebView* webView, WebPopupMenuProxy::Client& client)

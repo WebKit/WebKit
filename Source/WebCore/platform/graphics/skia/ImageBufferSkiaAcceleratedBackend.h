@@ -29,7 +29,7 @@
 
 #include "ImageBuffer.h"
 #include "ImageBufferSkiaSurfaceBackend.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(NICOSIA)
 #include "NicosiaContentLayer.h"
@@ -44,7 +44,7 @@ class ImageBufferSkiaAcceleratedBackend final : public ImageBufferSkiaSurfaceBac
     , public Nicosia::ContentLayer::Client
 #endif
 {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferSkiaAcceleratedBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferSkiaAcceleratedBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferSkiaAcceleratedBackend);
 public:
     static std::unique_ptr<ImageBufferSkiaAcceleratedBackend> create(const Parameters&, const ImageBufferCreationContext&);

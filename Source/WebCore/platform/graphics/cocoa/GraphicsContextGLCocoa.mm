@@ -601,15 +601,15 @@ bool GraphicsContextGLCocoa::addFoveation(IntSize physicalSizeLeft, IntSize phys
     return m_rasterizationRateMap[PlatformXR::Layout::Shared];
 }
 
-void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
+void GraphicsContextGLCocoa::enableFoveation(PlatformGLObject rbo)
 {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
     if (!makeContextCurrent())
         return;
-    GL_BindMetalRasterizationRateMapANGLE(fbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
+    GL_BindMetalRasterizationRateMapANGLE(rbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
     GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
 #else
-    UNUSED_PARAM(fbo);
+    UNUSED_PARAM(rbo);
 #endif
 }
 

@@ -29,6 +29,7 @@
 
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #ifdef __OBJC__
 @interface NSObject (WebKitSecureCoding)
@@ -51,7 +52,7 @@ void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
 #ifdef __OBJC__
 
 class CoreIPCSecureCoding {
-WTF_MAKE_FAST_ALLOCATED;
+WTF_MAKE_TZONE_ALLOCATED(CoreIPCSecureCoding);
 public:
     CoreIPCSecureCoding(id);
     CoreIPCSecureCoding(const RetainPtr<NSObject<NSSecureCoding>>& object)

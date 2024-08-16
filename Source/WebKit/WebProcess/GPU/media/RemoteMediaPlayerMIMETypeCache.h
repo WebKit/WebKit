@@ -30,6 +30,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ namespace WebKit {
 class RemoteMediaPlayerManager;
 
 class RemoteMediaPlayerMIMETypeCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaPlayerMIMETypeCache);
 public:
     RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager&, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
     ~RemoteMediaPlayerMIMETypeCache() = default;

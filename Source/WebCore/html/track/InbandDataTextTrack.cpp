@@ -32,11 +32,11 @@
 #include "DataCue.h"
 #include "InbandTextTrackPrivate.h"
 #include "TextTrackList.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InbandDataTextTrack);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InbandDataTextTrack);
 
 inline InbandDataTextTrack::InbandDataTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, trackPrivate)

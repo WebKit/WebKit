@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
@@ -60,7 +61,7 @@ class SpeechRecognitionRemoteRealtimeMediaSource;
 class WebProcessProxy;
 
 class SpeechRecognitionRemoteRealtimeMediaSourceManager final : public IPC::MessageReceiver, public IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionRemoteRealtimeMediaSourceManager);
 public:
     explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(const WebProcessProxy&);
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);

@@ -28,6 +28,8 @@
 
 #if USE(UICONTEXTMENU)
 
+#import <wtf/TZoneMallocInlines.h>
+
 @interface UIContextMenuInteraction (SPI)
 - (void)_presentMenuAtLocation:(CGPoint)location;
 @end
@@ -79,6 +81,8 @@
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CompactContextMenuPresenter);
 
 CompactContextMenuPresenter::CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate> delegate)
     : m_rootView(rootView)

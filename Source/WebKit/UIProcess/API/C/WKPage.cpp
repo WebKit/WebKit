@@ -103,6 +103,7 @@
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #ifdef __BLOCKS__
 #include <Block.h>
@@ -2427,7 +2428,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 }
 
 class StateClient final : public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(StateClient);
 public:
     explicit StateClient(const WKPageStateClientBase* client)
     {
@@ -3285,5 +3286,16 @@ void WKPageSetTopContentInsetForTesting(WKPageRef pageRef, float contentInset, v
 
     pageForTesting->setTopContentInset(contentInset, [context, callback] {
         callback(context);
+    });
+}
+
+void WKPageSetPageScaleFactorForTesting(WKPageRef pageRef, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler)
+{
+    auto* pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(context);
+
+    pageForTesting->setPageScaleFactor(scaleFactor, toIntPoint(point), [context, completionHandler] {
+        completionHandler(context);
     });
 }

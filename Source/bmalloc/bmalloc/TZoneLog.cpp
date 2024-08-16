@@ -53,10 +53,10 @@ void TZoneLog::init()
     }
 }
 
-extern TZoneLog& TZoneLog::getInstance()
+extern TZoneLog& TZoneLog::singleton()
 {
     if (!theTZoneLog)
-        ensureInstance();
+        ensureSingleton();
     BASSERT(theTZoneLog);
     return *theTZoneLog;
 }
@@ -103,7 +103,7 @@ void TZoneLog::osLogWithLineBuffer(const char* format, va_list list)
 }
 #endif
 
-void TZoneLog::ensureInstance()
+void TZoneLog::ensureSingleton()
 {
     static std::once_flag onceFlag;
     std::call_once(

@@ -25,7 +25,7 @@
 namespace WebCore {
 
 class SVGFEDistantLightElement final : public SVGFELightElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEDistantLightElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEDistantLightElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEDistantLightElement);
 public:
     static Ref<SVGFEDistantLightElement> create(const QualifiedName&, Document&);

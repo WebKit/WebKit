@@ -186,9 +186,28 @@ static LayoutUnit removeBorderForInsetValue(LayoutUnit insetValue, BoxSide inset
     }
 }
 
+static LayoutSize offsetFromAncestorContainer(const RenderElement& descendantContainer, const RenderElement& ancestorContainer)
+{
+    LayoutSize offset;
+    LayoutPoint referencePoint;
+    CheckedPtr currentContainer = &descendantContainer;
+    do {
+        CheckedPtr nextContainer = currentContainer->container();
+        ASSERT(nextContainer); // This means we reached the top without finding container.
+        if (!nextContainer)
+            break;
+        LayoutSize currentOffset = currentContainer->offsetFromContainer(*nextContainer, referencePoint);
+        offset += currentOffset;
+        referencePoint.move(currentOffset);
+        currentContainer = WTFMove(nextContainer);
+    } while (currentContainer != &ancestorContainer);
+
+    return offset;
+}
+
 // This computes the top left location, physical width, and physical height of the specified
 // anchor element. The location is computed relative to the specified containing block.
-static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderBlock> containingBlock)
+static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const RenderBoxModelObject> anchorBox, const RenderBlock& containingBlock)
 {
     // Fragmented flows are a little tricky to deal with. One example of a fragmented
     // flow is a block anchor element that is "fragmented" or split across multiple columns
@@ -197,9 +216,6 @@ static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const Re
     // We also need to adjust the anchor's top left location to match that of the bounding box
     // instead of the first fragment.
     if (CheckedPtr fragmentedFlow = anchorBox->enclosingFragmentedFlow()) {
-        // Compute the location of the fragmented flow relative to the containing block.
-        LayoutPoint fragmentedFlowLocation { fragmentedFlow->localToContainerPoint({ }, &containingBlock.get()) };
-
         // Compute the bounding box of the fragments.
         // Location is relative to the fragmented flow.
         CheckedPtr anchorRenderBox = dynamicDowncast<RenderBox>(&anchorBox.get());
@@ -210,23 +226,26 @@ static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const Re
         unfragmentedBorderBox.moveBy(offsetRelativeToFragmentedFlow);
         auto fragmentsBoundingBox = fragmentedFlow->fragmentsBoundingBox(unfragmentedBorderBox);
 
-        // Compute the final location.
+        // Change the location to be relative to the anchor's containing block.
+        if (fragmentedFlow->isDescendantOf(&containingBlock))
+            fragmentsBoundingBox.move(offsetFromAncestorContainer(*fragmentedFlow, containingBlock));
+        else
+            fragmentsBoundingBox.move(-offsetFromAncestorContainer(containingBlock, *fragmentedFlow));
+
         // FIXME: The final location of the fragments bounding box is not correctly
         // computed in flipped writing modes (i.e. vertical-rl and horizontal-bt).
-        fragmentsBoundingBox.moveBy(fragmentedFlowLocation);
         return fragmentsBoundingBox;
     }
 
-    FloatPoint localPoint;
     auto anchorWidth = anchorBox->offsetWidth();
     auto anchorHeight = anchorBox->offsetHeight();
+    auto anchorLocation = LayoutPoint { offsetFromAncestorContainer(anchorBox, containingBlock) };
     if (CheckedPtr anchorRenderInline = dynamicDowncast<RenderInline>(&anchorBox.get())) {
-        // RenderInline objects do not automatically account for their offset in RenderObject::localToContainerPoint,
-        // so we incorporate this offset via the localPoint.
-        localPoint = anchorRenderInline->linesBoundingBox().location();
+        // RenderInline objects do not automatically account for their offset in offsetFromAncestorContainer,
+        // so we incorporate this offset here.
+        anchorLocation.moveBy(anchorRenderInline->linesBoundingBox().location());
     }
 
-    LayoutPoint anchorLocation { anchorBox->localToContainerPoint(localPoint, &containingBlock.get()) };
     return LayoutRect(anchorLocation, LayoutSize(anchorWidth, anchorHeight));
 }
 
@@ -346,29 +365,40 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
         return Length(0, LengthType::Fixed);
     Ref anchorPositionedElement = *builderState.element();
 
-    auto* anchorPositionedStateMap = builderState.cssToLengthConversionData().anchorPositionedStateMap();
-    if (!anchorPositionedStateMap)
+    // FIXME: Support pseudo-elements.
+    if (builderState.style().pseudoElementType() != PseudoId::None)
         return Length(0, LengthType::Fixed);
-    auto& anchorPositionedElementState = *anchorPositionedStateMap->ensure(anchorPositionedElement, [&] {
-        return WTF::makeUnique<AnchorPositionedElementState>();
+
+    // FIXME: Support animations and transitions.
+    if (builderState.style().hasAnimationsOrTransitions())
+        return Length(0, LengthType::Fixed);
+
+    // In-flow elements cannot be anchor-positioned.
+    // FIXME: Should attempt to resolve the fallback value.
+    if (!builderState.style().hasOutOfFlowPosition())
+        return Length(0, LengthType::Fixed);
+
+    auto& anchorPositionedStates = anchorPositionedElement->document().styleScope().anchorPositionedStates();
+    auto& anchorPositionedState = *anchorPositionedStates.ensure(anchorPositionedElement, [&] {
+        return WTF::makeUnique<AnchorPositionedState>();
     }).iterator->value.get();
 
     // If we are encountering this anchor() instance for the first time, then we need to collect
     // all the relevant anchor-name strings that are referenced in this anchor function,
     // including the references in the fallback value.
-    if (!anchorPositionedElementState.finishedCollectingAnchorNames)
-        anchorValue.collectAnchorNames(anchorPositionedElementState.anchorNames);
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FinishedCollectingAnchorNames)
+        anchorValue.collectAnchorNames(anchorPositionedState.anchorNames);
 
-    // An anchor() instance will be ready to be resolved when all anchor-name strings
+    // An anchor() instance will be ready to be resolved when all referenced anchor-names
     // have been mapped to an actual anchor element in the DOM tree. At that point, we
     // should also have layout information for the anchor-positioned element alongside
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
-    if (!anchorPositionedElementState.readyToBeResolved)
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FoundAnchors)
         return Length(0, LengthType::Fixed);
 
     // Anchor value may now be resolved using layout information
-    anchorPositionedElementState.hasBeenResolved = true;
+    anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
@@ -376,8 +406,8 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     String anchorString = anchorValue.anchorElementString();
     if (anchorString.isNull())
         anchorString = anchorPositionedRenderer->style().positionAnchor();
-    auto anchorElementIt = anchorPositionedElementState.anchorElements.find(anchorString);
-    if (anchorElementIt == anchorPositionedElementState.anchorElements.end()) {
+    auto anchorElementIt = anchorPositionedState.anchorElements.find(anchorString);
+    if (anchorElementIt == anchorPositionedState.anchorElements.end()) {
         // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         return Length(0, LengthType::Fixed);
@@ -398,6 +428,62 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
     return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+}
+
+static bool elementIsInContainingBlockChain(const RenderElement& element, const RenderElement& start)
+{
+    auto currentBlock = &start;
+    while ((currentBlock = currentBlock->containingBlock())) {
+        if (currentBlock == &element)
+            return true;
+    }
+    return false;
+}
+
+// See: https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
+static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<const Element> anchorPositionedElement)
+{
+    CheckedPtr anchorRenderer = anchorElement->renderer();
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorRenderer && anchorPositionedRenderer);
+    CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
+    ASSERT(containingBlock);
+
+    if (!elementIsInContainingBlockChain(*containingBlock, *anchorRenderer))
+        return false;
+
+    // FIXME: Implement the rest of https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element.
+    return true;
+}
+
+
+static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, Ref<const Element> anchorPositionedElement)
+{
+    auto& anchorsForAnchorName = anchorPositionedElement->document().styleScope().anchorsForAnchorName();
+    const auto& anchors = anchorsForAnchorName.get(anchorName);
+
+    // FIXME: These should iterate through the anchor targets in reverse DOM order.
+    for (auto anchor : makeReversedRange(anchors)) {
+        ASSERT(anchor->renderer());
+        if (isAcceptableAnchorElement(anchor.get(), anchorPositionedElement))
+            return anchor.get();
+    }
+
+    return { };
+}
+
+void AnchorPositionEvaluator::findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement)
+{
+    auto* anchorPositionedState = anchorPositionedElement->document().styleScope().anchorPositionedStates().get(anchorPositionedElement);
+    ASSERT(anchorPositionedState && anchorPositionedState->stage == AnchorPositionResolutionStage::FinishedCollectingAnchorNames);
+
+    for (auto& anchorName : anchorPositionedState->anchorNames) {
+        auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositionedElement);
+        if (anchor.has_value())
+            anchorPositionedState->anchorElements.add(anchorName, anchor->get());
+    }
+
+    anchorPositionedState->stage = AnchorPositionResolutionStage::FoundAnchors;
 }
 
 } // namespace WebCore::Style

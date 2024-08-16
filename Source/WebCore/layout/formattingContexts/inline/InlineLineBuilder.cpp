@@ -658,6 +658,9 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
 
+        if (inlineItem.isFloat() || inlineItem.isBox())
+            formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
+
         if (inlineItem.isFloat()) {
             lineCandidate.floatItem = &inlineItem;
             // This is a soft wrap opportunity, must be the only item in the list.
@@ -1159,7 +1162,6 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
 {
     ASSERT(!m_wrapOpportunityList.isEmpty());
     size_t numberOfInlineItemsOnLine = 0;
-    // FIXME: Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.
     size_t numberOfFloatsInRange = 0;
     // We might already have added floats. They shrink the available horizontal space for the line.
     // Let's just reuse what the line has at this point.
@@ -1170,7 +1172,9 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
             return 1;
     }
-    for (size_t index = layoutRange.startIndex() + numberOfInlineItemsOnLine; index < layoutRange.endIndex(); ++index) {
+
+    size_t index = layoutRange.startIndex() + numberOfInlineItemsOnLine;
+    for (; index < layoutRange.endIndex(); ++index) {
         auto& inlineItem = m_inlineItemList[index];
         if (inlineItem.isFloat()) {
             ++numberOfFloatsInRange;
@@ -1186,6 +1190,20 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
         if (&inlineItem == &lastInlineItemToAdd)
             break;
     }
+
+    // Remove floats that are outside of this "rebuild" range to ensure we don't add them twice.
+    auto unplaceFloatBox = [&](const Box& floatBox) -> bool {
+        m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+            return placedFloatItem.layoutBox() == &floatBox;
+        });
+        return layoutState().placedFloats().remove(floatBox);
+    };
+    for (; index < layoutRange.endIndex(); ++index) {
+        auto& inlineItem = m_inlineItemList[index];
+        if (inlineItem.isFloat() && unplaceFloatBox(inlineItem.layoutBox()))
+            break;
+    }
+
     return numberOfInlineItemsOnLine + numberOfFloatsInRange;
 }
 

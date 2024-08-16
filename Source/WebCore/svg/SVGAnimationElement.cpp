@@ -6,7 +6,7 @@
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,16 +40,16 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStringList.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimationElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimationElement);
 
 SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document& document)
     : SVGSMILElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
@@ -366,7 +366,7 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
         totalDistance += *distance;
         keyTimesForPaced.append(*distance);
     }
-    if (!totalDistance)
+    if (!std::isfinite(totalDistance) || !totalDistance)
         return;
 
     // Normalize.

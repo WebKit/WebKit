@@ -581,7 +581,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE TextBoxTrim
-#define FOR_EACH(CASE) CASE(None) CASE(Start) CASE(End) CASE(Both)
+#define FOR_EACH(CASE) CASE(None) CASE(TrimStart) CASE(TrimEnd) CASE(TrimBoth)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
@@ -2289,50 +2289,54 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(TextBoxEdgeType textBoxEdgeType)
+constexpr CSSValueID toCSSValueID(TextEdgeType textEdgeType)
 {
-    switch (textBoxEdgeType) {
-    case TextBoxEdgeType::Leading:
+    switch (textEdgeType) {
+    case TextEdgeType::Auto:
+        return CSSValueAuto;
+    case TextEdgeType::Leading:
         return CSSValueLeading;
-    case TextBoxEdgeType::Text:
+    case TextEdgeType::Text:
         return CSSValueText;
-    case TextBoxEdgeType::CapHeight:
+    case TextEdgeType::CapHeight:
         return CSSValueCap;
-    case TextBoxEdgeType::ExHeight:
+    case TextEdgeType::ExHeight:
         return CSSValueEx;
-    case TextBoxEdgeType::Alphabetic:
+    case TextEdgeType::Alphabetic:
         return CSSValueAlphabetic;
-    case TextBoxEdgeType::CJKIdeographic:
+    case TextEdgeType::CJKIdeographic:
         return CSSValueIdeographic;
-    case TextBoxEdgeType::CJKIdeographicInk:
+    case TextEdgeType::CJKIdeographicInk:
         return CSSValueIdeographicInk;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr TextBoxEdgeType fromCSSValueID(CSSValueID valueID)
+template<> constexpr TextEdgeType fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
+    case CSSValueAuto:
+        return TextEdgeType::Auto;
     case CSSValueLeading:
-        return TextBoxEdgeType::Leading;
+        return TextEdgeType::Leading;
     case CSSValueText:
-        return TextBoxEdgeType::Text;
+        return TextEdgeType::Text;
     case CSSValueCap:
-        return TextBoxEdgeType::CapHeight;
+        return TextEdgeType::CapHeight;
     case CSSValueEx:
-        return TextBoxEdgeType::ExHeight;
+        return TextEdgeType::ExHeight;
     case CSSValueAlphabetic:
-        return TextBoxEdgeType::Alphabetic;
+        return TextEdgeType::Alphabetic;
     case CSSValueIdeographic:
-        return TextBoxEdgeType::CJKIdeographic;
+        return TextEdgeType::CJKIdeographic;
     case CSSValueIdeographicInk:
-        return TextBoxEdgeType::CJKIdeographicInk;
+        return TextEdgeType::CJKIdeographicInk;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return TextBoxEdgeType::Leading;
+    return TextEdgeType::Auto;
 }
 
 #if ENABLE(APPLE_PAY)

@@ -142,6 +142,7 @@ class DisplayMtl : public DisplayImpl
     bool supportsMetal2_2() const;
     bool supportsDepth24Stencil8PixelFormat() const;
     bool supports32BitFloatFiltering() const;
+    bool supportsBCTextureCompression() const;
     bool supportsVariableRasterizationRate() const;
     bool isAMD() const;
     bool isAMDBronzeDriver() const;

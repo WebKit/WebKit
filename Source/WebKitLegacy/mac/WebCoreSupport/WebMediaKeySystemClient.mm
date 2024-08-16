@@ -30,8 +30,11 @@
 #import <WebCore/MediaKeySystemRequest.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMediaKeySystemClient);
 
 WebMediaKeySystemClient& WebMediaKeySystemClient::singleton()
 {

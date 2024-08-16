@@ -16,11 +16,11 @@ FAIL x, y, width, and height presentation attributes not supported on other elem
 FAIL r presentation attribute not supported on other elements assert_false: Presentation attribute r="1" should not be supported on g element expected false got true
 FAIL rx and ry presentation attributes not supported on other elements assert_false: Presentation attribute rx="1" should not be supported on g element expected false got true
 PASS d presentation attribute not supported on other elements
-FAIL fill presentation attribute not supported on animate assert_false: Presentation attribute fill="blue" should not be supported on animate element expected false got true
-FAIL fill presentation attribute not supported on animateMotion assert_false: Presentation attribute fill="blue" should not be supported on animateMotion element expected false got true
-FAIL fill presentation attribute not supported on animateTransform assert_false: Presentation attribute fill="blue" should not be supported on animateTransform element expected false got true
+PASS fill presentation attribute not supported on animate
+PASS fill presentation attribute not supported on animateMotion
+PASS fill presentation attribute not supported on animateTransform
 FAIL fill presentation attribute not supported on discard assert_false: Presentation attribute fill="blue" should not be supported on discard element expected false got true
-FAIL fill presentation attribute not supported on set assert_false: Presentation attribute fill="blue" should not be supported on set element expected false got true
+PASS fill presentation attribute not supported on set
 FAIL transform presentation attribute supported on g assert_true: Presentation attribute transform="scale(2)" should be supported on g element expected true got false
 FAIL patternTransform presentation attribute supported on pattern assert_true: Presentation attribute patternTransform="scale(2)" should be supported on pattern element expected true got false
 FAIL patternTransform presentation attribute supported on linearGradient assert_true: Presentation attribute gradientTransform="scale(2)" should be supported on linearGradient element expected true got false

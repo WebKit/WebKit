@@ -37,7 +37,7 @@ static void SYSV_ABI flushDirtyStackPages(State*);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Context);
 
-void executeJSCJITProbe(State* state)
+extern "C" void SYSV_ABI executeJSCJITProbe(State* state)
 {
     Context context(state);
 #if CPU(ARM64)

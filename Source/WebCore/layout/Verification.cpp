@@ -105,8 +105,8 @@ static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<Web
 
 static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
-    for (auto* rootLine = root.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
-        for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
+    if (auto* rootBox = root.legacyRootBox()) {
+        for (auto* inlineBox = rootBox->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
             if (auto* legacyInlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(inlineBox))
                 collectFlowBoxSubtree(*legacyInlineFlowBox, inlineBoxes);
             else

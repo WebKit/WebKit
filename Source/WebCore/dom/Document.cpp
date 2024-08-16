@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008-2014 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -315,11 +315,11 @@
 #include <ctime>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
@@ -402,7 +402,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Document);
 
 using namespace HTMLNames;
 using namespace WTF::Unicode;
@@ -1861,93 +1861,80 @@ void Document::setReadyState(ReadyState readyState)
     if (m_frame)
         dispatchEvent(Event::create(eventNames().readystatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-    if (settings().suppressesIncrementalRendering())
-        setVisualUpdatesAllowed(readyState);
+    setVisualUpdatesAllowed(readyState);
 }
 
 void Document::setVisualUpdatesAllowed(ReadyState readyState)
 {
-    ASSERT(settings().suppressesIncrementalRendering());
     switch (readyState) {
     case ReadyState::Loading:
-        ASSERT(!m_visualUpdatesSuppressionTimer.isActive());
-        ASSERT(m_visualUpdatesAllowed);
-        setVisualUpdatesAllowed(false);
+        if (settings().suppressesIncrementalRendering())
+            addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::ReadyState);
         break;
     case ReadyState::Interactive:
-        ASSERT(m_visualUpdatesSuppressionTimer.isActive() || m_visualUpdatesAllowed);
         break;
     case ReadyState::Complete:
-        if (m_visualUpdatesSuppressionTimer.isActive()) {
-            ASSERT(!m_visualUpdatesAllowed);
-
-            if (view() && !view()->visualUpdatesAllowedByClient())
-                return;
-
-            setVisualUpdatesAllowed(true);
-        } else
-            ASSERT(m_visualUpdatesAllowed);
+        removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::ReadyState);
         break;
     }
 }
 
-void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
+void Document::addVisualUpdatePreventedReason(VisualUpdatesPreventedReason reason, CompletePageTransition completePageTransition)
 {
-    if (m_visualUpdatesAllowed == visualUpdatesAllowed)
-        return;
+    m_visualUpdatesPreventedReasons.add(reason);
 
-    m_visualUpdatesAllowed = visualUpdatesAllowed;
+    if (visualUpdatePreventRequiresLayoutMilestones().contains(reason))
+        m_visualUpdatesAllowedChangeRequiresLayoutMilestones = true;
 
-    if (visualUpdatesAllowed)
-        m_visualUpdatesSuppressionTimer.stop();
-    else
+    if (completePageTransition == CompletePageTransition::Yes)
+        m_visualUpdatesAllowedChangeCompletesPageTransition = true;
+
+    if (!m_visualUpdatesSuppressionTimer.isActive() && visualUpdatePreventReasonsClearedByTimer().contains(reason))
         m_visualUpdatesSuppressionTimer.startOneShot(1_s * settings().incrementalRenderingSuppressionTimeoutInSeconds());
+}
 
-    if (!visualUpdatesAllowed)
+void Document::removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPreventedReason> reasons)
+{
+    bool wasPrevented = !m_visualUpdatesPreventedReasons.isEmpty();
+    m_visualUpdatesPreventedReasons.remove(reasons);
+
+    if (!wasPrevented || !m_visualUpdatesPreventedReasons.isEmpty())
         return;
 
-    RefPtr frameView = view();
-    bool needsLayout = frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout());
-    if (needsLayout)
-        updateLayout();
+    m_visualUpdatesSuppressionTimer.stop();
 
-    if (RefPtr page = this->page()) {
-        if (frame()->isMainFrame()) {
-            frameView->addPaintPendingMilestones(LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
-            if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
-                protectedFrame()->checkedLoader()->didReachLayoutMilestone(LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
+    if (m_visualUpdatesAllowedChangeRequiresLayoutMilestones) {
+        RefPtr frameView = view();
+        if (RefPtr page = this->page()) {
+            if (frame()->isMainFrame()) {
+                frameView->addPaintPendingMilestones(LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
+                if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
+                    protectedFrame()->checkedLoader()->didReachLayoutMilestone(LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
+            }
         }
+        m_visualUpdatesAllowedChangeRequiresLayoutMilestones = false;
     }
-
-    if (frameView)
-        frameView->updateCompositingLayersAfterLayout();
 
     if (CheckedPtr renderView = this->renderView())
         renderView->repaintViewAndCompositedLayers();
 
-    if (RefPtr frame = this->frame())
+    if (RefPtr frame = this->frame(); m_visualUpdatesAllowedChangeCompletesPageTransition)
         frame->checkedLoader()->completePageTransitionIfNeeded();
+    m_visualUpdatesAllowedChangeCompletesPageTransition = false;
+    scheduleRenderingUpdate({ });
 }
 
 void Document::visualUpdatesSuppressionTimerFired()
 {
-    ASSERT(!m_visualUpdatesAllowed);
-
-    // If the client is extending the visual update suppression period explicitly, the
-    // watchdog should not re-enable visual updates itself, but should wait for the client.
-    if (view() && !view()->visualUpdatesAllowedByClient())
-        return;
-
-    setVisualUpdatesAllowed(true);
+    removeVisualUpdatePreventedReasons(visualUpdatePreventReasonsClearedByTimer());
 }
 
 void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient)
 {
-    // We should only re-enable visual updates if ReadyState is Completed or the watchdog timer has fired,
-    // both of which we can determine by looking at the timer.
-
-    if (visualUpdatesAllowedByClient && !m_visualUpdatesSuppressionTimer.isActive() && !visualUpdatesAllowed())
-        setVisualUpdatesAllowed(true);
+    if (visualUpdatesAllowedByClient)
+        addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::Client);
+    else
+        removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::Client);
 }
 
 String Document::characterSetWithUTF8Fallback() const
@@ -2575,6 +2562,10 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
+        // FIXME: Be smarter about invalidation for anchor positioning.
+        // This simply repeats the entire anchor-positioning process.
+        styleScope().clearAnchorPositioningState();
+
         Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
         auto styleUpdate = resolver.resolve();
 
@@ -2804,16 +2795,16 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     }
 
     SetForScope change(m_ignorePendingStylesheets, true);
-    auto& resolver = element.styleResolver();
+    Ref resolver = element.styleResolver();
 
     if (pseudoElementIdentifier) {
-        auto style = resolver.styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
+        auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
         if (!style)
             return nullptr;
         return WTFMove(style->style);
     }
 
-    auto elementStyle = resolver.styleForElement(element, { parentStyle });
+    auto elementStyle = resolver->styleForElement(element, { parentStyle });
     if (elementStyle.relations) {
         Style::Update emptyUpdate(*this);
         Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);
@@ -3232,11 +3223,11 @@ void Document::willBeRemovedFromFrame()
     commonTeardown();
 
 #if ENABLE(TOUCH_EVENTS)
-    if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
+    if (m_touchEventTargets && m_touchEventTargets->computeSize() && parentDocument())
         protectedParentDocument()->didRemoveEventTargetNode(*this);
 #endif
 
-    if (m_wheelEventTargets && m_wheelEventTargets->size() && parentDocument())
+    if (m_wheelEventTargets && m_wheelEventTargets->computeSize() && parentDocument())
         protectedParentDocument()->didRemoveEventTargetNode(*this);
 
     if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
@@ -6877,8 +6868,7 @@ void Document::suspend(ReasonForSuspension reason)
     ASSERT(m_frame);
     m_frame->clearTimers();
 
-    m_visualUpdatesAllowed = false;
-    m_visualUpdatesSuppressionTimer.stop();
+    addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::Suspension);
 
     if (auto* fontLoader = m_fontLoader.get())
         fontLoader->suspendFontLoading();
@@ -6907,7 +6897,7 @@ void Document::resume(ReasonForSuspension reason)
 
     resumeScheduledTasks(reason);
 
-    m_visualUpdatesAllowed = true;
+    removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::Suspension);
 
     if (auto* fontLoader = m_fontLoader.get())
         fontLoader->resumeFontLoading();
@@ -8073,15 +8063,15 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
 }
 
 // https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
-bool Document::resolveViewTransitionRule()
+std::variant<Document::SkipTransition, Vector<AtomString>> Document::resolveViewTransitionRule()
 {
     if (visibilityState() == VisibilityState::Hidden)
-        return false;
+        return SkipTransition { };
 
     auto rule = styleScope().resolver().viewTransitionRule();
-    if (rule)
-        return rule->computedNavigation() == ViewTransitionNavigation::Auto;
-    return false;
+    if (rule && rule->computedNavigation() == ViewTransitionNavigation::Auto)
+        return rule->types();
+    return SkipTransition { };
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#revealing-the-document
@@ -8096,11 +8086,20 @@ void Document::reveal()
 
     PageRevealEvent::Init init;
 
-    // FIXME: This should implement more of https://drafts.csswg.org/css-view-transitions-2/#resolve-inbound-cross-document-view-transition
-    if (m_inboundViewTransitionParams && resolveViewTransitionRule())
-        init.viewTransition = ViewTransition::createInbound(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    RefPtr<ViewTransition> inboundTransition = ViewTransition::resolveInboundCrossDocumentViewTransition(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    if (inboundTransition)
+        init.viewTransition = inboundTransition;
 
     dispatchWindowEvent(PageRevealEvent::create(eventNames().pagerevealEvent, WTFMove(init)), this);
+
+    if (inboundTransition) {
+        // FIXME: Prepare to run script given document.
+
+        inboundTransition->activateViewTransition();
+
+        // FIXME: Clean up after running script given document.
+        eventLoop().performMicrotaskCheckpoint();
+    }
 }
 
 void Document::transferViewTransitionParams(Document& newDocument)
@@ -8117,7 +8116,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition)
 
     PageSwapEvent::Init swapInit;
     if (canTriggerCrossDocumentViewTransition && globalObject()) {
-        oldViewTransition = ViewTransition::createOutbound(*this);
+        oldViewTransition = ViewTransition::setupCrossDocumentViewTransition(*this);
         swapInit.viewTransition = oldViewTransition;
     }
 
@@ -8308,6 +8307,49 @@ void Document::clearScriptedAnimationController()
         scriptedAnimationController->clearDocumentPointer();
 }
 
+// https://html.spec.whatwg.org/multipage/dom.html#render-blocking-mechanism
+bool Document::allowsAddingRenderBlockedElements() const
+{
+    return contentType() == "text/html"_s && !body();
+}
+
+bool Document::isRenderBlocked() const
+{
+    return m_visualUpdatesPreventedReasons.contains(VisualUpdatesPreventedReason::RenderBlocking);
+}
+
+void Document::blockRenderingOn(Element& element, ImplicitRenderBlocking implicit)
+{
+    if (allowsAddingRenderBlockedElements()) {
+        m_renderBlockingElements.add(element);
+
+        // Only forcibly complete the page transition when blocking ends (and override any
+        // rendering freezing from WebKit) if the document has explictly opted-into render blocking.
+        auto completePageTransition = CompletePageTransition::Yes;
+        if (implicit == ImplicitRenderBlocking::Yes)
+            completePageTransition = CompletePageTransition::No;
+
+        addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::RenderBlocking, completePageTransition);
+    }
+}
+
+void Document::unblockRenderingOn(Element& element)
+{
+    m_renderBlockingElements.remove(element);
+    if (m_renderBlockingElements.isEmptyIgnoringNullReferences())
+        removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::RenderBlocking);
+}
+
+// https://html.spec.whatwg.org/multipage/links.html#process-internal-resource-links
+void Document::processInternalResourceLinks(HTMLAnchorElement& anchor)
+{
+    auto copy = copyToVector(m_renderBlockingElements);
+    for (auto& element : copy) {
+        if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element.get()))
+            link->processInternalResourceLink(&anchor);
+    }
+}
+
 CheckedRef<FrameSelection> Document::checkedSelection()
 {
     return m_selection.get();
@@ -8363,7 +8405,7 @@ void Document::wheelEventHandlersChanged(Node* node)
     UNUSED_PARAM(node);
 #endif
 
-    bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmpty();
+    bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmptyIgnoringNullReferences();
     page->chrome().client().wheelEventHandlersChanged(haveHandlers);
 }
 
@@ -8372,7 +8414,7 @@ void Document::didAddWheelEventHandler(Node& node)
     if (!m_wheelEventTargets)
         m_wheelEventTargets = makeUnique<EventTargetSet>();
 
-    m_wheelEventTargets->add(&node);
+    m_wheelEventTargets->add(node);
     wheelEventHandlersChanged(&node);
 
     if (RefPtr frame = this->frame())
@@ -8383,9 +8425,9 @@ static bool removeHandlerFromSet(EventTargetSet& handlerSet, Node& node, EventHa
 {
     switch (removal) {
     case EventHandlerRemoval::One:
-        return handlerSet.remove(&node);
+        return handlerSet.remove(node);
     case EventHandlerRemoval::All:
-        return handlerSet.removeAll(&node);
+        return handlerSet.removeAll(node);
     }
     return false;
 }
@@ -8410,7 +8452,7 @@ unsigned Document::wheelEventHandlerCount() const
         return 0;
 
     unsigned count = 0;
-    for (auto& handler : *m_wheelEventTargets)
+    for (auto handler : *m_wheelEventTargets)
         count += handler.value;
 
     return count;
@@ -8422,7 +8464,7 @@ void Document::didAddTouchEventHandler(Node& handler)
     if (!m_touchEventTargets)
         m_touchEventTargets = makeUnique<EventTargetSet>();
 
-    m_touchEventTargets->add(&handler);
+    m_touchEventTargets->add(handler);
 
     if (RefPtr parent = parentDocument()) {
         parent->didAddTouchEventHandler(*this);
@@ -8453,15 +8495,15 @@ void Document::didRemoveEventTargetNode(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets) {
-        m_touchEventTargets->removeAll(&handler);
-        if ((&handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
+        m_touchEventTargets->removeAll(handler);
+        if ((&handler == this || m_touchEventTargets->isEmptyIgnoringNullReferences()) && parentDocument())
             protectedParentDocument()->didRemoveEventTargetNode(*this);
     }
 #endif
 
     if (m_wheelEventTargets) {
-        m_wheelEventTargets->removeAll(&handler);
-        if ((&handler == this || m_wheelEventTargets->isEmpty()) && parentDocument())
+        m_wheelEventTargets->removeAll(handler);
+        if ((&handler == this || m_wheelEventTargets->isEmptyIgnoringNullReferences()) && parentDocument())
             protectedParentDocument()->didRemoveEventTargetNode(*this);
     }
 }
@@ -8473,7 +8515,7 @@ unsigned Document::touchEventHandlerCount() const
         return 0;
 
     unsigned count = 0;
-    for (auto& handler : *m_touchEventTargets)
+    for (auto handler : *m_touchEventTargets)
         count += handler.value;
 
     return count;
@@ -8545,12 +8587,11 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
     Region targetRegion;
     bool insideFixedPosition = false;
 
-    for (auto& keyValuePair : *targets) {
-        if (RefPtr node = keyValuePair.key) {
-            auto targetRegionFixedPair = absoluteEventRegionForNode(*node);
-            targetRegion.unite(targetRegionFixedPair.first);
-            insideFixedPosition |= targetRegionFixedPair.second;
-        }
+    for (auto keyValuePair : *targets) {
+        Ref node = keyValuePair.key;
+        auto targetRegionFixedPair = absoluteEventRegionForNode(node);
+        targetRegion.unite(targetRegionFixedPair.first);
+        insideFixedPosition |= targetRegionFixedPair.second;
     }
 
     return RegionFixedPair(targetRegion, insideFixedPosition);
@@ -9877,7 +9918,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
             return true;
 
         if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect)) {
-            auto* target = keyframeEffect->target();
+            RefPtr target = keyframeEffect->target();
             return target && target->isConnected() && &target->document() == this && function(*target);
         }
 
@@ -9898,7 +9939,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
 
 void Document::keyframesRuleDidChange(const String& name)
 {
-    for (auto* animation : WebAnimation::instances()) {
+    for (RefPtr animation : WebAnimation::instances()) {
         auto cssAnimation = dynamicDowncast<CSSAnimation>(*animation);
         if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
@@ -10482,7 +10523,7 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
             context->flushDeferredOperations();
 
         // Some canvases need to do work when rendering has finished but before their content is composited.
-        if (auto* htmlCanvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+        if (RefPtr htmlCanvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
             if (htmlCanvas->needsPreparationForDisplay())
                 htmlCanvas->prepareForDisplay();
         }
@@ -10733,9 +10774,13 @@ bool Document::activeViewTransitionCapturedDocumentElement() const
 
 void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 {
-    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
-    if (documentElement())
-        styleInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionInvalidation;
+    std::optional<Style::PseudoClassChangeInvalidation> activeViewTransitionTypeInvalidation;
+    if (documentElement()) {
+        activeViewTransitionInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransition, !!viewTransition);
+        activeViewTransitionTypeInvalidation.emplace(*documentElement(), CSSSelector::PseudoClass::ActiveViewTransitionType, Style::PseudoClassChangeInvalidation::AnyValue);
+    }
+
     clearRenderingIsSuppressedForViewTransition();
     m_activeViewTransition = WTFMove(viewTransition);
 }

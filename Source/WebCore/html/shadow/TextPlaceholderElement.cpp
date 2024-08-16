@@ -28,11 +28,11 @@
 
 #include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextPlaceholderElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextPlaceholderElement);
 
 Ref<TextPlaceholderElement> TextPlaceholderElement::create(Document& document, const LayoutSize& size)
 {

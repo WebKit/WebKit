@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2024 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import annotations
+import argparse
+import re
+import os
+import sys
+from pathlib import Path
+from typing import IO
+from dataclasses import dataclass
+from configparser import ConfigParser
+
+
+@dataclass
+class Config:
+    candidates: list[str]
+
+    @staticmethod
+    def load(file: IO[str]) -> Config:
+        parser = ConfigParser()
+        parser.read_file(file)
+        candidates_str = parser["update-compile-commands-symlink"]["candidates"]
+        candidates = [
+            line.strip()
+            for line in candidates_str.splitlines()
+            if line.strip() != ""
+        ]
+        return Config(candidates)
+
+
+def update_symlink_with_path(symlink_path: Path, target_str: str):
+    try:
+        current_target = os.readlink(symlink_path)
+        symlink_exists = True
+    except FileNotFoundError:
+        current_target = None
+        symlink_exists = False
+
+    if symlink_exists and current_target != target_str:
+        os.remove(symlink_path)
+    if not symlink_exists or current_target != target_str:
+        os.symlink(target_str, symlink_path)
+
+
+def update_symlink_from_candidates(symlink_path: Path, config_path: Path):
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = Config.load(f)
+    # Pick first candidate that exists.
+    for candidate_str in config.candidates:
+        candidate_str = os.path.expanduser(candidate_str)
+        # Paths are resolved relative to the directory containing the candidates file.
+        if Path(config_path.parent, candidate_str).exists():
+            if sys.platform == "win32":
+                # Windows requires backslashes for symlinks.
+                candidate_str = candidate_str.replace("/", "\\")
+            update_symlink_with_path(symlink_path, candidate_str)
+            return
+    print(f"update-compile-commands-symlink: Couldn't update {symlink_path}. "
+        f"None of the candidates provided in {config_path} exist.",
+        file=sys.stderr)
+
+
+def main():
+    parser = argparse.ArgumentParser("update-compile-commands-symlink")
+    parser.add_argument("symlink_path", type=Path)
+    parser.add_argument("config_file", type=Path)
+    args = parser.parse_args()
+    update_symlink_from_candidates(args.symlink_path, args.config_file)
+
+
+if __name__ == "__main__":
+    main()

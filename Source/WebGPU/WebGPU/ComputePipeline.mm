@@ -137,6 +137,8 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
     });
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePipeline);
+
 ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, Device& device)
     : m_computePipelineState(computePipelineState)
     , m_device(device)

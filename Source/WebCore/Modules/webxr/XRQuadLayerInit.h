@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR_LAYERS)
 
 #include "WebXRRigidTransform.h"
+#include "XRLayerInit.h"
 #include "XRTextureType.h"
 
 namespace WebCore {

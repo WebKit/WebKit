@@ -41,12 +41,15 @@
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionToWebProcess.get()->connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSourceBufferProxy);
 
 Ref<RemoteSourceBufferProxy> RemoteSourceBufferProxy::create(GPUConnectionToWebProcess& connectionToWebProcess, RemoteSourceBufferIdentifier identifier, Ref<SourceBufferPrivate>&& sourceBufferPrivate, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
 {
@@ -67,6 +70,14 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
     disconnect();
+}
+
+RefPtr<IPC::Connection> RemoteSourceBufferProxy::connection() const
+{
+    RefPtr connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
 }
 
 void RemoteSourceBufferProxy::disconnect()

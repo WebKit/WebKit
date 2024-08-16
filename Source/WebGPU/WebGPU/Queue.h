@@ -30,6 +30,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -48,7 +49,7 @@ class TextureView;
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
 class Queue : public WGPUQueueImpl, public ThreadSafeRefCounted<Queue> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Queue);
 public:
     static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Device& device)
     {

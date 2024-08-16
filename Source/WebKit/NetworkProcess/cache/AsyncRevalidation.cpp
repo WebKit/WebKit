@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
 #include <WebCore/CacheValidation.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -53,6 +54,8 @@ static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& k
 
     return revalidationRequest;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AsyncRevalidation);
 
 void AsyncRevalidation::cancel()
 {

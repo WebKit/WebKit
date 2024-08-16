@@ -169,6 +169,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -445,7 +446,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    _writingToolsSessions = [NSMapTable strongToWeakObjectsMapTable];
+    _activeWritingToolsSession = nil;
     _writingToolsTextSuggestions = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
@@ -1831,28 +1832,40 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
+
 - (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
-#elif PLATFORM(MAC)
+#else
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
+
     _impl->addTextAnimationForAnimationID(*uuid, data);
 #endif
 }
+
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)nsUUID
 {
 #if PLATFORM(IOS_FAMILY)
     [_contentView removeTextAnimationForAnimationID:nsUUID];
-#elif PLATFORM(MAC)
+#else
     auto uuid = WTF::UUID::fromNSUUID(nsUUID);
     if (!uuid)
         return;
+
     _impl->removeTextAnimationForAnimationID(*uuid);
 #endif
 }
+
+- (void)_didEndPartialIntelligenceTextPonderingAnimation
+{
+#if PLATFORM(MAC)
+    _impl->didEndPartialIntelligenceTextPonderingAnimation();
+#endif
+}
+
 #endif
 
 - (WKPageRef)_pageForTesting
@@ -2129,7 +2142,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     auto webSession = WebKit::convertToWebSession(session);
 
     if (session) {
-        [_writingToolsSessions setObject:session forKey:session.uuid];
+        _activeWritingToolsSession = session;
         _page->setWritingToolsActive(true);
     }
 
@@ -2234,7 +2247,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    [_writingToolsSessions removeObjectForKey:session.uuid];
+    _activeWritingToolsSession = nil;
     [_writingToolsTextSuggestions removeAllObjects];
 
     _page->setWritingToolsActive(false);
@@ -2256,6 +2269,10 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
+#if PLATFORM(MAC)
+    _impl->writingToolsCompositionSessionDidReceiveReplacements(webSession->identifier, finished);
+#endif
+
     _page->compositionSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
 }
 
@@ -2267,19 +2284,27 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-    _page->writingToolsSessionDidReceiveAction(*webSession, WebKit::convertToWebAction(action));
-}
+    auto webAction = WebKit::convertToWebAction(action);
 
+#if PLATFORM(MAC)
+    if (webAction == WebCore::WritingTools::Action::Restart && webSession->compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply) {
+        // This must be done in the UI process to avoid any race conditions that may result from IPC
+        // to/from the web process with the UI process animations.
+        _impl->writingToolsCompositionSessionDidReceiveRestartAction();
+    }
+#endif
+
+    _page->writingToolsSessionDidReceiveAction(*webSession, webAction);
+}
 
 #pragma mark - WTTextViewDelegate invoking methods
 
-- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
+- (void)_proofreadingSessionShowDetailsForSuggestionWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect
 {
-    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
-    if (!session)
+    if (!_activeWritingToolsSession)
         return;
 
-    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)session.textViewDelegate;
+    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)[_activeWritingToolsSession textViewDelegate];
 
     if (![textViewDelegate respondsToSelector:@selector(proofreadingSessionWithUUID:showDetailsForSuggestionWithUUID:relativeToRect:inView:)])
         return;
@@ -2290,21 +2315,20 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     RetainPtr view = _contentView;
 #endif
 
-    [textViewDelegate proofreadingSessionWithUUID:session.uuid showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
+    [textViewDelegate proofreadingSessionWithUUID:[_activeWritingToolsSession uuid] showDetailsForSuggestionWithUUID:replacementUUID relativeToRect:rect inView:view.get()];
 }
 
-- (void)_proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WebCore::WritingTools::TextSuggestion::State)state forSuggestionWithUUID:(NSUUID *)replacementUUID
+- (void)_proofreadingSessionUpdateState:(WebCore::WritingTools::TextSuggestion::State)state forSuggestionWithUUID:(NSUUID *)replacementUUID
 {
-    WTSession *session = [_writingToolsSessions objectForKey:sessionUUID];
-    if (!session)
+    if (!_activeWritingToolsSession)
         return;
 
-    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)session.textViewDelegate;
+    auto textViewDelegate = (NSObject<WTTextViewDelegate> *)[_activeWritingToolsSession textViewDelegate];
 
     if (![textViewDelegate respondsToSelector:@selector(proofreadingSessionWithUUID:updateState:forSuggestionWithUUID:)])
         return;
 
-    [textViewDelegate proofreadingSessionWithUUID:session.uuid updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
+    [textViewDelegate proofreadingSessionWithUUID:[_activeWritingToolsSession uuid] updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
 }
 
 #endif
@@ -3124,10 +3148,12 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 {
     return [self _enableSourceTextAnimationAfterElementWithID:elementID];
 }
+
 - (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
 {
     return [self _enableFinalTextAnimationForElementWithID:elementID];
 }
+
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
     return [self _disableTextAnimationWithUUID:nsUUID];
@@ -3142,7 +3168,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return nil;
 
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableSourceTextAnimationAfterElementWithID(elementID, *uuid);
+    _page->enableSourceTextAnimationAfterElementWithID(elementID);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
@@ -3164,7 +3190,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
         return nil;
 
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableTextAnimationTypeForElementWithID(elementID, *uuid);
+    _page->enableTextAnimationTypeForElementWithID(elementID);
 
 #if PLATFORM(IOS_FAMILY)
     [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
@@ -3933,7 +3959,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getContentsAsStringWithCompletionHandlerKeepIPCConnectionAliveForTesting:(void (^)(NSString *, NSError *))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler), connection = RefPtr { _page->legacyMainFrameProcess().connection() }](String string) {
+    _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler), connection = _page->legacyMainFrameProcess().protectedConnection()](String string) {
         handler(string, nil);
     });
 }
@@ -4269,7 +4295,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _inputDelegate = inputDelegate;
 
     class FormClient : public API::FormClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(FormClient);
     public:
         explicit FormClient(WKWebView *webView)
             : m_webView(webView)

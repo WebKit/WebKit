@@ -565,6 +565,8 @@ public:
 
     void setTopContentInset(JSContextRef, double, JSValueRef);
 
+    void setPageScaleFactor(JSContextRef, double scaleFactor, long x, long y, JSValueRef callback);
+
 private:
     TestRunner();
 

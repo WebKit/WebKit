@@ -55,6 +55,7 @@
 #include "WebGPUTextureViewDimension.h"
 #include "WebGPUVertexFormat.h"
 #include "WebGPUVertexStepMode.h"
+#include "WebGPUXREye.h"
 #include <WebGPU/WebGPUExt.h>
 
 namespace WebCore::WebGPU {
@@ -380,6 +381,18 @@ WGPUTextureDimension ConvertToBackingContext::convertToBacking(TextureDimension 
         return WGPUTextureDimension_2D;
     case TextureDimension::_3d:
         return WGPUTextureDimension_3D;
+    }
+}
+
+WGPUXREye ConvertToBackingContext::convertToBacking(XREye eye)
+{
+    switch (eye) {
+    case XREye::None:
+        return WGPUXREye_None;
+    case XREye::Left:
+        return WGPUXREye_Left;
+    case XREye::Right:
+        return WGPUXREye_Right;
     }
 }
 

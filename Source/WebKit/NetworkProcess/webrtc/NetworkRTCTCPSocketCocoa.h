@@ -29,6 +29,7 @@
 
 #include "NetworkRTCProvider.h"
 #include <Network/Network.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -47,11 +48,12 @@ class SocketAddress;
 namespace WebKit {
 
 class NetworkRTCTCPSocketCocoa final : public NetworkRTCProvider::Socket, public CanMakeWeakPtr<NetworkRTCTCPSocketCocoa> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkRTCTCPSocketCocoa);
 public:
     static std::unique_ptr<NetworkRTCProvider::Socket> createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
 
     NetworkRTCTCPSocketCocoa(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
+    ~NetworkRTCTCPSocketCocoa();
 
     static void getInterfaceName(NetworkRTCProvider&, const URL&, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, CompletionHandler<void(String&&)>&&);
 
@@ -70,6 +72,9 @@ private:
     Ref<IPC::Connection> m_connection;
     RetainPtr<nw_connection_t> m_nwConnection;
     bool m_isSTUN { false };
+#if ASSERT_ENABLED
+    bool m_isClosed { false };
+#endif
 };
 
 } // namespace WebKit

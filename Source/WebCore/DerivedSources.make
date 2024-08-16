@@ -851,6 +851,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webxr/XREquirectLayerInit.idl \
     $(WebCore)/Modules/webxr/XREye.idl \
     $(WebCore)/Modules/webxr/XRFrameRequestCallback.idl \
+    $(WebCore)/Modules/webxr/XRGPUBinding.idl \
+    $(WebCore)/Modules/webxr/XRGPULayerInit.idl \
+    $(WebCore)/Modules/webxr/XRGPUProjectionLayerInit.idl \
+    $(WebCore)/Modules/webxr/XRGPUSubImage.idl \
     $(WebCore)/Modules/webxr/XRHandJoint.idl \
     $(WebCore)/Modules/webxr/XRHandedness.idl \
     $(WebCore)/Modules/webxr/XRInputSourceEvent.idl \

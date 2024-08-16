@@ -115,7 +115,7 @@ static std::optional<Duration> parseDuration(StringParsingBuffer<CharacterType>&
 {
     // ISO 8601 duration strings are like "-P1Y2M3W4DT5H6M7.123456789S". Notes:
     // - case insensitive
-    // - sign: + - −(U+2212)
+    // - sign: + -
     // - separator: . ,
     // - T is present iff there is a time part
     // - integral parts can have any number of digits but fractional parts have at most 9
@@ -128,7 +128,7 @@ static std::optional<Duration> parseDuration(StringParsingBuffer<CharacterType>&
     int factor = 1;
     if (*buffer == '+')
         buffer.advance();
-    else if (*buffer == '-' || *buffer == minusSign) {
+    else if (*buffer == '-') {
         factor = -1;
         buffer.advance();
     }
@@ -392,7 +392,7 @@ static std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringParsingBuffer<
     int64_t factor = 1;
     if (*buffer == '+')
         buffer.advance();
-    else if (*buffer == '-' || *buffer == minusSign) {
+    else if (*buffer == '-') {
         factor = -1;
         buffer.advance();
     } else
@@ -467,7 +467,7 @@ static std::optional<int64_t> parseUTCOffsetInMinutes(StringParsingBuffer<Charac
     int64_t factor = 1;
     if (*buffer == '+')
         buffer.advance();
-    else if (*buffer == '-' || *buffer == minusSign) {
+    else if (*buffer == '-') {
         factor = -1;
         buffer.advance();
     } else
@@ -543,7 +543,6 @@ static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, Char
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-':
-    case minusSign:
         return true;
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
@@ -580,10 +579,12 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
         return std::nullopt;
     buffer.advance();
 
+    if (*buffer == '!')
+        buffer.advance();
+
     switch (static_cast<UChar>(*buffer)) {
     case '+':
-    case '-':
-    case minusSign: {
+    case '-': {
         // TimeZoneUTCOffsetName is the same to TimeZoneNumericUTCOffset.
         auto offset = parseTimeZoneNumericUTCOffset(buffer);
         if (!offset)
@@ -731,8 +732,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     // TimeZoneUTCOffsetSign
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
-    case '-':
-    case minusSign: {
+    case '-': {
         auto offset = parseTimeZoneNumericUTCOffset(buffer);
         if (!offset)
             return std::nullopt;
@@ -903,7 +903,7 @@ static std::optional<PlainDate> parseDate(StringParsingBuffer<CharacterType>& bu
     if (*buffer == '+') {
         buffer.advance();
         sixDigitsYear = true;
-    } else if (*buffer == '-' || *buffer == minusSign) {
+    } else if (*buffer == '-') {
         yearFactor = -1;
         buffer.advance();
         sixDigitsYear = true;
@@ -1010,12 +1010,8 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
         return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTime), WTFMove(timeZone) };
     }
 
-    if (canBeTimeZone(buffer, *buffer)) {
-        auto timeZone = parseTimeZone(buffer);
-        if (!timeZone)
-            return std::nullopt;
-        return std::tuple { WTFMove(plainDate.value()), std::nullopt, WTFMove(timeZone) };
-    }
+    if (canBeTimeZone(buffer, *buffer))
+        return std::nullopt;
 
     return std::tuple { WTFMove(plainDate.value()), std::nullopt, std::nullopt };
 }

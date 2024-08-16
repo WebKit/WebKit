@@ -11,7 +11,9 @@
 #include "include/core/SkTypes.h"
 #include "include/private/base/SkTArray.h"
 #include "src/base/SkEnumBitMask.h"
+#include "src/base/SkNoDestructor.h"
 #include "src/base/SkStringView.h"
+#include "src/core/SkTHash.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/sksl/SkSLAnalysis.h"
 #include "src/sksl/SkSLBuiltinTypes.h"
@@ -28,6 +30,7 @@
 #include "src/sksl/SkSLString.h"
 #include "src/sksl/SkSLStringStream.h"
 #include "src/sksl/SkSLUtil.h"
+#include "src/sksl/codegen/SkSLCodeGenTypes.h"
 #include "src/sksl/codegen/SkSLCodeGenerator.h"
 #include "src/sksl/ir/SkSLBinaryExpression.h"
 #include "src/sksl/ir/SkSLBlock.h"
@@ -73,9 +76,12 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <memory>
 #include <string_view>
 #include <vector>
+
+using namespace skia_private;
 
 namespace SkSL {
 
@@ -84,8 +90,9 @@ public:
     GLSLCodeGenerator(const Context* context,
                       const ShaderCaps* caps,
                       const Program* program,
-                      OutputStream* out)
-            : INHERITED(context, caps, program, out) {}
+                      OutputStream* out,
+                      PrettyPrint pp)
+            : CodeGenerator(context, caps, program, out), fPrettyPrint(pp) {}
 
     bool generateCode() override;
 
@@ -222,27 +229,24 @@ protected:
     bool fSetupClockwise = false;
     bool fSetupFragPosition = false;
     bool fSetupFragCoordWorkaround = false;
+    PrettyPrint fPrettyPrint;
 
     // Workaround/polyfill flags
     bool fWrittenAbsEmulation = false;
     bool fWrittenDeterminant2 = false, fWrittenDeterminant3 = false, fWrittenDeterminant4 = false;
     bool fWrittenInverse2 = false, fWrittenInverse3 = false, fWrittenInverse4 = false;
     bool fWrittenTranspose[3][3] = {};
-
-    using INHERITED = CodeGenerator;
 };
 
 void GLSLCodeGenerator::write(std::string_view s) {
     if (s.empty()) {
         return;
     }
-#if defined(SK_DEBUG) || defined(SKSL_STANDALONE)
-    if (fAtLineStart) {
+    if (fAtLineStart && fPrettyPrint == PrettyPrint::kYes) {
         for (int i = 0; i < fIndentation; i++) {
             fOut->writeText("    ");
         }
     }
-#endif
     fOut->write(s.data(), s.length());
     fAtLineStart = false;
 }
@@ -269,6 +273,30 @@ bool GLSLCodeGenerator::usesPrecisionModifiers() const {
     return fCaps.fUsesPrecisionModifiers;
 }
 
+static bool is_reserved_identifier(std::string_view identifier) {
+    // This list was taken from https://registry.khronos.org/OpenGL/specs/gl/GLSLangSpec.4.60.pdf
+    // in section 3.6, "Keywords." Built-in types, and entries that our parser already recognizes as
+    // reserved or otherwise non-identifiers, have been eliminated.
+    using ReservedWordSet = THashSet<std::string_view>;
+    static const SkNoDestructor<ReservedWordSet> kAllReservedWords(ReservedWordSet{
+            "active",
+            "centroid",
+            "coherent",
+            "common",
+            "filter",
+            "partition",
+            "patch",
+            "precise",
+            "resource",
+            "restrict",
+            "shared",
+            "smooth",
+            "subroutine",
+    });
+
+    return kAllReservedWords->contains(identifier);
+}
+
 void GLSLCodeGenerator::writeIdentifier(std::string_view identifier) {
     // GLSL forbids two underscores in a row.
     // If an identifier contains "__" or "_X", replace each "_" in the identifier with "_X".
@@ -281,6 +309,9 @@ void GLSLCodeGenerator::writeIdentifier(std::string_view identifier) {
             }
         }
     } else {
+        if (is_reserved_identifier(identifier)) {
+            this->write("_skReserved_");
+        }
         this->write(identifier);
     }
 }
@@ -1023,7 +1054,7 @@ void GLSLCodeGenerator::writeFragCoord() {
                                "vec2(.5);\n";
             fSetupFragCoordWorkaround = true;
         }
-        this->writeIdentifier("sk_FragCoord_Resolved");
+        this->write("sk_FragCoord_Resolved");
         return;
     }
 
@@ -1041,21 +1072,21 @@ void GLSLCodeGenerator::writeFragCoord() {
                 "gl_FragCoord.w);\n";
         fSetupFragPosition = true;
     }
-    this->writeIdentifier("sk_FragCoord");
+    this->write("sk_FragCoord");
 }
 
 void GLSLCodeGenerator::writeVariableReference(const VariableReference& ref) {
     switch (ref.variable()->layout().fBuiltin) {
         case SK_FRAGCOLOR_BUILTIN:
             if (fCaps.mustDeclareFragmentShaderOutput()) {
-                this->writeIdentifier("sk_FragColor");
+                this->write("sk_FragColor");
             } else {
-                this->writeIdentifier("gl_FragColor");
+                this->write("gl_FragColor");
             }
             break;
         case SK_SECONDARYFRAGCOLOR_BUILTIN:
             if (fCaps.fDualSourceBlendingSupport) {
-                this->writeIdentifier("gl_SecondaryFragColorEXT");
+                this->write("gl_SecondaryFragColorEXT");
             } else {
                 fContext.fErrors->error(ref.position(), "'sk_SecondaryFragColor' not supported");
             }
@@ -1073,13 +1104,13 @@ void GLSLCodeGenerator::writeVariableReference(const VariableReference& ref) {
                 }
                 fSetupClockwise = true;
             }
-            this->writeIdentifier("sk_Clockwise");
+            this->write("sk_Clockwise");
             break;
         case SK_VERTEXID_BUILTIN:
-            this->writeIdentifier("gl_VertexID");
+            this->write("gl_VertexID");
             break;
         case SK_INSTANCEID_BUILTIN:
-            this->writeIdentifier("gl_InstanceID");
+            this->write("gl_InstanceID");
             break;
         case SK_LASTFRAGCOLOR_BUILTIN:
             if (fCaps.fFBFetchColorName) {
@@ -1090,11 +1121,11 @@ void GLSLCodeGenerator::writeVariableReference(const VariableReference& ref) {
             break;
         case SK_SAMPLEMASKIN_BUILTIN:
             // GLSL defines gl_SampleMaskIn as an array of ints. SkSL defines it as a scalar uint.
-            this->writeIdentifier("uint(gl_SampleMaskIn[0])");
+            this->write("uint(gl_SampleMaskIn[0])");
             break;
         case SK_SAMPLEMASK_BUILTIN:
             // GLSL defines gl_SampleMask as an array of ints. SkSL defines it as a scalar uint.
-            this->writeIdentifier("gl_SampleMask[0]");
+            this->write("gl_SampleMask[0]");
             break;
         default:
             this->writeIdentifier(ref.variable()->mangledName());
@@ -1133,9 +1164,9 @@ void GLSLCodeGenerator::writeFieldAccess(const FieldAccess& f) {
     const Type& baseType = f.base()->type();
     int builtin = baseType.fields()[f.fieldIndex()].fLayout.fBuiltin;
     if (builtin == SK_POSITION_BUILTIN) {
-        this->writeIdentifier("gl_Position");
+        this->write("gl_Position");
     } else if (builtin == SK_POINTSIZE_BUILTIN) {
-        this->writeIdentifier("gl_PointSize");
+        this->write("gl_PointSize");
     } else {
         this->writeIdentifier(baseType.fields()[f.fieldIndex()].fName);
     }
@@ -1361,7 +1392,11 @@ void GLSLCodeGenerator::writeFunctionDeclaration(const FunctionDeclaration& f) {
             this->write(std::to_string(index));
         }
         for (int s : sizes) {
-            this->write("[" + std::to_string(s) + "]");
+            this->write("[");
+            if (s != Type::kUnsizedArray) {
+                this->write(std::to_string(s));
+            }
+            this->write("]");
         }
     }
     this->write(")");
@@ -1688,11 +1723,9 @@ void GLSLCodeGenerator::writeForStatement(const ForStatement& f) {
     }
     if (f.test()) {
         if (fCaps.fAddAndTrueToLoopCondition) {
-            std::unique_ptr<Expression> and_true(new BinaryExpression(
-                    Position(), f.test()->clone(), Operator::Kind::LOGICALAND,
-                    Literal::MakeBool(fContext, Position(), /*value=*/true),
-                    fContext.fTypes.fBool.get()));
-            this->writeExpression(*and_true, Precedence::kExpression);
+            this->write("(");
+            this->writeExpression(*f.test(), Precedence::kLogicalAnd);
+            this->write(" && true)");
         } else {
             this->writeExpression(*f.test(), Precedence::kExpression);
         }
@@ -2020,16 +2053,25 @@ bool GLSLCodeGenerator::generateCode() {
     return fContext.fErrors->errorCount() == 0;
 }
 
-bool ToGLSL(Program& program, const ShaderCaps* caps, OutputStream& out) {
+bool ToGLSL(Program& program, const ShaderCaps* caps, OutputStream& out, PrettyPrint pp) {
     TRACE_EVENT0("skia.shaders", "SkSL::ToGLSL");
     SkASSERT(caps != nullptr);
 
     program.fContext->fErrors->setSource(*program.fSource);
-    GLSLCodeGenerator cg(program.fContext.get(), caps, &program, &out);
+    GLSLCodeGenerator cg(program.fContext.get(), caps, &program, &out, pp);
     bool result = cg.generateCode();
     program.fContext->fErrors->setSource(std::string_view());
 
     return result;
+}
+
+bool ToGLSL(Program& program, const ShaderCaps* caps, OutputStream& out) {
+#if defined(SK_DEBUG)
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kYes;
+#else
+    constexpr PrettyPrint defaultPrintOpts = PrettyPrint::kNo;
+#endif
+    return ToGLSL(program, caps, out, defaultPrintOpts);
 }
 
 bool ToGLSL(Program& program, const ShaderCaps* caps, std::string* out) {

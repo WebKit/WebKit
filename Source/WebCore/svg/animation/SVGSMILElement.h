@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ using SMILEventSender = EventSender<SVGSMILElement, WeakPtrImplWithEventTargetDa
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGSMILElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGSMILElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSMILElement);
 public:
     SVGSMILElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
@@ -137,6 +137,7 @@ private:
     virtual void updateAnimation(float percent, unsigned repeat) = 0;
 
     static bool isSupportedAttribute(const QualifiedName&);
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     QualifiedName constructAttributeName() const;
     void updateAttributeName();
 

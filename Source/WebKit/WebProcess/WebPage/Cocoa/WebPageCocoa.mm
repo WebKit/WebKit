@@ -80,6 +80,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -314,6 +315,47 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 }
 
 #if ENABLE(WRITING_TOOLS_UI)
+
+void WebPage::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::AddTextAnimationForAnimationID(uuid, styleData, indicatorData), WTFMove(completionHandler));
+}
+
+void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
+{
+    send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
+}
+
+void WebPage::removeTransparentMarkersForActiveWritingToolsSession()
+{
+    m_textAnimationController->removeTransparentMarkersForActiveWritingToolsSession();
+}
+
+void WebPage::removeInitialTextAnimationForActiveWritingToolsSession()
+{
+    m_textAnimationController->removeInitialTextAnimationForActiveWritingToolsSession();
+}
+
+void WebPage::addInitialTextAnimationForActiveWritingToolsSession()
+{
+    m_textAnimationController->addInitialTextAnimationForActiveWritingToolsSession();
+}
+
+void WebPage::addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+{
+    m_textAnimationController->addSourceTextAnimationForActiveWritingToolsSession(range, string, WTFMove(completionHandler));
+}
+
+void WebPage::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>& range, const String& string)
+{
+    m_textAnimationController->addDestinationTextAnimationForActiveWritingToolsSession(range, string);
+}
+
+void WebPage::clearAnimationsForActiveWritingToolsSession()
+{
+    m_textAnimationController->clearAnimationsForActiveWritingToolsSession();
+}
+
 void WebPage::createTextIndicatorForTextAnimationID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
     m_textAnimationController->createTextIndicatorForTextAnimationID(uuid, WTFMove(completionHandler));
@@ -324,14 +366,24 @@ void WebPage::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& 
     m_textAnimationController->updateUnderlyingTextVisibilityForTextAnimationID(uuid, visible, WTFMove(completionHandler));
 }
 
-void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementID)
 {
-    m_textAnimationController->enableSourceTextAnimationAfterElementWithID(elementID, uuid);
+    m_textAnimationController->enableSourceTextAnimationAfterElementWithID(elementID);
 }
 
-void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID, const WTF::UUID& uuid)
+void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID)
 {
-    m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID, uuid);
+    m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID);
+}
+
+void WebPage::showSelectionForActiveWritingToolsSession()
+{
+    corePage()->showSelectionForActiveWritingToolsSession();
+}
+
+void WebPage::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    send(Messages::WebPageProxy::DidEndPartialIntelligenceTextPonderingAnimation());
 }
 
 #endif // ENABLE(WRITING_TOOLS)
@@ -726,7 +778,7 @@ static String& replaceSelectionPasteboardName()
 
 class OverridePasteboardForSelectionReplacement {
     WTF_MAKE_NONCOPYABLE(OverridePasteboardForSelectionReplacement);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OverridePasteboardForSelectionReplacement);
 public:
     OverridePasteboardForSelectionReplacement(const Vector<String>& types, std::span<const uint8_t> data)
         : m_types(types)
@@ -980,14 +1032,14 @@ void WebPage::writingToolsSessionDidReceiveAction(const WritingTools::Session& s
     corePage()->writingToolsSessionDidReceiveAction(session, action);
 }
 
-void WebPage::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::Session::ID& sessionID, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
+void WebPage::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
 {
-    send(Messages::WebPageProxy::ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(sessionID, replacementID, rect));
+    send(Messages::WebPageProxy::ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(replacementID, rect));
 }
 
-void WebPage::proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::Session::ID& sessionID, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
+void WebPage::proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion::ID& replacementID)
 {
-    send(Messages::WebPageProxy::ProofreadingSessionUpdateStateForSuggestionWithID(sessionID, state, replacementID));
+    send(Messages::WebPageProxy::ProofreadingSessionUpdateStateForSuggestionWithID(state, replacementID));
 }
 
 #endif

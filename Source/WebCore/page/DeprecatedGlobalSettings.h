@@ -138,7 +138,7 @@ public:
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { shared().m_builtInNotificationsEnabled = isEnabled; }
-    static bool builtInNotificationsEnabled() { return shared().m_builtInNotificationsEnabled; }
+    WEBCORE_EXPORT static bool builtInNotificationsEnabled();
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

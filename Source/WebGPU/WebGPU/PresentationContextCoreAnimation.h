@@ -29,12 +29,13 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <optional>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebGPU {
 
 class PresentationContextCoreAnimation : public PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PresentationContextCoreAnimation);
 public:
     static Ref<PresentationContextCoreAnimation> create(const WGPUSurfaceDescriptor& descriptor)
     {

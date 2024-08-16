@@ -44,6 +44,7 @@
 #include "WebSWServerToContextConnection.h"
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/SWServerRegistration.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define SWFETCH_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - [fetchIdentifier=%" PRIu64 "] ServiceWorkerFetchTask::" fmt, this, m_fetchIdentifier.toUInt64(), ##__VA_ARGS__)
 #define SWFETCH_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - [fetchIdentifier=%" PRIu64 "] ServiceWorkerFetchTask::" fmt, this, m_fetchIdentifier.toUInt64(), ##__VA_ARGS__)
@@ -51,6 +52,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerFetchTask);
 
 Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::create(WebSWServerConnection& connection, NetworkResourceLoader& loader, WebCore::ResourceRequest&& request, WebCore::SWServerConnectionIdentifier connectionIdentifier, WebCore::ServiceWorkerIdentifier workerIdentifier, WebCore::SWServerRegistration& registration, NetworkSession* session, bool isWorkerReady)
 {

@@ -26,11 +26,14 @@
 <button id="b1"></button>
 <button id="b2"></button>
 <script>
-function runTest() {
+window.jsTestIsAsync = true;
+
+async function runTest() {
     description("This test applies page scale and scrolls the page, and checks that elementFromPoint returns the correct element.");
     if (window.internals) {
         window.internals.settings.setClientCoordinatesRelativeToLayoutViewport(true);
-        window.internals.setPageScaleFactor(2, 0, 0);
+        if (window.testRunner)
+            await window.testRunner.setPageScaleFactor(2, 0, 0);
     }
     window.scrollTo(100, 100);
 

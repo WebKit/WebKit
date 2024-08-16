@@ -75,6 +75,10 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSurface.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSwapChain.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteXRBinding.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteXRSubImage.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteXRView.messages.in
 $(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/AudioTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
@@ -557,8 +561,8 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPort.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIScripting.idl
-$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPISidebarAction.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPISidePanel.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPISidebarAction.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorage.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIStorageArea.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITabs.idl

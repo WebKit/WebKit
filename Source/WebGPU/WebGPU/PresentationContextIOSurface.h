@@ -27,6 +27,7 @@
 
 #import "PresentationContext.h"
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
@@ -36,7 +37,7 @@ class Device;
 class Instance;
 
 class PresentationContextIOSurface : public PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PresentationContextIOSurface);
 public:
     static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&, const Instance&);
 

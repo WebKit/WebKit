@@ -31,6 +31,7 @@
 #include "MessageSender.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Decoder;
@@ -52,7 +53,7 @@ struct ConnectionTraits {
 };
 
 class Connection : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Connection);
 public:
     Connection(CString&& machServiceName, NetworkNotificationManager&, WebPushDaemonConnectionConfiguration&&);
 

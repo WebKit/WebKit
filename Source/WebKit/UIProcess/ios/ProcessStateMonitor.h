@@ -29,6 +29,7 @@
 
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS RBSProcessMonitor;
 
@@ -44,7 +45,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProcessStateM
 namespace WebKit {
 
 class ProcessStateMonitor : public CanMakeWeakPtr<ProcessStateMonitor> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProcessStateMonitor);
 public:
     ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler);
     ~ProcessStateMonitor();

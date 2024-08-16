@@ -35,6 +35,7 @@
 #include "WebErrors.h"
 #include <WebCore/BackgroundFetchRequest.h>
 #include <WebCore/ClientOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #define BGLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - BackgroundFetchLoad::" fmt, this, ##__VA_ARGS__)
@@ -42,6 +43,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchLoad);
 
 BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
     : m_sessionID(WTFMove(sessionID))

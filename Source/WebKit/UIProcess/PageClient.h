@@ -53,6 +53,7 @@
 #include <variant>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -242,7 +243,7 @@ class WebKitWebResourceLoadManager;
 #endif
 
 class PageClient : public CanMakeWeakPtr<PageClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PageClient);
 public:
     virtual ~PageClient() { }
 
@@ -725,10 +726,13 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
+
 #if ENABLE(WRITING_TOOLS_UI)
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
+    virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
 #endif
+
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
 
 #if PLATFORM(COCOA)
@@ -753,9 +757,9 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    virtual void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) = 0;
+    virtual void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) = 0;
 
-    virtual void proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
+    virtual void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
 
     virtual void writingToolsActiveWillChange() = 0;
 

@@ -47,7 +47,7 @@ class ElementBox;
 }
 
 class RenderElement : public RenderObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderElement);
 public:
     virtual ~RenderElement();
@@ -123,6 +123,7 @@ public:
 
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
+    const RenderStyle* targetTextPseudoStyle() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
@@ -135,10 +136,7 @@ public:
     void removeLayers();
     void moveLayers(RenderLayer& newParent);
 
-    virtual void dirtyLinesFromChangedChild(RenderObject&) { }
-
-    bool ancestorLineBoxDirty() const { return m_ancestorLineBoxDirty; }
-    void setAncestorLineBoxDirty(bool f = true);
+    virtual void dirtyLineFromChangedChild() { }
 
     void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     void setOutOfFlowChildNeedsStaticPositionLayout();
@@ -401,7 +399,6 @@ private:
     const RenderStyle* textSegmentPseudoStyle(PseudoId) const;
 
     SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
-    unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
 
     unsigned m_hasPausedImageAnimations : 1;
@@ -431,13 +428,6 @@ private:
 inline int adjustForAbsoluteZoom(int, const RenderElement&);
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderElement&);
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderElement&);
-
-inline void RenderElement::setAncestorLineBoxDirty(bool f)
-{
-    m_ancestorLineBoxDirty = f;
-    if (m_ancestorLineBoxDirty)
-        setNeedsLayout();
-}
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {

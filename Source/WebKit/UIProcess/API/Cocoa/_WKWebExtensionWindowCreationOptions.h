@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebExtensionWindowCreationOptions.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 
 WK_EXTERN
-@interface _WKWebExtensionWindowCreationOptions : WKWebExtensionWindowCreationOptions
+@interface _WKWebExtensionWindowCreationOptions : WKWebExtensionWindowConfiguration
 @end
 
-#define _WKWebExtensionWindowCreationOptions WKWebExtensionWindowCreationOptions
+#define _WKWebExtensionWindowCreationOptions WKWebExtensionWindowConfiguration

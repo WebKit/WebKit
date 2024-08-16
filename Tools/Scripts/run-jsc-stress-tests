@@ -603,11 +603,11 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
+$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "playstation")
 # Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
 $isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
-$isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64") && $hostOS != "windows"
+$isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
 $skipLockdown = false
 $skipMiniMode = false
@@ -619,10 +619,6 @@ if $platform == "watchos"
     $skipLockdown = true
     $skipMiniMode = true
     $memoryLimited = true
-end
-
-if not $jitTests
-    $isWasmPlatform = false
 end
 
 # This is meant for skipping execution of tests than require a lot of address
@@ -2022,11 +2018,11 @@ def runWebAssemblySpecTest(mode)
 end
 
 def runWebAssemblyFunctionReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil, "--useWasmTypedFunctionReferences=true")
+    runWebAssemblySpecTestBase(mode, "funcref-spec-harness", nil)
 end
 
 def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWasmTypedFunctionReferences=true", "--useWasmGC=true", "--useWasmExtendedConstantExpressions=true")
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWasmGC=true")
 end
 
 def runWebAssemblyThreadsSpecTest(mode)
@@ -2041,10 +2037,6 @@ end
 
 def runWebAssemblyTailCallSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWasmTailCalls=true")
-end
-
-def runWebAssemblyExtendedConstSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWasmExtendedConstantExpressions=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

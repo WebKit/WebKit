@@ -27,29 +27,46 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "WebGPUXRProjectionLayer.h"
 #include "WebXRRigidTransform.h"
 #include "XRCompositionLayer.h"
 
 namespace WebCore {
 
+namespace WebGPU {
+class XRProjectionLayer;
+}
+
+class GPUTexture;
+
 class XRProjectionLayer : public XRCompositionLayer {
-    WTF_MAKE_ISO_ALLOCATED(XRProjectionLayer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRProjectionLayer);
 public:
+    static Ref<XRProjectionLayer> create(ScriptExecutionContext& scriptExecutionContext, Ref<WebCore::WebGPU::XRProjectionLayer>&& backing)
+    {
+        return adoptRef(*new XRProjectionLayer(scriptExecutionContext, WTFMove(backing)));
+    }
     virtual ~XRProjectionLayer();
 
-    uint32_t textureWidth() const { RELEASE_ASSERT_NOT_REACHED(); }
-    uint32_t textureHeight() const { RELEASE_ASSERT_NOT_REACHED(); }
-    uint32_t textureArrayLength() const { RELEASE_ASSERT_NOT_REACHED(); }
+    uint32_t textureWidth() const;
+    uint32_t textureHeight() const;
+    uint32_t textureArrayLength() const;
 
-    bool ignoreDepthValues() const { RELEASE_ASSERT_NOT_REACHED(); }
-    std::optional<float> fixedFoveation() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setFixedFoveation(std::optional<float>) { RELEASE_ASSERT_NOT_REACHED(); }
-    WebXRRigidTransform* deltaPose() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setDeltaPose(WebXRRigidTransform*) { RELEASE_ASSERT_NOT_REACHED(); }
+    bool ignoreDepthValues() const;
+    std::optional<float> fixedFoveation() const;
+    [[noreturn]] void setFixedFoveation(std::optional<float>);
+    WebXRRigidTransform* deltaPose() const;
+    [[noreturn]] void setDeltaPose(WebXRRigidTransform*);
 
     // WebXRLayer
     void startFrame(const PlatformXR::FrameData&) final;
     PlatformXR::Device::Layer endFrame() final;
+
+    WebCore::WebGPU::XRProjectionLayer& backing();
+private:
+    XRProjectionLayer(ScriptExecutionContext&, Ref<WebCore::WebGPU::XRProjectionLayer>&&);
+
+    Ref<WebCore::WebGPU::XRProjectionLayer> m_backing;
 };
 
 } // namespace WebCore

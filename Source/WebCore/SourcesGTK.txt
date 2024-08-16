@@ -112,3 +112,5 @@ platform/unix/LoggingUnix.cpp
 platform/unix/SharedMemoryUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
+
+Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp

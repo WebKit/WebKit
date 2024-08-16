@@ -33,7 +33,7 @@ namespace WebCore {
 class PushMessageData;
 
 class PushEvent final : public ExtendableEvent {
-    WTF_MAKE_ISO_ALLOCATED(PushEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushEvent);
 public:
     static Ref<PushEvent> create(const AtomString&, PushEventInit&&, IsTrusted = IsTrusted::No);
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);

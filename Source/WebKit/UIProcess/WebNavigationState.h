@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -56,7 +58,7 @@ class WebPageProxy;
 class WebBackForwardListItem;
 
 class WebNavigationState : public CanMakeWeakPtr<WebNavigationState> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebNavigationState);
 public:
     explicit WebNavigationState();
     ~WebNavigationState();
@@ -67,24 +69,18 @@ public:
     Ref<API::Navigation> createLoadDataNavigation(WebCore::ProcessIdentifier, std::unique_ptr<API::SubstituteData>&&);
     Ref<API::Navigation> createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<API::SubstituteData>&&, RefPtr<WebBackForwardListItem>&& currentItem);
 
-    bool hasNavigation(uint64_t navigationID) const { return m_navigations.contains(navigationID); }
-    API::Navigation* navigation(uint64_t navigationID);
-    RefPtr<API::Navigation> takeNavigation(uint64_t navigationID);
-    void didDestroyNavigation(WebCore::ProcessIdentifier, uint64_t navigationID);
+    bool hasNavigation(WebCore::NavigationIdentifier navigationID) const { return m_navigations.contains(navigationID); }
+    API::Navigation* navigation(WebCore::NavigationIdentifier);
+    RefPtr<API::Navigation> takeNavigation(WebCore::NavigationIdentifier);
+    void didDestroyNavigation(WebCore::ProcessIdentifier, WebCore::NavigationIdentifier);
     void clearAllNavigations();
 
     void clearNavigationsFromProcess(WebCore::ProcessIdentifier);
 
-    uint64_t generateNavigationID()
-    {
-        return ++m_navigationID;
-    }
-
-    using NavigationMap = HashMap<uint64_t, RefPtr<API::Navigation>>;
+    using NavigationMap = HashMap<WebCore::NavigationIdentifier, RefPtr<API::Navigation>>;
 
 private:
     NavigationMap m_navigations;
-    uint64_t m_navigationID { 0 };
 };
 
 } // namespace WebKit

@@ -2,8 +2,13 @@
 <html style="background:green;">
 <head>
 <script>
-if (window.internals)
-    internals.setPageScaleFactor(0.5);
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+
+    window.testRunner.setPageScaleFactor(0.5, 0, 0).then(() => {
+        testRunner.notifyDone();
+    });
+}
 </script>
 </head>
 <body>

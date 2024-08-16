@@ -31,6 +31,7 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ class Texture;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -52,7 +54,7 @@ struct TextureViewDescriptor;
 }
 
 class RemoteTexture final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteTexture);
 public:
     static Ref<RemoteTexture> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
@@ -76,6 +78,8 @@ private:
     RemoteTexture& operator=(RemoteTexture&&) = delete;
 
     WebCore::WebGPU::Texture& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

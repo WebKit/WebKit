@@ -47,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-removed-during-transition-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-removed-during-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/opt-in-without-frame-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-ctor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-finished-promise.html
@@ -61,6 +62,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-setup-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-updatecallbackdone-promise.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pagereveal-with-view-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-ctor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-fired-before-old-state-capture.html

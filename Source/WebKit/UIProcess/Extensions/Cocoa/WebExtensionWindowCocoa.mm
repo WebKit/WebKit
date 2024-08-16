@@ -40,8 +40,11 @@
 #import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionWindow);
 
 WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, WKWebExtensionWindow* delegate)
     : m_extensionContext(context)
@@ -51,7 +54,7 @@ WebExtensionWindow::WebExtensionWindow(const WebExtensionContext& context, WKWeb
     , m_respondsToWindowType([delegate respondsToSelector:@selector(windowTypeForWebExtensionContext:)])
     , m_respondsToWindowState([delegate respondsToSelector:@selector(windowStateForWebExtensionContext:)])
     , m_respondsToSetWindowState([delegate respondsToSelector:@selector(setWindowState:forWebExtensionContext:completionHandler:)])
-    , m_respondsToIsUsingPrivateBrowsing([delegate respondsToSelector:@selector(isUsingPrivateBrowsingForWebExtensionContext:)])
+    , m_respondsToIsPrivate([delegate respondsToSelector:@selector(isPrivateForWebExtensionContext:)])
     , m_respondsToFrame([delegate respondsToSelector:@selector(frameForWebExtensionContext:)])
     , m_respondsToSetFrame([delegate respondsToSelector:@selector(setFrame:forWebExtensionContext:completionHandler:)])
 #if PLATFORM(MAC)
@@ -154,7 +157,7 @@ bool WebExtensionWindow::matches(const WebExtensionTabQueryParameters& parameter
 bool WebExtensionWindow::extensionHasAccess() const
 {
     bool isPrivate = this->isPrivate();
-    return !isPrivate || (isPrivate && extensionContext()->hasAccessInPrivateBrowsing());
+    return !isPrivate || (isPrivate && extensionContext()->hasAccessToPrivateData());
 }
 
 WebExtensionWindow::TabVector WebExtensionWindow::tabs(SkipValidation skipValidation) const
@@ -353,11 +356,11 @@ bool WebExtensionWindow::isPrivate() const
     if (m_cachedPrivate)
         return m_private;
 
-    if (!isValid() || !m_respondsToIsUsingPrivateBrowsing)
+    if (!isValid() || !m_respondsToIsPrivate)
         return false;
 
     // Private can't change after the fact, so cache it for quick access and to ensure it does not change.
-    m_private = [m_delegate isUsingPrivateBrowsingForWebExtensionContext:m_extensionContext->wrapper()];
+    m_private = [m_delegate isPrivateForWebExtensionContext:m_extensionContext->wrapper()];
     m_cachedPrivate = true;
 
     return m_private;

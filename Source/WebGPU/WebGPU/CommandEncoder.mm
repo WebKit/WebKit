@@ -36,6 +36,7 @@
 #import "RenderPassEncoder.h"
 #import "Texture.h"
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @implementation TextureAndClearColor
 - (instancetype)initWithTexture:(id<MTLTexture>)texture
@@ -106,6 +107,8 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     return CommandEncoder::create(commandBufferWithEvent.first, commandBufferWithEvent.second, *this);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandEncoder);
 
 CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
     : m_commandBuffer(commandBuffer)

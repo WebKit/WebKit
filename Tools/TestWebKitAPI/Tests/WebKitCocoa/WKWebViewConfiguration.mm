@@ -127,8 +127,8 @@ TEST(WebKit, ConfigurationGroupIdentifierIsCopied)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setGroupIdentifier:@"TestGroupIdentifier"];
 
-    auto configuationCopy = adoptNS([configuration copy]);
-    EXPECT_STREQ([configuration _groupIdentifier].UTF8String, [configuationCopy _groupIdentifier].UTF8String);
+    auto configurationCopy = adoptNS([configuration copy]);
+    EXPECT_STREQ([configuration _groupIdentifier].UTF8String, [configurationCopy _groupIdentifier].UTF8String);
 }
 
 TEST(WebKit, DefaultConfigurationEME)

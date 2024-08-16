@@ -202,7 +202,7 @@ public:
     
     void add(const ICEvent& event);
     
-    static ICStats& instance();
+    static ICStats& singleton();
     
 private:
 

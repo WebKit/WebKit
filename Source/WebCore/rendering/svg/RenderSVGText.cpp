@@ -53,12 +53,12 @@
 #include "SVGVisitedRendererTracking.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGText);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGText);
 
 RenderSVGText::RenderSVGText(SVGTextElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGText, element, WTFMove(style))
@@ -493,13 +493,11 @@ void RenderSVGText::applyTransform(TransformationMatrix& transform, const Render
 
 VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, HitTestSource source, const RenderFragmentContainer* fragment)
 {
-    LegacyRootInlineBox* rootBox = firstRootBox();
+    auto* rootBox = legacyRootBox();
     if (!rootBox)
         return createVisiblePosition(0, Affinity::Downstream);
 
-    ASSERT(!rootBox->nextRootBox());
     ASSERT(childrenInline());
-
     LegacyInlineBox* closestBox = downcast<SVGRootInlineBox>(*rootBox).closestLeafChildForPosition(pointInContents);
     if (!closestBox)
         return createVisiblePosition(0, Affinity::Downstream);

@@ -27,13 +27,14 @@
 #define WebDiagnosticLoggingClient_h
 
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebDiagnosticLoggingClient : public WebCore::DiagnosticLoggingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebDiagnosticLoggingClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebDiagnosticLoggingClient);
 public:
     WebDiagnosticLoggingClient(WebPage&);

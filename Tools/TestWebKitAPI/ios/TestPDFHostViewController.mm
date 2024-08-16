@@ -26,12 +26,7 @@
 #import "config.h"
 #import "TestPDFHostViewController.h"
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
-
-// FIXME (rdar://133488399): Move this to TestWebKitAPI.xcconfig.
-#if PLATFORM(APPLETV)
-asm(".linker_option \"-framework\", \"PDFKit\"");
-#endif
+#if USE(PDFKIT_FOR_TESTING) && PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
 #import "PDFKitSPI.h"
@@ -136,4 +131,4 @@ std::unique_ptr<ClassMethodSwizzler> createPDFHostViewControllerSwizzler()
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // USE(PDFKIT_FOR_TESTING) && PLATFORM(IOS_FAMILY)

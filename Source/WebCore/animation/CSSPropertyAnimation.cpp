@@ -67,7 +67,7 @@
 #include "StyleFilterImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
-#include "StyleTextBoxEdge.h"
+#include "StyleTextEdge.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -3927,7 +3927,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<BoxSizing>(CSSPropertyBoxSizing, &RenderStyle::boxSizing, &RenderStyle::setBoxSizing),
         new DiscretePropertyWrapper<CaptionSide>(CSSPropertyCaptionSide, &RenderStyle::captionSide, &RenderStyle::setCaptionSide),
         new DiscretePropertyWrapper<Clear>(CSSPropertyClear, &RenderStyle::clear, &RenderStyle::setClear),
-        new DiscretePropertyWrapper<TextBoxEdge>(CSSPropertyTextBoxEdge, &RenderStyle::textBoxEdge, &RenderStyle::setTextBoxEdge),
+        new DiscretePropertyWrapper<TextEdge>(CSSPropertyTextBoxEdge, &RenderStyle::textBoxEdge, &RenderStyle::setTextBoxEdge),
+        new DiscretePropertyWrapper<TextEdge>(CSSPropertyLineFitEdge, &RenderStyle::lineFitEdge, &RenderStyle::setLineFitEdge),
         new DiscretePropertyWrapper<TextBoxTrim>(CSSPropertyTextBoxTrim, &RenderStyle::textBoxTrim, &RenderStyle::setTextBoxTrim),
         new DiscretePropertyWrapper<PrintColorAdjust>(CSSPropertyPrintColorAdjust, &RenderStyle::printColorAdjust, &RenderStyle::setPrintColorAdjust),
         new DiscretePropertyWrapper<ColumnFill>(CSSPropertyColumnFill, &RenderStyle::columnFill, &RenderStyle::setColumnFill),
@@ -4058,6 +4059,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<const ScrollSnapAlign&>(CSSPropertyScrollSnapAlign, &RenderStyle::scrollSnapAlign, &RenderStyle::setScrollSnapAlign),
         new DiscretePropertyWrapper<ScrollSnapStop>(CSSPropertyScrollSnapStop, &RenderStyle::scrollSnapStop, &RenderStyle::setScrollSnapStop),
         new DiscretePropertyWrapper<ScrollSnapType>(CSSPropertyScrollSnapType, &RenderStyle::scrollSnapType, &RenderStyle::setScrollSnapType),
+        new DiscretePropertyWrapper<const Vector<Style::ScopedName>&>(CSSPropertyViewTransitionClass, &RenderStyle::viewTransitionClasses, &RenderStyle::setViewTransitionClasses),
         new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
         new DiscretePropertyWrapper<FieldSizing>(CSSPropertyFieldSizing, &RenderStyle::fieldSizing, &RenderStyle::setFieldSizing),
         new DiscretePropertyWrapper<const Vector<AtomString>&>(CSSPropertyAnchorName, &RenderStyle::anchorNames, &RenderStyle::setAnchorNames),
@@ -4120,6 +4122,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyFontVariant,
         CSSPropertyFontSynthesis,
         CSSPropertyContainIntrinsicSize,
+        CSSPropertyTextBox,
         CSSPropertyTextWrap,
         CSSPropertyWhiteSpace
     };

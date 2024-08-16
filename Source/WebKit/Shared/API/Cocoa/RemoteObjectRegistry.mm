@@ -33,8 +33,11 @@
 #import "WebPage.h"
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteObjectRegistry);
 
 RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry)
     : m_remoteObjectRegistry(remoteObjectRegistry)

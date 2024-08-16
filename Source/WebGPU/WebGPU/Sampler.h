@@ -28,6 +28,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 
 struct WGPUSamplerImpl {
 };
@@ -46,7 +47,7 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpusampler
 class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Sampler);
 public:
     static Ref<Sampler> create(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     {

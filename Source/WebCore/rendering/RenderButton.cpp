@@ -35,7 +35,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RenderThemeIOS.h"
@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderButton);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderButton);
 
 RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
     : RenderFlexibleBox(Type::Button, element, WTFMove(style))

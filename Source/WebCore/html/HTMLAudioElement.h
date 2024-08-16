@@ -35,7 +35,7 @@ namespace WebCore {
 class Document;
 
 class HTMLAudioElement final : public HTMLMediaElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLAudioElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAudioElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAudioElement);
 public:
     static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);

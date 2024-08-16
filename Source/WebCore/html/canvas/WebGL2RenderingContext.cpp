@@ -101,15 +101,15 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 const GCGLuint64 MaxClientWaitTimeout = 0u;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {

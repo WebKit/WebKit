@@ -649,7 +649,7 @@ if ASSERT_ENABLED
 end
 
     macro saveJSEntrypointInterpreterRegisters()
-        subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+        subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
@@ -674,7 +674,7 @@ end
         else
             loadi -1 * SlotSize[cfr], wasmInstance
         end
-        addp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+        addp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
     end
 
     tagReturnAddress sp
@@ -684,11 +684,11 @@ end
     # Load data from the entry callee
     # This was written by doVMEntry
     loadp Callee[cfr], ws0 # WebAssemblyFunction*
-    loadp WebAssemblyFunction::m_jsToWasmInterpreterCallee[ws0], ws0 # JSEntrypointInterpreterCallee*
+    loadp WebAssemblyFunction::m_jsToWasmCallee[ws0], ws0 # JITLessJSEntrypointCallee*
 
 if ASSERT_ENABLED
     # Check to confirm we have the right kind of callee
-    loadi Wasm::JSEntrypointInterpreterCallee::ident[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::ident[ws0], ws1
     move 0xBF, wa0
     bpeq wa0, ws1, .ident_ok
     break
@@ -696,12 +696,12 @@ if ASSERT_ENABLED
 end
 
     # Allocate stack space (no stack check)
-    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
     subp ws1, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
     end)
 end
 
@@ -751,7 +751,7 @@ else
 end
 
     # Pop argument space values
-    addp constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned, sp
+    addp constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
@@ -759,7 +759,7 @@ if ASSERT_ENABLED
     end)
 end
 
-    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
 if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
@@ -769,37 +769,36 @@ end
 
     # Store Callee's wasm callee
 if JSVALUE64
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
 else
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + PayloadOffset[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + PayloadOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmCallee + TagOffset[ws0], ws1
+    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + TagOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
 end
 
-    loadp Wasm::JSEntrypointInterpreterCallee::wasmFunctionPrologue[ws0], ws0
+    loadp Wasm::JITLessJSEntrypointCallee::wasmFunctionPrologue[ws0], ws0
     call ws0, WasmEntryPtrTag
 
     clobberVolatileRegisters()
-    clobberArgumentOnlyRegisters()
 
     # Restore SP
-    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointInterpreterCallee*)
+    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
 if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    loadi Wasm::JSEntrypointInterpreterCallee::frameSize[ws0], ws1
+    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
     subp cfr, ws1, ws1
     move ws1, sp
-    subp constexpr Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned, sp
+    subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
 
 if ASSERT_ENABLED
     repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned[sp]
+        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
     end)
 end
 
@@ -883,6 +882,238 @@ end
 .handleException:
     throwException(OutOfMemory)
     break
+end)
+
+# This is the interpreted analogue to WasmBinding.cpp:wasmToWasm
+op(wasm_to_wasm_wrapper_entry, macro()
+    loadp (Callee - PrologueStackPointerDelta)[sp], ws0
+
+    loadi Wasm::Callee::m_index[ws0], ws1
+
+    const ImportFunctionInfoSize = constexpr (sizeof(JSWebAssemblyInstance::ImportFunctionInfo))
+    muli ImportFunctionInfoSize, ws1
+
+    # Store Callee's wasm callee for import function
+    const ImportFunctionInfoBase = constexpr (sizeof(JSWebAssemblyInstance) + 7) & (~7)
+    leap ImportFunctionInfoBase[wasmInstance], ws0
+    addp ws0, ws1
+    # offsetOfBoxedTargetCalleeLoadLocation
+    loadp JSWebAssemblyInstance::ImportFunctionInfo::boxedTargetCalleeLoadLocation[ws1], ws0
+    loadp [ws0], ws0
+
+    const addressOfCalleeCalleeFromCallerPerspectiveBase = constexpr CallFrameSlot::callee * SlotSize + PayloadOffset
+if JSVALUE64
+    storep ws0, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta[sp]
+else
+    storei ws0, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + PayloadOffset[sp]
+    storei constexpr JSValue::NativeCalleeTag, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + TagOffset[sp]
+end
+
+    loadp JSWebAssemblyInstance::ImportFunctionInfo::wasmEntrypointLoadLocation[ws1], ws0
+    loadp JSWebAssemblyInstance::ImportFunctionInfo::targetInstance[ws1], wasmInstance
+
+    # Memory
+    if ARM64 or ARM64E
+        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+    elsif X86_64
+        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
+        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+    end
+    if not ARMv7
+        cagedPrimitiveMayBeNull(memoryBase, ws1)
+    end
+
+    loadp [ws0], ws0
+    jmp ws0, WasmEntryPtrTag
+end)
+
+# This is the interpreted analogue to WasmBinding.cpp:wasmToJS
+op(wasm_to_js_wrapper_entry, macro()
+    # Load this before we create the stack frame, since we lose old cfr, which we wrote Callee to
+    loadp (Callee - PrologueStackPointerDelta)[sp], ws1
+
+    tagReturnAddress sp
+    preserveCallerPCAndCFR()
+
+    subp 0x10, sp
+if ARM64 or ARM64E
+    storepairq ws1, wasmInstance, -0x10[cfr]
+elsif JSVALUE64
+    storeq ws1, -0x10[cfr]
+    storeq wasmInstance, -8[cfr]
+else
+    storep ws1, -0x10[cfr]
+    storep wasmInstance, -8[cfr]
+end
+
+    subp 0x80, sp
+
+    # Store all the registers here
+
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        storepairq gpr1, gpr2, offset[sp]
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        storeq gpr, offset[sp]
+    end)
+else
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        store2ia gpLsw, gprMsw, offset[sp]
+    end)
+end
+
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        storepaird fpr1, fpr2, offset[sp]
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        stored fpr, offset[sp]
+    end)
+end
+
+    move wasmInstance, a0
+    move ws1, a1
+    cCall2(_operationGetWasmCalleeStackSize)
+
+    move sp, a2
+    subp r0, sp
+    move sp, a0
+    move cfr, a1
+    move wasmInstance, a3
+    cCall4(_operationWasmToJSExitMarshalArguments)
+    btpnz r1, .oom
+
+    bineq r0, 0, .safe
+    move wasmInstance, r0
+    move (constexpr Wasm::ExceptionType::TypeErrorInvalidV128Use), r1
+    cCall2(_operationWasmToJSException)
+    jmp r0, ExceptionHandlerPtrTag
+    break
+
+.safe:
+
+    move r0, t2
+    loadp JSWebAssemblyInstance::ImportFunctionInfo::importFunction[t2], t0
+if not JSVALUE64
+    move (constexpr JSValue::CellTag), t1
+end
+
+    leap JSWebAssemblyInstance::ImportFunctionInfo::callLinkInfo[t2], t2
+    # emitDataICFastPath
+    #   emitFastPathImpl(nullptr, jit, false, nullptr)
+
+if not JSVALUE64
+    # branchIfNotCell(t0)
+    bineq t0, constexpr(JSValue::CellTag), .notacell
+end
+
+    # calleeGPR = t0
+    # callLinkInfoGPR = t2
+    # callTargetGPR = t5
+    loadp CallLinkInfo::m_monomorphicCallDestination[t2], t5
+
+if RISCV64
+    bpeq CallLinkInfo::m_callee[t2], t0, .found
+    btpnz CallLinkInfo::m_callee[t2], (constexpr CallLinkInfo::polymorphicCalleeMask), .found
+else
+    # scratch = t3
+    loadp CallLinkInfo::m_callee[t2], t3
+    bpeq t3, t0, .found
+    btpnz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .found
+end
+
+if not JSVALUE64
+.notacell:
+end
+
+.found:
+if ARM64 or ARM64E
+    pcrtoaddr _llint_default_call_trampoline, t5
+else
+    leap (_llint_default_call_trampoline), t5
+end
+    # not a tail call
+    # jit.transferPtr (constexpr CallLinkInfo::offsetOfCodeBlock())[t2], CodeBlock[cfr]
+    loadp CallLinkInfo::m_codeBlock[t2], t3
+    const offset = constexpr (CallerFrameAndPC::sizeInRegisters*sizeof(Register))
+    storep t3, (CodeBlock - offset)[sp]
+    call t5
+    
+    subp 0x80, sp
+    storep r0, [sp]
+    move sp, a0
+    move cfr, a1
+    move wasmInstance, a2
+    cCall3(_operationWasmToJSExitMarshalReturnValues)
+    btpnz r1, .handleException
+
+    macro forEachReturnWasmJSR(fn)
+        if ARM64 or ARM64E
+            fn(0 * 8, wa0, wa1)
+            fn(2 * 8, wa2, wa3)
+            fn(4 * 8, wa4, wa5)
+            fn(6 * 8, wa6, wa7)
+        elsif X86_64
+            fn(0 * 8, wa0)
+            fn(1 * 8, wa1)
+            fn(2 * 8, wa2)
+            fn(3 * 8, wa3)
+            fn(4 * 8, wa4)
+            fn(5 * 8, wa5)
+        elsif JSVALUE64
+            fn(0 * 8, wa0)
+            fn(1 * 8, wa1)
+            fn(2 * 8, wa2)
+            fn(3 * 8, wa3)
+            fn(4 * 8, wa4)
+            fn(5 * 8, wa5)
+        else
+            fn(0 * 8, wa1, wa0)
+            fn(1 * 8, wa3, wa2)
+        end
+    end
+
+if ARM64 or ARM64E
+    forEachReturnWasmJSR(macro (offset, gpr1, gpr2)
+        loadpairq offset[sp], gpr1, gpr2
+    end)
+elsif JSVALUE64
+    forEachReturnWasmJSR(macro (offset, gpr)
+        loadq offset[sp], gpr
+    end)
+else
+    forEachReturnWasmJSR(macro (offset, gprMsw, gprLsw)
+        load2ia offset[sp], gprLsw, gprMsw
+    end)
+end
+
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        loadpaird offset[sp], fpr1, fpr2
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        loadd offset[sp], fpr
+    end)
+end
+
+    loadp -8[cfr], wasmInstance
+    addp 0x10, sp
+
+    restoreCallerPCAndCFR()
+    ret
+
+.handleException:
+    move wasmInstance, a0
+    call _operationWasmUnwind
+    jmp r0, ExceptionHandlerPtrTag
+
+.oom:
+    throwException(OutOfMemory)
+
 end)
 
 macro traceExecution()

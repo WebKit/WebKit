@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
     <script>
-        window.onload = function() {
-            if (window.internals)
-                window.internals.setPageScaleFactor(2, 0, 0);
+        window.onload = async function() {
+            if (window.testRunner)
+                await window.testRunner.setPageScaleFactor(2, 0, 0);
         }
     </script>
 <style>

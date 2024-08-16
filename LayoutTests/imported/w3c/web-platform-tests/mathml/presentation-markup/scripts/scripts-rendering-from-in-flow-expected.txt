@@ -1,0 +1,12 @@
+
+FAIL Rendering of mmultiscripts should only be affected by in-flow children assert_approx_equals: inline size expected 321.875 +/- 1 but got 423.5
+FAIL Rendering of munder should only be affected by in-flow children assert_approx_equals: inline size expected 128 +/- 1 but got 192
+FAIL Rendering of mover should only be affected by in-flow children assert_approx_equals: inline size expected 128 +/- 1 but got 160
+FAIL Rendering of munderover should only be affected by in-flow children assert_approx_equals: inline size expected 128 +/- 1 but got 224
+FAIL Rendering of msub should only be affected by in-flow children assert_approx_equals: block size expected 27.359375 +/- 1 but got 24
+FAIL Rendering of msup should only be affected by in-flow children assert_approx_equals: block size expected 36.328125 +/- 1 but got 24
+FAIL Rendering of msubsup should only be affected by in-flow children assert_approx_equals: inline size expected 192.625 +/- 1 but got 224
+
+
+
+

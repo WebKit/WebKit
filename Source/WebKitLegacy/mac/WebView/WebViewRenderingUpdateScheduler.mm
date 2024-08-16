@@ -28,12 +28,15 @@
 
 #import "WebViewInternal.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadInternal.h>
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewRenderingUpdateScheduler);
 
 WebViewRenderingUpdateScheduler::WebViewRenderingUpdateScheduler(WebView* webView)
     : m_webView(webView)

@@ -33,7 +33,7 @@ namespace WebCore {
 class CSSNumericArray;
 
 class CSSMathProduct final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathProduct);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathProduct);
 public:
     static ExceptionOr<Ref<CSSMathProduct>> create(FixedVector<CSSNumberish>);
     static ExceptionOr<Ref<CSSMathProduct>> create(Vector<Ref<CSSNumericValue>>);

@@ -50,6 +50,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -93,6 +94,8 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
     return true;
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaPermissionRequestManagerProxy);
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)

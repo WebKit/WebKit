@@ -33,11 +33,11 @@
 #include "WebXRSession.h"
 #include "XRInputSourceEvent.h"
 #include "XRInputSourcesChangeEvent.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRInputSourceArray);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRInputSourceArray);
 
 UniqueRef<WebXRInputSourceArray> WebXRInputSourceArray::create(WebXRSession& session)
 {

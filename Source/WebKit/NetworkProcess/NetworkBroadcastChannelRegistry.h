@@ -29,6 +29,7 @@
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct MessageWithMessagePorts;
@@ -39,7 +40,7 @@ namespace WebKit {
 class NetworkProcess;
 
 class NetworkBroadcastChannelRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkBroadcastChannelRegistry);
 public:
     explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
 

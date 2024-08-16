@@ -35,10 +35,13 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AsyncPDFRenderer);
 
 Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(PDFPresentationController& presentationController)
 {
@@ -370,7 +373,11 @@ FloatRect AsyncPDFRenderer::convertTileRectToPaintingCoords(const FloatRect& til
 
 void AsyncPDFRenderer::enqueueTilePaintIfNecessary(const TiledBacking& tiledBacking, const TileForGrid& tileInfo, const FloatRect& tileRect, const std::optional<FloatRect>& clipRect)
 {
-    auto renderInfo = renderInfoForTile(tiledBacking, tileInfo, tileRect, clipRect);
+    // Round the clip rect to integer bounds so that we don't end up making
+    // ImageBuffers with floating point sizes.
+    auto renderInfo = renderInfoForTile(tiledBacking, tileInfo, tileRect, clipRect.transform([](const auto& rect) {
+        return enclosingIntRect(rect);
+    }));
     if (renderInfo.pageCoverage.pages.isEmpty())
         return;
 

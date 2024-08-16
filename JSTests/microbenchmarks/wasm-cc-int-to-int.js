@@ -1,5 +1,5 @@
 //@ skip unless $isWasmPlatform
-//@ runDefaultWasm("--useWasm=1", "--useInterpretedJSEntryWrappers=1")
+//@ runDefaultWasm("--useWasm=1", "--useWasmJITLessJSEntrypoint=1")
 
 var wasm_code;
 try {

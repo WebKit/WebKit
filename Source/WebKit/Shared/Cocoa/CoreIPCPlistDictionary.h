@@ -31,13 +31,14 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
 class CoreIPCPlistDictionary {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CoreIPCPlistDictionary);
 public:
     CoreIPCPlistDictionary(NSDictionary *);
     CoreIPCPlistDictionary(const RetainPtr<NSDictionary>&);

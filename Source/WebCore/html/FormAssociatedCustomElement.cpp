@@ -32,8 +32,8 @@
 #include "HTMLFormElement.h"
 #include "NodeRareData.h"
 #include "ValidationMessage.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

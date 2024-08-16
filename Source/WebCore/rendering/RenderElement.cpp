@@ -97,9 +97,9 @@
 #include "Styleable.h"
 #include "TextAutoSizing.h"
 #include "ViewTransition.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
@@ -107,7 +107,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
     SingleThreadPackedWeakPtr<RenderObject> firstChild;
@@ -122,7 +122,6 @@ static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderE
 inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderObject(type, elementOrDocument, flags, typeSpecificFlags)
     , m_firstChild(nullptr)
-    , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
@@ -1824,6 +1823,11 @@ const RenderStyle* RenderElement::spellingErrorPseudoStyle() const
 const RenderStyle* RenderElement::grammarErrorPseudoStyle() const
 {
     return textSegmentPseudoStyle(PseudoId::GrammarError);
+}
+
+const RenderStyle* RenderElement::targetTextPseudoStyle() const
+{
+    return textSegmentPseudoStyle(PseudoId::TargetText);
 }
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const

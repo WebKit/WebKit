@@ -38,7 +38,7 @@ namespace WebCore {
 class Document;
 
 class History final : public ScriptWrappable, public RefCounted<History>, public LocalDOMWindowProperty {
-    WTF_MAKE_ISO_ALLOCATED(History);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(History);
 public:
     static Ref<History> create(LocalDOMWindow& window) { return adoptRef(*new History(window)); }
 

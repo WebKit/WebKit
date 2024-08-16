@@ -1,5 +1,5 @@
 //@ skip if !$isSIMDPlatform
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=true", "--useWasmGC=true")
+//@ runWebAssemblySuite("--useWasmGC=true")
 
 import * as assert from "../assert.js";
 

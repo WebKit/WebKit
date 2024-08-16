@@ -83,6 +83,7 @@ axis
 background
 behavior
 bgcolor
+blocking
 border
 bordercolor
 capture
@@ -283,7 +284,9 @@ onoffline
 ononline
 onorientationchange
 onpagehide
+onpagereveal
 onpageshow
+onpageswap
 onpaste
 onpause
 onplay

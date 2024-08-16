@@ -99,7 +99,7 @@ private:
     Page& page() const { return m_page; }
     Ref<Page> protectedPage() const { return m_page.get(); }
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     WeakPtr<PageOverlay> m_servicesOverlay;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;

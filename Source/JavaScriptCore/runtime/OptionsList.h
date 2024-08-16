@@ -582,35 +582,23 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues"_s) \
     v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ"_s) \
     v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG"_s) \
-    v(Bool, useInterpretedJSEntryWrappers, true, Normal, "Allow JS->wasm wrappers to be replaced by jit-less versions."_s) \
+    v(Bool, useWasmJITLessJSEntrypoint, true, Normal, "Allow JS->wasm wrappers to be replaced by jit-less versions."_s) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
     \
     /* Feature Flags */\
     \
-    v(Bool, useArrayBufferTransfer, true, Normal, "Expose ArrayBuffer.transfer feature."_s) \
-    v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync."_s) \
-    v(Bool, useArrayGroupMethod, true, Normal, "Expose the Object.groupBy() and Map.groupBy() methods."_s) \
-    v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics."_s) \
     v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
-    v(Bool, useSetMethods, true, Normal, "Expose the various Set.prototype methods for handling combinations of sets"_s) \
-    v(Bool, useImportAttributes, true, Normal, "Enable import attributes."_s) \
-    v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat."_s) \
-    v(Bool, usePromiseWithResolversMethod, true, Normal, "Expose the Promise.withResolvers() method."_s) \
     v(Bool, usePromiseTryMethod, true, Normal, "Expose the Promise.try() method."_s) \
     v(Bool, useRegExpEscape, true, Normal, "Expose RegExp.escape feature."_s) \
-    v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature."_s) \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \
-    v(Bool, useStringWellFormed, true, Normal, "Expose the String well-formed methods."_s) \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object."_s) \
     v(Bool, useTrustedTypes, false, Normal, "Enable trusted types eval protection feature."_s) \
     v(Bool, useUint8ArrayBase64Methods, true, Normal, "Expose methods for converting Uint8Array to/from base64 and hex."_s) \
-    v(Bool, useWasmTypedFunctionReferences, true, Normal, "Allow function types from the wasm typed function references spec."_s) \
     v(Bool, useWasmGC, true, Normal, "Allow gc types from the wasm gc proposal."_s) \
     v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
     v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
-    v(Bool, useWasmExtendedConstantExpressions, true, Normal, "Allow the use of global, element, and data init expressions from the extended constant expressions proposal."_s) \
 
 
 

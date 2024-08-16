@@ -42,6 +42,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -52,6 +53,7 @@ struct PresentationContextDescriptor;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -72,7 +74,7 @@ struct RequestAdapterOptions;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGPU> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteGPU);
 public:
     static Ref<RemoteGPU> create(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
     {
@@ -99,6 +101,8 @@ private:
     RemoteGPU(RemoteGPU&&) = delete;
     RemoteGPU& operator=(const RemoteGPU&) = delete;
     RemoteGPU& operator=(RemoteGPU&&) = delete;
+
+    RefPtr<IPC::Connection> connection() const;
 
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }

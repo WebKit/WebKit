@@ -44,6 +44,7 @@
 #import <WebCore/FontMetrics.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/ImmediateActionStage.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/NodeRenderStyle.h>

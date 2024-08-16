@@ -30,10 +30,16 @@
 #include <drm_fourcc.h>
 #include <glib.h>
 #include <string.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WPE {
 
 namespace DRM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Crtc);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Connector);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Plane);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
 
 static Property drmPropertyForName(int fd, drmModeObjectProperties* properties, const char* name)
 {

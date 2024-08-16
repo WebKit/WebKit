@@ -227,7 +227,7 @@ bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
 #endif
 
 
-const char* capsMediaType(const GstCaps* caps)
+StringView capsMediaType(const GstCaps* caps)
 {
     ASSERT(caps);
     GstStructure* structure = gst_caps_get_structure(caps, 0);
@@ -237,22 +237,22 @@ const char* capsMediaType(const GstCaps* caps)
     }
 #if ENABLE(ENCRYPTED_MEDIA)
     if (gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-cbcs") || gst_structure_has_name(structure, "application/x-webm-enc"))
-        return gst_structure_get_string(structure, "original-media-type");
+        return gstStructureGetString(structure, "original-media-type"_s);
 #endif
     if (gst_structure_has_name(structure, "application/x-rtp"))
-        return gst_structure_get_string(structure, "media");
+        return gstStructureGetString(structure, "media"_s);
 
-    return gst_structure_get_name(structure);
+    return gstStructureGetName(structure);
 }
 
 bool doCapsHaveType(const GstCaps* caps, const char* type)
 {
-    const char* mediaType = capsMediaType(caps);
+    auto mediaType = capsMediaType(caps);
     if (!mediaType) {
         GST_WARNING("Failed to get MediaType");
         return false;
     }
-    return g_str_has_prefix(mediaType, type);
+    return mediaType.startsWith(span(type));
 }
 
 bool areEncryptedCaps(const GstCaps* caps)
@@ -1069,6 +1069,11 @@ StringView gstStructureGetString(const GstStructure* structure, ASCIILiteral key
 StringView gstStructureGetString(const GstStructure* structure, StringView key)
 {
     return StringView::fromLatin1(gst_structure_get_string(structure, static_cast<const char*>(key.rawCharacters())));
+}
+
+StringView gstStructureGetName(const GstStructure* structure)
+{
+    return StringView::fromLatin1(gst_structure_get_name(structure));
 }
 
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);

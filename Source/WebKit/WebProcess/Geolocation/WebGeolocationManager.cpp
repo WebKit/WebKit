@@ -36,6 +36,7 @@
 #include <WebCore/GeolocationPositionData.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -47,6 +48,8 @@ static RegistrableDomain registrableDomainForPage(WebPage& page)
         return { };
     return RegistrableDomain { document->url() };
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGeolocationManager);
 
 ASCIILiteral WebGeolocationManager::supplementName()
 {

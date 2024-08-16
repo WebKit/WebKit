@@ -43,11 +43,15 @@
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
+#include "RemoteXRBindingProxy.h"
 #include "SharedVideoFrame.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDeviceProxy);
 
 RemoteDeviceProxy::RemoteDeviceProxy(Ref<WebCore::WebGPU::SupportedFeatures>&& features, Ref<WebCore::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : Device(WTFMove(features), WTFMove(limits))
@@ -73,6 +77,16 @@ void RemoteDeviceProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteDevice::Destroy());
     UNUSED_PARAM(sendResult);
+}
+
+RefPtr<WebCore::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
+{
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteDevice::CreateXRBinding(identifier));
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
+
+    return RemoteXRBindingProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 RefPtr<WebCore::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const WebCore::WebGPU::BufferDescriptor& descriptor)

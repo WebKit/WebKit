@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWasmTypedFunctionReferences=false", "--useWasmGC=false")
+//@ runWebAssemblySuite("--useWasmGC=false")
 
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
@@ -158,7 +158,7 @@ function makeFuncrefIdent() {
           .End();
 
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_local to type Funcref expected Externref, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't validate: set_local to type (ref null func) expected (ref null extern), in function at index 0 (evaluating 'new WebAssembly.Module(bin)')`);
 }
 
 // Globals
@@ -250,7 +250,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     .Function("h", { params: ["externref"], ret: "funcref" })
       .GetLocal(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
+  .End().WebAssembly().get()), Error, `WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module((new Builder())`);
 
 assert.throws(() => new WebAssembly.Module((new Builder())
   .Type().End()
@@ -264,7 +264,7 @@ assert.throws(() => new WebAssembly.Module((new Builder())
       .I32Const(0)
       .TableSet(0)
     .End()
-  .End().WebAssembly().get()), Error, "WebAssembly.Module doesn't validate: table.set value to type I32 expected Funcref, in function at index 0 (evaluating 'new WebAssembly.Module");
+  .End().WebAssembly().get()), Error, `WebAssembly.Module doesn't validate: table.set value to type I32 expected (ref null func), in function at index 0 (evaluating 'new WebAssembly.Module((new Builder())`);
 
 // Tables
 {

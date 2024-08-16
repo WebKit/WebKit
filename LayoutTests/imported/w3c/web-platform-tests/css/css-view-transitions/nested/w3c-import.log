@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/adjust-transform-with-scale.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/adjust-transform-with-scale.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/adjust-transform.tenative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/adjust-transform.tenative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-direct.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-direct.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-nested-vt-names.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-nested-vt-names.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-nested.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-nested.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-non-ancestor.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-non-ancestor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-non-existent.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-non-existent.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-self.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/compute-explicit-name-self.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-direct.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-direct.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-nested.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-nested.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-on-self.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/contain-on-self.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-direct.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-direct.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-ignores-nearest-name.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-ignores-nearest-name.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-nested.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nearest-nested.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-exit.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-exit.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-group-display-none.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-group-display-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-group-in-pseudo-basic.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-group-in-pseudo-basic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-ref-100.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/normal-goes-up.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/normal-goes-up.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/render-element.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/nested/render-element.tentative.html

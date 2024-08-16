@@ -287,6 +287,18 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, const void* n
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, asset);
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    getVideoPlaybackConfiguration(asset)->whenSettled(RunLoop::current(), [protectedThis = Ref { *this }](auto&& result) mutable {
+        if (!result)
+            return;
+        protectedThis->m_callOnClientThreadCallback([protectedThis, value = *result] {
+            if (protectedThis->m_didParseVideoPlaybackConfigurationCallback)
+                protectedThis->m_didParseVideoPlaybackConfigurationCallback(value);
+        });
+    });
+#endif
+
     m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, asset = retainPtr(asset)] {
         if (!m_didParseInitializationDataCallback)
             return;
@@ -319,18 +331,7 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
             // FIXME(125161)    : Add TextTrack support
         }
-
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-        getVideoPlaybackConfiguration(asset.get())->whenSettled(RunLoop::current(), [protectedThis, this, segment = WTFMove(segment)](auto&& result) mutable {
-            if (result)
-                segment.videoPlaybackConfiguration = *result;
-            m_callOnClientThreadCallback([protectedThis = WTFMove(protectedThis), segment = WTFMove(segment)]() mutable {
-                protectedThis->m_didParseInitializationDataCallback(WTFMove(segment));
-            });
-        });
-#else
         m_didParseInitializationDataCallback(WTFMove(segment));
-#endif
     });
 }
 
@@ -383,9 +384,7 @@ void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(N
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 Ref<SourceBufferParserAVFObjC::VideoPlaybackConfigurationPromise> SourceBufferParserAVFObjC::getVideoPlaybackConfiguration(AVAsset* asset)
 {
-    assertIsMainThread();
-
-    if (!asset || PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoMultiviewVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionSpatialVideo())
+    if (!asset || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoMultiviewVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionSpatialVideo())
         return VideoPlaybackConfigurationPromise::createAndReject(PlatformMediaError::NotSupportedError);
     RetainPtr<AVAssetPlaybackAssistant> assistant = [PAL::getAVAssetPlaybackAssistantClass() assetPlaybackAssistantWithAsset:asset];
     VideoPlaybackConfigurationPromise::Producer producer;

@@ -32,11 +32,11 @@
 #include "EventNames.h"
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TrackListBase);
 
 TrackListBase::TrackListBase(ScriptExecutionContext* context, Type type)
     : ActiveDOMObject(context)

@@ -36,7 +36,7 @@ namespace WebCore {
 class AudioContext;
     
 class ChannelMergerNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(ChannelMergerNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ChannelMergerNode);
 public:
     static ExceptionOr<Ref<ChannelMergerNode>> create(BaseAudioContext&, const ChannelMergerOptions& = { });
     

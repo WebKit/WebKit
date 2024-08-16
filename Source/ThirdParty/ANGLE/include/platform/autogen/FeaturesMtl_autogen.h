@@ -428,11 +428,11 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://anglebug.com/42266744"
     };
 
-    FeatureInfo alwaysResolveMultisampleRenderBuffers = {
-        "alwaysResolveMultisampleRenderBuffers",
+    FeatureInfo enableMultisampledRenderToTextureOnNonTilers = {
+        "enableMultisampledRenderToTextureOnNonTilers",
         FeatureCategory::MetalFeatures,
-        "Always automatically resolve MSAA render buffers to single sampled texture.",
-        &members, "http://crbug.com/1486094"
+        "Enable EXT_multisampled_render_to_texture on non tiled GPUs.",
+        &members, "http://anglebug.com/42261786"
     };
 
     FeatureInfo injectAsmStatementIntoLoopBodies = {

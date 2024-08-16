@@ -68,9 +68,9 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/MakeString.h>
 
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
-
 #if ENABLE(IMAGE_ANALYSIS)
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 
@@ -327,7 +327,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
     
-    [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
     [copiedConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
 
     m_mainWebView = makeUnique<PlatformWebView>((__bridge WKPageConfigurationRef)copiedConfiguration.get(), options);

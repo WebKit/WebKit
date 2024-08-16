@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PathTraversalState_h
-#define PathTraversalState_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "Path.h"
@@ -82,6 +81,5 @@ private:
     float m_normalAngle { 0 }; // degrees
     bool m_isZeroVector { false };
 };
-}
 
-#endif
+} // namespace WebCore

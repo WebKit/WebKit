@@ -32,12 +32,12 @@
 #include "Settings.h"
 #include "StyledElement.h"
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
 
 namespace {
 

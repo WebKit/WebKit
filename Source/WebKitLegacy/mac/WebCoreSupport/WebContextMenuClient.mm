@@ -57,6 +57,7 @@
 #import <WebCore/SimpleRange.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 
 using namespace WebCore;
@@ -66,6 +67,8 @@ using namespace WebCore;
 - (void)speakString:(NSString *)string;
 - (void)stopSpeaking:(id)sender;
 @end
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextMenuClient);
 
 WebContextMenuClient::WebContextMenuClient(WebView *webView)
 #if ENABLE(SERVICE_CONTROLS)

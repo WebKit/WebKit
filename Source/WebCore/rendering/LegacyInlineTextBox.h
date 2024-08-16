@@ -35,7 +35,7 @@ class BoxLegacyPath;
 }
 
 class LegacyInlineTextBox : public LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(LegacyInlineTextBox);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineTextBox);
 public:
     explicit LegacyInlineTextBox(RenderText& renderer)
         : LegacyInlineBox(renderer)

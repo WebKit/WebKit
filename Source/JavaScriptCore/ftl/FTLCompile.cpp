@@ -39,6 +39,8 @@
 #include "DFGGraphSafepoint.h"
 #include "FTLJITCode.h"
 #include "JITThunks.h"
+#include "LLIntEntrypoint.h"
+#include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ThunkGenerators.h"
@@ -142,8 +144,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
     CCallHelpers::Label arityCheckLabel = mainPathLabel;
 
     // Generating entrypoints.
-    CCallHelpers::Address frame = CCallHelpers::Address(CCallHelpers::stackPointerRegister, -static_cast<int32_t>(prologueStackPointerDelta()));
-
     switch (state.graph.m_plan.mode()) {
     case JITCompilationMode::FTL: {
         bool requiresArityFixup = codeBlock->numParameters() != 1;
@@ -151,23 +151,30 @@ void compile(State& state, Safepoint::Result& safepointResult)
             CCallHelpers::JumpList mainPathJumps;
 
             arityCheckLabel = jit.label();
-            jit.load32(
-                frame.withOffset(sizeof(Register) * CallFrameSlot::argumentCountIncludingThis),
-                GPRInfo::regT1);
-            mainPathJumps.append(jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::regT1, CCallHelpers::TrustedImm32(codeBlock->numParameters())));
+            jit.load32(CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+            mainPathJumps.append(jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::argumentGPR2, CCallHelpers::TrustedImm32(codeBlock->numParameters())));
 
             unsigned numberOfParameters = codeBlock->numParameters();
-            CCallHelpers::JumpList stackOverflow;
-            jit.getArityPadding(vm, numberOfParameters, GPRInfo::regT1, GPRInfo::regT0, GPRInfo::regT2, GPRInfo::regT3, stackOverflow);
+            CCallHelpers::JumpList stackOverflowWithEntry;
+            jit.getArityPadding(vm, numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
 
-            jit.emitFunctionPrologue();
-            jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-            jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
-            jit.emitFunctionEpilogue();
-            jit.untagReturnAddress();
+#if CPU(X86_64)
+            jit.pop(GPRInfo::argumentGPR1);
+#else
+            jit.tagPtr(NoPtrTag, CCallHelpers::linkRegister);
+            jit.move(CCallHelpers::linkRegister, GPRInfo::argumentGPR1);
+#endif
+            jit.nearCallThunk(CodeLocationLabel { LLInt::arityFixup() });
+#if CPU(X86_64)
+            jit.push(GPRInfo::argumentGPR1);
+#else
+            jit.move(GPRInfo::argumentGPR1, CCallHelpers::linkRegister);
+            jit.untagPtr(NoPtrTag, CCallHelpers::linkRegister);
+            jit.validateUntaggedPtr(CCallHelpers::linkRegister, GPRInfo::argumentGPR0);
+#endif
             mainPathJumps.append(jit.jump());
 
-            stackOverflow.link(&jit);
+            stackOverflowWithEntry.link(&jit);
             jit.emitFunctionPrologue();
             jit.move(CCallHelpers::TrustedImmPtr(codeBlock), GPRInfo::argumentGPR0);
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);

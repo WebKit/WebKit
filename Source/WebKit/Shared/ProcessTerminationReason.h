@@ -41,6 +41,7 @@ enum class ProcessTerminationReason : uint8_t {
     NavigationSwap,
     RequestedByNetworkProcess,
     RequestedByGPUProcess,
+    RequestedByModelProcess,
     GPUProcessCrashedTooManyTimes,
     ModelProcessCrashedTooManyTimes,
 };

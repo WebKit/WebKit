@@ -32,10 +32,13 @@
 #import <QuartzCore/CALayer.h>
 #import <WebCore/PerformanceLoggingClient.h>
 #import <WebCore/TileController.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeScrollingPerformanceData);
 
 RemoteLayerTreeScrollingPerformanceData::RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy& drawingArea)
     : m_drawingArea(drawingArea)

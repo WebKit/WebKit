@@ -72,39 +72,48 @@ static TypeNameTemplate typeNameTemplate;
 
 static void dumpRegisterdTypesAtExit(void)
 {
-    TZoneHeapManager::getInstance().dumpRegisterdTypes();
+    TZoneHeapManager::singleton().dumpRegisterdTypes();
 }
 
 void TZoneHeapManager::init()
 {
     RELEASE_BASSERT(m_state == TZoneHeapManager::Uninitialized);
 
-    if (verbose)
+    if constexpr (verbose)
         TZONE_LOG_DEBUG("TZoneHeapManager initialization ");
 
 #if BOS(DARWIN)
     // Use the boot UUID and the process' name to seed the key.
     static const size_t rawSeedLength = 128;
     char rawSeed[rawSeedLength] = { };
-    char bootDevUUID[NAME_MAX] = { };
-    size_t bootDevUUIDLen = sizeof(bootDevUUID);
 
-    // try using "kern.bootuuid" sysctl to obtain boot volume UUID
-    RELEASE_BASSERT(!sysctlbyname("kern.bootuuid", bootDevUUID, &bootDevUUIDLen, nullptr, 0));
+    uint64_t primordialSeed;
+    struct timeval timeValue;
+    int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+    size_t size = sizeof(timeValue);
 
-    if (verbose)
-        TZONE_LOG_DEBUG("kern.bootuuid: %s\n", bootDevUUID);
+    auto sysctlResult = sysctl(mib, 2, &timeValue, &size, nullptr, 0);
+    if (sysctlResult) {
+        TZONE_LOG_DEBUG("kern.boottime is required for TZoneHeap initialization: %d\n", sysctlResult);
+        RELEASE_BASSERT(!sysctlResult);
+    }
+    primordialSeed = timeValue.tv_sec * 1000 * 1000 + timeValue.tv_usec;
+
+    if constexpr (verbose)
+        TZONE_LOG_DEBUG("primordialSeed: 0x%llx\n", primordialSeed);
 
     const char* procName = processNameString();
 
-    if (verbose)
+    if constexpr (verbose)
         TZONE_LOG_DEBUG("Process Name: \"%s\"\n", procName);
 
-    // Convert bootTime to hex values.
     unsigned byteIdx = 0;
 
-    for (unsigned i = 0; i < bootDevUUIDLen && byteIdx < rawSeedLength; byteIdx++, i++)
-        rawSeed[byteIdx] = bootDevUUID[i];
+    while (primordialSeed && byteIdx < rawSeedLength) {
+        int digit = primordialSeed & 0xf;
+        rawSeed[byteIdx++] = 'Z' - digit;
+        primordialSeed >>= 4;
+    }
 
     auto procNameLen = strlen(procName);
 
@@ -112,18 +121,18 @@ void TZoneHeapManager::init()
         rawSeed[byteIdx] = procName[i];
 
     for (; byteIdx < rawSeedLength; byteIdx++)
-        rawSeed[byteIdx] = 0;
+        rawSeed[byteIdx] = 'Q' - (byteIdx & 0xf);
 
     (void)CC_SHA256(&rawSeed, rawSeedLength, (unsigned char*)&m_tzoneKey.seed);
 #else // OS(DARWIN) => !OS(DARWIN)
-    if (verbose)
+    if constexpr (verbose)
         TZONE_LOG_DEBUG("using static seed\n");
 
     const unsigned char defaultSeed[CC_SHA1_DIGEST_LENGTH] = { "DefaultSeed\x12\x34\x56\x78\x9a\xbc\xde\xf0" };
     memcpy(m_tzoneKey.seed, defaultSeed, CC_SHA1_DIGEST_LENGTH);
 #endif // OS(DARWIN) => !OS(DARWIN)
 
-    if (verbose) {
+    if constexpr (verbose) {
         TZONE_LOG_DEBUG("    Computed key {");
         for (unsigned i = 0; i < CC_SHA1_DIGEST_LENGTH; ++i)
             TZONE_LOG_DEBUG(" %02x",  m_tzoneKey.seed[i]);
@@ -239,7 +248,7 @@ void TZoneHeapManager::dumpRegisterdTypes()
     }
 }
 
-void TZoneHeapManager::ensureInstance()
+void TZoneHeapManager::ensureSingleton()
 {
     static std::once_flag onceFlag;
     std::call_once(

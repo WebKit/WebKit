@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -503,6 +504,8 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
 
     ASSERT(&from == child.parent());
     ASSERT(!beforeChild || &to == beforeChild->parent());
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from) && child.isRenderBox())
+        RenderBlock::removePercentHeightDescendantIfNeeded(downcast<RenderBox>(child));
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to.isRenderBlock() || to.isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
@@ -559,6 +562,7 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes) {
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlock>(from)) {
             blockFlow->removePositionedObjects(nullptr);
+            RenderBlock::removePercentHeightDescendantIfNeeded(*blockFlow);
             removeFloatingObjects(*blockFlow);
         }
     }

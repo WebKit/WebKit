@@ -2918,7 +2918,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefEq(Value ref0, Value ref1, Value&
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(uint32_t index, Value& result)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    TypeKind returnType = Options::useWasmTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
+    TypeKind returnType = TypeKind::Ref;
 
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -4034,7 +4034,10 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     parameterLocations.reserveInitialCapacity(arguments.size() + isX86());
 
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
-    ScratchScope<1, 0> scratches(*this, callingConvention.argumentGPRS(), isARM64E() ? callingConvention.prologueScratchGPRs[0] : InvalidGPRReg);
+    auto preserved = callingConvention.argumentGPRS();
+    if constexpr (isARM64E())
+        preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
+    ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
     GPRReg callerFramePointer = scratches.gpr(0);
 #if CPU(X86_64)
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister), callerFramePointer);

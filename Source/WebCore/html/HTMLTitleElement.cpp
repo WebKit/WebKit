@@ -35,13 +35,13 @@
 #include "Text.h"
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTitleElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTitleElement);
 
 using namespace HTMLNames;
 

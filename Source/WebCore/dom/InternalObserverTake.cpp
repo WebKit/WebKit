@@ -69,9 +69,6 @@ public:
         }
 
     private:
-        Ref<Observable> m_sourceObservable;
-        uint64_t m_amount;
-
         SubscriberCallbackTake(ScriptExecutionContext& context, Ref<Observable> source, uint64_t amount)
             : SubscriberCallback(&context)
             , m_sourceObservable(source)
@@ -79,12 +76,12 @@ public:
         { }
 
         bool hasCallback() const final { return true; }
+
+        Ref<Observable> m_sourceObservable;
+        uint64_t m_amount;
     };
 
 private:
-    Ref<Subscriber> m_subscriber;
-    uint64_t m_amount;
-
     void next(JSC::JSValue value) final
     {
         if (!m_amount)
@@ -123,6 +120,8 @@ private:
         , m_amount(amount)
     { }
 
+    Ref<Subscriber> m_subscriber;
+    uint64_t m_amount;
 };
 
 Ref<SubscriberCallback> createSubscriberCallbackTake(ScriptExecutionContext& context, Ref<Observable> observable, uint64_t amount)

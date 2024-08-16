@@ -31,7 +31,7 @@ class DOMMimeType;
 class Navigator;
 
 class DOMPlugin final : public ScriptWrappable, public RefCounted<DOMPlugin>, public CanMakeWeakPtr<DOMPlugin> {
-    WTF_MAKE_ISO_ALLOCATED(DOMPlugin);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DOMPlugin);
 public:
     static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
     ~DOMPlugin();

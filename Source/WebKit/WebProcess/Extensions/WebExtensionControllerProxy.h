@@ -31,6 +31,7 @@
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerParameters.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class WebFrame;
 class WebPage;
 
 class WebExtensionControllerProxy final : public RefCounted<WebExtensionControllerProxy>, public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionControllerProxy);
     WTF_MAKE_NONCOPYABLE(WebExtensionControllerProxy);
 
 public:

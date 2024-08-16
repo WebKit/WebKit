@@ -340,6 +340,7 @@ protected:
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
     GridTrackSizingDirection direction() const { return m_algorithm.m_direction; }
+    GridTrackSizingAlgorithm::SizingState sizingState() const { return m_algorithm.m_sizingState; }
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
     void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, TrackSizeComputationPhase::MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }

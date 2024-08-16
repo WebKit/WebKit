@@ -26,11 +26,11 @@
 #include "config.h"
 #include "CSSAnimationEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSAnimationEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSAnimationEvent);
 
 CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
     : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)

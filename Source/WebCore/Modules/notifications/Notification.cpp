@@ -52,12 +52,12 @@
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Notification);
 
 static Lock nonPersistentNotificationMapLock;
 static HashMap<WTF::UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)

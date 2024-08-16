@@ -1647,6 +1647,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setMediaCapabilityGrantsEnabled(mediaCapabilityGrantsEnabled);
 }
 
+- (void)_setAllowPrivacySensitiveOperationsInNonPersistentDataStores:(BOOL)allowPrivacySensitiveOperationsInNonPersistentDataStores
+{
+    _preferences->setAllowPrivacySensitiveOperationsInNonPersistentDataStores(allowPrivacySensitiveOperationsInNonPersistentDataStores);
+}
+
+- (BOOL)_allowPrivacySensitiveOperationsInNonPersistentDataStores
+{
+    return _preferences->allowPrivacySensitiveOperationsInNonPersistentDataStores();
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

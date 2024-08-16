@@ -33,10 +33,10 @@
 #include "KeyframeInterpolation.h"
 #include "TimingFunction.h"
 #include "WebAnimationTypes.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ class IntRect;
 class KeyframeEffect;
 
 class AcceleratedEffect : public RefCounted<AcceleratedEffect>, public CanMakeWeakPtr<AcceleratedEffect>, public KeyframeInterpolation {
-    WTF_MAKE_ISO_ALLOCATED(AcceleratedEffect);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AcceleratedEffect);
 public:
 
     class WEBCORE_EXPORT Keyframe final : public KeyframeInterpolation::Keyframe {

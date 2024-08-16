@@ -170,7 +170,7 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 template<SavedFPWidth savedFPWidth>
-static inline void buildEntryBufferForCatch(Probe::Context& context)
+static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
 {
     unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
     CallFrame* callFrame = context.fp<CallFrame*>();

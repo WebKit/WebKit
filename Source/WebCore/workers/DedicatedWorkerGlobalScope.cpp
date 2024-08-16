@@ -44,7 +44,7 @@
 #include "StructuredSerializeOptions.h"
 #include "Worker.h"
 #include "WorkerObjectProxy.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "WorkerNotificationClient.h"
@@ -56,7 +56,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
 
 Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, DedicatedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
 {

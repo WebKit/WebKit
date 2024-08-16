@@ -34,13 +34,14 @@
 #include <WebCore/WebGPUTextureDimension.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureViewDescriptor.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteTextureProxy final : public WebCore::WebGPU::Texture {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteTextureProxy);
 public:
     static Ref<RemoteTextureProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -63,11 +64,10 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
 
     RefPtr<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;

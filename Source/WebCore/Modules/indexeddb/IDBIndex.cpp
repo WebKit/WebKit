@@ -36,13 +36,13 @@
 #include "Logging.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBIndex);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBIndex);
 
 UniqueRef<IDBIndex> IDBIndex::create(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
 {

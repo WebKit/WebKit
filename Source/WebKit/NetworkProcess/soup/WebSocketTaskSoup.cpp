@@ -36,6 +36,7 @@
 #include <WebCore/SoupVersioning.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/StringBuilder.h>
@@ -54,6 +55,8 @@ static inline bool isConnectionError(GError* error, SoupMessage* message)
     return error && !g_error_matches(error, SOUP_WEBSOCKET_ERROR, SOUP_WEBSOCKET_ERROR_NOT_WEBSOCKET);
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
 WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, const String& protocol)
     : m_channel(channel)

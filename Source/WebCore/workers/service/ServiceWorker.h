@@ -46,7 +46,7 @@ class SWClientConnection;
 struct StructuredSerializeOptions;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorker, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ServiceWorker, WEBCORE_EXPORT);
 public:
     using State = ServiceWorkerState;
     static Ref<ServiceWorker> getOrCreate(ScriptExecutionContext&, ServiceWorkerData&&);

@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGSVGElement;
 
 class SVGDocument final : public XMLDocument {
-    WTF_MAKE_ISO_ALLOCATED(SVGDocument);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGDocument);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDocument);
 public:
     static Ref<SVGDocument> create(LocalFrame*, const Settings&, const URL&);

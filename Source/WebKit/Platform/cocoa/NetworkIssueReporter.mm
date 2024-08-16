@@ -30,6 +30,7 @@
 
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_networkextension)
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_create_xcode_issue, void, __cdecl, (const char*, const void*, size_t))
@@ -37,6 +38,8 @@ SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_copy_current_stacktrac
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_should_save_stacktrace, bool, __cdecl, (void))
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkIssueReporter);
 
 bool NetworkIssueReporter::isEnabled()
 {

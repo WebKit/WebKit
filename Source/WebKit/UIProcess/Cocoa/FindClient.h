@@ -29,6 +29,7 @@
 #import "WKFoundation.h"
 
 #import "APIFindClient.h"
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
@@ -37,7 +38,7 @@
 namespace WebKit {
 
 class FindClient final : public API::FindClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FindClient);
 public:
     explicit FindClient(WKWebView *);
     

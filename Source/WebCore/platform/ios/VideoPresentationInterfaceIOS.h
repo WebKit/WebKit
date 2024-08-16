@@ -169,10 +169,10 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
-    const Logger* loggerPtr() const;
+    WEBCORE_EXPORT const void* logIdentifier() const;
+    WEBCORE_EXPORT const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceIOS"_s; };
-    WTFLogChannel& logChannel() const;
+    WEBCORE_EXPORT WTFLogChannel& logChannel() const;
 #endif
 
 protected:

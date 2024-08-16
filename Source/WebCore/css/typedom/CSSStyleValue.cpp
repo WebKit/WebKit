@@ -34,13 +34,13 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleValue);
 
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const Document& document, const AtomString& property, const String& cssText)
 {

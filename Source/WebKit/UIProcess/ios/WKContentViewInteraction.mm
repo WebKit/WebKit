@@ -3118,9 +3118,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->hasRunningProcess())
         return NO;
 
-    auto* connection = _page->legacyMainFrameProcess().connection();
-    if (!connection)
-        return NO;
+    Ref connection = _page->legacyMainFrameProcess().connection();
 
     if (_isWaitingOnPositionInformation)
         return NO;
@@ -4852,7 +4850,7 @@ static UIPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory
     if (auto pasteAccessCategory = std::exchange(_domPasteRequestCategory, std::nullopt)) {
         if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture) {
             if (auto replyID = _page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(*pasteAccessCategory), [] () { }))
-                _page->websiteDataStore().protectedNetworkProcess()->connection()->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+                _page->websiteDataStore().protectedNetworkProcess()->connection().waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
         }
     }
 
@@ -5728,7 +5726,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     _pendingAutocorrectionContextHandler = WTFMove(completionHandler);
     _page->requestAutocorrectionContext();
 
-    if (_page->legacyMainFrameProcess().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) != IPC::Error::NoError)
+    if (_page->legacyMainFrameProcess().connection().waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) != IPC::Error::NoError)
         RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
 
     if (_autocorrectionContextNeedsUpdate)

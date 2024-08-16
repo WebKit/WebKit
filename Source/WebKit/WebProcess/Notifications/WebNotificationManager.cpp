@@ -31,6 +31,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "NetworkProcessConnection.h"
@@ -94,6 +95,8 @@ static bool sendNotificationMessageWithAsyncReply(U&& message, WebPage* page, C&
     });
 }
 #endif // ENABLE(NOTIFICATIONS)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNotificationManager);
 
 ASCIILiteral WebNotificationManager::supplementName()
 {

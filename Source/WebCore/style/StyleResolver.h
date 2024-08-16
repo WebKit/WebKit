@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "AnchorPositionEvaluator.h"
 #include "CSSSelector.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
@@ -79,14 +78,13 @@ struct ResolutionContext {
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
-    AnchorPositionedStateMap* anchorPositionedStateMap { nullptr };
     bool isSVGUseTreeRoot { false };
 };
 
 using KeyframesRuleMap = HashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
 
 class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
-    WTF_MAKE_ISO_ALLOCATED(Resolver);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Resolver);
 public:
     // Style resolvers are shared between shadow trees with identical styles. That's why we don't simply provide a Style::Scope.
     enum class ScopeType : bool { Document, ShadowTree };

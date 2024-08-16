@@ -32,6 +32,7 @@
 #include "JIT.h"
 #include "JITCode.h"
 #include "JSCJSValueInlines.h"
+#include "LLIntThunks.h"
 #include "SlowPathCall.h"
 #include "ThunkGenerators.h"
 #include "VM.h"

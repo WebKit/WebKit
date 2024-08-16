@@ -247,39 +247,15 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Instant/compare/argument-string-date-with-utc-offset.js:
-  default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-  strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-test/built-ins/Temporal/Instant/compare/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/from/argument-string-date-with-utc-offset.js:
-  default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-  strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-test/built-ins/Temporal/Instant/from/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/from/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/epochMilliseconds/basic.js:
   default: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
   strict mode: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
-test/built-ins/Temporal/Instant/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-  strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-test/built-ins/Temporal/Instant/prototype/equals/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/equals/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/since/argument-string-date-with-utc-offset.js:
-  default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-  strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-test/built-ins/Temporal/Instant/prototype/since/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
@@ -325,12 +301,6 @@ test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Instant/prototype/until/argument-string-date-with-utc-offset.js:
-  default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-  strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
-test/built-ins/Temporal/Instant/prototype/until/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/instant-string-sub-minute-offset.js:
   default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
@@ -385,12 +355,6 @@ test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-ins
 test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/compare/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDate/compare/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/from/argument-leap-second.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -409,9 +373,6 @@ test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-string.js:
 test/built-ins/Temporal/PlainDate/from/argument-string-date-with-utc-offset.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/from/argument-string-time-separators.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -523,21 +484,9 @@ test/built-ins/Temporal/PlainDate/prototype/calendarId/prop-desc.js:
 test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDate/prototype/since/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -580,9 +529,6 @@ test/built-ins/Temporal/PlainDate/prototype/subtract/subclassing-ignored.js:
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-date-with-utc-offset.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-separators.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -607,12 +553,6 @@ test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/until/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDate/prototype/until/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/until/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -676,12 +616,6 @@ test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/compare/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDateTime/compare/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/from/argument-object.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -697,9 +631,6 @@ test/built-ins/Temporal/PlainDateTime/from/argument-string-comma-decimal-separat
 test/built-ins/Temporal/PlainDateTime/from/argument-string-date-with-utc-offset.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-offset.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -814,12 +745,6 @@ test/built-ins/Temporal/PlainDateTime/prototype/calendarId/prop-desc.js:
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid date string'
-  strict mode: 'RangeError: invalid date string'
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/round/balance.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -961,9 +886,6 @@ test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-object-in
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-date-with-utc-offset.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-separators.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
@@ -1003,18 +925,6 @@ test/built-ins/Temporal/PlainDateTime/second-undefined.js:
 test/built-ins/Temporal/PlainDateTime/subclass.js:
   default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainTime/compare/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid time string'
-  strict mode: 'RangeError: invalid time string'
-test/built-ins/Temporal/PlainTime/compare/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainTime/from/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid time string'
-  strict mode: 'RangeError: invalid time string'
-test/built-ins/Temporal/PlainTime/from/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
   default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
@@ -1024,18 +934,6 @@ test/built-ins/Temporal/PlainTime/prototype/add/argument-duration-out-of-range.j
 test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js:
   default: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
   strict mode: 'Test262Error: microsecond result: Expected SameValue(«992», «993») to be true'
-test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid time string'
-  strict mode: 'RangeError: invalid time string'
-test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/PlainTime/prototype/since/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid time string'
-  strict mode: 'RangeError: invalid time string'
-test/built-ins/Temporal/PlainTime/prototype/since/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/since/order-of-operations.js:
   default: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
@@ -1048,12 +946,6 @@ test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematica
 test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
-test/built-ins/Temporal/PlainTime/prototype/until/argument-string-date-with-utc-offset.js:
-  default: 'RangeError: invalid time string'
-  strict mode: 'RangeError: invalid time string'
-test/built-ins/Temporal/PlainTime/prototype/until/argument-string-minus-sign.js:
-  default: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: variant minus sign: 1976-11-18T15:23:30.12−02:00 Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/prototype/until/order-of-operations.js:
   default: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
@@ -1075,9 +967,6 @@ test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by
 test/intl402/DateTimeFormat/canonicalize-calendar.js:
   default: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
   strict mode: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
-test/intl402/DateTimeFormat/offset-timezone-no-unicode-minus-sign.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"

@@ -29,8 +29,11 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionDataRecordHolder);
 
 WebExtensionDataRecord::WebExtensionDataRecord(const String& displayName, const String& uniqueIdentifier)
     : m_displayName(displayName)

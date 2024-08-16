@@ -27,15 +27,15 @@
 
 #include "Element.h"
 #include "JSDOMSetLike.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class ViewTransitionTypeSet : public RefCounted<ViewTransitionTypeSet> {
-    WTF_MAKE_ISO_ALLOCATED(ViewTransitionTypeSet);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ViewTransitionTypeSet);
 
 public:
     static Ref<ViewTransitionTypeSet> create(Document& document, Vector<AtomString>&& initialActiveTypes)
@@ -49,7 +49,7 @@ public:
     void addToSetLike(const AtomString&);
     bool removeFromSetLike(const AtomString&);
 
-    bool has(const AtomString&) const;
+    bool hasType(const AtomString&) const;
 
 private:
     ViewTransitionTypeSet(Document&, Vector<AtomString>&&);

@@ -30,6 +30,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +51,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PushServiceCo
 namespace WebPushD {
 
 class PushServiceConnection : public CanMakeWeakPtr<PushServiceConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PushServiceConnection);
 public:
     using IncomingPushMessageHandler = Function<void(NSString *, NSDictionary *)>;
 

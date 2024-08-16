@@ -96,6 +96,11 @@ class TextureView;
 enum class TextureViewDimension : uint8_t;
 enum class VertexFormat : uint8_t;
 enum class VertexStepMode : uint8_t;
+enum class XREye : uint8_t;
+class XRBinding;
+class XRProjectionLayer;
+class XRSubImage;
+class XRView;
 
 class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -130,6 +135,7 @@ public:
     WGPUTextureViewDimension convertToBacking(TextureViewDimension);
     WGPUVertexFormat convertToBacking(VertexFormat);
     WGPUVertexStepMode convertToBacking(VertexStepMode);
+    WGPUXREye convertToBacking(XREye);
 
     WGPUBufferUsageFlags convertBufferUsageFlagsToBacking(BufferUsageFlags);
     WGPUColorWriteMaskFlags convertColorWriteFlagsToBacking(ColorWriteFlags);
@@ -166,6 +172,10 @@ public:
     virtual WGPUSurface convertToBacking(const PresentationContext&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
+    virtual WGPUXRBinding convertToBacking(const XRBinding&) = 0;
+    virtual WGPUXRProjectionLayer convertToBacking(const XRProjectionLayer&) = 0;
+    virtual WGPUXRSubImage convertToBacking(const XRSubImage&) = 0;
+    virtual WGPUXRView convertToBacking(const XRView&) = 0;
 };
 
 } // namespace WebCore::WebGPU

@@ -1101,7 +1101,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
         WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
         WKPreferencesSetMinimumFontSize(preferences, 0);
-    
+
+        WKPreferencesSetBoolValueForKeyForTesting(preferences, options.allowTestOnlyIPC(), toWK("AllowTestOnlyIPC").get());
+
         for (const auto& [key, value] : options.boolWebPreferenceFeatures())
             WKPreferencesSetBoolValueForKeyForTesting(preferences, value, toWK(key).get());
 
@@ -1990,6 +1992,14 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
 
     if (WKStringIsEqualToUTF8CString(messageName, "FlushConsoleLogs"))
         return completionHandler(nullptr);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPageScaleFactor")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto scaleFactor = doubleValue(messageBodyDictionary, "scaleFactor");
+        auto x = doubleValue(messageBodyDictionary, "x");
+        auto y = doubleValue(messageBodyDictionary, "y");
+        return setPageScaleFactor(static_cast<float>(scaleFactor), static_cast<int>(x), static_cast<int>(y), WTFMove(completionHandler));
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries"))
         return getAllStorageAccessEntries(WTFMove(completionHandler));
@@ -3491,6 +3501,11 @@ void TestController::clearAppPrivacyReportTestingData()
 }
 
 #endif // !PLATFORM(COCOA)
+
+void TestController::setPageScaleFactor(float scaleFactor, int x, int y, CompletionHandler<void(WKTypeRef)>&& completionHandler)
+{
+    WKPageSetPageScaleFactorForTesting(mainWebView()->page(), scaleFactor, WKPointMake(x, y), completionHandler.leak(), adoptAndCallCompletionHandler);
+}
 
 void TestController::getAllStorageAccessEntries(CompletionHandler<void(WKTypeRef)>&& completionHandler)
 {

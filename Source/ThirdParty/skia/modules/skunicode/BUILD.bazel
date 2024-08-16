@@ -1,32 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
-
-skia_cc_library(
-    name = "legacy_skunicode",
-    srcs = [
-        "//modules/skunicode/src:bidi_full_srcs",
-        "//modules/skunicode/src:icu_bidi_srcs",
-        "//modules/skunicode/src:icu_srcs",
-        "//modules/skunicode/src:srcs",
-    ],
-    hdrs = ["//modules/skunicode/include:hdrs"],
-    defines = [
-        "SK_UNICODE_AVAILABLE",
-        "SK_UNICODE_ICU_IMPLEMENTATION",
-    ],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        "//:skia_internal",
-        "@icu",
-    ],
-)
 
 skia_cc_library(
     name = "skunicode_core",

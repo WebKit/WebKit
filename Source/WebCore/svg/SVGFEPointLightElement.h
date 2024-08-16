@@ -25,7 +25,7 @@
 namespace WebCore {
 
 class SVGFEPointLightElement final : public SVGFELightElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFEPointLightElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFEPointLightElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEPointLightElement);
 public:
     static Ref<SVGFEPointLightElement> create(const QualifiedName&, Document&);

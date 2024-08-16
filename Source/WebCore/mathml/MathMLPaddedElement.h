@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class MathMLPaddedElement final : public MathMLRowElement {
-    WTF_MAKE_ISO_ALLOCATED(MathMLPaddedElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MathMLPaddedElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLPaddedElement);
 public:
     static Ref<MathMLPaddedElement> create(const QualifiedName& tagName, Document&);

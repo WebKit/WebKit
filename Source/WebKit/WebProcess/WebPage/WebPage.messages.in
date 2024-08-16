@@ -204,7 +204,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
 
-    Reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, WebKit::SandboxExtensionHandle sandboxExtensionHandle)
+    Reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, WebKit::SandboxExtensionHandle sandboxExtensionHandle)
     StopLoading()
     StopLoadingDueToProcessSwap()
 
@@ -379,8 +379,13 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
     
 #if ENABLE(WRITING_TOOLS_UI)
-    createTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
-    updateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
+    CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
+    UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
+
+    EnableSourceTextAnimationAfterElementWithID(String elementID);
+    EnableTextAnimationTypeForElementWithID(String elementID);
+
+    ShowSelectionForActiveWritingToolsSession();
 #endif
 
     # Popup menu.
@@ -793,12 +798,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CompositionSessionDidReceiveTextWithReplacementRange(struct WebCore::WritingTools::Session session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebCore::WritingTools::Context context, bool finished);
 
     WritingToolsSessionDidReceiveAction(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::Action action);
-#endif
-
-#if ENABLE(WRITING_TOOLS_UI)
-    enableSourceTextAnimationAfterElementWithID(String elementID, WTF::UUID uuid);
-    
-    EnableTextAnimationTypeForElementWithID(String elementID, WTF::UUID uuid);
 #endif
 
     TakeSnapshotForTargetedElement(WebCore::ElementIdentifier elementID, WebCore::ScriptExecutionContextIdentifier documentID) -> (std::optional<WebCore::ShareableBitmapHandle> image)

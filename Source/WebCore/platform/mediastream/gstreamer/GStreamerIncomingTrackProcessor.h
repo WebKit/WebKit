@@ -56,6 +56,8 @@ private:
     GRefPtr<GstElement> incomingTrackProcessor();
     GRefPtr<GstElement> createParser();
 
+    void installRtpBufferPadProbe(GRefPtr<GstPad>&&);
+
     void trackReady();
 
     ThreadSafeWeakPtr<GStreamerMediaEndpoint> m_endPoint;

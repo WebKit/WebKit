@@ -30,8 +30,8 @@
 #include "CookieJar.h"
 #include "EventTarget.h"
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,7 +44,7 @@ class DeferredPromise;
 class ScriptExecutionContext;
 
 class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject, public CookieChangeListener {
-    WTF_MAKE_ISO_ALLOCATED(CookieStore);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CookieStore);
 public:
     static Ref<CookieStore> create(ScriptExecutionContext*);
     ~CookieStore();

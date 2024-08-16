@@ -40,6 +40,7 @@
 #include "SelectorChecker.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ViewTransition.h"
 #include <wtf/Compiler.h>
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -584,6 +585,32 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     if (&element != element.document().documentElement())
         return false;
     return !!element.document().activeViewTransition();
+}
+
+ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& typesInSelector)
+{
+    // This pseudo class only matches the root element.
+    if (&element != element.document().documentElement())
+        return false;
+
+    if (const auto* viewTransition = element.document().activeViewTransition()) {
+        const auto& activeTypes = viewTransition->types();
+
+        for (const auto& type : typesInSelector) {
+            ASSERT(!type.wasQuoted);
+
+            // https://github.com/w3c/csswg-drafts/issues/9534#issuecomment-1802364085
+            // RESOLVED: type can accept any idents, except 'none' or '-ua-' prefixes
+            const auto& ident = type.identifier;
+            if (ident.convertToASCIILowercase() == "none"_s || ident.convertToASCIILowercase().startsWith("-ua-"_s))
+                continue;
+
+            if (activeTypes.hasType(ident))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 } // namespace WebCore

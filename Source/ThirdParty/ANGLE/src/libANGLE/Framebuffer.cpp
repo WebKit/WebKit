@@ -1227,6 +1227,11 @@ const FramebufferAttachment *Framebuffer::getAttachment(const Context *context,
     return mState.getAttachment(context, attachment);
 }
 
+size_t Framebuffer::getDrawbufferStateCount() const
+{
+    return mState.mDrawBufferStates.size();
+}
+
 #if ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED
 const FramebufferAttachment *Framebuffer::getColorResolveAttachment(size_t colorAttachment) const
 {
@@ -1243,11 +1248,6 @@ const FramebufferAttachment *Framebuffer::getStencilResolveAttachment() const
     return mState.getStencilResolveAttachment();
 }
 #endif
-
-size_t Framebuffer::getDrawbufferStateCount() const
-{
-    return mState.mDrawBufferStates.size();
-}
 
 GLenum Framebuffer::getDrawBufferState(size_t drawBuffer) const
 {

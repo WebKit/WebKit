@@ -55,13 +55,15 @@
 #include <WebCore/UserContentProvider.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <WebCore/WebSocketHandshake.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 const Seconds TCPMaximumSegmentLifetime { 2_min };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketChannel);
 
 WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
     : m_document(document)

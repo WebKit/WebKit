@@ -31,12 +31,15 @@
 #import "AuthenticatorManager.h"
 #import "WKASCAuthorizationPresenterDelegate.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorPresenterCoordinator);
 
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
     : m_manager(manager)

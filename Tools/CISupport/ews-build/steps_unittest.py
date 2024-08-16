@@ -87,6 +87,7 @@ def mock_load_contributors(*args, **kwargs):
         'webkit-commit-queue': {'name': 'WebKit Committer', 'status': 'committer', 'email': 'committer@webkit.org'},
         'WebKit Committer': {'status': 'committer'},
         'Myles C. Maxfield': {'status': 'reviewer'},
+        'Abrar Protyasha': {'status': 'reviewer'},
     }, []
 
 
@@ -7977,6 +7978,35 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.expectOutcome(result=SUCCESS, state_string='Reviewed by WebKit Reviewer and Other Reviewer')
         return self.runStep()
 
+    def test_success_more_than_two_reviewers(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('valid_reviewers', ['WebKit Reviewer', 'Other Reviewer', 'Another Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
+                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer, Other Reviewer, and Another Reviewer/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 0
+            + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reviewed by WebKit Reviewer, Other Reviewer, and Another Reviewer')
+        return self.runStep()
+
     def test_failure(self):
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         fixed_time = int(time.time())
@@ -8098,6 +8128,24 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setUpCommonProperties()
         expected_remote_command_output = '    Reviewed by Myles C. Maxfield.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
+    def test_success_two_reviewers(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer and Abrar Protyasha.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
+    def test_success_more_than_two_reviewers(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer, Abrar Protyasha, and Myles C. Maxfield.\n'
         self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()

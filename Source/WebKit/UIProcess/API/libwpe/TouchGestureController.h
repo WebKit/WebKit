@@ -30,11 +30,12 @@
 #include "WebWheelEvent.h"
 #include <variant>
 #include <wpe/wpe.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class TouchGestureController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TouchGestureController);
 public:
     TouchGestureController() = default;
 

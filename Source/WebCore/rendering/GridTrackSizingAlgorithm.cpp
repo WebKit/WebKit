@@ -866,10 +866,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem(RenderBox&
         setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, gridItemBlockDirection, std::nullopt);
         gridItem.setNeedsLayout(MarkOnlyThis);
 
-        auto& itemsLayoutRequirements = gridLayoutState.itemsLayoutRequirements();
-
         if (renderGrid()->canSetColumnAxisStretchRequirementForItem(gridItem))
-            itemsLayoutRequirements.add(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
+            gridLayoutState.setLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
     }
 
     // We need to clear the stretched content size to properly compute logical height during layout.
@@ -886,11 +884,26 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForGridItem(RenderBox& gr
     if (direction() == gridItemInlineDirection) {
         if (isComputingInlineSizeContainment())
             return { };
+
+        bool needsGridItemMinContentContributionForSecondColumnPass = sizingState() == GridTrackSizingAlgorithm::SizingState::ColumnSizingSecondIteration
+            && gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::MinContentContributionForSecondColumnPass);
+
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        if (gridItem.needsPreferredWidthsRecalculation())
+        if (gridItem.needsPreferredWidthsRecalculation() ||  needsGridItemMinContentContributionForSecondColumnPass)
             gridItem.setPreferredLogicalWidthsDirty(true);
-        return gridItem.minPreferredLogicalWidth() + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemInlineDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
+
+        if (needsGridItemMinContentContributionForSecondColumnPass) {
+            auto rowSize = renderGrid()->gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForRows);
+            auto stretchedSize = !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid(), gridItem) ? gridItem.constrainLogicalHeightByMinMax(rowSize, { }) : gridItem.constrainLogicalWidthInFragmentByMinMax(rowSize, renderGrid()->contentWidth(), *renderGrid(), nullptr);
+            GridLayoutFunctions::setOverridingContentSizeForGridItem(*renderGrid(), gridItem, stretchedSize, GridTrackSizingDirection::ForRows);
+        }
+
+        auto minContentSize = gridItem.minPreferredLogicalWidth() + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemInlineDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
+        if (needsGridItemMinContentContributionForSecondColumnPass)
+            GridLayoutFunctions::clearOverridingContentSizeForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForRows);
+
+        return minContentSize;
     }
 
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection)) {

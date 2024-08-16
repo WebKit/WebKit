@@ -591,7 +591,7 @@ void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Naviga
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, const String&, uint64_t, std::optional<HitTestResult>&&, bool, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse&, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&)
 {
 }
 

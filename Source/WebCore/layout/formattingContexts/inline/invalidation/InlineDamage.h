@@ -27,8 +27,8 @@
 
 #include "InlineDisplayContent.h"
 #include "InlineLineTypes.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
@@ -37,7 +37,7 @@ class Box;
 class InlineInvalidation;
 
 class InlineDamage {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(InlineDamage);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(InlineDamage);
 public:
     InlineDamage() = default;
     ~InlineDamage();

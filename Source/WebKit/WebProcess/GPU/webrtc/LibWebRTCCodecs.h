@@ -45,6 +45,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 
@@ -68,7 +69,7 @@ namespace WebKit {
 class RemoteVideoFrameObjectHeapProxy;
 
 class LibWebRTCCodecs : public IPC::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCCodecs);
 public:
     static Ref<LibWebRTCCodecs> create();
     ~LibWebRTCCodecs();
@@ -82,7 +83,7 @@ public:
 
     using DecoderCallback = Function<void(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp)>;
     struct Decoder {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Decoder);
     public:
         struct EncodedFrame {
             int64_t timeStamp { 0 };
@@ -127,7 +128,7 @@ public:
         uint32_t maxFrameRate;
     };
     struct Encoder {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Encoder);
     public:
         VideoEncoderIdentifier identifier;
         VideoCodecType type;

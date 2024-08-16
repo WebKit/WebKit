@@ -35,6 +35,7 @@ namespace WebKit::WebGPU {
 struct RequestAdapterOptions {
     std::optional<WebCore::WebGPU::PowerPreference> powerPreference;
     bool forceFallbackAdapter { false };
+    bool xrCompatible { false };
 };
 
 } // namespace WebKit::WebGPU

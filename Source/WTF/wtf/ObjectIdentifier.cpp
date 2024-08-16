@@ -38,16 +38,16 @@ uint64_t ObjectIdentifierMainThreadAccessTraits<uint64_t>::generateIdentifierInt
     return ++current;
 }
 
-uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
-{
-    static std::atomic<uint64_t> current;
-    return ++current;
-}
-
 TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_t>& identifier)
 {
     ts << identifier.toRawValue();
     return ts;
+}
+
+uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
+{
+    static std::atomic<uint64_t> current;
+    return ++current;
 }
 
 UUID ObjectIdentifierMainThreadAccessTraits<UUID>::generateIdentifierInternal()

@@ -35,6 +35,7 @@
 #include <dispatch/dispatch.h>
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_COMMA_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -57,6 +58,8 @@ static dispatch_queue_t tcpSocketQueue()
     });
     return queue;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCTCPSocketCocoa);
 
 std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
 {
@@ -149,8 +152,16 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     nw_connection_start(m_nwConnection.get());
 }
 
+NetworkRTCTCPSocketCocoa::~NetworkRTCTCPSocketCocoa()
+{
+    ASSERT(m_isClosed);
+}
+
 void NetworkRTCTCPSocketCocoa::close()
 {
+#if ASSERT_ENABLED
+    m_isClosed = true;
+#endif
     if (m_nwConnection)
         nw_connection_cancel(m_nwConnection.get());
     m_rtcProvider.takeSocket(m_identifier);

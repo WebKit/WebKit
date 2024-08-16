@@ -25,11 +25,11 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceLinearGradientInlines.h"
 #include "SVGElementTypeHelpers.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceLinearGradient);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceLinearGradient);
 
 RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
     : RenderSVGResourceGradient(Type::SVGResourceLinearGradient, element, WTFMove(style))

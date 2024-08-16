@@ -28,8 +28,8 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 #include "BubblewrapLauncher.h"
-#include <WebCore/PlatformDisplay.h>
 #include <gio/gunixinputstream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/GRefPtr.h>
@@ -38,6 +38,8 @@
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XDGDBusProxy);
 
 CString XDGDBusProxy::makeProxy(const char* baseDirectory, const char* proxyTemplate)
 {
@@ -89,25 +91,18 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
     return m_dbusSessionProxyPath;
 }
 
-std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath)
+#if USE(ATSPI)
+std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const String& accessibilityBusAddress)
 {
     if (!m_accessibilityProxyPath.isNull())
         return m_accessibilityProxyPath;
-
-    auto dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
-    if (dbusAddress.isNull())
-        return std::nullopt;
 
     m_accessibilityProxyPath = makeProxy(baseDirectory, "a11y-proxy-XXXXXX");
     if (m_accessibilityProxyPath.isNull())
         return std::nullopt;
 
-#if USE(ATSPI)
-    setSandboxedAccessibilityBusAddress(makeString("unix:path="_s, WTF::span(sandboxedAccessibilityBusPath)));
-#endif
-
     m_args.appendVector(Vector<CString> {
-        WTFMove(dbusAddress), m_accessibilityProxyPath,
+        accessibilityBusAddress.utf8(), m_accessibilityProxyPath,
         "--filter",
         "--sloppy-names",
         "--broadcast=org.a11y.atspi.Registry.EventListenerRegistered=@/org/a11y/atspi/registry",
@@ -126,6 +121,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
 
     return m_accessibilityProxyPath;
 }
+#endif
 
 static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
 {
@@ -176,7 +172,7 @@ static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
         g_error("Failed to fully launch dbus-proxy: %s", data.error->message);
 }
 
-bool XDGDBusProxy::launch()
+bool XDGDBusProxy::launch(const ProcessLauncher::LaunchOptions& webProcessLaunchOptions)
 {
     if (m_syncFD)
         return true;
@@ -228,6 +224,12 @@ bool XDGDBusProxy::launch()
 
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
+
+#if USE(ATSPI)
+    launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, webProcessLaunchOptions.extraInitializationData.get("accessibilityBusAddress"_s));
+#else
+    UNUSED_PARAM(webProcessLaunchOptions);
+#endif
 
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());

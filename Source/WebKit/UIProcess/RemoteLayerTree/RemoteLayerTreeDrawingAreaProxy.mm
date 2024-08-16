@@ -167,11 +167,11 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 RemoteLayerTreeDrawingAreaProxy::ProcessState& RemoteLayerTreeDrawingAreaProxy::processStateForConnection(IPC::Connection& connection)
 {
     for (auto pair : m_remotePageProcessState) {
-        if (pair.key.process().hasConnection() && pair.key.process().connection() == &connection)
+        if (pair.key.process().hasConnection() && &pair.key.process().connection() == &connection)
             return pair.value;
     }
 
-    ASSERT(m_webProcessProxy->hasConnection() && &connection == m_webProcessProxy->connection());
+    ASSERT(m_webProcessProxy->hasConnection() && &connection == &m_webProcessProxy->connection());
     return m_webPageProxyProcessState;
 }
 
@@ -522,7 +522,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(ProcessState& state, IPC
 
     state.commitLayerTreeMessageState = CommitLayerTreePending;
 
-    if (m_webProcessProxy->connection() == &connection)
+    if (&m_webProcessProxy->connection() == &connection)
         m_webPageProxy->scrollingCoordinatorProxy()->sendScrollingTreeNodeDidScroll();
 
     // Waiting for CA to commit is insufficient, because the render server can still be
@@ -545,10 +545,10 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
         didRefreshDisplay(state, *connection);
     } else {
         if (m_webProcessProxy->hasConnection())
-            didRefreshDisplay(m_webPageProxyProcessState, *m_webProcessProxy->protectedConnection());
+            didRefreshDisplay(m_webPageProxyProcessState, m_webProcessProxy->protectedConnection());
         for (auto pair : m_remotePageProcessState) {
             if (pair.key.process().hasConnection())
-                didRefreshDisplay(pair.value, *pair.key.process().protectedConnection());
+                didRefreshDisplay(pair.value, pair.key.process().protectedConnection());
         }
     }
 
@@ -565,7 +565,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     if (!process.hasConnection() || activityStateChangeID == ActivityStateChangeAsynchronous)
         return;
 
-    Ref connection = *process.connection();
+    Ref connection = process.connection();
     ProcessState& state = processStateForConnection(connection);
 
     // We must send the didUpdate message before blocking on the next commit, otherwise

@@ -33,13 +33,13 @@
 #include "ScriptExecutionContext.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLTimerQueryEXT.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
 
 EXTDisjointTimerQuery::EXTDisjointTimerQuery(WebGLRenderingContext& context)
     : WebGLExtension(context, WebGLExtensionName::EXTDisjointTimerQuery)

@@ -29,14 +29,14 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutPoint.h"
 #include "LayoutUnits.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 namespace Layout {
 
 class FloatAvoider {
-    WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FloatAvoider);
 public:
     FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;

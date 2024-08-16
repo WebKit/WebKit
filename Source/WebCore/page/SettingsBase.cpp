@@ -368,8 +368,8 @@ void SettingsBase::imageLoadingSettingsTimerFired()
             continue;
         if (!localFrame->document())
             continue;
-        localFrame->document()->cachedResourceLoader().setImagesEnabled(m_page->settings().areImagesEnabled());
-        localFrame->document()->cachedResourceLoader().setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
+        localFrame->document()->protectedCachedResourceLoader()->setImagesEnabled(m_page->settings().areImagesEnabled());
+        localFrame->document()->protectedCachedResourceLoader()->setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
     }
 }
 

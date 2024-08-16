@@ -28,8 +28,8 @@
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGUnitTypes.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class GraphicsContext;
 class SVGFilterElement;
 
 struct FilterData {
-    WTF_MAKE_ISO_ALLOCATED(FilterData);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FilterData);
     WTF_MAKE_NONCOPYABLE(FilterData);
 public:
     enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
@@ -54,7 +54,7 @@ public:
 };
 
 class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
 public:
     LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);

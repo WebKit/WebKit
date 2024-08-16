@@ -28,11 +28,11 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEDropShadowElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFEDropShadowElement);
 
 inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

@@ -42,15 +42,15 @@
 #include "WorkerSWClientConnection.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
 #define WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorker);
 
 Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, ServiceWorkerData&& data)
 {

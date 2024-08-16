@@ -59,7 +59,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , WebCore::SandboxFlags effectiveSandboxFlags
     , URL&& openerURL
     , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
-    , uint64_t navigationID
+    , std::optional<WebCore::NavigationIdentifier> navigationID
     , std::optional<WebCore::NavigationRequester>&& navigationRequester
     , WebCore::ServiceWorkersMode serviceWorkersMode
     , std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier

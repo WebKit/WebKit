@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -191,8 +191,13 @@
         (iokit-property "MetalPluginName")
     )
 
-    (allow sysctl-read
-           (sysctl-name #"kern.bootsessionuuid"))
+    (allow sysctl-read (sysctl-name "kern.bootsessionuuid"))
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (with-filter (require-not (webcontent-process-launched))
+        (allow sysctl-read (sysctl-name "kern.boottime")))
+#else
+    (allow sysctl-read (sysctl-name "kern.boottime"))
+#endif
 
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
@@ -423,9 +428,10 @@
         (extension "com.apple.fileprovider.read-write")))
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-(deny mach-lookup (with no-report) (global-name
-    "com.apple.logd"
-    "com.apple.logd.events"))
+(with-filter (require-not (lockdown-mode))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
 #else
 (allow mach-lookup (global-name
     "com.apple.logd"

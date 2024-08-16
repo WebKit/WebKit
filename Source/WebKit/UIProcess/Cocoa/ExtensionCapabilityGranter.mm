@@ -38,6 +38,7 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
 #define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
@@ -141,6 +142,8 @@ static bool finalizeGrant(ExtensionCapabilityGranter& granter, const String& env
     existingGrants.remove(iterator);
     return false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtensionCapabilityGranter);
 
 UniqueRef<ExtensionCapabilityGranter> ExtensionCapabilityGranter::create(ExtensionCapabilityGranterClient& client)
 {

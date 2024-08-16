@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
+#include "NavigationIdentifier.h"
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ using SandboxFlags = int;
 
 class FrameLoaderClient {
 public:
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<HitTestResult>&&, bool hasOpener, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool hasOpener, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
     virtual ~FrameLoaderClient() = default;
 };
 

@@ -28,8 +28,11 @@
 
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::PCM {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClientImpl);
 
 ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
     : m_networkSession(session)

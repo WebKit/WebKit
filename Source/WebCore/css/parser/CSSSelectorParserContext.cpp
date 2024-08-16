@@ -42,8 +42,11 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , imageControlsEnabled(context.imageControlsEnabled)
 #endif
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
+    , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
     , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
+    , viewTransitionClassesEnabled(viewTransitionsEnabled && context.propertySettings.viewTransitionClassesEnabled)
+    , viewTransitionTypesEnabled(viewTransitionsEnabled && context.viewTransitionTypesEnabled)
 {
 }
 
@@ -57,8 +60,11 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , imageControlsEnabled(document.settings().imageControlsEnabled())
 #endif
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
+    , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
     , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
+    , viewTransitionClassesEnabled(viewTransitionsEnabled && document.settings().viewTransitionClassesEnabled())
+    , viewTransitionTypesEnabled(viewTransitionsEnabled && document.settings().viewTransitionTypesEnabled())
 {
 }
 
@@ -74,8 +80,11 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.imageControlsEnabled,
 #endif
         context.popoverAttributeEnabled,
+        context.targetTextPseudoElementEnabled,
         context.thumbAndTrackPseudoElementsEnabled,
-        context.viewTransitionsEnabled
+        context.viewTransitionsEnabled,
+        context.viewTransitionClassesEnabled,
+        context.viewTransitionTypesEnabled
     );
 }
 

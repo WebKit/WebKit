@@ -30,19 +30,20 @@
 #include "OfflineAudioContext.h"
 
 #include "AudioBuffer.h"
+#include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "Document.h"
 #include "JSAudioBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioContextOptions.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
 OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioContextOptions& options)
     : BaseAudioContext(document)

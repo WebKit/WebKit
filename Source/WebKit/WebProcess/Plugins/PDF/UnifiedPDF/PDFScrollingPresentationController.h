@@ -30,6 +30,7 @@
 #include "PDFPresentationController.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class KeyboardScrollingAnimator;
@@ -38,7 +39,7 @@ class KeyboardScrollingAnimator;
 namespace WebKit {
 
 class PDFScrollingPresentationController final : public PDFPresentationController, public WebCore::GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFScrollingPresentationController);
     WTF_MAKE_NONCOPYABLE(PDFScrollingPresentationController);
 public:
     PDFScrollingPresentationController(UnifiedPDFPlugin&);

@@ -63,12 +63,11 @@
             run('navigator.mediaSession.callActionHandler({action: "pause"})');
             await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
 
-            run('nowPlayingMetadata = internals.nowPlayingMetadata');
-            await testExpectedEventually('nowPlayingMetadata.title', 'title', '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.artist', 'artist', '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.album', 'album', '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.artwork.mimeType', 'image/png', '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.artwork.src', 'http://127.0.0.1:8000/media-resources/content/abe.png', '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.title', 'title', '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.artist', 'artist', '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.album', 'album', '==', 1000);
+            await testExpectedEventuallyIgnoringError('internals.nowPlayingMetadata.artwork.mimeType', 'image/png', '==', 1000);
+            await testExpectedEventuallyIgnoringError('internals.nowPlayingMetadata.artwork.src', 'http://127.0.0.1:8000/media-resources/content/abe.png', '==', 1000);
 
             consoleWrite('');
         }

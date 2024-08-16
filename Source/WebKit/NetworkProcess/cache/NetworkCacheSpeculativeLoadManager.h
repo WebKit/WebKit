@@ -32,6 +32,7 @@
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,7 @@ class SubresourceInfo;
 class SubresourcesEntry;
 
 class SpeculativeLoadManager : public CanMakeWeakPtr<SpeculativeLoadManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeculativeLoadManager);
 public:
     explicit SpeculativeLoadManager(Cache&, Storage&);
     ~SpeculativeLoadManager();

@@ -147,6 +147,9 @@ PASS rem(-18vw,5vw) should be used-value-equivalent to -3vw
 PASS calc(round(1px + 0%, 1px + 0%)) should be used-value-equivalent to 1px
 PASS calc(mod(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
 PASS calc(rem(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
+FAIL round(1px + 0%, 1px) should be used-value-equivalent to 1px assert_not_equals: round(1px + 0%, 1px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+FAIL mod(3px + 0%, 2px) should be used-value-equivalent to 1px assert_not_equals: mod(3px + 0%, 2px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+FAIL rem(3px + 0%, 2px) should be used-value-equivalent to 1px assert_not_equals: rem(3px + 0%, 2px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
 PASS round(0, 0) should be used-value-equivalent to calc(NaN)
 PASS round(-0, 0) should be used-value-equivalent to calc(NaN)
 PASS round(Infinity, 0) should be used-value-equivalent to calc(NaN)

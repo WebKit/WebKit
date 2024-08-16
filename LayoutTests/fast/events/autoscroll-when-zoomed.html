@@ -59,14 +59,14 @@
             window.setTimeout(doOneScroll, 2);
         }
 
-        function doTest()
+        async function doTest()
         {
             if (!window.testRunner || !window.eventSender) {
                 debug('This test requires testRunner and eventSender');
                 return;
             }
             
-            window.internals.setPageScaleFactor(pageScale, 0, 0);
+            await window.testRunner.setPageScaleFactor(pageScale, 0, 0);
 
             var containerRect = document.getElementById('container').getBoundingClientRect();
             var lineHeight = containerRect.height / 3;

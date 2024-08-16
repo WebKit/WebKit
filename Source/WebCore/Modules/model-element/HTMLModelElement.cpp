@@ -64,15 +64,15 @@
 #include "RenderLayerModelObject.h"
 #include "RenderModel.h"
 #include "RenderReplaced.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLModelElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLModelElement);
 
 HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })

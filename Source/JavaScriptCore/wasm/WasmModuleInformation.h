@@ -195,6 +195,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     std::optional<uint32_t> numberOfDataSegments;
     Vector<RefPtr<const RTT>> rtts;
     Vector<Vector<uint8_t>> constantExpressions;
+    Name sourceMappingURL;
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;

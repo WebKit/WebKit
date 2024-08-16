@@ -63,15 +63,15 @@
 #include <JavaScriptCore/VM.h>
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBuffer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SourceBuffer);
 
 class SourceBufferClientImpl final : public SourceBufferPrivateClient {
 public:

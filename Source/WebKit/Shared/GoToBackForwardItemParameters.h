@@ -30,6 +30,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <wtf/text/WTFString.h>
@@ -37,7 +38,7 @@
 namespace WebKit {
 
 struct GoToBackForwardItemParameters {
-    uint64_t navigationID;
+    WebCore::NavigationIdentifier navigationID;
     WebCore::BackForwardItemIdentifier backForwardItemID;
     WebCore::FrameLoadType backForwardType;
     WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;

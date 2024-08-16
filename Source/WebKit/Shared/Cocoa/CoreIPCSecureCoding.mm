@@ -32,6 +32,7 @@
 #import "AuxiliaryProcessCreationParameters.h"
 #import "WKCrashReporter.h"
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -82,6 +83,8 @@ void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters& pa
 }
 
 } // namespace SecureCoding
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCSecureCoding);
 
 bool CoreIPCSecureCoding::conformsToWebKitSecureCoding(id object)
 {

@@ -47,6 +47,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(VISION)
@@ -64,7 +65,7 @@ static const Seconds bannerMinimumHideDelay = 1_s;
 @class WKFullscreenStackView;
 
 class WKFullScreenViewControllerPlaybackSessionModelClient final : WebCore::PlaybackSessionModelClient, public CanMakeCheckedPtr<WKFullScreenViewControllerPlaybackSessionModelClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WKFullScreenViewControllerPlaybackSessionModelClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WKFullScreenViewControllerPlaybackSessionModelClient);
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }

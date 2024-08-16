@@ -41,11 +41,11 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInlineText);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGInlineText);
 
 static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSpace)
 {

@@ -74,6 +74,7 @@
 #include <WebCore/UserContentProvider.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 #if USE(QUICK_LOOK)
@@ -99,6 +100,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLoaderStrategy);
 
 WebLoaderStrategy::WebLoaderStrategy()
     : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)

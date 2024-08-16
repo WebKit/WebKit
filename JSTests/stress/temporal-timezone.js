@@ -54,6 +54,7 @@ let failures = [
     "+20:5900",
     "+20:59:00.0123456789",
     "local",
+    "\u221202:00",
 ];
 
 for (let text of failures) {

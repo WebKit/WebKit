@@ -84,12 +84,7 @@
 #import "DynamicContentScalingImageBufferBackend.h"
 #endif
 
-#define MESSAGE_CHECK(assertion, message) do { \
-    if (UNLIKELY(!(assertion))) { \
-        terminateWebProcess(message); \
-        return; \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_gpuConnectionToWebProcess->connection(), message);
 
 namespace WebKit {
 using namespace WebCore;
@@ -320,7 +315,7 @@ void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier rend
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.take(renderingResourceIdentifier);
     bool success = m_remoteImageBuffers.take(renderingResourceIdentifier).get();
-    MESSAGE_CHECK(success, "Resource is being released before being cached."_s);
+    MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
 void RemoteRenderingBackend::createRemoteImageBufferSet(RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)
@@ -333,7 +328,7 @@ void RemoteRenderingBackend::releaseRemoteImageBufferSet(RemoteImageBufferSetIde
 {
     assertIsCurrent(workQueue());
     bool success = m_remoteImageBufferSets.take(bufferSetIdentifier).get();
-    MESSAGE_CHECK(success, "BufferSet is being released before being created"_s);
+    MESSAGE_CHECK(success, "BufferSet is being released before being created");
 }
 
 void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
@@ -364,7 +359,7 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
     RefPtr<FontCustomPlatformData> customPlatformData = nullptr;
     if (fontCustomPlatformDataIdentifier) {
         customPlatformData = m_remoteResourceCache.cachedFontCustomPlatformData(*fontCustomPlatformDataIdentifier);
-        MESSAGE_CHECK(customPlatformData, "CacheFont without caching custom data"_s);
+        MESSAGE_CHECK(customPlatformData, "CacheFont without caching custom data");
     }
 
     FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData.get());
@@ -380,7 +375,7 @@ void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlat
     ASSERT(!RunLoop::isMain());
 
     auto customPlatformData = FontCustomPlatformData::tryMakeFromSerializationData(WTFMove(fontCustomPlatformSerializedData), shouldUseLockdownFontParser());
-    MESSAGE_CHECK(customPlatformData.has_value(), "cacheFontCustomPlatformData couldn't deserialize FontCustomPlatformData"_s);
+    MESSAGE_CHECK(customPlatformData.has_value(), "cacheFontCustomPlatformData couldn't deserialize FontCustomPlatformData");
 
     m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData.value()));
 }
@@ -433,7 +428,7 @@ void RemoteRenderingBackend::releaseRenderingResource(RenderingResourceIdentifie
 {
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseRenderingResource(renderingResourceIdentifier);
-    MESSAGE_CHECK(success, "Resource is being released before being cached."_s);
+    MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
 #if USE(GRAPHICS_LAYER_WC)
@@ -450,10 +445,10 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBuffer
 
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
+        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created");
         SwapBuffersDisplayRequirement displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
         remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], displayRequirement);
-        MESSAGE_CHECK(displayRequirement != SwapBuffersDisplayRequirement::NeedsFullDisplay, "Can't asynchronously require full display for a buffer set"_s);
+        MESSAGE_CHECK(displayRequirement != SwapBuffersDisplayRequirement::NeedsFullDisplay, "Can't asynchronously require full display for a buffer set");
 
         if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
             remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
@@ -469,7 +464,7 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplaySync(Vector<ImageBu
 
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
+        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created");
         remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], outputData[i]);
     }
 
@@ -481,7 +476,7 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplaySync(Vector<ImageBu
     // as possible.
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
+        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created");
 
         if (outputData[i] != SwapBuffersDisplayRequirement::NeedsNoDisplay)
             remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
@@ -500,7 +495,7 @@ void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestI
     for (auto identifier : identifiers) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(identifier.first);
 
-        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being marked volatile before being created"_s);
+        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being marked volatile before being created");
 
         OptionSet<BufferInSetType> volatileBuffers;
         if (!remoteImageBufferSet->makeBuffersVolatile(identifier.second, volatileBuffers, forcePurge))

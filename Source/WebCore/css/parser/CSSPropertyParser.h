@@ -151,6 +151,8 @@ private:
     bool consumeScrollTimelineShorthand(bool important);
     bool consumeViewTimelineShorthand(bool important);
 
+    bool consumeTextBoxShorthand(bool important);
+
     bool consumeTextWrapShorthand(bool important);
     bool consumeWhiteSpaceShorthand(bool important);
 

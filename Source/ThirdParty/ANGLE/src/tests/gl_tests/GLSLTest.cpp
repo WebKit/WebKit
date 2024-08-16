@@ -9060,7 +9060,7 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 }
 
-// Test that basic infinite loops are pruned in WebGL
+// Test that basic infinite loops are either rejected or are pruned in WebGL
 TEST_P(WebGL2GLSLTest, BasicInfiniteLoop)
 {
     constexpr char kFS[] = R"(#version 300 es
@@ -9159,9 +9159,62 @@ void main()
     color = vec4(r, g, b, 1);
 })";
 
+    if (getEGLWindow()->isFeatureEnabled(Feature::RejectWebglShadersWithUndefinedBehavior))
+    {
+        GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+        EXPECT_EQ(0u, shader);
+    }
+    else
+    {
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        EXPECT_PIXEL_NEAR(0, 0, 178, 255, 127, 255, 1);
+    }
+}
+
+// Test that while(true) loops with break/return are not rejected
+TEST_P(WebGL2GLSLTest, NotInfiniteLoop)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform uint zero;
+out vec4 color;
+
+void main()
+{
+    float r = 0.;
+    float g = 1.;
+    float b = 0.;
+
+    while (true)
+    {
+        r += 0.1;
+        if (r > 0.4)
+        {
+            break;
+        }
+    }
+
+    for (;;)
+    {
+        g -= 0.1;
+
+        switch (zero)
+        {
+            case 0u:
+                g -= 0.6;
+                color = vec4(r, g, b, 1);
+                return;
+            default:
+                r = 0.2;
+                break;
+        }
+    }
+})";
+
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
-    EXPECT_PIXEL_NEAR(0, 0, 178, 255, 127, 255, 1);
+    EXPECT_PIXEL_NEAR(0, 0, 127, 76, 0, 255, 1);
 }
 
 // Test that a constant struct inside an expression is handled correctly.

@@ -102,7 +102,7 @@ messages -> WebPageProxy {
 #endif
 
     # Policy messages
-    DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, bool isShowingInitialAboutBlank, enum:uint8_t WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue) -> (struct WebKit::PolicyDecision PolicyDecision)
+    DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, bool isShowingInitialAboutBlank, enum:uint8_t WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue) -> (struct WebKit::PolicyDecision PolicyDecision)
     DecidePolicyForNavigationActionAsync(struct WebKit::NavigationActionData data) -> (struct WebKit::PolicyDecision PolicyDecision)
     DecidePolicyForNavigationActionSync(struct WebKit::NavigationActionData data) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
     DecidePolicyForNewWindowAction(struct WebKit::NavigationActionData navigationActionData, String frameName) -> (struct WebKit::PolicyDecision PolicyDecision)
@@ -119,27 +119,27 @@ messages -> WebPageProxy {
     DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
 
     # Frame load messages
-    DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
-    DidReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
+    DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
+    DidReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
     WillPerformClientRedirectForFrame(WebCore::FrameIdentifier frameID, String url, double delay, enum:bool WebCore::LockBackForwardList lockBackForwardList)
     DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
-    DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, URL url)
-    DidFailProvisionalLoadForFrame(struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
-    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
-    DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
-    DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebKit::UserData userData)
-    DidFinishLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, WebKit::UserData userData)
+    DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL url)
+    DidFailProvisionalLoadForFrame(struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
+    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
+    DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceError error, WebKit::UserData userData)
+    DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, WebKit::UserData userData)
+    DidFinishLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, WebKit::UserData userData)
     DidFirstLayoutForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
     DidReceiveTitleForFrame(WebCore::FrameIdentifier frameID, String title, WebKit::UserData userData)
     DidDisplayInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
-    DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, WebKit::UserData userData)
+    DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, WebKit::UserData userData)
     DidSameDocumentNavigationForFrameViaJSHistoryAPI(enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
     DidChangeMainDocument(WebCore::FrameIdentifier frameID)
     DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
-    DidDestroyNavigation(uint64_t navigationID)
+    DidDestroyNavigation(WebCore::NavigationIdentifier navigationID)
 
     UpdateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
 
@@ -234,9 +234,9 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::Session::ID sessionID, struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
+    ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    ProofreadingSessionUpdateStateForSuggestionWithID(struct WebCore::WritingTools::Session::ID sessionID, enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
+    ProofreadingSessionUpdateStateForSuggestionWithID(enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -517,6 +517,7 @@ messages -> WebPageProxy {
 #if ENABLE(WRITING_TOOLS_UI)
     AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
     RemoveTextAnimationForAnimationID(WTF::UUID uuid)
+    DidEndPartialIntelligenceTextPonderingAnimation()
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)

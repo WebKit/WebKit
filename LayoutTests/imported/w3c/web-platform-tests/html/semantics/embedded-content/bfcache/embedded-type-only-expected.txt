@@ -1,4 +1,4 @@
 
-NOTRUN Page with <embed type=text/html src=undefined> Should be BFCached but actually wasn't
-NOTRUN Page with <object type=text/html data=undefined> Should be BFCached but actually wasn't
+NOTRUN Page with <embed type=text/html src=undefined> Could have been BFCached but actually wasn't
+NOTRUN Page with <object type=text/html data=undefined> Could have been BFCached but actually wasn't
 

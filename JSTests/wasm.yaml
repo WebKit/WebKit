@@ -28,7 +28,7 @@
 - path: wasm/js-api/
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/noJIT/
-  cmd: runNoJIT unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/function-tests
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/references
@@ -66,7 +66,7 @@
 - path: wasm/tail-call-spec-tests
   cmd: runWebAssemblyTailCallSpecTest :normal
 - path: wasm/extended-const-spec-tests
-  cmd: runWebAssemblyExtendedConstSpecTest :normal
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly

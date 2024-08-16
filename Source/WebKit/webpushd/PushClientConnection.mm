@@ -41,6 +41,7 @@
 #import <WebCore/PushPermissionState.h>
 #import <wtf/ASCIICType.h>
 #import <wtf/HexNumber.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/MakeString.h>
@@ -118,6 +119,8 @@ static bool isValidPushPartition(String partition)
     return true;
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushClientConnection);
 
 RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t connection, IPC::Decoder& initialMessageDecoder)
 {

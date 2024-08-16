@@ -318,7 +318,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 };
 
 
-class Page : public RefCounted<Page>, public Supplementable<Page>, public CanMakeSingleThreadWeakPtr<Page> {
+class Page : public RefCounted<Page>, public Supplementable<Page>, public CanMakeWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class SettingsBase;
@@ -1184,7 +1184,8 @@ public:
     void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
     void respondToReappliedWritingToolsEditing(EditCommandComposition*);
 
-    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForSessionWithID(const WritingTools::SessionID&) const;
+    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForActiveWritingToolsSession() const;
+    WEBCORE_EXPORT void showSelectionForActiveWritingToolsSession() const;
 #endif
 
     bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }

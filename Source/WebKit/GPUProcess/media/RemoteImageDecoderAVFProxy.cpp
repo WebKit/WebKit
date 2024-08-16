@@ -38,6 +38,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -48,6 +49,8 @@ RemoteImageDecoderAVFProxy::RemoteImageDecoderAVFProxy(GPUConnectionToWebProcess
     , m_resourceOwner(connectionToWebProcess.webProcessIdentity())
 {
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFProxy);
 
 void RemoteImageDecoderAVFProxy::createDecoder(const IPC::SharedBufferReference& data, const String& mimeType, CompletionHandler<void(std::optional<ImageDecoderIdentifier>&&)>&& completionHandler)
 {

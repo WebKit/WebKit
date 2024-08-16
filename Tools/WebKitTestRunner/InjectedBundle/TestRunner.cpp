@@ -2139,6 +2139,15 @@ void TestRunner::flushConsoleLogs(JSContextRef context, JSValueRef callback)
     postMessageWithAsyncReply(context, "FlushConsoleLogs", callback);
 }
 
+void TestRunner::setPageScaleFactor(JSContextRef context, double scaleFactor, long x, long y, JSValueRef callback)
+{
+    postMessageWithAsyncReply(context, "SetPageScaleFactor", createWKDictionary({
+        { "scaleFactor", toWK(scaleFactor) },
+        { "x", toWK(static_cast<double>(x)) },
+        { "y", toWK(static_cast<double>(y)) },
+        }), callback);
+}
+
 void TestRunner::generateTestReport(JSContextRef context, JSStringRef message, JSStringRef group)
 {
     auto frame = WKBundleFrameForJavaScriptContext(context);

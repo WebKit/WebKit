@@ -30,7 +30,7 @@
 #include "PushSubscription.h"
 #include "PushSubscriptionOptionsInit.h"
 #include <optional>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ class PushSubscriptionOwner;
 class ScriptExecutionContext;
 
 class PushManager {
-    WTF_MAKE_ISO_ALLOCATED(PushManager);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushManager);
 public:
     explicit PushManager(PushSubscriptionOwner&);
     ~PushManager();

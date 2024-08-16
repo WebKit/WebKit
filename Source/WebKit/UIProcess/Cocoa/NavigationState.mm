@@ -79,6 +79,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WeakHashMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -118,6 +119,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 
     return navigationStates;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
@@ -877,7 +880,7 @@ void NavigationState::NavigationClient::didCancelClientRedirect(WebPageProxy& pa
     [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidCancelClientRedirect:m_navigationState->webView().get()];
 }
 
-static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError, const URL& url, bool isHTTPSOnlyError = false)
+static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError, const URL& url)
 {
     auto frameHandle = API::FrameHandle::create(frameInfo.frameID);
     auto recoveryAttempter = adoptNS([[WKReloadFrameErrorRecoveryAttempter alloc] initWithWebView:webView frameHandle:wrapper(frameHandle.get()) urlString:url.string()]);
@@ -886,11 +889,6 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, c
 
     if (NSDictionary *originalUserInfo = originalError.userInfo)
         [userInfo addEntriesFromDictionary:originalUserInfo];
-
-    if (isHTTPSOnlyError) {
-        RELEASE_LOG(Loading, "NavigationState: Including HTTPS Only HTTP fallback signal.");
-        [userInfo setValue:@"HTTPSOnlyHTTPFallback" forKey:@"errorRecoveryMethod"];
-    }
 
     return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
 }
@@ -904,9 +902,7 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
     if (!navigationDelegate)
         return;
 
-    bool isHTTPSOnlyEnabled = navigation && navigation->websitePolicies() && navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnly) && !navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
-    bool isHTTPSOnlyError = isHTTPSOnlyEnabled && error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && frameInfo.isMainFrame;
-    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->webView().get(), frameInfo, error, url, isHTTPSOnlyError);
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->webView().get(), frameInfo, error, url);
 
     if (frameInfo.isMainFrame) {
         // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
@@ -1088,8 +1084,6 @@ void NavigationState::NavigationClient::didSameDocumentNavigation(WebPageProxy&,
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
-
     [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->webView().get() navigation:wrapper(navigation) didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
 }
 
@@ -1203,6 +1197,7 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::Unresponsive:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
+    case ProcessTerminationReason::RequestedByModelProcess:
     case ProcessTerminationReason::Crash:
         return _WKProcessTerminationReasonCrash;
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:

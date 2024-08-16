@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LoginStatus.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
 using CodeUnitMatchFunction = bool (*)(UChar);
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LoginStatus);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoginStatus);
 
 ExceptionOr<UniqueRef<LoginStatus>> LoginStatus::create(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType)
 {

@@ -33,7 +33,7 @@ namespace WebCore {
 class CSSNumericArray;
 
 class CSSMathMax final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathMax);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathMax);
 public:
     static ExceptionOr<Ref<CSSMathMax>> create(FixedVector<CSSNumberish>&&);
     static ExceptionOr<Ref<CSSMathMax>> create(Vector<Ref<CSSNumericValue>>&&);

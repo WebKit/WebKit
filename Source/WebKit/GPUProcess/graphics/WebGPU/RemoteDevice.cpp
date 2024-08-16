@@ -47,6 +47,7 @@
 #include "RemoteShaderModule.h"
 #include "RemoteTexture.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteXRBinding.h"
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUObjectHeap.h"
@@ -81,20 +82,14 @@
 #include <WebCore/WebGPUShaderModuleDescriptor.h>
 #include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUTextureDescriptor.h>
+#include <WebCore/WebGPUXRBinding.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDevice);
 
 RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : m_backing(device)
@@ -116,6 +111,14 @@ RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess,
 
 RemoteDevice::~RemoteDevice() = default;
 
+RefPtr<IPC::Connection> RemoteDevice::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
+
 void RemoteDevice::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
@@ -134,6 +137,13 @@ void RemoteDevice::destroy()
 void RemoteDevice::destruct()
 {
     m_objectHeap->removeObject(m_identifier);
+}
+
+void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
+{
+    auto binding = m_backing->createXRBinding();
+    auto remoteBinding = RemoteXRBinding::create(*binding, m_objectHeap, m_gpu, m_streamConnection.copyRef(), identifier);
+    m_objectHeap->addObject(identifier, remoteBinding);
 }
 
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)

@@ -27,7 +27,7 @@
 
 #include "CSSMatrixComponentOptions.h"
 #include "CSSTransformComponent.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class DOMMatrixReadOnly;
 template<typename> class ExceptionOr;
 
 class CSSMatrixComponent : public CSSTransformComponent {
-    WTF_MAKE_ISO_ALLOCATED(CSSMatrixComponent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMatrixComponent);
 public:
     static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
     static ExceptionOr<Ref<CSSTransformComponent>> create(CSSFunctionValue&);

@@ -879,6 +879,8 @@ accessibility/mac/lazy-spellchecking.html [ Skip ]
 accessibility/mac/spellcheck-with-voiceover.html [ Skip ]
 accessibility/text-marker/text-marker-range-with-unordered-markers.html
 
+accessibility/aria-controlled-table-row-visibility.html [ Skip ]
+
 # AccessibilityController::setForceInitialFrameCaching not supported on WK1.
 accessibility/mac/initial-relative-frame-cached.html [ Skip ]
 
@@ -1084,6 +1086,7 @@ media/media-vp8-webm-seek-to-start.html [ Skip ]
 media/media-vp8-webm-with-poster.html [ Skip ]
 media/media-vp8-webm-with-preload.html [ Skip ]
 media/video-src-webm-blob.html [ Failure ]
+media/track/audio-track-configuration-webm.html [ Skip ]
 
 media/track/media-audio-track.html [ Failure ]
 media/media-sources-selection.html [ ImageOnlyFailure ]
@@ -1305,10 +1308,6 @@ imported/w3c/web-platform-tests/server-timing/service_worker_idl.https.html [ Sk
 imported/w3c/web-platform-tests/push-api [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/cache-storage.tentative.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-matchall.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-controlled-after-restore.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-unregister.https.html [ Skip ]
 webkit.org/b/244316 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigate-parent-while-child-loading.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html [ Skip ]
@@ -1766,9 +1765,6 @@ http/tests/inspector/network/local-resource-override-script-tag.html [ Skip ]
 http/tests/inspector/network/resource-response-inspector-override.html [ Skip ]
 inspector/network/intercept-aborted-request.html [ Skip ]
 inspector/network/interceptContinue.html [ Skip ]
-
-# Test timeout with NowPlaying
-http/tests/media/now-playing-info-media-session-artwork-favicon.html [ Skip ]
 
 # Resource content retrival times out in WebKit1.
 webkit.org/b/257407 http/tests/inspector/network/xhr-request-type.html [ Skip ]

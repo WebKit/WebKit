@@ -29,7 +29,7 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ class LayoutState;
 class TreeBuilder;
 
 class Box : public CanMakeCheckedPtr<Box> {
-    WTF_MAKE_ISO_ALLOCATED(Box);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Box);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
 public:
     enum class NodeType : uint8_t {
@@ -83,6 +83,7 @@ public:
     bool establishesInlineFormattingContext() const;
     bool establishesTableFormattingContext() const;
     bool establishesFlexFormattingContext() const;
+    bool establishesGridFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
@@ -141,6 +142,7 @@ public:
     bool isInternalTableBox() const;
     bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex; }
     bool isFlexItem() const;
+    bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }

@@ -38,8 +38,11 @@
 #include "WebGPUSupportedLimits.h"
 #include <WebCore/WebGPUAdapter.h>
 #include <WebCore/WebGPUDevice.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapter);
 
 RemoteAdapter::RemoteAdapter(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)

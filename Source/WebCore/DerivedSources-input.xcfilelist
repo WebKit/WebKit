@@ -1111,6 +1111,10 @@ $(PROJECT_DIR)/Modules/webxr/XREquirectLayer.idl
 $(PROJECT_DIR)/Modules/webxr/XREquirectLayerInit.idl
 $(PROJECT_DIR)/Modules/webxr/XREye.idl
 $(PROJECT_DIR)/Modules/webxr/XRFrameRequestCallback.idl
+$(PROJECT_DIR)/Modules/webxr/XRGPUBinding.idl
+$(PROJECT_DIR)/Modules/webxr/XRGPULayerInit.idl
+$(PROJECT_DIR)/Modules/webxr/XRGPUProjectionLayerInit.idl
+$(PROJECT_DIR)/Modules/webxr/XRGPUSubImage.idl
 $(PROJECT_DIR)/Modules/webxr/XRHandJoint.idl
 $(PROJECT_DIR)/Modules/webxr/XRHandedness.idl
 $(PROJECT_DIR)/Modules/webxr/XRInputSourceEvent.idl

@@ -80,58 +80,69 @@ $pure float $apply_xfer_fn(int kind, float x, half4 cs[2]) {
     return s * x;
 }
 
+$pure half4 sk_premul_alpha(float4 color) {
+    return half4(color.rgb*color.a, color.a);
+}
+
 $pure half4 sk_color_space_transform(half4 halfColor,
                                      int flags,
                                      int srcKind,
                                      half3x3 gamutTransform,
                                      int dstKind,
                                      half4x4 coeffs) {
-    float4 color = float4(halfColor);
+    if (flags != 0) {
+        float4 color = float4(halfColor);
 
-    if (bool(flags & $kColorSpaceXformFlagUnpremul)) {
-        color = unpremul(color);
-    }
+        if (bool(flags & $kColorSpaceXformFlagAlphaSwizzle)) {
+            color.a = dot(color.r1, float2(coeffs[1][3], coeffs[3][3]));
+        }
+        if (bool(flags & $kColorSpaceXformFlagUnpremul)) {
+            color = unpremul(color);
+        }
+        if (bool(flags & $kColorSpaceXformFlagLinearize)) {
+            half4 srcCoeffs[2];
+            srcCoeffs[0] = coeffs[0];
+            srcCoeffs[1] = coeffs[1];
+            color.r = $apply_xfer_fn(srcKind, color.r, srcCoeffs);
+            color.g = $apply_xfer_fn(srcKind, color.g, srcCoeffs);
+            color.b = $apply_xfer_fn(srcKind, color.b, srcCoeffs);
+        }
+        if (bool(flags & $kColorSpaceXformFlagGamutTransform)) {
+            color.rgb = gamutTransform * color.rgb;
+        }
+        if (bool(flags & $kColorSpaceXformFlagEncode)) {
+            half4 dstCoeffs[2];
+            dstCoeffs[0] = coeffs[2];
+            dstCoeffs[1] = coeffs[3];
+            color.r = $apply_xfer_fn(dstKind, color.r, dstCoeffs);
+            color.g = $apply_xfer_fn(dstKind, color.g, dstCoeffs);
+            color.b = $apply_xfer_fn(dstKind, color.b, dstCoeffs);
+        }
 
-    if (bool(flags & $kColorSpaceXformFlagLinearize)) {
-        half4 srcCoeffs[2];
-        srcCoeffs[0] = coeffs[0];
-        srcCoeffs[1] = coeffs[1];
-        color.r = $apply_xfer_fn(srcKind, color.r, srcCoeffs);
-        color.g = $apply_xfer_fn(srcKind, color.g, srcCoeffs);
-        color.b = $apply_xfer_fn(srcKind, color.b, srcCoeffs);
+        halfColor = bool(flags & $kColorSpaceXformFlagPremul) ? sk_premul_alpha(color)
+                                                              : half4(color);
     }
-    if (bool(flags & $kColorSpaceXformFlagGamutTransform)) {
-        color.rgb = gamutTransform * color.rgb;
-    }
-    if (bool(flags & $kColorSpaceXformFlagEncode)) {
-        half4 dstCoeffs[2];
-        dstCoeffs[0] = coeffs[2];
-        dstCoeffs[1] = coeffs[3];
-        color.r = $apply_xfer_fn(dstKind, color.r, dstCoeffs);
-        color.g = $apply_xfer_fn(dstKind, color.g, dstCoeffs);
-        color.b = $apply_xfer_fn(dstKind, color.b, dstCoeffs);
-    }
-
-    if (bool(flags & $kColorSpaceXformFlagPremul)) {
-        color.rgb *= color.a;
-    }
-    return half4(color);
+    return halfColor;
 }
 
-$pure half4 $color_space_transform_swizzle(half4 halfColor,
-                                           int flags,
-                                           int srcKind,
-                                           half3x3 gamutTransform,
-                                           int dstKind,
-                                           half4x4 coeffs) {
-    if (flags == 0) {
-        return halfColor;
-    } else {
-        if (bool(flags & $kColorSpaceXformFlagAlphaSwizzle)) {
-            halfColor.a = dot(halfColor.r1, half2(coeffs[1][3], coeffs[3][3]));
-        }
-        return sk_color_space_transform(halfColor, flags, srcKind, gamutTransform, dstKind, coeffs);
-    }
+$pure half4 sk_circular_rrect_clip(half4 color,
+                                   float4 rect,
+                                   float2 radiusPlusHalf,
+                                   half4 edgeSelect) {
+    float2 fragCoord = sk_FragCoord.xy;
+
+    float2 radius = float2(radiusPlusHalf.x);
+    float2 dxy0 = edgeSelect.LT*((rect.LT + radius) - fragCoord);
+    float2 dxy1 = edgeSelect.RB*(fragCoord - (rect.RB - radius));
+    float2 dxy = max(max(dxy0, dxy1), 0.0);
+    // Use more complex length calculation to manage precision issues
+    half circleCornerAlpha = half(saturate(radiusPlusHalf.x*(1.0 - length(dxy*radiusPlusHalf.y))));
+
+    half4 rectEdgeAlphas = saturate(half4(fragCoord - rect.LT, rect.RB - fragCoord));
+    rectEdgeAlphas = mix(rectEdgeAlphas, half4(1), edgeSelect);
+
+    return color * circleCornerAlpha * rectEdgeAlphas.x * rectEdgeAlphas.y *
+           rectEdgeAlphas.z * rectEdgeAlphas.w;
 }
 
 $pure float $tile(int tileMode, float f, float low, float high) {
@@ -287,16 +298,9 @@ $pure half4 sk_image_shader(float2 coords,
                             int tileModeX,
                             int tileModeY,
                             int filterMode,
-                            int csXformFlags,
-                            int csXformSrcKind,
-                            half3x3 csXformGamutTransform,
-                            int csXformDstKind,
-                            half4x4 csXformCoeffs,
                             sampler2D s) {
-    half4 sampleColor = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
-                                             filterMode, float2($kLinearInset), s);
-    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
-                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+    return $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
+                                filterMode, float2($kLinearInset), s);
 }
 
 $pure half4 sk_cubic_image_shader(float2 coords,
@@ -305,52 +309,44 @@ $pure half4 sk_cubic_image_shader(float2 coords,
                                   int tileModeX,
                                   int tileModeY,
                                   half4x4 cubicCoeffs,
-                                  int csXformFlags,
-                                  int csXformSrcKind,
-                                  half3x3 csXformGamutTransform,
-                                  int csXformDstKind,
-                                  half4x4 csXformCoeffs,
                                   sampler2D s) {
-    half4 sampleColor = $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY,
-                                            cubicCoeffs, s);
-    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
-                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+    return $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY, cubicCoeffs, s);
 }
 
 $pure half4 sk_hw_image_shader(float2 coords,
                                float2 invImgSize,
-                               int csXformFlags,
-                               int csXformSrcKind,
-                               half3x3 csXformGamutTransform,
-                               int csXformDstKind,
-                               half4x4 csXformCoeffs,
                                sampler2D s) {
-    half4 sampleColor = $sample_image(coords, invImgSize, s);
-    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
-                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+    return $sample_image(coords, invImgSize, s);
+}
+
+$pure half4 $yuv_to_rgb_no_swizzle(half Y,
+                                   half U,
+                                   half V,
+                                   half alpha,
+                                   half3x3 yuvToRGBMatrix,
+                                   half3 yuvToRGBTranslate) {
+    half3 preColor = half3(Y, U, V);
+    half4 sampleColor;
+    sampleColor.rgb = saturate(yuvToRGBMatrix * preColor.rgb + yuvToRGBTranslate);
+    sampleColor.a = alpha;
+
+    // We always return an unpremul color here to skip work when transforming colorspaces
+    return sampleColor;
 }
 
 $pure half4 $yuv_to_rgb(half4 sampleColorY,
                         half4 sampleColorU,
                         half4 sampleColorV,
-                        half4 sampleColorA,
+                        half alpha,
                         half4 channelSelectY,
                         half4 channelSelectU,
                         half4 channelSelectV,
-                        half4 channelSelectA,
                         half3x3 yuvToRGBMatrix,
-                        float3 yuvToRGBTranslate) {
-    float Y = dot(channelSelectY, sampleColorY);
-    float U = dot(channelSelectU, sampleColorU);
-    float V = dot(channelSelectV, sampleColorV);
-    half3 preColor = half3(Y, U, V);
-    half4 sampleColor;
-    sampleColor.rgb = saturate(yuvToRGBMatrix * preColor.rgb + half3(yuvToRGBTranslate));
-    sampleColor.a = dot(channelSelectA, sampleColorA);
-    // premul alpha
-    sampleColor.rgb *= sampleColor.a;
-
-    return sampleColor;
+                        half3 yuvToRGBTranslate) {
+    half Y = dot(channelSelectY, sampleColorY);
+    half U = dot(channelSelectU, sampleColorU);
+    half V = dot(channelSelectV, sampleColorV);
+    return $yuv_to_rgb_no_swizzle(Y, U, V, alpha, yuvToRGBMatrix, yuvToRGBTranslate);
 }
 
 $pure half4 sk_yuv_image_shader(float2 coords,
@@ -367,7 +363,7 @@ $pure half4 sk_yuv_image_shader(float2 coords,
                                 half4 channelSelectV,
                                 half4 channelSelectA,
                                 half3x3 yuvToRGBMatrix,
-                                float3 yuvToRGBTranslate,
+                                half3 yuvToRGBTranslate,
                                 sampler2D sY,
                                 sampler2D sU,
                                 sampler2D sV,
@@ -382,22 +378,24 @@ $pure half4 sk_yuv_image_shader(float2 coords,
     int tileModeX_UV = tileModeX == $kTileModeDecal ? $kTileModeClamp : tileModeX;
     int tileModeY_UV = tileModeY == $kTileModeDecal ? $kTileModeClamp : tileModeY;
 
-    half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
+    half4 sampleColorY, sampleColorU, sampleColorV;
     sampleColorY = $sample_image_subset(coords, invImgSizeY, subset, tileModeX, tileModeY,
                                         filterModeY, float2($kLinearInset), sY);
     sampleColorU = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                         filterModeUV, linearFilterUVInset, sU);
     sampleColorV = $sample_image_subset(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                         filterModeUV, linearFilterUVInset, sV);
+    half alpha;
     if (channelSelectA == half4(1)) {
-        sampleColorA = half4(0, 0, 0, 1);
+        alpha = 1;
     } else {
-        sampleColorA = $sample_image_subset(coords, invImgSizeY, subset, tileModeX, tileModeY,
-                                            filterModeY, float2($kLinearInset), sA);
+        half4 sampleColorA = $sample_image_subset(coords, invImgSizeY, subset, tileModeX, tileModeY,
+                                                  filterModeY, float2($kLinearInset), sA);
+        alpha = dot(channelSelectA, sampleColorA);
     }
 
-    return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, sampleColorA,
-                       channelSelectY, channelSelectU, channelSelectV, channelSelectA,
+    return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, alpha,
+                       channelSelectY, channelSelectU, channelSelectV,
                        yuvToRGBMatrix, yuvToRGBTranslate);
 }
 
@@ -413,7 +411,7 @@ $pure half4 sk_cubic_yuv_image_shader(float2 coords,
                                       half4 channelSelectV,
                                       half4 channelSelectA,
                                       half3x3 yuvToRGBMatrix,
-                                      float3 yuvToRGBTranslate,
+                                      half3 yuvToRGBTranslate,
                                       sampler2D sY,
                                       sampler2D sU,
                                       sampler2D sV,
@@ -421,32 +419,83 @@ $pure half4 sk_cubic_yuv_image_shader(float2 coords,
     int tileModeX_UV = tileModeX == $kTileModeDecal ? $kTileModeClamp : tileModeX;
     int tileModeY_UV = tileModeY == $kTileModeDecal ? $kTileModeClamp : tileModeY;
 
-    half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
+    half4 sampleColorY, sampleColorU, sampleColorV;
     sampleColorY = $cubic_filter_image(coords, invImgSizeY, subset, tileModeX, tileModeY,
                                        cubicCoeffs, sY);
     sampleColorU = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                        cubicCoeffs, sU);
     sampleColorV = $cubic_filter_image(coords, invImgSizeUV, subset, tileModeX_UV, tileModeY_UV,
                                        cubicCoeffs, sV);
+    half alpha;
     if (channelSelectA == half4(1)) {
-        sampleColorA = half4(0, 0, 0, 1);
+        alpha = 1;
     } else {
-        sampleColorA = $cubic_filter_image(coords, invImgSizeY, subset, tileModeX, tileModeY,
-                                           cubicCoeffs, sA);
+        half4 sampleColorA = $cubic_filter_image(coords, invImgSizeY, subset, tileModeX, tileModeY,
+                                                 cubicCoeffs, sA);
+        alpha = dot(channelSelectA, sampleColorA);
     }
 
-    return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, sampleColorA,
-                       channelSelectY, channelSelectU, channelSelectV, channelSelectA,
+    return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, alpha,
+                       channelSelectY, channelSelectU, channelSelectV,
                        yuvToRGBMatrix, yuvToRGBTranslate);
 }
 
-$pure half4 sk_dither_shader(half4 colorIn,
-                             float2 coords,
-                             half range,
-                             sampler2D lut) {
+$pure half4 sk_hw_yuv_image_shader(float2 coords,
+                                   float2 invImgSizeY,
+                                   float2 invImgSizeUV,  // Relative to Y's coordinate space
+                                   half4 channelSelectY,
+                                   half4 channelSelectU,
+                                   half4 channelSelectV,
+                                   half4 channelSelectA,
+                                   half3x3 yuvToRGBMatrix,
+                                   half3 yuvToRGBTranslate,
+                                   sampler2D sY,
+                                   sampler2D sU,
+                                   sampler2D sV,
+                                   sampler2D sA) {
+    half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
+    sampleColorY = $sample_image(coords, invImgSizeY, sY);
+    sampleColorU = $sample_image(coords, invImgSizeUV, sU);
+    sampleColorV = $sample_image(coords, invImgSizeUV, sV);
+    half alpha;
+    if (channelSelectA == half4(1)) {
+        alpha = 1;
+    } else {
+        half4 sampleColorA = $sample_image(coords, invImgSizeY, sA);
+        alpha = dot(channelSelectA, sampleColorA);
+    }
+
+    return $yuv_to_rgb(sampleColorY, sampleColorU, sampleColorV, alpha,
+                       channelSelectY, channelSelectU, channelSelectV,
+                       yuvToRGBMatrix, yuvToRGBTranslate);
+}
+
+$pure half4 sk_hw_yuv_no_swizzle_image_shader(float2 coords,
+                                              float2 invImgSizeY,
+                                              float2 invImgSizeUV,  // Relative to Y's coord space
+                                              half3x3 yuvToRGBMatrix,
+                                              half4 yuvToRGBXlateAlphaParam,
+                                              sampler2D sY,
+                                              sampler2D sU,
+                                              sampler2D sV,
+                                              sampler2D sA) {
+    half4 sampleColorY, sampleColorU, sampleColorV, sampleColorA;
+    half Y = $sample_image(coords, invImgSizeY, sY).r;
+    half U = $sample_image(coords, invImgSizeUV, sU).r;
+    half V = $sample_image(coords, invImgSizeUV, sV).r;
+    // When it's a Y_U_V_A texture, yuvToRGBXlateAlphaParam.w is 0 and we have a real A sampler so
+    // alpha is just that saturated value (should be a no-op). For Y_U_V, we set
+    // yuvToRGBXlateAlphaParam.w to 1 and sample from Y, which after the saturate is always 1.
+    half alpha = saturate($sample_image(coords, invImgSizeY, sA).r + yuvToRGBXlateAlphaParam.w);
+
+    return $yuv_to_rgb_no_swizzle(Y, U, V, alpha,
+                                  yuvToRGBMatrix, yuvToRGBXlateAlphaParam.xyz);
+}
+
+$pure half4 sk_dither(half4 colorIn, half range, sampler2D lut) {
     const float kImgSize = 8;
 
-    half value = sample(lut, coords / kImgSize).r - 0.5; // undo the bias in the table
+    half value = sample(lut, sk_FragCoord.xy / kImgSize).r - 0.5; // undo the bias in the table
     // For each color channel, add the random offset to the channel value and then clamp
     // between 0 and alpha to keep the color premultiplied.
     return half4(clamp(colorIn.rgb + value * range, 0.0, colorIn.a), colorIn.a);
@@ -558,7 +607,7 @@ $pure half4 $colorize_grad_8(float4 colorsParam[8], float4 offsetsParam[2], floa
     }
 }
 
-half4 $colorize_grad_tex(sampler2D colorsAndOffsetsSampler, int numStops, float2 t) {
+$pure half4 $colorize_grad_tex(sampler2D colorsAndOffsetsSampler, int numStops, float2 t) {
     const float kColorCoord = 0.25;
     const float kOffsetCoord = 0.75;
 
@@ -603,170 +652,142 @@ half4 $colorize_grad_tex(sampler2D colorsAndOffsetsSampler, int numStops, float2
     }
 }
 
-$pure float2 $linear_grad_layout(float2 point0Param, float2 point1Param, float2 pos) {
-    pos -= point0Param;
-    float2 delta = point1Param - point0Param;
-    float t = dot(pos, delta) / dot(delta, delta);
+$pure half4 $half4_from_array(float[] arr, int offset) {
+    return half4(arr[offset + 0],
+                 arr[offset + 1],
+                 arr[offset + 2],
+                 arr[offset + 3]);
+}
+
+$pure half4 $colorize_grad_buf(float[] colorAndOffsetData,
+                               int offsetsBaseIndex,
+                               int numStops,
+                               float2 t) {
+    int colorsBaseIndex = offsetsBaseIndex + numStops;
+    if (t.y < 0) {
+        return half4(0);
+    } else if (t.x == 0) {
+        return $half4_from_array(colorAndOffsetData, colorsBaseIndex);
+    } else if (t.x == 1) {
+        int lastColorIndex = colorsBaseIndex + (numStops - 1) * 4;
+        return $half4_from_array(colorAndOffsetData, lastColorIndex);
+    } else {
+        // Binary search for the matching adjacent stop offsets running log2(numStops).
+        int lowOffsetIndex = offsetsBaseIndex;
+        int highOffsetIndex = lowOffsetIndex + numStops - 1;
+        for (int i = 1; i < numStops; i += i) {
+            int middleOffsetIndex = (lowOffsetIndex + highOffsetIndex) / 2;
+            if (t.x < colorAndOffsetData[middleOffsetIndex]) {
+                highOffsetIndex = middleOffsetIndex;
+            } else {
+                lowOffsetIndex = middleOffsetIndex;
+            }
+        }
+        int lowColorIndex = colorsBaseIndex + (lowOffsetIndex - offsetsBaseIndex) * 4;
+        float lowOffset = colorAndOffsetData[lowOffsetIndex];
+        half4 lowColor = $half4_from_array(colorAndOffsetData, lowColorIndex);
+
+        int highColorIndex = colorsBaseIndex + (highOffsetIndex - offsetsBaseIndex) * 4;
+        float highOffset = colorAndOffsetData[highOffsetIndex];
+        if (highOffset == lowOffset) {
+            // If the t value falls exactly on a color stop, both lowOffset
+            // and highOffset will be exactly the same so we avoid having
+            // 0/0=NaN as our mix value.
+            return lowColor;
+        } else {
+            half4 highColor = $half4_from_array(colorAndOffsetData, highColorIndex);
+
+            return half4(mix(lowColor, highColor, (t.x - lowOffset) / (highOffset - lowOffset)));
+        }
+    }
+}
+
+$pure float2 $linear_grad_layout(float2 pos) {
+    // Add small epsilon since when the gradient is horizontally or vertically aligned,
+    // pixels along the same column or row can have slightly different interpolated t values
+    // causing pixels to choose the wrong offset when colorizing. This helps ensure pixels
+    // along the same column or row choose the same gradient offsets.
+    return float2(pos.x + 0.00001, 1);
+}
+
+$pure float2 $radial_grad_layout(float2 pos) {
+    float t = length(pos);
     return float2(t, 1);
 }
 
-$pure float2 $radial_grad_layout(float2 centerParam, float radiusParam, float2 pos) {
-    float t = distance(pos, centerParam) / radiusParam;
-    return float2(t, 1);
-}
-
-$pure float2 $sweep_grad_layout(float2 centerParam, float biasParam, float scaleParam, float2 pos) {
-    pos -= centerParam;
-
+$pure float2 $sweep_grad_layout(float biasParam, float scaleParam, float2 pos) {
     // Some devices incorrectly implement atan2(y,x) as atan(y/x). In actuality it is
     // atan2(y,x) = 2 * atan(y / (sqrt(x^2 + y^2) + x)). To work around this we pass in
     // (sqrt(x^2 + y^2) + x) as the second parameter to atan2 in these cases. We let the device
     // handle the undefined behavior if the second parameter is 0, instead of doing the divide
     // ourselves and calling atan with the quotient.
-    float angle = sk_Caps.atan2ImplementedAsAtanYOverX ? 2 * atan(-pos.y, length(pos) - pos.x)
-                                                       : atan(-pos.y, -pos.x);
+    float angle;
+    if (sk_Caps.atan2ImplementedAsAtanYOverX) {
+        angle = 2 * atan(-pos.y, length(pos) - pos.x);
+    } else {
+        // Hardcode pi/2 for the angle when x == 0, to avoid undefined behavior in this
+        // case. This hasn't proven to be necessary in the atan workaround case.
+        angle = pos.x != 0.0 ? atan(-pos.y, -pos.x) : sign(pos.y) * -1.5707963267949;
+    }
 
     // 0.1591549430918 is 1/(2*pi), used since atan returns values [-pi, pi]
     float t = (angle * 0.1591549430918 + 0.5 + biasParam) * scaleParam;
     return float2(t, 1);
 }
 
-$pure float3x3 $map_to_unit_x(float2 p0, float2 p1) {
-    // Returns a matrix that maps [p0, p1] to [(0, 0), (1, 0)]. Results are undefined if p0 = p1.
-    // From skia/src/core/SkMatrix.cpp, SkMatrix::setPolyToPoly.
-    return float3x3(
-        0, -1,  0,
-        1,  0,  0,
-        0,  0,  1
-    ) * inverse(float3x3(
-        p1.y - p0.y, p0.x - p1.x, 0,
-        p1.x - p0.x, p1.y - p0.y, 0,
-               p0.x,        p0.y, 1
-    ));
-}
-
-$pure float2 $conical_grad_layout(float2 point0Param,
-                                  float2 point1Param,
-                                  float radius0Param,
-                                  float radius1Param,
+$pure float2 $conical_grad_layout(float radius0,
+                                  float dRadius,
+                                  float a,
+                                  float invA,
                                   float2 pos) {
-    const float SK_ScalarNearlyZero = 1.0 / (1 << 12);
-    float dCenter = distance(point0Param, point1Param);
-    float dRadius = radius1Param - radius0Param;
+    // When writing uniform values, if the gradient is radial, we encode a == 0 and since
+    // the linear edge case is when a == 0, we differentiate the radial case with invA == 1.
+    if (a == 0 && invA == 1) {
+        // Radial case
+        float t = length(pos) * dRadius - radius0;
 
-    // Degenerate case: a radial gradient (p0 = p1).
-    bool radial = dCenter < SK_ScalarNearlyZero;
-
-    // Degenerate case: a strip with bandwidth 2r (r0 = r1).
-    bool strip = abs(dRadius) < SK_ScalarNearlyZero;
-
-    if (radial) {
-        if (strip) {
-            // The start and end inputs are the same in both position and radius.
-            // We don't expect to see this input, but just in case we avoid dividing by zero.
-            return float2(0, -1);
-        }
-
-        float scale = 1 / dRadius;
-        float scaleSign = sign(dRadius);
-        float bias = radius0Param / dRadius;
-
-        float2 pt = (pos - point0Param) * scale;
-        float t = length(pt) * scaleSign - bias;
         return float2(t, 1);
-
-    } else if (strip) {
-        float3x3 transform = $map_to_unit_x(point0Param, point1Param);
-        float r = radius0Param / dCenter;
-        float r_2 = r * r;
-
-        float2 pt = (transform * pos.xy1).xy;
-        float t = r_2 - pt.y * pt.y;
-        if (t < 0) {
-            return float2(0, -1);
-        }
-        t = pt.x + sqrt(t);
-        return float2(t, 1);
-
     } else {
-        // See https://skia.org/docs/dev/design/conical/ for details on how this algorithm works.
-        // Calculate f and swap inputs if necessary (steps 1 and 2).
-        float f = radius0Param / (radius0Param - radius1Param);
+        // Focal/strip case.
+        float c = dot(pos, pos) - radius0 * radius0;
+        float negB = 2 * (dRadius * radius0 + pos.x);
 
-        bool isSwapped = abs(f - 1) < SK_ScalarNearlyZero;
-        if (isSwapped) {
-            float2 tmpPt = point0Param;
-            point0Param = point1Param;
-            point1Param = tmpPt;
-            f = 0;
-        }
+        float t;
+        if (a == 0) {
+            // Linear case, both circles intersect as exactly one point
+            // with the focal point sitting on that point.
 
-        // Apply mapping from [Cf, C1] to unit x, and apply the precalculations from steps 3 and 4,
-        // all in the same transformation.
-        float2 Cf = mix(point0Param, point1Param, f);
-        float3x3 transform = $map_to_unit_x(Cf, point1Param);
-
-        float scaleX = abs(1 - f);
-        float scaleY = scaleX;
-        float r1 = abs(radius1Param - radius0Param) / dCenter;
-        bool isFocalOnCircle = abs(r1 - 1) < SK_ScalarNearlyZero;
-        if (isFocalOnCircle) {
-            scaleX *= 0.5;
-            scaleY *= 0.5;
+            // It is highly unlikely that b and c would be 0 resulting in NaN, if b == 0 due to
+            // a specific translation, it would result is +/-Inf which propogates the sign to
+            // isValid resulting in how the pixel is expected to look.
+            t = c / negB;
         } else {
-            scaleX *= r1 / (r1 * r1 - 1);
-            scaleY /= sqrt(abs(r1 * r1 - 1));
-        }
-        transform = float3x3(
-            scaleX, 0, 0,
-            0, scaleY, 0,
-            0, 0, 1
-        ) * transform;
-
-        float2 pt = (transform * pos.xy1).xy;
-
-        // Continue with step 5 onward.
-        float invR1 = 1 / r1;
-        float dRadiusSign = sign(1 - f);
-        bool isWellBehaved = !isFocalOnCircle && r1 > 1;
-
-        float x_t = -1;
-        if (isFocalOnCircle) {
-            x_t = dot(pt, pt) / pt.x;
-        } else if (isWellBehaved) {
-            x_t = length(pt) - pt.x * invR1;
-        } else {
-            float temp = pt.x * pt.x - pt.y * pt.y;
-            if (temp >= 0) {
-                if (isSwapped || dRadiusSign < 0) {
-                    x_t = -sqrt(temp) - pt.x * invR1;
-                } else {
-                    x_t = sqrt(temp) - pt.x * invR1;
-                }
+            // Quadratic case
+            float d = negB*negB - 4*a*c;
+            if (d < 0) {
+                return float2(0, -1);
             }
+
+            // T should be as large as possible, so when one circle fully encloses the other,
+            // the sign will be positive or negative depending on the sign of dRadius.
+            // When this isn't the case and they form a cone, the sign will always be positive.
+            float quadSign = sign(1 - dRadius);
+            t = invA * (negB + quadSign * sqrt(d));
         }
 
-        if (!isWellBehaved && x_t < 0) {
-            return float2(0, -1);
-        }
-
-        float t = f + dRadiusSign * x_t;
-        if (isSwapped) {
-            t = 1 - t;
-        }
-        return float2(t, 1);
+        // Interpolated radius must be positive.
+        float isValid = sign(t * dRadius + radius0);
+        return float2(t, isValid);
     }
 }
 
 $pure half4 sk_linear_grad_4_shader(float2 coords,
                                     float4 colorsParam[4],
                                     float4 offsetsParam,
-                                    float2 point0Param,
-                                    float2 point1Param,
                                     int tileMode,
                                     int colorSpace,
                                     int doUnpremul) {
-    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    float2 t = $linear_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
@@ -775,40 +796,47 @@ $pure half4 sk_linear_grad_4_shader(float2 coords,
 $pure half4 sk_linear_grad_8_shader(float2 coords,
                                     float4 colorsParam[8],
                                     float4 offsetsParam[2],
-                                    float2 point0Param,
-                                    float2 point1Param,
                                     int tileMode,
                                     int colorSpace,
                                     int doUnpremul) {
-    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    float2 t = $linear_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_linear_grad_tex_shader(float2 coords,
-                                      float2 point0Param,
-                                      float2 point1Param,
                                       int numStops,
                                       int tileMode,
                                       int colorSpace,
                                       int doUnpremul,
                                       sampler2D colorAndOffsetSampler) {
-    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    float2 t = $linear_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_linear_grad_buf_shader(float2 coords,
+                                      int numStops,
+                                      int bufferOffset,
+                                      int tileMode,
+                                      int colorSpace,
+                                      int doUnpremul,
+                                      float[] colorAndOffsetData) {
+    float2 t = $linear_grad_layout(coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_buf(colorAndOffsetData, bufferOffset, numStops, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_radial_grad_4_shader(float2 coords,
                                     float4 colorsParam[4],
                                     float4 offsetsParam,
-                                    float2 centerParam,
-                                    float radiusParam,
                                     int tileMode,
                                     int colorSpace,
                                     int doUnpremul) {
-    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    float2 t = $radial_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
@@ -817,41 +845,49 @@ $pure half4 sk_radial_grad_4_shader(float2 coords,
 $pure half4 sk_radial_grad_8_shader(float2 coords,
                                     float4 colorsParam[8],
                                     float4 offsetsParam[2],
-                                    float2 centerParam,
-                                    float radiusParam,
                                     int tileMode,
                                     int colorSpace,
                                     int doUnpremul) {
-    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    float2 t = $radial_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_radial_grad_tex_shader(float2 coords,
-                                      float2 centerParam,
-                                      float radiusParam,
                                       int numStops,
                                       int tileMode,
                                       int colorSpace,
                                       int doUnpremul,
                                       sampler2D colorAndOffsetSampler) {
-    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    float2 t = $radial_grad_layout(coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_radial_grad_buf_shader(float2 coords,
+                                      int numStops,
+                                      int bufferOffset,
+                                      int tileMode,
+                                      int colorSpace,
+                                      int doUnpremul,
+                                      float[] colorAndOffsetData) {
+    float2 t = $radial_grad_layout(coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_buf(colorAndOffsetData, bufferOffset, numStops, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_sweep_grad_4_shader(float2 coords,
                                    float4 colorsParam[4],
                                    float4 offsetsParam,
-                                   float2 centerParam,
                                    float biasParam,
                                    float scaleParam,
                                    int tileMode,
                                    int colorSpace,
                                    int doUnpremul) {
-    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    float2 t = $sweep_grad_layout(biasParam, scaleParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
@@ -860,20 +896,18 @@ $pure half4 sk_sweep_grad_4_shader(float2 coords,
 $pure half4 sk_sweep_grad_8_shader(float2 coords,
                                    float4 colorsParam[8],
                                    float4 offsetsParam[2],
-                                   float2 centerParam,
                                    float biasParam,
                                    float scaleParam,
                                    int tileMode,
                                    int colorSpace,
                                    int doUnpremul) {
-    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    float2 t = $sweep_grad_layout(biasParam, scaleParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_sweep_grad_tex_shader(float2 coords,
-                                     float2 centerParam,
                                      float biasParam,
                                      float scaleParam,
                                      int numStops,
@@ -881,23 +915,38 @@ $pure half4 sk_sweep_grad_tex_shader(float2 coords,
                                      int colorSpace,
                                      int doUnpremul,
                                      sampler2D colorAndOffsetSampler) {
-    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    float2 t = $sweep_grad_layout(biasParam, scaleParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_sweep_grad_buf_shader(float2 coords,
+                                     float biasParam,
+                                     float scaleParam,
+                                     int numStops,
+                                     int bufferOffset,
+                                     int tileMode,
+                                     int colorSpace,
+                                     int doUnpremul,
+                                     float[] colorAndOffsetData) {
+    float2 t = $sweep_grad_layout(biasParam, scaleParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_buf(colorAndOffsetData, bufferOffset, numStops, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_conical_grad_4_shader(float2 coords,
                                      float4 colorsParam[4],
                                      float4 offsetsParam,
-                                     float2 point0Param,
-                                     float2 point1Param,
                                      float radius0Param,
-                                     float radius1Param,
+                                     float dRadiusParam,
+                                     float aParam,
+                                     float invAParam,
                                      int tileMode,
                                      int colorSpace,
                                      int doUnpremul) {
-    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    float2 t = $conical_grad_layout(radius0Param, dRadiusParam, aParam, invAParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
@@ -906,36 +955,53 @@ $pure half4 sk_conical_grad_4_shader(float2 coords,
 $pure half4 sk_conical_grad_8_shader(float2 coords,
                                      float4 colorsParam[8],
                                      float4 offsetsParam[2],
-                                     float2 point0Param,
-                                     float2 point1Param,
                                      float radius0Param,
-                                     float radius1Param,
+                                     float dRadiusParam,
+                                     float aParam,
+                                     float invAParam,
                                      int tileMode,
                                      int colorSpace,
                                      int doUnpremul) {
-    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    float2 t = $conical_grad_layout(radius0Param, dRadiusParam, aParam, invAParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
 $pure half4 sk_conical_grad_tex_shader(float2 coords,
-                                       float2 point0Param,
-                                       float2 point1Param,
                                        float radius0Param,
-                                       float radius1Param,
+                                       float dRadiusParam,
+                                       float aParam,
+                                       float invAParam,
                                        int numStops,
                                        int tileMode,
                                        int colorSpace,
                                        int doUnpremul,
                                        sampler2D colorAndOffsetSampler) {
-    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    float2 t = $conical_grad_layout(radius0Param, dRadiusParam, aParam, invAParam, coords);
     t = $tile_grad(tileMode, t);
     half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
     return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
 }
 
-$pure half4 sk_matrix_colorfilter(half4 colorIn, float4x4 m, float4 v, int inHSLA) {
+$pure half4 sk_conical_grad_buf_shader(float2 coords,
+                                       float radius0Param,
+                                       float dRadiusParam,
+                                       float aParam,
+                                       float invAParam,
+                                       int numStops,
+                                       int bufferOffset,
+                                       int tileMode,
+                                       int colorSpace,
+                                       int doUnpremul,
+                                       float[] colorAndOffsetData) {
+    float2 t = $conical_grad_layout(radius0Param, dRadiusParam, aParam, invAParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_buf(colorAndOffsetData, bufferOffset, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_matrix_colorfilter(half4 colorIn, float4x4 m, float4 v, int inHSLA, int clampRGB) {
     if (bool(inHSLA)) {
         colorIn = $rgb_to_hsl(colorIn.rgb, colorIn.a); // includes unpremul
     } else {
@@ -947,7 +1013,11 @@ $pure half4 sk_matrix_colorfilter(half4 colorIn, float4x4 m, float4 v, int inHSL
     if (bool(inHSLA)) {
         colorOut = $hsl_to_rgb(colorOut.rgb, colorOut.a); // includes clamp and premul
     } else {
-        colorOut = saturate(colorOut);
+        if (bool(clampRGB)) {
+            colorOut = saturate(colorOut);
+        } else {
+            colorOut.a = saturate(colorOut.a);
+        }
         colorOut.rgb *= colorOut.a;
     }
 
@@ -1047,14 +1117,14 @@ $pure half4 $noise_function(half2 noiseVec,
 
 // permutationSampler is [kBlockSize x 1] A8
 // noiseSampler is [kBlockSize x 4] RGBA8 premul
-$pure half4 perlin_noise_shader(float2 coords,
-                                float2 baseFrequency,
-                                float2 stitchDataIn,
-                                int noiseType,
-                                int numOctaves,
-                                int stitching,
-                                sampler2D permutationSampler,
-                                sampler2D noiseSampler) {
+$pure half4 sk_perlin_noise_shader(float2 coords,
+                                   float2 baseFrequency,
+                                   float2 stitchDataIn,
+                                   int noiseType,
+                                   int numOctaves,
+                                   int stitching,
+                                   sampler2D permutationSampler,
+                                   sampler2D noiseSampler) {
     const int kFractalNoise = 0;
     const int kTurbulence = 1;
 
@@ -1101,7 +1171,7 @@ $pure half4 perlin_noise_shader(float2 coords,
     color = saturate(color);
 
     // Pre-multiply the result
-    return half4(color.rgb * color.aaa, color.a);
+    return sk_premul_alpha(color);
 }
 
 $pure half4 sk_blend(half4 src, half4 dst, int blendMode) {
@@ -1148,7 +1218,7 @@ $pure half4 sk_blend(half4 src, half4 dst, int blendMode) {
         case kSrcATop:    return blend_porter_duff(half4(0, 0,  1, -1), src, dst);
         case kDstATop:    return blend_porter_duff(half4(0, 0, -1,  1), src, dst);
         case kXor:        return blend_porter_duff(half4(0, 0, -1, -1), src, dst);
-        case kPlus:       return blend_porter_duff(half4(1, 1,  0,  0), src, dst);
+        case kPlus:       return blend_plus(src, dst);
         case kModulate:   return blend_modulate(src, dst);
         case kScreen:     return blend_screen(src, dst);
         case kOverlay:    return blend_overlay(/*flip=*/0, src, dst);
@@ -1206,13 +1276,42 @@ $pure half4 sample_indexed_atlas(float2 textureCoords,
     }
 }
 
+$pure half3 $sample_indexed_atlas_lcd(float2 textureCoords,
+                                      int atlasIndex,
+                                      half2 offset,
+                                      sampler2D atlas0,
+                                      sampler2D atlas1,
+                                      sampler2D atlas2,
+                                      sampler2D atlas3) {
+    half3 distance = half3(1);
+    switch (atlasIndex) {
+        case 1:
+            distance.x = sample(atlas1, half2(textureCoords) - offset).r;
+            distance.y = sample(atlas1, textureCoords).r;
+            distance.z = sample(atlas1, half2(textureCoords) + offset).r;
+        case 2:
+            distance.x = sample(atlas2, half2(textureCoords) - offset).r;
+            distance.y = sample(atlas2, textureCoords).r;
+            distance.z = sample(atlas2, half2(textureCoords) + offset).r;
+        case 3:
+            distance.x = sample(atlas3, half2(textureCoords) - offset).r;
+            distance.y = sample(atlas3, textureCoords).r;
+            distance.z = sample(atlas3, half2(textureCoords) + offset).r;
+        default:
+            distance.x = sample(atlas0, half2(textureCoords) - offset).r;
+            distance.y = sample(atlas0, textureCoords).r;
+            distance.z = sample(atlas0, half2(textureCoords) + offset).r;
+    }
+    return distance;
+}
+
 $pure half4 bitmap_text_coverage_fn(half4 texColor, int maskFormat) {
     return (maskFormat == $kMaskFormatA8) ? texColor.rrrr
                                           : texColor;
 }
 
 $pure half4 sdf_text_coverage_fn(half texColor,
-                                 half distAdjust,
+                                 half2 gammaParams,
                                  float2 unormTexCoords) {
     // TODO: To minimize the number of shaders generated this is the full affine shader.
     // For best performance it may be worth creating the uniform scale shader as well,
@@ -1226,7 +1325,7 @@ $pure half4 sdf_text_coverage_fn(half texColor,
     half dist = 7.96875 * (texColor - 0.50196078431);
 
     // We may further adjust the distance for gamma correction.
-    dist -= half(distAdjust);
+    dist -= gammaParams.x;
 
     // After the distance is unpacked, we need to correct it by a factor dependent on the
     // current transformation. For general transforms, to determine the amount of correction
@@ -1234,7 +1333,7 @@ $pure half4 sdf_text_coverage_fn(half texColor,
     // unormTexCoords (which is the inverse transform for this fragment) and take the length of
     // the result.
     half2 dist_grad = half2(dFdx(dist), dFdy(dist));
-       half dg_len2 = dot(dist_grad, dist_grad);
+    half dg_len2 = dot(dist_grad, dist_grad);
 
     // The length of the gradient may be near 0, so we need to check for that. This also
     // compensates for the Adreno, which likes to drop tiles on division by 0.
@@ -1242,15 +1341,83 @@ $pure half4 sdf_text_coverage_fn(half texColor,
                                     : half2(0.7071);
 
     // Computing the Jacobian and multiplying by the gradient.
-    half4 jacobian = half4(dFdx(unormTexCoords), dFdy(unormTexCoords));
-    half2 grad = half2(dot(dist_grad, jacobian.xz),
-                       dot(dist_grad, jacobian.yw));
+    float2x2 jacobian = float2x2(dFdx(unormTexCoords), dFdy(unormTexCoords));
+    half2 grad = half2(jacobian * dist_grad);
 
     // This gives us a smooth step across approximately one fragment.
-    half afwidth = 0.65 * length(grad);
+    half approxFragWidth = 0.65 * length(grad);
 
-    // TODO: handle aliased and sRGB rendering
-    return half4(smoothstep(-afwidth, afwidth, dist));
+    // TODO: handle aliased rendering
+    if (gammaParams.y > 0) {
+        // The smoothstep falloff compensates for the non-linear sRGB response curve. If we are
+        // doing gamma-correct rendering (to an sRGB or F16 buffer), then we actually want
+        // distance mapped linearly to coverage, so use a linear step:
+        return half4(saturate((dist + approxFragWidth) / (2.0 * approxFragWidth)));
+    } else {
+        return half4(smoothstep(-approxFragWidth, approxFragWidth, dist));
+    }
+}
+
+$pure half4 sdf_text_lcd_coverage_fn(float2 textureCoords,
+                                     half2 pixelGeometryDelta,
+                                     half4 gammaParams,
+                                     float2 unormTexCoords,
+                                     float texIndex,
+                                     sampler2D atlas0,
+                                     sampler2D atlas1,
+                                     sampler2D atlas2,
+                                     sampler2D atlas3) {
+    // TODO: To minimize the number of shaders generated this is the full affine shader.
+    // For best performance it may be worth creating the uniform scale shader as well,
+    // as that's the most common case.
+
+    float2x2 jacobian = float2x2(dFdx(unormTexCoords), dFdy(unormTexCoords));
+    half2 offset = half2(jacobian * pixelGeometryDelta);
+
+    half3 distance = $sample_indexed_atlas_lcd(textureCoords,
+                                               int(texIndex),
+                                               offset,
+                                               atlas0,
+                                               atlas1,
+                                               atlas2,
+                                               atlas3);
+    // The distance field is constructed as uchar8_t values, so that the zero value is at 128,
+    // and the supported range of distances is [-4 * 127/128, 4].
+    // Hence to convert to floats our multiplier (width of the range) is 4 * 255/128 = 7.96875
+    // and zero threshold is 128/255 = 0.50196078431.
+    half3 dist = half3(7.96875) * (distance - half3(0.50196078431));
+
+    // We may further adjust the distance for gamma correction.
+    dist -= gammaParams.xyz;
+
+    // After the distance is unpacked, we need to correct it by a factor dependent on the
+    // current transformation. For general transforms, to determine the amount of correction
+    // we multiply a unit vector pointing along the SDF gradient direction by the Jacobian of
+    // unormTexCoords (which is the inverse transform for this fragment) and take the length of
+    // the result.
+    half2 dist_grad = half2(dFdx(dist.g), dFdy(dist.g));
+    half dg_len2 = dot(dist_grad, dist_grad);
+
+    // The length of the gradient may be near 0, so we need to check for that. This also
+    // compensates for the Adreno, which likes to drop tiles on division by 0.
+    dist_grad = (dg_len2 >= 0.0001) ? dist_grad * inversesqrt(dg_len2)
+                                    : half2(0.7071);
+
+    // Multiplying the Jacobian by the gradient.
+    half2 grad = half2(jacobian * dist_grad);
+
+    // This gives us a smooth step across approximately one fragment.
+    half3 approxFragWidth = half3(0.65 * length(grad));
+
+    // TODO: handle aliased rendering
+    if (gammaParams.w > 0) {
+        // The smoothstep falloff compensates for the non-linear sRGB response curve. If we are
+        // doing gamma-correct rendering (to an sRGB or F16 buffer), then we actually want
+        // distance mapped linearly to coverage, so use a linear step:
+        return half4(saturate((dist + approxFragWidth / (2.0 * approxFragWidth))), 1);
+    } else {
+        return half4(smoothstep(half3(-approxFragWidth), half3(approxFragWidth), dist), 1);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

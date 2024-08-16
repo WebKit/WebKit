@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ struct JITOperationAnnotation;
 
 class JITOperationList {
 public:
-    static JITOperationList& instance();
+    static JITOperationList& singleton();
     static void initialize();
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
@@ -76,7 +76,7 @@ public:
     {
         UNUSED_PARAM(function);
 #if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
-        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::instance().map(function));
+        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::singleton().map(function));
 #endif
     }
 
@@ -84,7 +84,7 @@ public:
     {
         UNUSED_PARAM(function);
 #if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
-        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::instance().inverseMap(function));
+        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::singleton().inverseMap(function));
 #endif
     }
 
@@ -113,7 +113,7 @@ private:
 
 JS_EXPORT_PRIVATE extern LazyNeverDestroyed<JITOperationList> jitOperationList;
 
-inline JITOperationList& JITOperationList::instance()
+inline JITOperationList& JITOperationList::singleton()
 {
     return jitOperationList.get();
 }

@@ -27,11 +27,11 @@
 #include "IDBCursorWithValue.h"
 
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBCursorWithValue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBCursorWithValue);
 
 Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {

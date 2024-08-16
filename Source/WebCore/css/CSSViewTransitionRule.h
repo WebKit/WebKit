@@ -46,12 +46,14 @@ public:
 
     std::optional<ViewTransitionNavigation> navigation() const { return m_navigation; }
     ViewTransitionNavigation computedNavigation() const { return navigation().value_or(ViewTransitionNavigation::None); }
+    Vector<AtomString> types() const { return m_types; }
 
 private:
     explicit StyleRuleViewTransition(Ref<StyleProperties>&&);
     StyleRuleViewTransition(const StyleRuleViewTransition&) = default;
 
     std::optional<ViewTransitionNavigation> m_navigation;
+    Vector<AtomString> m_types;
 };
 
 class CSSViewTransitionRule final : public CSSRule {
@@ -66,6 +68,7 @@ public:
     StyleRuleType styleRuleType() const final { return StyleRuleType::ViewTransition; }
 
     ViewTransitionNavigation navigation() const { return m_viewTransitionRule->computedNavigation(); }
+    Vector<AtomString> types() const { return m_viewTransitionRule->types(); }
 
 private:
     CSSViewTransitionRule(StyleRuleViewTransition&, CSSStyleSheet* parent);

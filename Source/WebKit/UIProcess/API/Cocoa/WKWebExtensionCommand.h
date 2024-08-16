@@ -35,7 +35,7 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `WKWebExtensionCommand` object encapsulates the properties for an individual web extension command.
+ @abstract A ``WKWebExtensionCommand`` object encapsulates the properties for an individual web extension command.
  @discussion Provides access to command properties such as a unique identifier, a descriptive title, and shortcut keys. Commands
  can be used by a web extension to perform specific actions within a web extension context, such toggling features, or interacting with
  web content. These commands enhance the functionality of the extension by allowing users to invoke actions quickly.
@@ -63,7 +63,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
  @abstract The primary key used to trigger the command, distinct from any modifier flags.
  @discussion This property can be customized within the app to avoid conflicts with existing shortcuts or to enable user personalization.
  It should accurately represent the activation key as used by the app, which the extension can use to display the complete shortcut in its interface.
- If no shortcut is desired for the command, the property should be set to `nil`.
+ If no shortcut is desired for the command, the property should be set to `nil`. This value should be saved and restored as needed by the app.
  */
 @property (nonatomic, nullable, copy) NSString *activationKey;
 
@@ -71,7 +71,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
  @abstract The modifier flags used with the activation key to trigger the command.
  @discussion This property can be customized within the app to avoid conflicts with existing shortcuts or to enable user personalization. It
  should accurately represent the modifier keys as used by the app, which the extension can use to display the complete shortcut in its interface.
- If no modifiers are desired for the command, the property should be set to `0`.
+ If no modifiers are desired for the command, the property should be set to `0`. This value should be saved and restored as needed by the app.
  */
 #if TARGET_OS_IPHONE
 @property (nonatomic) UIKeyModifierFlags modifierFlags;
@@ -81,7 +81,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
 
 /*!
  @abstract A menu item representation of the web extension command for use in menus.
- @discussion This property provides a representation of the web extension command as a menu item to display in the app.
+ @discussion Provides a representation of the web extension command as a menu item to display in the app.
  Selecting the menu item will perform the command, offering a convenient and visual way for users to execute this web extension command.
  */
 #if TARGET_OS_IPHONE
@@ -93,9 +93,9 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.Command)
 #if TARGET_OS_IPHONE
 /*!
  @abstract A key command representation of the web extension command for use in the responder chain.
- @discussion This property provides a `UIKeyCommand` instance representing the web extension command, ready for integration in the app.
+ @discussion Provides a ``UIKeyCommand`` instance representing the web extension command, ready for integration in the app.
  The property is `nil` if no shortcut is defined. Otherwise, the key command is fully configured with the necessary input key and modifier flags
- to perform the associated command upon activation. It can be included in a view controller or other responder's `keyCommands` property, enabling
+ to perform the associated command upon activation. It can be included in a view controller or other responder's ``keyCommands`` property, enabling
  keyboard activation and discoverability of the web extension command.
  */
 @property (nonatomic, readonly, copy, nullable) UIKeyCommand *keyCommand;

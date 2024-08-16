@@ -39,13 +39,13 @@
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBConnectionProxy);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionProxy);
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
     : m_connectionToServer(connection)
@@ -571,13 +571,17 @@ void IDBConnectionProxy::forgetTransaction(IDBTransaction& transaction)
     m_abortingTransactions.remove(transaction.info().identifier());
 }
 
-template<typename KeyType, typename ValueType>
-void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map)
+template<typename KeyType, typename ValueType, typename FunctionType>
+void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map, FunctionType&& cleanupFunction)
 {
     // FIXME: Revisit when introducing WebThread aware thread comparison.
     // https://bugs.webkit.org/show_bug.cgi?id=204345
-    map.removeIf([currentThread = &Thread::current()](auto& entry) {
-        return &entry.value->originThread() == currentThread;
+    map.removeIf([currentThread = &Thread::current(), cleanupFunction = WTFMove(cleanupFunction)](auto& entry) {
+        if (&entry.value->originThread() == currentThread) {
+            cleanupFunction(entry.value);
+            return true;
+        }
+        return false;
     });
 }
 
@@ -600,29 +604,45 @@ void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, Ha
     }
 }
 
-void IDBConnectionProxy::forgetActivityForCurrentThread()
+void IDBConnectionProxy::abortActivitiesForCurrentThread()
 {
     {
-        Locker locker { m_databaseConnectionMapLock };
-        removeItemsMatchingCurrentThread(m_databaseConnectionMap);
-    }
-    {
         Locker locker { m_openDBRequestMapLock };
-        removeItemsMatchingCurrentThread(m_openDBRequestMap);
+        removeItemsMatchingCurrentThread(m_openDBRequestMap, [](RefPtr<IDBOpenDBRequest>& request) {
+            if (request)
+                request->requestCompleted(IDBResultData::error(request->resourceIdentifier(), IDBError { ExceptionCode::InvalidStateError, "Request is removed"_s }));
+        });
     }
     {
         Locker locker { m_transactionMapLock };
-        removeItemsMatchingCurrentThread(m_pendingTransactions);
-        removeItemsMatchingCurrentThread(m_committingTransactions);
-        removeItemsMatchingCurrentThread(m_abortingTransactions);
+        removeItemsMatchingCurrentThread(m_pendingTransactions, [](auto& transaction) {
+            if (transaction)
+                transaction->didStart(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+        });
+        removeItemsMatchingCurrentThread(m_committingTransactions, [](auto& transaction) {
+            if (transaction)
+                transaction->didCommit(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+        });
+        removeItemsMatchingCurrentThread(m_abortingTransactions, [](auto& transaction) {
+            if (transaction)
+                transaction->didAbort(IDBError { ExceptionCode::InvalidStateError, "Transaction is removed"_s });
+        });
     }
     {
         Locker locker { m_transactionOperationLock };
-        removeItemsMatchingCurrentThread(m_activeOperations);
+        removeItemsMatchingCurrentThread(m_activeOperations, [](auto& operation) {
+            if (!operation)
+                return;
+
+            auto result = IDBResultData::error(operation->identifier(), IDBError { ExceptionCode::InvalidStateError, "Operation is removed"_s });
+            operation->transitionToComplete(result, Ref { *operation });
+        });
     }
     {
         Locker locker { m_databaseInfoMapLock };
-        removeItemsMatchingCurrentThread(m_databaseInfoCallbacks);
+        removeItemsMatchingCurrentThread(m_databaseInfoCallbacks, [](auto& request) {
+            request->complete(std::nullopt);
+        });
     }
 }
 

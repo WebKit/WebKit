@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSColor : public CSSColorValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSColor);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSColor);
 public:
     template<typename... Args> static Ref<CSSColor> create(Args&&... args) { return adoptRef(*new CSSColor(std::forward<Args>(args)...)); }
 

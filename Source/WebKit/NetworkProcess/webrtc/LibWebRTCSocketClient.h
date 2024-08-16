@@ -39,6 +39,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_COMMA_END
 
+#include <wtf/TZoneMalloc.h>
+
 namespace rtc {
 class AsyncPacketSocket;
 struct SentPacket;
@@ -48,7 +50,7 @@ typedef int64_t PacketTime;
 namespace WebKit {
 
 class LibWebRTCSocketClient final : public NetworkRTCProvider::Socket, public sigslot::has_slots<> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocketClient);
 public:
     LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type, Ref<IPC::Connection>&&);
 

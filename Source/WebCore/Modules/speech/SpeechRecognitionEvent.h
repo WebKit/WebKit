@@ -32,7 +32,7 @@ namespace WebCore {
 class SpeechRecognitionResultList;
 
 class SpeechRecognitionEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(SpeechRecognitionEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognitionEvent);
 public:
     struct Init : EventInit {
         uint64_t resultIndex;

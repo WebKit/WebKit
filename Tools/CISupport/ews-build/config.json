@@ -152,10 +152,11 @@
     { "name": "ews196", "platform": "ios-simulator-17" },
     { "name": "ews197", "platform": "ios-simulator-17" },
     { "name": "ews198", "platform": "ios-simulator-17" },
-    { "name": "ews200", "platform": "ios-simulator-17" },
-    { "name": "ews201", "platform": "ios-simulator-17" },
-    { "name": "ews202", "platform": "ios-simulator-17" },
-    { "name": "ews203", "platform": "ios-simulator-17" },
+    { "name": "ews200", "platform": "mac-ventura" },
+    { "name": "ews201", "platform": "mac-ventura" },
+    { "name": "ews202", "platform": "mac-ventura" },
+    { "name": "ews203", "platform": "mac-ventura" },
+    { "name": "ews204", "platform": "mac-ventura" },    
     { "name": "ews216", "platform": "visionos-1" },
     { "name": "ews217", "platform": "visionos-1" },
     { "name": "ews218", "platform": "visionos-1" },
@@ -249,7 +250,7 @@
       "name": "macOS-Ventura-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
       "factory": "macOSBuildFactory", "platform": "mac-ventura",
       "configuration": "release", "architectures": ["x86_64", "arm64"],
-      "triggers": ["api-tests-mac-ews", "macos-ventura-release-wk1-tests-ews", "macos-ventura-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-ventura-release-wk1-tests-ews", "macos-ventura-release-wk2-tests-ews", "macos-ventura-release-wk2-intel-tests-ews", "macos-release-wk2-stress-tests-ews"],
       "workernames": ["ews101", "ews102", "ews103", "ews105","ews118", "ews119", "ews120", "ews141", "ews161", "ews162"]
     },
     {
@@ -265,6 +266,13 @@
       "configuration": "release",
       "triggered_by": ["macos-ventura-release-build-ews"],
       "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
+    },
+    {
+      "name": "macOS-Ventura-Release-WK2-Intel-Tests-EWS", "shortname": "mac-intel-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-ventura",
+      "configuration": "release",
+      "triggered_by": ["macos-ventura-release-build-ews"],
+      "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
@@ -498,6 +506,10 @@
     {
       "type": "Triggerable", "name": "macos-ventura-release-wk2-tests-ews",
       "builderNames": ["macOS-Ventura-Release-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "macos-ventura-release-wk2-intel-tests-ews",
+      "builderNames": ["macOS-Ventura-Release-WK2-Intel-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "macos-release-wk2-stress-tests-ews",

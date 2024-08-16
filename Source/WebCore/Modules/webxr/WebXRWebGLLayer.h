@@ -35,9 +35,9 @@
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
 #include <variant>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -54,7 +54,7 @@ class WebXRViewport;
 struct XRWebGLLayerInit;
 
 class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
-    WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
 
     using WebXRRenderingContext = std::variant<

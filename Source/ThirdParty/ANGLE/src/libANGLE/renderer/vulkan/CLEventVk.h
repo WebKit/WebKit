@@ -47,12 +47,24 @@ class CLEventVk : public CLEventImpl, public vk::Resource
 
     angle::Result waitForUserEventStatus();
     angle::Result setStatusAndExecuteCallback(cl_int status);
+    angle::Result setTimestamp(cl_int status);
 
   private:
     std::mutex mUserEventMutex;
     angle::SynchronizedValue<cl_int> mStatus;
     std::condition_variable mUserEventCondition;
     angle::SynchronizedValue<cl::EventStatusMap<bool>> mHaveCallbacks;
+
+    // Event profiling timestamps
+    struct ProfilingTimestamps
+    {
+        cl_ulong commandEndTS;
+        cl_ulong commandStartTS;
+        cl_ulong commandQueuedTS;
+        cl_ulong commandSubmitTS;
+        cl_ulong commandCompleteTS;
+    };
+    angle::SynchronizedValue<ProfilingTimestamps> mProfilingTimestamps;
 };
 
 }  // namespace rx

@@ -34,6 +34,7 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -53,7 +54,7 @@ class RemoteMediaResource;
 
 class RemoteMediaResourceManager
     : public IPC::WorkQueueMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResourceManager);
 public:
     static Ref<RemoteMediaResourceManager> create() { return adoptRef(*new RemoteMediaResourceManager()); }
     ~RemoteMediaResourceManager();

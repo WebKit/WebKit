@@ -256,7 +256,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.emitFunctionPrologue();
 
         // saveJSEntrypointInterpreterRegisters
-        jit.subPtr(CCallHelpers::TrustedImmPtr(Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
+        jit.subPtr(CCallHelpers::TrustedImmPtr(Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
 
 #if CPU(ARM64) || CPU(ARM64E) || CPU(X86_64)
         CCallHelpers::Address memBaseSlot { GPRInfo::callFrameRegister, -2 * static_cast<long>(sizeof(Register)) };
@@ -275,13 +275,13 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         }
 
         {
-            CCallHelpers::Address calleeSlot { GPRInfo::regWS0, WebAssemblyFunction::offsetOfInterpreterCallee() };
+            CCallHelpers::Address calleeSlot { GPRInfo::regWS0, WebAssemblyFunction::offsetOfJSToWasmCallee() };
             jit.loadPtr(calleeSlot, GPRInfo::regWS0);
         }
 
 #if ASSERT_ENABLED
         {
-            CCallHelpers::Address identSlot { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfIdent() };
+            CCallHelpers::Address identSlot { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfIdent() };
             jit.load32(identSlot, GPRInfo::regWS1);
             jit.move(MacroAssembler::TrustedImm32(0xBF), GPRInfo::regWA0);
             auto ok = jit.branch32(CCallHelpers::Equal, GPRInfo::regWS1, GPRInfo::regWA0);
@@ -292,7 +292,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
 
         // Allocate stack space (no stack check)
         {
-            CCallHelpers::Address frameSlot { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfFrameSize() };
+            CCallHelpers::Address frameSlot { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfFrameSize() };
             jit.load32(frameSlot, GPRInfo::regWS1);
             jit.subPtr(GPRInfo::regWS1, CCallHelpers::stackPointerRegister);
         }
@@ -376,7 +376,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
 #endif
 
         // Pop argument space values
-        jit.addPtr(MacroAssembler::TrustedImmPtr(Wasm::JSEntrypointInterpreterCallee::RegisterStackSpaceAligned), CCallHelpers::stackPointerRegister);
+        jit.addPtr(MacroAssembler::TrustedImmPtr(Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned), CCallHelpers::stackPointerRegister);
 
 #if ASSERT_ENABLED
         for (int32_t i = 0; i < 30; ++i)
@@ -400,16 +400,16 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         // Store Callee's wasm callee
 
 #if USE(JSVALUE64)
-        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfWasmCallee() }, GPRInfo::regWS1);
+        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfWasmCallee() }, GPRInfo::regWS1);
         jit.storePtr(GPRInfo::regWS1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 });
 #else
-        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfWasmCallee() + PayloadOffset }, GPRInfo::regWS1);
+        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfWasmCallee() + PayloadOffset }, GPRInfo::regWS1);
         jit.storePtr(GPRInfo::regWS1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset });
-        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfWasmCallee() + TagOffset }, GPRInfo::regWS1);
+        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfWasmCallee() + TagOffset }, GPRInfo::regWS1);
         jit.storePtr(GPRInfo::regWS1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset });
 #endif
 
-        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfWasmFunctionPrologue() }, GPRInfo::regWS0);
+        jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfWasmFunctionPrologue() }, GPRInfo::regWS0);
         jit.call(GPRInfo::regWS0, WasmEntryPtrTag);
 
         // Restore SP
@@ -428,10 +428,10 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.loadPtr(CCallHelpers::Address { GPRInfo::regWS1, 0 }, GPRInfo::regWS1);
         jit.addPtr(GPRInfo::regWS1, GPRInfo::regWS0);
 
-        jit.load32(CCallHelpers::Address { GPRInfo::regWS0, JSEntrypointInterpreterCallee::offsetOfFrameSize() }, GPRInfo::regWS1);
+        jit.load32(CCallHelpers::Address { GPRInfo::regWS0, JITLessJSEntrypointCallee::offsetOfFrameSize() }, GPRInfo::regWS1);
         jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::regWS1, GPRInfo::regWS1);
         jit.move(GPRInfo::regWS1, CCallHelpers::stackPointerRegister);
-        jit.subPtr(MacroAssembler::TrustedImmPtr(JSEntrypointInterpreterCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
+        jit.subPtr(MacroAssembler::TrustedImmPtr(JITLessJSEntrypointCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
 
         // Save return registers
 #if CPU(ARM64) || CPU(ARM64E)
@@ -483,7 +483,7 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
 #else
         jit.load32(wasmInstanceSlot, GPRInfo::wasmContextInstancePointer);
 #endif
-        jit.addPtr(CCallHelpers::TrustedImmPtr(Wasm::JSEntrypointInterpreterCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
+        jit.addPtr(CCallHelpers::TrustedImmPtr(Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
 
         jit.emitFunctionEpilogue();
         jit.ret();

@@ -27,6 +27,7 @@
 messages -> RemoteDevice NotRefCounted Stream {
     void Destroy()
     void Destruct()
+    void CreateXRBinding(WebKit::WebGPUIdentifier identifier)
     void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)

@@ -20,11 +20,10 @@ RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
 ACTION: pause
 
 * Metadata should be blank due to private browsing mode.
-RUN(nowPlayingMetadata = internals.nowPlayingMetadata)
-EXPECTED (nowPlayingMetadata.title == 'undefined') OK
-EXPECTED (nowPlayingMetadata.artist == 'undefined') OK
-EXPECTED (nowPlayingMetadata.album == 'undefined') OK
-EXPECTED (nowPlayingMetadata.artwork == 'undefined') OK
+EXPECTED (internals.nowPlayingMetadata.title == 'undefined') OK
+EXPECTED (internals.nowPlayingMetadata.artist == 'undefined') OK
+EXPECTED (internals.nowPlayingMetadata.album == 'undefined') OK
+EXPECTED (internals.nowPlayingMetadata.artwork == 'undefined') OK
 
 END OF TEST
 

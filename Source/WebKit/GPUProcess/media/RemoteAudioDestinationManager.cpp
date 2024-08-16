@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
@@ -43,24 +44,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #endif
 
-#if ENABLE(IPC_TESTING_API)
-#define WEB_PROCESS_TERMINATE_CONDITION !connection->connection().ignoreInvalidMessageForTesting()
-#else
-#define WEB_PROCESS_TERMINATE_CONDITION true
-#endif
-
-#define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
-    if (WEB_PROCESS_TERMINATE_CONDITION) { \
-        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, connection->webProcessIdentifier().toUInt64(), #message); \
-        connection->terminateWebProcess(); \
-    }
-
-#define MESSAGE_CHECK(assertion, message) do { \
-    if (UNLIKELY(!(assertion))) { \
-        TERMINATE_WEB_PROCESS_WITH_MESSAGE(message); \
-        return; \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
 
 namespace WebKit {
 
@@ -69,7 +53,7 @@ class RemoteAudioDestination final
     : public WebCore::AudioUnitRenderer
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteAudioDestination);
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
@@ -196,6 +180,8 @@ private:
 #endif
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationManager);
+
 RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
 {
@@ -282,7 +268,5 @@ bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
-#undef TERMINATE_WEB_PROCESS_WITH_MESSAGE
-#undef WEB_PROCESS_TERMINATE_CONDITION
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

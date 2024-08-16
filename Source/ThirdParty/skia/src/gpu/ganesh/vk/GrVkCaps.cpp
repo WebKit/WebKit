@@ -7,33 +7,45 @@
 
 #include "src/gpu/ganesh/vk/GrVkCaps.h"
 
-#include <memory>
-
+#include "include/core/SkRect.h"
+#include "include/core/SkSize.h"
 #include "include/core/SkTextureCompressionType.h"
+#include "include/core/SkTypes.h"
+#include "include/gpu/GpuTypes.h"
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/GrContextOptions.h"
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
-#include "include/gpu/vk/GrVkBackendContext.h"
 #include "include/gpu/vk/VulkanExtensions.h"
+#include "include/gpu/vk/VulkanTypes.h"
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/gpu/KeyBuilder.h"
 #include "src/gpu/ganesh/GrBackendUtils.h"
+#include "src/gpu/ganesh/GrPipeline.h"
 #include "src/gpu/ganesh/GrProgramDesc.h"
+#include "src/gpu/ganesh/GrProgramInfo.h"
 #include "src/gpu/ganesh/GrRenderTarget.h"
 #include "src/gpu/ganesh/GrRenderTargetProxy.h"
 #include "src/gpu/ganesh/GrShaderCaps.h"
 #include "src/gpu/ganesh/GrStencilSettings.h"
-#include "src/gpu/ganesh/GrUtil.h"
-#include "src/gpu/ganesh/SkGr.h"
+#include "src/gpu/ganesh/GrSurface.h"
+#include "src/gpu/ganesh/GrSurfaceProxy.h"
+#include "src/gpu/ganesh/GrXferProcessor.h"
 #include "src/gpu/ganesh/TestFormatColorTypeCombination.h"
 #include "src/gpu/ganesh/vk/GrVkGpu.h"
 #include "src/gpu/ganesh/vk/GrVkImage.h"
+#include "src/gpu/ganesh/vk/GrVkRenderPass.h"
 #include "src/gpu/ganesh/vk/GrVkRenderTarget.h"
+#include "src/gpu/ganesh/vk/GrVkSampler.h"
 #include "src/gpu/ganesh/vk/GrVkTexture.h"
 #include "src/gpu/ganesh/vk/GrVkUniformHandler.h"
 #include "src/gpu/ganesh/vk/GrVkUtil.h"
-#include "src/gpu/vk/VulkanInterface.h"
 #include "src/gpu/vk/VulkanUtilsPriv.h"
+
+#include <limits.h>
+#include <algorithm>
+#include <array>
+#include <cstring>
+#include <memory>
 
 #ifdef SK_BUILD_FOR_ANDROID
 #include <sys/system_properties.h>
@@ -383,9 +395,9 @@ void GrVkCaps::init(const GrContextOptions& contextOptions,
         fSupportsYcbcrConversion = true;
     }
 
-    // We always push back the default GrVkYcbcrConversionInfo so that the case of no conversion
-    // will return a key of 0.
-    fYcbcrInfos.push_back(GrVkYcbcrConversionInfo());
+    // We always push back the default skgpu::VulkanYcbcrConversionInfo so that the case of no
+    // conversion will return a key of 0.
+    fYcbcrInfos.push_back(skgpu::VulkanYcbcrConversionInfo());
 
     if ((isProtected == GrProtected::kYes) &&
         (physicalDeviceVersion >= VK_MAKE_VERSION(1, 1, 0))) {
@@ -1521,7 +1533,8 @@ void GrVkCaps::FormatInfo::init(const GrContextOptions& contextOptions,
 // external the VkFormat will be VK_NULL_HANDLE which is not handled by our various format
 // capability checks.
 static bool backend_format_is_external(const GrBackendFormat& format) {
-    const GrVkYcbcrConversionInfo* ycbcrInfo = GrBackendFormats::GetVkYcbcrConversionInfo(format);
+    const skgpu::VulkanYcbcrConversionInfo* ycbcrInfo =
+            GrBackendFormats::GetVkYcbcrConversionInfo(format);
     SkASSERT(ycbcrInfo);
 
     // All external formats have a valid ycbcrInfo used for sampling and a non zero external format.
@@ -1746,7 +1759,8 @@ bool GrVkCaps::onAreColorTypeAndFormatCompatible(GrColorType ct,
     if (!GrBackendFormats::AsVkFormat(format, &vkFormat)) {
         return false;
     }
-    const GrVkYcbcrConversionInfo* ycbcrInfo = GrBackendFormats::GetVkYcbcrConversionInfo(format);
+    const skgpu::VulkanYcbcrConversionInfo* ycbcrInfo =
+            GrBackendFormats::GetVkYcbcrConversionInfo(format);
     SkASSERT(ycbcrInfo);
 
     if (ycbcrInfo->isValid() && !skgpu::VkFormatNeedsYcbcrSampler(vkFormat)) {
@@ -1826,7 +1840,8 @@ skgpu::Swizzle GrVkCaps::onGetReadSwizzle(const GrBackendFormat& format,
                                           GrColorType colorType) const {
     VkFormat vkFormat;
     SkAssertResult(GrBackendFormats::AsVkFormat(format, &vkFormat));
-    const GrVkYcbcrConversionInfo* ycbcrInfo = GrBackendFormats::GetVkYcbcrConversionInfo(format);
+    const skgpu::VulkanYcbcrConversionInfo* ycbcrInfo =
+            GrBackendFormats::GetVkYcbcrConversionInfo(format);
     SkASSERT(ycbcrInfo);
     if (ycbcrInfo->isValid() && ycbcrInfo->fExternalFormat != 0) {
         // We allow these to work with any color type and never swizzle. See
@@ -1879,7 +1894,8 @@ uint64_t GrVkCaps::computeFormatKey(const GrBackendFormat& format) const {
 
 #ifdef SK_DEBUG
     // We should never be trying to compute a key for an external format
-    const GrVkYcbcrConversionInfo* ycbcrInfo = GrBackendFormats::GetVkYcbcrConversionInfo(format);
+    const skgpu::VulkanYcbcrConversionInfo* ycbcrInfo =
+            GrBackendFormats::GetVkYcbcrConversionInfo(format);
     SkASSERT(ycbcrInfo);
     SkASSERT(!ycbcrInfo->isValid() || ycbcrInfo->fExternalFormat == 0);
 #endif
@@ -1930,7 +1946,8 @@ int GrVkCaps::getFragmentUniformSet() const {
 void GrVkCaps::addExtraSamplerKey(skgpu::KeyBuilder* b,
                                   GrSamplerState samplerState,
                                   const GrBackendFormat& format) const {
-    const GrVkYcbcrConversionInfo* ycbcrInfo = GrBackendFormats::GetVkYcbcrConversionInfo(format);
+    const skgpu::VulkanYcbcrConversionInfo* ycbcrInfo =
+            GrBackendFormats::GetVkYcbcrConversionInfo(format);
     if (!ycbcrInfo) {
         return;
     }

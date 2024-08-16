@@ -503,13 +503,18 @@ public:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };
+    void setSandboxEnabled(bool);
     void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
     const HashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
     bool sandboxEnabled() const { return m_sandboxEnabled; };
 
     void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTFMove(handler); }
     const Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>& userMessageHandler() const { return m_userMessageHandler; }
+
+#if USE(ATSPI)
+    const String& accessibilityBusAddress() const;
+    const String& sandboxedAccessibilityBusAddress() const;
+#endif
 #endif
 
     WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
@@ -835,6 +840,11 @@ private:
     HashMap<CString, SandboxPermission> m_extraSandboxPaths;
 
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
+
+#if USE(ATSPI)
+    mutable std::optional<String> m_accessibilityBusAddress;
+    String m_sandboxedAccessibilityBusAddress;
+#endif
 #endif
 
     WebProcessWithAudibleMediaCounter m_webProcessWithAudibleMediaCounter;

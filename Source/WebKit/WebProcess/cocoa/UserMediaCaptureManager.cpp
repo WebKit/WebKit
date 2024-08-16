@@ -41,10 +41,13 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaCaptureManager);
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
     : m_audioFactory(*this)

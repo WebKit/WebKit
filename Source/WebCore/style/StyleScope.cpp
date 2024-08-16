@@ -1024,5 +1024,21 @@ Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
     return host;
 }
 
+void Scope::clearAnchorPositioningState()
+{
+    if (m_anchorPositionedStates.isEmptyIgnoringNullReferences() && m_anchorElements.isEmptyIgnoringNullReferences())
+        return;
+
+    for (auto keyAndValue : m_anchorPositionedStates)
+        keyAndValue.key.invalidateStyle();
+
+    for (auto& anchorElement : m_anchorElements)
+        anchorElement.invalidateStyle();
+
+    m_anchorElements.clear();
+    m_anchorsForAnchorName.clear();
+    m_anchorPositionedStates.clear();
+}
+
 }
 }

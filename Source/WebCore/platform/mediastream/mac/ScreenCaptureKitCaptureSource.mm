@@ -171,6 +171,8 @@ using namespace WebCore;
 
 namespace WebCore {
 
+constexpr Seconds screenshotWaitTimeout = 1_s;
+
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 
 bool ScreenCaptureKitCaptureSource::isAvailable()
@@ -649,6 +651,90 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
     }
 
     return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
+}
+
+RetainPtr<CGImageRef> ScreenCaptureKitCaptureSource::captureWindowSnapshot(CGWindowID windowID, CGRect rect, OptionSet<ScreenCaptureKitCaptureSource::SnapshotOptions> options)
+{
+#if HAVE(SCREEN_SHOT_MANAGER)
+    RetainPtr<CGImageRef> captureImage = nullptr;
+    RetainPtr<NSError> captureError = nullptr;
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+    auto completionHandler = makeBlockPtr([&captureImage, &captureError, semaphore, windowID, rect, options] (SCShareableContent* shareableContent, NSError* error) mutable {
+        if (error || !shareableContent) {
+            RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::captureWindowSnapshot: +[SCShareableContent getCurrentProcessShareableContentWithCompletionHandler:] failed with error %s", error.localizedDescription.UTF8String);
+            dispatch_semaphore_signal(semaphore);
+            return;
+        }
+
+        SCWindow* targetWindow = nullptr;
+        for (SCWindow* window in shareableContent.windows) {
+            if (window.windowID == windowID) {
+                targetWindow = window;
+                break;
+            }
+        }
+
+        if (!targetWindow) {
+            RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::captureWindowSnapshot: Unable to find specified window");
+            dispatch_semaphore_signal(semaphore);
+            return;
+        }
+
+        if (CGRectEqualToRect(rect, CGRectNull))
+            rect = targetWindow.frame;
+
+        RetainPtr filter = adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:targetWindow]);
+        RetainPtr configuration = adoptNS([PAL::allocSCStreamConfigurationInstance() init]);
+
+        auto scale = filter.get().pointPixelScale;
+        [configuration setWidth:rect.size.width * scale];
+        [configuration setHeight:rect.size.height * scale];
+        [configuration setShowsCursor:NO];
+        [configuration setPixelFormat:kCVPixelFormatType_32BGRA];
+        if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows))
+            [configuration setIgnoreShadowsSingleWindow:YES];
+        if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque))
+            [configuration setShouldBeOpaque:YES];
+        if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution))
+            [configuration setCaptureResolution:SCCaptureResolutionNominal];
+
+        [PAL::getSCScreenshotManagerClass() captureImageWithFilter:filter.get() configuration:configuration.get() completionHandler:makeBlockPtr([&] (CGImageRef image, NSError *error) mutable {
+            captureImage = RetainPtr { image };
+            captureError = RetainPtr { error };
+            dispatch_semaphore_signal(semaphore);
+        }).get()];
+    });
+
+    [PAL::getSCShareableContentClass() getCurrentProcessShareableContentWithCompletionHandler:(void(^)(SCShareableContent* _Nullable shareableContent, NSError* _Nullable error))completionHandler.get()];
+
+    if (dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(screenshotWaitTimeout.nanoseconds()))))
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::captureWindowSnapshot: +[SCScreenshotManager captureImageWithFilter:completionHandler:] timed out");
+
+    if (captureError)
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::captureWindowSnapshot: +[SCScreenshotManager captureImageWithFilter:completionHandler:] failed with error %s", [captureError localizedDescription].UTF8String);
+
+    if (!captureImage)
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::captureWindowSnapshot: +[SCScreenshotManager captureImageWithFilter:completionHandler:] returned nil");
+
+    return captureImage;
+
+#else
+
+    CGWindowImageOption imageOptions = kCGWindowImageDefault;
+    if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows))
+        imageOptions |= kCGWindowImageBoundsIgnoreFraming;
+    if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque))
+        imageOptions |= kCGWindowImageShouldBeOpaque;
+    if (options.contains(ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution))
+        imageOptions |= kCGWindowImageNominalResolution;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return adoptCF(CGWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+#endif
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_END

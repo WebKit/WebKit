@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSMathInvert final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathInvert);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathInvert);
 public:
     static Ref<CSSMathInvert> create(CSSNumberish&&);
     CSSNumericValue& value() { return m_value.get(); }

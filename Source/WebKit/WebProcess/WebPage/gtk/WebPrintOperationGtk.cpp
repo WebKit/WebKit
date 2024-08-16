@@ -41,6 +41,7 @@
 #include <WebCore/ResourceError.h>
 #include <gtk/gtk.h>
 #include <memory>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -55,6 +56,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPrintOperationGtk);
 
 WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* printOperation)
     : printOperation(printOperation)

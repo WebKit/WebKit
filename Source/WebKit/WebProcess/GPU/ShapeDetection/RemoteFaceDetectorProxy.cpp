@@ -35,12 +35,15 @@
 #include "StreamClientConnection.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteFaceDetectorProxy);
+
 Ref<RemoteFaceDetectorProxy> RemoteFaceDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::FaceDetectorOptions& faceDetectorOptions)
 {
-    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteFaceDetector(identifier, faceDetectorOptions), renderingBackendIdentifier, Seconds::infinity());
+    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteFaceDetector(identifier, faceDetectorOptions), renderingBackendIdentifier);
     return adoptRef(*new RemoteFaceDetectorProxy(WTFMove(streamClientConnection), renderingBackendIdentifier, identifier));
 }
 
@@ -53,12 +56,12 @@ RemoteFaceDetectorProxy::RemoteFaceDetectorProxy(Ref<IPC::StreamClientConnection
 
 RemoteFaceDetectorProxy::~RemoteFaceDetectorProxy()
 {
-    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteFaceDetector(m_backing), m_renderingBackendIdentifier, Seconds::infinity());
+    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteFaceDetector(m_backing), m_renderingBackendIdentifier);
 }
 
 void RemoteFaceDetectorProxy::detect(Ref<WebCore::ImageBuffer>&& imageBuffer, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
-    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing, Seconds::infinity());
+    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing);
 }
 
 } // namespace WebKit::WebGPU

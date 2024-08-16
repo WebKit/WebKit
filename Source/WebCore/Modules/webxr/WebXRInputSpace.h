@@ -30,13 +30,13 @@
 #include "WebXRSpace.h"
 #include "XRHandedness.h"
 #include "XRTargetRayMode.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebXRInputSpace : public RefCounted<WebXRInputSpace>, public WebXRSpace {
-    WTF_MAKE_ISO_ALLOCATED(WebXRInputSpace);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRInputSpace);
 public:
     static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
     virtual ~WebXRInputSpace();

@@ -34,6 +34,7 @@
 #include "WebErrors.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -45,6 +46,8 @@ static WorkQueue& sharedServiceWorkerDownloadTaskQueue()
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Shared ServiceWorkerDownloadTask Queue"_s));
     return queue.get();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerDownloadTask);
 
 ServiceWorkerDownloadTask::ServiceWorkerDownloadTask(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& serviceWorkerConnection, ServiceWorkerIdentifier serviceWorkerIdentifier, SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, const ResourceResponse& response, DownloadID downloadID)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)

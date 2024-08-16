@@ -38,11 +38,11 @@
 #include "PictureInPictureSupport.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
 
 HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElement& videoElement)
     : m_videoElement(videoElement)

@@ -32,8 +32,11 @@
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProvisionalFrameProxy);
 
 ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
     : m_frame(frame)

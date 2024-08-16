@@ -32,7 +32,7 @@ namespace WebCore {
 // We cache offsets so that text transformations can be applied in such a way that we can recover
 // the original unaltered string from our corresponding DOM node.
 class RenderTextFragment final : public RenderText {
-    WTF_MAKE_ISO_ALLOCATED(RenderTextFragment);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTextFragment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextFragment);
 public:
     RenderTextFragment(Text&, const String&, int startOffset, int length);

@@ -1,5 +1,3 @@
-// @requireOptions("--useWasmTypedFunctionReferences=true")
-
 import * as assert from "../assert.js"
 
 // https://github.com/WebAssembly/function-references/blob/main/proposals/function-references/Overview.md#type-reflection

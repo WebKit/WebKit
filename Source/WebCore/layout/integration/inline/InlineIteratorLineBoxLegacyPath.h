@@ -81,11 +81,7 @@ public:
 
     size_t lineIndex() const
     {
-        size_t count = 0;
-        for (auto* box = formattingContextRoot().firstRootBox(); box && box != m_rootInlineBox; box = box->nextRootBox())
-            ++count;
-
-        return count;
+        return formattingContextRoot().legacyRootBox() ? 1 : 0;
     }
 
 

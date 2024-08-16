@@ -248,6 +248,8 @@ public:
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+    // Returns timeout duration for GPU process connections. Thread-safe.
+    Seconds gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
     void gpuProcessConnectionDidBecomeUnresponsive();
 
@@ -383,6 +385,8 @@ public:
     void updatePageScreenProperties();
 #endif
 
+    void setChildProcessDebuggabilityEnabled(bool);
+
 #if ENABLE(GPU_PROCESS)
     void setUseGPUProcessForCanvasRendering(bool);
     void setUseGPUProcessForDOMRendering(bool);
@@ -404,7 +408,7 @@ public:
     SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
 #endif
 
-    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool prefersNonBlinkingCursor() const { return m_prefersNonBlinkingCursor; }
@@ -774,7 +778,7 @@ private:
 
     bool m_hasSuspendedPageProxy { false };
     bool m_allowExitOnMemoryPressure { true };
-    bool m_isLockdownModeEnabled { false };
+    std::optional<bool> m_isLockdownModeEnabled;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
@@ -804,6 +808,8 @@ private:
     std::optional<audit_token_t> m_auditTokenForSelf;
     RetainPtr<NSMutableDictionary> m_accessibilityRemoteFrameTokenCache;
 #endif
+
+    bool m_childProcessDebuggabilityEnabled { false };
 
 #if ENABLE(GPU_PROCESS)
     bool m_useGPUProcessForCanvasRendering { false };

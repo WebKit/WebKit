@@ -636,6 +636,45 @@ RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderSt
     return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrapMode));
 }
 
+static Ref<CSSValue> valueForTextEdge(CSSPropertyID property, const TextEdge& textEdge)
+{
+    if (property == CSSPropertyTextBoxEdge && textEdge.over == TextEdgeType::Auto && textEdge.under == TextEdgeType::Auto)
+        return createConvertingToCSSValueID(textEdge.over);
+
+    if (property == CSSPropertyLineFitEdge && textEdge.over == TextEdgeType::Leading && textEdge.under == TextEdgeType::Leading)
+        return createConvertingToCSSValueID(textEdge.over);
+
+    // https://www.w3.org/TR/css-inline-3/#text-edges
+    // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
+    auto shouldSerializeUnderEdge = [&]() {
+        if (textEdge.over == TextEdgeType::CapHeight || textEdge.over == TextEdgeType::ExHeight)
+            return textEdge.under != TextEdgeType::Text;
+        return textEdge.over != textEdge.under;
+    }();
+
+    if (!shouldSerializeUnderEdge)
+        return createConvertingToCSSValueID(textEdge.over);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(textEdge.over),
+        createConvertingToCSSValueID(textEdge.under));
+}
+
+RefPtr<CSSValue> ComputedStyleExtractor::textBoxShorthandValue(const RenderStyle& style) const
+{
+    auto textBoxTrim = style.textBoxTrim();
+    auto textBoxEdge = style.textBoxEdge();
+    auto textBoxEdgeIsAuto = textBoxEdge == TextEdge { TextEdgeType::Auto, TextEdgeType::Auto };
+
+    if (textBoxTrim == TextBoxTrim::None && textBoxEdgeIsAuto)
+        return CSSPrimitiveValue::create(CSSValueNormal);
+    if (textBoxEdgeIsAuto)
+        return createConvertingToCSSValueID(textBoxTrim);
+    if (textBoxTrim == TextBoxTrim::TrimBoth)
+        return valueForTextEdge(CSSPropertyTextBoxEdge, textBoxEdge);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(textBoxTrim), valueForTextEdge(CSSPropertyTextBoxEdge, textBoxEdge));
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
@@ -1278,18 +1317,6 @@ static Ref<CSSValue> valueForScrollbarGutter(const ScrollbarGutter& gutter)
     if (!gutter.bothEdges)
         return CSSPrimitiveValue::create(gutter.isAuto ? CSSValueAuto : CSSValueStable);
     return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueStable), CSSPrimitiveValue::create(CSSValueBothEdges));
-}
-
-static Ref<CSSValue> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
-{
-    if (textBoxEdge.over == TextBoxEdgeType::Leading && textBoxEdge.under == TextBoxEdgeType::Leading)
-        return createConvertingToCSSValueID(textBoxEdge.over);
-
-    if (textBoxEdge.under == TextBoxEdgeType::Text)
-        return createConvertingToCSSValueID(textBoxEdge.over);
-
-    return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
-        createConvertingToCSSValueID(textBoxEdge.under));
 }
 
 static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeData)
@@ -4099,6 +4126,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return currentColorOrValidColor(style, style.textStrokeColor());
     case CSSPropertyWebkitTextStrokeWidth:
         return zoomAdjustedPixelValue(style.textStrokeWidth(), style);
+    case CSSPropertyTextBox:
+        return textBoxShorthandValue(style);
     case CSSPropertyTextTransform:
         return renderTextTransformFlagsToCSSValue(style.textTransform());
     case CSSPropertyTextWrap:
@@ -4136,6 +4165,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         ASSERT_NOT_REACHED();
         return nullptr;
+    case CSSPropertyViewTransitionClass: {
+        auto classList = style.viewTransitionClasses();
+        if (classList.isEmpty())
+            return CSSPrimitiveValue::create(CSSValueNone);
+
+        CSSValueListBuilder list;
+        for (auto& name : classList)
+            list.append(valueForScopedName(name));
+
+        return CSSValueList::createSpaceSeparated(WTFMove(list));
+    }
     case CSSPropertyViewTransitionName: {
         auto viewTransitionName = style.viewTransitionName();
         if (!viewTransitionName)
@@ -4647,7 +4687,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyOverflowAnchor:
         return createConvertingToCSSValueID(style.overflowAnchor());
     case CSSPropertyTextBoxEdge:
-        return valueForTextBoxEdge(style.textBoxEdge());
+        return valueForTextEdge(propertyID, style.textBoxEdge());
+    case CSSPropertyLineFitEdge:
+        return valueForTextEdge(propertyID, style.lineFitEdge());
 
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:
@@ -4814,6 +4856,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
     // @view-transition descriptors.
     case CSSPropertyNavigation:
+    case CSSPropertyTypes:
         return nullptr;
 
     // @font-palette-values descriptors.

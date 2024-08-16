@@ -26,16 +26,16 @@
 #pragma once
 
 #if ENABLE(WEBXR)
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebXRRigidTransform;
 
 class WebXRPose : public RefCounted<WebXRPose> {
-    WTF_MAKE_ISO_ALLOCATED(WebXRPose);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRPose);
 public:
     static Ref<WebXRPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
     virtual ~WebXRPose();

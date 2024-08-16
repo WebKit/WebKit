@@ -1890,11 +1890,11 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     m_canFallBackToLastFinishedSeekPosition = false;
 
     if (structure) {
-        const gchar* messageTypeName = gst_structure_get_name(structure);
+        auto messageTypeName = gstStructureGetName(structure);
 
         // Redirect messages are sent from elements, like qtdemux, to
         // notify of the new location(s) of the media.
-        if (!g_strcmp0(messageTypeName, "redirect")) {
+        if (messageTypeName == "redirect"_s) {
             mediaLocationChanged(message);
             return;
         }

@@ -30,13 +30,14 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUBindGroupLayout.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteBindGroupLayoutProxy final : public WebCore::WebGPU::BindGroupLayout {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteBindGroupLayoutProxy);
 public:
     static Ref<RemoteBindGroupLayoutProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -60,11 +61,10 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
 
     void setLabelInternal(const String&) final;

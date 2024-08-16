@@ -518,7 +518,7 @@ void VideoPresentationInterfaceIOS::cleanupFullscreen()
     m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason = false;
 
     m_cleanupNeedsReturnVideoContentLayer = true;
-    auto model = videoPresentationModel();
+    RefPtr model = videoPresentationModel();
     if (m_hasVideoContentLayer && model) {
         model->returnVideoContentLayer();
         return;

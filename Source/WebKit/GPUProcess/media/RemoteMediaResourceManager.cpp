@@ -38,10 +38,13 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaResourceManager);
 
 RemoteMediaResourceManager::RemoteMediaResourceManager()
 {

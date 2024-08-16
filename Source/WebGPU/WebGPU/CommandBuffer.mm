@@ -27,8 +27,11 @@
 #import "CommandBuffer.h"
 
 #import "APIConversions.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandBuffer);
 
 CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
     : m_commandBuffer(commandBuffer)

@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 
 struct WGPURenderBundleImpl {
@@ -58,7 +59,7 @@ class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderBundle);
 public:
     using MinVertexCountsContainer = HashMap<uint64_t, IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;

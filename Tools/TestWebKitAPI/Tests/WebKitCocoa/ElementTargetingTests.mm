@@ -400,6 +400,7 @@ TEST(ElementTargeting, RequestElementsFromSelectors)
     EXPECT_EQ(1U, [targets count]);
     EXPECT_WK_STREQ("DIV.absolute.bottom-right", [target selectorsIncludingShadowHosts].firstObject.firstObject);
     EXPECT_TRUE([target isInVisibilityAdjustmentSubtree]);
+    EXPECT_WK_STREQ("Bottom Right", [target renderedText]);
 
     didAdjustVisibility = false;
 
@@ -580,6 +581,9 @@ TEST(ElementTargeting, RequestTargetedElementsBySearchableText)
     RetainPtr targetFromSearchText = [[webView targetedElementInfoWithText:searchableText] firstObject];
     EXPECT_TRUE([targetFromSearchText isSameElement:targetFromHitTest.get()]);
     EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [[[targetFromSearchText mediaAndLinkURLs] anyObject] lastPathComponent]);
+
+    [webView adjustVisibilityForTargets:@[ targetFromSearchText.get() ]];
+    EXPECT_TRUE([targetFromSearchText isSameElement:[[webView targetedElementInfoWithText:searchableText] firstObject]]);
 }
 
 TEST(ElementTargeting, AdjustVisibilityAfterRecreatingElement)

@@ -28,13 +28,13 @@
 #include "WebGLExtension.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/TypedArrays.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public WebGLExtension<WebGLRenderingContextBase> {
-    WTF_MAKE_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
     WTF_MAKE_NONCOPYABLE(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;

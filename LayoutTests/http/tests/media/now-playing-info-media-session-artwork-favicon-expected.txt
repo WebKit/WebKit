@@ -18,12 +18,11 @@ ACTION: play
 EVENT(playing)
 RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
 ACTION: pause
-RUN(nowPlayingMetadata = internals.nowPlayingMetadata)
-EXPECTED (nowPlayingMetadata.title == 'title') OK
-EXPECTED (nowPlayingMetadata.artist == 'artist') OK
-EXPECTED (nowPlayingMetadata.album == 'album') OK
-EXPECTED (nowPlayingMetadata.artwork.mimeType == 'image/png') OK
-EXPECTED (nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/abe.png') OK
+EXPECTED (internals.nowPlayingMetadata.title == 'title') OK
+EXPECTED (internals.nowPlayingMetadata.artist == 'artist') OK
+EXPECTED (internals.nowPlayingMetadata.album == 'album') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.mimeType == 'image/png') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/abe.png') OK
 
 END OF TEST
 

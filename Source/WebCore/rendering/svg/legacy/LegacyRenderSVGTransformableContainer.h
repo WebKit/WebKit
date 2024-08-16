@@ -27,7 +27,7 @@ namespace WebCore {
 class SVGGraphicsElement;
 
 class LegacyRenderSVGTransformableContainer final : public LegacyRenderSVGContainer {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGTransformableContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGTransformableContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGTransformableContainer);
 public:
     LegacyRenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);

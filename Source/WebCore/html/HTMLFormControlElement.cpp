@@ -49,14 +49,14 @@
 #include "Settings.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 
 using namespace HTMLNames;
 

@@ -33,7 +33,7 @@ namespace WebCore {
 class CSSNumericValue;
 
 class CSSMathNegate final : public CSSMathValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathNegate);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMathNegate);
 public:
     template<typename... Args> static Ref<CSSMathNegate> create(Args&&... args) { return adoptRef(*new CSSMathNegate(std::forward<Args>(args)...)); }
     CSSNumericValue& value() { return m_value.get(); }

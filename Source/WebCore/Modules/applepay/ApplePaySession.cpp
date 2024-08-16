@@ -64,8 +64,8 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
@@ -74,7 +74,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePaySession);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePaySession);
 
 static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {

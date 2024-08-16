@@ -29,8 +29,8 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebCore/ShareableBitmap.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextCG.h>
@@ -39,7 +39,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
 IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
 {

@@ -59,9 +59,12 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardWriter.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDragClient);
 
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 

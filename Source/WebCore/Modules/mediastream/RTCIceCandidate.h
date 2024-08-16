@@ -41,7 +41,7 @@ namespace WebCore {
 struct RTCIceCandidateInit;
 
 class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(RTCIceCandidate);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCIceCandidate);
 public:
     using Fields = RTCIceCandidateFields;
 

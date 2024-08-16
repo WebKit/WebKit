@@ -9,16 +9,27 @@
 #ifndef GrGLRenderTarget_DEFINED
 #define GrGLRenderTarget_DEFINED
 
-#include "include/core/SkScalar.h"
+#include "include/core/SkRefCnt.h"
 #include "include/gpu/GrBackendSurface.h"
 #include "include/gpu/gl/GrGLTypes.h"
+#include "include/private/base/SkTo.h"
 #include "src/gpu/ganesh/GrRenderTarget.h"
+#include "src/gpu/ganesh/GrSurface.h"
 #include "src/gpu/ganesh/gl/GrGLAttachment.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 
+#include <cstddef>
+#include <string_view>
+
+class GrAttachment;
 class GrGLCaps;
 class GrGLGpu;
-class GrGLAttachment;
+class SkTraceMemoryDump;
+enum class GrBackendObjectOwnership : bool;
+struct SkISize;
+namespace skgpu {
+enum class Protected : bool;
+}
 
 class GrGLRenderTarget : public GrRenderTarget {
 public:
@@ -27,7 +38,7 @@ public:
 
     // set fSingleSampleFBOID to this value to indicate that it is multisampled but
     // Gr doesn't know how to resolve it.
-    enum { kUnresolvableFBOID = 0 };
+    static constexpr GrGLuint kUnresolvableFBOID = 0;
 
     struct IDs {
         GrGLuint                   fMultisampleFBOID;

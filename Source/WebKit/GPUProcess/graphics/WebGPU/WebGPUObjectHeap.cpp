@@ -52,12 +52,18 @@
 #include "RemoteShaderModule.h"
 #include "RemoteTexture.h"
 #include "RemoteTextureView.h"
+#include "RemoteXRBinding.h"
+#include "RemoteXRProjectionLayer.h"
+#include "RemoteXRSubImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #include <WebCore/WebGPU.h>
 #endif
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectHeap);
 
 ObjectHeap::ObjectHeap()
 {
@@ -201,6 +207,30 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTexture& texture)
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTextureView& textureView)
 {
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView> { Ref { textureView } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRBinding& xrBinding)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding> { Ref { xrBinding } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRSubImage& xrSubImage)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage> { Ref { xrSubImage } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRProjectionLayer& layer)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer> { Ref { layer } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRView& view)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRView> { Ref { view } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -397,6 +427,38 @@ WebCore::WebGPU::TextureView* ObjectHeap::convertTextureViewFromBacking(WebGPUId
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value))
         return nullptr;
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value)->backing();
+}
+
+WebCore::WebGPU::XRBinding* ObjectHeap::convertXRBindingFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>>(iterator->value)->backing();
+}
+
+WebCore::WebGPU::XRSubImage* ObjectHeap::convertXRSubImageFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>>(iterator->value)->backing();
+}
+
+WebCore::WebGPU::XRProjectionLayer* ObjectHeap::convertXRProjectionLayerFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>>(iterator->value)->backing();
+}
+
+WebCore::WebGPU::XRView* ObjectHeap::createXRViewFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value)->backing();
 }
 
 ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPU::GPU& gpu, WebGPUIdentifier identifier) const

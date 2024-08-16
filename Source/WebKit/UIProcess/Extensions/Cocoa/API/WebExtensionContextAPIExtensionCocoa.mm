@@ -36,7 +36,7 @@ namespace WebKit {
 
 void WebExtensionContext::extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(hasAccessInPrivateBrowsing());
+    completionHandler(hasAccessToPrivateData());
 }
 
 } // namespace WebKit

@@ -160,6 +160,12 @@ template: struct WebKit::WebTransportStreamIdentifierType
 }
 
 header: <wtf/ObjectIdentifier.h>
+template: struct WebCore::NavigationIdentifierType
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::NonNullableObjectIdentifier {
+    [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
+}
+
+header: <wtf/ObjectIdentifier.h>
 template: class WebCore::ResourceLoader
 template: class WebCore::WebSocketChannel
 template: class WebCore::WebSocketChannelClient

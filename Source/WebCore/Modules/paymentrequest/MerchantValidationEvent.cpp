@@ -30,12 +30,12 @@
 
 #include "Document.h"
 #include "PaymentRequest.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MerchantValidationEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MerchantValidationEvent);
 
 Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& type, const String& methodName, URL&& validationURL)
 {

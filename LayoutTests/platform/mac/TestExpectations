@@ -2456,10 +2456,6 @@ webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
 
 webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.worker.html [ Pass Failure ]
 
-# rdar://132528380 (REGRESSION (281042@main): [ macOS ] 2x tiled-drawing/scrolling/overflow/overflow-scrolled-* is flaky failing.
-tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage.html [ Pass Failure ]
-tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass Failure ]
-
 # webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
 http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
 
@@ -2468,3 +2464,13 @@ http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.htm
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Pass Timeout Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Timeout ]
 http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure ]
+
+# webkit.org/b/277986 [ iOS MacOS ] http/tests/navigation/page-cache-shared-worker.html is a flaky timeout
+http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]
+
+# webkit.org/b/278052 REGRESSION (282158@main): [macOS] inspector/console/webcore-logging.html is a flaky failure
+inspector/console/webcore-logging.html [ Pass Failure ]
+
+# webkit.org/b/278239 [macOS Release] 2 tests in media/video are flaky failure (failing in EWS)
+[ Release ] media/video-playsinline.html [ Pass Failure ]
+[ Release ] media/video-webkit-playsinline.html [ Pass Failure ]

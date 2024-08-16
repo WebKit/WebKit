@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class BeforeTextInsertedEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(BeforeTextInsertedEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BeforeTextInsertedEvent);
 public:
     virtual ~BeforeTextInsertedEvent();
 

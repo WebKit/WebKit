@@ -88,7 +88,9 @@ func main() {
 		td.Fatal(ctx, err)
 	}
 
+	skslFlags := append([]string{"--config=compile_sksl"}, *bazelFlags.AdditionalArgs...)
 	skslTests := []string{
+		"compile_hlsl_tests",
 		"compile_glsl_tests",
 		"compile_glsl_nosettings_tests",
 		"compile_metal_tests",
@@ -98,7 +100,7 @@ func main() {
 		"compile_wgsl_tests",
 	}
 	for _, label := range skslTests {
-		if err := bazelRun(ctx, skiaPath, "//tools/skslc:"+label, *bazelFlags.AdditionalArgs...); err != nil {
+		if err := bazelRun(ctx, skiaPath, "//tools/skslc:"+label, skslFlags...); err != nil {
 			td.Fatal(ctx, err)
 		}
 	}
@@ -107,11 +109,11 @@ func main() {
 		td.Fatal(ctx, err)
 	}
 
-	if err := bazelRun(ctx, skiaPath, "//tools/sksl-minify:minify_srcs", *bazelFlags.AdditionalArgs...); err != nil {
+	if err := bazelRun(ctx, skiaPath, "//tools/sksl-minify:minify_srcs", skslFlags...); err != nil {
 		td.Fatal(ctx, err)
 	}
 
-	if err := bazelRun(ctx, skiaPath, "//tools/sksl-minify:minify_tests", *bazelFlags.AdditionalArgs...); err != nil {
+	if err := bazelRun(ctx, skiaPath, "//tools/sksl-minify:minify_tests", skslFlags...); err != nil {
 		td.Fatal(ctx, err)
 	}
 

@@ -40,6 +40,7 @@
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 
 #import "PDFKitSoftLink.h"
@@ -53,7 +54,7 @@ using namespace WebCore;
 static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::max();
 
 class ByteRangeRequest : public Identified<ByteRangeRequestIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ByteRangeRequest);
 public:
     ByteRangeRequest() = default;
     ByteRangeRequest(uint64_t position, size_t count, DataRequestCompletionHandler&& completionHandler)
@@ -87,6 +88,8 @@ private:
 };
 
 #pragma mark -
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ByteRangeRequest);
 
 void ByteRangeRequest::clearStreamLoader()
 {
@@ -272,6 +275,8 @@ struct PDFIncrementalLoader::RequestData {
 };
 
 #pragma mark -
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFIncrementalLoader);
 
 Ref<PDFIncrementalLoader> PDFIncrementalLoader::create(PDFPluginBase& plugin)
 {

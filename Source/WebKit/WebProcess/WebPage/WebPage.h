@@ -1769,28 +1769,30 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect);
+    void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect);
 
-    void proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&);
+    void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&);
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
-    void enableSourceTextAnimationAfterElementWithID(const String&, const WTF::UUID&);
-    void enableTextAnimationTypeForElementWithID(const String&, const WTF::UUID&);
+    void enableSourceTextAnimationAfterElementWithID(const String&);
+    void enableTextAnimationTypeForElementWithID(const String&);
 
     void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&, const WebCore::TextIndicatorData&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& = nil);
 
     void removeTextAnimationForAnimationID(const WTF::UUID&);
-    void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&);
+    void removeTransparentMarkersForActiveWritingToolsSession();
 
-    void removeInitialTextAnimation(const WebCore::WritingTools::SessionID&);
-    void addInitialTextAnimation(const WebCore::WritingTools::SessionID&);
-    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
-    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String);
-    void clearAnimationsForSessionID(const WebCore::WritingTools::SessionID&);
+    void removeInitialTextAnimationForActiveWritingToolsSession();
+    void addInitialTextAnimationForActiveWritingToolsSession();
+    void addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
+    void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<WebCore::CharacterRange>&, const String&);
+    void clearAnimationsForActiveWritingToolsSession();
 
     std::optional<WebCore::TextIndicatorData> createTextIndicatorForRange(const WebCore::SimpleRange&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+
+    void didEndPartialIntelligenceTextPonderingAnimation();
 #endif
 
     void startObservingNowPlayingMetadata();
@@ -1922,7 +1924,7 @@ private:
 
     void startTextManipulationForFrame(WebCore::Frame&);
 
-    void loadDataImpl(uint64_t navigationID, WebCore::ShouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::SubstituteData::SessionHistoryVisibility, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataImpl(std::optional<WebCore::NavigationIdentifier>, WebCore::ShouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::SubstituteData::SessionHistoryVisibility, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
@@ -1937,7 +1939,7 @@ private:
     void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
-    void reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&&);
+    void reload(WebCore::NavigationIdentifier, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&&);
     void goToBackForwardItem(GoToBackForwardItemParameters&&);
     [[noreturn]] void goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
     void tryRestoreScrollPosition();
@@ -2313,6 +2315,8 @@ private:
     void writingToolsSessionDidReceiveAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::Action);
 
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
+
+    void showSelectionForActiveWritingToolsSession();
 #endif
 
     void remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
@@ -2720,7 +2724,7 @@ private:
     bool m_isAppNapEnabled { true };
     UserActivity m_userActivity;
 
-    uint64_t m_pendingNavigationID { 0 };
+    Markable<WebCore::NavigationIdentifier> m_pendingNavigationID;
     std::optional<WebsitePoliciesData> m_pendingWebsitePolicies;
 
     bool m_mainFrameProgressCompleted { false };

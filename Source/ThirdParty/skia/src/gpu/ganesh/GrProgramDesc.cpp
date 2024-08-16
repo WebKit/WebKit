@@ -4,27 +4,30 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/ganesh/GrProgramDesc.h"
 
+#include "include/gpu/GrBackendSurface.h"
+#include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTo.h"
-#include "src/core/SkChecksum.h"
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/gpu/KeyBuilder.h"
+#include "src/gpu/Swizzle.h"
 #include "src/gpu/ganesh/GrCaps.h"
 #include "src/gpu/ganesh/GrFragmentProcessor.h"
 #include "src/gpu/ganesh/GrGeometryProcessor.h"
 #include "src/gpu/ganesh/GrPipeline.h"
 #include "src/gpu/ganesh/GrProcessor.h"
 #include "src/gpu/ganesh/GrProgramInfo.h"
-#include "src/gpu/ganesh/GrRenderTarget.h"
-#include "src/gpu/ganesh/GrShaderCaps.h"
-#include "src/gpu/ganesh/GrTexture.h"
+#include "src/gpu/ganesh/GrSurfaceProxy.h"
+#include "src/gpu/ganesh/GrSurfaceProxyView.h"
+#include "src/gpu/ganesh/GrXferProcessor.h"
 #include "src/gpu/ganesh/effects/GrTextureEffect.h"
-#include "src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.h"
 
-enum {
-    kSamplerOrImageTypeKeyBits = 4
-};
+enum GrSurfaceOrigin : int;
+
+// Currently we allow 8 bits for the class id
+static constexpr uint32_t kClassIDBits = 8;
+static constexpr uint32_t kSamplerOrImageTypeKeyBits = 4;
 
 static inline uint16_t texture_type_key(GrTextureType type) {
     int value = UINT16_MAX;
@@ -71,9 +74,6 @@ static void add_geomproc_sampler_keys(skgpu::KeyBuilder* b,
         caps.addExtraSamplerKey(b, sampler.samplerState(), backendFormat);
     }
 }
-
-// Currently we allow 8 bits for the class id
-static constexpr uint32_t kClassIDBits = 8;
 
 /**
  * Functions which emit processor key info into the key builder.

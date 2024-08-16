@@ -49,6 +49,17 @@ class InlineCacheHandler;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PolymorphicAccess);
 
+enum class CacheType : int8_t {
+    Unset,
+    GetByIdSelf,
+    GetByIdPrototype,
+    PutByIdReplace,
+    InByIdSelf,
+    Stub,
+    ArrayLength,
+    StringLength,
+};
+
 class AccessGenerationResult {
 public:
     enum Kind {
@@ -159,7 +170,7 @@ public:
     using Base = TrailingArray<InlineCacheHandler, DataOnlyCallLinkInfo>;
 
     static Ref<InlineCacheHandler> create(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
-    static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, AccessCase&);
+    static Ref<InlineCacheHandler> createPreCompiled(Ref<InlineCacheHandler>&&, CodeBlock*, StructureStubInfo&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, AccessCase&, CacheType);
 
     CodePtr<JITStubRoutinePtrTag> callTarget() const { return m_callTarget; }
     CodePtr<JITStubRoutinePtrTag> jumpTarget() const { return m_jumpTarget; }
@@ -218,16 +229,19 @@ public:
 
     StructureID structureID() const { return m_structureID; }
     PropertyOffset offset() const { return m_offset; }
+    JSCell* holder() const { return u.s1.m_holder; }
     size_t newSize() const { return u.s2.m_newSize; }
     size_t oldSize() const { return u.s2.m_oldSize; }
     StructureID newStructureID() const { return u.s2.m_newStructureID; }
+
+    CacheType cacheType() const { return m_cacheType; }
 
 private:
     InlineCacheHandler()
         : Base(0)
     { }
 
-    InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount);
+    InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount, CacheType);
 
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
@@ -252,10 +266,11 @@ private:
             WriteBarrierBase<Unknown>* m_moduleVariableSlot;
         } s3;
     } u;
+    CacheType m_cacheType { CacheType::Unset };
+    RefPtr<InlineCacheHandler> m_next;
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<StructureStubInfoClearingWatchpoint> m_watchpoint;
-    RefPtr<InlineCacheHandler> m_next;
 };
 
 inline bool canUseMegamorphicGetById(VM& vm, UniquedStringImpl* uid)

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ResourceLoaderIdentifier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 class WebFrame;
@@ -43,7 +44,7 @@ namespace API {
 namespace InjectedBundle {
 
 class ResourceLoadClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ResourceLoadClient);
 public:
     virtual ~ResourceLoadClient() = default;
 

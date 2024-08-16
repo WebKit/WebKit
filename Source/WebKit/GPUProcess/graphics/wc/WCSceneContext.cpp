@@ -30,8 +30,11 @@
 
 #include <WebCore/GLContext.h>
 #include <WebCore/TextureMapper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WCSceneContext);
 
 WCSceneContext::WCSceneContext(uint64_t nativeWindow)
 {

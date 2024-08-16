@@ -38,7 +38,7 @@ struct DetailsToggleEventData {
 };
 
 class HTMLDetailsElement final : public HTMLElement {
-    WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLDetailsElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDetailsElement);
 public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);

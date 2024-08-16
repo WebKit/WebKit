@@ -75,6 +75,10 @@
         "active-view-transition": {
             "settings-flag": "viewTransitionsEnabled"
         },
+        "active-view-transition-type": {
+            "argument": "required",
+            "settings-flag": "viewTransitionTypesEnabled"
+        },
         "any-link": {
             "aliases": [
                 "-webkit-any-link"
@@ -514,6 +518,11 @@
             "conditional": "ENABLE(VIDEO)",
             "user-agent-part-string": true
         },
+        "-internal-cue-background": {
+            "conditional": "ENABLE(VIDEO)",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
         "file-selector-button": {
             "aliases": [
                 "-webkit-file-upload-button"
@@ -549,6 +558,9 @@
         },
         "spelling-error": {
             "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
+        },
+        "target-text": {
+            "settings-flag": "targetTextPseudoElementEnabled"
         },
         "thumb": {
             "settings-flag": "thumbAndTrackPseudoElementsEnabled",

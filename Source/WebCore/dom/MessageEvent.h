@@ -42,7 +42,7 @@ class Blob;
 using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
 
 class MessageEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(MessageEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MessageEvent);
 public:
     struct JSValueTag { };
     using DataType = std::variant<JSValueTag, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;

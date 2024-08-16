@@ -34,11 +34,11 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
 NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
     : ContextDestructionObserver(context)

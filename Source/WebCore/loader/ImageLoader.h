@@ -101,6 +101,7 @@ public:
     bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred || m_lazyImageLoadState == LazyImageLoadState::LoadImmediately; }
 
     Document& document() { return m_element->document(); }
+    Ref<Document> protectedDocument() { return m_element->document(); }
 
 protected:
     explicit ImageLoader(Element&);

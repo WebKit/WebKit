@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
@@ -127,7 +128,7 @@ public:
     };
 
     struct PendingAPIRequest {
-        uint64_t navigationID { 0 };
+        Markable<WebCore::NavigationIdentifier> navigationID;
         String url;
     };
 

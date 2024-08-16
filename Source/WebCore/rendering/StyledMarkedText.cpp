@@ -40,7 +40,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     if (!pseudoElementStyle)
         return;
 
-    style.backgroundColor = pseudoElementStyle->colorResolvingCurrentColor(pseudoElementStyle->backgroundColor());
+    style.backgroundColor = pseudoElementStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor, paintInfo.paintBehavior);
     style.textStyles.fillColor = pseudoElementStyle->computedStrokeColor();
     style.textStyles.strokeColor = pseudoElementStyle->computedStrokeColor();
     style.textStyles.hasExplicitlySetFillColor = pseudoElementStyle->hasExplicitlySetColor();
@@ -94,6 +94,11 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     }
     case MarkedText::Type::FragmentHighlight: {
+        if (CheckedPtr renderStyle = renderer.targetTextPseudoStyle()) {
+            computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
+            break;
+        }
+
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
         style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
         break;

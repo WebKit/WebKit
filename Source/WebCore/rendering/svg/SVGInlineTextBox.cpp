@@ -46,11 +46,11 @@
 #include "SVGRootInlineBox.h"
 #include "TextBoxSelectableRange.h"
 #include "TextPainter.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGInlineTextBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGInlineTextBox);
 
 struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     float float1;

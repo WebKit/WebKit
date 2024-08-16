@@ -203,7 +203,7 @@ void OMGPlan::work(CompilationEffort)
     // Replace the LLInt interpreted entry callee. Note that we can do this after we publish our
     // callee because calling into the LLInt should still work.
     auto* jsEntrypointCallee = m_calleeGroup->m_jsEntrypointCallees.get(m_functionIndex);
-    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode && !static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->hasReplacement()) {
+    if (jsEntrypointCallee && jsEntrypointCallee->compilationMode() == CompilationMode::JITLessJSEntrypointMode && !static_cast<JITLessJSEntrypointCallee*>(jsEntrypointCallee)->hasReplacement()) {
         ASSERT(!m_entrypoint);
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
@@ -233,7 +233,7 @@ void OMGPlan::work(CompilationEffort)
             callee->setEntrypoint(WTFMove(jsToWasmInternalFunction->entrypoint));
             // Note that we can compile the same function with multiple memory modes, which can cause this
             // race. That's fine, both stubs should do the same thing.
-            static_cast<JSEntrypointInterpreterCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
+            static_cast<JITLessJSEntrypointCallee*>(jsEntrypointCallee)->setReplacement(callee.ptr());
             m_entrypoint = WTFMove(callee);
         }
     }

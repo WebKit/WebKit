@@ -28,6 +28,7 @@
 #include "WebPageInspectorTarget.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageInspectorTargetController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTargetController);
 public:
     WebPageInspectorTargetController(WebPage&);
     ~WebPageInspectorTargetController();

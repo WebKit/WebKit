@@ -66,6 +66,11 @@ BoxGeometryUpdater::BoxGeometryUpdater(BoxTree& boxTree, Layout::LayoutState& la
 {
 }
 
+BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState)
+    : m_layoutState(layoutState)
+{
+}
+
 void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& listMarker, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
     updateLayoutBoxDimensions(listMarker, intrinsicWidthMode);
@@ -341,22 +346,10 @@ void BoxGeometryUpdater::setGeometriesForLayout()
         if (is<RenderText>(renderer))
             continue;
 
-        if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer)) {
-            updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
+        if (renderer.isFloating())
             continue;
-        }
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer)) {
-            updateListMarkerDimensions(*renderListMarker);
-            continue;
-        }
-        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
-            updateLineBreakBoxDimensions(*renderLineBreak);
-            continue;
-        }
-        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
-            updateInlineBoxDimensions(*renderInline);
-            continue;
-        }
+
+        updateGeometryAfterLayout(downcast<RenderElement>(renderer));
     }
 }
 
@@ -420,6 +413,26 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     createRootGeometryIfNeeded();
 
     return { { horizontalConstraints, contentBoxTop }, visualLeft };
+}
+
+void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& box)
+{
+    updateGeometryAfterLayout(*dynamicDowncast<RenderBox>(box.rendererForIntegration()));
+}
+
+void BoxGeometryUpdater::updateGeometryAfterLayout(const RenderElement& renderer)
+{
+    if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer))
+        updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
+
+    if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer))
+        updateListMarkerDimensions(*renderListMarker);
+
+    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
+        updateLineBreakBoxDimensions(*renderLineBreak);
+
+    if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
+        updateInlineBoxDimensions(*renderInline);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const

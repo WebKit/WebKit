@@ -27,7 +27,9 @@
 #include "CSSAnchorValue.h"
 #include "EventTarget.h"
 #include <memory>
+#include <wtf/HashMap.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -37,21 +39,28 @@ namespace Style {
 
 class BuilderState;
 
-struct AnchorPositionedElementState {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    HashMap<String, Ref<Element>> anchorElements;
-    HashSet<String> anchorNames;
-    bool finishedCollectingAnchorNames { false };
-    bool readyToBeResolved { false };
-    bool hasBeenResolved { false };
+enum class AnchorPositionResolutionStage : uint8_t {
+    Initial,
+    FinishedCollectingAnchorNames,
+    FoundAnchors,
+    Resolved,
 };
 
-using AnchorPositionedStateMap = WeakHashMap<Element, std::unique_ptr<AnchorPositionedElementState>, WeakPtrImplWithEventTargetData>;
+struct AnchorPositionedState {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    HashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
+    HashSet<String> anchorNames;
+    AnchorPositionResolutionStage stage;
+};
+
+using AnchorsForAnchorName = HashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
+using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 
 class AnchorPositionEvaluator {
 public:
     static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
+    static void findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement);
 };
 
 } // namespace Style

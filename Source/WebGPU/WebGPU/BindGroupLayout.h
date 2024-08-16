@@ -32,6 +32,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
@@ -46,7 +47,7 @@ class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpubindgrouplayout
 class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout>, public CanMakeWeakPtr<BindGroupLayout> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BindGroupLayout);
 public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;

@@ -52,25 +52,35 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 /* https://w3c.github.io/webvtt/#applying-css-properties
    7.4. Applying CSS properties to WebVTT Node Objects */
 
-::cue {
-    background-color: rgba(0, 0, 0, 0.8);
-    overflow: visible;
-}
-
-::-webkit-media-text-track-display {
+/* These properties are not allowed via ::cue */
+[useragentpart="cue"] {
+    position: absolute;
     unicode-bidi: plaintext;
-    overflow: visible;
     writing-mode: writing-mode;
     overflow-wrap: break-word;
-    white-space: pre-line;
     text-wrap: balance;
 }
 
-::-webkit-media-text-track-display {
+[useragentpart="cue"] .hidden { display: none; }
+[useragentpart="cue"] ruby { display: ruby; }
+[useragentpart="cue"] ruby > rt { display: ruby-text; }
+
+::cue {
+    font: 5cqmin/1 sans-serif;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(0, 0, 0, 0.8);
     white-space: pre-line;
-    box-sizing: border-box;
-    font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */
 }
+
+::cue(rt) {
+    background: rgba(0, 0, 0, 0.8);
+    font-size: -webkit-ruby-text;
+}
+
+::cue(i) { font-style: italic; }
+::cue(b) { font-weight: bold; }
+::cue(u) { text-decoration: underline; }
+::cue(rt) { white-space: nowrap; }
 
 ::-webkit-media-text-track-display-backdrop {
     display: inline-block;
@@ -94,15 +104,3 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     color: gray;
 }
 
-[useragentpart="-webkit-media-text-track-display"] b { font-weight: bold; }
-[useragentpart="-webkit-media-text-track-display"] u { text-decoration: underline; }
-[useragentpart="-webkit-media-text-track-display"] i { font-style: italic; }
-[useragentpart="-webkit-media-text-track-display"] .hidden { display: none; }
-[useragentpart="-webkit-media-text-track-display"] ruby { display: ruby; }
-[useragentpart="-webkit-media-text-track-display"] ruby > rt {
-    display: ruby-text;
-    font-size: -webkit-ruby-text;
-    text-align: start;
-    line-height: normal;
-}
-[useragentpart="-webkit-media-text-track-display"] ruby > :not(ruby) { white-space: nowrap; }

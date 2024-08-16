@@ -85,6 +85,7 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
@@ -619,17 +620,17 @@ URL WebExtensionContext::overrideNewTabPageURL() const
     return { m_baseURL, extension().overrideNewTabPagePath() };
 }
 
-void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
+void WebExtensionContext::setHasAccessToPrivateData(bool hasAccess)
 {
-    if (m_hasAccessInPrivateBrowsing == hasAccess)
+    if (m_hasAccessToPrivateData == hasAccess)
         return;
 
-    m_hasAccessInPrivateBrowsing = hasAccess;
+    m_hasAccessToPrivateData = hasAccess;
 
     if (!isLoaded())
         return;
 
-    if (m_hasAccessInPrivateBrowsing) {
+    if (m_hasAccessToPrivateData) {
         addDeclarativeNetRequestRulesToPrivateUserContentControllers();
 
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
@@ -1998,7 +1999,7 @@ bool WebExtensionContext::canOpenNewWindow() const
 {
     ASSERT(isLoaded());
 
-    return [extensionController()->delegate() respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)];
+    return [extensionController()->delegate() respondsToSelector:@selector(webExtensionController:openNewWindowUsingConfiguration:forExtensionContext:completionHandler:)];
 }
 
 void WebExtensionContext::openNewWindow(const WebExtensionWindowParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionWindow>)>&& completionHandler)
@@ -2963,7 +2964,7 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
     if (!hasPermission(WKWebExtensionPermissionActiveTab))
         return;
 
-    if (!tab.shouldGrantTabPermissionsOnUserGesture())
+    if (!tab.shouldGrantPermissionsOnUserGesture())
         return;
 
     auto currentURL = tab.url();
@@ -3230,7 +3231,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
 WebsiteDataStore* WebExtensionContext::websiteDataStore(std::optional<PAL::SessionID> sessionID) const
 {
     RefPtr result = extensionController()->websiteDataStore(sessionID);
-    if (result && !result->isPersistent() && !hasAccessInPrivateBrowsing())
+    if (result && !result->isPersistent() && !hasAccessToPrivateData())
         return nullptr;
     return result.get();
 }
@@ -3861,7 +3862,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         return;
 
     class InspectorExtensionClient : public API::InspectorExtensionClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorExtensionClient);
 
     public:
         explicit InspectorExtensionClient(API::InspectorExtension& inspectorExtension, WebExtensionContext& extensionContext)

@@ -31,13 +31,14 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUBuffer.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteBufferProxy final : public WebCore::WebGPU::Buffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteBufferProxy);
 public:
     static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
     {
@@ -61,21 +62,20 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendSync(WTFMove(message), backing());
     }
     template<typename T, typename C>
     WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
 
     void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;

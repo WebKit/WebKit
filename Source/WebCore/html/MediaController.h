@@ -47,7 +47,7 @@ class MediaController final
     , public MediaControllerInterface
     , public ContextDestructionObserver
     , public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(MediaController);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaController);
 public:
     static Ref<MediaController> create(ScriptExecutionContext&);
     virtual ~MediaController();

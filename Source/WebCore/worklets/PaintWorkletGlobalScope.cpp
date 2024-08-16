@@ -31,13 +31,13 @@
 #include "JSDOMConvert.h"
 #include "LocalDOMWindow.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PaintWorkletGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaintWorkletGlobalScope);
 
 RefPtr<PaintWorkletGlobalScope> PaintWorkletGlobalScope::tryCreate(Document& document, ScriptSourceCode&& code)
 {

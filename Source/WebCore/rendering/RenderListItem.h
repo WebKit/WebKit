@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLOListElement;
 
 class RenderListItem final : public RenderBlockFlow {
-    WTF_MAKE_ISO_ALLOCATED(RenderListItem);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListItem);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);

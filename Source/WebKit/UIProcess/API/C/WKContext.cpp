@@ -169,6 +169,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     }
 }
 
+// FIXME: Remove when rdar://133503931 is complete.
 void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* wkClient)
 {
     class LegacyDownloadClient final : public API::Client<WKContextDownloadClientBase>, public API::DownloadClient {

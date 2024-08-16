@@ -47,6 +47,7 @@
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @interface WKScrollingNodeScrollViewDelegate () <WKBaseScrollViewDelegate>
 @end
@@ -247,6 +248,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeScrollingNodeDelegateIOS);
 
 ScrollingTreeScrollingNodeDelegateIOS::ScrollingTreeScrollingNodeDelegateIOS(ScrollingTreeScrollingNode& scrollingNode)
     : ScrollingTreeScrollingNodeDelegate(scrollingNode)

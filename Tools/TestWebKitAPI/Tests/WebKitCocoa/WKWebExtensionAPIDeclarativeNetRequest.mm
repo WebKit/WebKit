@@ -128,7 +128,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadInPrivateBrowsingTest)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
     [manager closeWindow:manager.get().defaultWindow];
 
     auto privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];

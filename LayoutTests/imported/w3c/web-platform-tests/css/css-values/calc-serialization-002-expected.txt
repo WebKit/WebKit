@@ -16,6 +16,11 @@ PASS testing calc(100% + 1em - 100%)
 PASS testing calc(1vh - 7px)
 PASS testing calc(5ex - 9ex)
 PASS testing calc(-80px + 25.4mm)
+PASS testing calc(2 * (10px + 1rem))
+PASS testing calc(2 * (10px - 1rem))
+PASS testing calc((10px + 1rem) / 2)
+PASS testing calc(2 * (min(10px, 20%) + max(1rem, 2%)))
+FAIL testing calc((min(10px, 20%) + max(1rem, 2%)) * 2) assert_equals: expected "calc((min(10px, 20%) + max(1rem, 2%)) * 2)" but got "calc(2 * (min(10px, 20%) + max(1rem, 2%)))"
 PASS testing calc(1vmin - 14%)
 PASS testing calc(4 * 3px + 4pc / 8)
 

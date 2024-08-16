@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "LayoutSize.h"
 #include "StyleScopeOrdinal.h"
 #include "Timer.h"
@@ -159,6 +160,11 @@ public:
     const CSSCounterStyleRegistry& counterStyleRegistry() const { return m_counterStyleRegistry.get(); }
     CSSCounterStyleRegistry& counterStyleRegistry() { return m_counterStyleRegistry.get(); }
 
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData>& anchorElements() { return m_anchorElements; }
+    AnchorPositionedStates& anchorPositionedStates() { return m_anchorPositionedStates; }
+    AnchorsForAnchorName& anchorsForAnchorName() { return m_anchorsForAnchorName; }
+    void clearAnchorPositioningState();
+
 private:
     Scope& documentScope();
     bool isForUserAgentShadowTree() const;
@@ -253,6 +259,10 @@ private:
 
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
+
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_anchorElements;
+    AnchorsForAnchorName m_anchorsForAnchorName;
+    AnchorPositionedStates m_anchorPositionedStates;
 };
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

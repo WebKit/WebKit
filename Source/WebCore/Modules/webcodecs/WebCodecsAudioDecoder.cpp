@@ -40,11 +40,11 @@
 #include "WebCodecsAudioDataOutputCallback.h"
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsErrorCallback.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebCodecsAudioDecoder);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsAudioDecoder);
 
 Ref<WebCodecsAudioDecoder> WebCodecsAudioDecoder::create(ScriptExecutionContext& context, Init&& init)
 {

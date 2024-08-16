@@ -31,6 +31,7 @@
 #import "WKGroupSession.h"
 #import <WebCore/NotImplemented.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -103,6 +104,8 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GroupActivitiesCoordinator);
 
 Ref<GroupActivitiesCoordinator> GroupActivitiesCoordinator::create(GroupActivitiesSession& session)
 {

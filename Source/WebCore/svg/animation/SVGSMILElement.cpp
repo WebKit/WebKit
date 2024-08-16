@@ -49,16 +49,16 @@
 #include "SVGUseElement.h"
 #include "SVGVisitedElementTracking.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSMILElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGSMILElement);
 
 static SMILEventSender& smilEventSender()
 {
@@ -211,6 +211,14 @@ void SVGSMILElement::buildPendingResource()
         }
     } else
         svgTarget->addReferencingElement(*this);
+}
+
+bool SVGSMILElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    // https://svgwg.org/svg2-draft/styling.html#PresentationAttributes
+    if (name == SVGNames::fillAttr)
+        return false;
+    return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
 inline QualifiedName SVGSMILElement::constructAttributeName() const

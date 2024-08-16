@@ -27,6 +27,7 @@
 
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,7 +38,7 @@ class WebFrameProxy;
 class WebProcessProxy;
 
 class ProvisionalFrameProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ProvisionalFrameProxy);
 public:
     explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
 

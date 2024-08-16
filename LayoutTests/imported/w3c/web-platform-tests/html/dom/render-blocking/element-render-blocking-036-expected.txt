@@ -1,3 +1,3 @@
 
-FAIL link URLs are relative to base URL, not to document URL assert_false: expected false got true
+PASS link URLs are relative to base URL, not to document URL
 

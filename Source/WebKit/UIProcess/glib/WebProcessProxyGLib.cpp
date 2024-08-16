@@ -41,6 +41,10 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 {
     launchOptions.extraInitializationData.set("enable-sandbox"_s, m_processPool->sandboxEnabled() ? "true"_s : "false"_s);
 
+#if USE(ATSPI)
+    launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, m_processPool->accessibilityBusAddress());
+#endif
+
     if (m_processPool->sandboxEnabled()) {
         // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
         // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
@@ -50,6 +54,9 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
         launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedDirectories().mediaKeysStorageDirectory);
 
         launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
+#if USE(ATSPI)
+        launchOptions.extraInitializationData.set("sandboxedAccessibilityBusAddress"_s, m_processPool->sandboxedAccessibilityBusAddress());
+#endif
     }
 }
 

@@ -40,7 +40,7 @@
 #include "StyleImage.h"
 #include "TextAffinity.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class TextStream;
@@ -102,7 +102,7 @@ enum class RequiresFullRepaint : bool { No, Yes };
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient, public CanMakeCheckedPtr<RenderObject> {
-    WTF_MAKE_COMPACT_ISO_ALLOCATED(RenderObject);
+    WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(RenderObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;

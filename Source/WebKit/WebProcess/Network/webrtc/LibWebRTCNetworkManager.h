@@ -32,11 +32,12 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCNetworkManager.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class LibWebRTCNetworkManager final : public WebCore::RTCNetworkManager, public rtc::NetworkManagerBase, public webrtc::MdnsResponderInterface, public WebRTCMonitorObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCNetworkManager);
 public:
     static LibWebRTCNetworkManager* getOrCreate(WebCore::ScriptExecutionContextIdentifier);
     ~LibWebRTCNetworkManager();

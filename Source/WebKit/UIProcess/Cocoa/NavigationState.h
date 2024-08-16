@@ -34,6 +34,7 @@
 #import "ProcessThrottler.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
@@ -64,7 +65,7 @@ namespace WebKit {
 struct WebNavigationDataStore;
 
 class NavigationState final : public PageLoadState::Observer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigationState);
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();

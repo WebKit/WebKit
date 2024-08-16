@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1225,6 +1225,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::WebKitDrag:
     case CSSSelector::PseudoClass::Has:
     case CSSSelector::PseudoClass::State:
+    // FIXME: <webkit.org/b/278189> CSS JIT: add support for :active-view-transition-type pseudo class
+    case CSSSelector::PseudoClass::ActiveViewTransitionType:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -1481,6 +1483,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::WebKitScrollbarTrackPiece:
             case CSSSelector::PseudoElement::Selection:
             case CSSSelector::PseudoElement::SpellingError:
+            case CSSSelector::PseudoElement::TargetText:
             case CSSSelector::PseudoElement::ViewTransition:
             case CSSSelector::PseudoElement::UserAgentPart:
             case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:

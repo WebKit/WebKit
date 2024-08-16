@@ -27,12 +27,13 @@
 
 #include "WebPage.h"
 #include <WebCore/GeolocationClient.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
 
 class WebGeolocationClient final : public WebCore::GeolocationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebGeolocationClient);
 public:
     WebGeolocationClient(WebPage& page)
         : m_page(page)

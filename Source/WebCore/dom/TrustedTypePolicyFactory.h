@@ -41,7 +41,7 @@ struct TrustedTypePolicyOptions;
 class ScriptExecutionContext;
 
 class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory>, public ContextDestructionObserver {
-    WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicyFactory);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicyFactory);
 public:
     static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
     ~TrustedTypePolicyFactory() = default;

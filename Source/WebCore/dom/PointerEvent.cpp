@@ -30,21 +30,11 @@
 #include "Node.h"
 #include "PlatformMouseEvent.h"
 #include "PointerEventTypeNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PointerEvent);
-
-typedef struct PointerEventTilt {
-    long tiltX;
-    long tiltY;
-} PointerEventTilt;
-
-typedef struct PointerEventAngle {
-    double altitudeAngle;
-    double azimuthAngle;
-} PointerEventAngle;
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PointerEvent);
 
 static AtomString pointerEventType(const AtomString& mouseEventType)
 {
@@ -97,7 +87,7 @@ PointerEvent::PointerEvent()
 }
 
 // Calculated in accordance with https://w3c.github.io/pointerevents/#converting-between-tiltx-tilty-and-altitudeangle-azimuthangle.
-static PointerEventAngle angleFromTilt(long tiltX, long tiltY)
+auto PointerEvent::angleFromTilt(long tiltX, long tiltY) -> PointerEventAngle
 {
     const double tiltXRadians = tiltX * radiansPerDegreeDouble;
     const double tiltYRadians = tiltY * radiansPerDegreeDouble;
@@ -129,7 +119,7 @@ static PointerEventAngle angleFromTilt(long tiltX, long tiltY)
 }
 
 // This algorithm is equivalent to the one provided in https://w3c.github.io/pointerevents/#converting-between-tiltx-tilty-and-altitudeangle-azimuthangle.
-static PointerEventTilt tiltFromAngle(double altitudeAngle, double azimuthAngle)
+auto PointerEvent::tiltFromAngle(double altitudeAngle, double azimuthAngle) -> PointerEventTilt
 {
     double tiltXRadians = WTF::areEssentiallyEqual(altitudeAngle, 0.0) ? cos(azimuthAngle) * piOverTwoDouble : atan(cos(azimuthAngle) / tan(altitudeAngle));
     double tiltYRadians = WTF::areEssentiallyEqual(altitudeAngle, 0.0) ? sin(azimuthAngle) * piOverTwoDouble : atan(sin(azimuthAngle) / tan(altitudeAngle));

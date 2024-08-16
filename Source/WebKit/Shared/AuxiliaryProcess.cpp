@@ -242,7 +242,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 {
 }
 
-void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
+void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, int32_t)
 {
     WTFLogAlways("Received invalid message: '%s'", description(messageName).characters());
     CRASH();

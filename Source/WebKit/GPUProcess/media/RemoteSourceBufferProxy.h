@@ -35,6 +35,7 @@
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
@@ -57,7 +58,7 @@ class RemoteMediaPlayerProxy;
 class RemoteSourceBufferProxy final
     : public WebCore::SourceBufferPrivateClient
     , private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteSourceBufferProxy);
 public:
     static Ref<RemoteSourceBufferProxy> create(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
     virtual ~RemoteSourceBufferProxy();
@@ -66,6 +67,8 @@ public:
 
 private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
+
+    RefPtr<IPC::Connection> connection() const;
 
     // SourceBufferPrivateClient
     Ref<WebCore::MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;

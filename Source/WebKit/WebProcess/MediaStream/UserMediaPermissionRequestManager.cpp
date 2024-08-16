@@ -37,9 +37,12 @@
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaPermissionRequestManager);
 
 UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& page)
     : m_page(page)

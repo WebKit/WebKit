@@ -39,6 +39,7 @@
 #import "RenderPipeline.h"
 #import "TextureView.h"
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -57,6 +58,8 @@ if (id<MTLRenderPipelineState> pso = makePso) \
     [commandEncoder setRenderPipelineState:pso]; \
 else \
     return __VA_ARGS__;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPassEncoder);
 
 RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device, MTLRenderPassDescriptor* metalDescriptor)
     : m_renderCommandEncoder(renderCommandEncoder)
@@ -937,18 +940,12 @@ void RenderPassEncoder::endPass()
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
-    auto issuedDraw = issuedDrawCall();
     bool useDiscardTextures = m_attachmentsToClear.count || m_clearDepthAttachment || m_clearStencilAttachment;
     bool hasTexturesToClear = m_allColorAttachments.count || m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
 
-    if ((!issuedDraw || useDiscardTextures) && hasTexturesToClear) {
-        if (m_depthStencilView && m_depthStencilAttachmentToClear && !issuedDraw && !useDiscardTextures) {
-            m_clearDepthAttachment = Texture::containsDepthAspect(m_depthStencilView->format());
-            m_clearStencilAttachment = Texture::containsStencilAspect(m_depthStencilView->format());
-        }
-        if (useDiscardTextures)
-            endEncoder();
-        m_parentEncoder->runClearEncoder(useDiscardTextures ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, useDiscardTextures ? nil : m_renderCommandEncoder);
+    if (useDiscardTextures && hasTexturesToClear) {
+        endEncoder();
+        m_parentEncoder->runClearEncoder(m_attachmentsToClear, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, nil);
     } else
         endEncoder();
 

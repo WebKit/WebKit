@@ -34,7 +34,7 @@ class FilterEffect;
 class SVGFilter;
 
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFilterPrimitiveStandardAttributes);
 public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;

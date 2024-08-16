@@ -28,12 +28,13 @@
 #include "QuotaIncreaseRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebKit {
 
 class OriginQuotaManager : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<OriginQuotaManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OriginQuotaManager);
 public:
     using GetUsageFunction = Function<uint64_t()>;
     using IncreaseQuotaFunction = Function<void(QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease)>;

@@ -29,11 +29,11 @@
 #include "SVGFitToViewBox.h"
 #include "SVGRenderStyle.h"
 #include "SVGVisitedRendererTracking.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourcePattern);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, RenderStyle&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTFMove(style))

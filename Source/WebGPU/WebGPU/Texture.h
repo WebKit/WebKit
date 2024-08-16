@@ -30,6 +30,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
@@ -45,7 +46,7 @@ class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
 class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
     static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
     {

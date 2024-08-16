@@ -1448,20 +1448,45 @@ RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
     if (auto ident = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueManipulation>(range))
         return ident;
 
-    Vector<CSSValueID, 3> list;
+    bool hasPanX = false;
+    bool hasPanY = false;
+    bool hasPinchZoom = false;
     while (true) {
         auto ident = consumeIdentRaw<CSSValuePanX, CSSValuePanY, CSSValuePinchZoom>(range);
         if (!ident)
             break;
-        if (list.contains(*ident))
+        switch (*ident) {
+        case CSSValuePanX:
+            if (hasPanX)
+                return nullptr;
+            hasPanX = true;
+            break;
+        case CSSValuePanY:
+            if (hasPanY)
+                return nullptr;
+            hasPanY = true;
+            break;
+        case CSSValuePinchZoom:
+            if (hasPinchZoom)
+                return nullptr;
+            hasPinchZoom = true;
+            break;
+        default:
             return nullptr;
-        list.append(*ident);
+        }
     }
-    if (list.isEmpty())
+
+    if (!hasPanX && !hasPanY && !hasPinchZoom)
         return nullptr;
+
     CSSValueListBuilder builder;
-    for (auto ident : list)
-        builder.append(CSSPrimitiveValue::create(ident));
+    if (hasPanX)
+        builder.append(CSSPrimitiveValue::create(CSSValuePanX));
+    if (hasPanY)
+        builder.append(CSSPrimitiveValue::create(CSSValuePanY));
+    if (hasPinchZoom)
+        builder.append(CSSPrimitiveValue::create(CSSValuePinchZoom));
+
     return CSSValueList::createSpaceSeparated(WTFMove(builder));
 }
 
@@ -2484,20 +2509,32 @@ RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextEdge(CSSPropertyID property, CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueLeading)
-        return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
+    if (property == CSSPropertyTextBoxEdge && range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
 
-    auto firstGroupValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (!firstGroupValue)
+    if (property == CSSPropertyLineFitEdge && range.peek().id() == CSSValueLeading)
+        return consumeIdent(range);
+
+    auto firstValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    if (!firstValue)
         return nullptr;
 
-    auto secondGroupValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (secondGroupValue)
-        return CSSValueList::createSpaceSeparated(firstGroupValue.releaseNonNull(), secondGroupValue.releaseNonNull());
+    auto secondValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    // https://www.w3.org/TR/css-inline-3/#text-edges
+    // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
+    auto shouldSerializeSecondValue = [&]() {
+        if (!secondValue)
+            return false;
+        if (firstValue->valueID() == CSSValueCap || firstValue->valueID() == CSSValueEx)
+            return secondValue->valueID() != CSSValueText;
+        return firstValue->valueID() != secondValue->valueID();
+    }();
+    if (!shouldSerializeSecondValue)
+        return firstValue;
 
-    return CSSValueList::createSpaceSeparated(firstGroupValue.releaseNonNull());
+    return CSSValuePair::create(firstValue.releaseNonNull(), secondValue.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode mode)
@@ -2913,7 +2950,7 @@ static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, con
 
     std::array<RefPtr<CSSValue>, 2> dimensions;
     for (auto& dimension : dimensions) {
-        dimension = consumeLengthOrPercent(args, context.mode);
+        dimension = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
         if (!dimension)
             return nullptr;
     }
@@ -4304,6 +4341,29 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
+RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range)
+{
+    if (auto noneValue = consumeIdent<CSSValueNone>(range))
+        return noneValue;
+
+    CSSValueListBuilder list;
+    do {
+        if (range.peek().id() == CSSValueNone)
+            return nullptr;
+
+        auto ident = consumeCustomIdent(range);
+        if (!ident)
+            return nullptr;
+
+        list.append(ident.releaseNonNull());
+    } while (!range.atEnd());
+
+    if (list.isEmpty())
+        return nullptr;
+
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
 {
     if (auto noneValue = consumeIdent<CSSValueNone>(range))
@@ -4797,6 +4857,25 @@ RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, CSSParserMod
     range = rangeCopy;
     auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), WTFMove(fallback));
     return CSSPrimitiveValue::create(anchor);
+}
+
+RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    CSSValueListBuilder list;
+    do {
+        if (range.peek().id() == CSSValueNone)
+            return nullptr;
+        auto type = consumeCustomIdent(range);
+        if (!type)
+            return nullptr;
+        if (type->customIdent().startsWith("-ua-"_s))
+            return nullptr;
+        list.append(type.releaseNonNull());
+    } while (!range.atEnd());
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 } // namespace CSSPropertyParserHelpers

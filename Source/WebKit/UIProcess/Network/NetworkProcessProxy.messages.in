@@ -75,7 +75,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     DidAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL resourceURL)
     
-    TriggerBrowsingContextGroupSwitchForNavigation(WebKit::WebPageProxyIdentifier pageIdentifier, uint64_t navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, WebCore::RegistrableDomain responseDomain, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume) -> (bool success)
+    TriggerBrowsingContextGroupSwitchForNavigation(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, WebCore::RegistrableDomain responseDomain, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume) -> (bool success)
 
 #if USE(SOUP)
     DidExceedMemoryLimit()

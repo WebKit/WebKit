@@ -65,6 +65,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSSetIterator.h"
 #include "JSWebAssemblyInstance.h"
+#include "LLIntEntrypoint.h"
 #include "LLIntThunks.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ProbeContext.h"
@@ -202,7 +203,7 @@ void SpeculativeJIT::compileFunction()
     // This is the main entry point, without performing an arity check.
     // If we needed to perform an arity check we will already have moved the return address,
     // so enter after this.
-    Label fromArityCheck(this);
+
     // Plant a check that sufficient space is available in the JSStack.
     JumpList stackOverflow;
     emitStackOverflowCheck(*this, stackOverflow);
@@ -226,21 +227,31 @@ void SpeculativeJIT::compileFunction()
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     Label arityCheck;
+    JumpList stackOverflowWithEntry;
     bool requiresArityFixup = m_codeBlock->numParameters() != 1;
     if (requiresArityFixup) {
         arityCheck = label();
-        compileEntry();
-
         unsigned numberOfParameters = m_codeBlock->numParameters();
-        load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
-        branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(numberOfParameters)).linkTo(fromArityCheck, this);
+        load32(calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta()), GPRInfo::argumentGPR2);
+        branch32(AboveOrEqual, GPRInfo::argumentGPR2, TrustedImm32(numberOfParameters)).linkTo(entryLabel, this);
 
-        getArityPadding(vm(), numberOfParameters, GPRInfo::regT1, GPRInfo::regT0, GPRInfo::regT2, GPRInfo::regT3, stackOverflow);
+        getArityPadding(vm(), numberOfParameters, GPRInfo::argumentGPR2, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, stackOverflowWithEntry);
 
-        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
-        move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-        nearCallThunk(CodeLocationLabel { vm().getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
-        jump(fromArityCheck);
+#if CPU(X86_64)
+        pop(GPRInfo::argumentGPR1);
+#else
+        tagPtr(NoPtrTag, linkRegister);
+        move(linkRegister, GPRInfo::argumentGPR1);
+#endif
+        nearCallThunk(CodeLocationLabel { LLInt::arityFixup() });
+#if CPU(X86_64)
+        push(GPRInfo::argumentGPR1);
+#else
+        move(GPRInfo::argumentGPR1, linkRegister);
+        untagPtr(NoPtrTag, linkRegister);
+        validateUntaggedPtr(linkRegister, GPRInfo::argumentGPR0);
+#endif
+        jump(entryLabel);
     } else
         arityCheck = entryLabel;
 
@@ -249,6 +260,8 @@ void SpeculativeJIT::compileFunction()
     //
     // Generate the stack overflow handling; if the stack check in the function head fails,
     // we need to call out to a helper function to throw the StackOverflowError.
+    stackOverflowWithEntry.link(this);
+    compileEntry();
     stackOverflow.link(this);
 
     emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
@@ -3191,32 +3204,6 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 #endif
 }
 
-JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node* node, GPRReg base, Jump outOfBounds)
-{
-    Jump done;
-    if (outOfBounds.isSet()) {
-        done = jump();
-        if (node->arrayMode().isInBounds())
-            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
-        else {
-            // This includes resizable arraybuffer's out-of-bounds. But here, we exit only when the buffer is detached.
-            outOfBounds.link(this);
-
-            Jump notWasteful = branchTest8(
-                Zero,
-                Address(base, JSArrayBufferView::offsetOfMode()),
-                TrustedImm32(isWastefulTypedArrayMode));
-
-            auto hasNullVector = branchTestPtr(
-                Zero,
-                Address(base, JSArrayBufferView::offsetOfVector()));
-            speculationCheck(Uncountable, JSValueSource(), node, hasNullVector);
-            notWasteful.link(this);
-        }
-    }
-    return done;
-}
-
 void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
 {
     switch (elementSize(type)) {
@@ -3586,9 +3573,16 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
         CRASH();
     }
 
-    Jump done = jumpForTypedArrayIsDetachedIfOutOfBounds(node, baseReg, outOfBounds);
-    if (done.isSet())
-        done.link(this);
+    if (outOfBounds.isSet()) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        else {
+            if (node->op() == PutByValDirect)
+                speculationCheck(Uncountable, JSValueSource(), nullptr, outOfBounds);
+            else
+                outOfBounds.link(this);
+        }
+    }
 
     if (!slowPathCases.empty()) {
         addSlowPathGenerator(slowPathCall(
@@ -3725,9 +3719,17 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    Jump done = jumpForTypedArrayIsDetachedIfOutOfBounds(node, baseReg, outOfBounds);
-    if (done.isSet())
-        done.link(this);
+    if (outOfBounds.isSet()) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        else {
+            if (node->op() == PutByValDirect)
+                speculationCheck(Uncountable, JSValueSource(), nullptr, outOfBounds);
+            else
+                outOfBounds.link(this);
+        }
+    }
+
     noResult(node);
 }
 

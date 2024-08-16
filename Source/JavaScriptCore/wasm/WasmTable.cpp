@@ -256,7 +256,6 @@ void ExternRefTable::set(uint32_t index, JSValue value)
 FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
     : Table(initial, maximum, wasmType, TableElementType::Funcref)
 {
-    RELEASE_ASSERT(isFuncref(wasmType) || Options::useWasmTypedFunctionReferences());
     ASSERT(isSubtype(wasmType, funcrefType()));
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.

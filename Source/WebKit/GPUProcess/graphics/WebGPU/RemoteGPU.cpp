@@ -50,19 +50,11 @@
 #include <WebCore/WebGPUCreateImpl.h>
 #endif
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGPU);
 
 RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
@@ -77,6 +69,14 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
 }
 
 RemoteGPU::~RemoteGPU() = default;
+
+RefPtr<IPC::Connection> RemoteGPU::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteGPU::initialize()
 {

@@ -6,7 +6,11 @@
  */
 
 #include "src/gpu/ganesh/GrStyle.h"
+
+#include "include/core/SkPath.h"
 #include "src/utils/SkDashPathPriv.h"
+
+#include <cstring>
 
 int GrStyle::KeySize(const GrStyle &style, Apply apply, uint32_t flags) {
     static_assert(sizeof(uint32_t) == sizeof(SkScalar));
@@ -62,14 +66,12 @@ void GrStyle::WriteKey(uint32_t *key, const GrStyle &style, Apply apply, SkScala
 
     if (Apply::kPathEffectAndStrokeRec == apply && style.strokeRec().needToApply()) {
         memcpy(&key[i++], &scale, sizeof(SkScalar));
-        enum {
-            kStyleBits = 2,
-            kJoinBits = 2,
-            kCapBits = 32 - kStyleBits - kJoinBits,
+        static constexpr uint32_t kStyleBits = 2;
+        static constexpr uint32_t kJoinBits = 2;
+        static constexpr uint32_t kCapBits = 32 - kStyleBits - kJoinBits;
+        static constexpr uint32_t kJoinShift = kStyleBits;
+        static constexpr uint32_t kCapShift = kJoinShift + kJoinBits;
 
-            kJoinShift = kStyleBits,
-            kCapShift = kJoinShift + kJoinBits,
-        };
         static_assert(SkStrokeRec::kStyleCount <= (1 << kStyleBits));
         static_assert(SkPaint::kJoinCount <= (1 << kJoinBits));
         static_assert(SkPaint::kCapCount <= (1 << kCapBits));

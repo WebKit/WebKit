@@ -245,7 +245,7 @@ private:
     EventTrackingRegions absoluteEventTrackingRegionsForFrame(const LocalFrame&) const;
 
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
-    SingleThreadWeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
+    WeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
 
 };
 

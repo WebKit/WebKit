@@ -31,6 +31,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
 
@@ -52,7 +53,7 @@ struct ExternalTextureIndices {
 
 // https://gpuweb.github.io/gpuweb/#gpubindgroup
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup>, public CanMakeWeakPtr<BindGroup> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BindGroup);
 public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;

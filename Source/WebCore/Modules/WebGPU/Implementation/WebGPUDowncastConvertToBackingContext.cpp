@@ -52,6 +52,10 @@
 #include "WebGPUShaderModuleImpl.h"
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
+#include "WebGPUXRBindingImpl.h"
+#include "WebGPUXRProjectionLayerImpl.h"
+#include "WebGPUXRSubImageImpl.h"
+#include "WebGPUXRViewImpl.h"
 
 namespace WebCore::WebGPU {
 
@@ -173,6 +177,26 @@ WGPUTextureView DowncastConvertToBackingContext::convertToBacking(const TextureV
 CompositorIntegrationImpl& DowncastConvertToBackingContext::convertToBacking(CompositorIntegration& compositorIntegration)
 {
     return static_cast<CompositorIntegrationImpl&>(compositorIntegration);
+}
+
+WGPUXRBinding DowncastConvertToBackingContext::convertToBacking(const XRBinding& xrBinding)
+{
+    return static_cast<const XRBindingImpl&>(xrBinding).backing();
+}
+
+WGPUXRProjectionLayer DowncastConvertToBackingContext::convertToBacking(const XRProjectionLayer& layer)
+{
+    return static_cast<const XRProjectionLayerImpl&>(layer).backing();
+}
+
+WGPUXRSubImage DowncastConvertToBackingContext::convertToBacking(const XRSubImage& subImage)
+{
+    return static_cast<const XRSubImageImpl&>(subImage).backing();
+}
+
+WGPUXRView DowncastConvertToBackingContext::convertToBacking(const XRView& xrView)
+{
+    return static_cast<const XRViewImpl&>(xrView).backing();
 }
 
 } // namespace WebCore::WebGPU

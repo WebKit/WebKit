@@ -30,10 +30,13 @@
 #import "Texture.h"
 #import "TextureView.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextIOSurface);
 
 Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor, const Instance& instance)
 {

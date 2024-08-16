@@ -127,16 +127,6 @@ void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
     iterator->second->close();
 }
 
-void NetworkRTCProvider::doSocketTaskOnRTCNetworkThread(LibWebRTCSocketIdentifier identifier, Function<void(Socket&)>&& callback)
-{
-    callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, callback = WTFMove(callback)]() mutable {
-        auto iterator = m_sockets.find(identifier);
-        if (iterator == m_sockets.end())
-            return;
-        callback(*iterator->second);
-    });
-}
-
 void NetworkRTCProvider::setSocketOption(LibWebRTCSocketIdentifier identifier, int option, int value)
 {
     assertIsRTCNetworkThread();
@@ -150,6 +140,7 @@ void NetworkRTCProvider::addSocket(LibWebRTCSocketIdentifier identifier, std::un
 {
     assertIsRTCNetworkThread();
     ASSERT(socket);
+    ASSERT(!m_sockets.contains(identifier));
     m_sockets.emplace(identifier, WTFMove(socket));
 
     RTC_RELEASE_LOG("new socket %" PRIu64 ", total socket number is %lu", identifier.toUInt64(), m_sockets.size());
@@ -256,6 +247,11 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 {
     assertIsRTCNetworkThread();
 
+    if (m_sockets.contains(identifier)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createUDPSocket duplicate identifier");
+        return;
+    }
+
     auto socket = makeUnique<NetworkRTCUDPSocketCocoa>(identifier, *this, address.rtcAddress(), m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain));
     addSocket(identifier, WTFMove(socket));
 }
@@ -263,6 +259,11 @@ void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, c
 void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&& domain)
 {
     assertIsRTCNetworkThread();
+
+    if (m_sockets.contains(identifier)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createClientTCPSocket duplicate identifier");
+        return;
+    }
 
     auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.rtcAddress(), options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isFirstParty, isRelayDisabled, domain, m_ipcConnection.copyRef());
     if (socket)
@@ -318,6 +319,11 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
 {
     assertIsRTCNetworkThread();
 
+    if (m_sockets.contains(identifier)) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createClientTCPSocket duplicate identifier");
+        return;
+    }
+
     callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
         if (!m_connection)
             return;
@@ -328,6 +334,11 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             return;
         }
         callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, localAddress = localAddress.rtcAddress(), remoteAddress = remoteAddress.rtcAddress(), options]() mutable {
+
+            if (m_sockets.contains(identifier)) {
+                RELEASE_LOG_ERROR(WebRTC, "NetworkRTCProvider::createClientTCPSocket duplicate identifier");
+                return;
+            }
 
             rtc::PacketSocketTcpOptions tcpOptions;
             tcpOptions.opts = options;

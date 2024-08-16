@@ -130,6 +130,7 @@
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/MediaUniqueIdentifier.h>
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
@@ -501,6 +502,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ModelPlayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaUniqueIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::NavigationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::OpaqueOriginIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PageIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PlatformLayerIdentifierID));
@@ -644,6 +646,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::MediaSessionIdentifier"_s,
         "WebCore::ModelPlayerIdentifier"_s,
         "WebCore::MediaUniqueIdentifier"_s,
+        "WebCore::NavigationIdentifier"_s,
         "WebCore::OpaqueOriginIdentifier"_s,
         "WebCore::PageIdentifier"_s,
         "WebCore::PlatformLayerIdentifierID"_s,

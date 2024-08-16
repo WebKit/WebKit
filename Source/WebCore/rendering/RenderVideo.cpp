@@ -42,14 +42,14 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderVideo);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderVideo);
 
 RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
     : RenderMedia(Type::Video, element, WTFMove(style))

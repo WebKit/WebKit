@@ -29,15 +29,15 @@
 #include "ContentSecurityPolicyClient.h"
 #include "FormData.h"
 #include "SecurityPolicyViolationEvent.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using Init = SecurityPolicyViolationEventInit;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CSPViolationReportBody);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSPViolationReportBody);
 
 CSPViolationReportBody::CSPViolationReportBody(Init&& init)
     : m_documentURL(WTFMove(init.documentURI))

@@ -32,6 +32,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS PDFDocument;
@@ -52,7 +53,7 @@ enum class RepaintRequirement : uint8_t;
 
 class PDFPresentationController : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPresentationController> {
     WTF_MAKE_NONCOPYABLE(PDFPresentationController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFPresentationController);
 public:
     static RefPtr<PDFPresentationController> createForMode(PDFDocumentLayout::DisplayMode, UnifiedPDFPlugin&);
 

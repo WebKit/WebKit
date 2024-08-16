@@ -185,6 +185,7 @@ PASS left
 PASS letter-spacing
 PASS lighting-color
 PASS line-break
+PASS line-fit-edge
 PASS line-height
 PASS list-style-image
 PASS list-style-position
@@ -361,6 +362,7 @@ PASS vertical-align
 PASS view-timeline-axis
 PASS view-timeline-inset
 PASS view-timeline-name
+PASS view-transition-class
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse

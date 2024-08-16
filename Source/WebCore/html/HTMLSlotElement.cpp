@@ -34,13 +34,13 @@
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSlotElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSlotElement);
 
 using namespace HTMLNames;
 

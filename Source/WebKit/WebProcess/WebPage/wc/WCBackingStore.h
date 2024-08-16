@@ -29,11 +29,12 @@
 
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WCBackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WCBackingStore);
 public:
     WCBackingStore() { }
     WebCore::ImageBuffer* imageBuffer() { return m_imageBuffer.get(); }

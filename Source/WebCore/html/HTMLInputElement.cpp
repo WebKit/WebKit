@@ -80,10 +80,10 @@
 #include "TextInputType.h"
 #include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -93,7 +93,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLInputElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLInputElement);
 
 using namespace HTMLNames;
 

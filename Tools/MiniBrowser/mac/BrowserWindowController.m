@@ -283,6 +283,12 @@
     return nil;
 }
 
+- (NSImage *)windowSnapshotInRect:(CGRect)rect
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
 - (IBAction)toggleEditable:(id)sender
 {
     self.editable = !self.isEditable;
@@ -344,20 +350,8 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
 - (NSImage *)sharingService:(NSSharingService *)sharingService transitionImageForShareItem:(id)item contentRect:(NSRect *)contentRect
 {
     NSRect contentFrame = [self.window convertRectToScreen:self.mainContentView.bounds];
-
     CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(contentFrame);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    CGImageRef imageRef = CGWindowListCreateImage(frame, kCGWindowListOptionIncludingWindow, (CGWindowID)[self.window windowNumber], kCGWindowImageBoundsIgnoreFraming);
-#pragma clang diagnostic pop
-
-    if (!imageRef)
-        return nil;
-    
-    NSImage *image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
-    CGImageRelease(imageRef);
-
-    return image;
+    return [self windowSnapshotInRect:frame];
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope

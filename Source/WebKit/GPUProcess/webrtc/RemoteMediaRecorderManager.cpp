@@ -33,9 +33,12 @@
 #include "GPUProcess.h"
 #include "RemoteMediaRecorder.h"
 #include <WebCore/ExceptionData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaRecorderManager);
 
 RemoteMediaRecorderManager::RemoteMediaRecorderManager(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)

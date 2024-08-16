@@ -40,13 +40,13 @@
 #include "SliderThumbElement.h"
 #include "StepRange.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSlider);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSlider);
 
 const int RenderSlider::defaultTrackLength = 129;
 

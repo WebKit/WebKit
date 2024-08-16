@@ -89,8 +89,6 @@ private:
 
     bool ensureEntrypoint(LLIntCallee&, unsigned functionIndex);
 
-    RefPtr<JSEntrypointCallee> tryCreateInterpretedJSToWasmCallee(unsigned functionIndex);
-
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;

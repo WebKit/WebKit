@@ -34,12 +34,12 @@
 #include "FileSystemEntriesCallback.h"
 #include "ScriptExecutionContext.h"
 #include "WindowEventLoop.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryReader);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemDirectoryReader);
 
 Ref<FileSystemDirectoryReader> FileSystemDirectoryReader::create(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
 {

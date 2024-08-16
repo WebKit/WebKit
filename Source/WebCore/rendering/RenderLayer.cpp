@@ -149,9 +149,9 @@
 #include "WheelEventTestMonitor.h"
 #include <stdio.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
@@ -304,7 +304,7 @@ static ScrollingScope nextScrollingScope()
     return ++currentScope;
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLayer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderLayer);
 
 RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     : m_isRenderViewLayer(renderer.isRenderView())

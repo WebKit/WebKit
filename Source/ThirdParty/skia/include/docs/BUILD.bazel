@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 # Not yet referenced by Bazel build.
 # In separate group for exporting to xps.gni:skia_xps_public.
@@ -28,4 +26,10 @@ skia_filegroup(
         "//conditions:default": [],
     }),  # TODO(kjlubick) XPSDocument
     visibility = ["//include:__pkg__"],
+)
+
+skia_filegroup(
+    name = "pdf_hdrs",
+    srcs = ["SkPDFDocument.h"],
+    visibility = ["//src/pdf:__pkg__"],
 )

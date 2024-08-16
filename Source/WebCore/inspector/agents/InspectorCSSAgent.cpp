@@ -418,6 +418,8 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
         return Inspector::Protocol::CSS::PseudoId::Highlight;
     case PseudoId::SpellingError:
         return Inspector::Protocol::CSS::PseudoId::SpellingError;
+    case PseudoId::TargetText:
+        return Inspector::Protocol::CSS::PseudoId::TargetText;
     case PseudoId::ViewTransition:
         return Inspector::Protocol::CSS::PseudoId::ViewTransition;
     case PseudoId::ViewTransitionGroup:

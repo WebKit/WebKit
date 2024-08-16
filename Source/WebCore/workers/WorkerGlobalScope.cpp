@@ -77,8 +77,8 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -99,7 +99,7 @@ static WorkQueue& sharedFileSystemStorageQueue()
     return queue.get();
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
     : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), params.referrerPolicy, &thread, params.noiseInjectionHashSalt, params.advancedPrivacyProtections, params.clientIdentifier)
@@ -167,7 +167,8 @@ void WorkerGlobalScope::prepareForDestruction()
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
 
-    stopIndexedDatabase();
+    if (m_connectionProxy)
+        m_connectionProxy->abortActivitiesForCurrentThread();
 
     if (m_storageConnection)
         m_storageConnection->scopeClosed();
@@ -237,12 +238,6 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 GraphicsClient* WorkerGlobalScope::graphicsClient()
 {
     return workerClient();
-}
-
-void WorkerGlobalScope::stopIndexedDatabase()
-{
-    if (m_connectionProxy)
-        m_connectionProxy->forgetActivityForCurrentThread();
 }
 
 void WorkerGlobalScope::suspend()

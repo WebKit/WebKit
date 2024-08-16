@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ class FormattingContext;
 // subsequent layouts (subtree layout). A non-initial, subtree layout could be initiated on multiple formatting contexts.
 // Each formatting context has an entry point for layout, which potenitally means multiple entry points per layout frame.
 class LayoutContext {
-    WTF_MAKE_ISO_ALLOCATED(LayoutContext);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LayoutContext);
 public:
     LayoutContext(LayoutState&);
 

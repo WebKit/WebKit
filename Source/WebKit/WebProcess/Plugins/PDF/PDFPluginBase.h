@@ -45,6 +45,7 @@
 #include <wtf/Range.h>
 #include <wtf/RangeSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/WeakPtr.h>
@@ -89,7 +90,7 @@ enum class CheckValidRanges : bool { No, Yes };
 
 class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public CanMakeThreadSafeCheckedPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluatorClient, public Identified<PDFPluginIdentifier> {
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PDFPluginBase);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginBase);
     friend class PDFIncrementalLoader;
     friend class PDFPluginChoiceAnnotation;
@@ -171,7 +172,7 @@ public:
     virtual Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const { return { }; }
     virtual bool drawsFindOverlay() const = 0;
     virtual RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition) { return { }; }
-    virtual WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition);
+    virtual WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
     void performWebSearch(const String& query);

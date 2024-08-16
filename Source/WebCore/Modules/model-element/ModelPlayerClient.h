@@ -27,6 +27,7 @@
 
 #include "LayerHostingContextIdentifier.h"
 #include "PlatformLayerIdentifier.h"
+#include "TransformationMatrix.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 

@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy")
+load("//bazel:skia_rules.bzl", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -6,4 +6,14 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy()
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "MtlBackendContext.h",
+        "MtlGraphiteTypes.h",
+        "MtlGraphiteUtils.h",
+    ],
+    visibility = [
+        "//src/gpu/graphite/mtl:__pkg__",
+    ],
+)

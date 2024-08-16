@@ -36,6 +36,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/InspectorOverlay.h>
@@ -45,7 +46,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RepaintIndicatorLayerClient);
 public:
     RepaintIndicatorLayerClient(WebInspectorClient& inspectorClient)
         : m_inspectorClient(inspectorClient)
@@ -60,6 +61,8 @@ private:
     
     WebInspectorClient& m_inspectorClient;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorClient);
 
 WebInspectorClient::WebInspectorClient(WebPage* page)
     : m_page(page)

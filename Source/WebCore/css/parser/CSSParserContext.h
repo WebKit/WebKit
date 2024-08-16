@@ -102,6 +102,8 @@ struct CSSParserContext {
 #endif
     bool colorLayersEnabled : 1 { false };
     bool lightDarkEnabled : 1 { false };
+    bool targetTextPseudoElementEnabled : 1 { false };
+    bool viewTransitionTypesEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -44,6 +44,7 @@
 #include "HTTPSByDefaultMode.h"
 #include "LinkIcon.h"
 #include "NavigationAction.h"
+#include "NavigationIdentifier.h"
 #include "ResourceError.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
@@ -509,8 +510,8 @@ public:
     void contentFilterHandleProvisionalLoadFailure(const ResourceError&);
 #endif
 
-    uint64_t navigationID() const { return m_navigationID; }
-    WEBCORE_EXPORT void setNavigationID(uint64_t);
+    std::optional<NavigationIdentifier> navigationID() const { return m_navigationID.asOptional(); }
+    WEBCORE_EXPORT void setNavigationID(NavigationIdentifier);
 
     bool isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
@@ -651,7 +652,7 @@ private:
     // benefit of the various policy handlers.
     NavigationAction m_triggeringAction;
 
-    uint64_t m_navigationID { 0 };
+    Markable<NavigationIdentifier> m_navigationID;
 
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the

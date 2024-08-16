@@ -8,9 +8,10 @@
     </style>
     <script>
       window.enablePixelTesting = true;
-
+      if (window.testRunner)
+          window.testRunner.waitUntilDone();
       function scroll() {
-          // The page scale, as set by window.internals.setPageScaleFactor should not be apparent
+          // The page scale, as set by window.testRunner.setPageScaleFactor should not be apparent
           // to javascript. So, we expect scrolling to (100,100) to be page coordinates, rather
           // than device pixels.
           window.scrollTo(100,100);
@@ -19,18 +20,20 @@
           shouldBe("window.document.scrollingElement.scrollLeft", "100");
           shouldBe("window.scrollX", "100");
           shouldBe("window.scrollY", "100");
+          if (window.testRunner)
+              window.testRunner.notifyDone();
       }
 
-      function scaleWithEventSender() {
+      async function scaleWithEventSender() {
           var scaleFactor = 2.0;
           var scaleOffset = 0;
-          if (window.internals) {
-             window.internals.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+          if (window.testRunner) {
+             await window.testRunner.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
           }
       }
 
-      function test() {
-          scaleWithEventSender();
+      async function test() {
+          await scaleWithEventSender();
           scroll();
       }
     </script>

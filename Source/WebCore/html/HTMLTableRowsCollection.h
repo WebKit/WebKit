@@ -36,7 +36,7 @@ namespace WebCore {
 class HTMLTableRowElement;
 
 class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection, CollectionTypeTraits<CollectionType::TableRows>::traversalType> {
-    WTF_MAKE_ISO_ALLOCATED(HTMLTableRowsCollection);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLTableRowsCollection);
 public:
     static Ref<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
 

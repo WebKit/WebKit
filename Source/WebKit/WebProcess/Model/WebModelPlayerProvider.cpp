@@ -27,6 +27,7 @@
 #include "WebModelPlayerProvider.h"
 
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/ModelPlayer.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
@@ -43,6 +44,7 @@
 
 #if ENABLE(MODEL_PROCESS)
 #include "ModelProcessModelPlayer.h"
+#include "ModelProcessModelPlayerManager.h"
 #endif
 
 namespace WebKit {

@@ -29,7 +29,7 @@
 
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferCGBackend.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class BifurcatedGraphicsContext;

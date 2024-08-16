@@ -252,6 +252,8 @@ public:
     bool canBlend(const BasicShape&) const final;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
 
+    static Ref<BasicShape> blendWithPath(const BasicShape& from, const BasicShape& to, const BlendingContext&);
+
     bool operator==(const BasicShape&) const final;
 
     void dump(TextStream&) const final;
@@ -270,9 +272,12 @@ public:
     const Vector<ShapeSegment>& segments() const { return m_segments; }
 
     static Ref<BasicShapeShape> create(WindRule, const CoordinatePair&, Vector<ShapeSegment>&&);
+    static RefPtr<BasicShapeShape> createFromPath(const BasicShapePath&);
 
 private:
     BasicShapeShape(WindRule, const CoordinatePair&, Vector<ShapeSegment>&&);
+
+    bool canBlendWithPath(const BasicShapePath&) const;
 
     static bool canBlend(const ShapeSegment&, const ShapeSegment&);
     static ShapeSegment blend(const ShapeSegment& from, const ShapeSegment& to, const BlendingContext&);

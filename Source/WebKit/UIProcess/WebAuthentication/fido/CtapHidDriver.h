@@ -30,6 +30,7 @@
 #include "CtapDriver.h"
 #include "HidConnection.h"
 #include <WebCore/FidoHidMessage.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
@@ -49,7 +50,7 @@ namespace WebKit {
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#arbitration
 // FSM: Idle => Write => Read.
 class CtapHidDriverWorker : public CanMakeWeakPtr<CtapHidDriverWorker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CtapHidDriverWorker);
     WTF_MAKE_NONCOPYABLE(CtapHidDriverWorker);
 public:
     using MessageCallback = Function<void(std::optional<fido::FidoHidMessage>&&)>;

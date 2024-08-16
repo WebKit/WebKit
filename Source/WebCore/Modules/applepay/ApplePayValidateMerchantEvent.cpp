@@ -28,11 +28,11 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayValidateMerchantEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayValidateMerchantEvent);
 
 ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomString& type, URL&& validationURL)
     : Event(EventInterfaceType::ApplePayValidateMerchantEvent, type, CanBubble::No, IsCancelable::No)

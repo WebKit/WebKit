@@ -36,7 +36,7 @@ class AudioBus;
 class OfflineAudioContext;
     
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
-    WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
     OfflineAudioDestinationNode(OfflineAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
     ~OfflineAudioDestinationNode();

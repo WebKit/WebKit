@@ -30,7 +30,7 @@
 
 #include "HTMLVideoElement.h"
 #include "Supplementable.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class DeferredPromise;
 class Document;
 
 class DocumentPictureInPicture : public Supplement<Document> {
-    WTF_MAKE_ISO_ALLOCATED(DocumentPictureInPicture);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentPictureInPicture);
 public:
     virtual ~DocumentPictureInPicture();
 

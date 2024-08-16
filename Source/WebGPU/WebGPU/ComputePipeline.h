@@ -33,6 +33,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 struct WGPUComputePipelineImpl {
@@ -46,7 +47,7 @@ class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpucomputepipeline
 class ComputePipeline : public WGPUComputePipelineImpl, public RefCounted<ComputePipeline>, public CanMakeWeakPtr<ComputePipeline> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ComputePipeline);
 public:
     static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, Device& device)
     {

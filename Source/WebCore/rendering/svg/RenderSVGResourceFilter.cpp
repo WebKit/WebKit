@@ -29,11 +29,11 @@
 #include "RenderSVGResourceFilterInlines.h"
 #include "SVGFilterElement.h"
 #include "SVGUseElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGElement& element, RenderStyle&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourceFilter, element, WTFMove(style))

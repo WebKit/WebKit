@@ -36,7 +36,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*!
  @abstract Returns a web extension initialized with a specified app extension bundle.
  @param appExtensionBundle The bundle to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  */
 - (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_DESIGNATED_INITIALIZER;
@@ -44,7 +44,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
  @param resourceBaseURL The directory URL to use for the new web extension.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
+ @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion The URL must be a file URL that points to a directory containing a `manifest.json` file.
  */
@@ -77,10 +77,10 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (nullable instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources NS_DESIGNATED_INITIALIZER;
 
 /*! @abstract A Boolean value indicating whether the extension background content is a service worker. */
-@property (readonly, nonatomic) BOOL _backgroundContentIsServiceWorker;
+@property (readonly, nonatomic) BOOL _hasServiceWorkerBackgroundContent;
 
 /*! @abstract A Boolean value indicating whether the extension use modules for the background content. */
-@property (readonly, nonatomic) BOOL _backgroundContentUsesModules;
+@property (readonly, nonatomic) BOOL _hasModularBackgroundContent;
 
 @end
 

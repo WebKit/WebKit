@@ -36,8 +36,6 @@ public:
 
     const GstStructure* stats();
 
-    bool setBin(const GRefPtr<GstElement>&) final;
-
 protected:
     RealtimeIncomingVideoSourceGStreamer(AtomString&&);
 

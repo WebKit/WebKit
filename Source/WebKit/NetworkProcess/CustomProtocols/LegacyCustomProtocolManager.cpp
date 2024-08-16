@@ -33,8 +33,11 @@
 #include "NetworkProcessCreationParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManager);
 
 ASCIILiteral LegacyCustomProtocolManager::supplementName()
 {

@@ -19,6 +19,7 @@ PASS abs(10px + 10%) should be used-value-equivalent to 20px
 PASS calc(10px + abs(10%)) should be used-value-equivalent to 20px
 PASS abs(-10px) should be used-value-equivalent to 10px
 PASS abs(-10%) should be used-value-equivalent to 10px
+PASS calc((1em + 1px) * (sign(1em - 10px - 10%) + 1)) should be used-value-equivalent to 21px
 PASS calc(calc(sign(-0))) should be used-value-equivalent to 0
 PASS clamp(-1, calc( 1 / sign(calc(sign(-0)))), 1) should be used-value-equivalent to -1
 PASS calc(calc(sign(0))) should be used-value-equivalent to 0
@@ -26,6 +27,13 @@ PASS clamp(-1, calc( 1 / sign(calc(sign(0)))), 1) should be used-value-equivalen
 PASS abs(infinity) should be used-value-equivalent to calc(infinity)
 PASS abs(-infinity) should be used-value-equivalent to calc(infinity)
 PASS abs(NaN) should be used-value-equivalent to calc(NaN)
+PASS calc(20 - abs(-10)) should be used-value-equivalent to 10
+PASS calc(20 - abs(10)) should be used-value-equivalent to 10
+PASS calc(10 - abs(10 - abs(-30)) should be used-value-equivalent to -10
+PASS calc(2 - sign(1)) should be used-value-equivalent to 1
+PASS calc(2 - sign(-1)) should be used-value-equivalent to 3
+PASS calc(2 - sign(1 - sign(-1))) should be used-value-equivalent to 1
+PASS calc(10 - abs(20 - sign(2 - abs(-20)))) should be used-value-equivalent to -11
 PASS sign(1px) should be used-value-equivalent to 1
 PASS sign(1cm) should be used-value-equivalent to 1
 PASS sign(1mm) should be used-value-equivalent to 1
@@ -196,4 +204,5 @@ PASS abs(-1rad) should be used-value-equivalent to 1rad
 PASS abs(-1turn) should be used-value-equivalent to 1turn
 FAIL sign(10px - 1em) should be used-value-equivalent to 0; fontSize=10px assert_equals: sign(10px - 1em) and 0 serialize to the same thing in used values. expected "0" but got "1"
 FAIL sign(10px - 2em) should be used-value-equivalent to -1; fontSize=10px assert_equals: sign(10px - 2em) and -1 serialize to the same thing in used values. expected "-1" but got "1"
+PASS calc(sign(10%) * 100px) should be used-value-equivalent to 100px
 

@@ -30,11 +30,11 @@
 #include "JSNode.h"
 #include "Text.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(StaticRange);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StaticRange);
 
 StaticRange::StaticRange(SimpleRange&& range)
     : SimpleRange(WTFMove(range))

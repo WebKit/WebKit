@@ -70,11 +70,14 @@
 #include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
 #include "RequestAnimationFrameCallback.h"
+#include "WebGPUXRBinding.h"
+#include "XRGPUBinding.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUDevice);
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     : ActiveDOMObject { scriptExecutionContext }
@@ -148,6 +151,11 @@ GPUDevice::LostPromise& GPUDevice::lost()
     });
 
     return m_lostPromise;
+}
+
+RefPtr<WebGPU::XRBinding> GPUDevice::createXRBinding(const WebXRSession&)
+{
+    return m_backing->createXRBinding();
 }
 
 ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)

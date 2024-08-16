@@ -81,7 +81,7 @@ class IDBConnectionProxy;
 }
 
 class WorkerGlobalScope : public Supplementable<WorkerGlobalScope>, public Base64Utilities, public WindowOrWorkerGlobalScope, public WorkerOrWorkletGlobalScope, public ReportingClient {
-    WTF_MAKE_ISO_ALLOCATED(WorkerGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerGlobalScope);
 public:
     virtual ~WorkerGlobalScope();
 
@@ -208,8 +208,6 @@ private:
 
     std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>& key) final;
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) final;
-
-    void stopIndexedDatabase();
 
     // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;

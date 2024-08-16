@@ -39,11 +39,11 @@
 #include "RenderElement.h"
 #include "ScopedEventQueue.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDialogElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
 

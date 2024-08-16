@@ -30,21 +30,21 @@
 
 #import "config.h"
 #import "PixelDumpSupport.h"
-#import "PixelDumpSupportCG.h"
 
-#import "DumpRenderTree.h" 
+#import "DumpRenderTree.h"
+#import "PixelDumpSupportCG.h"
 #import "TestRunner.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/Assertions.h>
-#import <wtf/RefPtr.h>
-
+#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Assertions.h>
+#import <wtf/RefPtr.h>
 
 @interface WebView ()
 - (BOOL)_flushCompositingChanges;
@@ -79,10 +79,16 @@ static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
     CGContextRestoreGState(context);
 }
 
-static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, CGWindowImageOption imageOptions)
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
 {
-    imageOptions |= kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+    OptionSet<WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions> options = {
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque,
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows
+    };
+    if (captureAtNominalResolution)
+        options.add(WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution);
+
+    return WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, CGRectNull, options);
 }
 
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
@@ -134,13 +140,13 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
             // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor.
             NSWindow *window = [view window];
-            auto image = takeWindowSnapshot([window windowNumber], kCGWindowImageDefault);
+            auto image = takeWindowSnapshot([window windowNumber], false);
 
             if (image) {
                 // Work around <rdar://problem/17084993>; re-request the snapshot at kCGWindowImageNominalResolution if it was captured at the wrong scale.
                 CGFloat desiredSnapshotWidth = window.frame.size.width * deviceScaleFactor;
                 if (CGImageGetWidth(image.get()) != desiredSnapshotWidth)
-                    image = takeWindowSnapshot([window windowNumber], kCGWindowImageNominalResolution);
+                    image = takeWindowSnapshot([window windowNumber], true);
             }
 
             if (!image)

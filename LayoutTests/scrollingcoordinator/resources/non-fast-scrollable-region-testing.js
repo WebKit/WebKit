@@ -1,7 +1,8 @@
-function runNonFastScrollableRegionTest(scale) {
+async function runNonFastScrollableRegionTest(scale) {
     var invScale;
     if (scale != undefined) {
-        window.internals.setPageScaleFactor(scale, 0, 0);
+        if (window.testRunner)
+            await window.testRunner.setPageScaleFactor(scale, 0, 0);
         // FIXME: This is a hack for applyPageScaleFactorInCompositor() == false.
         invScale = 1 / scale;
     } else {

@@ -124,10 +124,9 @@ protected:
         return true;
     }
 
-#if ENABLE(JIT)
     bool generateWasmToJSStubs();
     bool generateWasmToWasmStubs();
-#endif
+
     void generateStubsIfNecessary() WTF_REQUIRES_LOCK(m_lock);
 
     Vector<uint8_t> m_source;

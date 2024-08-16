@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -37,7 +38,7 @@ class WebPageProxy;
 
 class InspectorBrowserAgent final : public InspectorAgentBase, public Inspector::BrowserBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorBrowserAgent);
 public:
     InspectorBrowserAgent(WebPageAgentContext&);
     ~InspectorBrowserAgent();

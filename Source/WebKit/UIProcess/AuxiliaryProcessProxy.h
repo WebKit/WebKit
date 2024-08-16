@@ -38,6 +38,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/Seconds.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
@@ -68,7 +69,7 @@ class AuxiliaryProcessProxy
     , public IPC::Connection::Client
     , public CanMakeThreadSafeCheckedPtr<AuxiliaryProcessProxy> {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AuxiliaryProcessProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcessProxy);
 protected:
     AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority = AlwaysRunsAtBackgroundPriority::No, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
@@ -125,13 +126,13 @@ public:
         return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
 
-    IPC::Connection* connection() const
+    IPC::Connection& connection() const
     {
-        ASSERT(m_connection);
-        return m_connection.get();
+        RELEASE_ASSERT(m_connection);
+        return *m_connection;
     }
 
-    RefPtr<IPC::Connection> protectedConnection() const { return connection(); }
+    Ref<IPC::Connection> protectedConnection() const { return connection(); }
 
     bool hasConnection() const
     {
@@ -347,7 +348,7 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
 
-    return connection()->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+    return connection().sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
 }
 
 template<typename T, typename C>

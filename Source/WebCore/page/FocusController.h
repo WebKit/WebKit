@@ -123,7 +123,7 @@ private:
     void focusRepaintTimerFired();
     Ref<Page> protectedPage() const;
 
-    SingleThreadWeakRef<Page> m_page;
+    WeakRef<Page> m_page;
     WeakPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;

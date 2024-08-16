@@ -510,6 +510,10 @@ namespace WebCore {
     macro(XRCylinderLayer) \
     macro(XREquirectLayer) \
     macro(XRFrame) \
+    macro(XRGPUBinding) \
+    macro(XRGPULayerInit) \
+    macro(XRGPUProjectionLayerInit) \
+    macro(XRGPUSubImage) \
     macro(XRHand) \
     macro(XRInputSource) \
     macro(XRInputSourceArray) \

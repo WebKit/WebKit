@@ -13,6 +13,7 @@
 #import "TestRunner.h"
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/EnumTraits.h>
 
 @implementation DefaultPolicyDelegate
 
@@ -26,7 +27,7 @@
     }
 
     WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
-    if (static_cast<unsigned>(navType) == static_cast<unsigned>(WebNavigationTypePlugInRequest)) {
+    if (enumToUnderlyingType(navType) == enumToUnderlyingType(WebNavigationTypePlugInRequest)) {
         if (![frame frameElement])
             gTestRunner->willNavigate();
         [listener use];

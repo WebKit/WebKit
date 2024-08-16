@@ -41,11 +41,14 @@
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <wtf/LoggerHelper.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 #pragma mark - PlaybackSessionModelContext
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionModelContext);
 
 PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
     : m_manager(manager)

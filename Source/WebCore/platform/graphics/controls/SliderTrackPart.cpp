@@ -33,19 +33,20 @@ namespace WebCore {
 
 Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type)
 {
-    return adoptRef(*new SliderTrackPart(type, { }, { }, { }));
+    return adoptRef(*new SliderTrackPart(type, { }, { }, { }, 0));
 }
 
-Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition)
 {
-    return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios)));
+    return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios), thumbPosition));
 }
 
-SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
+SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition)
     : ControlPart(type)
     , m_thumbSize(thumbSize)
     , m_trackBounds(trackBounds)
     , m_tickRatios(WTFMove(tickRatios))
+    , m_thumbPosition(thumbPosition)
 {
     ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
 }

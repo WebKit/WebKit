@@ -34,6 +34,7 @@
 #import "IsValidToUseWith.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #define ENABLE_WEBGPU_ALWAYS_USE_ICB_REPLAY 0
 
@@ -83,6 +84,8 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
 @end
 
 namespace WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundleEncoder);
 
 bool RenderBundleEncoder::returnIfEncodingIsFinished(NSString* errorString)
 {
@@ -901,7 +904,7 @@ bool RenderBundleEncoder::validToEncodeCommand() const
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
-    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid()) {
+    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid() || m_finished) {
         m_device->generateAValidationError(m_lastErrorString);
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
     }

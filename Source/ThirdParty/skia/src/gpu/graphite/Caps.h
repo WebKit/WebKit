@@ -20,10 +20,10 @@
 #include "src/gpu/Swizzle.h"
 #include "src/gpu/graphite/ResourceTypes.h"
 #include "src/gpu/graphite/TextureProxy.h"
-#include "src/text/gpu/SDFTControl.h"
+#include "src/text/gpu/SubRunControl.h"
 
 #if defined(GRAPHITE_TEST_UTILS)
-#include "include/private/gpu/graphite/ContextOptionsPriv.h"
+#include "src/gpu/graphite/ContextOptionsPriv.h"
 #endif
 
 enum class SkBlendMode;
@@ -59,6 +59,11 @@ struct ResourceBindingRequirements {
 
     // Whether buffer, texture, and sampler resource bindings use distinct index ranges.
     bool fDistinctIndexRanges = false;
+
+    int fIntrinsicBufferBinding = -1;
+    int fRenderStepBufferBinding = -1;
+    int fPaintParamsBufferBinding = -1;
+    int fGradientBufferBinding = -1;
 };
 
 enum class DstReadRequirement {
@@ -122,7 +127,7 @@ public:
 
     // Backends can optionally override this method to return meaningful sampler conversion info.
     // By default, simply return a default ImmutableSamplerInfo.
-    virtual ImmutableSamplerInfo getImmutableSamplerInfo(sk_sp<TextureProxy> proxy) const {
+    virtual ImmutableSamplerInfo getImmutableSamplerInfo(const TextureProxy*) const {
         return {};
     }
 
@@ -231,12 +236,17 @@ public:
     // If false then calling Context::submit with SyncToCpu::kYes is an error.
     bool allowCpuSync() const { return fAllowCpuSync; }
 
-    // Returns whether storage buffers are supported.
+    // Returns whether storage buffers are supported and to be preferred over uniform buffers.
     bool storageBufferSupport() const { return fStorageBufferSupport; }
 
-    // Returns whether storage buffers are preferred over uniform buffers, when both will yield
-    // correct results.
-    bool storageBufferPreferred() const { return fStorageBufferPreferred; }
+    // The gradient buffer is an unsized float array so it is only optimal memory-wise to use it if
+    // the storage buffer memory layout is std430 or in metal, which is also the only supported
+    // way the data is packed.
+    bool gradientBufferSupport() const {
+        return fStorageBufferSupport &&
+               (fResourceBindingReqs.fStorageBufferLayout == Layout::kStd430 ||
+                fResourceBindingReqs.fStorageBufferLayout == Layout::kMetal);
+    }
 
     // Returns whether a draw buffer can be mapped.
     bool drawBufferCanBeMapped() const { return fDrawBufferCanBeMapped; }
@@ -292,7 +302,7 @@ public:
         return fFullCompressedUploadSizeMustAlignToBlockDims;
     }
 
-    sktext::gpu::SDFTControl getSDFTControl(bool useSDFTForSmallText) const;
+    sktext::gpu::SubRunControl getSubRunControl(bool useSDFTForSmallText) const;
 
     bool setBackendLabels() const { return fSetBackendLabels; }
 
@@ -328,9 +338,17 @@ protected:
         }
     }
 
-    // ColorTypeInfo for a specific format.
-    // Used in format tables.
+    // ColorTypeInfo for a specific format. Used in format tables.
     struct ColorTypeInfo {
+        ColorTypeInfo() = default;
+        ColorTypeInfo(SkColorType ct, SkColorType transferCt, uint32_t flags,
+                      skgpu::Swizzle readSwizzle, skgpu::Swizzle writeSwizzle)
+                : fColorType(ct)
+                , fTransferColorType(transferCt)
+                , fFlags(flags)
+                , fReadSwizzle(readSwizzle)
+                , fWriteSwizzle(writeSwizzle) {}
+
         SkColorType fColorType = kUnknown_SkColorType;
         SkColorType fTransferColorType = kUnknown_SkColorType;
         enum {
@@ -359,7 +377,6 @@ protected:
     bool fSemaphoreSupport = false;
     bool fAllowCpuSync = true;
     bool fStorageBufferSupport = false;
-    bool fStorageBufferPreferred = false;
     bool fDrawBufferCanBeMapped = true;
     bool fBufferMapsAreAsync = false;
     bool fMSAARenderToSingleSampledSupport = false;

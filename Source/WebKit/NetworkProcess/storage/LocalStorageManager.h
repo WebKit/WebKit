@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class StorageAreaBase;
 class StorageAreaRegistry;
 
 class LocalStorageManager {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LocalStorageManager);
 public:
     static Vector<WebCore::SecurityOriginData> originsOfLocalStorageData(const String& path);
     static String localStorageFilePath(const String& directory, const WebCore::ClientOrigin&);

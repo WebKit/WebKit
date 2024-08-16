@@ -46,6 +46,7 @@
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebGPU {
@@ -123,6 +124,8 @@ bool GPUFrameCapture::captureFirstFrame = false;
 bool GPUFrameCapture::enabled = false;
 int GPUFrameCapture::submitCallsCaptured = 0;
 int GPUFrameCapture::maxSubmitCallsToCapture = 1;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Device);
 
 bool Device::shouldStopCaptureAfterSubmit()
 {
@@ -226,6 +229,14 @@ Device::~Device()
         m_deviceLostCallback(WGPUDeviceLostReason_Destroyed, ""_s);
         m_deviceLostCallback = nullptr;
     }
+}
+
+RefPtr<XRSubImage> Device::getXRViewSubImage(WGPUXREye eye)
+{
+    if (m_xrSubImages.size() < 2)
+        return nullptr;
+
+    return eye == WGPUXREye_Right ? m_xrSubImages[1] : m_xrSubImages[0];
 }
 
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
@@ -902,6 +913,11 @@ WGPUBindGroup wgpuDeviceCreateBindGroup(WGPUDevice device, const WGPUBindGroupDe
 WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGPUBindGroupLayoutDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createBindGroupLayout(*descriptor));
+}
+
+WGPUXRBinding wgpuDeviceCreateXRBinding(WGPUDevice device)
+{
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createXRBinding());
 }
 
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)

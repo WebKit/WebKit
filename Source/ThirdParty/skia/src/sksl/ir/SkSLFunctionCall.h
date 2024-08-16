@@ -32,14 +32,18 @@ class FunctionCall final : public Expression {
 public:
     inline static constexpr Kind kIRNodeKind = Kind::kFunctionCall;
 
-    FunctionCall(Position pos, const Type* type, const FunctionDeclaration* function,
-                 ExpressionArray arguments)
-        : INHERITED(pos, kIRNodeKind, type)
-        , fFunction(*function)
-        , fArguments(std::move(arguments)) {}
+    FunctionCall(Position pos,
+                 const Type* type,
+                 const FunctionDeclaration* function,
+                 ExpressionArray arguments,
+                 const FunctionCall* stablePointer)
+            : INHERITED(pos, kIRNodeKind, type)
+            , fFunction(*function)
+            , fArguments(std::move(arguments))
+            , fStablePointer(stablePointer ? stablePointer : this) {}
 
     // Resolves generic types, performs type conversion on arguments, determines return type, and
-    // reports errors via the ErrorReporter.
+    // chooses a unique stable ID. Reports errors via the ErrorReporter.
     static std::unique_ptr<Expression> Convert(const Context& context,
                                                Position pos,
                                                const FunctionDeclaration& function,
@@ -50,7 +54,7 @@ public:
                                                std::unique_ptr<Expression> functionValue,
                                                ExpressionArray arguments);
 
-    // Creates the function call; reports errors via ASSERT.
+    // Creates a function call with a given stable ID; reports errors via ASSERT.
     static std::unique_ptr<Expression> Make(const Context& context,
                                             Position pos,
                                             const Type* returnType,
@@ -73,6 +77,10 @@ public:
         return fArguments;
     }
 
+    const FunctionCall* stablePointer() const {
+        return fStablePointer;
+    }
+
     std::unique_ptr<Expression> clone(Position pos) const override;
 
     std::string description(OperatorPrecedence) const override;
@@ -80,6 +88,10 @@ public:
 private:
     const FunctionDeclaration& fFunction;
     ExpressionArray fArguments;
+
+    // The stable pointer uniquely identifies this FunctionCall across an entire SkSL program.
+    // This allows us to clone() a FunctionCall but still find that call in a hash-map.
+    const FunctionCall* fStablePointer = nullptr;
 
     using INHERITED = Expression;
 };

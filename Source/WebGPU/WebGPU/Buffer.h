@@ -32,6 +32,7 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
 
@@ -45,7 +46,7 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
 class Buffer : public WGPUBufferImpl, public RefCounted<Buffer>, public CanMakeWeakPtr<Buffer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Buffer);
 public:
     enum class State : uint8_t;
     struct MappingRange {

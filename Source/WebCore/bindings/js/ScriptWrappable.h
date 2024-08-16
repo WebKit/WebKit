@@ -32,14 +32,14 @@
 #pragma once
 
 #include <JavaScriptCore/WeakInlines.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class JSDOMObject;
 
 class ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(ScriptWrappable);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScriptWrappable);
 public:
     inline JSDOMObject* wrapper() const;
     inline void setWrapper(JSDOMObject*, JSC::WeakHandleOwner*, void*);

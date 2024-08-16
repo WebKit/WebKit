@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/NavigationIdentifier.h>
 #include <optional>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -52,7 +53,7 @@ class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
-    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags) const;
+    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags) const;
 
     virtual void applyWebsitePolicies(WebsitePoliciesData&&) = 0;
 
@@ -63,7 +64,7 @@ public:
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
 
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, uint64_t, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
 
     Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

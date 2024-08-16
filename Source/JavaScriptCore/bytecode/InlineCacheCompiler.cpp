@@ -1675,19 +1675,20 @@ MacroAssemblerCodeRef<JITThunkPtrTag> InlineCacheCompiler::generateSlowPathCode(
     return { };
 }
 
-InlineCacheHandler::InlineCacheHandler(Ref<InlineCacheHandler>&& previous, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, unsigned callLinkInfoCount)
+InlineCacheHandler::InlineCacheHandler(Ref<InlineCacheHandler>&& previous, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, unsigned callLinkInfoCount, CacheType cacheType)
     : Base(callLinkInfoCount)
     , m_callTarget(stubRoutine->code().code().template retagged<JITStubRoutinePtrTag>())
     , m_jumpTarget(CodePtr<NoPtrTag> { m_callTarget.retagged<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC }.template retagged<JITStubRoutinePtrTag>())
+    , m_cacheType(cacheType)
+    , m_next(WTFMove(previous))
     , m_stubRoutine(WTFMove(stubRoutine))
     , m_watchpoint(WTFMove(watchpoint))
-    , m_next(WTFMove(previous))
 {
 }
 
 Ref<InlineCacheHandler> InlineCacheHandler::create(Ref<InlineCacheHandler>&& previous, CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, unsigned callLinkInfoCount)
 {
-    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(callLinkInfoCount))) InlineCacheHandler(WTFMove(previous), WTFMove(stubRoutine), WTFMove(watchpoint), callLinkInfoCount));
+    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(callLinkInfoCount))) InlineCacheHandler(WTFMove(previous), WTFMove(stubRoutine), WTFMove(watchpoint), callLinkInfoCount, CacheType::Unset));
     VM& vm = codeBlock->vm();
     for (auto& callLinkInfo : result->span())
         callLinkInfo.initialize(vm, codeBlock, CallLinkInfo::CallType::Call, stubInfo.codeOrigin);
@@ -1695,10 +1696,10 @@ Ref<InlineCacheHandler> InlineCacheHandler::create(Ref<InlineCacheHandler>&& pre
     return result;
 }
 
-Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHandler>&& previous, CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, AccessCase& accessCase)
+Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHandler>&& previous, CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<PolymorphicAccessJITStubRoutine>&& stubRoutine, std::unique_ptr<StructureStubInfoClearingWatchpoint>&& watchpoint, AccessCase& accessCase, CacheType cacheType)
 {
     unsigned callLinkInfoCount = JSC::doesJSCalls(accessCase.m_type) ? 1 : 0;
-    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(callLinkInfoCount))) InlineCacheHandler(WTFMove(previous), WTFMove(stubRoutine), WTFMove(watchpoint), callLinkInfoCount));
+    auto result = adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(callLinkInfoCount))) InlineCacheHandler(WTFMove(previous), WTFMove(stubRoutine), WTFMove(watchpoint), callLinkInfoCount, cacheType));
     VM& vm = codeBlock->vm();
     for (auto& callLinkInfo : result->span())
         callLinkInfo.initialize(vm, codeBlock, CallLinkInfo::CallType::Call, stubInfo.codeOrigin);
@@ -2625,32 +2626,29 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             ready.link(&jit);
         }
 
-        if (!isResizableOrGrowableShared) {
-            CCallHelpers::Address addressOfLength = CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength());
-            jit.signExtend32ToPtr(propertyGPR, scratchGPR);
-#if USE(LARGE_TYPED_ARRAYS)
-            // The length is a UCPURegister, so either 32 or 64 bits depending on the platform.
-            m_failAndRepatch.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, addressOfLength));
-#else
-            m_failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, addressOfLength));
-#endif
-        }
-
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
 
-        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(
-            jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        CCallHelpers::JumpList failAndRepatchAfterRestore;
+        CCallHelpers::JumpList outOfBoundsAfterSave;
         if (isResizableOrGrowableShared) {
             jit.loadTypedArrayLength(baseGPR, scratch2GPR, scratchGPR, scratch2GPR, type);
             jit.signExtend32ToPtr(propertyGPR, scratchGPR);
 #if USE(LARGE_TYPED_ARRAYS)
             // The length is a size_t, so either 32 or 64 bits depending on the platform.
-            failAndRepatchAfterRestore.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, scratch2GPR));
+            outOfBoundsAfterSave.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, scratch2GPR));
 #else
-            failAndRepatchAfterRestore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratch2GPR));
+            outOfBoundsAfterSave.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratch2GPR));
+#endif
+        } else {
+            CCallHelpers::Address addressOfLength = CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength());
+            jit.signExtend32ToPtr(propertyGPR, scratchGPR);
+#if USE(LARGE_TYPED_ARRAYS)
+            // The length is a UCPURegister, so either 32 or 64 bits depending on the platform.
+            outOfBoundsAfterSave.append(jit.branch64(CCallHelpers::AboveOrEqual, scratchGPR, addressOfLength));
+#else
+            outOfBoundsAfterSave.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, addressOfLength));
 #endif
         }
 
@@ -2713,13 +2711,22 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             }
         }
 
-        allocator.restoreReusedRegistersByPopping(jit, preservedState);
-        succeed();
+        switch (m_stubInfo.accessType) {
+        case AccessType::PutByValDirectStrict:
+        case AccessType::PutByValDirectSloppy: {
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            succeed();
 
-        if (isResizableOrGrowableShared) {
-            failAndRepatchAfterRestore.link(&jit);
+            outOfBoundsAfterSave.link(&jit);
             allocator.restoreReusedRegistersByPopping(jit, preservedState);
             m_failAndRepatch.append(jit.jump());
+            break;
+        }
+        default:
+            outOfBoundsAfterSave.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            succeed();
+            break;
         }
         return;
     }
@@ -6739,14 +6746,14 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
             ensureReferenceAndAddWatchpoint(vm, watchpoints, watchpointSet, *set);
     };
 
-    auto finishPreCompiledCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub) {
+    auto finishPreCompiledCodeGeneration = [&](Ref<PolymorphicAccessJITStubRoutine>&& stub, CacheType cacheType = CacheType::Unset) {
         std::unique_ptr<StructureStubInfoClearingWatchpoint> watchpoint;
         if (!stub->watchpoints().isEmpty()) {
             watchpoint = makeUnique<StructureStubInfoClearingWatchpoint>(codeBlock, m_stubInfo);
             stub->watchpointSet().add(watchpoint.get());
         }
 
-        auto handler = InlineCacheHandler::createPreCompiled(InlineCacheCompiler::generateSlowPathHandler(vm, m_stubInfo.accessType), codeBlock, m_stubInfo, WTFMove(stub), WTFMove(watchpoint), accessCase);
+        auto handler = InlineCacheHandler::createPreCompiled(InlineCacheCompiler::generateSlowPathHandler(vm, m_stubInfo.accessType), codeBlock, m_stubInfo, WTFMove(stub), WTFMove(watchpoint), accessCase, cacheType);
         handler->setAccessCase(Ref { accessCase });
         dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", handler->callTarget());
 
@@ -6816,13 +6823,17 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                                 currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
 
                             MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
-                            if (!accessCase.tryGetAlternateBase())
+                            CacheType cacheType = CacheType::Unset;
+                            if (!accessCase.tryGetAlternateBase()) {
+                                cacheType = CacheType::GetByIdSelf;
                                 code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadOwnPropertyHandler).retagged<JITStubRoutinePtrTag>();
-                            else
+                            } else {
+                                cacheType = CacheType::GetByIdPrototype;
                                 code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadPrototypePropertyHandler).retagged<JITStubRoutinePtrTag>();
+                            }
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                            return finishPreCompiledCodeGeneration(WTFMove(stub));
+                            return finishPreCompiledCodeGeneration(WTFMove(stub), cacheType);
                         }
                     }
                     break;
@@ -6936,7 +6947,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                         auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
                         auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                         connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), { }, { });
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub), CacheType::PutByIdReplace);
                     }
                     break;
                 }
@@ -7022,10 +7033,11 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
                     ASSERT(!accessCase.viaGlobalProxy());
                     collectConditions(accessCase, watchedConditions, checkingConditions);
                     if (checkingConditions.isEmpty()) {
-                        auto code = vm.getCTIStub(accessCase.m_type == AccessCase::InHit ? CommonJITThunkID::InByIdHitHandler : CommonJITThunkID::InByIdMissHandler).retagged<JITStubRoutinePtrTag>();
+                        bool isHit = accessCase.m_type == AccessCase::InHit;
+                        auto code = vm.getCTIStub(isHit ? CommonJITThunkID::InByIdHitHandler : CommonJITThunkID::InByIdMissHandler).retagged<JITStubRoutinePtrTag>();
                         auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                         connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
-                        return finishPreCompiledCodeGeneration(WTFMove(stub));
+                        return finishPreCompiledCodeGeneration(WTFMove(stub), isHit ? CacheType::InByIdSelf : CacheType::Unset);
                     }
                     break;
                 }

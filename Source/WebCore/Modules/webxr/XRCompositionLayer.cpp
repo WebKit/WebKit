@@ -28,11 +28,16 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(XRCompositionLayer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRCompositionLayer);
+
+XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionContext)
+    : WebXRLayer(scriptExecutionContext)
+{
+}
 
 XRCompositionLayer::~XRCompositionLayer() = default;
 

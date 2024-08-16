@@ -34,6 +34,7 @@
 #include <WebCore/ResourceError.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -57,7 +58,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class ModelElementController : public CanMakeWeakPtr<ModelElementController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ModelElementController);
 public:
     explicit ModelElementController(WebPageProxy&);
 

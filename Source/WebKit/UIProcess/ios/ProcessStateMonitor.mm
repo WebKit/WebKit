@@ -32,10 +32,13 @@
 #import "NetworkProcessMessages.h"
 #import "ProcessAssertion.h"
 #import "RunningBoardServicesSPI.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 static constexpr double maxPrepareForSuspensionDelayInSecond = 15;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessStateMonitor);
 
 ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler)
     : m_becomeSuspendedHandler(WTFMove(becomeSuspendedHandler))

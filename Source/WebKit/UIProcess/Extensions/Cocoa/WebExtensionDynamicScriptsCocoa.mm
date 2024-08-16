@@ -47,6 +47,7 @@
 #import "_WKFrameHandle.h"
 #import "_WKFrameTreeNode.h"
 #import <wtf/CallbackAggregator.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -102,7 +103,7 @@ SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParamet
 
 class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
     WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InjectionResultHolder);
 
 public:
     template<typename... Args>
@@ -213,6 +214,8 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
 
     return parameters;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionRegisteredScript);
 
 void WebExtensionRegisteredScript::updateParameters(const WebExtensionRegisteredScriptParameters& parameters)
 {

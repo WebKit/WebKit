@@ -1,0 +1,7 @@
+
+PASS Constructing pagereveal event
+PASS Constructing pagereveal event with a custom name
+PASS Constructing pagereveal event with empty dictionary
+PASS Constructing pagereveal event with a null viewTransition
+PASS Constructing pagereveal event with a viewTransition
+

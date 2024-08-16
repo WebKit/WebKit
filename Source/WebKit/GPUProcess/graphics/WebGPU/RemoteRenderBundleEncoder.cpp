@@ -29,26 +29,20 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteRenderBundle.h"
 #include "RemoteRenderBundleEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPURenderBundle.h>
 #include <WebCore/WebGPURenderBundleEncoder.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderBundleEncoder);
 
 RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
@@ -62,6 +56,14 @@ RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& 
 }
 
 RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
+
+RefPtr<IPC::Connection> RemoteRenderBundleEncoder::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteRenderBundleEncoder::destruct()
 {

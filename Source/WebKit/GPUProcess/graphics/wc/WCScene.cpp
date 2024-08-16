@@ -41,11 +41,14 @@
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WCScene);
+
 struct WCScene::Layer final : public WCContentBuffer::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WCScene::Layer);
 public:
     Layer() = default;
     ~Layer()

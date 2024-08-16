@@ -5,4 +5,9 @@ PASS testing calc(calc(2) * calc(50px)
 PASS testing calc(calc(150px*2/3)
 PASS testing calc(calc(2 * calc(calc(3)) + 4) * 10px)
 PASS testing calc(50px + calc(40%))
+FAIL testing calc(calc(300px - 1 * (0% + 100px))) assert_equals: expected "calc(0% + 200px)" but got "calc(300px - (0% + 100px))"
+FAIL testing calc(calc(300px - (0% + 100px) * 1)) assert_equals: expected "calc(0% + 200px)" but got "calc(300px - (0% + 100px))"
+FAIL testing calc(calc(300px - (0% + 100px) * -1)) assert_equals: expected "calc(0% + 400px)" but got "calc(300px - (0% + 100px))"
+FAIL testing calc(calc(300px - -1 * (0% + 100px))) assert_equals: expected "calc(0% + 400px)" but got "calc(300px - (0% + 100px))"
+FAIL testing calc(calc(300px - 1 * (0% - 100px))) assert_equals: expected "calc(0% + 400px)" but got "calc(300px - (0% + 100px))"
 

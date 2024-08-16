@@ -303,6 +303,7 @@ inline void RenderStyle::setTextEmphasisMark(TextEmphasisMark mark) { SET(m_rare
 inline void RenderStyle::setTextEmphasisPosition(OptionSet<TextEmphasisPosition> position) { SET(m_rareInheritedData, textEmphasisPosition, static_cast<unsigned>(position.toRaw())); }
 inline void RenderStyle::setTextFillColor(const StyleColor& color) { SET(m_rareInheritedData, textFillColor, color); }
 inline void RenderStyle::setHasExplicitlySetColor(bool value) { m_inheritedFlags.hasExplicitlySetColor = value; }
+inline void RenderStyle::setTableLayout(TableLayoutType value) { SET_NESTED(m_nonInheritedData, miscData, tableLayout, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextGroupAlign(TextGroupAlign value) { SET_NESTED(m_nonInheritedData, rareData, textGroupAlign, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextIndent(Length&& length) { SET(m_rareInheritedData, indent, WTFMove(length)); }
 inline void RenderStyle::setTextIndentLine(TextIndentLine value) { SET(m_rareInheritedData, textIndentLine, static_cast<unsigned>(value)); }
@@ -330,6 +331,7 @@ inline void RenderStyle::setUsedZIndex(int index) { SET_NESTED_PAIR(m_nonInherit
 inline void RenderStyle::setUserDrag(UserDrag value) { SET_NESTED(m_nonInheritedData, miscData, userDrag, static_cast<unsigned>(value)); }
 inline void RenderStyle::setUserModify(UserModify value) { SET(m_rareInheritedData, userModify, static_cast<unsigned>(value)); }
 inline void RenderStyle::setUserSelect(UserSelect value) { SET(m_rareInheritedData, userSelect, static_cast<unsigned>(value)); }
+inline void RenderStyle::setViewTransitionClasses(const Vector<Style::ScopedName>& value) { SET_NESTED(m_nonInheritedData, rareData, viewTransitionClasses, value); }
 inline void RenderStyle::setViewTransitionName(std::optional<Style::ScopedName> value) { SET_NESTED(m_nonInheritedData, rareData, viewTransitionName, value); }
 inline void RenderStyle::setVisitedLinkBackgroundColor(const StyleColor& value) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, visitedLinkColor, background, value); }
 inline void RenderStyle::setVisitedLinkBorderBottomColor(const StyleColor& value) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, visitedLinkColor, borderBottom, value); }

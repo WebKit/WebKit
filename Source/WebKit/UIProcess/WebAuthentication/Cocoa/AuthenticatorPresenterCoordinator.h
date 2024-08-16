@@ -34,6 +34,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS ASCAppleIDCredential;
@@ -58,7 +59,7 @@ namespace WebKit {
 class AuthenticatorManager;
 
 class AuthenticatorPresenterCoordinator : public CanMakeWeakPtr<AuthenticatorPresenterCoordinator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AuthenticatorPresenterCoordinator);
     WTF_MAKE_NONCOPYABLE(AuthenticatorPresenterCoordinator);
 public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;

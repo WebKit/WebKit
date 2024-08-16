@@ -31,11 +31,11 @@
 #include "SVGInlineFlowBox.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGInline);
     
 RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(type, element, WTFMove(style))
@@ -132,7 +132,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         return;
 
     FloatRect textBoundingBox = textAncestor->strokeBoundingBox();
-    for (auto* box = firstLineBox(); box; box = box->nextLineBox())
+    for (auto* box = firstLegacyInlineBox(); box; box = box->nextLineBox())
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), UseTransforms, wasFixed));
 }
 

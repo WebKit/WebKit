@@ -47,6 +47,8 @@ static NSMapTable<WKDownload *, _WKDownload *> *downloadWrapperMap()
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
+// FIXME: Remove when rdar://133558571, rdar://133558520, rdar://133498655, rdar://133498564, rdar://133498491, rdar://133495572, and rdar://125569813 are complete.
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation _WKDownload
 IGNORE_WARNINGS_END

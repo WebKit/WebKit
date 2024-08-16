@@ -86,6 +86,7 @@
     NSInteger _numberOfValidItemsForDrop;
 }
 @property (nonatomic) NSPoint lastMousePosition;
+@property (nonatomic, readonly) id localContext;
 @end
 
 @implementation DragInfo
@@ -204,6 +205,11 @@ IGNORE_WARNINGS_END
 
 - (void)resetSpringLoading
 {
+}
+
+- (id)localContext
+{
+    return nil;
 }
 
 @end

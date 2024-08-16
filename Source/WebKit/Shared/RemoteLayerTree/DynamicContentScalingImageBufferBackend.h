@@ -30,12 +30,12 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferCGBackend.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class DynamicContentScalingImageBufferBackend : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_ISO_ALLOCATED(DynamicContentScalingImageBufferBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DynamicContentScalingImageBufferBackend);
     WTF_MAKE_NONCOPYABLE(DynamicContentScalingImageBufferBackend);
 public:
     static size_t calculateMemoryCost(const Parameters&);

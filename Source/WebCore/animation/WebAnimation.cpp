@@ -56,14 +56,14 @@
 #include "StyledElement.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebAnimation);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebAnimation);
 
 HashSet<WebAnimation*>& WebAnimation::instances()
 {

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class ContentVisibilityAutoStateChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(ContentVisibilityAutoStateChangeEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContentVisibilityAutoStateChangeEvent);
 public:
     struct Init : EventInit {
         bool skipped = false;

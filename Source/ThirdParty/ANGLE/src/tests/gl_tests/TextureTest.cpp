@@ -12326,6 +12326,141 @@ TEST_P(Texture2DTestES3Foveation, DrawWithMsaaFramebuffer)
     EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::green);
 }
 
+// QCOM framebuffer foveated rendering with multiple attachments
+TEST_P(Texture2DTestES3Foveation, DrawWithMultipleAttachments)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_framebuffer_foveated"));
+
+    const GLsizei kSizeW = getWindowWidth();
+    const GLsizei kSizeH = getWindowHeight();
+
+    // Setup sampling texture
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+
+    std::vector<GLColor> data(kSizeW * kSizeH);
+    // Generate red / blue checkered pattern
+    for (int i = 0; i < kSizeH; i++)
+    {
+        for (int j = 0; j < kSizeW; j++)
+        {
+            data[(i * kSizeW) + j] = ((i + j) % 2 == 0) ? GLColor::red : GLColor::blue;
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSizeW, kSizeH, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 data.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw without foveation
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glUseProgram(mProgram);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Record original data
+    std::vector<GLColor> originalData(kSizeW * kSizeH, {0, 0, 0, 0});
+    glReadPixels(0, 0, kSizeW, kSizeH, GL_RGBA, GL_UNSIGNED_BYTE, originalData.data());
+
+    // Switch to foveated framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+
+    // Setup mutliple color attachments
+    std::array<GLTexture, 3> colorAttachments;
+    GLenum attachmentBase  = GL_COLOR_ATTACHMENT0;
+    GLuint attachmentIndex = 0;
+    for (GLTexture &attachment : colorAttachments)
+    {
+        glBindTexture(GL_TEXTURE_2D, attachment);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSizeW, kSizeH, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        EXPECT_GL_NO_ERROR();
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentBase + attachmentIndex, GL_TEXTURE_2D,
+                               attachment, 0);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        attachmentIndex++;
+    }
+
+    // Setup foveation parameters, just need 1 focal point
+    GLuint providedFeatures = 0;
+    glFramebufferFoveationConfigQCOM(mFramebuffer, 1, 1, GL_FOVEATION_ENABLE_BIT_QCOM,
+                                     &providedFeatures);
+    ASSERT_NE(providedFeatures & GL_FOVEATION_ENABLE_BIT_QCOM, 0u);
+
+    glFramebufferFoveationParametersQCOM(mFramebuffer, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+in vec2 texcoord;
+uniform sampler2D tex;
+
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
+layout(location = 2) out vec4 color2;
+
+void main()
+{
+    vec4 fragColor = texture(tex, texcoord);
+    color0 = fragColor;
+    color1 = fragColor;
+    color2 = fragColor;
+})";
+
+    ANGLE_GL_PROGRAM(program, getVertexShaderSource(), kFS);
+    glUseProgram(program);
+
+    std::array<GLenum, 3> drawBuffers = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                                         GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, drawBuffers.data());
+
+    // Draw with foveation into multiple attachments
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    drawQuad(program, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify
+    GLFramebuffer readFBO;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO);
+
+    // Use colorAttachments[0]'s content as reference data
+    std::vector<GLColor> referenceData(kSizeW * kSizeH, {0, 0, 0, 0});
+    std::vector<GLColor> result(kSizeW * kSizeH, {0, 0, 0, 0});
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                           colorAttachments[0], 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+    glReadPixels(0, 0, kSizeW, kSizeH, GL_RGBA, GL_UNSIGNED_BYTE, referenceData.data());
+
+    // Foveated rendering should produce content that differs from original data
+    ASSERT(originalData != referenceData);
+
+    // Verify rest of the attachments
+    for (size_t index = 1; index < colorAttachments.size(); index++)
+    {
+        glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               colorAttachments[index], 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+
+        result.assign(result.size(), {0, 0, 0, 0});
+        glReadPixels(0, 0, kSizeW, kSizeH, GL_RGBA, GL_UNSIGNED_BYTE, result.data());
+
+        ASSERT(referenceData == result);
+    }
+}
+
 // QCOM texture foveated rendering, basic draw
 TEST_P(Texture2DTestES3Foveation, FoveatedTextureDraw)
 {

@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 #include "EXTBlendMinMax.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EXTBlendMinMax);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTBlendMinMax);
 
 EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTBlendMinMax)

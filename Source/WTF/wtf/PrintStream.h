@@ -142,6 +142,28 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawHex);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawPointer);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
+template<typename... Values>
+class ConditionalDump {
+public:
+    explicit ConditionalDump(bool shouldPrint, const Values&... values)
+        : m_shouldPrint(shouldPrint)
+        , m_values(values...)
+    { }
+
+    void dump(PrintStream& out) const
+    {
+        if (!m_shouldPrint)
+            return;
+        std::apply([&] (const auto&... values) {
+            out.print(values...);
+        }, m_values);
+    }
+
+private:
+    bool m_shouldPrint;
+    std::tuple<const Values&...> m_values;
+};
+
 template<typename Enum>
 requires (std::is_enum_v<std::decay_t<Enum>>)
 void printInternal(PrintStream& out, Enum e)
@@ -410,6 +432,7 @@ void printInternal(PrintStream& out, const std::optional<T>& value)
 } // namespace WTF
 
 using WTF::boolForPrinting;
+using WTF::ConditionalDump;
 using WTF::ScopedEnumDump;
 using WTF::EnumDumpWithDefault;
 using WTF::CharacterDump;

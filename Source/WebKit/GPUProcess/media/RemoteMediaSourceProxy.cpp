@@ -36,10 +36,13 @@
 #include <WebCore/ContentType.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SourceBufferPrivate.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSourceProxy);
 
 RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, bool webMParserEnabled, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
     : m_connectionToWebProcess(connectionToWebProcess)

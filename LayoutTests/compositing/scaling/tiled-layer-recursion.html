@@ -11,13 +11,17 @@
     }
   </style>
   <script>
-    if (window.testRunner)
-      testRunner.dumpAsText(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
 
-    function scalePage()
+    async function scalePage()
     {
-      if (window.internals)
-        window.internals.setPageScaleFactor(1.50025, 0, 0);
+      if (window.testRunner) {
+        await window.testRunner.setPageScaleFactor(1.50025, 0, 0);
+        window.testRunner.notifyDone();
+      }
     }
   
     window.addEventListener('load', scalePage, false);

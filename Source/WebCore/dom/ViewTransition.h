@@ -151,8 +151,8 @@ public:
 class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition>, public ActiveDOMObject {
 public:
     static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
-    static Ref<ViewTransition> createInbound(Document&, std::unique_ptr<ViewTransitionParams>);
-    static Ref<ViewTransition> createOutbound(Document&);
+    static RefPtr<ViewTransition> resolveInboundCrossDocumentViewTransition(Document&, std::unique_ptr<ViewTransitionParams>);
+    static Ref<ViewTransition> setupCrossDocumentViewTransition(Document&);
     ~ViewTransition();
 
     // ActiveDOMObject.
@@ -165,7 +165,7 @@ public:
     void setupViewTransition();
     void handleTransitionFrame();
 
-    void startInbound();
+    void activateViewTransition();
 
     UniqueRef<ViewTransitionParams> takeViewTransitionParams();
 
@@ -182,18 +182,17 @@ public:
     bool documentElementIsCaptured() const;
 
     const ViewTransitionTypeSet& types() const { return m_types; }
-    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = newTypes; }
+    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = WTFMove(newTypes); }
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
-    ViewTransition(Document&);
+    ViewTransition(Document&, Vector<AtomString>&&);
 
     Ref<MutableStyleProperties> copyElementBaseProperties(RenderLayerModelObject&, LayoutSize&);
 
     // Setup view transition sub-algorithms.
-    void activateViewTransition();
     ExceptionOr<void> captureOldState();
     ExceptionOr<void> captureNewState();
     void setupTransitionPseudoElements();

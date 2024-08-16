@@ -36,7 +36,6 @@ class AndroidFlavor(default.DefaultFlavor):
         lotties_dir    = android_data_dir + 'lotties',
         skp_dir        = android_data_dir + 'skps',
         svg_dir        = android_data_dir + 'svgs',
-        mskp_dir       = android_data_dir + 'mskp',
         tmp_dir        = android_data_dir,
         texttraces_dir = android_data_dir + 'text_blob_traces')
 
@@ -44,7 +43,8 @@ class AndroidFlavor(default.DefaultFlavor):
     # on the list, we fail the task to avoid perf inconsistencies.
     self.cant_root = ['GalaxyS7_G930FD', 'GalaxyS9',
                       'GalaxyS20', 'MotoG4', 'NVIDIA_Shield',
-                      'P30', 'Pixel4','Pixel4XL', 'Pixel5', 'TecnoSpark3Pro', 'JioNext']
+                      'P30', 'Pixel4','Pixel4XL', 'Pixel5', 'TecnoSpark3Pro', 'JioNext',
+                      'GalaxyS24']
 
     # Maps device type -> CPU ids that should be scaled for nanobench.
     # Many devices have two (or more) different CPUs (e.g. big.LITTLE
@@ -184,7 +184,7 @@ class AndroidFlavor(default.DefaultFlavor):
     for i in self.cpus_to_scale.get(device, [0]):
       if device in ['Pixel6', 'Pixel7']:
         self._set_governor(i, 'powersave')
-      else:
+      elif device not in self.cant_root:
         self._set_governor(i, 'userspace')
         self._scale_cpu(i, 0.6)
 

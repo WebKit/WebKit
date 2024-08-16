@@ -35,12 +35,15 @@
 #include "RemoteAudioSessionProxyManager.h"
 #include "RemoteAudioSessionProxyMessages.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection()))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxy);
 
 UniqueRef<RemoteAudioSessionProxy> RemoteAudioSessionProxy::create(GPUConnectionToWebProcess& gpuConnection)
 {

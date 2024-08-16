@@ -34,7 +34,7 @@ namespace WebCore {
 class TimeRanges;
 
 class BufferedChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(BufferedChangeEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BufferedChangeEvent);
 public:
     ~BufferedChangeEvent();
 

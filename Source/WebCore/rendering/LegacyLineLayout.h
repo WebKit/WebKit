@@ -57,8 +57,7 @@ public:
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
-    LegacyRootInlineBox* firstRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLineBox()); }
-    LegacyRootInlineBox* lastRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.lastLineBox()); }
+    LegacyRootInlineBox* legacyRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLegacyLineBox()); }
 
     void layoutLineBoxes();
 

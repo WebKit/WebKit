@@ -64,6 +64,7 @@
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GeometryUtilities.h>
@@ -74,6 +75,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ImmediateActionStage.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -92,6 +94,7 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Algorithms.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
@@ -134,6 +137,8 @@ static constexpr double zoomIncrement = 1.18920;
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UnifiedPDFPlugin);
 
 Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(HTMLPlugInElement& pluginElement)
 {
@@ -1583,6 +1588,11 @@ bool UnifiedPDFPlugin::requestStopKeyboardScrollAnimation(bool immediate)
     return scrollingCoordinator.requestStopKeyboardScrollAnimation(*this, immediate);
 }
 
+WebCore::OverscrollBehavior UnifiedPDFPlugin::overscrollBehavior() const
+{
+    return isInDiscreteDisplayMode() ? WebCore::OverscrollBehavior::None : WebCore::OverscrollBehavior::Auto;
+}
+
 bool UnifiedPDFPlugin::isInDiscreteDisplayMode() const
 {
     return m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::SinglePageDiscrete || m_documentLayout.displayMode() == PDFDocumentLayout::DisplayMode::TwoUpDiscrete;
@@ -1798,7 +1808,9 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     auto mouseEventType = event.type();
     // Context menu events always call handleContextMenuEvent as well.
     if (mouseEventType == WebEventType::MouseDown && isContextMenuEvent(event)) {
-        beginTrackingSelection(pageIndex, pointInPageSpace, event);
+        bool contextMenuEventIsInsideDocumentBounds = m_presentationController->pageIndexForDocumentPoint(pointInDocumentSpace).has_value();
+        if (contextMenuEventIsInsideDocumentBounds)
+            beginTrackingSelection(pageIndex, pointInPageSpace, event);
         return true;
     }
 
@@ -1876,12 +1888,19 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 RetainPtr annotationUnderMouse = annotationForRootViewPoint(event.position());
                 finishTrackingAnnotation(annotationUnderMouse.get(), mouseEventType, mouseEventButton);
 
-                if (annotationIsLinkWithDestination(trackedAnnotation.get()))
+                bool shouldFollowLinkAnnotation = [frame = m_frame] {
+                    if (!frame || !frame->coreLocalFrame())
+                        return true;
+                    auto immediateActionStage = frame->protectedCoreLocalFrame()->checkedEventHandler()->immediateActionStage();
+                    return !immediateActionBeganOrWasCompleted(immediateActionStage);
+                }();
+
+                if (shouldFollowLinkAnnotation && annotationIsLinkWithDestination(trackedAnnotation.get()))
                     followLinkAnnotation(trackedAnnotation.get());
 
 #if PLATFORM(MAC)
                 if (RetainPtr pdfAction = [trackedAnnotation action])
-                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex);
+                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex, shouldFollowLinkAnnotation ? ShouldPerformGoToAction::Yes : ShouldPerformGoToAction::No);
 #endif
             }
 
@@ -3103,6 +3122,28 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(PDFSelection *
     return TextIndicator::create(data);
 }
 
+WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (!selection.string.length)
+        return dictionaryPopupInfo;
+
+    NSAttributedString *nsAttributedString = [selection] {
+        static constexpr unsigned maximumSelectionLength = 250;
+        if (selection.string.length > maximumSelectionLength)
+            return [selection.attributedString attributedSubstringFromRange:NSMakeRange(0, maximumSelectionLength)];
+        return selection.attributedString;
+    }();
+
+    dictionaryPopupInfo.origin = rectForSelectionInRootView(selection).location();
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(nsAttributedString);
+
+    if (auto textIndicator = textIndicatorForSelection(selection, { }, presentationTransition))
+        dictionaryPopupInfo.textIndicator = textIndicator->data();
+
+    return dictionaryPopupInfo;
+}
+
 bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootViewPoint)
 {
     auto pluginPoint = convertFromRootViewToPlugin(roundedIntPoint(rootViewPoint));
@@ -3115,15 +3156,6 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootV
     auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
     RetainPtr lookupSelection = [page selectionForWordAtPoint:pagePoint];
     return showDefinitionForSelection(lookupSelection.get());
-}
-
-WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition transition)
-{
-    DictionaryPopupInfo dictionaryPopupInfo = PDFPluginBase::dictionaryPopupInfoForSelection(selection, transition);
-    if (auto textIndicator = textIndicatorForSelection(selection, { }, transition))
-        dictionaryPopupInfo.textIndicator = textIndicator->data();
-
-    return dictionaryPopupInfo;
 }
 
 bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
@@ -3399,7 +3431,7 @@ void UnifiedPDFPlugin::revealAnnotation(PDFAnnotation *annotation)
 }
 
 #if PLATFORM(MAC)
-void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, PDFDocumentLayout::PageIndex currentPageIndex)
+void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, PDFDocumentLayout::PageIndex currentPageIndex, ShouldPerformGoToAction shouldPerformGoToAction)
 {
     if (!annotation)
         return;
@@ -3410,7 +3442,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
         return;
 
     using PDFActionList = Vector<RetainPtr<PDFAction>>;
-    auto performPDFAction = [this, currentPageIndex, annotation](PDFAction *action) {
+    auto performPDFAction = [this, currentPageIndex, annotation, shouldPerformGoToAction](PDFAction *action) {
         if (!action)
             return;
 
@@ -3448,7 +3480,7 @@ void UnifiedPDFPlugin::handlePDFActionForAnnotation(PDFAnnotation *annotation, P
                 LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: unhandled action " << actionName);
                 break;
             }
-        } else if ([actionType isEqualToString:@"GoTo"])
+        } else if ([actionType isEqualToString:@"GoTo"] && shouldPerformGoToAction == ShouldPerformGoToAction::Yes)
             revealPDFDestination([annotation destination]);
     };
 

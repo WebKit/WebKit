@@ -27,6 +27,7 @@
 #include "StyleImage.h"
 #include "StyleReflection.h"
 #include "StyleResolver.h"
+#include "StyleTextEdge.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/TextStream.h>
@@ -67,6 +68,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , translate(RenderStyle::initialTranslate())
     , offsetPath(RenderStyle::initialOffsetPath())
     // containerNames
+    , viewTransitionClasses(RenderStyle::initialViewTransitionClasses())
     // viewTransitionName
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
@@ -94,6 +96,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , pseudoElementNameArgument(nullAtom())
     , anchorNames(RenderStyle::initialAnchorNames())
     , positionAnchor(RenderStyle::initialPositionAnchor())
+    , textBoxEdge(RenderStyle::initialTextBoxEdge())
     , blockStepSize(RenderStyle::initialBlockStepSize())
     , blockStepInsert(static_cast<unsigned>(RenderStyle::initialBlockStepInsert()))
     , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
@@ -159,6 +162,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , translate(o.translate)
     , offsetPath(o.offsetPath)
     , containerNames(o.containerNames)
+    , viewTransitionClasses(o.viewTransitionClasses)
     , viewTransitionName(o.viewTransitionName)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
@@ -186,6 +190,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , pseudoElementNameArgument(o.pseudoElementNameArgument)
     , anchorNames(o.anchorNames)
     , positionAnchor(o.positionAnchor)
+    , textBoxEdge(o.textBoxEdge)
     , blockStepSize(o.blockStepSize)
     , blockStepInsert(o.blockStepInsert)
     , overscrollBehaviorX(o.overscrollBehaviorX)
@@ -310,7 +315,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && containIntrinsicHeightType == o.containIntrinsicHeightType
         && containerType == o.containerType
         && textBoxTrim == o.textBoxTrim
+        && textBoxEdge == o.textBoxEdge
         && overflowAnchor == o.overflowAnchor
+        && viewTransitionClasses == o.viewTransitionClasses
         && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip
         && fieldSizing == o.fieldSizing;

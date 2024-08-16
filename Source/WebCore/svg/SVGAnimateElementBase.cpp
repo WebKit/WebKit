@@ -28,11 +28,11 @@
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimateElementBase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGAnimateElementBase);
 
 SVGAnimateElementBase::SVGAnimateElementBase(const QualifiedName& tagName, Document& document)
     : SVGAnimationElement(tagName, document)

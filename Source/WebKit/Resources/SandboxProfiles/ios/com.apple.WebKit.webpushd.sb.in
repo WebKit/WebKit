@@ -1,4 +1,4 @@
-; Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+; Copyright (C) 2021-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@
         "hw.ncpu"
         "hw.pagesize_compat"
         "kern.bootargs"
+        "kern.boottime"
         "kern.hostname"
         "kern.maxfilesperproc"
         "kern.osproductversion"
@@ -185,6 +186,17 @@
 ;; Web Clip metadata.
 (allow file-read*
     (home-subpath "/Library/WebClips"))
+
+;; Web Clip notifications.
+(define (notifyd-message-numbers) (message-number 1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))
+(define (allow-notifyd)
+    (allow ipc-posix-shm-read* (ipc-posix-name "apple.shm.notification_center"))
+    (allow mach-lookup (global-name "com.apple.system.notification_center")
+        (apply-message-filter
+            (deny mach-message-send)
+            (deny mach-message-send (with no-report) (message-number 1023))
+            (allow mach-message-send (notifyd-message-numbers)))))
+(allow-notifyd)
 
 ;; Support for looking up host apps from extensions.
 (allow mach-lookup

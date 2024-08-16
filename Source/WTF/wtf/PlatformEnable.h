@@ -99,6 +99,10 @@
 
 /* Do not use PLATFORM() tests in this section ! */
 
+#if !defined(ENABLE_CONJECTURE_ASSERT)
+#define ENABLE_CONJECTURE_ASSERT 0
+#endif
+
 #if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL)
 #define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 0
 #endif
@@ -553,7 +557,7 @@
 #endif
 
 #if !defined(ENABLE_WEBXR_LAYERS)
-#define ENABLE_WEBXR_LAYERS 0
+#define ENABLE_WEBXR_LAYERS (PLATFORM(COCOA) && ENABLE_WEBXR)
 #endif
 
 #if !defined(ENABLE_WHEEL_EVENT_LATCHING)

@@ -1027,7 +1027,6 @@ void ComputePipelineCacheVkChunkKey(VkPhysicalDeviceProperties physicalDevicePro
 
 void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDeviceProperties,
                                      vk::GlobalOps *globalOps,
-                                     ContextVk *contextVk,
                                      const std::vector<uint8_t> &cacheData,
                                      const size_t maxTotalSize)
 {
@@ -1036,9 +1035,14 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
     // handle big pipeline cache when android will reject it finally.
     if (cacheData.size() >= maxTotalSize)
     {
-        // TODO: handle the big pipeline cache. http://anglebug.com/42263322
-        ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
-                           "Skip syncing pipeline cache data when it's larger than maxTotalSize.");
+        static bool warned = false;
+        if (!warned)
+        {
+            // TODO: handle the big pipeline cache. http://anglebug.com/42263322
+            WARN() << "Skip syncing pipeline cache data when it's larger than maxTotalSize. "
+                      "(this message will no longer repeat)";
+            warned = true;
+        }
         return;
     }
 
@@ -1047,8 +1051,7 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
 
     if (!angle::CompressBlob(cacheData.size(), cacheData.data(), &compressedData))
     {
-        ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
-                           "Skip syncing pipeline cache data as it failed compression.");
+        WARN() << "Skip syncing pipeline cache data as it failed compression.";
         return;
     }
 
@@ -1067,7 +1070,7 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
     uint32_t compressedDataCRC = 0;
     if (kEnableCRCForPipelineCache)
     {
-        compressedDataCRC = angle::GenerateCrc(compressedData.data(), compressedData.size());
+        compressedDataCRC = angle::GenerateCRC32(compressedData.data(), compressedData.size());
     }
 
     for (size_t chunkIndex = 0; chunkIndex < numChunks; ++chunkIndex)
@@ -1080,8 +1083,7 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
         angle::MemoryBuffer keyData;
         if (!keyData.resize(sizeof(CacheDataHeader) + chunkSize))
         {
-            ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
-                               "Skip syncing pipeline cache data due to out of memory.");
+            WARN() << "Skip syncing pipeline cache data due to out of memory.";
             return;
         }
 
@@ -1108,11 +1110,11 @@ class CompressAndStorePipelineCacheTask : public angle::Closure
 {
   public:
     CompressAndStorePipelineCacheTask(vk::GlobalOps *globalOps,
-                                      ContextVk *contextVk,
+                                      vk::Renderer *renderer,
                                       std::vector<uint8_t> &&cacheData,
                                       size_t kMaxTotalSize)
         : mGlobalOps(globalOps),
-          mContextVk(contextVk),
+          mRenderer(renderer),
           mCacheData(std::move(cacheData)),
           mMaxTotalSize(kMaxTotalSize)
     {}
@@ -1120,13 +1122,13 @@ class CompressAndStorePipelineCacheTask : public angle::Closure
     void operator()() override
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "CompressAndStorePipelineCacheVk");
-        CompressAndStorePipelineCacheVk(mContextVk->getRenderer()->getPhysicalDeviceProperties(),
-                                        mGlobalOps, mContextVk, mCacheData, mMaxTotalSize);
+        CompressAndStorePipelineCacheVk(mRenderer->getPhysicalDeviceProperties(), mGlobalOps,
+                                        mCacheData, mMaxTotalSize);
     }
 
   private:
     vk::GlobalOps *mGlobalOps;
-    ContextVk *mContextVk;
+    vk::Renderer *mRenderer;
     std::vector<uint8_t> mCacheData;
     size_t mMaxTotalSize;
 };
@@ -1245,7 +1247,7 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
     if (kEnableCRCForPipelineCache)
     {
         uint32_t computedCompressedDataCRC =
-            angle::GenerateCrc(compressedData.data(), compressedSize);
+            angle::GenerateCRC32(compressedData.data(), compressedSize);
         if (computedCompressedDataCRC != compressedDataCRC)
         {
             if (compressedDataCRC == 0)
@@ -1945,14 +1947,14 @@ angle::Result Renderer::initialize(vk::Context *context,
     const VkBool32 setting_check_shaders = IsAndroid() ? VK_FALSE : VK_TRUE;
     // http://b/316013423 Disable QueueSubmit Synchronization Validation. Lots of failures and some
     // test timeout due to https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7285
-    const VkBool32 setting_sync_queue_submit = VK_FALSE;
-    const VkLayerSettingEXT layerSettings[]  = {
+    const VkBool32 setting_syncval_submit_time_validation = VK_FALSE;
+    const VkLayerSettingEXT layerSettings[]               = {
         {name, "validate_core", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_core},
         {name, "validate_sync", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_sync},
         {name, "thread_safety", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_thread_safety},
         {name, "check_shaders", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_check_shaders},
-        {name, "sync_queue_submit", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1,
-          &setting_sync_queue_submit},
+        {name, "syncval_submit_time_validation", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1,
+                       &setting_syncval_submit_time_validation},
     };
     VkLayerSettingsCreateInfoEXT layerSettingsCreateInfo = {
         VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT, nullptr,
@@ -3700,8 +3702,9 @@ angle::Result Renderer::createDeviceAndQueue(vk::Context *context, uint32_t queu
     mDefaultUniformBufferSize = std::min(
         mDefaultUniformBufferSize, getPhysicalDeviceProperties().limits.maxUniformBufferRange);
 
-    // Initialize the vulkan pipeline cache.
-    ANGLE_TRY(ensurePipelineCacheInitialized(context));
+    // Vulkan pipeline cache will be initialized lazily in ensurePipelineCacheInitialized() method.
+    ASSERT(!mPipelineCacheInitialized);
+    ASSERT(!mPipelineCache.valid());
 
     // Track the set of supported pipeline stages.  This is used when issuing image layout
     // transitions that cover many stages (such as AllGraphicsReadOnly) to mask out unsupported
@@ -5441,6 +5444,11 @@ angle::Result Renderer::syncPipelineCacheVk(vk::Context *context,
                                             vk::GlobalOps *globalOps,
                                             const gl::Context *contextGL)
 {
+    // Skip syncing until pipeline cache is initialized.
+    if (!mPipelineCacheInitialized)
+    {
+        return angle::Result::Continue;
+    }
     ASSERT(mPipelineCache.valid());
 
     if (!mFeatures.syncMonolithicPipelinesToBlobCache.enabled)
@@ -5454,6 +5462,17 @@ angle::Result Renderer::syncPipelineCacheVk(vk::Context *context,
     }
 
     mPipelineCacheVkUpdateTimeout = kPipelineCacheVkUpdatePeriod;
+
+    ContextVk *contextVk = vk::GetImpl(contextGL);
+
+    // Use worker thread pool to complete compression.
+    // If the last task hasn't been finished, skip the syncing.
+    if (mCompressEvent && !mCompressEvent->isReady())
+    {
+        ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
+                           "Skip syncing pipeline cache data when the last task is not ready.");
+        return angle::Result::Continue;
+    }
 
     size_t pipelineCacheSize = 0;
     ANGLE_TRY(getPipelineCacheSize(context, &pipelineCacheSize));
@@ -5469,17 +5488,6 @@ angle::Result Renderer::syncPipelineCacheVk(vk::Context *context,
     if (pipelineCacheSize < kPipelineCacheHeaderSize)
     {
         // No pipeline cache data to read, so return
-        return angle::Result::Continue;
-    }
-
-    ContextVk *contextVk = vk::GetImpl(contextGL);
-
-    // Use worker thread pool to complete compression.
-    // If the last task hasn't been finished, skip the syncing.
-    if (mCompressEvent && !mCompressEvent->isReady())
-    {
-        ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
-                           "Skip syncing pipeline cache data when the last task is not ready.");
         return angle::Result::Continue;
     }
 
@@ -5525,15 +5533,15 @@ angle::Result Renderer::syncPipelineCacheVk(vk::Context *context,
         // Create task to compress.
         mCompressEvent = contextGL->getWorkerThreadPool()->postWorkerTask(
             std::make_shared<CompressAndStorePipelineCacheTask>(
-                globalOps, contextVk, std::move(pipelineCacheData), kMaxTotalSize));
+                globalOps, this, std::move(pipelineCacheData), kMaxTotalSize));
     }
     else
     {
         // If enableAsyncPipelineCacheCompression is disabled, to avoid the risk, set kMaxTotalSize
         // to 64k.
         constexpr size_t kMaxTotalSize = 64 * 1024;
-        CompressAndStorePipelineCacheVk(mPhysicalDeviceProperties, globalOps, contextVk,
-                                        pipelineCacheData, kMaxTotalSize);
+        CompressAndStorePipelineCacheVk(mPhysicalDeviceProperties, globalOps, pipelineCacheData,
+                                        kMaxTotalSize);
     }
 
     return angle::Result::Continue;

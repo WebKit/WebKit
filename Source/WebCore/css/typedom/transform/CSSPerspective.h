@@ -36,7 +36,7 @@ class CSSKeywordValue;
 using CSSPerspectiveValue = std::variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 
 class CSSPerspective : public CSSTransformComponent {
-    WTF_MAKE_ISO_ALLOCATED(CSSPerspective);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPerspective);
 public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
     static ExceptionOr<Ref<CSSPerspective>> create(CSSFunctionValue&);

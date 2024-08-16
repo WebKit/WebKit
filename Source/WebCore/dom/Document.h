@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -56,7 +56,6 @@
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/ObjectIdentifier.h>
@@ -64,6 +63,7 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TriState.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashCountedSet.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
@@ -145,6 +145,7 @@ class Frame;
 class GPUCanvasContext;
 class GraphicsClient;
 class HTMLAllCollection;
+class HTMLAnchorElement;
 class HTMLAttachmentElement;
 class HTMLBaseElement;
 class HTMLBodyElement;
@@ -356,7 +357,7 @@ enum class NodeListInvalidationType : uint8_t {
 const auto numNodeListInvalidationTypes = enumToUnderlyingType(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
 enum class EventHandlerRemoval : bool { One, All };
-using EventTargetSet = HashCountedSet<Node*>;
+using EventTargetSet = WeakHashCountedSet<Node, WeakPtrImplWithEventTargetData>;
 
 enum class DocumentCompatibilityMode : uint8_t {
     NoQuirksMode = 1,
@@ -423,7 +424,7 @@ class Document
     , public Supplementable<Document>
     , public Logger::Observer
     , public ReportingClient {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(Document, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Document, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Document);
 public:
     using EventTarget::weakPtrFactory;
@@ -1388,7 +1389,8 @@ public:
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject);
 
-    bool resolveViewTransitionRule();
+    class SkipTransition { };
+    std::variant<SkipTransition, Vector<AtomString>> resolveViewTransitionRule();
 
     WEBCORE_EXPORT void addMediaCanStartListener(MediaCanStartListener&);
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener&);
@@ -1481,8 +1483,8 @@ public:
     WEBCORE_EXPORT unsigned styleRecalcCount() const;
 
 #if ENABLE(TOUCH_EVENTS)
-    bool hasTouchEventHandlers() const { return m_touchEventTargets.get() ? m_touchEventTargets->size() : false; }
-    bool touchEventTargetsContain(Node& node) const { return m_touchEventTargets ? m_touchEventTargets->contains(&node) : false; }
+    bool hasTouchEventHandlers() const { return m_touchEventTargets && m_touchEventTargets->computeSize(); }
+    bool touchEventTargetsContain(Node& node) const { return m_touchEventTargets && m_touchEventTargets->contains(node); }
 #else
     bool hasTouchEventHandlers() const { return false; }
     bool touchEventTargetsContain(Node&) const { return false; }
@@ -1516,7 +1518,7 @@ public:
 #endif
     }
 
-    bool hasWheelEventHandlers() const { return m_wheelEventTargets.get() ? m_wheelEventTargets->size() : false; }
+    bool hasWheelEventHandlers() const { return m_wheelEventTargets && m_wheelEventTargets->computeSize(); }
     const EventTargetSet* wheelEventTargets() const { return m_wheelEventTargets.get(); }
 
     using RegionFixedPair = std::pair<Region, bool>;
@@ -1525,7 +1527,7 @@ public:
 
     LayoutRect absoluteEventHandlerBounds(bool&) final;
 
-    bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
+    bool visualUpdatesAllowed() const { return m_visualUpdatesPreventedReasons.isEmpty(); }
 
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
@@ -1823,6 +1825,14 @@ public:
     void updateServiceWorkerClientData() final;
     WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(ScheduleLocationChangeResult)>&&);
 
+    bool allowsAddingRenderBlockedElements() const;
+    bool isRenderBlocked() const;
+
+    enum class ImplicitRenderBlocking : bool { Yes, No };
+    void blockRenderingOn(Element&, ImplicitRenderBlocking = ImplicitRenderBlocking::No);
+    void unblockRenderingOn(Element&);
+    void processInternalResourceLinks(HTMLAnchorElement&);
+
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
 #endif
@@ -2055,7 +2065,20 @@ private:
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
 
     void setVisualUpdatesAllowed(ReadyState);
-    void setVisualUpdatesAllowed(bool);
+
+    enum class VisualUpdatesPreventedReason {
+        Client         = 1 << 0,
+        ReadyState     = 1 << 1,
+        Suspension     = 1 << 2,
+        RenderBlocking = 1 << 3,
+    };
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState, VisualUpdatesPreventedReason::RenderBlocking }; }
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::Client, VisualUpdatesPreventedReason::ReadyState }; }
+
+    enum class CompletePageTransition : bool { Yes, No };
+    void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason, CompletePageTransition = CompletePageTransition::Yes);
+    void removeVisualUpdatePreventedReasons(OptionSet<VisualUpdatesPreventedReason>);
+
     void visualUpdatesSuppressionTimerFired();
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes.add(listenerType); }
@@ -2440,6 +2463,8 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
 
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
+
     RefPtr<ReportingScope> m_reportingScope;
 
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
@@ -2502,6 +2527,8 @@ private:
     MutationObserverOptions m_mutationObserverTypes;
 
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
+
+    OptionSet<VisualUpdatesPreventedReason> m_visualUpdatesPreventedReasons;
 
     FocusTrigger m_latestFocusTrigger { };
 
@@ -2581,7 +2608,6 @@ private:
     bool m_isSuspended { false };
 
     bool m_scheduledTasksAreSuspended { false };
-    bool m_visualUpdatesAllowed { true };
 
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
     bool m_userDidInteractWithPage { false };
@@ -2641,6 +2667,8 @@ private:
     bool m_wasRemovedLastRefCalled { false };
 
     bool m_hasBeenRevealed { false };
+    bool m_visualUpdatesAllowedChangeRequiresLayoutMilestones { false };
+    bool m_visualUpdatesAllowedChangeCompletesPageTransition { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

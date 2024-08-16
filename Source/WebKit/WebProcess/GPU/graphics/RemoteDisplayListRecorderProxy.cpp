@@ -78,7 +78,7 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
     RefPtr imageBuffer = m_imageBuffer.get();
     if (LIKELY(imageBuffer))
         imageBuffer->backingStoreWillChange();
-    auto result = connection->send(std::forward<T>(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+    auto result = connection->send(std::forward<T>(message), m_destinationBufferIdentifier);
     if (UNLIKELY(result != IPC::Error::NoError)) {
         RELEASE_LOG(RemoteLayerBuffers, "RemoteDisplayListRecorderProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
             IPC::description(T::name()).characters(), IPC::errorAsString(result).characters());

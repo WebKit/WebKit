@@ -33,6 +33,7 @@
 #include "WCLayerTreeHostIdentifier.h"
 #include "WCSharedSceneContextHolder.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class StreamConnectionWorkQueue;
@@ -45,7 +46,7 @@ struct UpdateInfo;
 struct WCUpdateInfo;
 
 class RemoteWCLayerTreeHost : public IPC::MessageReceiver, private IPC::MessageSender {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteWCLayerTreeHost);
 public:
     static std::unique_ptr<RemoteWCLayerTreeHost> create(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);
     RemoteWCLayerTreeHost(GPUConnectionToWebProcess&, WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);

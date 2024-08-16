@@ -33,4 +33,5 @@ messages -> WebPageTesting NotRefCounted {
     ClearWheelEventTestMonitor()
 
     SetTopContentInset(float contentInset) -> ()
+    SetPageScaleFactor(double scale, WebCore::IntPoint origin) -> ()
 }

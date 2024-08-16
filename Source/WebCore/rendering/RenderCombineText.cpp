@@ -24,12 +24,12 @@
 #include "RenderBlock.h"
 #include "RenderStyleInlines.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCombineText);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderCombineText);
 
 const float textCombineMargin = 1.15f; // Allow em + 15% margin
 

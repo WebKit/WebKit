@@ -437,7 +437,7 @@ TEST(WKWebExtensionAPIExtension, InIncognitoContext)
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -509,7 +509,7 @@ TEST(WKWebExtensionAPIExtension, IsAllowedIncognitoAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     [manager loadAndRun];
 

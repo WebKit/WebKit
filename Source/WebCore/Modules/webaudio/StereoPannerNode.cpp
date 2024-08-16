@@ -33,11 +33,11 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(StereoPannerNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StereoPannerNode);
 
 ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& context, const StereoPannerOptions& options)
 {

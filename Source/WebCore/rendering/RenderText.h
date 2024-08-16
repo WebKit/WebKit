@@ -46,7 +46,7 @@ class LineLayout;
 }
 
 class RenderText : public RenderObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderText);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderText);
 public:
     RenderText(Type, Text&, const String&);
@@ -70,6 +70,7 @@ public:
 
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
+    const RenderStyle* targetTextPseudoStyle() const;
 
     virtual String originalText() const;
 
@@ -351,6 +352,13 @@ inline const RenderStyle* RenderText::grammarErrorPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->grammarErrorPseudoStyle();
+    return nullptr;
+}
+
+inline const RenderStyle* RenderText::targetTextPseudoStyle() const
+{
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->targetTextPseudoStyle();
     return nullptr;
 }
 

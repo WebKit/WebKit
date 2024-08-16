@@ -26,9 +26,12 @@
 #include "WebPage.h"
 #include <WebCore/UserMediaController.h>
 #include <WebCore/UserMediaRequest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebUserMediaClient);
 
 WebUserMediaClient::WebUserMediaClient(WebPage& page)
     : m_page(page)

@@ -38,12 +38,12 @@
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "ResourceLoaderOptions.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLBodyElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLBodyElement);
 
 using namespace HTMLNames;
 

@@ -35,6 +35,7 @@
 #import "Sampler.h"
 #import "TextureView.h"
 #import <wtf/EnumeratedArray.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -1233,6 +1234,8 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
     for (size_t index = 0, maxIndex = m_dynamicBuffers.size(); index < maxIndex; ++index)
         m_dynamicOffsetsIndices.add(m_dynamicBuffers[index].bindingIndex, index);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BindGroup);
 
 BindGroup::BindGroup(Device& device)
     : m_device(device)

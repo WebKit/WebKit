@@ -31,9 +31,13 @@
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
 #include "WebFrameProxy.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/IntPoint.h>
+#include <wtf/CallbackAggregator.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "DisplayCaptureSessionManager.h"
@@ -41,6 +45,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageProxyTesting);
 
 WebPageProxyTesting::WebPageProxyTesting(WebPageProxy& page)
     : m_page(page)
@@ -59,7 +65,7 @@ bool WebPageProxyTesting::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& en
 
 IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
 {
-    return m_page->legacyMainFrameProcess().connection();
+    return &m_page->legacyMainFrameProcess().connection();
 }
 
 uint64_t WebPageProxyTesting::messageSenderDestinationID() const
@@ -202,6 +208,14 @@ void WebPageProxyTesting::setTopContentInset(float contentInset, CompletionHandl
 Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
 {
     return m_page.get();
+}
+
+void WebPageProxyTesting::setPageScaleFactor(float scaleFactor, IntPoint point, CompletionHandler<void()>&& completionHandler)
+{
+    Ref callback = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), [callback] { }, pageID);
+    });
 }
 
 } // namespace WebKit

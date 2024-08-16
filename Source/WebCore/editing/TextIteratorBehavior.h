@@ -69,6 +69,9 @@ enum class TextIteratorBehavior : uint16_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
     EmitsObjectReplacementCharactersForAttachments = 1 << 13,
 #endif
+
+    // Used by accessibility to expose untransformed kana text.
+    IgnoresFullSizeKana = 1 << 14
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;

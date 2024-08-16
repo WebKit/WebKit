@@ -30,9 +30,12 @@
 #include "WKAPICast.h"
 #include "WebFrameProxy.h"
 #include "WebProcessPool.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextInjectedBundleClient);
 
 WebContextInjectedBundleClient::WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
 {

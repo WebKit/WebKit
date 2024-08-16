@@ -35,10 +35,10 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -66,7 +66,7 @@ class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 // This class exists to act as a threadsafe DisplayLink::Client client, allowing RemoteScrollingCoordinatorProxyMac to
 // be main-thread only. It's the UI-process analogue of WebPage/EventDispatcher.
 class RemoteLayerTreeEventDispatcher : public ThreadSafeRefCounted<RemoteLayerTreeEventDispatcher>, public MomentumEventDispatcher::Client {
-    WTF_MAKE_FAST_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeEventDispatcher);
     friend class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 public:
     static Ref<RemoteLayerTreeEventDispatcher> create(RemoteScrollingCoordinatorProxyMac&, WebCore::PageIdentifier);

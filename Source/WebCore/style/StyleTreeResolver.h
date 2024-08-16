@@ -142,9 +142,6 @@ private:
     const RenderStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const;
 
     AnchorPositionedElementAction updateAnchorPositioningState(Element&, const RenderStyle*);
-    void findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const Element* containingBlock);
-    std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, const Element* containingBlock);
-    void updateAnchorPositioningStateInInitialContainingBlock();
 
     struct QueryContainerState {
         Change change { Change::None };
@@ -161,12 +158,6 @@ private:
     HashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
     bool m_hasUnresolvedQueryContainers { false };
 
-    AnchorPositionedStateMap m_anchorPositionedStateMap;
-
-    HashSet<Ref<Element>> m_anchorElements;
-    HashMap<String, Vector<Ref<Element>>> m_anchorsForAnchorName;
-    HashMap<Ref<Element>, Vector<Ref<Element>>> m_unresolvedAnchorPositionedElementsForContainingBlock;
-    Vector<Ref<Element>> m_unresolvedAnchorPositionedElementsForInitialContainingBlock;
     bool m_hasUnresolvedAnchorPositionedElements { false };
     bool m_canFindAnchorsForNextAnchorPositionedElement { false };
 

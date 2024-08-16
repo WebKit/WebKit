@@ -30,6 +30,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -50,7 +51,7 @@ class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpushadermodule
 class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 
     using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
 public:

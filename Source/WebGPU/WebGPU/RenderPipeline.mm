@@ -32,6 +32,7 @@
 #import "Pipeline.h"
 #import "RenderBundleEncoder.h"
 #import "WGSLShaderModule.h"
+#import <wtf/TZoneMallocInlines.h>
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
 @interface NSObject ()
@@ -1582,6 +1583,8 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPipeline);
+
 RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, Ref<PipelineLayout>&& pipelineLayout, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor* renderPipelineDescriptor, uint32_t colorAttachmentCount, const WGPURenderPipelineDescriptor& descriptor, RequiredBufferIndicesContainer&& requiredBufferIndices, BufferBindingSizesForPipeline&& minimumBufferSizes, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
@@ -1774,7 +1777,6 @@ WGPUPrimitiveTopology RenderPipeline::primitiveTopology() const
 
 MTLIndexType RenderPipeline::stripIndexFormat() const
 {
-    ASSERT(m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 || m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint32);
     return m_descriptor.primitive.stripIndexFormat == WGPUIndexFormat_Uint16 ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32;
 }
 

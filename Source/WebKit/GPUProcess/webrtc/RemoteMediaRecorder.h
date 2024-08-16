@@ -35,6 +35,7 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
@@ -53,7 +54,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 
 class RemoteMediaRecorder : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaRecorder);
 public:
     static std::unique_ptr<RemoteMediaRecorder> create(GPUConnectionToWebProcess&, MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&);
     ~RemoteMediaRecorder();
@@ -66,6 +67,8 @@ public:
 
 private:
     RemoteMediaRecorder(GPUConnectionToWebProcess&, MediaRecorderIdentifier, Ref<WebCore::MediaRecorderPrivateWriter>&&, bool recordAudio);
+
+    RefPtr<IPC::Connection> connection() const;
 
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);

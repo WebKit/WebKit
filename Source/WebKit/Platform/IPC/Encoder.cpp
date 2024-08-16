@@ -30,6 +30,7 @@
 #include "MessageFlags.h"
 #include <algorithm>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 #if OS(DARWIN)
@@ -61,6 +62,8 @@ static inline void freeBuffer(void* addr, size_t size)
     fastFree(addr);
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Encoder);
 
 Encoder::Encoder(MessageName messageName, uint64_t destinationID)
     : m_messageName(messageName)

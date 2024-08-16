@@ -37,7 +37,7 @@ class BaseAudioContext;
 class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
-    WTF_MAKE_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
 public:
     static ExceptionOr<Ref<MediaStreamAudioDestinationNode>> create(BaseAudioContext&, const AudioNodeOptions& = { });
 

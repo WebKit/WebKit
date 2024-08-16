@@ -10,11 +10,11 @@
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkRRect.h"
-#include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkOnce.h"
 #include "src/base/SkVx.h"
 
 #include <cstring>
+#include <utility>
 
 #ifdef SK_BUILD_FOR_ANDROID_FRAMEWORK
     static constexpr int kPathRefGenIDBitCnt = 30; // leave room for the fill type (skbug.com/1762)
@@ -201,15 +201,11 @@ void SkPathRef::CreateTransformedCopy(sk_sp<SkPathRef>* dst,
 
     (*dst)->fSegmentMask = src.fSegmentMask;
 
-    // It's an oval only if it stays a rect. Technically if scale is uniform, then it would stay an
-    // arc. For now, don't bother handling that (we'd also need to fixup the angles for negative
-    // scale, etc.)
+    // It's an oval only if it stays a rect.
     bool rectStaysRect = matrix.rectStaysRect();
-    const PathType newType =
-            (rectStaysRect && src.fType != PathType::kArc) ? src.fType : PathType::kGeneral;
+    const PathType newType = rectStaysRect ? src.fType : PathType::kGeneral;
     (*dst)->fType = newType;
-    if (newType == PathType::kOval || newType == PathType::kOpenOval ||
-        newType == PathType::kRRect) {
+    if (newType == PathType::kOval || newType == PathType::kRRect) {
         unsigned start = src.fRRectOrOvalStartIdx;
         bool isCCW = SkToBool(src.fRRectOrOvalIsCCW);
         transform_dir_and_start(matrix, newType == PathType::kRRect, &isCCW, &start);
@@ -291,10 +287,6 @@ void SkPathRef::copy(const SkPathRef& ref,
     fType = ref.fType;
     fRRectOrOvalIsCCW = ref.fRRectOrOvalIsCCW;
     fRRectOrOvalStartIdx = ref.fRRectOrOvalStartIdx;
-    fArcOval = ref.fArcOval;
-    fArcStartAngle = ref.fArcStartAngle;
-    fArcSweepAngle = ref.fArcSweepAngle;
-    fArcType = ref.fArcType;
     SkDEBUGCODE(this->validate();)
 }
 
@@ -426,11 +418,7 @@ SkPoint* SkPathRef::growForVerb(int /* SkPath::Verb*/ verb, SkScalar weight) {
 
     fSegmentMask |= mask;
     fBoundsIsDirty = true;  // this also invalidates fIsFinite
-    if (verb == SkPath::kClose_Verb && fType == PathType::kOpenOval) {
-        fType = PathType::kOval;
-    } else {
-        fType = PathType::kGeneral;
-    }
+    fType = PathType::kGeneral;
 
     fVerbs.push_back(verb);
     if (SkPath::kConic_Verb == verb) {
@@ -625,18 +613,12 @@ bool SkPathRef::isValid() const {
         case PathType::kGeneral:
             break;
         case PathType::kOval:
-        case PathType::kOpenOval:
             if (fRRectOrOvalStartIdx >= 4) {
                 return false;
             }
             break;
         case PathType::kRRect:
             if (fRRectOrOvalStartIdx >= 8) {
-                return false;
-            }
-            break;
-        case PathType::kArc:
-            if (!(fArcOval.isFinite() && SkIsFinite(fArcStartAngle, fArcSweepAngle))) {
                 return false;
             }
             break;

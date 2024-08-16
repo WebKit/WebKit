@@ -375,7 +375,7 @@ public:
     virtual void didAccessWindowProxyPropertyViaOpener(SecurityOriginData&&, WindowProxyProperty) { }
 #endif
 
-    virtual void documentLoaderDetached(uint64_t, LoadWillContinueInAnotherProcess) { }
+    virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
 
     virtual void frameNameChanged(const String&) { }
 };

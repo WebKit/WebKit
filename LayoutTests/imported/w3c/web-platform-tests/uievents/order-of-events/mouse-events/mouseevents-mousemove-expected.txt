@@ -6,7 +6,5 @@ Move the pointer to the upper-left red box and then move it directly toward and 
 Test Passes if both boxes turn green and the word 'PASS' appears below
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Mousemove events
+PASS Mousemove events
 

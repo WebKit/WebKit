@@ -37,11 +37,14 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 namespace NetworkCache {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculativeLoad);
 
 SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, RevalidationCompletionHandler&& completionHandler)
     : m_cache(cache)

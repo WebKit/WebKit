@@ -360,6 +360,8 @@ WebProcess::~WebProcess()
 
 void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
+    m_isLockdownModeEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
+
     WTF::setProcessPrivileges({ });
 
     {
@@ -603,8 +605,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);
-    m_isLockdownModeEnabled = parameters.isLockdownModeEnabled;
-    DeprecatedGlobalSettings::setArePDFImagesEnabled(!m_isLockdownModeEnabled);
+    DeprecatedGlobalSettings::setArePDFImagesEnabled(!isLockdownModeEnabled());
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);
@@ -1375,6 +1376,12 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         }
     }
     return *m_gpuProcessConnection;
+}
+
+Seconds WebProcess::gpuProcessTimeoutDuration() const
+{
+    constexpr Seconds defaultTimeoutDuration = 15_s;
+    return m_childProcessDebuggabilityEnabled ? Seconds::infinity() : defaultTimeoutDuration;
 }
 
 void WebProcess::gpuProcessConnectionClosed()
@@ -2210,6 +2217,11 @@ void WebProcess::updateDomainsWithStorageAccessQuirks(HashSet<WebCore::Registrab
     m_domainsWithStorageAccessQuirks.clear();
     for (auto&& domain : domainsWithStorageAccessQuirks)
         m_domainsWithStorageAccessQuirks.add(domain);
+}
+
+void WebProcess::setChildProcessDebuggabilityEnabled(bool childProcessDebuggabilityEnabled)
+{
+    m_childProcessDebuggabilityEnabled = childProcessDebuggabilityEnabled;
 }
 
 #if ENABLE(GPU_PROCESS)

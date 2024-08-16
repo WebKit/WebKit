@@ -384,6 +384,8 @@ angle::Result CLProgramVk::build(const cl::DevicePtrs &devices,
     BuildType buildType = !mProgram.getSource().empty() ? BuildType::BUILD : BuildType::BINARY;
     const cl::DevicePtrs &devicePtrs = !devices.empty() ? devices : mProgram.getDevices();
 
+    setBuildStatus(devicePtrs, CL_BUILD_IN_PROGRESS);
+
     if (notify)
     {
         std::shared_ptr<angle::WaitableEvent> asyncEvent =
@@ -440,6 +442,8 @@ angle::Result CLProgramVk::compile(const cl::DevicePtrs &devices,
         }
         writeFile(headerFilePath.c_str(), inputHeaderSrc.data(), inputHeaderSrc.size());
     }
+
+    setBuildStatus(devicePtrs, CL_BUILD_IN_PROGRESS);
 
     // Perform compile
     if (notify)
@@ -774,7 +778,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
     {
         const cl::RefPointer<cl::Device> &device = devices.at(i);
         DeviceProgramData &deviceProgramData     = mAssociatedDevicePrograms[device->getNative()];
-        deviceProgramData.buildStatus            = CL_BUILD_IN_PROGRESS;
+
+        cl_uint addressBits;
+        ANGLE_CL_IMPL_TRY(
+            device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint), &addressBits, nullptr));
+        processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
 
         cl_uint addressBits;
         ANGLE_CL_IMPL_TRY(
@@ -964,6 +972,18 @@ angle::Result CLProgramVk::allocateDescriptorSet(const vk::DescriptorSetLayout &
             CL_INVALID_OPERATION);
     }
     return angle::Result::Continue;
+}
+
+void CLProgramVk::setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status)
+{
+    std::scoped_lock<angle::SimpleMutex> sl(mProgramMutex);
+
+    for (const auto &device : devices)
+    {
+        ASSERT(mAssociatedDevicePrograms.contains(device->getNative()));
+        DeviceProgramData &deviceProgram = mAssociatedDevicePrograms.at(device->getNative());
+        deviceProgram.buildStatus        = status;
+    }
 }
 
 }  // namespace rx

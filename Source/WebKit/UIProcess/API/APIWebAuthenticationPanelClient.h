@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +44,7 @@ class AuthenticatorAssertionResponse;
 namespace API {
 
 class WebAuthenticationPanelClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebAuthenticationPanelClient);
 public:
     virtual ~WebAuthenticationPanelClient() = default;
 

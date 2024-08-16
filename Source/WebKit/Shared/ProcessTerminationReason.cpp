@@ -52,6 +52,8 @@ ASCIILiteral processTerminationReasonToString(ProcessTerminationReason reason)
         return "RequestedByNetworkProcess"_s;
     case ProcessTerminationReason::RequestedByGPUProcess:
         return "RequestedByGPUProcess"_s;
+    case ProcessTerminationReason::RequestedByModelProcess:
+        return "RequestedByModelProcess"_s;
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
         return "GPUProcessCrashedTooManyTimes"_s;
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:

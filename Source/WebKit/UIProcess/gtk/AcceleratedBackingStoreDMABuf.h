@@ -36,6 +36,7 @@
 #include <gtk/gtk.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -63,7 +64,8 @@ class WebPageProxy;
 enum class DMABufRendererBufferMode : uint8_t;
 
 class AcceleratedBackingStoreDMABuf final : public AcceleratedBackingStore, public IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStoreDMABuf);
+    WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf);
 public:
     static OptionSet<DMABufRendererBufferMode> rendererBufferMode();
     static bool checkRequirements();

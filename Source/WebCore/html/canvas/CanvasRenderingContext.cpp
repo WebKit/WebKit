@@ -41,14 +41,14 @@
 #include "SVGImageElement.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
 
 Lock CanvasRenderingContext::s_instancesLock;
 

@@ -59,9 +59,9 @@
 #include "TrustedType.h"
 #include "WorkerFetchResult.h"
 #include "WorkerSWClientConnection.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 #define CONTAINER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
@@ -74,7 +74,7 @@ static inline SWClientConnection& mainThreadConnection()
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
 
 UniqueRef<ServiceWorkerContainer> ServiceWorkerContainer::create(ScriptExecutionContext* context, NavigatorBase& navigator)
 {

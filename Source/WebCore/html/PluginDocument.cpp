@@ -41,13 +41,13 @@
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
 #include "StyleSheetContents.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PluginDocument);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PluginDocument);
 
 using namespace HTMLNames;
 

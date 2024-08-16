@@ -34,6 +34,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,6 +53,7 @@ class CompositorIntegration;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -64,7 +66,7 @@ class ObjectHeap;
 }
 
 class RemoteCompositorIntegration final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCompositorIntegration);
 public:
     static Ref<RemoteCompositorIntegration> create(WebCore::WebGPU::CompositorIntegration& compositorIntegration, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
@@ -88,6 +90,8 @@ private:
     RemoteCompositorIntegration& operator=(RemoteCompositorIntegration&&) = delete;
 
     WebCore::WebGPU::CompositorIntegration& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

@@ -83,15 +83,7 @@
 #include <EGL/eglext.h>
 #endif
 
-#if USE(LIBDRM)
-#include <xf86drm.h>
-#ifndef EGL_DRM_RENDER_NODE_FILE_EXT
-#define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
-#endif
-#endif
-
 #if USE(GBM)
-#include "DRMDeviceManager.h"
 #include <drm_fourcc.h>
 #endif
 
@@ -197,11 +189,6 @@ PlatformDisplay::PlatformDisplay(GdkDisplay* display)
     , m_eglDisplay(EGL_NO_DISPLAY)
 {
     if (m_sharedDisplay) {
-#if USE(ATSPI) && USE(GTK4)
-        if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_sharedDisplay.get()), "-gtk-atspi-bus-address")))
-            m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
-#endif
-
         g_signal_connect(m_sharedDisplay.get(), "closed", G_CALLBACK(+[](GdkDisplay*, gboolean, gpointer userData) {
             auto& platformDisplay = *static_cast<PlatformDisplay*>(userData);
             platformDisplay.sharedDisplayDidClose();
@@ -401,124 +388,7 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return false;
 }
 
-#if USE(LIBDRM)
-EGLDeviceEXT PlatformDisplay::eglDevice()
-{
-    if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
-        return nullptr;
-
-    if (!m_eglDisplayInitialized)
-        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
-
-    EGLDeviceEXT eglDevice;
-    if (eglQueryDisplayAttribEXT(m_eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
-        return eglDevice;
-
-    return nullptr;
-}
-
-const String& PlatformDisplay::drmDeviceFile()
-{
-    if (!m_drmDeviceFile.has_value()) {
-        if (EGLDeviceEXT device = eglDevice()) {
-            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm")) {
-                m_drmDeviceFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
-                return m_drmDeviceFile.value();
-            }
-        }
-        m_drmDeviceFile = String();
-    }
-
-    return m_drmDeviceFile.value();
-}
-
-static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
-{
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0)
-        return;
-
-    for (int i = 0; i < numDevices; ++i) {
-        if (!functor(devices[i]))
-            break;
-    }
-    drmFreeDevices(devices, numDevices);
-}
-
-static String drmFirstRenderNode()
-{
-    String renderNodeDeviceFile;
-    drmForeachDevice([&](drmDevice* device) {
-        if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
-            return true;
-
-        renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
-        return false;
-    });
-    return renderNodeDeviceFile;
-}
-
-static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
-{
-    if (primaryDeviceFile.isEmpty())
-        return drmFirstRenderNode();
-
-    String renderNodeDeviceFile;
-    drmForeachDevice([&](drmDevice* device) {
-        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
-            return true;
-
-        if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
-            renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
-            return false;
-        }
-
-        return true;
-    });
-    // If we fail to find a render node for the device file, just use the device file as render node.
-    return !renderNodeDeviceFile.isEmpty() ? renderNodeDeviceFile : primaryDeviceFile;
-}
-
-const String& PlatformDisplay::drmRenderNodeFile()
-{
-    if (!m_drmRenderNodeFile.has_value()) {
-        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
-        if (envDeviceFile && *envDeviceFile) {
-            m_drmRenderNodeFile = String::fromUTF8(envDeviceFile);
-            return m_drmRenderNodeFile.value();
-        }
-
-        if (EGLDeviceEXT device = eglDevice()) {
-            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node")) {
-                m_drmRenderNodeFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
-                return m_drmRenderNodeFile.value();
-            }
-
-            // If EGL_EXT_device_drm_render_node is not present, try to get the render node using DRM API.
-            m_drmRenderNodeFile = drmRenderNodeFromPrimaryDeviceFile(drmDeviceFile());
-        } else {
-            // If EGLDevice is not available, just get the first render node returned by DRM.
-            m_drmRenderNodeFile = drmFirstRenderNode();
-        }
-    }
-
-    return m_drmRenderNodeFile.value();
-}
-#endif // USE(LIBDRM)
-
 #if USE(GBM)
-struct gbm_device* PlatformDisplay::gbmDevice()
-{
-    auto& manager = DRMDeviceManager::singleton();
-    if (!manager.isInitialized())
-        manager.initializeMainDevice(drmRenderNodeFile());
-
-    return manager.mainGBMDeviceNode(DRMDeviceManager::NodeType::Render);
-}
-
 const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 {
     static std::once_flag onceFlag;
@@ -575,46 +445,16 @@ const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 #endif // USE(GBM)
 
 #if USE(ATSPI)
-const String& PlatformDisplay::accessibilityBusAddress() const
+String PlatformDisplay::accessibilityBusAddress() const
 {
-    if (m_accessibilityBusAddress)
-        return m_accessibilityBusAddress.value();
-
-    const char* address = g_getenv("AT_SPI_BUS_ADDRESS");
-    if (address && *address) {
-        m_accessibilityBusAddress = String::fromUTF8(address);
-        return m_accessibilityBusAddress.value();
+#if USE(GTK4)
+    if (m_sharedDisplay) {
+        if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_sharedDisplay.get()), "-gtk-atspi-bus-address")))
+            return String::fromUTF8(atspiBusAddress);
     }
+#endif
 
-    auto platformAddress = platformAccessibilityBusAddress();
-    if (!platformAddress.isEmpty()) {
-        m_accessibilityBusAddress = platformAddress;
-        return m_accessibilityBusAddress.value();
-    }
-
-    GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
-    if (sessionBus.get()) {
-        GRefPtr<GDBusMessage> message = adoptGRef(g_dbus_message_new_method_call("org.a11y.Bus", "/org/a11y/bus", "org.a11y.Bus", "GetAddress"));
-        g_dbus_message_set_body(message.get(), g_variant_new("()"));
-        GRefPtr<GDBusMessage> reply = adoptGRef(g_dbus_connection_send_message_with_reply_sync(sessionBus.get(), message.get(),
-            G_DBUS_SEND_MESSAGE_FLAGS_NONE, 30000, nullptr, nullptr, nullptr));
-        if (reply) {
-            GUniqueOutPtr<GError> error;
-            if (g_dbus_message_to_gerror(reply.get(), &error.outPtr())) {
-                if (!g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN))
-                    WTFLogAlways("Can't find a11y bus: %s", error->message);
-            } else {
-                GUniqueOutPtr<char> a11yAddress;
-                g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                m_accessibilityBusAddress = String::fromUTF8(a11yAddress.get());
-                return m_accessibilityBusAddress.value();
-            }
-        }
-    }
-
-    WTFLogAlways("Could not determine the accessibility bus address");
-    m_accessibilityBusAddress = String();
-    return m_accessibilityBusAddress.value();
+    return { };
 }
 #endif
 

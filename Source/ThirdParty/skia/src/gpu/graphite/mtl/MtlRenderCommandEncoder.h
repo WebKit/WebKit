@@ -254,7 +254,7 @@ public:
     }
 
 private:
-    inline static constexpr int kMaxExpectedBuffers = 5;
+    inline static constexpr int kMaxExpectedBuffers = 6;
     inline static constexpr int kMaxExpectedTextures = 16;
 
     MtlRenderCommandEncoder(const SharedContext* sharedContext,
@@ -262,8 +262,7 @@ private:
             : Resource(sharedContext,
                        Ownership::kOwned,
                        skgpu::Budgeted::kYes,
-                       /*gpuMemorySize=*/0,
-                       /*label=*/"MtlRenderCommandEncoder")
+                       /*gpuMemorySize=*/0)
             , fCommandEncoder(std::move(encoder)) {
         for (int i = 0; i < kMaxExpectedBuffers; i++) {
             fCurrentVertexBuffer[i] = nil;

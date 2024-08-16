@@ -31,9 +31,9 @@
 #include "WebXRRigidTransform.h"
 #include "XREye.h"
 #include <JavaScriptCore/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class WebXRRigidTransform;
 class WebXRSession;
 
 class WebXRView : public RefCounted<WebXRView> {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();

@@ -42,11 +42,11 @@
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "ScreenOrientation.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Screen);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Screen);
 
 Screen::Screen(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
@@ -60,6 +60,12 @@ static bool fingerprintingProtectionsEnabled(const LocalFrame& frame)
     return frame.mainFrame().advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
+static bool shouldFlipScreenDimensions(const LocalFrame& frame)
+{
+    RefPtr document = frame.protectedDocument();
+    return document && document->quirks().shouldFlipScreenDimensions();
+}
+
 int Screen::height() const
 {
     RefPtr frame = this->frame();
@@ -67,6 +73,10 @@ int Screen::height() const
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::Height);
+
+    if (shouldFlipScreenDimensions(*frame))
+        return static_cast<int>(frame->screenSize().width());
+
     return static_cast<int>(frame->screenSize().height());
 }
 
@@ -77,6 +87,10 @@ int Screen::width() const
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::Width);
+
+    if (shouldFlipScreenDimensions(*frame))
+        return static_cast<int>(frame->screenSize().height());
+
     return static_cast<int>(frame->screenSize().width());
 }
 

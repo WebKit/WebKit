@@ -28,6 +28,7 @@
 #include "NetworkSession.h"
 #include "SoupCookiePersistentStorageType.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 
 typedef struct _SoupSession SoupSession;
 
@@ -44,7 +45,7 @@ class WebSocketTask;
 struct NetworkSessionCreationParameters;
 
 class NetworkSessionSoup final : public NetworkSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkSessionSoup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkSessionSoup);
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)

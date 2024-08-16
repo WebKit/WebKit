@@ -33,7 +33,7 @@ class RenderTable;
 class RenderTableCell;
 
 class RenderTableCol final : public RenderBox {
-    WTF_MAKE_ISO_ALLOCATED(RenderTableCol);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderTableCol);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCol);
 public:
     RenderTableCol(Element&, RenderStyle&&);

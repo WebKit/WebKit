@@ -887,11 +887,13 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    if (isLockdownModeEnabled()) {
 #if PLATFORM(IOS_FAMILY)
-    prewarmLogs();
+        prewarmLogs();
 #endif
-    registerLogHook();
-#endif
+        registerLogHook();
+    }
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 #if PLATFORM(MAC)
     // Deny the WebContent process access to the WindowServer.

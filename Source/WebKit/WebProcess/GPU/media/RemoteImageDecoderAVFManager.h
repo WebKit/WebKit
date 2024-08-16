@@ -35,6 +35,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -45,7 +46,7 @@ class RemoteImageDecoderAVFManager final
     : private GPUProcessConnection::Client
     , private IPC::MessageReceiver
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageDecoderAVFManager);
 public:
     static Ref<RemoteImageDecoderAVFManager> create();
     virtual ~RemoteImageDecoderAVFManager();

@@ -31,13 +31,14 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
 class RemoteQueueProxy final : public WebCore::WebGPU::Queue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteQueueProxy);
 public:
     static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -61,16 +62,15 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
     
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
     template<typename T, typename C>
     WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
 
     void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;

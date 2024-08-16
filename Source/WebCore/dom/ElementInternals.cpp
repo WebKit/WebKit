@@ -34,13 +34,13 @@
 #include "HTMLFormElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "ShadowRoot.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ElementInternals);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ElementInternals);
 
 RefPtr<ShadowRoot> ElementInternals::shadowRoot() const
 {

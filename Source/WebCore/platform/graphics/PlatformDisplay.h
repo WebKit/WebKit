@@ -35,12 +35,6 @@ typedef void *EGLContext;
 typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
-#if USE(LIBDRM)
-typedef void *EGLDeviceEXT;
-#endif
-#if USE(GBM)
-struct gbm_device;
-#endif
 
 #if PLATFORM(GTK)
 #include <wtf/glib/GRefPtr.h>
@@ -114,12 +108,7 @@ public:
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
-#if USE(LIBDRM)
-    const String& drmDeviceFile();
-    const String& drmRenderNodeFile();
-#endif
 #if USE(GBM)
-    struct gbm_device* gbmDevice();
     struct DMABufFormat {
         uint32_t fourcc { 0 };
         Vector<uint64_t, 1> modifiers;
@@ -145,10 +134,11 @@ public:
 #if USE(SKIA)
     GLContext* skiaGLContext();
     GrDirectContext* skiaGrContext();
+    unsigned msaaSampleCount() const;
 #endif
 
 #if USE(ATSPI)
-    const String& accessibilityBusAddress() const;
+    virtual String accessibilityBusAddress() const;
 #endif
 
 protected:
@@ -169,20 +159,9 @@ protected:
     bool m_eglDisplayOwned { true };
     std::unique_ptr<GLContext> m_sharingGLContext;
 
-#if USE(LIBDRM)
-    std::optional<String> m_drmDeviceFile;
-    std::optional<String> m_drmRenderNodeFile;
-#endif
-
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     std::optional<int> m_anglePlatform;
     void* m_angleNativeDisplay { nullptr };
-#endif
-
-#if USE(ATSPI)
-    virtual String platformAccessibilityBusAddress() const { return { }; }
-
-    mutable std::optional<String> m_accessibilityBusAddress;
 #endif
 
 private:
@@ -197,9 +176,6 @@ private:
 #endif
 
     void terminateEGLDisplay();
-#if USE(LIBDRM)
-    EGLDeviceEXT eglDevice();
-#endif
 
     bool m_eglDisplayInitialized { false };
     int m_eglMajorVersion { 0 };

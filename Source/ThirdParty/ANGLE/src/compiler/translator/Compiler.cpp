@@ -1046,11 +1046,20 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    // Attempt to reject shaders with infinite loops in WebGL contexts.
     if (IsWebGLBasedSpec(mShaderSpec))
     {
-        if (!PruneInfiniteLoops(this, root, &mSymbolTable))
+        // Remove infinite loops, they are not supposed to exist in shaders.
+        bool anyInfiniteLoops = false;
+        if (!PruneInfiniteLoops(this, root, &mSymbolTable, &anyInfiniteLoops))
         {
+            return false;
+        }
+
+        // If requested, reject shaders with infinite loops.  If not requested, the same loops are
+        // removed from the shader as a fallback.
+        if (anyInfiniteLoops && mCompileOptions.rejectWebglShadersWithUndefinedBehavior)
+        {
+            mDiagnostics.globalError("Infinite loop detected in the shader");
             return false;
         }
     }

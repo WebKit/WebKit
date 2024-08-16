@@ -8,12 +8,17 @@
 #ifndef PathRendererChain_DEFINED
 #define PathRendererChain_DEFINED
 
-#include "src/gpu/ganesh/PathRenderer.h"
-
+#include "include/core/SkRefCnt.h"
 #include "include/core/SkTypes.h"
 #include "include/private/base/SkNoncopyable.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "src/gpu/ganesh/PathRenderer.h"
+#include "src/gpu/ganesh/ops/AtlasRenderTask.h"  // IWYU pragma: keep
+
+#include <cstddef>
+
+class GrRecordingContext;
 
 namespace skgpu::ganesh {
 
@@ -60,9 +65,8 @@ public:
     }
 
 private:
-    enum {
-        kPreAllocCount = 8,
-    };
+    static constexpr size_t kPreAllocCount = 8;
+
     skia_private::STArray<kPreAllocCount, sk_sp<PathRenderer>> fChain;
     AtlasPathRenderer* fAtlasPathRenderer = nullptr;
     PathRenderer* fTessellationPathRenderer = nullptr;

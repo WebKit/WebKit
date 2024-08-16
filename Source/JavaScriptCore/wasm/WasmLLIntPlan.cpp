@@ -135,11 +135,14 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
             else
                 callee->setEntrypoint(LLInt::wasmFunctionEntryThunk().retaggedCode<WasmEntryPtrTag>());
 #endif
-        } else
-            if (m_moduleInformation->usesSIMD(functionIndex))
-                callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline));
-            else
-                callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        } else {
+            if (m_moduleInformation->usesSIMD(functionIndex)) {
+                Locker locker { m_lock };
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                return;
+            }
+            callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        }
         llintCallee = callee.ptr();
         m_calleesVector[functionIndex] = WTFMove(callee);
     } else
@@ -157,38 +160,26 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     }
 }
 
-bool LLIntPlan::ensureEntrypoint(LLIntCallee& llintCallee, unsigned functionIndex)
+bool LLIntPlan::ensureEntrypoint(LLIntCallee&, unsigned functionIndex)
 {
     if (m_entrypoints[functionIndex])
         return true;
 
-    // Create the interpreted callee
-    if (auto callee = tryCreateInterpretedJSToWasmCallee(functionIndex)) {
-        m_entrypoints[functionIndex] = WTFMove(callee);
-        return true;
-    }
+    if (!Options::useWasmJITLessJSEntrypoint())
+        return false;
 
-    UNUSED_PARAM(llintCallee);
-    UNUSED_PARAM(functionIndex);
-    return false;
-}
-
-RefPtr<JSEntrypointCallee> LLIntPlan::tryCreateInterpretedJSToWasmCallee(unsigned functionIndex)
-{
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    if (!Options::useInterpretedJSEntryWrappers()
-        || m_moduleInformation->memoryCount() > 1)
-        return nullptr;
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
 
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
     totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
-    totalFrameSize += JSEntrypointInterpreterCallee::RegisterStackSpaceAligned;
+    totalFrameSize += JITLessJSEntrypointCallee::RegisterStackSpaceAligned;
     totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
 
-    return JSEntrypointInterpreterCallee::create(totalFrameSize, typeIndex, m_moduleInformation->usesSIMD(functionIndex));
+    m_entrypoints[functionIndex] = JITLessJSEntrypointCallee::create(totalFrameSize, typeIndex, m_moduleInformation->usesSIMD(functionIndex));
+    return true;
 }
 
 void LLIntPlan::didCompleteCompilation()
@@ -220,8 +211,8 @@ void LLIntPlan::didCompleteCompilation()
             }
         }
         if (auto& callee = m_entrypoints[functionIndex]) {
-            if (callee->compilationMode() == CompilationMode::JSEntrypointInterpreterMode)
-                static_cast<JSEntrypointInterpreterCallee*>(callee.get())->wasmCallee = CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get());
+            if (callee->compilationMode() == CompilationMode::JITLessJSEntrypointMode)
+                static_cast<JITLessJSEntrypointCallee*>(callee.get())->wasmCallee = CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get());
             m_jsEntrypointCallees.add(functionIndex, callee);
         }
     }

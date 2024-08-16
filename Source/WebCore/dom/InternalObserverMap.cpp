@@ -70,9 +70,6 @@ public:
         }
 
     private:
-        Ref<Observable> m_sourceObservable;
-        Ref<MapperCallback> m_mapper;
-
         SubscriberCallbackMap(ScriptExecutionContext& context, Ref<Observable> source, Ref<MapperCallback> mapper)
             : SubscriberCallback(&context)
             , m_sourceObservable(source)
@@ -80,13 +77,12 @@ public:
         { }
 
         bool hasCallback() const final { return true; }
+
+        Ref<Observable> m_sourceObservable;
+        Ref<MapperCallback> m_mapper;
     };
 
 private:
-    Ref<Subscriber> m_subscriber;
-    Ref<MapperCallback> m_mapper;
-    uint64_t m_idx { 0 };
-
     void next(JSC::JSValue value) final
     {
         auto context = scriptExecutionContext();
@@ -147,6 +143,9 @@ private:
         , m_mapper(mapper)
     { }
 
+    Ref<Subscriber> m_subscriber;
+    Ref<MapperCallback> m_mapper;
+    uint64_t m_idx { 0 };
 };
 
 Ref<SubscriberCallback> createSubscriberCallbackMap(ScriptExecutionContext& context, Ref<Observable> observable, Ref<MapperCallback> mapper)

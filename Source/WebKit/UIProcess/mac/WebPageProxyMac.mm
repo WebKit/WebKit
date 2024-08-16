@@ -71,7 +71,7 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ProcessPrivilege.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection)
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_legacyMainFrameProcess, url), m_legacyMainFrameProcess->connection())
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, process().connection(), returnValue)
 
@@ -239,7 +239,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
         return false;
 
     if (auto replyID = grantAccessToCurrentPasteboardData(pasteboardName, [] () { }))
-        websiteDataStore().protectedNetworkProcess()->connection()->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+        websiteDataStore().protectedNetworkProcess()->connection().waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
 
     const Seconds messageTimeout(20);
     auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), webPageIDInMainFrameProcess(), messageTimeout);
@@ -254,7 +254,7 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const St
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
-    MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension));
+    MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension), connection);
 
     auto sharedMemoryImage = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryImage)
@@ -292,7 +292,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
         return;
 
     // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection()->remoteProcessID());
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection().remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()
@@ -333,7 +333,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t>
 
 void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, const String& selector, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(isValidKeypressCommandName(selector));
+    MESSAGE_CHECK(isValidKeypressCommandName(selector), connection);
 
     completionHandler(protectedPageClient()->executeSavedCommandBySelector(selector));
 }
@@ -361,7 +361,7 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
         return false;
 
     legacyMainFrameProcess().send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, event), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-    bool receivedReply = m_legacyMainFrameProcess->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageIDInMainFrameProcess(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    bool receivedReply = m_legacyMainFrameProcess->connection().waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageIDInMainFrameProcess(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
 
     if (!receivedReply)
         return false;

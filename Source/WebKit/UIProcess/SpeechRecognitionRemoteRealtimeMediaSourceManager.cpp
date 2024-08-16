@@ -32,8 +32,11 @@
 #include "SpeechRecognitionRealtimeMediaSourceManagerMessages.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRemoteRealtimeMediaSourceManager);
 
 SpeechRecognitionRemoteRealtimeMediaSourceManager::SpeechRecognitionRemoteRealtimeMediaSourceManager(const WebProcessProxy& process)
     : m_process(process)
@@ -78,7 +81,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteSourceStopped(WebC
 
 IPC::Connection* SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderConnection() const
 {
-    return m_process->connection();
+    return &m_process->connection();
 }
 
 uint64_t SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestinationID() const

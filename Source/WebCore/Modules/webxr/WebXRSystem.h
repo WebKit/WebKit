@@ -38,8 +38,8 @@
 #include "XRReferenceSpaceType.h"
 #include "XRSessionMode.h"
 #include <wtf/HashSet.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -57,7 +57,7 @@ class SecurityOriginData;
 struct XRSessionInit;
 
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(WebXRSystem);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSystem);
 public:
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;

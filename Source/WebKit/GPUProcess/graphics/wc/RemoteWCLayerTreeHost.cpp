@@ -35,6 +35,7 @@
 #include "StreamConnectionWorkQueue.h"
 #include "WCScene.h"
 #include "WCUpdateInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -51,6 +52,8 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
     return instance.get();
 #endif
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWCLayerTreeHost);
 
 std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {

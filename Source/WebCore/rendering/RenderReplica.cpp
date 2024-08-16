@@ -32,12 +32,12 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplica);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderReplica);
 
 RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
     : RenderBox(Type::Replica, document, WTFMove(style))

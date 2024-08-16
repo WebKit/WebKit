@@ -30,7 +30,7 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/IOSurface.h>
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ProcessIdentity;
@@ -40,7 +40,7 @@ namespace WebKit {
 
 // ImageBufferBackend for small LayerBacking stores.
 class ImageBufferShareableMappedIOSurfaceBitmapBackend final : public WebCore::ImageBufferCGBackend, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBitmapBackend);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableMappedIOSurfaceBitmapBackend);
 public:
     static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBitmapBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);

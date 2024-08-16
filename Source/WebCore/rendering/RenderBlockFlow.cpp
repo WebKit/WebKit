@@ -71,11 +71,11 @@
 #include "Settings.h"
 #include "TextAutoSizing.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlockFlow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBlockFlow);
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
 
@@ -153,7 +153,7 @@ RenderBlockFlow::~RenderBlockFlow()
 void RenderBlockFlow::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed()) {
-        if (firstRootBox()) {
+        if (legacyRootBox()) {
             // We can't wait for RenderBox::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
             if (isSelectionBorder())
@@ -163,13 +163,11 @@ void RenderBlockFlow::willBeDestroyed()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
-                    while (auto childBox = box->firstChild())
-                        childBox->removeFromParent();
-                }
+                if (auto* childBox = legacyRootBox()->firstChild())
+                    childBox->removeFromParent();
             }
         } else if (auto* parent = this->parent(); parent && parent->isSVGRenderer())
-            parent->dirtyLinesFromChangedChild(*this);
+            parent->dirtyLineFromChangedChild();
     }
 
     if (legacyLineLayout())
@@ -742,8 +740,8 @@ void TextBoxTrimmer::setTextBoxTrimForSubtree(const RenderBlockFlow* inlineForma
     }
     // FIXME: Add support for nested leading trims if applicable.
     layoutState->resetTextBoxTrim();
-    auto applyTextBoxTrimStart = textBoxTrim == TextBoxTrim::Start || textBoxTrim == TextBoxTrim::Both;
-    auto applyTextBoxTrimEnd = (textBoxTrim == TextBoxTrim::End || textBoxTrim == TextBoxTrim::Both) && inlineFormattingContextRootForTextBoxTrimEnd;
+    auto applyTextBoxTrimStart = textBoxTrim == TextBoxTrim::TrimStart || textBoxTrim == TextBoxTrim::TrimBoth;
+    auto applyTextBoxTrimEnd = (textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth) && inlineFormattingContextRootForTextBoxTrimEnd;
     if (applyTextBoxTrimEnd) {
         layoutState->addTextBoxTrimEnd(*inlineFormattingContextRootForTextBoxTrimEnd);
         // FIXME: Instead we should just damage the last line.
@@ -795,7 +793,7 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
 
     auto handleTextBoxTrimEnd = [&] {
         auto textBoxTrim = TextBoxTrimmer::textBoxTrim(*this);
-        auto hasTextBoxTrimEnd = textBoxTrim == TextBoxTrim::End || textBoxTrim == TextBoxTrim::Both;
+        auto hasTextBoxTrimEnd = textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth;
         if (!hasTextBoxTrimEnd)
             return;
         // Dirty the last formatted line (in the last IFC) and issue relayout with forcing trimming the last line.
@@ -3313,11 +3311,10 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
         }
 
         if (legacyLineLayout()) {
-            bool isFirstLine = lastRootBox() == firstRootBox();
-            const auto& style = isFirstLine ? firstLineStyle() : this->style();
+            auto& style = firstLineStyle();
             // LegacyInlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
-            lastBaseline = style.metricsOfPrimaryFont().intAscent(lastRootBox()->baselineType())
-                + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
+            lastBaseline = style.metricsOfPrimaryFont().intAscent(legacyRootBox()->baselineType())
+                + (style.isFlippedLinesWritingMode() ? logicalHeight() - legacyRootBox()->logicalBottom() : legacyRootBox()->logicalTop());
         }
         else if (modernLineLayout())
             lastBaseline = floorToInt(modernLineLayout()->lastLineLogicalBaseline());
@@ -3946,10 +3943,17 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (auto* renderText = dynamicDowncast<RenderText>(renderer))
             setFullRepaintOnParentInlineBoxLayerIfNeeded(*renderText);
 
-        auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
-        if (shouldRunInFlowLayout || renderer.isFloating())
-            downcast<RenderElement>(renderer).layoutIfNeeded();
-        else if (!renderer.isOutOfFlowPositioned())
+        if (auto* inlineLevelBox = dynamicDowncast<RenderBox>(renderer)) {
+            // FIXME: Move this to where the actual content change happens and call it on the parent IFC.
+            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && inlineLevelBox->needsLayout() && modernLineLayout();
+            if (shouldTriggerFullLayout)
+                modernLineLayout()->boxContentWillChange(*inlineLevelBox);
+        }
+
+        if (box && box->style().display() == DisplayType::RubyAnnotation)
+            box->layoutIfNeeded();
+
+        if (is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderText>(renderer))
             renderer.clearNeedsLayout();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(AX_THREAD_TEXT_APIS)
@@ -4135,7 +4139,7 @@ void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const Legac
         modernLineLayout->outputLineTree(stream, depth);
         return;
     }
-    for (const LegacyRootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
+    if (auto* root = legacyRootBox())
         root->outputLineTreeAndMark(stream, markedBox, depth);
 }
 #endif

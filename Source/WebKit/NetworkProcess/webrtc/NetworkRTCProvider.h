@@ -116,7 +116,6 @@ public:
     IPC::Connection& connection() { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
-    void doSocketTaskOnRTCNetworkThread(WebCore::LibWebRTCSocketIdentifier, Function<void(Socket&)>&&);
 
 #if PLATFORM(COCOA)
     const std::optional<audit_token_t>& sourceApplicationAuditToken() const { return m_sourceApplicationAuditToken; }

@@ -38,14 +38,14 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableRow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTableRow);
 
 RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
     : RenderBox(Type::TableRow, element, WTFMove(style))
@@ -239,7 +239,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
         // Paint the row background behind the cell.
         if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::ChildBlockBackground)
-            cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this);
+            cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this, paintOffset);
         if (!cell->hasSelfPaintingLayer())
             cell->paint(paintInfo, paintOffset);
     }

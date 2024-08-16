@@ -31,6 +31,7 @@
 #import "WebSharingServicePickerController.h"
 #import <WebCore/ContextMenuClient.h>
 #import <WebCore/IntRect.h>
+#import <wtf/TZoneMalloc.h>
 
 @class WebSharingServicePickerController;
 @class WebView;
@@ -44,7 +45,7 @@ class WebContextMenuClient : public WebCore::ContextMenuClient
     , public WebSharingServicePickerClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebContextMenuClient);
 public:
     WebContextMenuClient(WebView *webView);
     virtual ~WebContextMenuClient();

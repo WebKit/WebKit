@@ -32,8 +32,11 @@
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBResultData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageConnectionToClient);
 
 IDBStorageConnectionToClient::IDBStorageConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)
     : m_connection(connection)

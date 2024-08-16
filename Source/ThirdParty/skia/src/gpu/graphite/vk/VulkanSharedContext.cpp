@@ -7,17 +7,23 @@
 
 #include "src/gpu/graphite/vk/VulkanSharedContext.h"
 
+#include "include/gpu/GpuTypes.h"
 #include "include/gpu/graphite/ContextOptions.h"
 #include "include/gpu/vk/VulkanBackendContext.h"
+#include "include/gpu/vk/VulkanExtensions.h"
 #include "include/private/base/SkMutex.h"
+#include "src/gpu/GpuTypesPriv.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/ResourceTypes.h"
 #include "src/gpu/graphite/vk/VulkanBuffer.h"
 #include "src/gpu/graphite/vk/VulkanCaps.h"
 #include "src/gpu/graphite/vk/VulkanResourceProvider.h"
-#include "src/gpu/vk/VulkanAMDMemoryAllocator.h"
 #include "src/gpu/vk/VulkanInterface.h"
 #include "src/gpu/vk/VulkanUtilsPriv.h"
+
+#if defined(SK_USE_VMA)
+#include "src/gpu/vk/vulkanmemoryallocator/VulkanMemoryAllocatorPriv.h"
+#endif
 
 namespace skgpu::graphite {
 
@@ -37,49 +43,18 @@ sk_sp<SharedContext> VulkanSharedContext::Make(const VulkanBackendContext& conte
                     "on the VulkanBackendContext");
         return nullptr;
     }
-
-    PFN_vkEnumerateInstanceVersion localEnumerateInstanceVersion =
-            reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
-                    context.fGetProc("vkEnumerateInstanceVersion", VK_NULL_HANDLE, VK_NULL_HANDLE));
-    uint32_t instanceVersion = 0;
-    if (!localEnumerateInstanceVersion) {
-        instanceVersion = VK_MAKE_VERSION(1, 0, 0);
-    } else {
-        VkResult err = localEnumerateInstanceVersion(&instanceVersion);
-        if (err) {
-            SKGPU_LOG_E("Failed to enumerate instance version. Err: %d\n", err);
-            return nullptr;
-        }
+    // If no extensions are provided, make sure we don't have a null dereference downstream.
+    skgpu::VulkanExtensions noExtensions;
+    const skgpu::VulkanExtensions* extensions = &noExtensions;
+    if (context.fVkExtensions) {
+        extensions = context.fVkExtensions;
     }
 
-    PFN_vkGetPhysicalDeviceProperties localGetPhysicalDeviceProperties =
-            reinterpret_cast<PFN_vkGetPhysicalDeviceProperties>(
-                    context.fGetProc("vkGetPhysicalDeviceProperties",
-                                      context.fInstance,
-                                      VK_NULL_HANDLE));
-
-    if (!localGetPhysicalDeviceProperties) {
-        SKGPU_LOG_E("Failed to get function pointer to vkGetPhysicalDeviceProperties.");
-        return nullptr;
-    }
-    VkPhysicalDeviceProperties physDeviceProperties;
-    localGetPhysicalDeviceProperties(context.fPhysicalDevice, &physDeviceProperties);
-    uint32_t physDevVersion = physDeviceProperties.apiVersion;
-
-    uint32_t apiVersion = context.fMaxAPIVersion ? context.fMaxAPIVersion : instanceVersion;
-
-    instanceVersion = std::min(instanceVersion, apiVersion);
-    physDevVersion = std::min(physDevVersion, apiVersion);
-
-    sk_sp<const skgpu::VulkanInterface> interface(
-            new skgpu::VulkanInterface(context.fGetProc,
-                                       context.fInstance,
-                                       context.fDevice,
-                                       instanceVersion,
-                                       physDevVersion,
-                                       context.fVkExtensions));
-    if (!interface->validate(instanceVersion, physDevVersion, context.fVkExtensions)) {
-        SKGPU_LOG_E("Failed to validate VulkanInterface.");
+    uint32_t physDevVersion = 0;
+    sk_sp<const skgpu::VulkanInterface> interface =
+            skgpu::MakeInterface(context, extensions, &physDevVersion, nullptr);
+    if (!interface) {
+        SKGPU_LOG_E("Failed to create VulkanInterface.");
         return nullptr;
     }
 
@@ -100,21 +75,21 @@ sk_sp<SharedContext> VulkanSharedContext::Make(const VulkanBackendContext& conte
                                                           context.fPhysicalDevice,
                                                           physDevVersion,
                                                           featuresPtr,
-                                                          context.fVkExtensions,
+                                                          extensions,
                                                           context.fProtectedContext));
 
     sk_sp<skgpu::VulkanMemoryAllocator> memoryAllocator = context.fMemoryAllocator;
+#if defined(SK_USE_VMA)
     if (!memoryAllocator) {
         // We were not given a memory allocator at creation
-        bool threadSafe = !options.fClientWillExternallySynchronizeAllThreads;
-        memoryAllocator = skgpu::VulkanAMDMemoryAllocator::Make(context.fInstance,
-                                                                context.fPhysicalDevice,
-                                                                context.fDevice,
-                                                                physDevVersion,
-                                                                context.fVkExtensions,
-                                                                interface.get(),
-                                                                threadSafe);
+        skgpu::ThreadSafe threadSafe = options.fClientWillExternallySynchronizeAllThreads
+                                               ? skgpu::ThreadSafe::kNo
+                                               : skgpu::ThreadSafe::kYes;
+        memoryAllocator = skgpu::VulkanMemoryAllocators::Make(context,
+                                                              threadSafe,
+                                                              options.fVulkanVMALargeHeapBlockSize);
     }
+#endif
     if (!memoryAllocator) {
         SKGPU_LOG_E("No supplied vulkan memory allocator and unable to create one internally.");
         return nullptr;
@@ -133,7 +108,8 @@ VulkanSharedContext::VulkanSharedContext(const VulkanBackendContext& backendCont
         : skgpu::graphite::SharedContext(std::move(caps), BackendApi::kVulkan)
         , fInterface(std::move(interface))
         , fMemoryAllocator(std::move(memoryAllocator))
-        , fDevice(std::move(backendContext.fDevice))
+        , fPhysDevice(backendContext.fPhysicalDevice)
+        , fDevice(backendContext.fDevice)
         , fQueueIndex(backendContext.fGraphicsQueueIndex)
         , fDeviceLostContext(backendContext.fDeviceLostContext)
         , fDeviceLostProc(backendContext.fDeviceLostProc) {}
@@ -151,17 +127,15 @@ std::unique_ptr<ResourceProvider> VulkanSharedContext::makeResourceProvider(
     size_t alignedIntrinsicConstantSize =
             std::max(VulkanResourceProvider::kIntrinsicConstantSize,
                      this->vulkanCaps().requiredUniformBufferAlignment());
-    sk_sp<Buffer> intrinsicConstantBuffer = VulkanBuffer::Make(this,
-                                                               alignedIntrinsicConstantSize,
-                                                               BufferType::kUniform,
-                                                               AccessPattern::kGpuOnly,
-                                                               "IntrinsicConstantBuffer");
+    sk_sp<Buffer> intrinsicConstantBuffer = VulkanBuffer::Make(
+            this, alignedIntrinsicConstantSize, BufferType::kUniform, AccessPattern::kGpuOnly);
     if (!intrinsicConstantBuffer) {
         SKGPU_LOG_E("Failed to create intrinsic constant uniform buffer");
         return nullptr;
     }
     SkASSERT(static_cast<VulkanBuffer*>(intrinsicConstantBuffer.get())->bufferUsageFlags()
              & VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+    intrinsicConstantBuffer->setLabel("IntrinsicConstantBuffer");
 
     // Establish a vertex buffer that can be updated across multiple render passes and cmd buffers
     // for loading MSAA from resolve
@@ -169,14 +143,14 @@ std::unique_ptr<ResourceProvider> VulkanSharedContext::makeResourceProvider(
             VulkanBuffer::Make(this,
                                VulkanResourceProvider::kLoadMSAAVertexBufferSize,
                                BufferType::kVertex,
-                               AccessPattern::kGpuOnly,
-                               "LoadMSAAVertexBuffer");
+                               AccessPattern::kGpuOnly);
     if (!loadMSAAVertexBuffer) {
         SKGPU_LOG_E("Failed to create vertex buffer for loading MSAA from resolve");
         return nullptr;
     }
     SkASSERT(static_cast<VulkanBuffer*>(loadMSAAVertexBuffer.get())->bufferUsageFlags()
              & VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    loadMSAAVertexBuffer->setLabel("LoadMSAAVertexBuffer");
 
     return std::unique_ptr<ResourceProvider>(
             new VulkanResourceProvider(this,

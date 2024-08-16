@@ -52,10 +52,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -64,7 +64,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(CookieStore);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CookieStore);
 
 class CookieStore::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
 public:

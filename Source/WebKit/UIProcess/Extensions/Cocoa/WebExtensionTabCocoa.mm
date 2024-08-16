@@ -36,7 +36,7 @@
 #import "Logging.h"
 #import "WKSnapshotConfiguration.h"
 #import "WKWebExtensionTab.h"
-#import "WKWebExtensionTabCreationOptionsInternal.h"
+#import "WKWebExtensionTabConfigurationInternal.h"
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
@@ -48,8 +48,11 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionTab);
 
 WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtensionTab *delegate)
     : m_extensionContext(context)
@@ -63,9 +66,9 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtens
     , m_respondsToIsPinned([delegate respondsToSelector:@selector(isPinnedForWebExtensionContext:)])
     , m_respondsToSetPinned([delegate respondsToSelector:@selector(setPinned:forWebExtensionContext:completionHandler:)])
     , m_respondsToIsReaderModeAvailable([delegate respondsToSelector:@selector(isReaderModeAvailableForWebExtensionContext:)])
-    , m_respondsToIsReaderModeShowing([delegate respondsToSelector:@selector(isReaderModeShowingForWebExtensionContext:)])
-    , m_respondsToSetReaderModeShowing([delegate respondsToSelector:@selector(setReaderModeShowing:forWebExtensionContext:completionHandler:)])
-    , m_respondsToIsAudible([delegate respondsToSelector:@selector(isAudibleForWebExtensionContext:)])
+    , m_respondsToIsReaderModeActive([delegate respondsToSelector:@selector(isReaderModeActiveForWebExtensionContext:)])
+    , m_respondsToSetReaderModeActive([delegate respondsToSelector:@selector(setReaderModeActive:forWebExtensionContext:completionHandler:)])
+    , m_respondsToIsPlayingAudio([delegate respondsToSelector:@selector(isPlayingAudioForWebExtensionContext:)])
     , m_respondsToIsMuted([delegate respondsToSelector:@selector(isMutedForWebExtensionContext:)])
     , m_respondsToSetMuted([delegate respondsToSelector:@selector(setMuted:forWebExtensionContext:completionHandler:)])
     , m_respondsToSize([delegate respondsToSelector:@selector(sizeForWebExtensionContext:)])
@@ -74,8 +77,8 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtens
     , m_respondsToURL([delegate respondsToSelector:@selector(urlForWebExtensionContext:)])
     , m_respondsToPendingURL([delegate respondsToSelector:@selector(pendingURLForWebExtensionContext:)])
     , m_respondsToIsLoadingComplete([delegate respondsToSelector:@selector(isLoadingCompleteForWebExtensionContext:)])
-    , m_respondsToWebpageLocale([delegate respondsToSelector:@selector(webpageLocaleForWebExtensionContext:completionHandler:)])
-    , m_respondsToTakeSnapshot([delegate respondsToSelector:@selector(takeSnapshotWithConfiguration:forWebExtensionContext:completionHandler:)])
+    , m_respondsToDetectWebpageLocale([delegate respondsToSelector:@selector(detectWebpageLocaleForWebExtensionContext:completionHandler:)])
+    , m_respondsToTakeSnapshot([delegate respondsToSelector:@selector(takeSnapshotUsingConfiguration:forWebExtensionContext:completionHandler:)])
     , m_respondsToLoadURL([delegate respondsToSelector:@selector(loadURL:forWebExtensionContext:completionHandler:)])
     , m_respondsToReload([delegate respondsToSelector:@selector(reloadFromOrigin:forWebExtensionContext:completionHandler:)])
     , m_respondsToGoBack([delegate respondsToSelector:@selector(goBackForWebExtensionContext:completionHandler:)])
@@ -83,9 +86,9 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtens
     , m_respondsToActivate([delegate respondsToSelector:@selector(activateForWebExtensionContext:completionHandler:)])
     , m_respondsToIsSelected([delegate respondsToSelector:@selector(isSelectedForWebExtensionContext:)])
     , m_respondsToSetSelected([delegate respondsToSelector:@selector(setSelected:forWebExtensionContext:completionHandler:)])
-    , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateForWebExtensionContext:withOptions:completionHandler:)])
+    , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateUsingConfiguration:forWebExtensionContext:completionHandler:)])
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
-    , m_respondsToShouldGrantTabPermissionsOnUserGesture([delegate respondsToSelector:@selector(shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:)])
+    , m_respondsToShouldGrantTabPermissionsOnUserGesture([delegate respondsToSelector:@selector(shouldGrantPermissionsOnUserGestureForWebExtensionContext:)])
 {
     // Access to cache the result early, when the window is associated.
     isPrivate();
@@ -125,14 +128,14 @@ WebExtensionTabParameters WebExtensionTab::parameters() const
 
         m_respondsToIsSelected ? std::optional(isSelected()) : std::nullopt,
         m_respondsToIsPinned ? std::optional(isPinned()) : std::nullopt,
-        m_respondsToIsAudible ? std::optional(isAudible()) : std::nullopt,
+        m_respondsToIsPlayingAudio ? std::optional(isPlayingAudio()) : std::nullopt,
         m_respondsToIsMuted ? std::optional(isMuted()) : std::nullopt,
 
         !isLoadingComplete(),
         isPrivate(),
 
         m_respondsToIsReaderModeAvailable ? std::optional(isReaderModeAvailable()) : std::nullopt,
-        m_respondsToIsReaderModeShowing ? std::optional(isReaderModeShowing()) : std::nullopt
+        m_respondsToIsReaderModeActive ? std::optional(isReaderModeActive()) : std::nullopt
     };
 }
 
@@ -159,15 +162,15 @@ WebExtensionTabParameters WebExtensionTab::changedParameters(OptionSet<ChangedPr
         std::nullopt, // selected
 
         m_respondsToIsPinned && changedProperties.contains(ChangedProperties::Pinned) ? std::optional(isPinned()) : std::nullopt,
-        m_respondsToIsAudible && changedProperties.contains(ChangedProperties::Audible) ? std::optional(isAudible()) : std::nullopt,
+        m_respondsToIsPlayingAudio && changedProperties.contains(ChangedProperties::PlayingAudio) ? std::optional(isPlayingAudio()) : std::nullopt,
         m_respondsToIsMuted && changedProperties.contains(ChangedProperties::Muted) ? std::optional(isMuted()) : std::nullopt,
 
         changedProperties.contains(ChangedProperties::Loading) ? std::optional(!isLoadingComplete()) : std::nullopt,
 
-        std::nullopt, // privateBrowsing
+        std::nullopt, // private
 
         m_respondsToIsReaderModeAvailable && changedProperties.contains(ChangedProperties::ReaderMode) ? std::optional(isReaderModeAvailable()) : std::nullopt,
-        m_respondsToIsReaderModeShowing && changedProperties.contains(ChangedProperties::ReaderMode) ? std::optional(isReaderModeShowing()) : std::nullopt
+        m_respondsToIsReaderModeActive && changedProperties.contains(ChangedProperties::ReaderMode) ? std::optional(isReaderModeActive()) : std::nullopt
     };
 }
 
@@ -192,7 +195,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
     if (parameters.active && isActive != parameters.active.value())
         return false;
 
-    if (parameters.audible && isAudible() != parameters.audible.value())
+    if (parameters.audible && isPlayingAudio() != parameters.audible.value())
         return false;
 
     if (parameters.hidden && isActive != !parameters.hidden.value())
@@ -242,7 +245,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
 bool WebExtensionTab::extensionHasAccess() const
 {
     bool isPrivate = this->isPrivate();
-    return !isPrivate || (isPrivate && extensionContext()->hasAccessInPrivateBrowsing());
+    return !isPrivate || (isPrivate && extensionContext()->hasAccessToPrivateData());
 }
 
 bool WebExtensionTab::extensionHasPermission() const
@@ -420,16 +423,16 @@ bool WebExtensionTab::isPrivate() const
     return m_private;
 }
 
-void WebExtensionTab::setReaderModeShowing(bool showReaderMode, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionTab::setReaderModeActive(bool showReaderMode, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.toggleReaderMode()";
 
-    if (!isValid() || !m_respondsToSetReaderModeShowing) {
+    if (!isValid() || !m_respondsToSetReaderModeActive) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
-    [m_delegate setReaderModeShowing:showReaderMode forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+    [m_delegate setReaderModeActive:showReaderMode forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
@@ -448,12 +451,12 @@ bool WebExtensionTab::isReaderModeAvailable() const
     return [m_delegate isReaderModeAvailableForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-bool WebExtensionTab::isReaderModeShowing() const
+bool WebExtensionTab::isReaderModeActive() const
 {
-    if (!isValid() || !m_respondsToIsReaderModeShowing)
+    if (!isValid() || !m_respondsToIsReaderModeActive)
         return false;
 
-    return [m_delegate isReaderModeShowingForWebExtensionContext:m_extensionContext->wrapper()];
+    return [m_delegate isReaderModeActiveForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
 void WebExtensionTab::setMuted(bool muted, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -476,12 +479,12 @@ void WebExtensionTab::setMuted(bool muted, CompletionHandler<void(Expected<void,
     }).get()];
 }
 
-bool WebExtensionTab::isAudible() const
+bool WebExtensionTab::isPlayingAudio() const
 {
-    if (!isValid() || !m_respondsToIsAudible)
+    if (!isValid() || !m_respondsToIsPlayingAudio)
         return false;
 
-    return [m_delegate isAudibleForWebExtensionContext:m_extensionContext->wrapper()];
+    return [m_delegate isPlayingAudioForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
 bool WebExtensionTab::isMuted() const
@@ -563,12 +566,12 @@ void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(Expected<NSLoca
 {
     static NSString * const apiName = @"tabs.detectLanguage()";
 
-    if (!isValid() || !m_respondsToWebpageLocale) {
+    if (!isValid() || !m_respondsToDetectWebpageLocale) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
-    [m_delegate webpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSLocale *locale, NSError *error) mutable {
+    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSLocale *locale, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for detectWebpageLocale: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
@@ -616,7 +619,7 @@ void WebExtensionTab::captureVisibleWebpage(CompletionHandler<void(Expected<Coco
         return;
     }
 
-    [m_delegate takeSnapshotWithConfiguration:snapshotConfiguration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:internalCompletionHandler.get()];
+    [m_delegate takeSnapshotUsingConfiguration:snapshotConfiguration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:internalCompletionHandler.get()];
 }
 
 void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -772,13 +775,13 @@ void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, Com
     else if (auto currentIndex = this->index(); currentIndex != notFound)
         index = currentIndex + 1;
 
-    WKWebExtensionTabCreationOptions *duplicateOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
-    duplicateOptions.active = parameters.active.value_or(true);
-    duplicateOptions.selected = duplicateOptions.active ?: parameters.selected.value_or(false);
-    duplicateOptions.window = window ? window->delegate() : nil;
-    duplicateOptions.index = index;
+    WKWebExtensionTabConfiguration *configuration = [[WKWebExtensionTabConfiguration alloc] _init];
+    configuration.shouldBeActive = parameters.active.value_or(true);
+    configuration.shouldAddToSelection = configuration.shouldBeActive ?: parameters.selected.value_or(false);
+    configuration.window = window ? window->delegate() : nil;
+    configuration.index = index;
 
-    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
+    [m_delegate duplicateUsingConfiguration:configuration forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> duplicatedTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
@@ -814,12 +817,12 @@ void WebExtensionTab::close(CompletionHandler<void(Expected<void, WebExtensionEr
     }).get()];
 }
 
-bool WebExtensionTab::shouldGrantTabPermissionsOnUserGesture() const
+bool WebExtensionTab::shouldGrantPermissionsOnUserGesture() const
 {
     if (!isValid() || !m_respondsToShouldGrantTabPermissionsOnUserGesture)
         return true;
 
-    return [m_delegate shouldGrantTabPermissionsOnUserGestureForWebExtensionContext:m_extensionContext->wrapper()];
+    return [m_delegate shouldGrantPermissionsOnUserGestureForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
 WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const

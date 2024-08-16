@@ -38,6 +38,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/TZoneMallocInlines.h>
 
 static const float smartMagnificationPanScrollThresholdZoomedOut = 60;
 static const float smartMagnificationPanScrollThresholdIPhone = 100;
@@ -49,6 +50,8 @@ static const double smartMagnificationMinimumScale = 0;
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SmartMagnificationController);
 
 SmartMagnificationController::SmartMagnificationController(WKContentView *contentView)
     : m_webPageProxy(*contentView.page)

@@ -47,9 +47,9 @@
 #include "SubframeLoader.h"
 #include "Text.h"
 #include "Widget.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
@@ -57,7 +57,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLObjectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLObjectElement);
 
 using namespace HTMLNames;
 

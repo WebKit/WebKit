@@ -1,5 +1,5 @@
 load("//bazel:macros.bzl", "py_binary")
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_objc_library")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_objc_library")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -7,7 +7,7 @@ package(
 
 licenses(["notice"])
 
-exports_files_legacy(label_list = [
+exports_files([
     "ToolUtils.h",
     "ToolUtils.cpp",
     "SkMetaData.h",
@@ -140,20 +140,6 @@ skia_cc_library(
         "//tools/viewer:__pkg__",
     ],
     deps = ["//:skia_internal"],
-)
-
-skia_cc_library(
-    name = "get_executable_path",
-    srcs = select({
-        "@platforms//os:windows": ["SkGetExecutablePath_win.cpp"],
-        "@platforms//os:macos": ["SkGetExecutablePath_mac.cpp"],
-        "@platforms//os:linux": ["SkGetExecutablePath_linux.cpp"],
-    }),
-    hdrs = ["SkGetExecutablePath.h"],
-    visibility = [
-        "//src/sksl:__pkg__",
-        "//tools/sksl-minify:__pkg__",
-    ],
 )
 
 skia_cc_library(
@@ -300,6 +286,7 @@ skia_cc_library(
         "//include/encode:headers_to_compile",
         "//include/gpu/ganesh:headers_to_compile",
         "//include/gpu:headers_to_compile",
+        "//include/gpu/vk:headers_to_compile",
         "//include/private/base:headers_to_compile",
         "//include/private/chromium:headers_to_compile",
         "//include/private/gpu/ganesh:headers_to_compile",
@@ -308,12 +295,16 @@ skia_cc_library(
         "//src/codec:headers_to_compile",
         "//src/core:headers_to_compile",
         "//src/encode:headers_to_compile",
+        "//src/gpu/ganesh/effects:headers_to_compile",
         "//src/gpu/ganesh/geometry:headers_to_compile",
+        "//src/gpu/ganesh/gl:headers_to_compile",
         "//src/gpu/ganesh/mock:headers_to_compile",
+        "//src/gpu/ganesh/tessellate:headers_to_compile",
         "//src/gpu/ganesh:headers_to_compile",
         "//src/gpu/tessellate:headers_to_compile",
+        "//src/gpu/vk:headers_to_compile",
         "//src/gpu:headers_to_compile",
-        #"//src/pdf:headers_to_compile", # TODO(kjlubick) add module for pdf
+        "//src/pdf:headers_to_compile",
     ],
     copts = [
         # Since we are generating .cpp files for headers, some variables/functions which
@@ -338,9 +329,10 @@ skia_cc_library(
         "//:jpeg_encode_codec",
         "//:jpegxl_decode_codec",
         "//:pathops",
+        "//:pdf_writer",
         "//:png_decode_codec",
         "//:png_encode_codec",
-        "//:skparagraph_harfbuzz_unicode",
+        "//:skparagraph_harfbuzz_skunicode",
         "//:skresources",
         "//:skshaper_core",
         "//:skshaper_harfbuzz",
@@ -348,6 +340,7 @@ skia_cc_library(
         "//:skunicode_core",
         "//:skunicode_icu",
         "//:svg_renderer",
+        "//:svg_writer",
         "//:wbmp_decode_codec",
         "//:webp_decode_codec",
         "//:webp_encode_codec",

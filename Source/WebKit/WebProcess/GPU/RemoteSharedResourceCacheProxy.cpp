@@ -27,8 +27,11 @@
 
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCacheProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCacheProxy);
 
 Ref<RemoteSharedResourceCacheProxy> RemoteSharedResourceCacheProxy::create()
 {

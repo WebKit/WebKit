@@ -1725,6 +1725,10 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/XREnvironmentBlendMode.idl
     Modules/webxr/XREye.idl
     Modules/webxr/XRFrameRequestCallback.idl
+    Modules/webxr/XRGPUBinding.idl
+    Modules/webxr/XRGPULayerInit.idl
+    Modules/webxr/XRGPUProjectionLayerInit.idl
+    Modules/webxr/XRGPUSubImage.idl
     Modules/webxr/XRHandJoint.idl
     Modules/webxr/XRHandedness.idl
     Modules/webxr/XRInputSourceEvent.idl

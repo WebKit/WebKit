@@ -36,7 +36,7 @@ namespace WebCore {
 class MathMLOperatorElement;
 
 class RenderMathMLOperator : public RenderMathMLToken {
-    WTF_MAKE_ISO_ALLOCATED(RenderMathMLOperator);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderMathMLOperator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLOperator);
 public:
     RenderMathMLOperator(Type, MathMLOperatorElement&, RenderStyle&&);

@@ -28,7 +28,11 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WCTileGridTile, WCTileGrid::Tile);
 
 WCTileGrid::Tile::Tile(WebCore::IntRect rect)
     : m_tileRect(rect)

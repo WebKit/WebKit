@@ -33,6 +33,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ResourceError;
@@ -47,7 +48,7 @@ class NetworkProcess;
 class NetworkResourceLoader;
 
 class NetworkCORSPreflightChecker final : private NetworkDataTaskClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkCORSPreflightChecker);
 public:
     struct Parameters {
         WebCore::ResourceRequest originalRequest;

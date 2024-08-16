@@ -40,9 +40,9 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class PermissionStatus final : public ActiveDOMObject, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PermissionStatus>, public EventTarget  {
-    WTF_MAKE_ISO_ALLOCATED(PermissionStatus);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PermissionStatus);
 public:
-    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, SingleThreadWeakPtr<Page>&&);
+    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
     ~PermissionStatus();
 
     PermissionState state() const { return m_state; }
@@ -55,7 +55,7 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
 private:
-    PermissionStatus(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, SingleThreadWeakPtr<Page>&&);
+    PermissionStatus(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
 
     // ActiveDOMObject
     bool virtualHasPendingActivity() const final;

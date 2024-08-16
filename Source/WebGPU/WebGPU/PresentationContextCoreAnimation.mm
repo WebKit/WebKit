@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Texture.h"
 #import "TextureView.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebGPU {
@@ -41,6 +42,8 @@ static CAMetalLayer *layerFromSurfaceDescriptor(const WGPUSurfaceDescriptor& des
     CAMetalLayer *layer = bridge_id_cast(metalDescriptor.layer);
     return layer;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextCoreAnimation);
 
 PresentationContextCoreAnimation::PresentationContextCoreAnimation(const WGPUSurfaceDescriptor& descriptor)
     : m_layer(layerFromSurfaceDescriptor(descriptor))

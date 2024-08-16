@@ -36,6 +36,7 @@
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
 #include "WasmSIMDOpcodes.h"
+#include "WasmSourceMappingURLSectionParser.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -293,7 +294,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     int8_t firstByte = 0;
     WASM_PARSER_FAIL_IF(!peekInt7(firstByte), "can't parse Table information"_s);
-    if (!isImport && Options::useWasmTypedFunctionReferences() && static_cast<TypeKind>(firstByte) == TypeKind::Void) {
+    if (!isImport && static_cast<TypeKind>(firstByte) == TypeKind::Void) {
         hasInitExpr = true;
         m_offset++;
         uint8_t reservedByte;
@@ -302,8 +303,6 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     WASM_PARSER_FAIL_IF(!parseValueType(m_info, type), "can't parse Table type"_s);
     WASM_PARSER_FAIL_IF(!isRefType(type), "Table type should be a ref type, got "_s, type);
-    if (!Options::useWasmTypedFunctionReferences())
-        WASM_PARSER_FAIL_IF(type.kind != TypeKind::Funcref && type.kind != TypeKind::Externref, "Table type should be funcref or anyref, got "_s, type);
     if (!hasInitExpr)
         WASM_PARSER_FAIL_IF(!isDefaultableType(type), "Table's type must be defaultable"_s);
 
@@ -623,7 +622,6 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x05: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -645,7 +643,6 @@ auto SectionParser::parseElement() -> PartialResult
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, refType));
 
             uint32_t indexCount;
@@ -663,7 +660,6 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x07: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section"_s);
-            ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), isExternref(refType) || isFuncref(refType));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -764,17 +760,13 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
 
     case RefNull: {
         Type typeOfNull;
-        if (Options::useWasmTypedFunctionReferences()) {
-            int32_t heapType;
-            WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
-            if (isTypeIndexHeapType(heapType)) {
-                TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[heapType].get());
-                typeOfNull = Type { TypeKind::RefNull, typeIndex };
-            } else
-                typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
+        int32_t heapType;
+        WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
+        if (isTypeIndexHeapType(heapType)) {
+            TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[heapType].get());
+            typeOfNull = Type { TypeKind::RefNull, typeIndex };
         } else
-            WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type"_s);
-
+            typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
         resultType = typeOfNull;
         bitsOrImportNumber = JSValue::encode(jsNull());
         break;
@@ -785,20 +777,14 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index"_s);
         WASM_PARSER_FAIL_IF(index >= m_info->functionIndexSpaceSize(), "ref.func index "_s, index, " exceeds the number of functions "_s, m_info->functionIndexSpaceSize());
         m_info->addReferencedFunction(index);
-
-        if (Options::useWasmTypedFunctionReferences()) {
-            TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
-            resultType = { TypeKind::Ref, typeIndex };
-        } else
-            resultType = Types::Funcref;
-
+        TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
+        resultType = { TypeKind::Ref, typeIndex };
         bitsOrImportNumber = index;
         break;
     }
 
     case ExtGC:
         WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
-        WASM_PARSER_FAIL_IF(!Options::useWasmExtendedConstantExpressions(), "unknown init_expr opcode "_s, opcode);
         break;
 
     default:
@@ -816,7 +802,6 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         isExtendedConstantExpression = false;
         return { };
     }
-    WASM_PARSER_FAIL_IF(!Options::useWasmExtendedConstantExpressions(), "init_expr should end with end, ended with "_s, endOpcode);
 
     // If an End doesn't appear, we have to assume it's an extended constant expression
     // and use the full Wasm expression parser to validate.
@@ -1403,18 +1388,19 @@ auto SectionParser::parseCustom() -> PartialResult
         section.payload[byteNumber] = byte;
     }
 
-    Name nameName = { 'n', 'a', 'm', 'e' };
-    Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
-    if (section.name == nameName) {
+    if (WTF::Unicode::equal("name"_span, section.name.span())) {
         NameSectionParser nameSectionParser(section.payload, m_info);
         auto nameSection = nameSectionParser.parse();
         if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
         else
             dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
-    } else if (section.name == branchHintsName) {
+    } else if (WTF::Unicode::equal("metadata.code.branch_hint"_span, section.name.span())) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload, m_info);
         branchHintsSectionParser.parse();
+    } else if (WTF::Unicode::equal("sourceMappingURL"_span, section.name.span())) {
+        SourceMappingURLSectionParser sourceMappingURLSectionParser(section.payload, m_info);
+        sourceMappingURLSectionParser.parse();
     }
 
     m_info->customSections.append(WTFMove(section));

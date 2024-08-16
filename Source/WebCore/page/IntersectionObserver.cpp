@@ -47,7 +47,7 @@
 #include "RenderView.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -129,7 +129,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
     return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
 }
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IntersectionObserver);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntersectionObserver);
 
 IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
     : m_root(root)

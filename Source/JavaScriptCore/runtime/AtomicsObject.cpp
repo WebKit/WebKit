@@ -87,7 +87,7 @@ void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     FOR_EACH_ATOMICS_FUNC(PUT_DIRECT_NATIVE_FUNC)
 #undef PUT_DIRECT_NATIVE_FUNC
 
-    if (Options::useAtomicsWaitAsync() && vm.vmType == VM::Default)
+    if (vm.vmType == VM::Default)
         putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "waitAsync"_s), 4, atomicsFuncWaitAsync, ImplementationVisibility::Public, AtomicsWaitAsyncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();

@@ -670,6 +670,7 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
     int clientCount = m_clientCounts.get(contextId);
     ASSERT(clientCount > 0);
     clientCount--;
+    ALWAYS_LOG(LOGIDENTIFIER, clientCount);
 
     if (clientCount <= 0) {
         Ref interface = ensureInterface(contextId);
@@ -678,6 +679,10 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
+
+        if (RefPtr page = m_page.get())
+            page->didCleanupFullscreen(contextId);
+
         return;
     }
 

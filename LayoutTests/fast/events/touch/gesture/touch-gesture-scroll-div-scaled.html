@@ -103,12 +103,12 @@ function firstGestureScroll()
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-function runTest()
+async function runTest()
 {
     var scaleFactor = 2.0;
     var scaleOffset = 0;
-    if (window.internals) {
-       window.internals.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+    if (window.testRunner) {
+       await window.testRunner.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
     }
 
     movingdiv = document.getElementById('movingbox');
@@ -125,6 +125,8 @@ function runTest()
     } else {
         debug("This test requires DumpRenderTree.  Touch scroll the red rect to log.");
     }
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 </body>

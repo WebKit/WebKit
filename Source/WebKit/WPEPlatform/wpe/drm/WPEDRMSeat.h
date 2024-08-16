@@ -28,8 +28,8 @@
 #include "WPEKeymap.h"
 #include "WPEView.h"
 #include <libinput.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 
@@ -42,7 +42,7 @@ namespace DRM {
 class Session;
 
 class Seat {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Seat);
 public:
     static std::unique_ptr<Seat> create(struct udev*, Session&);
     explicit Seat(struct libinput*);

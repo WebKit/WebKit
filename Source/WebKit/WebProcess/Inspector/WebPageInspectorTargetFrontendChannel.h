@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -34,7 +35,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageInspectorTargetFrontendChannel final : public Inspector::FrontendChannel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorTargetFrontendChannel);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTargetFrontendChannel);
 public:
     WebPageInspectorTargetFrontendChannel(WebPage&, const String& targetId, Inspector::FrontendChannel::ConnectionType);

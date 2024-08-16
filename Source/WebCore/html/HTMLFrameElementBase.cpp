@@ -40,12 +40,12 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
 
 using namespace HTMLNames;
 

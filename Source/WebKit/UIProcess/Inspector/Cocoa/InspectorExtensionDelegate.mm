@@ -33,9 +33,12 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorExtensionDelegate.h"
 #import "_WKInspectorExtensionInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UniqueRef.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorExtensionDelegate);
 
 InspectorExtensionDelegate::InspectorExtensionDelegate(_WKInspectorExtension *inspectorExtension, id <_WKInspectorExtensionDelegate> delegate)
     : m_inspectorExtension(inspectorExtension)
@@ -55,6 +58,8 @@ RetainPtr<id <_WKInspectorExtensionDelegate>> InspectorExtensionDelegate::delega
 {
     return m_delegate.get();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorExtensionDelegateInspectorExtensionClient, InspectorExtensionDelegate::InspectorExtensionClient);
 
 InspectorExtensionDelegate::InspectorExtensionClient::InspectorExtensionClient(InspectorExtensionDelegate& delegate)
     : m_inspectorExtensionDelegate(delegate)

@@ -168,11 +168,12 @@ angle::Result Texture::Make2DTexture(ContextMtl *context,
 }
 
 /** static */
-angle::Result Texture::MakeMemoryLess2DTexture(ContextMtl *context,
-                                               const Format &format,
-                                               uint32_t width,
-                                               uint32_t height,
-                                               TextureRef *refOut)
+angle::Result Texture::MakeMemoryLess2DMSTexture(ContextMtl *context,
+                                                 const Format &format,
+                                                 uint32_t width,
+                                                 uint32_t height,
+                                                 uint32_t samples,
+                                                 TextureRef *refOut)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -181,8 +182,11 @@ angle::Result Texture::MakeMemoryLess2DTexture(ContextMtl *context,
                                                                width:width
                                                               height:height
                                                            mipmapped:NO];
+        desc.textureType = MTLTextureType2DMultisample;
+        desc.sampleCount = samples;
 
-        return MakeTexture(context, format, desc, 1, true, false, true, refOut);
+        return MakeTexture(context, format, desc, 1, /*renderTargetOnly=*/true,
+                           /*allowFormatView=*/false, /*memoryLess=*/true, refOut);
     }  // ANGLE_MTL_OBJC_SCOPE
 }
 /** static */
@@ -426,11 +430,27 @@ Texture::Texture(ContextMtl *context,
 
         if (memoryLess)
         {
+            bool supportsMemoryless = false;
 #if (TARGET_OS_IOS || TARGET_OS_TV) && !TARGET_OS_MACCATALYST
-            desc.resourceOptions = MTLResourceStorageModeMemoryless;
+            supportsMemoryless = true;
 #else
-            desc.resourceOptions = MTLResourceStorageModePrivate;
+            if (ANGLE_APPLE_AVAILABLE_XC(11.0, 14.1))
+            {
+                supportsMemoryless = context->getDisplay()->supportsAppleGPUFamily(1);
+            }
 #endif
+            if (supportsMemoryless)
+            {
+                desc.resourceOptions = MTLResourceStorageModeMemoryless;
+            }
+            else
+            {
+                desc.resourceOptions = MTLResourceStorageModePrivate;
+            }
+
+            // Regardless of whether MTLResourceStorageModeMemoryless is used or not, we disable
+            // Load/Store on this texture.
+            mShouldNotLoadStore = true;
         }
         else if (context->getNativeFormatCaps(desc.pixelFormat).depthRenderable ||
                  desc.textureType == MTLTextureType2DMultisample)
@@ -449,12 +469,12 @@ Texture::Texture(ContextMtl *context,
         }
         if (desc.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
         {
-            ASSERT(allowFormatView);
+            ASSERT(allowFormatView || memoryLess);
         }
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         if (desc.pixelFormat == MTLPixelFormatDepth24Unorm_Stencil8)
         {
-            ASSERT(allowFormatView);
+            ASSERT(allowFormatView || memoryLess);
         }
 #endif
 

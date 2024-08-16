@@ -128,6 +128,7 @@ private:
         case ProcessTerminationReason::RequestedByNetworkProcess:
         case ProcessTerminationReason::NavigationSwap:
         case ProcessTerminationReason::RequestedByGPUProcess:
+        case ProcessTerminationReason::RequestedByModelProcess:
         case ProcessTerminationReason::ExceededProcessCountLimit:
         case ProcessTerminationReason::IdleExit:
         case ProcessTerminationReason::Unresponsive:

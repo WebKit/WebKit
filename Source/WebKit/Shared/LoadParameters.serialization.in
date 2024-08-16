@@ -26,7 +26,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 [RValue] struct WebKit::LoadParameters {
     WebCore::PublicSuffix publicSuffix;
-    uint64_t navigationID;
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;

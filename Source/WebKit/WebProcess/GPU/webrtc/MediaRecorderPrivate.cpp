@@ -40,6 +40,7 @@
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -74,6 +75,8 @@ private:
 
     WeakPtr<MediaRecorderPrivate> m_recorder;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivate);
 
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_stream(stream)

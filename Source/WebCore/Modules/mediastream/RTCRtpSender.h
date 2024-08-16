@@ -55,7 +55,7 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
     , private LoggerHelper
 #endif
     {
-    WTF_MAKE_ISO_ALLOCATED(RTCRtpSender);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCRtpSender);
 public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);

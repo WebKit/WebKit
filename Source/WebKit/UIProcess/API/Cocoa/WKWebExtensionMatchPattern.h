@@ -30,11 +30,11 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @class WKWebExtension;
 
-/*! @abstract Indicates a @link WKWebExtensionMatchPattern @/link error. */
+/*! @abstract Indicates a ``WKWebExtensionMatchPattern`` error. */
 WK_EXTERN NSErrorDomain const WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by NSError to indicate errors in the @link WKWebExtensionMatchPattern @/link domain.
+ @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionMatchPattern`` domain.
  @constant WKWebExtensionMatchPatternErrorUnknown  Indicates that an unknown error occurred.
  @constant WKWebExtensionMatchPatternErrorInvalidScheme  Indicates that the scheme component was invalid.
  @constant WKWebExtensionMatchPatternErrorInvalidHost  Indicates that the host component was invalid.
@@ -48,7 +48,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionMatchPatternErrorDomain, WKWebExtensionMatch
 } NS_SWIFT_NAME(WKWebExtensionMatchPattern.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract Constants used by @link WKWebExtensionMatchPattern @/link to indicate matching options.
+ @abstract Constants used by ``WKWebExtensionMatchPattern`` to indicate matching options.
  @constant WKWebExtensionMatchPatternOptionsNone  Indicates no special matching options.
  @constant WKWebExtensionMatchPatternOptionsIgnoreSchemes  Indicates that the scheme components should be ignored while matching.
  @constant WKWebExtensionMatchPatternOptionsIgnorePaths  Indicates that the host components should be ignored while matching.
@@ -62,7 +62,7 @@ typedef NS_OPTIONS(NSUInteger, WKWebExtensionMatchPatternOptions) {
 } NS_SWIFT_NAME(WKWebExtensionMatchPattern.Options) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
- @abstract A `WKWebExtensionMatchPattern` object represents a way to specify groups of URLs.
+ @abstract A ``WKWebExtensionMatchPattern`` object represents a way to specify groups of URLs.
  @discussion All match patterns are specified as strings. Apart from the special `<all_urls>` pattern, match patterns
  consist of three parts: scheme, host, and path.
  */
@@ -103,16 +103,16 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MatchPattern)
 
 /*!
  @abstract Returns a pattern object for the specified pattern string.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result A pattern object, or `nil` if the pattern string is invalid and `error` will be set.
+ @param error Set to \c nil or an error instance if an error occurred.
+ @result A pattern object, or `nil` if the pattern string is invalid and an error will be set.
  @seealso initWithString:
  */
 - (nullable instancetype)initWithString:(NSString *)string error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /*!
  @abstract Returns a pattern object for the specified scheme, host, and path strings.
- @param error Set to \c nil or an \c NSError instance if an error occurred.
- @result A pattern object, or `nil` if any of the strings are invalid and `error` will be set.
+ @param error Set to \c nil or an error instance if an error occurred.
+ @result A pattern object, or `nil` if any of the strings are invalid and an error will be set.
  @seealso initWithScheme:host:path:
  */
 - (nullable instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error NS_DESIGNATED_INITIALIZER;
@@ -120,13 +120,13 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MatchPattern)
 /*! @abstract The original pattern string. */
 @property (nonatomic, readonly, copy) NSString *string;
 
-/*! @abstract The scheme part of the pattern string, unless `matchesAllURLs` is `YES`. */
+/*! @abstract The scheme part of the pattern string, unless ``matchesAllURLs`` is `YES`. */
 @property (nonatomic, nullable, readonly, copy) NSString *scheme;
 
-/*! @abstract The host part of the pattern string, unless `matchesAllURLs` is `YES`. */
+/*! @abstract The host part of the pattern string, unless ``matchesAllURLs`` is `YES`. */
 @property (nonatomic, nullable, readonly, copy) NSString *host;
 
-/*! @abstract The path part of the pattern string, unless `matchesAllURLs` is `YES`. */
+/*! @abstract The path part of the pattern string, unless ``matchesAllURLs`` is `YES`. */
 @property (nonatomic, nullable, readonly, copy) NSString *path;
 
 /*! @abstract If the pattern is `<all_urls>`. */

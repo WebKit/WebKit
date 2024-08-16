@@ -59,18 +59,15 @@ static inline LegacyInlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
     if (CheckedPtr renderBlock = dynamicDowncast<RenderBlockFlow>(*renderer)) {
         // If we're given a block element, it has to be a RenderSVGText.
         ASSERT(is<RenderSVGText>(*renderBlock));
-
-        // RenderSVGText only ever contains a single line box.
-        auto* flowBox = renderBlock->firstRootBox();
-        ASSERT(flowBox == renderBlock->lastRootBox());
-        return flowBox;
+        return renderBlock->legacyRootBox();
     }
 
     if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer)) {
         // We're given a RenderSVGInline or objects that derive from it (RenderSVGTSpan / RenderSVGTextPath)
         // RenderSVGInline only ever contains a single line box.
-        auto* flowBox = renderInline->firstLineBox();
-        ASSERT(flowBox == renderInline->lastLineBox());
+        // FIXME: While the above statment is correct, RenderInline's line box list is about the boxes it generates and not about the single line root inline box.
+        auto* flowBox = renderInline->firstLegacyInlineBox();
+        ASSERT(flowBox == renderInline->lastLegacyInlineBox());
         return flowBox;
     }
 

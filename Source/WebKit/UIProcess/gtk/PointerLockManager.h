@@ -28,6 +28,7 @@
 #include "WebMouseEvent.h"
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct _GdkDevice GdkDevice;
 #if USE(GTK4)
@@ -41,7 +42,8 @@ namespace WebKit {
 class WebPageProxy;
 
 class PointerLockManager {
-    WTF_MAKE_NONCOPYABLE(PointerLockManager); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PointerLockManager);
+    WTF_MAKE_NONCOPYABLE(PointerLockManager);
 public:
     static std::unique_ptr<PointerLockManager> create(WebPageProxy&, const WebCore::FloatPoint&, const WebCore::FloatPoint&, WebMouseEventButton, unsigned short, OptionSet<WebEventModifier>);
     PointerLockManager(WebPageProxy&, const WebCore::FloatPoint&, const WebCore::FloatPoint&, WebMouseEventButton, unsigned short, OptionSet<WebEventModifier>);

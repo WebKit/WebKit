@@ -35,12 +35,12 @@
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGForeignObject);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGForeignObject);
 
 RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, RenderStyle&& style)
     : RenderSVGBlock(Type::SVGForeignObject, element, WTFMove(style))

@@ -278,7 +278,7 @@ void GStreamerVideoCapturer::reconfigure()
         return;
 
     struct MimeTypeSelector {
-        const char* mimeType = "video/x-raw";
+        String mimeType = "video/x-raw"_s;
         String format;
         int maxWidth = 0;
         int maxHeight = 0;
@@ -326,7 +326,7 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxWidth = *width;
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
-                selector->mimeType = gst_structure_get_name(structure);
+                selector->mimeType = gstStructureGetName(structure).toString();
                 if (gst_structure_has_name(structure, "video/x-raw")) {
                     if (gst_structure_has_field(structure, "format"))
                         selector->format = makeString(gstStructureGetString(structure, "format"_s));
@@ -340,7 +340,7 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxWidth = *width;
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
-                selector->mimeType = gst_structure_get_name(structure);
+                selector->mimeType = gstStructureGetName(structure).toString();
                 if (gst_structure_has_name(structure, "video/x-raw")) {
                     if (gst_structure_has_field(structure, "format"))
                         selector->format = makeString(gstStructureGetString(structure, "format"_s));
@@ -352,7 +352,7 @@ void GStreamerVideoCapturer::reconfigure()
             return TRUE;
         }), &selector);
 
-    auto caps = adoptGRef(gst_caps_new_simple(selector.mimeType, "width", G_TYPE_INT, selector.maxWidth,
+    auto caps = adoptGRef(gst_caps_new_simple(selector.mimeType.ascii().data(), "width", G_TYPE_INT, selector.maxWidth,
         "height", G_TYPE_INT, selector.maxHeight, nullptr));
 
     // Workaround for https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/1793.

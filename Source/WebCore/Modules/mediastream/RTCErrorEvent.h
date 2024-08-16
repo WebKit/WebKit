@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class RTCErrorEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(RTCErrorEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCErrorEvent);
 public:
     struct Init : EventInit {
         RefPtr<RTCError> error;

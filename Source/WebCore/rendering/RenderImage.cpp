@@ -66,8 +66,8 @@
 #include "SVGImage.h"
 #include "Settings.h"
 #include "TextPainter.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "LogicalSelectionOffsetCaches.h"
@@ -85,7 +85,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImage);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderImage);
 
 #if PLATFORM(IOS_FAMILY)
 // FIXME: This doesn't behave correctly for floating or positioned images, but WebCore doesn't handle those well

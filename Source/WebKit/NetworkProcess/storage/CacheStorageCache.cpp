@@ -35,6 +35,7 @@
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
@@ -61,6 +62,8 @@ static Ref<CacheStorageStore> createStore(const String& uniqueName, const String
         return CacheStorageMemoryStore::create();
     return CacheStorageDiskStore::create(uniqueName, path, WTFMove(queue));
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageCache);
 
 CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
     : m_manager(manager)

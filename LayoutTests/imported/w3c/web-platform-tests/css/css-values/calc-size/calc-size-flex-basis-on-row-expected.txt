@@ -1,0 +1,36 @@
+ninechars twenty_characters___
+
+PASS resolved value for width resulting from flex-basis: 274px
+PASS resolved value for width resulting from flex-basis: min-content
+PASS resolved value for width resulting from flex-basis: fit-content
+PASS resolved value for width resulting from flex-basis: max-content
+PASS resolved value for width resulting from flex-basis: content
+PASS resolved value for width resulting from flex-basis: auto
+FAIL resolved value for width resulting from flex-basis: calc-size(any, 357px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(any, 31%) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(max-content, 31%) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(fit-content, 172px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(37px, 193px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(83px, size * 3) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(min-content, size / 2) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(max-content, size * 1.2) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(fit-content, size / 4 + 30px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(stretch, size / 2 - 10%) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(30px, 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(calc-size(any, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(calc-size(min-content, size), size) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(auto, size) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(auto, size * 1.6 + 23px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(content, size) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(content, size / 2) assert_not_equals: flex-basis value is accepted got disallowed value ""
+PASS resolved value for width resulting from flex-basis: auto and width: auto
+FAIL resolved value for width resulting from flex-basis: calc-size(auto, size * 2) and width: auto assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: auto and width: calc-size(auto, size * 1.5 + 5px) assert_not_equals: width value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(auto, size + 14px) and width: calc-size(auto, size * 1.5) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: auto and width: calc-size(max-content, size + 12px) assert_not_equals: width value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(auto, size + 4px) and width: calc-size(fit-content, size + 12px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: 472px and width: calc-size(fit-content, size + 12px) assert_not_equals: width value is accepted got disallowed value ""
+FAIL resolved value for width resulting from flex-basis: calc-size(content, size * 1.5 + 4px) and width: 321px assert_not_equals: flex-basis value is accepted got disallowed value ""
+

@@ -224,7 +224,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
         return true;
 
     // Confirm that the connection is from a WebContent process:
-    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection()->xpcConnection());
+    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection().xpcConnection());
 
     if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
         RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
@@ -240,7 +240,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return connection()->getAuditToken();
+    return connection().getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()

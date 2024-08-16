@@ -40,7 +40,7 @@ namespace WebCore {
 class ScreenOrientation;
 
 class Screen final : public ScriptWrappable, public RefCounted<Screen>, public LocalDOMWindowProperty {
-    WTF_MAKE_ISO_ALLOCATED(Screen);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Screen);
 public:
     static Ref<Screen> create(LocalDOMWindow& window) { return adoptRef(*new Screen(window)); }
     ~Screen();

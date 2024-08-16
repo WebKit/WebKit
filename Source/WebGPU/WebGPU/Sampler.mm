@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import <cmath>
+#import <wtf/TZoneMallocInlines.h>
 
 @implementation SamplerIdentifier
 - (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second
@@ -235,6 +236,8 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
     return Sampler::create([[SamplerIdentifier alloc] initWithFirst:newDescriptorHash.first second:newDescriptorHash.second], descriptor, *this);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
 
 Sampler::Sampler(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     : m_samplerIdentifier(samplerIdentifier)

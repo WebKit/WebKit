@@ -29,8 +29,11 @@
 #include "DrawingAreaProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageDrawingAreaProxy);
 
 RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
     : m_drawingArea(drawingArea)

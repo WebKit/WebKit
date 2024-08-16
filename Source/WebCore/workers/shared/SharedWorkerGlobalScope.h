@@ -27,7 +27,7 @@
 
 #include "TransferredMessagePort.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class SharedWorkerThread;
 struct WorkerParameters;
 
 class SharedWorkerGlobalScope final : public WorkerGlobalScope {
-    WTF_MAKE_ISO_ALLOCATED(SharedWorkerGlobalScope);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SharedWorkerGlobalScope);
 public:
     template<typename... Args> static Ref<SharedWorkerGlobalScope> create(Args&&... args)
     {

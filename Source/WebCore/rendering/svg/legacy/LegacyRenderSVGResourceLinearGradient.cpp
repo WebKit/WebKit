@@ -22,11 +22,11 @@
 #include "LegacyRenderSVGResourceLinearGradient.h"
 
 #include "LegacyRenderSVGResourceLinearGradientInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
 
 LegacyRenderSVGResourceLinearGradient::LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceGradient(Type::LegacySVGResourceLinearGradient, element, WTFMove(style))

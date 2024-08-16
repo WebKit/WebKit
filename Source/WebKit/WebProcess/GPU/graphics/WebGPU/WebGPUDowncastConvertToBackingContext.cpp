@@ -52,8 +52,15 @@
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
 #include "RemoteTextureViewProxy.h"
+#include "RemoteXRBindingProxy.h"
+#include "RemoteXRProjectionLayerProxy.h"
+#include "RemoteXRSubImageProxy.h"
+#include "RemoteXRViewProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
 
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Adapter& adapter)
 {
@@ -178,6 +185,26 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::TextureView& textureView)
 {
     return static_cast<const RemoteTextureViewProxy&>(textureView).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::XRBinding& xrBinding)
+{
+    return static_cast<const RemoteXRBindingProxy&>(xrBinding).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::XRProjectionLayer& layer)
+{
+    return static_cast<const RemoteXRProjectionLayerProxy&>(layer).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::XRSubImage& subImage)
+{
+    return static_cast<const RemoteXRSubImageProxy&>(subImage).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::XRView& view)
+{
+    return static_cast<const RemoteXRViewProxy&>(view).backing();
 }
 
 } // namespace WebKit::WebGPU

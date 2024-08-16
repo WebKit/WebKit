@@ -35,6 +35,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ namespace IPC {
 //
 // The StreamClientConnection trusts the StreamServerConnection.
 class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StreamClientConnection);
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
     struct StreamConnectionPair {
@@ -65,7 +66,7 @@ public:
     };
 
     // The messages from the server are delivered to the caller through the passed IPC::MessageReceiver.
-    static std::optional<StreamConnectionPair> create(unsigned bufferSizeLog2);
+    static std::optional<StreamConnectionPair> create(unsigned bufferSizeLog2, Seconds defaultTimeoutDuration);
 
     ~StreamClientConnection();
 
@@ -74,22 +75,23 @@ public:
     void setMaxBatchSize(unsigned);
 
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
-    Error flushSentMessages(Timeout);
+    Error flushSentMessages();
     void invalidate();
 
-    template<typename T, typename U, typename V, typename W> Error send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout);
-
+    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+    Error send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
     using AsyncReplyID = Connection::AsyncReplyID;
-    template<typename T, typename C, typename U, typename V, typename W>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout);
+    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
 
-    template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
-    template<typename T, typename U, typename V, typename W>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout);
-
-    template<typename T, typename U, typename V, typename W>
-    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W> destinationID, Timeout, OptionSet<WaitForOption> = { });
-    template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout);
+    template<typename T>
+    using SendSyncResult = Connection::SendSyncResult<T>;
+    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
+    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<WaitForOption> = { });
+    template<typename>
+    Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
 
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
@@ -97,8 +99,14 @@ public:
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
 
+    // Returns the timeout moment for current time.
+    Timeout defaultTimeout() const { return m_defaultTimeoutDuration; }
+
+    // Returns the timeout duration. Useful for waiting for consistent per-connection amounts with other APIs
+    // used in conjunction with the connection.
+    Seconds defaultTimeoutDuration() const { return m_defaultTimeoutDuration; }
 private:
-    StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&);
+    StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&, Seconds defaultTimeoutDuration);
 
     template<typename T, typename... AdditionalData>
     bool trySendStream(std::span<uint8_t>, T& message, AdditionalData&&...);
@@ -120,7 +128,7 @@ private:
         void didReceiveMessage(Connection&, Decoder&) final;
         bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
-        void didReceiveInvalidMessage(Connection&, MessageName) final;
+        void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
     private:
         Connection::Client& m_receiver;
     };
@@ -129,12 +137,13 @@ private:
     StreamClientConnectionBuffer m_buffer;
     unsigned m_maxBatchSize { 20 }; // Number of messages marked as StreamBatched to accumulate before notifying the server.
     unsigned m_batchSize { 0 };
+    const Seconds m_defaultTimeoutDuration;
 
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };
 
-template<typename T, typename U, typename V, typename W>
-Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout)
+template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = Connection::generateSignpostIdentifier();
@@ -145,6 +154,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
 #endif
 
     static_assert(!T::isSync, "Message is sync!");
+    Timeout timeout = defaultTimeout();
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return error;
@@ -152,7 +162,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
         return Error::FailedToAcquireBufferSpan;
-    if constexpr(T::isStreamEncodable) {
+    if constexpr (T::isStreamEncodable) {
         if (trySendStream(*span, message))
             return Error::NoError;
     }
@@ -160,8 +170,8 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
     return protectedConnection()->send(std::forward<T>(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-template<typename T, typename C, typename U, typename V, typename W>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout)
+template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = Connection::generateSignpostIdentifier();
@@ -169,6 +179,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
 #endif
 
     static_assert(!T::isSync, "Message is sync!");
+    Timeout timeout = defaultTimeout();
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return { }; // FIXME: Propagate errors.
@@ -181,14 +192,14 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     auto handler = Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    handler.completionHandler = CompletionHandler<void(Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Decoder *decoder) mutable {
+    handler.completionHandler = CompletionHandler<void(Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Decoder* decoder) mutable {
         WTFEndSignpost(signpostIdentifier, StreamClientConnection);
         handler(decoder);
     });
 #endif
     connection->addAsyncReplyHandler(WTFMove(handler));
 
-    if constexpr(T::isStreamEncodable) {
+    if constexpr (T::isStreamEncodable) {
         if (trySendStream(*span, message, replyID))
             return replyID;
     }
@@ -217,7 +228,7 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, 
     StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
     if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
-        if constexpr(T::isStreamBatched)
+        if constexpr (T::isStreamBatched)
             wakeUpServerBatched(wakeUpResult);
         else
             wakeUpServer(wakeUpResult);
@@ -226,8 +237,8 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, 
     return false;
 }
 
-template<typename T, typename U, typename V, typename W>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout)
+template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = Connection::generateSignpostIdentifier();
@@ -238,6 +249,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
 #endif
 
     static_assert(T::isSync, "Message is not sync!");
+    Timeout timeout = defaultTimeout();
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
         return { error };
@@ -246,7 +258,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     if (!span)
         return { Error::FailedToAcquireBufferSpan };
 
-    if constexpr(T::isStreamEncodable) {
+    if constexpr (T::isStreamEncodable) {
         auto maybeSendResult = trySendSyncStream(message, timeout, *span);
         if (maybeSendResult)
             return WTFMove(*maybeSendResult);
@@ -255,15 +267,17 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     return protectedConnection()->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
 }
 
-template<typename T, typename U, typename V, typename W>
-Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
+Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<WaitForOption> waitForOptions)
 {
+    Timeout timeout = defaultTimeout();
     return protectedConnection()->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }
 
 template<typename T>
-Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
+Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID)
 {
+    Timeout timeout = defaultTimeout();
     return protectedConnection()->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);
 }
 
@@ -284,7 +298,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
 
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         wakeUpServer(wakeUpResult);
-        if constexpr(T::isReplyStreamEncodable) {
+        if constexpr (T::isReplyStreamEncodable) {
             auto replySpan = m_buffer.tryAcquireAll(timeout);
             if (!replySpan)
                 return makeUnexpected(Error::FailedToAcquireReplyBufferSpan);

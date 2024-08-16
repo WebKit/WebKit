@@ -47,7 +47,7 @@ class WebCoreOpaqueRoot;
 enum class IfMissing : bool { Throw, ReturnNull };
 
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
-    WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicy);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedTypePolicy);
 public:
     static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy() = default;

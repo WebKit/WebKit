@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/bidi_ruby-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/bidi_ruby-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/bidi_ruby.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/start_alignment-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/start_alignment-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/start_alignment.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_LF_u05D0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_LF_u05D0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_LF_u05D0.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2028_u05D0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2028_u05D0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2028_u05D0.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0041_first-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0041_first-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0041_first.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u05D0_first-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u05D0_first-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u05D0_first.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0628_first-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0628_first-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0628_first.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_lr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_lr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_lr.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_rl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_rl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/vertical_rl.html

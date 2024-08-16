@@ -36,7 +36,7 @@ class DrawingContext;
 class CustomPaintCanvas;
 
 class PaintRenderingContext2D final : public CanvasRenderingContext2DBase {
-    WTF_MAKE_ISO_ALLOCATED(PaintRenderingContext2D);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaintRenderingContext2D);
 public:
     static std::unique_ptr<PaintRenderingContext2D> create(CustomPaintCanvas&);
 

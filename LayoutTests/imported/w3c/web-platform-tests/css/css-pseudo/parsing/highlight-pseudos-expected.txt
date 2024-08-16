@@ -9,10 +9,10 @@ PASS "::selection div" should be an invalid selector
 PASS "::selection::after" should be an invalid selector
 PASS "::selection:hover" should be an invalid selector
 PASS ":not(::selection)" should be an invalid selector
-FAIL "::target-text" should be a valid selector '::target-text' is not a valid selector.
-FAIL ".a::target-text" should be a valid selector '.a::target-text' is not a valid selector.
-FAIL "div ::target-text" should be a valid selector 'div ::target-text' is not a valid selector.
-FAIL "::part(my-part)::target-text" should be a valid selector '::part(my-part)::target-text' is not a valid selector.
+PASS "::target-text" should be a valid selector
+PASS ".a::target-text" should be a valid selector
+PASS "div ::target-text" should be a valid selector
+PASS "::part(my-part)::target-text" should be a valid selector
 PASS "::before::target-text" should be an invalid selector
 PASS "::target-text.a" should be an invalid selector
 PASS "::target-text div" should be an invalid selector

@@ -1164,6 +1164,7 @@ wasm/WasmSectionParser.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmOpcodeCounter.cpp
 wasm/WasmSlowPaths.cpp @no-unify
+wasm/WasmSourceMappingURLSectionParser.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmStreamingPlan.cpp

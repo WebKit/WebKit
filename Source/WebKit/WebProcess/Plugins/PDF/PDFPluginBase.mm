@@ -67,6 +67,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VoidCallback.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
@@ -76,6 +77,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPluginBase);
 
 PluginInfo PDFPluginBase::pluginInfo()
 {
@@ -1124,50 +1127,6 @@ bool PDFPluginBase::performImmediateActionHitTestAtLocation(const WebCore::Float
     data.isSelected = true;
     data.dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection.get(), TextIndicatorPresentationTransition::FadeIn);
     return true;
-}
-
-DictionaryPopupInfo PDFPluginBase::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition presentationTransition)
-{
-    DictionaryPopupInfo dictionaryPopupInfo;
-    if (!selection.string.length)
-        return dictionaryPopupInfo;
-
-#if PLATFORM(MAC)
-    NSRect rangeRect = rectForSelectionInRootView(selection);
-    NSAttributedString *nsAttributedString = selection.attributedString;
-    RetainPtr scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    auto scaleFactor = contentScaleFactor();
-
-    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
-        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-
-        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
-        if (font) {
-            font = [fontManager convertFont:font toSize:font.pointSize * scaleFactor];
-            [scaledAttributes setObject:font forKey:NSFontAttributeName];
-        }
-
-        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
-    }];
-
-    rangeRect.size.height = nsAttributedString.size.height * scaleFactor;
-    rangeRect.size.width = nsAttributedString.size.width * scaleFactor;
-
-    TextIndicatorData dataForSelection;
-    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
-    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
-    dataForSelection.contentImageScaleFactor = scaleFactor;
-    dataForSelection.presentationTransition = presentationTransition;
-
-    dictionaryPopupInfo.origin = rangeRect.origin;
-    dictionaryPopupInfo.textIndicator = dataForSelection;
-    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledNSAttributedString);
-#else
-    UNUSED_PARAM(presentationTransition);
-#endif
-
-    return dictionaryPopupInfo;
 }
 
 WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const

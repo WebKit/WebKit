@@ -157,6 +157,11 @@ IGNORE_WARNINGS_END
 {
 }
 
+- (id)localContext
+{
+    return nil;
+}
+
 @end
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

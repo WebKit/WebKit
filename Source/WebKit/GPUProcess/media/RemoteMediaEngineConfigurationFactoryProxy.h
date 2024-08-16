@@ -30,13 +30,14 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/MediaEngineConfigurationFactory.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class RemoteMediaEngineConfigurationFactoryProxy final : private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaEngineConfigurationFactoryProxy);
 public:
     RemoteMediaEngineConfigurationFactoryProxy();
     virtual ~RemoteMediaEngineConfigurationFactoryProxy();

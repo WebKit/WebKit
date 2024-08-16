@@ -37,7 +37,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SelectionGeometry.h"
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLineBreak);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderLineBreak);
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
     : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), { }, is<HTMLWBRElement>(element) ? OptionSet<LineBreakFlag> { LineBreakFlag::IsWBR } : OptionSet<LineBreakFlag> { })

@@ -1,4 +1,4 @@
 some text
 
-FAIL Script-inserted module script elements with "blocking=render" are render-blocking assert_true: Script-inserted render-blocking inline module script should execute before rAF callback expected true got false
+PASS Script-inserted module script elements with "blocking=render" are render-blocking
 

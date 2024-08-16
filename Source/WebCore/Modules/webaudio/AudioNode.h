@@ -58,7 +58,7 @@ class AudioNode
 #endif
 {
     WTF_MAKE_NONCOPYABLE(AudioNode);
-    WTF_MAKE_ISO_ALLOCATED(AudioNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioNode);
 public:
     enum NodeType {
         NodeTypeDestination,

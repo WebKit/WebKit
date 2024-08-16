@@ -32,11 +32,11 @@
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include "StyleCachedImage.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImageResourceStyleImage);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderImageResourceStyleImage);
 
 RenderImageResourceStyleImage::RenderImageResourceStyleImage(StyleImage& styleImage)
     : m_styleImage(styleImage)

@@ -233,9 +233,9 @@
 
 namespace WebCore {
 
-static HashSet<SingleThreadWeakRef<Page>>& allPages()
+static HashSet<WeakRef<Page>>& allPages()
 {
-    static NeverDestroyed<HashSet<SingleThreadWeakRef<Page>>> set;
+    static NeverDestroyed<HashSet<WeakRef<Page>>> set;
     return set;
 }
 
@@ -1926,7 +1926,9 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::Reveal, [] (Document& document) {
-        document.reveal();
+        // FIXME: Bug 278193 - Hidden docs should already be excluded.
+        if (document.visibilityState() != VisibilityState::Hidden)
+            document.reveal();
     });
 
     runProcessingStep(RenderingUpdateStep::FlushAutofocusCandidates, [] (Document& document) {
@@ -1995,7 +1997,7 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
-        for (auto& image : document.cachedResourceLoader().allCachedSVGImages()) {
+        for (auto& image : document.protectedCachedResourceLoader()->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
                 page->isolatedUpdateRendering();
         }
@@ -4043,6 +4045,8 @@ void Page::forEachRenderableDocument(const Function<void(Document&)>& functor) c
             continue;
         if (document->renderingIsSuppressedForViewTransition())
             continue;
+        if (!document->visualUpdatesAllowed())
+            continue;
         documents.append(*document);
     }
     for (auto& document : documents)
@@ -4944,6 +4948,11 @@ void Page::compositionSessionDidReceiveTextWithReplacementRange(const WritingToo
     m_writingToolsController->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
 }
 
+void Page::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WritingTools::Action action)
+{
+    m_writingToolsController->writingToolsSessionDidReceiveAction(session, action);
+}
+
 void Page::updateStateForSelectedSuggestionIfNeeded()
 {
     m_writingToolsController->updateStateForSelectedSuggestionIfNeeded();
@@ -4959,14 +4968,14 @@ void Page::respondToReappliedWritingToolsEditing(EditCommandComposition* command
     m_writingToolsController->respondToReappliedEditing(command);
 }
 
-std::optional<SimpleRange> Page::contextRangeForSessionWithID(const WritingTools::Session::ID& sessionID) const
+std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const
 {
-    return m_writingToolsController->contextRangeForSessionWithID(sessionID);
+    return m_writingToolsController->activeSessionRange();
 }
 
-void Page::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WritingTools::Action action)
+void Page::showSelectionForActiveWritingToolsSession() const
 {
-    m_writingToolsController->writingToolsSessionDidReceiveAction(session, action);
+    return m_writingToolsController->showSelection();
 }
 #endif
 

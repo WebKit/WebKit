@@ -48,7 +48,7 @@ class MediaRecorder final
     , public EventTarget
     , private MediaStreamPrivateObserver
     , private MediaStreamTrackPrivateObserver {
-    WTF_MAKE_ISO_ALLOCATED(MediaRecorder);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaRecorder);
 public:
     enum class RecordingState { Inactive, Recording, Paused };
     

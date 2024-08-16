@@ -30,7 +30,7 @@
 #include "ScrollbarColor.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
-#include "StyleTextBoxEdge.h"
+#include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TextUnderlineOffset.h"
 #include "TouchAction.h"
@@ -95,7 +95,7 @@ public:
 
     TextUnderlineOffset textUnderlineOffset;
 
-    TextBoxEdge textBoxEdge;
+    TextEdge lineFitEdge;
     
     Length wordSpacing;
     float miterLimit;

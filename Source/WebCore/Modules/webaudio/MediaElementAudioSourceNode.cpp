@@ -37,8 +37,8 @@
 #include "MediaElementAudioSourceOptions.h"
 #include "MediaPlayer.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.
 constexpr unsigned minSampleRate = 8000;
@@ -46,7 +46,7 @@ constexpr unsigned maxSampleRate = 192000;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
 ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::create(BaseAudioContext& context, MediaElementAudioSourceOptions&& options)
 {

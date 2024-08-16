@@ -34,7 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "WKWebExtensionControllerDelegatePrivate.h"
-#import "WKWebExtensionTabCreationOptionsInternal.h"
+#import "WKWebExtensionTabConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtensionContextProxy.h"
@@ -64,17 +64,17 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     static NSString * const apiName = @"tabs.create()";
 
     auto delegate = extensionController()->delegate();
-    if (![delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)]) {
+    if (![delegate respondsToSelector:@selector(webExtensionController:openNewTabUsingConfiguration:forExtensionContext:completionHandler:)]) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
 
-    auto *creationOptions = [[WKWebExtensionTabCreationOptions alloc] _init];
-    creationOptions.active = parameters.active.value_or(true);
-    creationOptions.selected = creationOptions.active ?: parameters.selected.value_or(false);
-    creationOptions.pinned = parameters.pinned.value_or(false);
-    creationOptions.muted = parameters.muted.value_or(false);
-    creationOptions.readerModeShowing = parameters.showingReaderMode.value_or(false);
+    auto *configuration = [[WKWebExtensionTabConfiguration alloc] _init];
+    configuration.shouldBeActive = parameters.active.value_or(true);
+    configuration.shouldAddToSelection = configuration.shouldBeActive ?: parameters.selected.value_or(false);
+    configuration.shouldBePinned = parameters.pinned.value_or(false);
+    configuration.shouldBeMuted = parameters.muted.value_or(false);
+    configuration.shouldReaderModeBeActive = parameters.showingReaderMode.value_or(false);
 
     RefPtr window = getWindow(parameters.windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
     if (parameters.windowIdentifier && !window) {
@@ -82,8 +82,8 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
         return;
     }
 
-    creationOptions.window = window ? window->delegate() : nil;
-    creationOptions.index = parameters.index.value_or(window ? window->tabs().size() : 0);
+    configuration.window = window ? window->delegate() : nil;
+    configuration.index = parameters.index.value_or(window ? window->tabs().size() : 0);
 
     if (parameters.parentTabIdentifier) {
         RefPtr tab = getTab(parameters.parentTabIdentifier.value());
@@ -92,13 +92,13 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
             return;
         }
 
-        creationOptions.parentTab = tab->delegate();
+        configuration.parentTab = tab->delegate();
     }
 
     if (parameters.url)
-        creationOptions.url = parameters.url.value();
+        configuration.url = parameters.url.value();
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionTab> newTab, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{public}@", privacyPreservingDescription(error));
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));

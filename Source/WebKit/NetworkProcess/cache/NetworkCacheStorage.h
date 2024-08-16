@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -57,7 +58,7 @@ public:
         Data body;
         std::optional<SHA1::Digest> bodyHash;
 
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Record);
     };
 
     struct Timings {
@@ -74,7 +75,7 @@ public:
         bool shrinkInProgressAtDispatch { false };
         bool wasCanceled { false };
 
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Timings);
     };
 
     // This may call completion handler synchronously on failure.

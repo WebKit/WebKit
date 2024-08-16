@@ -42,14 +42,14 @@
 #include "MutationRecord.h"
 #include "WindowEventLoop.h"
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MutationObserver);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MutationObserver);
 
 static unsigned s_observerPriority = 0;
 

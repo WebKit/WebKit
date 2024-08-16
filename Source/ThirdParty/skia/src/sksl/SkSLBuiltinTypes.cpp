@@ -80,6 +80,9 @@ BuiltinTypes::BuiltinTypes()
         , fIVec2(Type::MakeAliasType("ivec2", *fInt2))
         , fIVec3(Type::MakeAliasType("ivec3", *fInt3))
         , fIVec4(Type::MakeAliasType("ivec4", *fInt4))
+        , fUVec2(Type::MakeAliasType("uvec2", *fUInt2))
+        , fUVec3(Type::MakeAliasType("uvec3", *fUInt3))
+        , fUVec4(Type::MakeAliasType("uvec4", *fUInt4))
         , fBVec2(Type::MakeAliasType("bvec2", *fBool2))
         , fBVec3(Type::MakeAliasType("bvec3", *fBool3))
         , fBVec4(Type::MakeAliasType("bvec4", *fBool4))
@@ -206,6 +209,7 @@ BuiltinTypes::BuiltinTypes()
         , fColorFilter(Type::MakeSpecialType("colorFilter", "CF", Type::TypeKind::kColorFilter))
         , fShader(Type::MakeSpecialType("shader", "SH", Type::TypeKind::kShader))
         , fBlender(Type::MakeSpecialType("blender", "B", Type::TypeKind::kBlender))
-        , fAtomicUInt(Type::MakeAtomicType("atomicUint", "au")) {}
+        , fAtomicUInt(Type::MakeAtomicType("atomicUint", "au"))
+        , fAtomic_uint(Type::MakeAliasType("atomic_uint", *fAtomicUInt)) {}
 
 }  // namespace SkSL

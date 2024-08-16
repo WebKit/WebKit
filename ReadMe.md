@@ -23,7 +23,7 @@ Still need to figure out how to get the remote inspector to work.
 
 # WebKit
 
-WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, iBooks, and many other applications. For more information about WebKit, see the [WebKit project website](https://webkit.org/).
+WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, Apple Books, and many other applications. For more information about WebKit, see the [WebKit project website](https://webkit.org/).
 
 ## Trying the Latest
 
@@ -67,7 +67,7 @@ For performance testing, and other purposes, use `--release` instead.
 #### Embedded Builds
 
 To build for an embedded platform like iOS, tvOS, or watchOS, pass a platform
-argument to `build-webkit`. 
+argument to `build-webkit`.
 
 For example, to build a debug build with debugging symbols and assertions for
 embedded simulators:

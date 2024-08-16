@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT TrustedScriptURL : public ScriptWrappable, public RefCounted<TrustedScriptURL> {
-    WTF_MAKE_ISO_ALLOCATED(TrustedScriptURL);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrustedScriptURL);
 public:
     static Ref<TrustedScriptURL> create(const String& data);
     ~TrustedScriptURL() = default;

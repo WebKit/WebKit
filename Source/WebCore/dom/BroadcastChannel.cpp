@@ -39,13 +39,13 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(BroadcastChannel);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BroadcastChannel);
 
 static Lock allBroadcastChannelsLock;
 static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)

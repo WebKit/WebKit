@@ -28,11 +28,6 @@
 
 #if ENABLE(WKPDFVIEW)
 
-// FIXME (rdar://133488399): Move this to WebKit.xcconfig.
-#if PLATFORM(APPLETV)
-asm(".linker_option \"-framework\", \"PDFKit\"");
-#endif
-
 #import "APIUIClient.h"
 #import "FindClient.h"
 #import "PDFKitSPI.h"
@@ -55,6 +50,13 @@ asm(".linker_option \"-framework\", \"PDFKit\"");
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
+
+#if PLATFORM(APPLETV)
+#import "PDFKitSoftLink.h"
+#define PDFHostViewControllerClass WebKit::getPDFHostViewControllerClass()
+#else
+#define PDFHostViewControllerClass PDFHostViewController
+#endif
 
 #if HAVE(UIFINDINTERACTION)
 
@@ -154,6 +156,15 @@ static void* kvoContext = &kvoContext;
 #endif
 }
 
++ (BOOL)platformSupportsPDFView
+{
+#if PLATFORM(APPLETV)
+    return WebKit::isPDFKitFrameworkAvailable();
+#else
+    return YES;
+#endif
+}
+
 - (void)dealloc
 {
 #if HAVE(SHARE_SHEET_UI)
@@ -224,7 +235,7 @@ static void* kvoContext = &kvoContext;
 
 - (void)updateBackgroundColor
 {
-    UIColor *backgroundColor = PDFHostViewController.backgroundColor;
+    UIColor *backgroundColor = [PDFHostViewControllerClass backgroundColor];
 
 #if PLATFORM(VISION)
     if (_isShowingPasswordView)
@@ -241,10 +252,10 @@ static void* kvoContext = &kvoContext;
     _suggestedFilename = adoptNS([filename copy]);
 
 #if HAVE(SETUSEIOSURFACEFORTILES)
-    [PDFHostViewController setUseIOSurfaceForTiles:false];
+    [PDFHostViewControllerClass setUseIOSurfaceForTiles:false];
 #endif
 
-    [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController *hostViewController) {
+    [PDFHostViewControllerClass createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController *hostViewController) {
         ASSERT(isMainRunLoop());
 
         WKPDFView *autoreleasedSelf = weakSelf.getAutoreleased();

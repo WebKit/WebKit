@@ -33,6 +33,7 @@
 #include <WebCore/PointerEvent.h>
 #include <WebCore/PointerID.h>
 #include <gtk/gtk.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WAYLAND)
 #include "PointerLockManagerWayland.h"
@@ -44,6 +45,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockManager);
 
 std::unique_ptr<PointerLockManager> PointerLockManager::create(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEventButton button, unsigned short buttons, OptionSet<WebEventModifier> modifiers)
 {

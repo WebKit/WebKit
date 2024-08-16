@@ -27,10 +27,15 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
+}
+
+namespace WebCore {
+class IntPoint;
 }
 
 namespace WebKit {
@@ -38,7 +43,7 @@ namespace WebKit {
 class WebPage;
 
 class WebPageTesting : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebPageTesting);
     WTF_MAKE_NONCOPYABLE(WebPageTesting);
 public:
     explicit WebPageTesting(WebPage&);
@@ -58,6 +63,8 @@ private:
 #endif
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
+
+    void setPageScaleFactor(double scale, WebCore::IntPoint origin, CompletionHandler<void()>&&);
 
     void clearWheelEventTestMonitor();
     Ref<WebPage> protectedPage() const;

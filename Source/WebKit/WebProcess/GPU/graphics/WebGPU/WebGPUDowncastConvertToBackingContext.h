@@ -28,11 +28,12 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
 
 class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DowncastConvertToBackingContext);
 public:
     static Ref<DowncastConvertToBackingContext> create()
     {
@@ -66,6 +67,10 @@ public:
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRBinding&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRProjectionLayer&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRSubImage&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRView&) final;
 
 private:
     DowncastConvertToBackingContext() = default;

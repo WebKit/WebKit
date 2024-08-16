@@ -35,12 +35,15 @@
 #include "StreamClientConnection.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::ShapeDetection {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBarcodeDetectorProxy);
+
 Ref<RemoteBarcodeDetectorProxy> RemoteBarcodeDetectorProxy::create(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
 {
-    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteBarcodeDetector(identifier, barcodeDetectorOptions), renderingBackendIdentifier, Seconds::infinity());
+    streamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteBarcodeDetector(identifier, barcodeDetectorOptions), renderingBackendIdentifier);
     return adoptRef(*new RemoteBarcodeDetectorProxy(WTFMove(streamClientConnection), renderingBackendIdentifier, identifier));
 }
 
@@ -53,17 +56,17 @@ RemoteBarcodeDetectorProxy::RemoteBarcodeDetectorProxy(Ref<IPC::StreamClientConn
 
 RemoteBarcodeDetectorProxy::~RemoteBarcodeDetectorProxy()
 {
-    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteBarcodeDetector(m_backing), m_renderingBackendIdentifier, Seconds::infinity());
+    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteBarcodeDetector(m_backing), m_renderingBackendIdentifier);
 }
 
 void RemoteBarcodeDetectorProxy::getSupportedFormats(Ref<IPC::StreamClientConnection>&& streamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&& completionHandler)
 {
-    streamClientConnection->sendWithAsyncReply(Messages::RemoteRenderingBackend::GetRemoteBarcodeDetectorSupportedFormats(), WTFMove(completionHandler), renderingBackendIdentifier, Seconds::infinity());
+    streamClientConnection->sendWithAsyncReply(Messages::RemoteRenderingBackend::GetRemoteBarcodeDetectorSupportedFormats(), WTFMove(completionHandler), renderingBackendIdentifier);
 }
 
 void RemoteBarcodeDetectorProxy::detect(Ref<WebCore::ImageBuffer>&& imageBuffer, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&& completionHandler)
 {
-    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteBarcodeDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing, Seconds::infinity());
+    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteBarcodeDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing);
 }
 
 } // namespace WebKit::WebGPU

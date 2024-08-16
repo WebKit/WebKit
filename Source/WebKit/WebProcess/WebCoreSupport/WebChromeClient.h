@@ -28,6 +28,7 @@
 
 #include <WebCore/ChromeClient.h>
 #include <WebCore/HTMLVideoElement.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class WebFrame;
 class WebPage;
 
 class WebChromeClient final : public WebCore::ChromeClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebChromeClient);
 public:
     WebChromeClient(WebPage&);
     ~WebChromeClient();
@@ -514,26 +515,25 @@ private:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::SessionID&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) final;
+    void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) final;
 
-    void proofreadingSessionUpdateStateForSuggestionWithID(const WebCore::WritingTools::SessionID&, WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) final;
+    void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) final;
 #endif
 
 #if ENABLE(WRITING_TOOLS_UI)
     void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 
-    void removeInitialTextAnimation(const WebCore::WritingTools::SessionID&) final;
+    void removeInitialTextAnimationForActiveWritingToolsSession() final;
 
-    void addInitialTextAnimation(const WebCore::WritingTools::SessionID&) final;
+    void addInitialTextAnimationForActiveWritingToolsSession() final;
 
-    void removeTransparentMarkersForSessionID(const WebCore::WritingTools::SessionID&) final;
+    void removeTransparentMarkersForActiveWritingToolsSession() final;
 
-    void addSourceTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String, WTF::CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
+    void addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
 
-    void addDestinationTextAnimation(const WebCore::WritingTools::SessionID&, const WebCore::CharacterRange&, const String) final;
+    void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<WebCore::CharacterRange>&, const String&) final;
 
-    void clearAnimationsForSessionID(const WebCore::WritingTools::SessionID&) final;
-
+    void clearAnimationsForActiveWritingToolsSession() final;
 #endif
 
     void hasActiveNowPlayingSessionChanged(bool) final;

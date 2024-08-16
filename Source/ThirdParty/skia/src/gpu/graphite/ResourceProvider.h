@@ -63,10 +63,8 @@ public:
                                               const TextureInfo&,
                                               std::string_view label,
                                               skgpu::Budgeted);
-    // TODO: Consider having this take a label that is provided by the client. If we do this,
-    // should we be setting the label on the backend object or do we assume the client already did
-    // that if they wanted to?
-    virtual sk_sp<Texture> createWrappedTexture(const BackendTexture&) = 0;
+
+    sk_sp<Texture> createWrappedTexture(const BackendTexture&, std::string_view label);
 
     sk_sp<Texture> findOrCreateDepthStencilAttachment(SkISize dimensions,
                                                       const TextureInfo&);
@@ -129,12 +127,8 @@ private:
     virtual sk_sp<ComputePipeline> createComputePipeline(const ComputePipelineDesc&) = 0;
     virtual sk_sp<Texture> createTexture(SkISize,
                                          const TextureInfo&,
-                                         std::string_view label,
                                          skgpu::Budgeted) = 0;
-    virtual sk_sp<Buffer> createBuffer(size_t size,
-                                       BufferType type,
-                                       AccessPattern,
-                                       std::string_view label) = 0;
+    virtual sk_sp<Buffer> createBuffer(size_t size, BufferType type, AccessPattern) = 0;
     virtual sk_sp<Sampler> createSampler(const SamplerDesc&) = 0;
 
     sk_sp<Texture> findOrCreateTextureWithKey(SkISize dimensions,
@@ -142,6 +136,8 @@ private:
                                               const GraphiteResourceKey& key,
                                               std::string_view label,
                                               skgpu::Budgeted);
+
+    virtual sk_sp<Texture> onCreateWrappedTexture(const BackendTexture&) = 0;
 
     virtual BackendTexture onCreateBackendTexture(SkISize dimensions, const TextureInfo&) = 0;
 #ifdef SK_BUILD_FOR_ANDROID

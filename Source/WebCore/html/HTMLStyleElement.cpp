@@ -40,12 +40,12 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLStyleElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLStyleElement);
 
 using namespace HTMLNames;
 
@@ -101,10 +101,29 @@ void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomStr
         if (auto* scope = m_styleSheetOwner.styleScope())
             scope->didChangeStyleSheetContents();
         break;
+    case AttributeNames::blockingAttr:
+        if (m_blockingList)
+            m_blockingList->associatedAttributeValueChanged();
+        break;
     default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
     }
+}
+
+// https://html.spec.whatwg.org/multipage/semantics.html#dom-style-blocking
+// FIXME: Bug 88869 - This isn't currently connected to anything, because style elements are
+// parser blocking, even when script inserted.
+DOMTokenList& HTMLStyleElement::blocking()
+{
+    if (!m_blockingList) {
+        m_blockingList = makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::blockingAttr, [](Document&, StringView token) {
+            if (equalLettersIgnoringASCIICase(token, "render"_s))
+                return true;
+            return false;
+        });
+    }
+    return *m_blockingList;
 }
 
 void HTMLStyleElement::finishParsingChildren()

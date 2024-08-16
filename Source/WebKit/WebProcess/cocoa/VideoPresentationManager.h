@@ -39,6 +39,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace IPC {
@@ -69,7 +70,7 @@ class VideoPresentationInterfaceContext final
     : public RefCounted<VideoPresentationInterfaceContext>
     , public WebCore::VideoPresentationModelClient
     , public CanMakeCheckedPtr<VideoPresentationInterfaceContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VideoPresentationInterfaceContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceContext);
 public:
     static Ref<VideoPresentationInterfaceContext> create(VideoPresentationManager& manager, PlaybackSessionContextIdentifier contextId)

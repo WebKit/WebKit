@@ -43,8 +43,8 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ static constexpr auto borderStartEdgeColor = SRGBA<uint8_t> { 170, 170, 170 };
 static constexpr auto borderEndEdgeColor = Color::black;
 static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameSet);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFrameSet);
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
     : RenderBox(Type::FrameSet, frameSet, WTFMove(style))

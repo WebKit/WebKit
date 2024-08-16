@@ -28,6 +28,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -40,7 +41,7 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandbuffer
 class CommandBuffer : public WGPUCommandBufferImpl, public RefCounted<CommandBuffer>, public CanMakeWeakPtr<CommandBuffer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CommandBuffer);
 public:
     static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
     {

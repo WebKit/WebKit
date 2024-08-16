@@ -36,6 +36,7 @@
 #include <WebCore/PermissionState.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/PlatformViewController.h>
@@ -95,7 +96,7 @@ class SecurityOrigin;
 class WebAuthenticationPanel;
 
 class UIClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UIClient);
 public:
     virtual ~UIClient() { }
 

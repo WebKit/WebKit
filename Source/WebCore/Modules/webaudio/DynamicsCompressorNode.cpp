@@ -34,14 +34,14 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "DynamicsCompressor.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // Set output to stereo by default.
 static constexpr unsigned defaultNumberOfOutputChannels = 2;
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicsCompressorNode);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DynamicsCompressorNode);
 
 ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudioContext& context, const DynamicsCompressorOptions& options)
 {

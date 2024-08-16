@@ -38,12 +38,12 @@
 #include "Logging.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBFactory);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBFactory);
 
 static bool shouldThrowSecurityException(ScriptExecutionContext& context)
 {

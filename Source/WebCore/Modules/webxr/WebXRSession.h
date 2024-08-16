@@ -55,7 +55,7 @@ class WebXRViewerSpace;
 struct XRRenderStateInit;
 
 class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
-    WTF_MAKE_ISO_ALLOCATED(WebXRSession);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSession);
 public:
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
     using EndPromise = DOMPromiseDeferred<void>;

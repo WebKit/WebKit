@@ -28,8 +28,6 @@ public:
                         size_t resourceBudget);
     ~MtlResourceProvider() override {}
 
-    sk_sp<Texture> createWrappedTexture(const BackendTexture&) override;
-
     sk_sp<MtlGraphicsPipeline> findOrCreateLoadMSAAPipeline(const RenderPassDesc&);
 
 private:
@@ -42,12 +40,9 @@ private:
 
     sk_sp<Texture> createTexture(SkISize,
                                  const TextureInfo&,
-                                 std::string_view label,
                                  skgpu::Budgeted) override;
-    sk_sp<Buffer> createBuffer(size_t size,
-                               BufferType type,
-                               AccessPattern,
-                               std::string_view label) override;
+    sk_sp<Texture> onCreateWrappedTexture(const BackendTexture&) override;
+    sk_sp<Buffer> createBuffer(size_t size, BufferType type, AccessPattern) override;
     sk_sp<Sampler> createSampler(const SamplerDesc&) override;
 
     BackendTexture onCreateBackendTexture(SkISize dimensions, const TextureInfo&) override;

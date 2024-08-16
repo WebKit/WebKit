@@ -43,9 +43,9 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(COCOA)
@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(History);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(History);
 
 History::History(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

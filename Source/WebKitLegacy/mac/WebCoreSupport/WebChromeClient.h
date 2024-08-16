@@ -30,6 +30,7 @@
 #import <WebCore/ChromeClient.h>
 #import <WebCore/FocusDirection.h>
 #import <wtf/Forward.h>
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class HTMLImageElement;
@@ -41,7 +42,7 @@ class HTMLImageElement;
 // base class of the concrete class, WebChromeClientIOS. Because of that, this class and
 // many of its functions are not marked final. That is messy way to organize things.
 class WebChromeClient : public WebCore::ChromeClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebChromeClient);
 public:
     WebChromeClient(WebView*);
 

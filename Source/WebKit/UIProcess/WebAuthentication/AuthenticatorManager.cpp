@@ -47,6 +47,7 @@
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -174,6 +175,8 @@ static String getUserName(const std::variant<PublicKeyCredentialCreationOptions,
 } // namespace
 
 const size_t AuthenticatorManager::maxTransportNumber = 5;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorManager);
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)

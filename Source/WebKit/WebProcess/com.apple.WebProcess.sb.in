@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -459,6 +459,13 @@
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (webcontent-process-launched))
+    (allow sysctl-read (sysctl-name "kern.boottime")))
+#else
+(allow sysctl-read (sysctl-name "kern.boottime"))
+#endif
 
 (deny sysctl-read (with no-report)
     (sysctl-name

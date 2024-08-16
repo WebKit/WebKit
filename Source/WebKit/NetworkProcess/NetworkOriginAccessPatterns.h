@@ -27,12 +27,13 @@
 
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/UserContentURLPattern.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
 class NetworkOriginAccessPatterns final : public WebCore::OriginAccessPatterns {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NetworkOriginAccessPatterns);
 public:
     void allowAccessTo(const WebCore::UserContentURLPattern&);
 private:

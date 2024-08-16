@@ -3582,6 +3582,7 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
     WebCore::IntSize thumbSize();
     WebCore::IntRect trackBounds();
     Vector<double> tickRatios();
+    double thumbPosition();
 }
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchThumbPart {
@@ -4452,6 +4453,8 @@ enum class WebCore::MediaPlayerPitchCorrectionAlgorithm : uint8_t {
     StereoMultiview,
     Spatial
 };
+using WebCore::MediaPlayerVideoPlaybackConfiguration = OptionSet<WebCore::MediaPlayerVideoPlaybackConfigurationOption>;
+using WebCore::MediaPlayer::VideoPlaybackConfiguration = WebCore::MediaPlayerVideoPlaybackConfiguration;
 
 class WebCore::GeolocationPositionData {
     double timestamp;

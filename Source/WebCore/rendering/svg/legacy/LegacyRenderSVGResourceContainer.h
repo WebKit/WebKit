@@ -29,7 +29,7 @@ namespace WebCore {
 class RenderLayer;
 
 class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer, public LegacyRenderSVGResource {
-    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceContainer);
 public:
     virtual ~LegacyRenderSVGResourceContainer();

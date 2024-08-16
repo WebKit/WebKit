@@ -43,11 +43,14 @@
 #include <WebCore/SWServer.h>
 #include <WebCore/SWServerWorker.h>
 #include <WebCore/ServiceWorkerContextData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &this->ipcConnection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, ipcConnection())
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerToContextConnection);
 
 WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
     : SWServerToContextConnection(server, WTFMove(registrableDomain), serviceWorkerPageIdentifier)

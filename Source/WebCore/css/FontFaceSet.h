@@ -39,7 +39,7 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 class DOMException;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(FontFaceSet);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
 public:
     static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);

@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGRadialGradientElement;
 
 class RenderSVGResourceRadialGradient final : public RenderSVGResourceGradient {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceRadialGradient);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGResourceRadialGradient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceRadialGradient);
 public:
     RenderSVGResourceRadialGradient(SVGRadialGradientElement&, RenderStyle&&);

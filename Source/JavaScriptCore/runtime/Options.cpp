@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -621,6 +621,28 @@ void Options::setAllJITCodeValidations(bool value)
     Options::useJITAsserts() = value;
 }
 
+static inline void disableAllWasmOptions()
+{
+    Options::useWasm() = false;
+    Options::useWasmIPInt() = false;
+    Options::useWasmLLInt() = false;
+    Options::useBBQJIT() = false;
+    Options::useOMGJIT() = false;
+    Options::dumpWasmDisassembly() = false;
+    Options::dumpBBQDisassembly() = false;
+    Options::dumpOMGDisassembly() = false;
+    Options::failToCompileWasmCode() = true;
+
+    Options::useWasmFastMemory() = false;
+    Options::useWasmFaultSignalHandler() = false;
+    Options::numberOfWasmCompilerThreads() = 0;
+
+    Options::useWasmGC() = false;
+    Options::useWasmSIMD() = false;
+    Options::useWasmRelaxedSIMD() = false;
+    Options::useWasmTailCalls() = false;
+}
+
 static inline void disableAllJITOptions()
 {
     Options::useLLInt() = true;
@@ -635,8 +657,10 @@ static inline void disableAllJITOptions()
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
 
-    if (!Options::useInterpretedJSEntryWrappers())
-        Options::useWasm() = false;
+    if (!Options::useWasmJITLessJSEntrypoint() && Options::useWasm())
+        disableAllWasmOptions();
+
+    Options::useWasmSIMD() = false;
 
     Options::usePollingTraps() = true;
 
@@ -736,6 +760,9 @@ void Options::notifyOptionsChanged()
     if (!Options::allowDoubleShape())
         Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
 
+    if (!Options::useWasm())
+        disableAllWasmOptions();
+
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.
@@ -747,11 +774,6 @@ void Options::notifyOptionsChanged()
             Options::useDFGJIT() = false;
             Options::useFTLJIT() = false;
         }
-
-        // Windows: Building with WEBASSEMBLY_OMGJIT and disabling at runtime
-#if OS(WINDOWS)
-        Options::useOMGJIT() = false;
-#endif
 
         if (Options::dumpDisassembly()
             || Options::asyncDisassembly()

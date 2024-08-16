@@ -130,6 +130,89 @@ bool RenderPipelineDesc::setDepthStencilAttachmentFormat(wgpu::TextureFormat for
     return true;
 }
 
+bool RenderPipelineDesc::setDepthFunc(wgpu::CompareFunction compareFunc)
+{
+    if (mDepthStencilState.depthCompare == static_cast<uint8_t>(compareFunc))
+    {
+        return false;
+    }
+    SetBitField(mDepthStencilState.depthCompare, compareFunc);
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilFrontFunc(wgpu::CompareFunction compareFunc)
+{
+    if (mDepthStencilState.stencilFrontCompare == static_cast<uint8_t>(compareFunc))
+    {
+        return false;
+    }
+    SetBitField(mDepthStencilState.stencilFrontCompare, compareFunc);
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilFrontOps(wgpu::StencilOperation failOp,
+                                            wgpu::StencilOperation depthFailOp,
+                                            wgpu::StencilOperation passOp)
+{
+    if (mDepthStencilState.stencilFrontFailOp == static_cast<uint8_t>(failOp) &&
+        mDepthStencilState.stencilFrontDepthFailOp == static_cast<uint8_t>(depthFailOp) &&
+        mDepthStencilState.stencilFrontPassOp == static_cast<uint8_t>(passOp))
+    {
+        return false;
+    }
+    SetBitField(mDepthStencilState.stencilFrontFailOp, failOp);
+    SetBitField(mDepthStencilState.stencilFrontDepthFailOp, depthFailOp);
+    SetBitField(mDepthStencilState.stencilFrontPassOp, passOp);
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilBackFunc(wgpu::CompareFunction compareFunc)
+{
+    if (mDepthStencilState.stencilBackCompare == static_cast<uint8_t>(compareFunc))
+    {
+        return false;
+    }
+    SetBitField(mDepthStencilState.stencilBackCompare, compareFunc);
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilBackOps(wgpu::StencilOperation failOp,
+                                           wgpu::StencilOperation depthFailOp,
+                                           wgpu::StencilOperation passOp)
+{
+    if (mDepthStencilState.stencilBackFailOp == static_cast<uint8_t>(failOp) &&
+        mDepthStencilState.stencilBackDepthFailOp == static_cast<uint8_t>(depthFailOp) &&
+        mDepthStencilState.stencilBackPassOp == static_cast<uint8_t>(passOp))
+    {
+        return false;
+    }
+    SetBitField(mDepthStencilState.stencilBackFailOp, failOp);
+    SetBitField(mDepthStencilState.stencilBackDepthFailOp, depthFailOp);
+    SetBitField(mDepthStencilState.stencilBackPassOp, passOp);
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilReadMask(uint8_t readMask)
+{
+
+    if (mDepthStencilState.stencilReadMask == readMask)
+    {
+        return false;
+    }
+    mDepthStencilState.stencilReadMask = readMask;
+    return true;
+}
+
+bool RenderPipelineDesc::setStencilWriteMask(uint8_t writeMask)
+{
+    if (mDepthStencilState.stencilWriteMask == writeMask)
+    {
+        return false;
+    }
+    mDepthStencilState.stencilWriteMask = writeMask;
+    return true;
+}
+
 size_t RenderPipelineDesc::hash() const
 {
     return angle::ComputeGenericHash(this, sizeof(*this));

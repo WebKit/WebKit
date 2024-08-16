@@ -211,6 +211,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
 #if ENABLE(VIDEO)
             if (propertyAllowlist == PropertyAllowlist::Cue && !isValidCueStyleProperty(propertyID))
                 return false;
+            if (propertyAllowlist == PropertyAllowlist::CueSelector && !isValidCueSelectorStyleProperty(propertyID))
+                return false;
+            if (propertyAllowlist == PropertyAllowlist::CueBackground && !isValidCueBackgroundStyleProperty(propertyID))
+                return false;
 #endif
             if (propertyAllowlist == PropertyAllowlist::Marker && !isValidMarkerStyleProperty(propertyID))
                 return false;

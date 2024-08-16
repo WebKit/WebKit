@@ -32,11 +32,11 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(PushMessageData);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushMessageData);
 
 ExceptionOr<Ref<JSC::ArrayBuffer>> PushMessageData::arrayBuffer()
 {

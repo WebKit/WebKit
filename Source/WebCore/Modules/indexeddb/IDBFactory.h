@@ -29,8 +29,8 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -50,7 +50,7 @@ class IDBConnectionProxy;
 }
 
 class IDBFactory : public ThreadSafeRefCounted<IDBFactory> {
-    WTF_MAKE_ISO_ALLOCATED(IDBFactory);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBFactory);
 public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();

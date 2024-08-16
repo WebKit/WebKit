@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 skia_filegroup(
     name = "core_srcs",
@@ -19,6 +17,7 @@ skia_filegroup(
 # TODO(kjlubick) Could this be split up so we don't need to compile the SkSLMetalCodeGenerator
 # on platforms that don't support metal (e.g. WebGL, Linux)?
 GPU_SRCS = [
+    "SkSLCodeGenTypes.h",
     "SkSLCodeGenerator.h",
     "SkSLGLSLCodeGenerator.cpp",
     "SkSLGLSLCodeGenerator.h",
@@ -113,7 +112,11 @@ skia_cc_library(
         "SkSLPipelineStageCodeGenerator.h",
     ],
     features = ["layering_check"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
+    visibility = [
+        "//src/gpu/ganesh:__pkg__",
+        "//src/gpu/graphite:__pkg__",
+        "//tools/skslc:__pkg__",
+    ],
     deps = [
         "//:core",
         "//src/base",
@@ -128,14 +131,44 @@ skia_cc_library(
         "SkSLCodeGenerator.h",
         "SkSLGLSLCodeGenerator.cpp",
     ],
-    hdrs = ["SkSLGLSLCodeGenerator.h"],
+    hdrs = [
+        "SkSLCodeGenTypes.h",
+        "SkSLGLSLCodeGenerator.h",
+    ],
     features = ["layering_check"],
-    visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+    visibility = [
+        "//src/gpu/ganesh/gl:__pkg__",
+        "//tools/skslc:__pkg__",
+    ],
     deps = [
-        ":gpu",
         "//:core",
         "//src/base",
         "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "hlsl",
+    srcs = [
+        "SkSLCodeGenerator.h",
+        "SkSLHLSLCodeGenerator.cpp",
+        "SkSLSPIRVtoHLSL.cpp",
+        "SkSLSPIRVtoHLSL.h",
+    ],
+    hdrs = [
+        "SkSLCodeGenTypes.h",
+        "SkSLHLSLCodeGenerator.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//tools/skslc:__pkg__",
+    ],
+    deps = [
+        ":spirv",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "@spirv_cross",
     ],
 )
 
@@ -145,11 +178,17 @@ skia_cc_library(
         "SkSLCodeGenerator.h",
         "SkSLMetalCodeGenerator.cpp",
     ],
-    hdrs = ["SkSLMetalCodeGenerator.h"],
+    hdrs = [
+        "SkSLCodeGenTypes.h",
+        "SkSLMetalCodeGenerator.h",
+    ],
     features = ["layering_check"],
-    visibility = ["//src/gpu/ganesh/mtl:__pkg__"],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/gpu/mtl:__pkg__",
+        "//tools/skslc:__pkg__",
+    ],
     deps = [
-        ":gpu",
         "//:core",
         "//src/base",
         "//src/core:core_priv",
@@ -163,13 +202,79 @@ skia_cc_library(
         "SkSLSPIRVCodeGenerator.cpp",
         "//src/sksl:gpu_hdrs",
     ],
-    hdrs = ["SkSLSPIRVCodeGenerator.h"],
+    hdrs = [
+        "SkSLCodeGenTypes.h",
+        "SkSLSPIRVCodeGenerator.h",
+    ],
     features = ["layering_check"],
-    visibility = ["//src/gpu/ganesh/vk:__pkg__"],
+    visibility = [
+        "//src/gpu/vk:__pkg__",
+        "//tools/skslc:__pkg__",
+    ],
     deps = [
-        ":gpu",
         "//:core",
         "//src/base",
         "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "spirv_validator",
+    srcs = [
+        "SkSLSPIRVValidator.cpp",
+    ],
+    hdrs = [
+        "SkSLSPIRVValidator.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//tools/skslc:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/core:core_priv",
+        "@spirv_tools",
+    ],
+)
+
+skia_cc_library(
+    name = "wgsl",
+    srcs = [
+        "SkSLCodeGenerator.h",
+        "SkSLWGSLCodeGenerator.cpp",
+    ],
+    hdrs = [
+        "SkSLCodeGenTypes.h",
+        "SkSLWGSLCodeGenerator.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//tools/skslc:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "wgsl_validator",
+    srcs = [
+        "SkSLWGSLValidator.cpp",
+    ],
+    hdrs = [
+        "SkSLWGSLValidator.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//tools/skslc:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/core:core_priv",
+        "@dawn//:tint",
+        "@dawn//src/tint/lang/wgsl",
+        "@dawn//src/tint/lang/wgsl/reader",
     ],
 )

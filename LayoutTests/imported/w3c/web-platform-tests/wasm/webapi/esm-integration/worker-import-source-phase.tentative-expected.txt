@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'modSource'. Expected 'from' before imported module name.
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Testing import of WebAssembly source phase from JavaScript worker
+

@@ -50,7 +50,7 @@ class TZoneHeapManager {
         TypesRegistered
     };
 
-    static const bool verbose = false;
+    static constexpr bool verbose = false;
     static const unsigned typeNameLen = 12;
 
     typedef uint64_t SHA256ResultAsUnsigned[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];
@@ -144,10 +144,10 @@ public:
 
     BEXPORT bool isReady();
 
-    BINLINE static TZoneHeapManager& getInstance()
+    BINLINE static TZoneHeapManager& singleton()
     {
         if (!theTZoneHeapManager)
-            ensureInstance();
+            ensureSingleton();
         BASSERT(theTZoneHeapManager);
         return *theTZoneHeapManager;
     }
@@ -156,7 +156,7 @@ public:
     BEXPORT void dumpRegisterdTypes();
 
 private:
-    BEXPORT static void ensureInstance();
+    BEXPORT static void ensureSingleton();
 
     BEXPORT void init();
 

@@ -63,11 +63,10 @@
             await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
 
             consoleWrite('<br>* Metadata should be blank due to private browsing mode.');
-            run('nowPlayingMetadata = internals.nowPlayingMetadata');
-            await testExpectedEventually('nowPlayingMetadata.title', undefined, '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.artist', undefined, '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.album', undefined, '==', 1000);
-            await testExpectedEventually('nowPlayingMetadata.artwork', undefined, '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.title', undefined, '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.artist', undefined, '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.album', undefined, '==', 1000);
+            await testExpectedEventually('internals.nowPlayingMetadata.artwork', undefined, '==', 1000);
 
             consoleWrite('');
         }

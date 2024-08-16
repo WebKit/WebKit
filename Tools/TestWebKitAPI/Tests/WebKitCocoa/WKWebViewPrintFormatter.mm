@@ -132,7 +132,7 @@ TEST(WKWebView, PrintToPDFUsingPrintPageRenderer)
     EXPECT_NE([pdfData length], 0UL);
 }
 
-#if HAVE(PDFKIT)
+#if USE(PDFKIT_FOR_TESTING)
 TEST(WKWebView, PrintToPDFShouldPrintBackgrounds)
 {
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -179,7 +179,7 @@ TEST(WKWebView, PrintToPDFShouldPrintBackgrounds)
     
     runTest(YES);
 }
-#endif // HAVE(PDFKIT)
+#endif // USE(PDFKIT_FOR_TESTING)
 
 TEST(WKWebView, PrintToPDFUsingPrintInteractionController)
 {

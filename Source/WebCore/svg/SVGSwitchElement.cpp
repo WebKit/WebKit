@@ -26,11 +26,11 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGElementTypeHelpers.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSwitchElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGSwitchElement);
 
 inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

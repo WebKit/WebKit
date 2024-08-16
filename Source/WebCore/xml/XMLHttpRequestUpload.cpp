@@ -31,12 +31,12 @@
 #include "WebCoreOpaqueRoot.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(XMLHttpRequestUpload);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XMLHttpRequestUpload);
 
 XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest& request)
     : m_request(request)

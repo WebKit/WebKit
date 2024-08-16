@@ -47,6 +47,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -199,7 +200,7 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 class WebViewImpl final : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr<WebViewImpl> {
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebViewImpl);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebViewImpl);
 public:
     WebViewImpl(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
@@ -743,6 +744,15 @@ public:
 #if ENABLE(WRITING_TOOLS_UI)
     void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);
+
+    void writingToolsCompositionSessionDidReceiveRestartAction();
+    void writingToolsCompositionSessionDidReceiveReplacements(const WTF::UUID&, bool finished);
+
+    bool isWritingToolsTextReplacementsFinished() const;
+    bool isIntelligenceTextPonderingAnimationFinished() const;
+
+    void willBeginPartialIntelligenceTextPonderingAnimation();
+    void didEndPartialIntelligenceTextPonderingAnimation();
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)
@@ -982,8 +992,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
 #endif
 
-#if ENABLE(WRITING_TOOLS)
-    RetainPtr<WKTextAnimationManager> m_TextAnimationTypeManager;
+#if ENABLE(WRITING_TOOLS_UI)
+    RetainPtr<WKTextAnimationManager> m_textAnimationTypeManager;
+
+    unsigned m_partialIntelligenceTextPonderingAnimationCount { 0 };
+    bool m_writingToolsTextReplacementsFinished { false };
 #endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

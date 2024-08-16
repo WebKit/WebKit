@@ -33,6 +33,7 @@
 #include <WebCore/WebGPUCommandEncoderDescriptor.h>
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -44,7 +45,7 @@ class ConvertToBackingContext;
 class RemoteQueueProxy;
 
 class RemoteDeviceProxy final : public WebCore::WebGPU::Device {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteDeviceProxy);
 public:
     static Ref<RemoteDeviceProxy> create(Ref<WebCore::WebGPU::SupportedFeatures>&& features, Ref<WebCore::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
@@ -67,22 +68,22 @@ private:
     RemoteDeviceProxy& operator=(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy& operator=(RemoteDeviceProxy&&) = delete;
 
-    static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
+        return root().streamClientConnection().send(WTFMove(message), backing());
     }
     template<typename T, typename C>
     WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
     {
-        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
 
     Ref<WebCore::WebGPU::Queue> queue() final;
 
     void destroy() final;
 
+    RefPtr<WebCore::WebGPU::XRBinding> createXRBinding() final;
     RefPtr<WebCore::WebGPU::Buffer> createBuffer(const WebCore::WebGPU::BufferDescriptor&) final;
     RefPtr<WebCore::WebGPU::Texture> createTexture(const WebCore::WebGPU::TextureDescriptor&) final;
     RefPtr<WebCore::WebGPU::Sampler> createSampler(const WebCore::WebGPU::SamplerDescriptor&) final;

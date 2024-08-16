@@ -993,19 +993,11 @@ void DisplayMtl::initializeExtensions() const
     // regular 2D textures with Metal, and causes other problems such as
     // breaking the SPIR-V Metal compiler.
 
-    // TODO(anglebug.com/42264909): figure out why WebGL drawing buffer
-    // creation fails on macOS when the Metal backend advertises the
-    // EXT_multisampled_render_to_texture extension.
-    // TODO(anglebug.com/42261786): Metal doesn't implement render to texture
-    // correctly. A texture (if used as a color attachment for a framebuffer)
-    // is always created with sample count == 1, which results in creation of a
-    // render pipeline with the same value. Moreover, if there is a more
-    // sophisticated case and a framebuffer also has a stencil/depth attachment,
-    // it will result in creation of a render pipeline with those attachment's
-    // sample count, but the texture that was used as a color attachment, will
-    // still remain with sample count 1. That results in Metal validation error
-    // if enabled.
-    mNativeExtensions.multisampledRenderToTextureEXT = false;
+    mNativeExtensions.multisampledRenderToTextureEXT =
+        (supportsAppleGPUFamily(1) ||
+         mFeatures.enableMultisampledRenderToTextureOnNonTilers.enabled) &&
+        mFeatures.hasShaderStencilOutput.enabled && mFeatures.hasDepthAutoResolve.enabled &&
+        mFeatures.hasStencilAutoResolve.enabled;
 
     // Enable EXT_blend_minmax
     mNativeExtensions.blendMinmaxEXT = true;
@@ -1378,18 +1370,11 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), preTransformTextureCubeGradDerivatives,
                             supportsAppleGPUFamily(1));
 
-    // On tile-based GPUs, always resolving MSAA render buffers to single-sampled
-    // is preferred. Because it would save bandwidth by avoiding the cost of storing the MSAA
-    // textures to memory. Traditional desktop GPUs almost always store MSAA textures to memory
-    // anyway, so this feature would have no benefit besides adding additional resolve step and
-    // memory overhead of the hidden single-sampled textures.
-    ANGLE_FEATURE_CONDITION((&mFeatures), alwaysResolveMultisampleRenderBuffers, isARM);
-
     // Metal compiler optimizations may remove infinite loops causing crashes later in shader
     // execution. http://crbug.com/1513738
     // Disabled on Mac11 due to test failures. http://crbug.com/1522730
     ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies,
-                            GetMacOSVersion() >= OSVersion(12, 0, 0));
+                            !isOSX || GetMacOSVersion() >= OSVersion(12, 0, 0));
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()
@@ -1457,17 +1442,36 @@ bool DisplayMtl::supportsMetal2_2() const
 
 bool DisplayMtl::supports32BitFloatFiltering() const
 {
-#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0)
-    if (@available(ios 14.0, macOS 11.0, *))
+#if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000) ||  \
+     (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000) || \
+     (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000) || TARGET_OS_VISION)
+    if (@available(macOS 11.0, macCatalyst 14.0, iOS 14.0, tvOS 16.0, *))
     {
         return [mMetalDevice supports32BitFloatFiltering];
     }
-    else
 #endif
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    return true;  // Always true on old macOS
+#else
+    return false;  // Always false everywhere else
+#endif
+}
+
+bool DisplayMtl::supportsBCTextureCompression() const
+{
+#if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000) ||  \
+     (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400) || \
+     (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160400) || TARGET_OS_VISION)
+    if (@available(macOS 11.0, macCatalyst 16.4, iOS 16.4, tvOS 16.4, *))
     {
-        return supportsMacGPUFamily(1);
+        return [mMetalDevice supportsBCTextureCompression];
     }
+#endif
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    return true;  // Always true on old macOS
+#else
+    return false;  // Always false everywhere else
+#endif
 }
 
 bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const

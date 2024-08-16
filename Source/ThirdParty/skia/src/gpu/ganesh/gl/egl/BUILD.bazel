@@ -1,12 +1,10 @@
-load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library", "skia_filegroup")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
 
 package(
     default_applicable_licenses = ["//:license"],
 )
 
 licenses(["notice"])
-
-exports_files_legacy()
 
 # Used for exporting to //gn/gpu.gni:skia_native_gpu_sources.
 skia_filegroup(
@@ -30,6 +28,13 @@ skia_cc_library(
         "//include/gpu/ganesh/gl/egl:public_hdrs",
     ],
     defines = ["SK_DISABLE_LEGACY_EGLINTERFACE_FACTORY"],
+    linkopts = select({
+        "@platforms//os:android": [
+            "-lEGL",
+            "-lGLESv2",
+        ],
+        "//conditions:default": [],
+    }),
     visibility = ["//:__pkg__"],
     deps = [
         "//:core",

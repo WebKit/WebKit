@@ -67,15 +67,15 @@
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NativePromise.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaSource);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaSource);
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue)
 {

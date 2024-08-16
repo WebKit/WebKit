@@ -30,7 +30,7 @@ namespace WebCore {
 class StyleCursorImage;
 
 class SVGCursorElement final : public SVGElement, public SVGTests, public SVGURIReference {
-    WTF_MAKE_ISO_ALLOCATED(SVGCursorElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGCursorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGCursorElement);
 public:
     static Ref<SVGCursorElement> create(const QualifiedName&, Document&);

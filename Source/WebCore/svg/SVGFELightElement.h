@@ -30,7 +30,7 @@ namespace WebCore {
 class SVGFilter;
 
 class SVGFELightElement : public SVGElement {
-    WTF_MAKE_ISO_ALLOCATED(SVGFELightElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGFELightElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFELightElement);
 public:
     virtual Ref<LightSource> lightSource() const = 0;

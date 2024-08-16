@@ -31,6 +31,7 @@
 #import "TextureView.h"
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebGPU {
@@ -42,6 +43,8 @@ Ref<ExternalTexture> Device::createExternalTexture(const WGPUExternalTextureDesc
 
     return ExternalTexture::create(descriptor.pixelBuffer, descriptor.colorSpace, *this);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternalTexture);
 
 ExternalTexture::ExternalTexture(CVPixelBufferRef pixelBuffer, WGPUColorSpace colorSpace, Device& device)
     : m_pixelBuffer(pixelBuffer)

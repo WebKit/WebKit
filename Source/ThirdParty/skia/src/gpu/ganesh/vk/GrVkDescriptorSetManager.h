@@ -8,17 +8,19 @@
 #ifndef GrVkDescriptorSetManager_DEFINED
 #define GrVkDescriptorSetManager_DEFINED
 
-#include "include/core/SkRefCnt.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
+#include "include/private/gpu/vk/SkiaVulkan.h"
 #include "src/gpu/ganesh/GrResourceHandle.h"
-#include "src/gpu/ganesh/vk/GrVkDescriptorPool.h"
-#include "src/gpu/ganesh/vk/GrVkSampler.h"
 
+#include <cstddef>
+#include <cstdint>
+
+class GrVkDescriptorPool;
 class GrVkDescriptorSet;
 class GrVkGpu;
+class GrVkSampler;
 class GrVkUniformHandler;
-
 /**
  * This class handles the allocation of descriptor sets for a given VkDescriptorSetLayout. It will
  * try to reuse previously allocated descriptor sets if they are no longer in use by other objects.
@@ -71,10 +73,10 @@ private:
         GrVkDescriptorPool*    fPool;
 
     private:
-        enum {
-            kMaxDescriptors = 1024,
-            kStartNumDescriptors = 16, // must be less than kMaxUniformDescriptors
-        };
+        static constexpr size_t kMaxDescriptors = 1024;
+        static constexpr size_t kStartNumDescriptors = 16;
+        // kStartNumDescriptors must be less than kMaxUniformDescriptors
+        static_assert(kStartNumDescriptors < kMaxDescriptors);
 
         bool getNewPool(GrVkGpu* gpu);
     };

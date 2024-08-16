@@ -54,13 +54,13 @@
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplaced);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderReplaced);
 
 const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
@@ -94,7 +94,7 @@ RenderReplaced::~RenderReplaced() = default;
 void RenderReplaced::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed() && parent())
-        parent()->dirtyLinesFromChangedChild(*this);
+        parent()->dirtyLineFromChangedChild();
 
     RenderBox::willBeDestroyed();
 }

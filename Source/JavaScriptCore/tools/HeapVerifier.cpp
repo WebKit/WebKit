@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -439,7 +439,7 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 {
     HeapCell* candidateHeapCell = reinterpret_cast<HeapCell*>(candidateCell);
     
-    auto& inspector = VMInspector::instance();
+    auto& inspector = VMInspector::singleton();
     if (!inspector.getLock().tryLockWithTimeout(2_s)) {
         dataLog("ERROR: Timed out while waiting to iterate VMs.");
         return;

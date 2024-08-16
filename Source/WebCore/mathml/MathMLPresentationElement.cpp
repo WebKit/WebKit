@@ -42,12 +42,12 @@
 #include "RenderTableCell.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLPresentationElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLPresentationElement);
 
 using namespace MathMLNames;
 

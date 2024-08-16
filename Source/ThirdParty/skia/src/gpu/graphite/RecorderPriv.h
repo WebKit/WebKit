@@ -30,7 +30,7 @@ public:
 
     const Caps* caps() const { return fRecorder->fSharedContext->caps(); }
 
-    ResourceProvider* resourceProvider() { return fRecorder->fResourceProvider.get(); }
+    ResourceProvider* resourceProvider() { return fRecorder->fResourceProvider; }
 
     const RuntimeEffectDictionary* runtimeEffectDictionary() const {
         return fRecorder->fRuntimeEffectDict.get();
@@ -71,8 +71,7 @@ public:
 
     static sk_sp<TextureProxy> CreateCachedProxy(Recorder*,
                                                  const SkBitmap&,
-                                                 std::string_view label,
-                                                 Mipmapped = skgpu::Mipmapped::kNo);
+                                                 std::string_view label);
 
     uint32_t uniqueID() const { return fRecorder->fUniqueID; }
 

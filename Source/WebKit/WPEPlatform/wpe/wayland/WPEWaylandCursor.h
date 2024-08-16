@@ -27,15 +27,15 @@
 
 #include "WPEDisplayWayland.h"
 #include <wayland-client.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WPE {
 
 class WaylandCursorTheme;
 
 class WaylandCursor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WaylandCursor);
 public:
     explicit WaylandCursor(WPEDisplayWayland*);
     ~WaylandCursor();

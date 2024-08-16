@@ -38,13 +38,13 @@
 #include "Logging.h"
 #include "SecurityOrigin.h"
 #include "TransactionOperation.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
 
 Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDelegate& delegate)
 {

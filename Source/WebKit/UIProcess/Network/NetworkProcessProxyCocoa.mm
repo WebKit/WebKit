@@ -96,7 +96,7 @@ bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& proces
     auto message = xpcEndpointMessage();
     if (!message)
         return false;
-    auto xpcConnection = process.connection()->xpcConnection();
+    auto xpcConnection = process.connection().xpcConnection();
     RELEASE_ASSERT(xpcConnection);
     xpc_connection_send_message(xpcConnection, message);
     return true;

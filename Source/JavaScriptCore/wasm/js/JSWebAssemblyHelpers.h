@@ -157,7 +157,6 @@ ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
     ASSERT(Wasm::isRefType(type));
     if (Wasm::isExternref(type))
         return jsUndefined();
-    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), Wasm::isFuncref(type));
     return jsNull();
 }
 

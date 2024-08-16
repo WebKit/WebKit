@@ -105,8 +105,61 @@ bool FrameCaptureDeviceScope()
 #endif
 }
 
+// Ensure that .gputrace files have RW permissions for the user or, if a
+// directory, RWX permissions for the user.
+ANGLE_APPLE_UNUSED
+static inline void FixGPUTracePathPermissions(NSString *path, bool isDir)
+{
+    // Ensure we're only change permissions on files in a gputrace bundle.
+    if (![path containsString:@".gputrace"])
+    {
+        return;
+    }
+
+    NSError *error = nil;
+    NSDictionary<NSFileAttributeKey, id> *attributes =
+        [NSFileManager.defaultManager attributesOfItemAtPath:path error:&error];
+    NSNumber *oldPerms = static_cast<NSNumber *>(attributes[NSFilePosixPermissions]);
+    if (!oldPerms)
+    {
+        NSString *msg =
+            attributes ? @"NSFilePosixPermissions unavailable" : error.localizedDescription;
+        NSLog(@"Unable to read permissions for %@ (%@)", path, msg);
+        return;
+    }
+
+    NSUInteger newPerms = oldPerms.unsignedIntegerValue | S_IRUSR | S_IWUSR;
+    if (isDir)
+    {
+        newPerms |= S_IXUSR;
+    }
+
+    if (![NSFileManager.defaultManager setAttributes:@{
+            NSFilePosixPermissions : @(newPerms)
+        }
+                                        ofItemAtPath:path
+                                               error:&error])
+    {
+        NSLog(@"Unable to set permissions=%3lo for %@ (%@)", static_cast<unsigned long>(newPerms),
+              path, error.localizedDescription);
+    }
+}
+
+ANGLE_APPLE_UNUSED
+static inline void FixGPUTraceBundlePermissions(NSString *bundlePath)
+{
+    FixGPUTracePathPermissions(bundlePath, true);
+    for (NSString *file in [NSFileManager.defaultManager enumeratorAtPath:bundlePath])
+    {
+        FixGPUTracePathPermissions([NSString pathWithComponents:@[ bundlePath, file ]], false);
+    }
+}
+
 ANGLE_APPLE_UNUSED
 std::atomic<size_t> gFrameCaptured(0);
+
+ANGLE_APPLE_UNUSED
+NSString *gFrameCapturePath;
 
 ANGLE_APPLE_UNUSED
 void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQueue)
@@ -141,14 +194,14 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
         auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
         captureDescriptor.get().captureObject = metalDevice;
         const std::string filePath            = GetMetalCaptureFile();
+        NSString *frameCapturePath            = nil;
         if (filePath != "")
         {
-            const std::string numberedPath =
-                filePath + std::to_string(gFrameCaptured - 1) + ".gputrace";
+            frameCapturePath =
+                [NSString stringWithFormat:@"%s%zu.gputrace", filePath.c_str(), gFrameCaptured - 1];
             captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
-            captureDescriptor.get().outputURL =
-                [NSURL fileURLWithPath:[NSString stringWithUTF8String:numberedPath.c_str()]
-                           isDirectory:false];
+            captureDescriptor.get().outputURL   = [NSURL fileURLWithPath:frameCapturePath
+                                                           isDirectory:false];
         }
         else
         {
@@ -157,7 +210,12 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
         }
 
         NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+        if ([captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+        {
+            ASSERT(!gFrameCapturePath);
+            gFrameCapturePath = frameCapturePath;
+        }
+        else
         {
             NSLog(@"Failed to start capture, error %@", error);
         }
@@ -194,6 +252,12 @@ void StopFrameCapture()
     if (captureManager.isCapturing)
     {
         [captureManager stopCapture];
+        if (gFrameCapturePath)
+        {
+            FixGPUTraceBundlePermissions(gFrameCapturePath);
+            [gFrameCapturePath ANGLE_MTL_RELEASE];
+            gFrameCapturePath = nil;
+        }
     }
 #endif
 }
@@ -1484,9 +1548,10 @@ bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device)
 
 bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
 {
-#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101500 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || \
-    (__TV_OS_VERSION_MAX_ALLOWED >= 130000)
     // If device supports [MTLDevice supportsFamily:], then use it.
+#if (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500) ||  \
+    (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || \
+    (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 130000) || TARGET_OS_WATCH || TARGET_OS_VISION
     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
     {
         MTLGPUFamily family;
@@ -1507,60 +1572,61 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
             case 5:
                 family = MTLGPUFamilyApple5;
                 break;
-#    if TARGET_OS_IOS || (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000)
+#    if !TARGET_OS_OSX || __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000
             case 6:
                 family = MTLGPUFamilyApple6;
                 break;
+#        if (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000) || \
+            (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 140000) ||      \
+            (!TARGET_OS_IOS && !TARGET_OS_TV)
             case 7:
                 family = MTLGPUFamilyApple7;
                 break;
+#        endif
 #    endif
             default:
                 return false;
         }
         return [device supportsFamily:family];
-    }   // Metal 2.2
-#endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
+    }
+#endif
 
-#if (!TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST || \
-    (TARGET_OS_IOS && defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
-    return false;
-#else
     // If device doesn't support [MTLDevice supportsFamily:], then use
-    // [MTLDevice supportsFeatureSet:].
-    MTLFeatureSet featureSet;
+    // [MTLDevice supportsFeatureSet:]. Only compiled for deployment targets
+    // that need support for older devices.
+#if TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED < 130000
     switch (appleFamily)
     {
-#    if TARGET_OS_IOS
         case 1:
-            featureSet = MTLFeatureSet_iOS_GPUFamily1_v1;
-            break;
+            return [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily1_v1];
         case 2:
-            featureSet = MTLFeatureSet_iOS_GPUFamily2_v1;
-            break;
+            return [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily2_v1];
         case 3:
-            featureSet = MTLFeatureSet_iOS_GPUFamily3_v1;
-            break;
+            return [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily3_v1];
         case 4:
-            featureSet = MTLFeatureSet_iOS_GPUFamily4_v1;
-            break;
-#        if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
+            return [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily4_v1];
+#    if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000
         case 5:
-            featureSet = MTLFeatureSet_iOS_GPUFamily5_v1;
+            return [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily5_v1];
+#    endif
+        default:
             break;
-#        endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
-#    elif TARGET_OS_TV
+    }
+#elif TARGET_OS_TV && __TV_OS_VERSION_MIN_REQUIRED < 130000
+    switch (appleFamily)
+    {
         case 1:
         case 2:
-            featureSet = MTLFeatureSet_tvOS_GPUFamily1_v1;
-            break;
-#    endif  // TARGET_OS_IOS
+            return [device supportsFeatureSet:MTLFeatureSet_tvOS_GPUFamily1_v1];
+#    if __TV_OS_VERSION_MAX_ALLOWED >= 120000
+        case 3:
+            return [device supportsFeatureSet:MTLFeatureSet_tvOS_GPUFamily2_v1];
+#    endif
         default:
-            return false;
+            break;
     }
-
-    return [device supportsFeatureSet:featureSet];
-#endif      // TARGET_OS_IOS || TARGET_OS_TV
+#endif
+    return false;
 }
 
 #if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) ||        \

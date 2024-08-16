@@ -110,6 +110,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #endif
     , colorLayersEnabled { document.settings().cssColorLayersEnabled() }
     , lightDarkEnabled { document.settings().cssLightDarkEnabled() }
+    , targetTextPseudoElementEnabled { document.settings().targetTextPseudoElementEnabled() }
+    , viewTransitionTypesEnabled { document.settings().viewTransitionsEnabled() && document.settings().viewTransitionTypesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -145,7 +147,9 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #endif
         | context.colorLayersEnabled                        << 23
         | context.lightDarkEnabled                          << 24
-        | (uint32_t)context.mode                            << 25; // This is multiple bits, so keep it last.
+        | context.targetTextPseudoElementEnabled            << 25
+        | context.viewTransitionTypesEnabled                << 26
+        | (uint32_t)context.mode                            << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

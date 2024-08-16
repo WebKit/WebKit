@@ -28,12 +28,12 @@
 #include "EventNames.h"
 #include "Node.h"
 #include "PlatformMouseEvent.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WheelEvent);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WheelEvent);
 
 inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
 {

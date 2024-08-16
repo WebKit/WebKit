@@ -77,9 +77,10 @@ shouldThrow(() => Temporal.Duration.from({}), TypeError);
         'P1W1Y',  'PT1S1M',
         'P1.1Y', 'PT1.1H1M', 'PT1.1M1S',
         'PT1.1111111111H', 'PT1.1111111111M', 'PT1.1111111111S',
-        `P${Array(309).fill(9).join('')}Y`
+        `P${Array(309).fill(9).join('')}Y`,
+        '\u2212p1y2m3w4dt5h6m7,008009010s'
     ];
-    for (const badString in badStrings)
+    for (const badString of badStrings)
         shouldThrow(() => Temporal.Duration.from(badString), RangeError);
     
     const fromString = Temporal.Duration.from('P1Y2M3W4DT5H6M7.008009010S');
@@ -94,7 +95,6 @@ shouldThrow(() => Temporal.Duration.from({}), TypeError);
     }
 }
 shouldNotThrow(() => Temporal.Duration.from(`P${Array(308).fill(9).join('')}Y`));
-shouldBe(Temporal.Duration.from('−p1y2m3w4dt5h6m7,008009010s').toString(), '-P1Y2M3W4DT5H6M7.00800901S');
 shouldBe(Temporal.Duration.from('+P1Y2DT3H4.0S').toString(), 'P1Y2DT3H4S');
 shouldBe(Temporal.Duration.from('PT1.03125H').toString(), 'PT1H1M52.5S');
 shouldBe(Temporal.Duration.from('PT1.03125M').toString(), 'PT1M1.875S');

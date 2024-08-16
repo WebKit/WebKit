@@ -1026,13 +1026,18 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
     }
+    if (!m_parameters.navigationID) {
+        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup: Missing navigationID, loaderIdentifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
+        send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
+        return;
+    }
 
     ASSERT(loader == this);
     auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
     if (auto* session = m_connection->networkSession())
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
     RegistrableDomain responseDomain { response.url() };
-    m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(m_parameters.webPageProxyID, m_parameters.navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connectionToWebProcess().networkSession() }](bool success) {
+    m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(m_parameters.webPageProxyID, *m_parameters.navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connectionToWebProcess().networkSession() }](bool success) {
         if (success)
             return;
         if (session)
@@ -1792,16 +1797,16 @@ static String escapeForJSON(const String& s)
     return makeStringByReplacingAll(makeStringByReplacingAll(s, '\\', "\\\\"_s), '"', "\\\""_s);
 }
 
-template<typename IdentifierType, typename ThreadSafety, typename RawValue>
-static String escapeIDForJSON(const std::optional<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue>>& value)
+template<typename IdentifierType, typename ThreadSafety, typename RawValue, SupportsObjectIdentifierNullState supportsNullState>
+static String escapeIDForJSON(const std::optional<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue, supportsNullState>>& value)
 {
-    return value ? String::number(value->toUInt64()) : String("None"_s);
+    return value ? String::number(value->toUInt64()) : "None"_str;
 }
 
-template<typename IdentifierType, typename ThreadSafety, typename RawValue>
-static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue>>>& value)
+template<typename IdentifierType, typename ThreadSafety, typename RawValue, SupportsObjectIdentifierNullState supportsNullState>
+static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue, supportsNullState>>>& value)
 {
-    return value ? String::number(value->object().toUInt64()) : String("None"_s);
+    return value ? String::number(value->object().toUInt64()) : "None"_str;
 }
 
 void NetworkResourceLoader::logCookieInformation() const

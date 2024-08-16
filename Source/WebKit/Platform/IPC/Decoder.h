@@ -34,6 +34,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -65,7 +66,7 @@ template<typename T, typename = IsObjCObject<T>> Class getClass()
 #endif
 
 class Decoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Decoder);
 public:
     static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, Vector<Attachment>&&);
     using BufferDeallocator = Function<void(std::span<const uint8_t>)>;
@@ -157,6 +158,13 @@ public:
 
     std::optional<Attachment> takeLastAttachment();
 
+    void setIndexOfDecodingFailure(int32_t indexOfObjectFailingDecoding)
+    {
+        if (m_indexOfObjectFailingDecoding == -1)
+            m_indexOfObjectFailingDecoding = indexOfObjectFailingDecoding;
+    }
+    int32_t indexOfObjectFailingDecoding() const { return m_indexOfObjectFailingDecoding; }
+
 private:
     Decoder(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
 
@@ -178,6 +186,8 @@ private:
 #endif
 
     uint64_t m_destinationID;
+
+    int32_t m_indexOfObjectFailingDecoding { -1 };
 };
 
 template<>

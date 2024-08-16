@@ -39,11 +39,14 @@
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 const Seconds volatilityTimerInterval = 200_ms;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerBackingStoreCollection);
 
 RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayerTreeContext& layerTreeContext)
     : m_layerTreeContext(layerTreeContext)

@@ -33,7 +33,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::controlBlock(); }
 
     GstElement* bin() const { return m_bin.get(); }
-    virtual bool setBin(const GRefPtr<GstElement>&);
+    bool setBin(const GRefPtr<GstElement>&);
 
     bool hasClient(const GRefPtr<GstElement>&);
     int registerClient(GRefPtr<GstElement>&&);

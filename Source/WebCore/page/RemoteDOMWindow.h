@@ -29,7 +29,7 @@
 #include "RemoteFrame.h"
 #include "WindowPostMessageOptions.h"
 #include <JavaScriptCore/Strong.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace JSC {
@@ -46,7 +46,7 @@ class Document;
 class Location;
 
 class RemoteDOMWindow final : public DOMWindow {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
 public:
     static Ref<RemoteDOMWindow> create(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
     {

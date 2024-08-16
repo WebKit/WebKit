@@ -281,6 +281,19 @@ AllowMultiElementImplicitSubmission:
     WebCore:
       default: false
 
+AllowPrivacySensitiveOperationsInNonPersistentDataStores:
+  type: bool
+  status: embedder
+  humanReadableName: "Allow Privacy-Sensitive Operations in Non-Persistent Data Stores"
+  humanReadableDescription: "Allow Privacy-Sensitive Operations in Non-Persistent Data Stores"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AllowRunningOfInsecureContent:
   type: bool
   status: embedder
@@ -980,17 +993,17 @@ CSSAnchorPositioningEnabled:
 
 CSSBackgroundClipBorderAreaEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS background-clip: border-area"
   humanReadableDescription: "Enable the border-area value for background-clip"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSColorContrastEnabled:
   type: bool
@@ -1009,7 +1022,7 @@ CSSColorContrastEnabled:
 CSSColorLayersEnabled:
   type: bool
   category: css
-  status: testable
+  status: preview
   humanReadableName: "CSS color-layers()"
   humanReadableDescription: "Enable support for CSS color-layers()"
   defaultValue:
@@ -1248,17 +1261,17 @@ CSSRhythmicSizingEnabled:
 
 CSSRubyAlignEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS ruby-align property"
   humanReadableDescription: "Enable ruby-align"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScopeAtRuleEnabled:
   type: bool
@@ -1388,17 +1401,17 @@ CSSTextAutospaceEnabled:
 
 CSSTextBoxTrimEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS text-box-trim property"
   humanReadableDescription: "Enable text-box-trim"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextGroupAlignEnabled:
   type: bool
@@ -1686,6 +1699,21 @@ CaptureVideoInUIProcessEnabled:
 CaretBrowsingEnabled:
   type: bool
   status: embedder
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ChildProcessDebuggabilityEnabled:
+  comment: Disables GPU process IPC timeouts
+  type: bool
+  status: internal
+  humanReadableName: "Child Process Debuggability"
+  humanReadableDescription: "Enable stopping child processes with a debugger"
+  exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
       default: false
@@ -6827,6 +6855,20 @@ TabsToLinks:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+TargetTextPseudoElementEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "::target-text pseudo-element"
+  humanReadableDescription: "Enable the ::target-text CSS pseudo-element"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 TelephoneNumberParsingEnabled:
   type: bool
   status: embedder
@@ -7510,12 +7552,12 @@ ViewGestureDebuggingEnabled:
     WebKit:
       default: false
 
-ViewTransitionTypesEnabled:
+ViewTransitionClassesEnabled:
   type: bool
   category: animation
   status: testable
-  humanReadableName: "View Transition Types"
-  humanReadableDescription: "Support specifying types for view transitions"
+  humanReadableName: "View Transition Classes"
+  humanReadableDescription: "Support specifying classes for view transitions"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -7523,6 +7565,20 @@ ViewTransitionTypesEnabled:
       default: false
     WebCore:
       default: false
+
+ViewTransitionTypesEnabled:
+  type: bool
+  category: animation
+  status: stable
+  humanReadableName: "View Transition Types"
+  humanReadableDescription: "Support specifying types for view transitions"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 ViewTransitionsEnabled:
   type: bool
@@ -8053,7 +8109,7 @@ WebRTCEncodedTransformEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
+      "USE(LIBWEBRTC) && (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE))": WebKit::defaultPeerConnectionEnabledAvailable()
       default: false
     WebCore:
       "USE(LIBWEBRTC)": true
@@ -8346,19 +8402,40 @@ WebXRHandInputModuleEnabled:
       default: true
     WebCore:
       default: true
+
 WebXRLayersAPIEnabled:
   type: bool
-  status: unstable
+  status: Webxr_layers_feature_status
   category: dom
   humanReadableName: "WebXR Layers API"
   humanReadableDescription: "Adds support for the WebXR Layers API"
   condition: ENABLE(WEBXR_LAYERS)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
     WebKit:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
     WebCore:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+
+WebXRWebGPUBindingsEnabled:
+  type: bool
+  status: Webgpu_webxr_feature_status
+  category: dom
+  humanReadableName: "WebGPU Support for WebXR"
+  humanReadableDescription: "Adds WebGPU support for WebXR"
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+    WebKit:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
+      default: false
+    WebCore:
+      "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
 
 WheelEventGesturesBecomeNonBlocking:

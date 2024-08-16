@@ -36,9 +36,12 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextMenuClient);
 
 void WebContextMenuClient::downloadURL(const URL&)
 {

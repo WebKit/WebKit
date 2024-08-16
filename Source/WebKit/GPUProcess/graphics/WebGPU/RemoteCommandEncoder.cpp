@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteCommandBuffer.h"
 #include "RemoteCommandEncoderMessages.h"
 #include "RemoteComputePassEncoder.h"
@@ -37,20 +38,13 @@
 #include "WebGPUComputePassDescriptor.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCommandEncoder.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCommandEncoder);
 
 RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(commandEncoder)
@@ -64,6 +58,14 @@ RemoteCommandEncoder::RemoteCommandEncoder(GPUConnectionToWebProcess& gpuConnect
 }
 
 RemoteCommandEncoder::~RemoteCommandEncoder() = default;
+
+RefPtr<IPC::Connection> RemoteCommandEncoder::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteCommandEncoder::destruct()
 {

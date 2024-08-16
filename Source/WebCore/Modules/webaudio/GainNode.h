@@ -37,7 +37,7 @@ class AudioContext;
 // De-zippering (smoothing) is applied when the gain value is changed dynamically.
 
 class GainNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(GainNode);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GainNode);
 public:
     static ExceptionOr<Ref<GainNode>> create(BaseAudioContext& context, const GainOptions& = { });
 

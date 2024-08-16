@@ -37,9 +37,9 @@
 #import <WebKit/WKWebExtensionPermission.h>
 #import <WebKit/WKWebExtensionPrivate.h>
 #import <WebKit/WKWebExtensionTab.h>
-#import <WebKit/WKWebExtensionTabCreationOptions.h>
+#import <WebKit/WKWebExtensionTabConfiguration.h>
 #import <WebKit/WKWebExtensionWindow.h>
-#import <WebKit/WKWebExtensionWindowCreationOptions.h>
+#import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WebKit.h>
 
 @interface TestWebExtensionsDelegate : NSObject <WKWebExtensionControllerDelegate>
@@ -48,10 +48,10 @@
 @property (nonatomic, copy) id <WKWebExtensionWindow> (^focusedWindow)(WKWebExtensionContext *);
 
 #if PLATFORM(MAC)
-@property (nonatomic, copy) void (^openNewWindow)(WKWebExtensionWindowCreationOptions *, WKWebExtensionContext *, void (^)(id<WKWebExtensionWindow>, NSError *));
+@property (nonatomic, copy) void (^openNewWindow)(WKWebExtensionWindowConfiguration *, WKWebExtensionContext *, void (^)(id<WKWebExtensionWindow>, NSError *));
 #endif
 
-@property (nonatomic, copy) void (^openNewTab)(WKWebExtensionTabCreationOptions *, WKWebExtensionContext *, void (^)(id<WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^openNewTab)(WKWebExtensionTabConfiguration *, WKWebExtensionContext *, void (^)(id<WKWebExtensionTab>, NSError *));
 @property (nonatomic, copy) void (^openOptionsPage)(WKWebExtensionContext *, void (^)(NSError *));
 
 @property (nonatomic, copy) void (^promptForPermissions)(id <WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<WKWebExtensionPermission> *, NSDate *));

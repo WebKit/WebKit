@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteTextureMessages.h"
 #include "RemoteTextureView.h"
 #include "StreamServerConnection.h"
@@ -37,20 +38,13 @@
 #include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUTextureView.h>
 #include <WebCore/WebGPUTextureViewDescriptor.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTexture);
 
 RemoteTexture::RemoteTexture(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(texture)
@@ -64,6 +58,14 @@ RemoteTexture::RemoteTexture(GPUConnectionToWebProcess& gpuConnectionToWebProces
 }
 
 RemoteTexture::~RemoteTexture() = default;
+
+RefPtr<IPC::Connection> RemoteTexture::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteTexture::stopListeningForIPC()
 {

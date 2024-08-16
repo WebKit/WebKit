@@ -39,6 +39,7 @@
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Locker.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
@@ -50,6 +51,8 @@ extern WTFLogChannel LogMedia;
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferPrivateRemote);
 
 WorkQueue& SourceBufferPrivateRemote::queue()
 {

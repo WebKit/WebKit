@@ -924,11 +924,19 @@ void TextureMtl::deallocateNativeStorage(bool keepImages, bool keepSamplerStateA
 
     // Clear render target cache for each texture's image. We don't erase them because they
     // might still be referenced by a framebuffer.
-    for (auto &sliceRenderTargets : mPerLayerRenderTargets)
+    for (auto &samplesMapRenderTargets : mRenderTargets)
     {
-        for (RenderTargetMtl &mipRenderTarget : sliceRenderTargets.second)
+        for (RenderTargetMtl &perSampleCountRenderTarget : samplesMapRenderTargets.second)
         {
-            mipRenderTarget.reset();
+            perSampleCountRenderTarget.reset();
+        }
+    }
+
+    for (auto &samplesMapMSTextures : mImplicitMSTextures)
+    {
+        for (mtl::TextureRef &perSampleCountMSTexture : samplesMapMSTextures.second)
+        {
+            perSampleCountMSTexture.reset();
         }
     }
 
@@ -1325,13 +1333,22 @@ ImageDefinitionMtl &TextureMtl::getImageDefinition(const gl::ImageIndex &imageIn
 
     return imageDef;
 }
-RenderTargetMtl &TextureMtl::getRenderTarget(const gl::ImageIndex &imageIndex)
+angle::Result TextureMtl::getRenderTarget(ContextMtl *context,
+                                          const gl::ImageIndex &imageIndex,
+                                          GLsizei implicitSamples,
+                                          RenderTargetMtl **renderTargetOut)
 {
     ASSERT(imageIndex.getType() == gl::TextureType::_2D ||
            imageIndex.getType() == gl::TextureType::Rectangle ||
            imageIndex.getType() == gl::TextureType::_2DMultisample || imageIndex.hasLayer());
+
+    const gl::RenderToTextureImageIndex renderToTextureIndex =
+        implicitSamples <= 1
+            ? gl::RenderToTextureImageIndex::Default
+            : static_cast<gl::RenderToTextureImageIndex>(PackSampleCount(implicitSamples));
+
     GLuint layer         = GetImageLayerIndexFrom(imageIndex);
-    RenderTargetMtl &rtt = mPerLayerRenderTargets[layer][imageIndex.getLevelIndex()];
+    RenderTargetMtl &rtt = mRenderTargets[imageIndex][renderToTextureIndex];
     if (!rtt.getTexture())
     {
         // Lazy initialization of render target:
@@ -1349,7 +1366,24 @@ RenderTargetMtl &TextureMtl::getRenderTarget(const gl::ImageIndex &imageIndex)
             }
         }
     }
-    return rtt;
+
+    if (implicitSamples > 1 && !rtt.getImplicitMSTexture())
+    {
+        // This format must supports implicit resolve
+        ANGLE_MTL_CHECK(context, mFormat.getCaps().resolve, GL_INVALID_VALUE);
+        mtl::TextureRef &msTexture = mImplicitMSTextures[imageIndex][renderToTextureIndex];
+        if (!msTexture)
+        {
+            const gl::ImageDesc &desc = mState.getImageDesc(imageIndex);
+            ANGLE_TRY(mtl::Texture::MakeMemoryLess2DMSTexture(
+                context, mFormat, desc.size.width, desc.size.height, implicitSamples, &msTexture));
+        }
+        rtt.setImplicitMSTexture(msTexture);
+    }
+
+    *renderTargetOut = &rtt;
+
+    return angle::Result::Continue;
 }
 
 angle::Result TextureMtl::setImage(const gl::Context *context,
@@ -1790,7 +1824,10 @@ angle::Result TextureMtl::getAttachmentRenderTarget(const gl::Context *context,
     ContextMtl *contextMtl = mtl::GetImpl(context);
     ANGLE_MTL_TRY(contextMtl, mNativeTextureStorage);
 
-    *rtOut = &getRenderTarget(imageIndex);
+    RenderTargetMtl *rtt;
+    ANGLE_TRY(getRenderTarget(contextMtl, imageIndex, samples, &rtt));
+
+    *rtOut = rtt;
 
     return angle::Result::Continue;
 }
@@ -2611,12 +2648,13 @@ angle::Result TextureMtl::copySubImageWithDraw(const gl::Context *context,
     ContextMtl *contextMtl = mtl::GetImpl(context);
     DisplayMtl *displayMtl = contextMtl->getDisplay();
 
-    const RenderTargetMtl &imageRtt = getRenderTarget(index);
+    RenderTargetMtl *imageRtt;
+    ANGLE_TRY(getRenderTarget(contextMtl, index, /*implicitSamples=*/0, &imageRtt));
 
-    mtl::RenderCommandEncoder *cmdEncoder = contextMtl->getRenderTargetCommandEncoder(imageRtt);
+    mtl::RenderCommandEncoder *cmdEncoder = contextMtl->getRenderTargetCommandEncoder(*imageRtt);
     mtl::ColorBlitParams blitParams;
 
-    blitParams.dstTextureSize = imageRtt.getTexture()->size(imageRtt.getLevelIndex());
+    blitParams.dstTextureSize = imageRtt->getTexture()->size(imageRtt->getLevelIndex());
     blitParams.dstRect        = gl::Rectangle(modifiedDestOffset.x, modifiedDestOffset.y,
                                               clippedSourceArea.width, clippedSourceArea.height);
     blitParams.dstScissorRect = blitParams.dstRect;

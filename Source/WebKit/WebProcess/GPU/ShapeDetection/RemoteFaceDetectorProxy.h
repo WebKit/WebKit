@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -47,7 +48,7 @@ struct FaceDetectorOptions;
 namespace WebKit::ShapeDetection {
 
 class RemoteFaceDetectorProxy : public WebCore::ShapeDetection::FaceDetector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteFaceDetectorProxy);
 public:
     static Ref<RemoteFaceDetectorProxy> create(Ref<IPC::StreamClientConnection>&&, RenderingBackendIdentifier, ShapeDetectionIdentifier, const WebCore::ShapeDetection::FaceDetectorOptions&);
 

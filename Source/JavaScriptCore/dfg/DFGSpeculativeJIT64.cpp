@@ -173,7 +173,8 @@ void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, JSValueReg
     if (needsBaseCellCheck)
         slowCases.append(branchIfNotCell(BaselineJITRegisters::GetById::baseJSR));
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::GetById::baseJSR, resultRegs, BaselineJITRegisters::GetById::stubInfoGPR, BaselineJITRegisters::GetById::scratch1GPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::GetById::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::GetById::stubInfoGPR, Address(BaselineJITRegisters::GetById::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), appropriateGetByIdOptimizeFunction(type),
         DontSpill, ExceptionCheckRequirement::CheckNeeded,
@@ -208,7 +209,8 @@ void SpeculativeJIT::cachedGetByIdWithThis(Node* node, CodeOrigin codeOrigin, JS
         slowCases.append(branchIfNotCell(BaselineJITRegisters::GetByIdWithThis::thisJSR));
     }
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::GetByIdWithThis::baseJSR, resultRegs, BaselineJITRegisters::GetByIdWithThis::stubInfoGPR, BaselineJITRegisters::GetByIdWithThis::scratch1GPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::GetByIdWithThis::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByIdWithThis::stubInfoGPR, Address(BaselineJITRegisters::GetByIdWithThis::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByIdWithThisOptimize,
         DontSpill, ExceptionCheckRequirement::CheckNeeded,
@@ -2722,7 +2724,8 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
                 stubInfo->propertyIsSymbol = true;
         }, stubInfo);
 
-        gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR);
+        loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR);
+        gen.generateDataICFastPath(*this);
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR, Address(BaselineJITRegisters::GetByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByValOptimize,
             resultRegs, BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR, nullptr);
@@ -5791,7 +5794,8 @@ void SpeculativeJIT::compile(Node* node)
                 stubInfo->propertyIsInt32 = true;
             }, stubInfo);
 
-            gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+            loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+            gen.generateDataICFastPath(*this);
             auto slowPath = slowPathICCall(
                 slowCases, this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR, Address(BaselineJITRegisters::InByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByValOptimize,
                 DontSpill, ExceptionCheckRequirement::CheckNeeded,
@@ -6859,7 +6863,8 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
             stubInfo->propertyIsSymbol = true;
     }, stubInfo);
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::GetByValWithThis::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::GetByValWithThis::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, Address(BaselineJITRegisters::GetByValWithThis::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByValWithThisOptimize,
         resultRegs.payloadGPR(), BaselineJITRegisters::GetByValWithThis::baseJSR, BaselineJITRegisters::GetByValWithThis::propertyJSR, BaselineJITRegisters::GetByValWithThis::thisJSR, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, nullptr);
@@ -6877,7 +6882,12 @@ void SpeculativeJIT::compileGetById(Node* node, AccessType accessType)
     if (accessType == AccessType::GetById || accessType == AccessType::GetByIdDirect) {
         if (node->cacheableIdentifier() == vm().propertyNames->length)
             cacheType = CacheType::ArrayLength;
-    }
+        else {
+            if (accessType == AccessType::GetById)
+                cacheType = node->cacheType();
+        }
+    } else
+        cacheType = CacheType::GetByIdPrototype;
 
     switch (node->child1().useKind()) {
     case CellUse: {
@@ -6945,7 +6955,8 @@ void SpeculativeJIT::compileDeleteById(Node* node)
         JumpList slowCases;
 
         auto* operation = node->ecmaMode().isStrict() ? operationDeleteByIdStrictOptimize : operationDeleteByIdSloppyOptimize;
-        gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::DelById::stubInfoGPR);
+        loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::DelById::stubInfoGPR);
+        gen.generateDataICFastPath(*this);
         ASSERT(!gen.stubInfo());
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::DelById::stubInfoGPR, Address(BaselineJITRegisters::DelById::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
@@ -7011,7 +7022,8 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
 
         auto* operation = node->ecmaMode().isStrict() ? operationDeleteByValStrictOptimize : operationDeleteByValSloppyOptimize;
 
-        gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::DelByVal::stubInfoGPR);
+        loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::DelByVal::stubInfoGPR);
+        gen.generateDataICFastPath(*this);
         ASSERT(!gen.stubInfo());
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::DelByVal::stubInfoGPR, Address(BaselineJITRegisters::DelByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
@@ -7067,7 +7079,8 @@ void SpeculativeJIT::compileInById(Node* node)
         BaselineJITRegisters::InById::baseJSR, resultRegs, BaselineJITRegisters::InById::stubInfoGPR);
     JumpList slowCases;
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::InById::baseJSR, resultRegs, BaselineJITRegisters::InById::stubInfoGPR, BaselineJITRegisters::InById::scratch1GPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::InById::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     ASSERT(!gen.stubInfo());
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::InById::stubInfoGPR, Address(BaselineJITRegisters::InById::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByIdOptimize,
@@ -7112,7 +7125,8 @@ void SpeculativeJIT::compileInByVal(Node* node)
         BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, resultRegs, BaselineJITRegisters::InByVal::profileGPR, BaselineJITRegisters::InByVal::stubInfoGPR);
     JumpList slowCases;
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     ASSERT(!gen.stubInfo());
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR, Address(BaselineJITRegisters::InByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByValOptimize,
@@ -7162,7 +7176,8 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
         stubInfo->propertyIsSymbol = true;
     }, stubInfo);
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     ASSERT(!gen.stubInfo());
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR, Address(BaselineJITRegisters::InByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), type == AccessType::HasPrivateName ? operationHasPrivateNameOptimize : operationHasPrivateBrandOptimize,
@@ -7286,7 +7301,8 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         }, stubInfo);
 
         auto operation = isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValSloppyOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValSloppyOptimize);
-        gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+        loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+        gen.generateDataICFastPath(*this);
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
             NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);
@@ -7440,7 +7456,8 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
         stubInfo->propertyIsSymbol = true;
     }, stubInfo);
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR, Address(BaselineJITRegisters::GetByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetPrivateNameOptimize,
         result.regs(), BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR);
@@ -7555,7 +7572,8 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     }, stubInfo);
 
     auto operation = node->privateFieldPutKind().isDefine() ? operationPutByValDefinePrivateFieldOptimize : operationPutByValSetPrivateFieldOptimize;
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
         NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);
@@ -7603,7 +7621,8 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
         stubInfo->propertyIsSymbol = true;
     }, stubInfo);
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR, Address(BaselineJITRegisters::PrivateBrand::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationCheckPrivateBrandOptimize, NoResult,
         BaselineJITRegisters::PrivateBrand::baseJSR, BaselineJITRegisters::PrivateBrand::propertyJSR, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
@@ -7650,7 +7669,8 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
         stubInfo->propertyIsSymbol = true;
     }, stubInfo);
 
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::PrivateBrand::stubInfoGPR, Address(BaselineJITRegisters::PrivateBrand::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationSetPrivateBrandOptimize, NoResult,
         BaselineJITRegisters::PrivateBrand::baseJSR, BaselineJITRegisters::PrivateBrand::propertyJSR, BaselineJITRegisters::PrivateBrand::stubInfoGPR);
@@ -7687,7 +7707,8 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         if (needsPrototypeCellCheck)
             slowCases.append(branchIfNotCell(BaselineJITRegisters::Instanceof::protoJSR));
 
-        gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::Instanceof::stubInfoGPR);
+        loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::Instanceof::stubInfoGPR);
+        gen.generateDataICFastPath(*this);
         auto slowPath = slowPathICCall(slowCases, this, stubInfoConstant, BaselineJITRegisters::Instanceof::stubInfoGPR, Address(BaselineJITRegisters::Instanceof::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInstanceOfOptimize, resultGPR, BaselineJITRegisters::Instanceof::valueJSR, BaselineJITRegisters::Instanceof::protoJSR, BaselineJITRegisters::Instanceof::stubInfoGPR);
 
         addInstanceOf(gen, slowPath.get());
@@ -7795,7 +7816,8 @@ void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR,
         BaselineJITRegisters::PutById::scratch1GPR, accessType);
     JumpList slowCases;
     auto* operation = appropriatePutByIdOptimizeFunction(accessType);
-    gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PutById::baseJSR, BaselineJITRegisters::PutById::valueJSR, BaselineJITRegisters::PutById::stubInfoGPR, BaselineJITRegisters::PutById::scratch1GPR);
+    loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PutById::stubInfoGPR);
+    gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(slowCases, this, stubInfoConstant, BaselineJITRegisters::PutById::stubInfoGPR, Address(BaselineJITRegisters::PutById::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation, NoResult, BaselineJITRegisters::PutById::valueJSR, BaselineJITRegisters::PutById::baseJSR, BaselineJITRegisters::PutById::stubInfoGPR);
 
     addPutById(gen, slowPath.get());
@@ -8168,7 +8190,8 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
             }, stubInfo);
 
             auto operation = ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValSloppyOptimize;
-            gen.generateDFGDataICFastPath(*this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+            loadStructureStubInfo(stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR);
+            gen.generateDataICFastPath(*this);
             auto slowPath = slowPathICCall(
                 slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
                 NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);

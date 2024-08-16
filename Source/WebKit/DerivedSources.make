@@ -300,6 +300,10 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteShaderModule \
 	GPUProcess/graphics/WebGPU/RemoteTexture \
 	GPUProcess/graphics/WebGPU/RemoteTextureView \
+	GPUProcess/graphics/WebGPU/RemoteXRBinding \
+	GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer \
+	GPUProcess/graphics/WebGPU/RemoteXRSubImage \
+	GPUProcess/graphics/WebGPU/RemoteXRView \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager \
 	GPUProcess/webrtc/RemoteMediaRecorderManager \

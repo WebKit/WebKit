@@ -4,7 +4,7 @@ headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
 headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
-[AdditionalEncoder=OtherEncoder, CustomHeader] struct Namespace::Subnamespace::StructName {
+[AdditionalEncoder=OtherEncoder, CustomHeader, DebugDecodingFailure] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;

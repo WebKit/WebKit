@@ -68,7 +68,9 @@ LinkRelAttribute::LinkRelAttribute(Document& document, StringView rel)
     } else if (equalLettersIgnoringASCIICase(rel, "manifest"_s)) {
         isApplicationManifest = true;
 #endif
-    } else {
+    } else if (equalLettersIgnoringASCIICase(rel, "expect"_s))
+        isInternalResourceLink = true;
+    else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         for (auto line : rel.split('\n')) {
             for (auto word : line.split(' ')) {

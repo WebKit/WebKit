@@ -34,7 +34,13 @@ if (USE_SKIA)
     add_subdirectory(ThirdParty/skia)
 endif ()
 
-if (USE_SYSPROF_CAPTURE)
+if (USE_SYSTEM_SYSPROF_CAPTURE)
+    find_package(SysProfCapture)
+    if (NOT SysProfCapture_FOUND)
+        message(FATAL_ERROR "system libsysprof-capture-4 not found, "
+                            "consider using USE_SYSTEM_SYSPROF_CAPTURE=NO")
+    endif ()
+elseif (USE_SYSPROF_CAPTURE)
     add_subdirectory(ThirdParty/libsysprof-capture)
 endif ()
 

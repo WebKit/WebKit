@@ -11,16 +11,11 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 initial-letter
 line-clamp
-ruby-position
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/inheritance.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-edge-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-edge-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-edge-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-accumulation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-atomic-inline-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-atomic-inline-001-ref.html
@@ -58,6 +53,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-clear-br-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-start-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-start-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-float-start-001.html
@@ -68,11 +66,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-half-leading-block-box-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-height-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-initial-letter-end-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-initial-letter-end-001-ref.html
@@ -102,7 +108,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-tall-line-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-tall-line-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-tall-line-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-start-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-start-001-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-start-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-text-emphasis-001.html

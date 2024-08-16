@@ -36,13 +36,13 @@
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Text);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::create(Document& document, String&& data)
 {

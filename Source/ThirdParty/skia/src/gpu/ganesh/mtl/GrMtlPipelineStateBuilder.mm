@@ -11,7 +11,7 @@
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/core/SkWriteBuffer.h"
-#include "src/gpu/PipelineUtils.h"
+#include "src/gpu/SkSLToBackend.h"
 #include "src/gpu/ganesh/GrAutoLocaleSetter.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "src/gpu/ganesh/GrPersistentCacheUtils.h"
@@ -177,7 +177,7 @@ static MTLVertexDescriptor* create_vertex_descriptor(const GrGeometryProcessor& 
                                                      SkBinaryWriteBuffer* writer) {
     uint32_t vertexBinding = 0, instanceBinding = 0;
 
-    int nextBinding = GrMtlUniformHandler::kLastUniformBinding + 1;
+    int nextBinding = GrMtlUniformHandler::kLastUniformBinding + 1; // Start after the uniforms.
     if (geomProc.hasVertexAttributes()) {
         vertexBinding = nextBinding++;
     }

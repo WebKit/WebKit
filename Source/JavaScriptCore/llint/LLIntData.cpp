@@ -256,6 +256,10 @@ void initialize()
 #endif // CPU(ARM64E)
 #endif // ENABLE(C_LOOP)
     g_jscConfig.defaultCallThunk = defaultCall().code().taggedPtr();
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        g_jscConfig.arityFixupThunk = arityFixupThunk().code().taggedPtr();
+#endif
 }
 
 } } // namespace JSC::LLInt

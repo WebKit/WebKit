@@ -36,12 +36,15 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (connection ? &connection->connection() : nullptr))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 using namespace WebCore;
 static constexpr Seconds mediaRecorderDefaultTimeout { 1_s };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaRecorder);
 
 std::unique_ptr<RemoteMediaRecorder> RemoteMediaRecorder::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options)
 {
@@ -65,9 +68,16 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
     m_writer->close();
 }
 
+RefPtr<IPC::Connection> RemoteMediaRecorder::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
+
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
-    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
     m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
@@ -79,7 +89,6 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer:
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
-    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(m_description && WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames));

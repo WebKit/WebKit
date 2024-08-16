@@ -28,6 +28,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -394,7 +395,7 @@ webkit_script_message_reply_return_error_message(WebKitScriptMessageReply* messa
 }
 
 class ScriptMessageClientGtk final : public WebScriptMessageHandler::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScriptMessageClientGtk);
 public:
     ScriptMessageClientGtk(WebKitUserContentManager* manager, const char* handlerName, bool supportsAsyncReply)
         : m_handlerName(g_quark_from_string(handlerName))

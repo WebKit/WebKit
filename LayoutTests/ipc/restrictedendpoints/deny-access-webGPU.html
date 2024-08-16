@@ -14,8 +14,9 @@ function runTest() {
     let rrbStreamConnectionHandle;
     let webGPUStreamConnection;
     let webGPUStreamConnectionHandle;
+    const defaultTimeout = 1000;
     try {
-        [rrbStreamConnection, rrbStreamConnectionHandle] = IPC.createStreamClientConnection(16);
+        [rrbStreamConnection, rrbStreamConnectionHandle] = IPC.createStreamClientConnection(16, defaultTimeout);
         let renderingBackendID = randomIPCID();
         IPC.sendMessage(
             'GPU',
@@ -30,7 +31,7 @@ function runTest() {
             ]);
 
         let webGPUID = randomIPCID();
-        [webGPUStreamConnection, webGPUStreamConnectionHandle] = IPC.createStreamClientConnection(16);
+        [webGPUStreamConnection, webGPUStreamConnectionHandle] = IPC.createStreamClientConnection(16, defaultTimeout);
         var result = IPC.sendMessage(
             'GPU',
             IPC.webPageProxyID,

@@ -93,10 +93,10 @@
 #include "UserAgentStyleSheets.h"
 #include "XMLNames.h"
 #include "markup.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Range.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -106,7 +106,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLElement);
 
 using namespace HTMLNames;
 

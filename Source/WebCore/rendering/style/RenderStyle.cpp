@@ -56,7 +56,7 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
-#include "StyleTextBoxEdge.h"
+#include "StyleTextEdge.h"
 #include "StyleTreeResolver.h"
 #include "TransformOperationData.h"
 #include <algorithm>
@@ -218,7 +218,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.position = static_cast<unsigned>(initialPosition());
     m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(initialUnicodeBidi());
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
-    m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
     m_nonInheritedFlags.textDecorationLine = initialTextDecorationLine().toRaw();
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.usesContainerUnits = false;
@@ -398,7 +397,6 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     position = other.position;
     unicodeBidi = other.unicodeBidi;
     floating = other.floating;
-    tableLayout = other.tableLayout;
     textDecorationLine = other.textDecorationLine;
     usesViewportUnits = other.usesViewportUnits;
     usesContainerUnits = other.usesContainerUnits;
@@ -880,6 +878,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.textBoxTrim != second.textBoxTrim)
         return true;
 
+    if (first.textBoxEdge != second.textBoxEdge)
+        return true;
+
     return false;
 }
 
@@ -891,7 +892,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
         || first.textIndentLine != second.textIndentLine
-        || first.textBoxEdge != second.textBoxEdge
+        || first.lineFitEdge != second.lineFitEdge
         || first.usedZoom != second.usedZoom
         || first.textZoom != second.textZoom
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1040,7 +1041,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         if (m_inheritedFlags.borderCollapse != other.m_inheritedFlags.borderCollapse
             || m_inheritedFlags.emptyCells != other.m_inheritedFlags.emptyCells
             || m_inheritedFlags.captionSide != other.m_inheritedFlags.captionSide
-            || m_nonInheritedFlags.tableLayout != other.m_nonInheritedFlags.tableLayout)
+            || tableLayout() != other.tableLayout())
             return true;
 
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
@@ -1549,8 +1550,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyDisplay);
         if (first.floating != second.floating)
             changingProperties.m_properties.set(CSSPropertyFloat);
-        if (first.tableLayout != second.tableLayout)
-            changingProperties.m_properties.set(CSSPropertyTableLayout);
         if (first.textDecorationLine != second.textDecorationLine)
             changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
 
@@ -1794,6 +1793,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyObjectFit);
         if (first.appearance != second.appearance)
             changingProperties.m_properties.set(CSSPropertyAppearance);
+        if (first.tableLayout != second.tableLayout)
+            changingProperties.m_properties.set(CSSPropertyTableLayout);
 
         if (first.transform.ptr() != second.transform.ptr())
             conservativelyCollectChangedAnimatablePropertiesViaTransformData(*first.transform, *second.transform);
@@ -1922,6 +1923,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowAnchor);
         if (first.hasClip != second.hasClip)
             changingProperties.m_properties.set(CSSPropertyClip);
+        if (first.viewTransitionClasses != second.viewTransitionClasses)
+            changingProperties.m_properties.set(CSSPropertyViewTransitionClass);
         if (first.viewTransitionName != second.viewTransitionName)
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
         if (first.contentVisibility != second.contentVisibility)
@@ -1936,6 +1939,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollSnapStop);
         if (first.scrollSnapType != second.scrollSnapType)
             changingProperties.m_properties.set(CSSPropertyScrollSnapType);
+        if (first.textBoxEdge != second.textBoxEdge)
+            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
 
         // Non animated styles are followings.
         // customProperties
@@ -2065,8 +2070,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyImageRendering);
         if (first.textAlignLast != second.textAlignLast)
             changingProperties.m_properties.set(CSSPropertyTextAlignLast);
-        if (first.textBoxEdge != second.textBoxEdge)
-            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
+        if (first.lineFitEdge != second.lineFitEdge)
+            changingProperties.m_properties.set(CSSPropertyLineFitEdge);
         if (first.textJustify != second.textJustify)
             changingProperties.m_properties.set(CSSPropertyTextJustify);
         if (first.textDecorationSkipInk != second.textDecorationSkipInk)
@@ -3755,19 +3760,34 @@ bool RenderStyle::hasSnapPosition() const
     return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
 }
 
-TextBoxEdge RenderStyle::textBoxEdge() const
+TextEdge RenderStyle::textBoxEdge() const
 {
-    return m_rareInheritedData->textBoxEdge;
+    return m_nonInheritedData->rareData->textBoxEdge;
 }
 
-void RenderStyle::setTextBoxEdge(TextBoxEdge textBoxEdgeValue)
+void RenderStyle::setTextBoxEdge(TextEdge textBoxEdgeValue)
 {
-    SET_VAR(m_rareInheritedData, textBoxEdge, textBoxEdgeValue);
+    SET_NESTED_VAR(m_nonInheritedData, rareData, textBoxEdge, textBoxEdgeValue);
 }
 
-TextBoxEdge RenderStyle::initialTextBoxEdge()
+TextEdge RenderStyle::initialTextBoxEdge()
 {
-    return { TextBoxEdgeType::Leading, TextBoxEdgeType::Leading };
+    return { TextEdgeType::Auto, TextEdgeType::Auto };
+}
+
+TextEdge RenderStyle::lineFitEdge() const
+{
+    return m_rareInheritedData->lineFitEdge;
+}
+
+void RenderStyle::setLineFitEdge(TextEdge lineFitEdgeValue)
+{
+    SET_VAR(m_rareInheritedData, lineFitEdge, lineFitEdgeValue);
+}
+
+TextEdge RenderStyle::initialLineFitEdge()
+{
+    return { TextEdgeType::Leading, TextEdgeType::Leading };
 }
 
 bool RenderStyle::hasReferenceFilterOnly() const

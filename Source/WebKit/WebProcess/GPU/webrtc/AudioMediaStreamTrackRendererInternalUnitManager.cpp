@@ -43,11 +43,12 @@
 #include <mach/mach_time.h>
 #include <wtf/Deque.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class AudioMediaStreamTrackRendererInternalUnitManagerProxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 public:
     explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client&);
     ~AudioMediaStreamTrackRendererInternalUnitManagerProxy();
@@ -63,7 +64,7 @@ private:
     void setAudioOutputDevice(const String&) final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
-    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
+    void storageChanged(WebCore::SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
 
     void stopThread();
     void startThread();
@@ -89,6 +90,8 @@ private:
     std::atomic<bool> m_shouldStopThread { false };
     bool m_didClose { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererInternalUnitManager);
 
 void AudioMediaStreamTrackRendererInternalUnitManager::add(AudioMediaStreamTrackRendererInternalUnitManagerProxy& proxy)
 {
@@ -117,6 +120,8 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
     for (auto proxy : proxies.values())
         proxy->reset(AudioMediaStreamTrackRendererInternalUnitManagerProxy::IsClosed::Yes);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 
 AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client& client)
     : m_client(client)

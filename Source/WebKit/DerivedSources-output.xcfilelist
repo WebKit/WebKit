@@ -86,10 +86,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIRuntime.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIScripting.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIScripting.mm
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidePanel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidePanel.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPISidebarAction.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorage.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIStorageArea.h
@@ -392,6 +392,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebInspectorUIProxyMessageRece
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebInspectorUIProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebLockRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteWebLockRegistryMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRBindingMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRBindingMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRProjectionLayerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRProjectionLayerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRSubImageMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRSubImageMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRViewMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteXRViewMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SampleBufferDisplayLayerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SampleBufferDisplayLayerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecItemShimProxyMessageReceiver.cpp

@@ -42,7 +42,7 @@ namespace WebCore {
 struct RTCSessionDescriptionInit;
 
 class RTCSessionDescription final : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(RTCSessionDescription);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCSessionDescription);
 public:
     struct Init {
         RTCSdpType type;

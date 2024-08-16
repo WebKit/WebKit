@@ -47,12 +47,12 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentedFlow);
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, RenderStyle&& style)
     : RenderBlockFlow(type, document, WTFMove(style), BlockFlowFlag::IsFragmentedFlow)
@@ -409,8 +409,8 @@ void RenderFragmentedFlow::removeLineFragmentInfo(const RenderBlockFlow& blockFl
     if (!m_lineToFragmentMap)
         return;
 
-    for (auto* curr = blockFlow.firstRootBox(); curr; curr = curr->nextRootBox())
-        m_lineToFragmentMap->remove(curr);
+    if (auto* rootBox = blockFlow.legacyRootBox())
+        m_lineToFragmentMap->remove(rootBox);
 
     ASSERT_WITH_SECURITY_IMPLICATION(checkLinesConsistency(blockFlow));
 }

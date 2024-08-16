@@ -104,7 +104,7 @@ private:
     RefPtr<Page> protectedPage() const;
     RefPtr<PageOverlay> protectedOverlay() const { return m_overlay; }
 
-    SingleThreadWeakPtr<Page> m_page;
+    WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_hostElementForSelection;
     Vector<FloatQuad> m_selectionQuads;

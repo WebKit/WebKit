@@ -36,11 +36,11 @@
 #include "RenderInline.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRootInlineBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRootInlineBox);
 
 struct SameSizeAsLegacyRootInlineBox : LegacyInlineFlowBox, CanMakeWeakPtr<LegacyRootInlineBox>, CanMakeCheckedPtr<SameSizeAsLegacyRootInlineBox> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

@@ -34,10 +34,13 @@
 #include "RemoteAudioSessionProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSession);
 
 UniqueRef<RemoteAudioSession> RemoteAudioSession::create()
 {

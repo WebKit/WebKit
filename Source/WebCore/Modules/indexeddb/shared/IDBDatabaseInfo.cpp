@@ -26,12 +26,12 @@
 #include "config.h"
 #include "IDBDatabaseInfo.h"
 
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
 
 IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)

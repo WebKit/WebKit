@@ -435,10 +435,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
         }
         default:  {
             if (Wasm::isRefType(returnType)) {
-                if (Wasm::isExternref(returnType))
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
-                else if (Wasm::isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
-                    ASSERT_IMPLIES(!Options::useWasmTypedFunctionReferences(), returnType.isNullable());
+                if (Wasm::isExternref(returnType)) {
+                    // Do nothing.
+                } else if (Wasm::isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
                     jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
                     jit.setupArguments<decltype(operationConvertToFuncref)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR);
                     jit.callOperation<OperationPtrTag>(operationConvertToFuncref);

@@ -31,12 +31,12 @@
 #include "XRLayerLayout.h"
 #include "XRLayerQuality.h"
 
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class XRCompositionLayer : public WebXRLayer {
-    WTF_MAKE_ISO_ALLOCATED(XRCompositionLayer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRCompositionLayer);
 public:
     virtual ~XRCompositionLayer();
 
@@ -59,6 +59,8 @@ public:
     bool needsRedraw() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     [[noreturn]] void destroy() { RELEASE_ASSERT_NOT_REACHED(); }
+protected:
+    explicit XRCompositionLayer(ScriptExecutionContext*);
 };
 
 } // namespace WebCore

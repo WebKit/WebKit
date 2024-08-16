@@ -39,7 +39,7 @@ class HTMLSourceElement final
     , public AttachmentAssociatedElement
 #endif
     , public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(HTMLSourceElement);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLSourceElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSourceElement);
 public:
     static Ref<HTMLSourceElement> create(Document&);

@@ -32,11 +32,11 @@
 #include "HTMLSpanElement.h"
 #include "RenderTreePosition.h"
 #include "TextTrack.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebVTTElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {

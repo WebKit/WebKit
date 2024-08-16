@@ -30,6 +30,7 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "Device.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebGPU {
 
@@ -57,6 +58,8 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::createInvalid(*this);
     }
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QuerySet);
 
 QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)

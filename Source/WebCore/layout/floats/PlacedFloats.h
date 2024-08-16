@@ -28,8 +28,8 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "Shape.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -42,7 +42,7 @@ class Rect;
 // PlacedFloats may be inherited by IFCs with mismataching writing mode. In such cases floats
 // are added to PlacledFloats as if they had matching inline direction (i.e. all boxes within PlacedFloats share the same writing mode)
 class PlacedFloats {
-    WTF_MAKE_ISO_ALLOCATED(PlacedFloats);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PlacedFloats);
 public:
     PlacedFloats(const ElementBox& blockFormattingContextRoot);
 
@@ -86,6 +86,7 @@ public:
     const Item* last() const { return list().isEmpty() ? nullptr : &m_list.last(); }
 
     void append(Item);
+    bool remove(const Box&);
     void clear();
 
     bool isEmpty() const { return list().isEmpty(); }
@@ -109,6 +110,13 @@ private:
     OptionSet<PositionType> m_positionTypes;
     bool m_isLeftToRightDirection { true };
 };
+
+inline bool PlacedFloats::remove(const Box& floatBox)
+{
+    return m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
+        return placedFloatItem.layoutBox() == &floatBox;
+    });
+}
 
 inline bool PlacedFloats::hasLeftPositioned() const
 {

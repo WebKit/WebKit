@@ -46,12 +46,13 @@
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/cocoa/Entitlements.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &m_connectionProxy->connection(), completion)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connectionProxy->connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_connectionProxy->connection(), completion)
 
 namespace WebKit {
 class UserMediaCaptureManagerProxySourceProxy;
@@ -70,7 +71,7 @@ class UserMediaCaptureManagerProxySourceProxy final
     , private RealtimeMediaSource::AudioSampleObserver
     , private RealtimeMediaSource::VideoFrameObserver
     , public CanMakeCheckedPtr<UserMediaCaptureManagerProxySourceProxy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UserMediaCaptureManagerProxySourceProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UserMediaCaptureManagerProxySourceProxy);
 public:
     UserMediaCaptureManagerProxySourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
@@ -434,6 +435,8 @@ private:
     std::optional<MediaConstraints> m_videoConstraints;
     Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaCaptureManagerProxy);
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)
     : m_connectionProxy(WTFMove(connectionProxy))

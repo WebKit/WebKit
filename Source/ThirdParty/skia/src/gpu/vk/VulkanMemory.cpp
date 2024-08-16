@@ -5,9 +5,14 @@
 * found in the LICENSE file.
 */
 
+#include "include/core/SkTypes.h"
+#include "include/gpu/GpuTypes.h"
+#include "include/gpu/vk/VulkanMemoryAllocator.h"
+#include "include/gpu/vk/VulkanTypes.h"
 #include "src/gpu/vk/VulkanMemory.h"
 
-#include "include/gpu/vk/VulkanMemoryAllocator.h"
+#include <cstdint>
+#include <cstring>
 
 namespace skgpu {
 
@@ -15,6 +20,7 @@ using BufferUsage = VulkanMemoryAllocator::BufferUsage;
 
 bool VulkanMemory::AllocBufferMemory(VulkanMemoryAllocator* allocator,
                                      VkBuffer buffer,
+                                     skgpu::Protected isProtected,
                                      BufferUsage usage,
                                      bool shouldPersistentlyMapCpuToGpu,
                                      const std::function<CheckResult>& checkResult,
@@ -28,6 +34,10 @@ bool VulkanMemory::AllocBufferMemory(VulkanMemoryAllocator* allocator,
         propFlags = VulkanMemoryAllocator::kPersistentlyMapped_AllocationPropertyFlag;
     } else {
         propFlags = VulkanMemoryAllocator::kNone_AllocationPropertyFlag;
+    }
+
+    if (isProtected == Protected::kYes) {
+        propFlags = propFlags | VulkanMemoryAllocator::kProtected_AllocationPropertyFlag;
     }
 
     VkResult result = allocator->allocateBufferMemory(buffer, usage, propFlags, &memory);
@@ -123,7 +133,7 @@ void VulkanMemory::GetNonCoherentMappedMemoryRange(const VulkanAlloc& alloc,
     SkASSERT(0 == (size & (alignment-1)));
 #endif
 
-    memset(range, 0, sizeof(VkMappedMemoryRange));
+    std::memset(range, 0, sizeof(VkMappedMemoryRange));
     range->sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
     range->memory = alloc.fMemory;
     range->offset = offset;
@@ -159,4 +169,3 @@ void VulkanMemory::InvalidateMappedAlloc(VulkanMemoryAllocator* allocator,
 }
 
 }  // namespace skgpu
-

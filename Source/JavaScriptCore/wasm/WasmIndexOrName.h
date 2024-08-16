@@ -31,13 +31,18 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class LLIntOffsetsExtractor;
+
+namespace Wasm {
 
 struct NameSection;
 
 // Keep this class copyable when the world is stopped: do not allocate any memory while copying this.
 // SamplingProfiler copies it while suspending threads.
 struct IndexOrName {
+    friend class JSC::LLIntOffsetsExtractor;
     typedef size_t Index;
 
 private:
@@ -110,10 +115,12 @@ private:
     RefPtr<NameSection> m_nameSection;
 
 #if USE(JSVALUE64)
+    public:
     // Use the top bits as tags. Neither pointers nor the function index space should use them.
     static constexpr Index indexTag = 1ull << (CHAR_BIT * sizeof(Index) - 1);
     static constexpr Index emptyTag = 1ull << (CHAR_BIT * sizeof(Index) - 2);
     static constexpr Index allTags = indexTag | emptyTag;
+    private:
 #elif USE(JSVALUE32_64)
     // Use an explicit tag as pointers might have high bits set
     Kind m_kind;

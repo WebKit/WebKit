@@ -26,11 +26,12 @@
 #pragma once
 
 #include <WebCore/SystemSoundDelegate.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebSystemSoundDelegate final : public WebCore::SystemSoundDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebSystemSoundDelegate);
 public:
     void systemBeep() final;
 };

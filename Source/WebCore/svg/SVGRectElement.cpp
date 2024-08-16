@@ -29,11 +29,11 @@
 #include "RenderSVGRect.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGRectElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGRectElement);
 
 inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

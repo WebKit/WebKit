@@ -57,7 +57,7 @@
 #include "UserAgentStyleSheets.h"
 #include <pal/FileSizeFormatter.h>
 #include <unicode/ubidi.h>
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
@@ -73,7 +73,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
 
 using namespace HTMLNames;
 

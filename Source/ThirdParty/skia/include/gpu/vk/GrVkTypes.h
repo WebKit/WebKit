@@ -12,10 +12,6 @@
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/vk/VulkanTypes.h"
 
-using GrVkBackendMemory = skgpu::VulkanBackendMemory;
-using GrVkAlloc = skgpu::VulkanAlloc;
-using GrVkYcbcrConversionInfo = skgpu::VulkanYcbcrConversionInfo;
-
 /*
  * When wrapping a GrBackendTexture or GrBackendRendenderTarget, the fCurrentQueueFamily should
  * either be VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_EXTERNAL, or VK_QUEUE_FAMILY_FOREIGN_EXT. If
@@ -23,20 +19,20 @@ using GrVkYcbcrConversionInfo = skgpu::VulkanYcbcrConversionInfo;
  * queue index passed into Skia.
  */
 struct GrVkImageInfo {
-    VkImage                  fImage = VK_NULL_HANDLE;
-    skgpu::VulkanAlloc       fAlloc;
-    VkImageTiling            fImageTiling = VK_IMAGE_TILING_OPTIMAL;
-    VkImageLayout            fImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    VkFormat                 fFormat = VK_FORMAT_UNDEFINED;
-    VkImageUsageFlags        fImageUsageFlags = 0;
-    uint32_t                 fSampleCount = 1;
-    uint32_t                 fLevelCount = 0;
-    uint32_t                 fCurrentQueueFamily = VK_QUEUE_FAMILY_IGNORED;
-    skgpu::Protected         fProtected = skgpu::Protected::kNo;
-    GrVkYcbcrConversionInfo  fYcbcrConversionInfo;
-    VkSharingMode            fSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    VkImage                           fImage = VK_NULL_HANDLE;
+    skgpu::VulkanAlloc                fAlloc;
+    VkImageTiling                     fImageTiling = VK_IMAGE_TILING_OPTIMAL;
+    VkImageLayout                     fImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    VkFormat                          fFormat = VK_FORMAT_UNDEFINED;
+    VkImageUsageFlags                 fImageUsageFlags = 0;
+    uint32_t                          fSampleCount = 1;
+    uint32_t                          fLevelCount = 0;
+    uint32_t                          fCurrentQueueFamily = VK_QUEUE_FAMILY_IGNORED;
+    skgpu::Protected                  fProtected = skgpu::Protected::kNo;
+    skgpu::VulkanYcbcrConversionInfo  fYcbcrConversionInfo;
+    VkSharingMode                     fSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 #ifdef SK_BUILD_FOR_ANDROID_FRAMEWORK
-    bool                     fPartOfSwapchainOrAndroidWindow = false;
+    bool                              fPartOfSwapchainOrAndroidWindow = false;
 #endif
 
     bool operator==(const GrVkImageInfo& that) const {
@@ -57,8 +53,6 @@ struct GrVkImageInfo {
         return equal;
     }
 };
-
-using GrVkGetProc = skgpu::VulkanGetProc;
 
 /**
  * This object is wrapped in a GrBackendDrawableInfo and passed in as an argument to
@@ -100,7 +94,7 @@ struct GrVkSurfaceInfo {
     VkImageTiling fImageTiling = VK_IMAGE_TILING_OPTIMAL;
     VkFormat fFormat = VK_FORMAT_UNDEFINED;
     VkImageUsageFlags fImageUsageFlags = 0;
-    GrVkYcbcrConversionInfo fYcbcrConversionInfo;
+    skgpu::VulkanYcbcrConversionInfo fYcbcrConversionInfo;
     VkSharingMode fSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 };
 

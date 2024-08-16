@@ -31,6 +31,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/UUID.h>
 
 @class WebNotification;
@@ -38,7 +39,7 @@
 @class WebView;
 
 class WebNotificationClient final : public WebCore::NotificationClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebNotificationClient);
 public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }

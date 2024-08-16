@@ -13,17 +13,21 @@
 }
 </style>
 <script>
-  if (window.internals) {
-    window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
-    window.internals.setPageScaleFactor(0.5, 0, 0);
-  }
-  function test() {
-    if (window.testRunner)
+  if (window.testRunner)
+      window.testRunner.waitUntilDone();
+  async function test() {
+    if (window.internals) {
+        window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    }
+    if (window.testRunner) {
+      await window.testRunner.setPageScaleFactor(0.5, 0, 0);
       testRunner.dumpAsText(true);
 
-    var d = document.getElementById('frame').contentDocument.open();
-    d.write("<div style='position:fixed; z-index: 1; left; 10px;'>TEST</div>");
-    d.close();
+      var d = document.getElementById('frame').contentDocument.open();
+      d.write("<div style='position:fixed; z-index: 1; left; 10px;'>TEST</div>");
+      d.close();
+      window.testRunner.notifyDone();
+    }
   }
 </script>
 </head>

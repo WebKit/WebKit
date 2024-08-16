@@ -235,20 +235,20 @@ TEST(WKWebExtensionAPITabs, Create)
     auto *window = manager.get().defaultWindow;
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.window, window);
-        EXPECT_EQ(options.index, window.tabs.count);
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, window.tabs.count);
 
-        EXPECT_NULL(options.parentTab);
-        EXPECT_NULL(options.url);
+        EXPECT_NULL(configuration.parentTab);
+        EXPECT_NULL(configuration.url);
 
-        EXPECT_TRUE(options.active);
-        EXPECT_TRUE(options.selected);
-        EXPECT_FALSE(options.pinned);
-        EXPECT_FALSE(options.muted);
-        EXPECT_FALSE(options.readerModeShowing);
+        EXPECT_TRUE(configuration.shouldBeActive);
+        EXPECT_TRUE(configuration.shouldAddToSelection);
+        EXPECT_FALSE(configuration.shouldBePinned);
+        EXPECT_FALSE(configuration.shouldBeMuted);
+        EXPECT_FALSE(configuration.shouldReaderModeBeActive);
 
-        originalOpenNewTab(options, context, completionHandler);
+        originalOpenNewTab(configuration, context, completionHandler);
     };
 
     [manager loadAndRun];
@@ -286,20 +286,20 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
     auto *tab = manager.get().defaultTab;
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.window, window);
-        EXPECT_EQ(options.index, 1lu);
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, 1lu);
 
-        EXPECT_NS_EQUAL(options.parentTab, tab);
-        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"https://example.com/"]);
+        EXPECT_NS_EQUAL(configuration.parentTab, tab);
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"https://example.com/"]);
 
-        EXPECT_FALSE(options.active);
-        EXPECT_FALSE(options.selected);
-        EXPECT_TRUE(options.pinned);
-        EXPECT_TRUE(options.muted);
-        EXPECT_TRUE(options.readerModeShowing);
+        EXPECT_FALSE(configuration.shouldBeActive);
+        EXPECT_FALSE(configuration.shouldAddToSelection);
+        EXPECT_TRUE(configuration.shouldBePinned);
+        EXPECT_TRUE(configuration.shouldBeMuted);
+        EXPECT_TRUE(configuration.shouldReaderModeBeActive);
 
-        originalOpenNewTab(options, context, completionHandler);
+        originalOpenNewTab(configuration, context, completionHandler);
     };
 
     [manager loadAndRun];
@@ -322,10 +322,10 @@ TEST(WKWebExtensionAPITabs, CreateWithRelativeURL)
 
     auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
 
-    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabCreationOptions *options, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
-        EXPECT_NS_EQUAL(options.url, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
 
-        originalOpenNewTab(options, context, completionHandler);
+        originalOpenNewTab(configuration, context, completionHandler);
     };
 
     [manager loadAndRun];
@@ -354,20 +354,20 @@ TEST(WKWebExtensionAPITabs, Duplicate)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        EXPECT_NS_EQUAL(options.window, window);
-        EXPECT_EQ(options.index, window.tabs.count);
+    tab.duplicate = ^(WKWebExtensionTabConfiguration *configuration, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, window.tabs.count);
 
-        EXPECT_NULL(options.parentTab);
-        EXPECT_NULL(options.url);
+        EXPECT_NULL(configuration.parentTab);
+        EXPECT_NULL(configuration.url);
 
-        EXPECT_TRUE(options.active);
-        EXPECT_TRUE(options.selected);
-        EXPECT_FALSE(options.pinned);
-        EXPECT_FALSE(options.muted);
-        EXPECT_FALSE(options.readerModeShowing);
+        EXPECT_TRUE(configuration.shouldBeActive);
+        EXPECT_TRUE(configuration.shouldAddToSelection);
+        EXPECT_FALSE(configuration.shouldBePinned);
+        EXPECT_FALSE(configuration.shouldBeMuted);
+        EXPECT_FALSE(configuration.shouldReaderModeBeActive);
 
-        originalDuplicate(options, completionHandler);
+        originalDuplicate(configuration, completionHandler);
     };
 
     [manager loadAndRun];
@@ -400,20 +400,20 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
-        EXPECT_NS_EQUAL(options.window, window);
-        EXPECT_EQ(options.index, 1lu);
+    tab.duplicate = ^(WKWebExtensionTabConfiguration *configuration, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.window, window);
+        EXPECT_EQ(configuration.index, 1lu);
 
-        EXPECT_NULL(options.parentTab);
-        EXPECT_NULL(options.url);
+        EXPECT_NULL(configuration.parentTab);
+        EXPECT_NULL(configuration.url);
 
-        EXPECT_FALSE(options.active);
-        EXPECT_FALSE(options.selected);
-        EXPECT_FALSE(options.pinned);
-        EXPECT_FALSE(options.muted);
-        EXPECT_FALSE(options.readerModeShowing);
+        EXPECT_FALSE(configuration.shouldBeActive);
+        EXPECT_FALSE(configuration.shouldAddToSelection);
+        EXPECT_FALSE(configuration.shouldBePinned);
+        EXPECT_FALSE(configuration.shouldBeMuted);
+        EXPECT_FALSE(configuration.shouldReaderModeBeActive);
 
-        originalDuplicate(options, completionHandler);
+        originalDuplicate(configuration, completionHandler);
     };
 
     [manager loadAndRun];
@@ -718,7 +718,7 @@ TEST(WKWebExtensionAPITabs, QueryWithPrivateAccess)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     auto *windowOne = manager.get().defaultWindow;
     [windowOne openNewTab];
@@ -1185,7 +1185,7 @@ TEST(WKWebExtensionAPITabs, UpdatedEventWithPrivateAccess)
 
     [manager loadAndRun];
 
-    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    manager.get().context.hasAccessToPrivateData = YES;
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 

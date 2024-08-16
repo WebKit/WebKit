@@ -36,8 +36,8 @@
 #import <WebCore/PixelBuffer.h>
 #import <WebCore/SharedMemory.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/IsoMallocInlines.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenate.h>
@@ -70,7 +70,7 @@ public:
     bool canUseShadowBlur() const final { return false; }
 };
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
 
 size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parameters& parameters)
 {

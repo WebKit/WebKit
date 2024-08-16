@@ -35,6 +35,7 @@
 #include "ImageQualityController.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
@@ -67,19 +68,19 @@
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderView);
 
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox))
     , m_selection(*this)
 {
     // FIXME: We should find a way to enforce this at compile time.

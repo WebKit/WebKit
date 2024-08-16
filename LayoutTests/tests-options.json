@@ -2198,6 +2198,12 @@
     "imported/w3c/web-platform-tests/css/css-typed-om/idlharness.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-values/calc-size/animation/calc-size-height-interpolation.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-values/calc-size/animation/calc-size-width-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],
@@ -3293,9 +3299,6 @@
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch-redirects.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/inflight-fetch.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/eligibility/shared-worker.html": [
         "slow"
     ],
@@ -3306,6 +3309,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/pushstate.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-client-postmessage.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/browsers/browsing-the-web/back-forward-cache/service-worker-clients-claim.https.html": [
@@ -6702,6 +6708,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webstorage/event_setattribute.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm": [

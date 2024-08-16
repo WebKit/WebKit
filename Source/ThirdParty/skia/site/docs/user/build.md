@@ -113,13 +113,14 @@ To pull new changes and rebuild:
 
 ```
 git pull
-python tools/git-sync-deps
+python3 tools/git-sync-deps
 ninja -C out/Static
 ```
 
 ## Android
 
-To build Skia for Android you need an
+To build Skia for Android you need a recent version of
+[Java](https://www.oracle.com/java/technologies/downloads/) and a recent
 [Android NDK](https://developer.android.com/ndk/index.html).
 
 If you do not have an NDK and have access to CIPD, you can use one of these

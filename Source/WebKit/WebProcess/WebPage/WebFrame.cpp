@@ -554,7 +554,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     if (policyDecision.navigationID) {
         auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
         if (RefPtr documentLoader = localFrame ? localFrame->loader().policyDocumentLoader() : nullptr)
-            documentLoader->setNavigationID(policyDecision.navigationID);
+            documentLoader->setNavigationID(*policyDecision.navigationID);
     }
 
     if (policyDecision.policyAction == PolicyAction::Use && policyDecision.sandboxExtensionHandle) {
@@ -1340,13 +1340,13 @@ WebCore::HandleUserInputEventResult WebFrame::handleMouseEvent(const WebMouseEve
 
 bool WebFrame::handleKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    auto* coreFrame = coreLocalFrame();
+    RefPtr coreFrame = coreLocalFrame();
     if (!coreFrame)
         return false;
 
     if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
-        return coreFrame->eventHandler().handleAccessKey(platform(keyboardEvent));
-    return coreFrame->eventHandler().keyEvent(platform(keyboardEvent));
+        return coreFrame->checkedEventHandler()->handleAccessKey(platform(keyboardEvent));
+    return coreFrame->checkedEventHandler()->keyEvent(platform(keyboardEvent));
 }
 
 bool WebFrame::isFocused() const

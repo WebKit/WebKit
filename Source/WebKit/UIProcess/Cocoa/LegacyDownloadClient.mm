@@ -44,10 +44,13 @@
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyDownloadClient);
 
 LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)
     : m_delegate(delegate)

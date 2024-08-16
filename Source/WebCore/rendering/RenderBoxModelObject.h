@@ -76,7 +76,7 @@ using BorderEdges = RectEdges<BorderEdge>;
 // at http://www.w3.org/TR/CSS21/box.html
 
 class RenderBoxModelObject : public RenderLayerModelObject {
-    WTF_MAKE_ISO_ALLOCATED(RenderBoxModelObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderBoxModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
     virtual ~RenderBoxModelObject();

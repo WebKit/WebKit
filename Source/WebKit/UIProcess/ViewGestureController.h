@@ -35,6 +35,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -107,7 +108,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class ViewGestureController : public IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ViewGestureController);
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
 public:
 

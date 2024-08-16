@@ -289,6 +289,8 @@ public:
     bool didLoadAppInitiatedRequest();
     bool didLoadNonAppInitiatedRequest();
 
+    void setPageScaleFactor(float scaleFactor, int x, int y, CompletionHandler<void(WKTypeRef)>&&);
+
     void reloadFromOrigin();
 
     void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);

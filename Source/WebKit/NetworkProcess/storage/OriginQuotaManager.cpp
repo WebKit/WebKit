@@ -27,10 +27,13 @@
 #include "OriginQuotaManager.h"
 
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 static constexpr double defaultReportedQuotaIncreaseFactor = 2.0;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OriginQuotaManager);
 
 Ref<OriginQuotaManager> OriginQuotaManager::create(Parameters&& parameters, GetUsageFunction&& getUsageFunction)
 {

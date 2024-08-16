@@ -27,11 +27,11 @@
 #include "HTMLSpanElement.h"
 
 #include "HTMLNames.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSpanElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLSpanElement);
 
 using namespace HTMLNames;
 

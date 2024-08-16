@@ -29,11 +29,11 @@
 #include "RenderProgress.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLProgressElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLProgressElement);
 
 using namespace HTMLNames;
 

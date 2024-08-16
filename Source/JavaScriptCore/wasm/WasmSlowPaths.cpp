@@ -672,19 +672,24 @@ static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSW
     CodePtr<WasmEntryPtrTag> codePtr;
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
 
+    Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
+
     if (functionIndex < importFunctionCount) {
         JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
+#if USE(JSVALUE64)
+        calleeStackSlot = bitwise_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
+#else
+        calleeStackSlot = bitwise_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
+#endif
     } else {
         // Target is a wasm function within the same instance
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         boxedCallee = CalleeBits::encodeNativeCallee(
             instance->calleeGroup()->wasmCalleeFromFunctionIndexSpace(functionIndex));
+        ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
+        calleeStackSlot = boxedCallee;
     }
-
-    Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
-    ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
-    calleeStackSlot = boxedCallee;
 
     WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
 }
@@ -714,6 +719,7 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
+    ASSERT(function.m_function.boxedWasmCalleeLoadLocation);
     if (function.m_function.boxedWasmCalleeLoadLocation)
         calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
     else
@@ -748,6 +754,7 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
+    ASSERT(function.boxedWasmCalleeLoadLocation);
     if (function.boxedWasmCalleeLoadLocation)
         calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.boxedWasmCalleeLoadLocation));
     else

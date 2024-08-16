@@ -29,6 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
@@ -64,7 +65,8 @@ struct LayerHostingContextOptions {
 };
 
 class LayerHostingContext {
-    WTF_MAKE_NONCOPYABLE(LayerHostingContext); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LayerHostingContext);
+    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
     static std::unique_ptr<LayerHostingContext> createForPort(const WTF::MachSendRight& serverPort);
     

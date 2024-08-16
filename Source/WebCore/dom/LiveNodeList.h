@@ -29,7 +29,7 @@
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class Element;
 inline bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 class LiveNodeList : public NodeList {
-    WTF_MAKE_ISO_NONALLOCATABLE(LiveNodeList);
+    WTF_MAKE_TZONE_OR_ISO_NONALLOCATABLE(LiveNodeList);
 public:
     virtual ~LiveNodeList();
 
@@ -73,7 +73,7 @@ private:
 
 template <class NodeListType>
 class CachedLiveNodeList : public LiveNodeList {
-    WTF_MAKE_ISO_NONALLOCATABLE(CachedLiveNodeList);
+    WTF_MAKE_TZONE_OR_ISO_NONALLOCATABLE(CachedLiveNodeList);
 public:
     virtual ~CachedLiveNodeList();
 

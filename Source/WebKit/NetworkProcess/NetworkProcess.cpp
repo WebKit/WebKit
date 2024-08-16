@@ -100,6 +100,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WTFProcess.h>
@@ -146,6 +147,8 @@ static void callExitSoon(IPC::Connection*)
         terminateProcess(EXIT_FAILURE);
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcess);
 
 NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
     : m_downloadManager(*this)
@@ -2571,7 +2574,7 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
         bool isDeclarative = !!pushMessage.notificationPayload;
         session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.notificationPayload), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), scope = WTFMove(scope), callback = WTFMove(callback), isDeclarative](bool result, std::optional<WebCore::NotificationPayload>&& resultPayload) mutable {
             // When using built-in notifications, we expect clients to use getPendingPushMessage, which automatically tracks silent push counts within webpushd.
-            if (!DeprecatedGlobalSettings::builtInNotificationsEnabled() &&!isDeclarative && !result) {
+            if (!m_builtInNotificationsEnabled &&!isDeclarative && !result) {
                 if (auto* session = networkSession(sessionID)) {
                     session->notificationManager().incrementSilentPushCount(WTFMove(origin), [scope = WTFMove(scope), callback = WTFMove(callback), result](unsigned newSilentPushCount) mutable {
                         RELEASE_LOG_ERROR(Push, "Push message for scope %" SENSITIVE_LOG_STRING " not handled properly; new silent push count: %u", scope.utf8().data(), newSilentPushCount);

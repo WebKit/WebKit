@@ -107,6 +107,10 @@ typedef struct WGPUSurfaceImpl* WGPUSurface WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUSwapChainImpl* WGPUSwapChain WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUTextureImpl* WGPUTexture WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUTextureViewImpl* WGPUTextureView WGPU_OBJECT_ATTRIBUTE;
+typedef struct WGPUXRBindingImpl* WGPUXRBinding WGPU_OBJECT_ATTRIBUTE;
+typedef struct WGPUXRSubImageImpl* WGPUXRSubImage WGPU_OBJECT_ATTRIBUTE;
+typedef struct WGPUXRProjectionLayerImpl* WGPUXRProjectionLayer WGPU_OBJECT_ATTRIBUTE;
+typedef struct WGPUXRViewImpl* WGPUXRView WGPU_OBJECT_ATTRIBUTE;
 
 // Structure forward declarations
 struct WGPUAdapterProperties;
@@ -982,6 +986,7 @@ typedef struct WGPURequestAdapterOptions {
     WGPUPowerPreference powerPreference;
     WGPUBackendType backendType;
     WGPUBool forceFallbackAdapter;
+    WGPUBool xrCompatible;
 } WGPURequestAdapterOptions WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUSamplerBindingLayout {
@@ -1829,6 +1834,26 @@ WGPU_EXPORT WGPUBool wgpuSamplerIsValid(WGPUSampler sampler) WGPU_FUNCTION_ATTRI
 WGPU_EXPORT WGPUBool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuTextureIsValid(WGPUTexture texture) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView) WGPU_FUNCTION_ATTRIBUTE;
+
+// XRBinding functions
+WGPU_EXPORT void wgpuXRBindingReference(WGPUXRBinding binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuXRBindingRelease(WGPUXRBinding binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUBool wgpuXRBindingIsValid(WGPUXRBinding binding) WGPU_FUNCTION_ATTRIBUTE;
+
+// XRSubImage functions
+WGPU_EXPORT void wgpuXRSubImageReference(WGPUXRSubImage binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuXRSubImageRelease(WGPUXRSubImage binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUBool wgpuXRSubImageIsValid(WGPUXRSubImage binding) WGPU_FUNCTION_ATTRIBUTE;
+
+// XRProjectionLayer functions
+WGPU_EXPORT void wgpuXRProjectionLayerReference(WGPUXRProjectionLayer binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuXRProjectionLayerRelease(WGPUXRProjectionLayer binding) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUBool wgpuXRProjectionLayerIsValid(WGPUXRProjectionLayer binding) WGPU_FUNCTION_ATTRIBUTE;
+
+// XRView functions
+WGPU_EXPORT void wgpuXRViewReference(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT void wgpuXRViewRelease(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUBool wgpuXRViewIsValid(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

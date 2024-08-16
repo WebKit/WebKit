@@ -29,12 +29,12 @@
 #include "MediaQueryListEvent.h"
 #include "MediaQueryParser.h"
 #include "Quirks.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(MediaQueryList);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaQueryList);
 
 MediaQueryList::MediaQueryList(Document& document, MediaQueryMatcher& matcher, MQ::MediaQueryList&& mediaQueries, bool matches)
     : ActiveDOMObject(&document)

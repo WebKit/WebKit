@@ -113,6 +113,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
+#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextRecognitionResult.h>
@@ -153,6 +154,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/OSVariantSPI.h>
@@ -1216,6 +1218,8 @@ static bool isInRecoveryOS()
 {
     return os_variant_is_basesystem("WebKit");
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewImpl);
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
@@ -3441,7 +3445,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 bool WebViewImpl::hasContentRelativeChildViews() const
 {
 #if ENABLE(WRITING_TOOLS)
-    return [m_TextAnimationTypeManager hasActiveTextAnimationType];
+    return [m_textAnimationTypeManager hasActiveTextAnimationType];
 #else
     return false;
 #endif
@@ -3478,14 +3482,14 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
 void WebViewImpl::suppressContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_TextAnimationTypeManager suppressTextAnimationType];
+    [m_textAnimationTypeManager suppressTextAnimationType];
 #endif
 }
 
 void WebViewImpl::restoreContentRelativeChildViews()
 {
 #if ENABLE(WRITING_TOOLS)
-    [m_TextAnimationTypeManager restoreTextAnimationType];
+    [m_textAnimationTypeManager restoreTextAnimationType];
 #endif
 }
 
@@ -4523,33 +4527,17 @@ void WebViewImpl::hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse res
     m_domPasteMenuDelegate = nil;
 }
 
-static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution, ForceSoftwareCapturingViewportSnapshot)
 {
-    // FIXME <https://webkit.org/b/277572>: CGSHWCaptureWindowList is currently bugged where
-    // the kCGSCaptureIgnoreGlobalClipShape option has no effect and the resulting screenshot
-    // still contains the window's rounded corners. There are WPT tests relying on comparing
-    // WebDriver's screenshots that cannot tolerate this inconsistency, especially due to
-    // CGSHWCaptureWindowList not always succeeding. So for WebDriver only, we bypass that bug
-    // and always use deprecated CGWindowListCreateImage instead.
-
-    if (forceSoftwareCapturing == ForceSoftwareCapturingViewportSnapshot::No) {
-        CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
-        if (captureAtNominalResolution)
-            options |= kCGSWindowCaptureNominalResolution;
-        RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
-
-        if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
-            return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
-    }
-
-    // Fall back to the non-hardware capture path if we didn't get a snapshot
-    // (which usually happens if the window is fully off-screen).
-    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
+    // FIXME: remove `ForceSoftwareCapturingViewportSnapshot` parameter in followup patch.
+    OptionSet<WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions> options = {
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque,
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows
+    };
     if (captureAtNominalResolution)
-        imageOptions |= kCGWindowImageNominalResolution;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-ALLOW_DEPRECATED_DECLARATIONS_END
+        options.add(WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution);
+
+    return WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, CGRectNull, options);
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
@@ -4644,10 +4632,10 @@ void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::
     if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    if (!m_TextAnimationTypeManager)
-        m_TextAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
+    if (!m_textAnimationTypeManager)
+        m_textAnimationTypeManager = adoptNS([[WKTextAnimationManager alloc] initWithWebViewImpl:*this]);
 
-    [m_TextAnimationTypeManager addTextAnimationForAnimationID:uuid withData:data];
+    [m_textAnimationTypeManager addTextAnimationForAnimationID:uuid withData:data];
 }
 
 void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
@@ -4655,7 +4643,45 @@ void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
     if (!m_page->preferences().textAnimationsEnabled())
         return;
 
-    [m_TextAnimationTypeManager removeTextAnimationForAnimationID:uuid];
+    [m_textAnimationTypeManager removeTextAnimationForAnimationID:uuid];
+}
+
+void WebViewImpl::writingToolsCompositionSessionDidReceiveRestartAction()
+{
+    m_writingToolsTextReplacementsFinished = false;
+    m_partialIntelligenceTextPonderingAnimationCount = 0;
+}
+
+void WebViewImpl::writingToolsCompositionSessionDidReceiveReplacements(const WTF::UUID& sessionID, bool finished)
+{
+    m_writingToolsTextReplacementsFinished = finished;
+
+    willBeginPartialIntelligenceTextPonderingAnimation();
+}
+
+bool WebViewImpl::isWritingToolsTextReplacementsFinished() const
+{
+    return m_writingToolsTextReplacementsFinished;
+}
+
+bool WebViewImpl::isIntelligenceTextPonderingAnimationFinished() const
+{
+    return !m_partialIntelligenceTextPonderingAnimationCount;
+}
+
+void WebViewImpl::willBeginPartialIntelligenceTextPonderingAnimation()
+{
+    m_partialIntelligenceTextPonderingAnimationCount += 1;
+}
+
+void WebViewImpl::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    if (!m_partialIntelligenceTextPonderingAnimationCount) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_partialIntelligenceTextPonderingAnimationCount -= 1;
 }
 #endif
 
@@ -5302,7 +5328,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 #if HAVE(INLINE_PREDICTIONS)
     if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(string)) {
         BOOL hasTextCompletion = [&] {
-            __block BOOL result;
+            __block BOOL result = NO;
 
             [attributedString enumerateAttribute:NSTextCompletionAttributeName inRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
                 if ([value respondsToSelector:@selector(boolValue)] && [value boolValue]) {

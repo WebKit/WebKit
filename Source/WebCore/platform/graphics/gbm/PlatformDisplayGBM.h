@@ -28,6 +28,8 @@
 #if USE(GBM)
 #include "PlatformDisplay.h"
 
+struct gbm_device;
+
 namespace WebCore {
 
 class PlatformDisplayGBM final : public PlatformDisplay {

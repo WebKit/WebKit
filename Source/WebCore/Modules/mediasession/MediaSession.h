@@ -86,7 +86,7 @@ public:
 
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
-    void metadataUpdated();
+    void metadataUpdated(const MediaMetadata&);
 
     MediaSessionPlaybackState playbackState() const { return m_playbackState; };
     void setPlaybackState(MediaSessionPlaybackState);
@@ -146,7 +146,7 @@ private:
     void updateReportedPosition();
 
     void forEachObserver(const Function<void(MediaSessionObserver&)>&);
-    void notifyMetadataObservers();
+    void notifyMetadataObservers(const RefPtr<MediaMetadata>&);
     void notifyPositionStateObservers();
     void notifyPlaybackStateObservers();
     void notifyActionHandlerObservers();
@@ -159,6 +159,7 @@ private:
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
+    RefPtr<MediaMetadata> m_defaultMetadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
     std::optional<MediaPositionState> m_positionState;
     std::optional<double> m_lastReportedPosition;

@@ -386,8 +386,6 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
         if (m_client->shouldEnableSharedArrayBuffer())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
-        if (m_client->shouldEnableLockdownMode())
-            xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-captive-portal-mode", true);
         if (m_client->shouldDisableJITCage())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit-cage", true);
     }
@@ -410,7 +408,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-        bool disableLogging = true;
+        bool disableLogging = m_client->shouldEnableLockdownMode();
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
 

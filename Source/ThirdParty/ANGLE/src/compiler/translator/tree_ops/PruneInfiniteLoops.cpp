@@ -113,8 +113,12 @@ class PruneInfiniteLoopsTraverser : public TIntermTraverser
 {
   public:
     PruneInfiniteLoopsTraverser(TSymbolTable *symbolTable, const VariableSet &constVariables)
-        : TIntermTraverser(true, false, false, symbolTable), mConstVariables(constVariables)
+        : TIntermTraverser(true, false, false, symbolTable),
+          mConstVariables(constVariables),
+          mAnyLoopsPruned(false)
     {}
+
+    bool anyLoopsPruned() const { return mAnyLoopsPruned; }
 
   private:
     bool visitLoop(Visit visit, TIntermLoop *loop) override;
@@ -144,6 +148,7 @@ class PruneInfiniteLoopsTraverser : public TIntermTraverser
 
     const VariableSet &mConstVariables;
     std::stack<LoopStats> mLoopStats;
+    bool mAnyLoopsPruned;
 };
 
 bool PruneInfiniteLoopsTraverser::visitLoop(Visit visit, TIntermLoop *loop)
@@ -168,6 +173,7 @@ bool PruneInfiniteLoopsTraverser::visitLoop(Visit visit, TIntermLoop *loop)
     if (isConditionConstant && loop->getType() != ELoopDoWhile && !hasLoopEscape())
     {
         mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), loop, TIntermSequence{});
+        mAnyLoopsPruned = true;
     }
 
     onScopeEnd();
@@ -215,14 +221,20 @@ bool PruneInfiniteLoopsTraverser::visitBranch(Visit visit, TIntermBranch *node)
 }
 }  // namespace
 
-bool PruneInfiniteLoops(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
+bool PruneInfiniteLoops(TCompiler *compiler,
+                        TIntermBlock *root,
+                        TSymbolTable *symbolTable,
+                        bool *anyLoopsPruned)
 {
+    *anyLoopsPruned = false;
+
     FindConstantVariablesTraverser constVarTransverser(symbolTable);
     root->traverse(&constVarTransverser);
 
     PruneInfiniteLoopsTraverser pruneTraverser(symbolTable,
                                                constVarTransverser.getConstVariables());
     root->traverse(&pruneTraverser);
+    *anyLoopsPruned = pruneTraverser.anyLoopsPruned();
     return pruneTraverser.updateTree(compiler, root);
 }
 

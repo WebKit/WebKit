@@ -33,6 +33,7 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
@@ -55,7 +56,7 @@ namespace WebKit {
 struct LoadParameters {
     WebCore::PublicSuffix publicSuffix;
 
-    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
 
     WebCore::ResourceRequest request;

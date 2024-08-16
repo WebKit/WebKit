@@ -35,13 +35,13 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTableRowsCollection);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableRowsCollection);
 
 static inline void assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
 {

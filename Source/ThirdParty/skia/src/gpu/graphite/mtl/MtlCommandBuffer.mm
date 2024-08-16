@@ -8,6 +8,7 @@
 #include "src/gpu/graphite/mtl/MtlCommandBuffer.h"
 
 #include "include/gpu/graphite/BackendSemaphore.h"
+#include "include/gpu/graphite/mtl/MtlGraphiteTypes.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/TextureProxy.h"
@@ -119,9 +120,10 @@ void MtlCommandBuffer::addWaitSemaphores(size_t numWaitSemaphores,
         for (size_t i = 0; i < numWaitSemaphores; ++i) {
             auto semaphore = waitSemaphores[i];
             if (semaphore.isValid() && semaphore.backend() == BackendApi::kMetal) {
-                id<MTLEvent> mtlEvent = (__bridge id<MTLEvent>)semaphore.getMtlEvent();
-                [(*fCommandBuffer) encodeWaitForEvent: mtlEvent
-                                                value: semaphore.getMtlValue()];
+                id<MTLEvent> mtlEvent =
+                        (__bridge id<MTLEvent>)BackendSemaphores::GetMtlEvent(semaphore);
+                [(*fCommandBuffer) encodeWaitForEvent:mtlEvent
+                                                value:BackendSemaphores::GetMtlValue(semaphore)];
             }
         }
     }
@@ -143,15 +145,16 @@ void MtlCommandBuffer::addSignalSemaphores(size_t numSignalSemaphores,
         for (size_t i = 0; i < numSignalSemaphores; ++i) {
             auto semaphore = signalSemaphores[i];
             if (semaphore.isValid() && semaphore.backend() == BackendApi::kMetal) {
-                id<MTLEvent> mtlEvent = (__bridge id<MTLEvent>)semaphore.getMtlEvent();
-                [(*fCommandBuffer) encodeSignalEvent: mtlEvent
-                                               value: semaphore.getMtlValue()];
+                id<MTLEvent> mtlEvent = (__bridge id<MTLEvent>)BackendSemaphores::GetMtlEvent;
+                [(*fCommandBuffer) encodeSignalEvent:mtlEvent
+                                               value:BackendSemaphores::GetMtlValue(semaphore)];
             }
         }
     }
 }
 
 bool MtlCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
+                                       SkIRect renderPassBounds,
                                        const Texture* colorTexture,
                                        const Texture* resolveTexture,
                                        const Texture* depthStencilTexture,
@@ -178,8 +181,8 @@ bool MtlCommandBuffer::onAddComputePass(DispatchGroupSpan groups) {
         for (const auto& dispatch : group->dispatches()) {
             this->bindComputePipeline(group->getPipeline(dispatch.fPipelineIndex));
             for (const ResourceBinding& binding : dispatch.fBindings) {
-                if (const BufferView* buffer = std::get_if<BufferView>(&binding.fResource)) {
-                    this->bindBuffer(buffer->fInfo.fBuffer, buffer->fInfo.fOffset, binding.fIndex);
+                if (const BindBufferInfo* buffer = std::get_if<BindBufferInfo>(&binding.fResource)) {
+                    this->bindBuffer(buffer->fBuffer, buffer->fOffset, binding.fIndex);
                 } else if (const TextureIndex* texIdx =
                                    std::get_if<TextureIndex>(&binding.fResource)) {
                     SkASSERT(texIdx);
@@ -200,11 +203,11 @@ bool MtlCommandBuffer::onAddComputePass(DispatchGroupSpan groups) {
                         std::get_if<WorkgroupSize>(&dispatch.fGlobalSizeOrIndirect)) {
                 this->dispatchThreadgroups(*globalSize, dispatch.fLocalSize);
             } else {
-                SkASSERT(std::holds_alternative<BufferView>(dispatch.fGlobalSizeOrIndirect));
-                const BufferView& indirect =
-                        *std::get_if<BufferView>(&dispatch.fGlobalSizeOrIndirect);
+                SkASSERT(std::holds_alternative<BindBufferInfo>(dispatch.fGlobalSizeOrIndirect));
+                const BindBufferInfo& indirect =
+                        *std::get_if<BindBufferInfo>(&dispatch.fGlobalSizeOrIndirect);
                 this->dispatchThreadgroupsIndirect(
-                        dispatch.fLocalSize, indirect.fInfo.fBuffer, indirect.fInfo.fOffset);
+                        dispatch.fLocalSize, indirect.fBuffer, indirect.fOffset);
             }
         }
     }
@@ -336,7 +339,7 @@ void MtlCommandBuffer::endRenderPass() {
 void MtlCommandBuffer::addDrawPass(const DrawPass* drawPass) {
     SkIRect replayPassBounds = drawPass->bounds().makeOffset(fReplayTranslation.x(),
                                                              fReplayTranslation.y());
-    if (!SkIRect::Intersects(replayPassBounds, SkIRect::MakeSize(fRenderPassSize))) {
+    if (!SkIRect::Intersects(replayPassBounds, SkIRect::MakeSize(fColorAttachmentSize))) {
         // The entire DrawPass is offscreen given the replay translation so skip adding any
         // commands. When the DrawPass is partially offscreen individual draw commands will be
         // culled while preserving state changing commands.
@@ -492,6 +495,9 @@ void MtlCommandBuffer::bindUniformBuffer(const BindBufferInfo& info, UniformSlot
         case UniformSlot::kPaint:
             bufferIndex = MtlGraphicsPipeline::kPaintUniformBufferIndex;
             break;
+        case UniformSlot::kGradient:
+            bufferIndex = MtlGraphicsPipeline::kGradientBufferIndex;
+            break;
     }
 
     fActiveRenderCommandEncoder->setVertexBuffer(mtlBuffer, info.fOffset, bufferIndex);
@@ -569,7 +575,7 @@ void MtlCommandBuffer::setScissor(unsigned int left, unsigned int top,
     SkASSERT(fActiveRenderCommandEncoder);
     SkIRect scissor = SkIRect::MakeXYWH(
             left + fReplayTranslation.x(), top + fReplayTranslation.y(), width, height);
-    fDrawIsOffscreen = !scissor.intersect(SkIRect::MakeSize(fRenderPassSize));
+    fDrawIsOffscreen = !scissor.intersect(SkIRect::MakeSize(fColorAttachmentSize));
     if (fDrawIsOffscreen) {
         scissor.setEmpty();
     }

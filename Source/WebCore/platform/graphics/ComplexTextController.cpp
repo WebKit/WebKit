@@ -649,16 +649,16 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         float spaceWidth = font.spaceWidth(Font::SyntheticBoldInclusion::Exclude);
         const UChar* charactersPointer = complexTextRun.characters();
         FloatPoint glyphOrigin;
-        unsigned lastCharacterIndex = m_run.ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
+        unsigned previousCharacterIndex = m_run.ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
         bool isMonotonic = true;
 
         for (unsigned glyphIndex = 0; glyphIndex < glyphCount; glyphIndex++) {
             unsigned characterIndex = complexTextRun.indexAt(glyphIndex);
             if (m_run.ltr()) {
-                if (characterIndex < lastCharacterIndex)
+                if (characterIndex < previousCharacterIndex)
                     isMonotonic = false;
             } else {
-                if (characterIndex > lastCharacterIndex)
+                if (characterIndex > previousCharacterIndex)
                     isMonotonic = false;
             }
             UChar character = *(charactersPointer + characterIndex);
@@ -776,7 +776,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
             glyphOrigin.move(advance);
 
-            lastCharacterIndex = characterIndex;
+            previousCharacterIndex = characterIndex;
         }
         if (!isMonotonic)
             complexTextRun.setIsNonMonotonic();

@@ -270,7 +270,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return _webExtension->hasBackgroundContent();
 }
 
-- (BOOL)backgroundContentIsPersistent
+- (BOOL)hasPersistentBackgroundContent
 {
     return _webExtension->backgroundContentIsPersistent();
 }
@@ -300,12 +300,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return _webExtension->hasContentModificationRules();
 }
 
-- (BOOL)_backgroundContentIsServiceWorker
+- (BOOL)_hasServiceWorkerBackgroundContent
 {
     return _webExtension->backgroundContentIsServiceWorker();
 }
 
-- (BOOL)_backgroundContentUsesModules
+- (BOOL)_hasModularBackgroundContent
 {
     return _webExtension->backgroundContentUsesModules();
 }
@@ -468,7 +468,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return NO;
 }
 
-- (BOOL)backgroundContentIsPersistent
+- (BOOL)hasPersistentBackgroundContent
 {
     return NO;
 }
@@ -498,12 +498,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     return NO;
 }
 
-- (BOOL)_backgroundContentIsServiceWorker
+- (BOOL)_hasServiceWorkerBackgroundContent
 {
     return NO;
 }
 
-- (BOOL)_backgroundContentUsesModules
+- (BOOL)_hasModularBackgroundContent
 {
     return NO;
 }

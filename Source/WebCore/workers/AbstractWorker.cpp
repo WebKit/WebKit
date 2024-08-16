@@ -36,11 +36,11 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractWorker);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbstractWorker);
 
 FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, FetchOptions::Destination destination)
 {

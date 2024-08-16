@@ -36,6 +36,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Timer.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS PDFAction;
 OBJC_CLASS PDFDestination;
@@ -103,7 +104,7 @@ enum class AnnotationSearchDirection : bool {
 };
 
 class UnifiedPDFPlugin final : public PDFPluginBase, public WebCore::GraphicsLayerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UnifiedPDFPlugin);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(UnifiedPDFPlugin);
 
     friend class AsyncPDFRenderer;
@@ -135,7 +136,8 @@ public:
     void focusPreviousAnnotation() final;
 #if PLATFORM(MAC)
     RetainPtr<PDFAnnotation> nextTextAnnotation(AnnotationSearchDirection) const;
-    void handlePDFActionForAnnotation(PDFAnnotation *, PDFDocumentLayout::PageIndex currentPageIndex);
+    enum class ShouldPerformGoToAction : bool { No, Yes };
+    void handlePDFActionForAnnotation(PDFAnnotation *, PDFDocumentLayout::PageIndex currentPageIndex, ShouldPerformGoToAction);
 #endif
     enum class IsAnnotationCommit : bool { No, Yes };
     static RepaintRequirements repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
@@ -490,6 +492,10 @@ private:
     bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
+
+    WebCore::OverscrollBehavior overscrollBehavior() const;
+    WebCore::OverscrollBehavior horizontalOverscrollBehavior() const override { return overscrollBehavior(); }
+    WebCore::OverscrollBehavior verticalOverscrollBehavior() const override { return overscrollBehavior(); }
 
     WebCore::FloatSize centeringOffset() const;
 

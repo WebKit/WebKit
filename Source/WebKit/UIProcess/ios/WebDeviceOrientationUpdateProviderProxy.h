@@ -29,13 +29,14 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/MotionManagerClient.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
 class WebDeviceOrientationUpdateProviderProxy : public WebCore::MotionManagerClient, private IPC::MessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebDeviceOrientationUpdateProviderProxy);
 public:
     WebDeviceOrientationUpdateProviderProxy(WebPageProxy&);
     ~WebDeviceOrientationUpdateProviderProxy();

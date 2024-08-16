@@ -56,14 +56,14 @@
 #include "RenderView.h"
 #include "WritingMode.h"
 #include <limits>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFlexibleBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFlexibleBox);
 
 struct RenderFlexibleBox::LineState {
     LineState(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, std::optional<BaselineAlignmentState> baselineAlignmentState, FlexLayoutItems&& flexLayoutItems)

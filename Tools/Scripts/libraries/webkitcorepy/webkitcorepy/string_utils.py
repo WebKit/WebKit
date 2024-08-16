@@ -73,7 +73,8 @@ def join(list, conjunction='and'):
         return 'Nothing'
     if len(list) == 1:
         return list[0]
-    return '{} {} {}'.format(', '.join(list[:-1]), conjunction, list[-1])
+    conjunctionWithSerialCommaIfNeeded = f'{"," if len(list) > 2 else ""} {conjunction} '
+    return '{}{}{}'.format(', '.join(list[:-1]), conjunctionWithSerialCommaIfNeeded, list[-1])
 
 
 def split(string, conjunctions=None):

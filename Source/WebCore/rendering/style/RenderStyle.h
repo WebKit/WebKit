@@ -268,7 +268,7 @@ struct ViewTimelineInsets;
 
 struct TabSize;
 class TextAutospace;
-struct TextBoxEdge;
+struct TextEdge;
 struct TextSpacingTrim;
 struct TransformOperationData;
 
@@ -286,7 +286,7 @@ struct PseudoElementIdentifier;
 struct ScopedName;
 }
 
-constexpr auto PublicPseudoIDBits = 16;
+constexpr auto PublicPseudoIDBits = 17;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
 constexpr auto PseudoElementTypeBits = 5;
@@ -543,7 +543,6 @@ public:
 
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
     static UsedClear usedClear(const RenderObject&);
-    TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
 
     FieldSizing fieldSizing() const;
 
@@ -580,7 +579,8 @@ public:
     inline TextJustify textJustify() const;
 
     inline TextBoxTrim textBoxTrim() const;
-    TextBoxEdge textBoxEdge() const;
+    TextEdge textBoxEdge() const;
+    TextEdge lineFitEdge() const;
 
     inline OptionSet<MarginTrimType> marginTrim() const;
 
@@ -911,6 +911,8 @@ public:
     inline bool hasExplicitlySetColorScheme() const;
 #endif
 
+    inline TableLayoutType tableLayout() const;
+
     inline TextOrientation textOrientation() const;
 
     inline ObjectFit objectFit() const;
@@ -1119,6 +1121,7 @@ public:
 
     inline MathStyle mathStyle() const;
 
+    inline const Vector<Style::ScopedName>& viewTransitionClasses() const;
     inline std::optional<Style::ScopedName> viewTransitionName() const;
 
     void setDisplay(DisplayType value)
@@ -1241,7 +1244,6 @@ public:
     void setUnicodeBidi(UnicodeBidi v) { m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(v); }
 
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
-    void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
 
     void setFieldSizing(FieldSizing);
 
@@ -1284,7 +1286,8 @@ public:
     inline void setTextJustify(TextJustify);
 
     inline void setTextBoxTrim(TextBoxTrim);
-    void setTextBoxEdge(TextBoxEdge);
+    void setTextBoxEdge(TextEdge);
+    void setLineFitEdge(TextEdge);
 
     inline void setMarginTrim(OptionSet<MarginTrimType>);
 
@@ -1530,6 +1533,8 @@ public:
     inline void setColorScheme(StyleColorScheme);
 #endif
 
+    inline void setTableLayout(TableLayoutType);
+
     inline void setFilter(FilterOperations&&);
     inline void setAppleColorFilter(FilterOperations&&);
 
@@ -1766,6 +1771,7 @@ public:
     inline QuotesData* quotes() const;
     void setQuotes(RefPtr<QuotesData>&&);
 
+    inline void setViewTransitionClasses(const Vector<Style::ScopedName>&);
     inline void setViewTransitionName(std::optional<Style::ScopedName>);
 
     inline WillChangeData* willChange() const;
@@ -1872,6 +1878,7 @@ public:
     static constexpr ListStylePosition initialListStylePosition();
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
+    static inline Vector<Style::ScopedName> initialViewTransitionClasses();
     static inline std::optional<Style::ScopedName> initialViewTransitionName();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
@@ -1897,7 +1904,8 @@ public:
     static inline Length initialPadding();
     static inline Length initialTextIndent();
     static constexpr TextBoxTrim initialTextBoxTrim();
-    static TextBoxEdge initialTextBoxEdge();
+    static TextEdge initialTextBoxEdge();
+    static TextEdge initialLineFitEdge();
     static constexpr LengthType zeroLength();
     static inline Length oneLength();
     static unsigned short initialWidows() { return 2; }
@@ -2244,15 +2252,14 @@ private:
         unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
-        unsigned tableLayout : 1; // TableLayoutType
 
         unsigned usesViewportUnits : 1;
         unsigned usesContainerUnits : 1;
         unsigned isUnique : 1; // Style cannot be shared.
+        unsigned hasContentNone : 1;
         unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned disallowsFastPathInheritance : 1;
-        unsigned hasContentNone : 1;
 
         // Non-property related state bits.
         unsigned emptyState : 1;

@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +46,7 @@ class WebNotification;
 
 class NotificationService {
     WTF_MAKE_NONCOPYABLE(NotificationService);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NotificationService);
     friend LazyNeverDestroyed<NotificationService>;
 public:
     static NotificationService& singleton();

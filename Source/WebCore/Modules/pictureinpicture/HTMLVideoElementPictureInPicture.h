@@ -30,8 +30,8 @@
 
 #include "PictureInPictureObserver.h"
 #include "Supplementable.h"
-#include <wtf/IsoMalloc.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ class HTMLVideoElementPictureInPicture
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_ISO_ALLOCATED(HTMLVideoElementPictureInPicture);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLVideoElementPictureInPicture);
 public:
     HTMLVideoElementPictureInPicture(HTMLVideoElement&);
     static HTMLVideoElementPictureInPicture* from(HTMLVideoElement&);

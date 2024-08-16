@@ -584,6 +584,8 @@ accessibility/dynamically-ignored-canvas.html [ Skip ]
 accessibility/basic-focusability.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
+accessibility/aria-controlled-table-row-visibility.html [ Skip ]
+accessibility/animated-dropdown.html [ Skip ]
 accessibility/aria-modal-with-text-crash.html [ Skip ]
 accessibility/button-inside-label-ax-text.html [ Skip ]
 accessibility/display-contents/dynamically-added-children.html [ Skip ]
@@ -705,6 +707,9 @@ accessibility/dynamic-table-row-column-indices.html [ Skip ]
 accessibility/cells-inside-contenteditable.html [ Skip ]
 
 http/wpt/service-workers/mac [ Skip ]
+
+# TextMarkerRangeForElement is only implemented on Cocoa platforms.
+accessibility/full-size-kana-untransformed.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -1161,7 +1166,6 @@ webkit.org/b/244776 webkit.org/b/230028 media/media-source/media-source-seek-twi
 
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
-imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
@@ -2207,7 +2211,7 @@ http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Skip ]
 
 # The GstWebRTC backend doesn't support transforms yet.
-webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Skip ]
+webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Pass ]
 webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/video-script-transform.html [ Skip ]
@@ -2225,8 +2229,8 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-keys.https.html 
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-buffer-source.html [ Skip ]
 webkit.org/b/224068 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-late-transform.https.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
-webrtc/sframe-test-vectors.html [ Skip ]
-webrtc/sframe-transform-buffer-source.html [ Skip ]
+webrtc/sframe-test-vectors.html [ Pass ]
+webrtc/sframe-transform-buffer-source.html [ Pass ]
 webrtc/video-sframe.html [ Skip ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
@@ -2468,6 +2472,8 @@ webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/selec
 # GTK/WPE don't support the "none" value for selections of input and textarea elements.
 webkit.org/b/180931 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
 
+webkit.org/b/278055 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-002.html [ ImageOnlyFailure ]
+
 # Passes for GTK/WPE (but not for Mac/iOS) after WPT update of css-writing-modes tests
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-004.html [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-006.html [ Pass ]
@@ -2568,6 +2574,7 @@ fast/events/webkit-media-key-events-constructor.html [ Skip ]
 # NowPlaying is macOS and iOS only.
 http/tests/media/now-playing-info-private-browsing.html [ Skip ]
 http/tests/media/now-playing-info.html [ Skip ]
+http/tests/media/now-playing-info-default-artwork-favicon.html [ Skip ]
 http/tests/media/now-playing-info-media-session-artwork-favicon.html [ Skip ]
 media/now-playing-info-media-session-private-browsing.html [ Skip ]
 media/now-playing-info-media-session-suspend-playback.html [ Skip ]
@@ -3547,6 +3554,10 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-i
 
 webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-007.html [ ImageOnlyFailure ]
+
 # Tests failing due to HTML being interpreted as XHTML
 webkit.org/b/232386 animations/animation-welcome-safari.html [ Failure ]
 webkit.org/b/232386 compositing/geometry/root-layer-update.html [ Failure ]
@@ -3631,8 +3642,6 @@ webkit.org/b/232386 fast/xpath/nodeset-duplicates.html [ Failure ]
 webkit.org/b/232386 fast/xsl/extra-lf-at-end.html [ Failure ]
 webkit.org/b/232386 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
 webkit.org/b/232386 ietestcenter/css3/bordersbackgrounds/background-size-aspect-ratio.htm [ Failure ]
-webkit.org/b/232386 imported/blink/css3/filters/effect-reference-add-hw.html [ ImageOnlyFailure ]
-webkit.org/b/232386 imported/blink/css3/filters/effect-reference-source-alpha-hw.html [ ImageOnlyFailure ]
 webkit.org/b/232386 imported/blink/svg/as-image/zero-size-buffered-image-nopaint.html [ ImageOnlyFailure ]
 webkit.org/b/232386 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/232386 svg/as-object/mutate-on-load.html [ ImageOnlyFailure ]
@@ -3744,19 +3753,6 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall-
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
-
-# TestOnlyIPC support needs investigated.
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
-webkit.org/b/277813 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
 
 # Flaky tests detected both on GTK and WPE on May2023
 webkit.org/b/257624 animations/background-position.html [ ImageOnlyFailure Pass ]
@@ -4059,6 +4055,9 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-pus
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-with-redirect.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-replace-navigation.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-bfcache.https.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
@@ -4110,6 +4109,8 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-011.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-020.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-021.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-024.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-027.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
 

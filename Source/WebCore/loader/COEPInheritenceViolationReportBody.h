@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class COEPInheritenceViolationReportBody : public ReportBody {
-    WTF_MAKE_ISO_ALLOCATED(COEPInheritenceViolationReportBody);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(COEPInheritenceViolationReportBody);
 public:
     WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const String& type);
 

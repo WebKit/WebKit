@@ -70,6 +70,7 @@
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -82,6 +83,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UIDelegate);
 
 UIDelegate::UIDelegate(WKWebView *webView)
     : m_webView(webView)

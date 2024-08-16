@@ -33,11 +33,12 @@ async function dispatchMouseActions(actions, pointerType)
         switch (action.type) {
         case "pointerMove":
             const origin = { x: 0, y: 0 };
-            if (action.origin instanceof Element) {
+            const actionWindow = action.origin?.ownerDocument?.defaultView;
+            if (actionWindow && action.origin instanceof actionWindow.Element) {
                 const bounds = action.origin.getBoundingClientRect();
                 logDebug(`${action.origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
-                origin.x = bounds.left + 1;
-                origin.y = bounds.top + 1;
+                origin.x = bounds.left + (bounds.width / 2.0);
+                origin.y = bounds.top + (bounds.height / 2.0);
             }
             logDebug(`eventSender.mouseMoveTo(${action.x + origin.x}, ${action.y + origin.y})`);
             eventSender.mouseMoveTo(action.x + origin.x, action.y + origin.y, pointerType);
@@ -97,10 +98,11 @@ async function dispatchTouchActions(actions, options = { insertPauseAfterPointer
         switch (action.type) {
         case "pointerMove":
             touch.phase = "moved";
-            if (action.origin instanceof Element) {
+            const actionWindow = action.origin?.ownerDocument?.defaultView;
+            if (actionWindow && action.origin instanceof actionWindow.Element) {
                 const bounds = action.origin.getBoundingClientRect();
-                touch.x += bounds.left + 1;
-                touch.y += bounds.top + 1;
+                touch.x += bounds.left + (bounds.width / 2.0);
+                touch.y += bounds.top + (bounds.height / 2.0);
             }
             break;
         case "pointerDown":
@@ -231,11 +233,13 @@ async function dispatchWheelActions(actions)
                 throw new Error('Move target out of bounds');
             if (duration === undefined)
                 duration = computeTickDuration(actions, "wheel");
-            if (origin instanceof Element) {
+
+            const originWindow = origin?.ownerDocument?.defaultView;
+            if (originWindow && origin instanceof originWindow.Element) {
                 const bounds = origin.getBoundingClientRect();
                 logDebug(() => `${origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
-                x += bounds.left + 1;
-                y += bounds.top + 1;
+                x += bounds.left + (bounds.width / 2.0);
+                y += bounds.top + (bounds.height / 2.0);
             }
             const scrollEvents = [
                 {

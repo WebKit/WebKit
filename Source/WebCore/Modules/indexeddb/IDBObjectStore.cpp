@@ -47,14 +47,14 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(IDBObjectStore);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBObjectStore);
 
 UniqueRef<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
 {

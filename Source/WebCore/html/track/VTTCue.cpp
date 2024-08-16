@@ -59,15 +59,15 @@
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTParser.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCue);
-WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCue);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCueBox);
 
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr
@@ -955,7 +955,8 @@ void VTTCue::obtainCSSBoxes()
     // background box.
 
     // Note: This is contained by default in m_cueHighlightBox.
-    m_cueHighlightBox->setUserAgentPart(UserAgentParts::cue());
+    displayTree->setUserAgentPart(UserAgentParts::cue());
+    m_cueHighlightBox->setUserAgentPart(UserAgentParts::internalCueBackground());
 
     m_cueBackdropBox->setUserAgentPart(UserAgentParts::webkitMediaTextTrackDisplayBackdrop());
     m_cueBackdropBox->appendChild(m_cueHighlightBox);

@@ -771,9 +771,12 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     bool implicitLigatures = true;
     bool implicitNumeric = true;
     do {
+        if (m_range.peek().id() == CSSValueNormal)
+            return false;
+
         if (!capsValue && (capsValue = CSSPropertyParsing::consumeFontVariantCaps(m_range)))
             continue;
-        
+
         if (!positionValue && (positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range)))
             continue;
 
@@ -1219,6 +1222,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueLegacy;
     case CSSPropertyLightingColor:
         return CSSValueWhite;
+    case CSSPropertyLineFitEdge:
+        return CSSValueLeading;
     case CSSPropertyListStylePosition:
         return CSSValueOutside;
     case CSSPropertyListStyleType:
@@ -1274,7 +1279,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyTextDecorationStyle:
         return CSSValueSolid;
     case CSSPropertyTextBoxEdge:
-        return CSSValueLeading;
+        return CSSValueAuto;
     case CSSPropertyTextOrientation:
         return CSSValueMixed;
     case CSSPropertyTextOverflow:
@@ -2610,6 +2615,44 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
     return m_range.atEnd();
 }
 
+bool CSSPropertyParser::consumeTextBoxShorthand(bool important)
+{
+    if (m_range.peek().id() == CSSValueNormal) {
+        // if the single keyword normal is specified, it sets text-box-trim to none and text-box-edge to auto.
+        addProperty(CSSPropertyTextBoxTrim, CSSPropertyTextBox, CSSPrimitiveValue::create(CSSValueNone), important);
+        addProperty(CSSPropertyTextBoxEdge, CSSPropertyTextBox, CSSPrimitiveValue::create(CSSValueAuto), important);
+        consumeIdent(m_range);
+        return m_range.atEnd();
+    }
+
+    RefPtr<CSSValue> textBoxTrim;
+    RefPtr<CSSValue> textBoxEdge;
+
+    for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !m_range.atEnd(); ++propertiesParsed) {
+        if (!textBoxTrim && (textBoxTrim = CSSPropertyParsing::consumeTextBoxTrim(m_range)))
+            continue;
+        if (!textBoxEdge && (textBoxEdge = consumeTextEdge(CSSPropertyTextBoxEdge, m_range)))
+            continue;
+        // There has to be at least one valid longhand.
+        return false;
+    }
+
+    if (!m_range.atEnd())
+        return false;
+
+    // Omitting the text-box-edge value sets it to auto (the initial value)
+    if (!textBoxEdge)
+        textBoxEdge = CSSPrimitiveValue::create(CSSValueAuto);
+
+    // Omitting the text-box-trim value sets it to both (not the initial value)
+    if (!textBoxTrim)
+        textBoxTrim = CSSPrimitiveValue::create(CSSValueTrimBoth);
+
+    addProperty(CSSPropertyTextBoxTrim, CSSPropertyTextBox, WTFMove(textBoxTrim), important);
+    addProperty(CSSPropertyTextBoxEdge, CSSPropertyTextBox, WTFMove(textBoxEdge), important);
+    return true;
+}
+
 bool CSSPropertyParser::consumeTextWrapShorthand(bool important)
 {
     RefPtr<CSSValue> mode;
@@ -3001,6 +3044,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeContainIntrinsicSizeShorthand(important);
     case CSSPropertyScrollTimeline:
         return consumeScrollTimelineShorthand(important);
+    case CSSPropertyTextBox:
+        return consumeTextBoxShorthand(important);
     case CSSPropertyTextWrap:
         return consumeTextWrapShorthand(important);
     case CSSPropertyViewTimeline:

@@ -127,7 +127,6 @@ public:
 
         String originalText;
         WritingTools::TextSuggestionID suggestionID;
-        WritingTools::SessionID sessionID;
         State state { State::Accepted };
     };
 #endif

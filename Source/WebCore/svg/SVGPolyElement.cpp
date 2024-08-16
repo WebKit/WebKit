@@ -28,12 +28,12 @@
 #include "RenderSVGPath.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolyElement);
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGPolyElement);
 
 SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

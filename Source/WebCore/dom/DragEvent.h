@@ -39,7 +39,7 @@ struct DragEventInit : public MouseEventInit {
 };
 
 class DragEvent : public MouseEvent {
-    WTF_MAKE_ISO_ALLOCATED(DragEvent);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DragEvent);
 public:
     using Init = DragEventInit;
 
