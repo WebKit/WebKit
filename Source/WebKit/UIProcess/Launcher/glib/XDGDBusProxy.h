@@ -26,6 +26,7 @@
 #pragma once
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
+#include "ProcessLauncher.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -43,16 +44,20 @@ public:
 
     enum class AllowPortals : bool { No, Yes };
     std::optional<CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
-    std::optional<CString> accessibilityProxy(const char* baseDirectory, const char* sandboxedAccessibilityBusPath);
+#if USE(ATSPI)
+    std::optional<CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath);
+#endif
 
-    bool launch();
+    bool launch(const ProcessLauncher::LaunchOptions&);
 
 private:
     static CString makeProxy(const char* baseDirectory, const char* proxyTemplate);
 
     Vector<CString> m_args;
     CString m_dbusSessionProxyPath;
+#if USE(ATSPI)
     CString m_accessibilityProxyPath;
+#endif
     UnixFileDescriptor m_syncFD;
 };
 

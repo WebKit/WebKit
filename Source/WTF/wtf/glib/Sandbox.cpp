@@ -27,6 +27,9 @@
 #include <wtf/glib/Sandbox.h>
 
 #include <glib.h>
+#include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -85,15 +88,19 @@ bool shouldUsePortal()
     return returnValue;
 }
 
-String& sandboxedAccessibilityBusAddress()
+const CString& sandboxedUserRuntimeDirectory()
 {
-    static String accessibilityBusAddress;
-    return accessibilityBusAddress;
-}
-
-void setSandboxedAccessibilityBusAddress(String&& address)
-{
-    sandboxedAccessibilityBusAddress() = address;
+    static LazyNeverDestroyed<CString> userRuntimeDirectory;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+#if PLATFORM(GTK)
+        static constexpr ASCIILiteral baseDirectory = "webkitgtk"_s;
+#elif PLATFORM(WPE)
+        static constexpr ASCIILiteral baseDirectory = "wpe"_s;
+#endif
+        userRuntimeDirectory.construct(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_runtime_dir()), baseDirectory).utf8());
+    });
+    return userRuntimeDirectory.get();
 }
 
 } // namespace WTF

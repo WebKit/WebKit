@@ -61,7 +61,7 @@ private:
     void initializeEGLDisplay() override;
 
 #if USE(ATSPI)
-    String platformAccessibilityBusAddress() const override;
+    String accessibilityBusAddress() const override;
 #endif
 
     ::Display* m_display { nullptr };

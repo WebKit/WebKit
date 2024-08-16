@@ -138,7 +138,7 @@ public:
 #endif
 
 #if USE(ATSPI)
-    const String& accessibilityBusAddress() const;
+    virtual String accessibilityBusAddress() const;
 #endif
 
 protected:
@@ -162,12 +162,6 @@ protected:
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     std::optional<int> m_anglePlatform;
     void* m_angleNativeDisplay { nullptr };
-#endif
-
-#if USE(ATSPI)
-    virtual String platformAccessibilityBusAddress() const { return { }; }
-
-    mutable std::optional<String> m_accessibilityBusAddress;
 #endif
 
 private:

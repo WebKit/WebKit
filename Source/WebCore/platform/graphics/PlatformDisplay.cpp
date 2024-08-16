@@ -189,11 +189,6 @@ PlatformDisplay::PlatformDisplay(GdkDisplay* display)
     , m_eglDisplay(EGL_NO_DISPLAY)
 {
     if (m_sharedDisplay) {
-#if USE(ATSPI) && USE(GTK4)
-        if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_sharedDisplay.get()), "-gtk-atspi-bus-address")))
-            m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
-#endif
-
         g_signal_connect(m_sharedDisplay.get(), "closed", G_CALLBACK(+[](GdkDisplay*, gboolean, gpointer userData) {
             auto& platformDisplay = *static_cast<PlatformDisplay*>(userData);
             platformDisplay.sharedDisplayDidClose();
@@ -450,46 +445,16 @@ const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 #endif // USE(GBM)
 
 #if USE(ATSPI)
-const String& PlatformDisplay::accessibilityBusAddress() const
+String PlatformDisplay::accessibilityBusAddress() const
 {
-    if (m_accessibilityBusAddress)
-        return m_accessibilityBusAddress.value();
-
-    const char* address = g_getenv("AT_SPI_BUS_ADDRESS");
-    if (address && *address) {
-        m_accessibilityBusAddress = String::fromUTF8(address);
-        return m_accessibilityBusAddress.value();
+#if USE(GTK4)
+    if (m_sharedDisplay) {
+        if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_sharedDisplay.get()), "-gtk-atspi-bus-address")))
+            return String::fromUTF8(atspiBusAddress);
     }
+#endif
 
-    auto platformAddress = platformAccessibilityBusAddress();
-    if (!platformAddress.isEmpty()) {
-        m_accessibilityBusAddress = platformAddress;
-        return m_accessibilityBusAddress.value();
-    }
-
-    GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
-    if (sessionBus.get()) {
-        GRefPtr<GDBusMessage> message = adoptGRef(g_dbus_message_new_method_call("org.a11y.Bus", "/org/a11y/bus", "org.a11y.Bus", "GetAddress"));
-        g_dbus_message_set_body(message.get(), g_variant_new("()"));
-        GRefPtr<GDBusMessage> reply = adoptGRef(g_dbus_connection_send_message_with_reply_sync(sessionBus.get(), message.get(),
-            G_DBUS_SEND_MESSAGE_FLAGS_NONE, 30000, nullptr, nullptr, nullptr));
-        if (reply) {
-            GUniqueOutPtr<GError> error;
-            if (g_dbus_message_to_gerror(reply.get(), &error.outPtr())) {
-                if (!g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN))
-                    WTFLogAlways("Can't find a11y bus: %s", error->message);
-            } else {
-                GUniqueOutPtr<char> a11yAddress;
-                g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                m_accessibilityBusAddress = String::fromUTF8(a11yAddress.get());
-                return m_accessibilityBusAddress.value();
-            }
-        }
-    }
-
-    WTFLogAlways("Could not determine the accessibility bus address");
-    m_accessibilityBusAddress = String();
-    return m_accessibilityBusAddress.value();
+    return { };
 }
 #endif
 

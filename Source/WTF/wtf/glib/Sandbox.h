@@ -28,8 +28,7 @@ WTF_EXPORT_PRIVATE bool isInsideUnsupportedContainer();
 WTF_EXPORT_PRIVATE bool isInsideSnap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
 
-WTF_EXPORT_PRIVATE String& sandboxedAccessibilityBusAddress();
-WTF_EXPORT_PRIVATE void setSandboxedAccessibilityBusAddress(String&&);
+WTF_EXPORT_PRIVATE const CString& sandboxedUserRuntimeDirectory();
 
 } // namespace WTF
 
@@ -38,5 +37,4 @@ using WTF::isInsideUnsupportedContainer;
 using WTF::isInsideSnap;
 using WTF::shouldUsePortal;
 
-using WTF::sandboxedAccessibilityBusAddress;
-using WTF::setSandboxedAccessibilityBusAddress;
+using WTF::sandboxedUserRuntimeDirectory;

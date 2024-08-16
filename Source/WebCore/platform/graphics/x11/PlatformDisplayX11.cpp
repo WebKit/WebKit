@@ -145,8 +145,12 @@ void PlatformDisplayX11::initializeEGLDisplay()
 }
 
 #if USE(ATSPI)
-String PlatformDisplayX11::platformAccessibilityBusAddress() const
+String PlatformDisplayX11::accessibilityBusAddress() const
 {
+    auto address = PlatformDisplay::accessibilityBusAddress();
+    if (!address.isEmpty())
+        return address;
+
     Atom atspiBusAtom = XInternAtom(m_display, "AT_SPI_BUS", False);
     Atom type;
     int format;
