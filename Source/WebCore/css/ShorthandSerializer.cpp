@@ -1259,21 +1259,23 @@ String ShorthandSerializer::serializePageBreak() const
 String ShorthandSerializer::serializeTextBox() const
 {
     auto textBoxTrim = longhandValueID(0);
-    auto& textBoxEdgeValue = longhandValue(longhandIndex(1, CSSPropertyTextBoxEdge));
+    auto& textBoxEdge = longhandValue(longhandIndex(1, CSSPropertyTextBoxEdge));
+    auto textBoxEdgeIsAuto = [&]() {
+        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(textBoxEdge))
+            return primitiveValue->valueID() == CSSValueAuto;
+        return false;
+    }();
 
-    if (textBoxTrim == CSSValueNone && is<CSSPrimitiveValue>(textBoxEdgeValue)) {
-        ASSERT(downcast<CSSPrimitiveValue>(textBoxEdgeValue).isValueID() && downcast<CSSPrimitiveValue>(textBoxEdgeValue).valueID() == CSSValueAuto);
+    if (textBoxTrim == CSSValueNone && textBoxEdgeIsAuto)
         return nameString(CSSValueNormal);
-    }
 
-    if (auto* valueList = dynamicDowncast<CSSValueList>(textBoxEdgeValue)) {
-        StringBuilder builder;
-        valueList->serializeItems(builder);
-        return makeString(nameLiteral(textBoxTrim), ' ', builder.toString());
-    }
+    if (textBoxEdgeIsAuto)
+        return nameLiteral(textBoxTrim);
 
-    ASSERT_NOT_REACHED();
-    return { };
+    if (textBoxTrim == CSSValueTrimBoth)
+        return textBoxEdge.cssText();
+
+    return makeString(nameLiteral(textBoxTrim), ' ', textBoxEdge.cssText());
 }
 
 String ShorthandSerializer::serializeTextWrap() const

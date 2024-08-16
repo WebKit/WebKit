@@ -2512,20 +2512,29 @@ RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
 RefPtr<CSSValue> consumeTextEdge(CSSPropertyID property, CSSParserTokenRange& range)
 {
     if (property == CSSPropertyTextBoxEdge && range.peek().id() == CSSValueAuto)
-        return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
+        return consumeIdent(range);
 
     if (property == CSSPropertyLineFitEdge && range.peek().id() == CSSValueLeading)
-        return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
+        return consumeIdent(range);
 
-    auto firstGroupValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (!firstGroupValue)
+    auto firstValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    if (!firstValue)
         return nullptr;
 
-    auto secondGroupValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    if (secondGroupValue)
-        return CSSValueList::createSpaceSeparated(firstGroupValue.releaseNonNull(), secondGroupValue.releaseNonNull());
+    auto secondValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
+    // https://www.w3.org/TR/css-inline-3/#text-edges
+    // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
+    auto shouldSerializeSecondValue = [&]() {
+        if (!secondValue)
+            return false;
+        if (firstValue->valueID() == CSSValueCap || firstValue->valueID() == CSSValueEx)
+            return secondValue->valueID() != CSSValueText;
+        return firstValue->valueID() != secondValue->valueID();
+    }();
+    if (!shouldSerializeSecondValue)
+        return firstValue;
 
-    return CSSValueList::createSpaceSeparated(firstGroupValue.releaseNonNull());
+    return CSSValuePair::create(firstValue.releaseNonNull(), secondValue.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode mode)

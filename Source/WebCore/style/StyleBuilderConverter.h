@@ -972,24 +972,8 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
 
 inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueAuto)
-            return { TextEdgeType::Auto, TextEdgeType::Auto };
-        if (value.valueID() == CSSValueLeading)
-            return { TextEdgeType::Leading, TextEdgeType::Leading };
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    auto& values = downcast<CSSValueList>(value);
-    auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
-
-    auto overValue = [&] {
-        switch (firstValue.valueID()) {
-        case CSSValueAuto:
-            return TextEdgeType::Auto;
-        case CSSValueLeading:
-            return TextEdgeType::Leading;
+    auto overValue = [&](CSSValueID valueID) {
+        switch (valueID) {
         case CSSValueText:
             return TextEdgeType::Text;
         case CSSValueCap:
@@ -1006,20 +990,8 @@ inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue&
         }
     };
 
-    auto underValue = [&] {
-        if (firstValue.valueID() == CSSValueAuto)
-            return TextEdgeType::Auto;
-        if (firstValue.valueID() == CSSValueLeading)
-            return TextEdgeType::Leading;
-        if (values.length() == 1) {
-            // https://www.w3.org/TR/css-inline-3/#text-edges
-            // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
-            // FIXME: Figure out what "if possible" means here.
-            return TextEdgeType::Text;
-        }
-
-        auto& secondValue = downcast<CSSPrimitiveValue>(*values.item(1));
-        switch (secondValue.valueID()) {
+    auto underValue = [&](CSSValueID valueID) {
+        switch (valueID) {
         case CSSValueText:
             return TextEdgeType::Text;
         case CSSValueAlphabetic:
@@ -1033,7 +1005,30 @@ inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue&
             return TextEdgeType::Auto;
         }
     };
-    return { overValue(), underValue() };
+
+    // One value was given.
+    if (is<CSSPrimitiveValue>(value)) {
+        switch (value.valueID()) {
+        case CSSValueAuto:
+            return { TextEdgeType::Auto, TextEdgeType::Auto };
+        case CSSValueLeading:
+            return { TextEdgeType::Leading, TextEdgeType::Leading };
+        // https://www.w3.org/TR/css-inline-3/#text-edges
+        // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
+        case CSSValueCap:
+        case CSSValueEx:
+            return { overValue(value.valueID()), TextEdgeType::Text };
+        default:
+            return { overValue(value.valueID()), underValue(value.valueID()) };
+        }
+    }
+
+    // Two values were given.
+    auto& pair = downcast<CSSValuePair>(value);
+    return {
+        overValue(downcast<CSSPrimitiveValue>(pair.first()).valueID()),
+        underValue(downcast<CSSPrimitiveValue>(pair.second()).valueID())
+    };
 }
 
 inline IntSize BuilderConverter::convertInitialLetter(BuilderState&, const CSSValue& value)

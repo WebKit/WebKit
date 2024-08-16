@@ -1,15 +1,38 @@
 
-FAIL Property text-box value 'normal' assert_equals: expected "normal" but got "auto auto"
-FAIL Property text-box value 'none' assert_equals: expected "normal" but got "auto auto"
+PASS Property text-box value 'normal'
+PASS Property text-box value 'none'
+PASS Property text-box value 'none auto'
+PASS Property text-box value 'auto none'
+PASS Property text-box value 'auto'
 PASS Property text-box value 'trim-start'
 PASS Property text-box value 'trim-end'
 PASS Property text-box value 'trim-both'
-FAIL Property text-box value 'none auto' assert_equals: expected "normal" but got "auto auto"
+PASS Property text-box value 'text'
+PASS Property text-box value 'cap'
+PASS Property text-box value 'ideographic'
+PASS Property text-box value 'cap alphabetic'
+PASS Property text-box value 'text alphabetic'
 PASS Property text-box value 'trim-start auto'
 PASS Property text-box value 'trim-both auto'
-FAIL Property text-box value 'text' assert_equals: expected "text" but got "trim-both text text"
-FAIL Property text-box value 'cap alphabetic' assert_equals: expected "cap alphabetic" but got "trim-both cap alphabetic"
-FAIL Property text-box value 'trim-both text' assert_equals: expected "text" but got "trim-both text text"
-FAIL Property text-box value 'trim-start text' assert_equals: expected "trim-start text" but got "trim-start text text"
+PASS Property text-box value 'auto trim-both'
+PASS Property text-box value 'none text'
+PASS Property text-box value 'text text none'
+PASS Property text-box value 'none cap'
+PASS Property text-box value 'cap ideographic none'
+PASS Property text-box value 'ideographic none'
+PASS Property text-box value 'trim-both text'
+PASS Property text-box value 'trim-start text'
+PASS Property text-box value 'text text trim-both'
+PASS Property text-box value 'text text trim-end'
+PASS Property text-box value 'cap alphabetic trim-start'
 PASS Property text-box value 'trim-start cap alphabetic'
+PASS Property text-box value 'trim-both cap alphabetic'
+PASS Property text-box value 'trim-start ideographic ideographic'
+PASS Property text-box value 'trim-start ideographic-ink ideographic-ink'
+PASS Property text-box value 'trim-end cap text'
+PASS Property text-box value 'trim-end ex text'
+PASS Property text-box value 'cap text trim-end'
+PASS Property text-box value 'ex text trim-end'
+PASS Property text-box value 'cap text trim-both'
+PASS Property text-box value 'ex text trim-both'
 
