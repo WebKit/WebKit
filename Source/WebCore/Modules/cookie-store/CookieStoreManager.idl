@@ -26,7 +26,7 @@
 // https://wicg.github.io/cookie-store/#cookiestoremanager
 
 [
-    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
+    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled,
     Exposed=(ServiceWorker,Window),
     SecureContext
 ] interface CookieStoreManager {
