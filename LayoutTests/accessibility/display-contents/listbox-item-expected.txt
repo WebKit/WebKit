@@ -1,0 +1,25 @@
+This test ensures we compute the right accessibilty text for display:contents listbox items.
+
+#item-one: 	AXTitle: Foo
+	AXDescription:
+	AXHelp:
+PASS: text.includes('Foo') === true
+
+#item-two: 	AXTitle: Bar
+	AXDescription:
+	AXHelp:
+PASS: text.includes('Bar') === true
+
+#item-three: 	AXTitle: Baz
+	AXDescription:
+	AXHelp:
+PASS: text.includes('Baz') === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Foo
+Bar
+Baz

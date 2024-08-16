@@ -1,0 +1,19 @@
+This test ensures we compute the right accessibilty text for display:contents listbox items.
+
+#item-one: 	AXLabel: Foo
+PASS: text.includes('Foo') === true
+
+#item-two: 	AXLabel: Bar
+PASS: text.includes('Bar') === true
+
+#item-three: 	AXLabel: Baz
+PASS: text.includes('Baz') === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Foo
+Bar
+Baz
