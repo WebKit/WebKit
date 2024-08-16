@@ -5787,11 +5787,11 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const We
 }
 #endif
 
-void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
+void WebPageProxy::getAllFrames(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler)
 {
     RefPtr mainFrame = m_mainFrame;
     if (!mainFrame)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
     mainFrame->getFrameInfo(WTFMove(completionHandler));
 }
 

@@ -98,7 +98,7 @@ void WebExtensionContext::webNavigationGetFrame(WebExtensionTabIdentifier tabIde
     }
 
     [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab, frameIdentifier](_WKFrameTreeNode *mainFrame) mutable {
-        if (!mainFrame.info.isMainFrame) {
+        if (!mainFrame) {
             RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
             completionHandler(toWebExtensionError(@"webNavigation.getFrame()", nil, @"main frame not found"));
             return;
@@ -126,7 +126,7 @@ void WebExtensionContext::webNavigationGetAllFrames(WebExtensionTabIdentifier ta
     }
 
     [webView _frames:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), tab](_WKFrameTreeNode *mainFrame) mutable {
-        if (!mainFrame.info.isMainFrame) {
+        if (!mainFrame) {
             RELEASE_LOG_INFO(Extensions, "Skipping frame traversal because the mainFrame is nil");
             completionHandler(toWebExtensionError(@"webNavigation.getAllFrames()", nil, @"main frame not found"));
             return;

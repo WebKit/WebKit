@@ -124,7 +124,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
     });
 
     [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab = Ref { tab }, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
-        if (!mainFrame.info.isMainFrame) {
+        if (!mainFrame) {
             RELEASE_LOG_INFO(Extensions, "Not executing script because the mainFrame is nil");
             injectionResults->results.append(toInjectionResultParameters(nil, nil, @"Failed to execute script."));
             return;
