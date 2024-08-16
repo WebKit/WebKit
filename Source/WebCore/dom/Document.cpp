@@ -2795,16 +2795,16 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     }
 
     SetForScope change(m_ignorePendingStylesheets, true);
-    auto& resolver = element.styleResolver();
+    Ref resolver = element.styleResolver();
 
     if (pseudoElementIdentifier) {
-        auto style = resolver.styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
+        auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
         if (!style)
             return nullptr;
         return WTFMove(style->style);
     }
 
-    auto elementStyle = resolver.styleForElement(element, { parentStyle });
+    auto elementStyle = resolver->styleForElement(element, { parentStyle });
     if (elementStyle.relations) {
         Style::Update emptyUpdate(*this);
         Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);
@@ -9918,7 +9918,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
             return true;
 
         if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect)) {
-            auto* target = keyframeEffect->target();
+            RefPtr target = keyframeEffect->target();
             return target && target->isConnected() && &target->document() == this && function(*target);
         }
 
@@ -9939,7 +9939,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(El
 
 void Document::keyframesRuleDidChange(const String& name)
 {
-    for (auto* animation : WebAnimation::instances()) {
+    for (RefPtr animation : WebAnimation::instances()) {
         auto cssAnimation = dynamicDowncast<CSSAnimation>(*animation);
         if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
@@ -10523,7 +10523,7 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
             context->flushDeferredOperations();
 
         // Some canvases need to do work when rendering has finished but before their content is composited.
-        if (auto* htmlCanvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
+        if (RefPtr htmlCanvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
             if (htmlCanvas->needsPreparationForDisplay())
                 htmlCanvas->prepareForDisplay();
         }
