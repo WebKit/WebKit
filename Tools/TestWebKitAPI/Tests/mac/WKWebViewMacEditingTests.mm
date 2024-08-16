@@ -107,6 +107,18 @@
     return result;
 }
 
+- (NSRange)_selectedRange
+{
+    __block bool done = false;
+    __block NSRange result;
+    [static_cast<id<NSTextInputClient_Async>>(self) selectedRangeWithCompletionHandler:^(NSRange selectedRange) {
+        result = selectedRange;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
 @end
 
 TEST(WKWebViewMacEditingTests, DoubleClickDoesNotSelectTrailingSpace)
@@ -321,7 +333,7 @@ TEST(WKWebViewMacEditingTests, FirstRectForCharacterRange)
         EXPECT_EQ(18, firstRect.size.height);
 
         EXPECT_EQ(0U, actualRange.location);
-        EXPECT_EQ(10U, actualRange.length);
+        EXPECT_EQ(11U, actualRange.length);
     }
     {
         auto [firstRect, actualRange] = [webView _firstRectForCharacterRange:NSMakeRange(0, 5)];
@@ -369,6 +381,121 @@ TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeInTextArea)
     EXPECT_GT(rectAfterTyping.size.height, 0);
     EXPECT_EQ(rangeAfterTyping.location, 1U);
     EXPECT_EQ(rangeAfterTyping.length, 0U);
+}
+
+TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeWithNewlinesAndWrapping)
+{
+    Vector<std::pair<NSRect, NSRange>> expectedRectsAndRanges = {
+        { { { 8.f, 574.f }, { 328.f, 18.f } }, { 0, 51 } },
+        { { { 8.f, 556.f }, { 719.f, 18.f } }, { 51, 111 } },
+        { { { 8.f, 538.f }, { 770.f, 18.f } }, { 162, 122 } },
+        { { { 8.f, 520.f }, { 764.f, 18.f } }, { 284, 125 } },
+        { { { 8.f, 502.f }, { 232.f, 18.f } }, { 409, 36 } }
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body><div>Lorem ipsum dolor sit amet, consectetur adipiscing</div><div>elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    [webView selectAll:nil];
+
+    NSRange selectedRange = [webView _selectedRange];
+    NSRange remainingRange = selectedRange;
+
+    NSUInteger lineCount = 0;
+    while (remainingRange.length) {
+        auto [firstRect, actualRange] = [webView _firstRectForCharacterRange:remainingRange];
+
+        auto [expectedRect, expectedRange] = expectedRectsAndRanges[lineCount];
+
+        EXPECT_TRUE(NSEqualRects(expectedRect, firstRect));
+        EXPECT_TRUE(NSEqualRanges(expectedRange, actualRange));
+
+        remainingRange.location += actualRange.length;
+        remainingRange.length -= actualRange.length;
+
+        lineCount++;
+    }
+
+    EXPECT_EQ(5U, lineCount);
+}
+
+TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeForPartialLineWithNewlinesAndWrapping)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body><div>Lorem ipsum dolor sit amet, consectetur adipiscing</div><div>elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    [webView selectAll:nil];
+
+    NSRange characterRange = NSMakeRange(175, 31);
+    NSRect expectedRect = NSMakeRect(87.f, 538.f, 192.f, 18.f);
+
+    auto [firstRect, actualRange] = [webView _firstRectForCharacterRange:characterRange];
+    EXPECT_TRUE(NSEqualRects(expectedRect, firstRect));
+    EXPECT_TRUE(NSEqualRanges(characterRange, actualRange));
+}
+
+TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeWithNewlinesAndWrappingLineBreakAfterWhiteSpace)
+{
+    Vector<std::pair<NSRect, NSRange>> expectedRectsAndRanges = {
+        { { { 8.f, 574.f }, { 328.f, 18.f } }, { 0, 51 } },
+        { { { 8.f, 556.f }, { 723.f, 18.f } }, { 51, 111 } },
+        { { { 8.f, 538.f }, { 774.f, 18.f } }, { 162, 122 } },
+        { { { 8.f, 520.f }, { 768.f, 18.f } }, { 284, 125 } },
+        // FIXME: <http://webkit.org/b/278181> The size of the rect for the last line is incorrect.
+        { { { 8.f, 502.f }, { 768.f, 36.f } }, { 409, 36 } }
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='line-break: after-white-space;'><div>Lorem ipsum dolor sit amet, consectetur adipiscing</div><div>elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    [webView selectAll:nil];
+
+    NSRange selectedRange = [webView _selectedRange];
+    NSRange remainingRange = selectedRange;
+
+    NSUInteger lineCount = 0;
+    while (remainingRange.length) {
+        auto [firstRect, actualRange] = [webView _firstRectForCharacterRange:remainingRange];
+
+        auto [expectedRect, expectedRange] = expectedRectsAndRanges[lineCount];
+
+        EXPECT_TRUE(NSEqualRects(expectedRect, firstRect));
+        EXPECT_TRUE(NSEqualRanges(expectedRange, actualRange));
+
+        remainingRange.location += actualRange.length;
+        remainingRange.length -= actualRange.length;
+
+        lineCount++;
+    }
+
+    EXPECT_EQ(5U, lineCount);
+}
+
+TEST(WKWebViewMacEditingTests, FirstRectForCharacterRangeForPartialLineWithNewlinesAndWrappingLineBreakAfterWhiteSpace)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body style='line-break: after-white-space;'><div>Lorem ipsum dolor sit amet, consectetur adipiscing</div><div>elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    [webView selectAll:nil];
+
+    NSRange characterRange = NSMakeRange(175, 31);
+    NSRect expectedRect = NSMakeRect(87.f, 538.f, 192.f, 18.f);
+
+    auto [firstRect, actualRange] = [webView _firstRectForCharacterRange:characterRange];
+    EXPECT_TRUE(NSEqualRects(expectedRect, firstRect));
+    EXPECT_TRUE(NSEqualRanges(characterRange, actualRange));
 }
 
 #endif // PLATFORM(MAC)
