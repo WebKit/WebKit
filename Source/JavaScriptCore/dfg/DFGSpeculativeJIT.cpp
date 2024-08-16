@@ -3204,32 +3204,6 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 #endif
 }
 
-JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node* node, GPRReg base, Jump outOfBounds)
-{
-    Jump done;
-    if (outOfBounds.isSet()) {
-        done = jump();
-        if (node->arrayMode().isInBounds())
-            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
-        else {
-            // This includes resizable arraybuffer's out-of-bounds. But here, we exit only when the buffer is detached.
-            outOfBounds.link(this);
-
-            Jump notWasteful = branchTest8(
-                Zero,
-                Address(base, JSArrayBufferView::offsetOfMode()),
-                TrustedImm32(isWastefulTypedArrayMode));
-
-            auto hasNullVector = branchTestPtr(
-                Zero,
-                Address(base, JSArrayBufferView::offsetOfVector()));
-            speculationCheck(Uncountable, JSValueSource(), node, hasNullVector);
-            notWasteful.link(this);
-        }
-    }
-    return done;
-}
-
 void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
 {
     switch (elementSize(type)) {
@@ -3599,9 +3573,16 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
         CRASH();
     }
 
-    Jump done = jumpForTypedArrayIsDetachedIfOutOfBounds(node, baseReg, outOfBounds);
-    if (done.isSet())
-        done.link(this);
+    if (outOfBounds.isSet()) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        else {
+            if (node->op() == PutByValDirect)
+                speculationCheck(Uncountable, JSValueSource(), nullptr, outOfBounds);
+            else
+                outOfBounds.link(this);
+        }
+    }
 
     if (!slowPathCases.empty()) {
         addSlowPathGenerator(slowPathCall(
@@ -3738,9 +3719,17 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    Jump done = jumpForTypedArrayIsDetachedIfOutOfBounds(node, baseReg, outOfBounds);
-    if (done.isSet())
-        done.link(this);
+    if (outOfBounds.isSet()) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        else {
+            if (node->op() == PutByValDirect)
+                speculationCheck(Uncountable, JSValueSource(), nullptr, outOfBounds);
+            else
+                outOfBounds.link(this);
+        }
+    }
+
     noResult(node);
 }
 
