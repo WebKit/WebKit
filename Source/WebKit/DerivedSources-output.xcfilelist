@@ -12,8 +12,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DrawingAreaMessageReceiver.cpp
@@ -412,9 +410,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessageRece
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerDownloadTaskMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ServiceWorkerFetchTaskMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.serialization.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SmartMagnificationControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SourceBufferPrivateRemoteMessageReceiver.cpp
@@ -484,6 +479,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebExtensionIDLFileNamesList.txt
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.serialization.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFileSystemStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebFrameMessageReceiver.cpp

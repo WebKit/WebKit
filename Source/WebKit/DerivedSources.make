@@ -52,7 +52,6 @@ VPATH = \
     $(WebKit2)/WebProcess/Automation \
     $(WebKit2)/WebProcess/Cache \
     $(WebKit2)/WebProcess/Databases/IndexedDB \
-    $(WebKit2)/WebProcess/DigitalCredentials \
     $(WebKit2)/WebProcess/Extensions/Interfaces \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
@@ -89,7 +88,6 @@ VPATH = \
     $(WebKit2)/UIProcess/Automation \
     $(WebKit2)/UIProcess/Cocoa \
     $(WebKit2)/UIProcess/Databases \
-    $(WebKit2)/UIProcess/DigitalCredentials \
     $(WebKit2)/UIProcess/Downloads \
     $(WebKit2)/UIProcess/GPU \
     $(WebKit2)/UIProcess/Inspector \
@@ -161,7 +159,6 @@ MESSAGE_RECEIVERS = \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \
 	UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy \
-	UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/UserContent/WebUserContentControllerProxy \
 	UIProcess/Inspector/WebInspectorUIProxy \

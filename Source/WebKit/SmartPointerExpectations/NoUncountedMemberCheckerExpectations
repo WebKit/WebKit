@@ -8,7 +8,6 @@ Shared/IPCTester.cpp
 Shared/RemoteLayerTree/RemoteLayerBackingStore.h
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h
 UIProcess/Automation/SimulatedInputDispatcher.h
-UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy.h
 UIProcess/GeolocationPermissionRequestManagerProxy.h
 UIProcess/Inspector/InspectorTargetProxy.h
 UIProcess/Inspector/WebPageInspectorAgentBase.h
@@ -31,7 +30,6 @@ UIProcess/WebPageProxyInternals.h
 UIProcess/WebPermissionControllerProxy.h
 UIProcess/WebPreferences.h
 WebProcess/ApplePay/WebPaymentCoordinator.h
-WebProcess/DigitalCredentials/DigitalCredentialsCoordinator.h
 WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.h
 WebProcess/GPU/media/MediaPlayerPrivateRemote.h
 WebProcess/GPU/media/RemoteImageDecoderAVF.h

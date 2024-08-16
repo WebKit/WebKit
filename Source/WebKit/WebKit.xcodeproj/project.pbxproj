@@ -3290,8 +3290,6 @@
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0D02BE3129B6D0F7005852BF /* WebGPUInternalError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternalError.h; sourceTree = "<group>"; };
 		0D02BE3229B6D0F8005852BF /* WebGPUInternalError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUInternalError.cpp; sourceTree = "<group>"; };
-		0D20EA192C59E2CE00CA61BD /* DigitalCredentialsCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredentialsCoordinator.cpp; sourceTree = "<group>"; };
-		0D20EA1C2C59E2F900CA61BD /* DigitalCredentialsCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsCoordinator.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.xcfilelist; };
 		0D25BC912B69D92100916722 /* WebGPUInternalError.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUInternalError.serialization.in; sourceTree = "<group>"; };
 		0D6D0AA32C6AD99B0073F63D /* RemoteXRView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRView.h; sourceTree = "<group>"; };
 		0D6D0AA42C6AD99B0073F63D /* RemoteXRView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRView.cpp; sourceTree = "<group>"; };
@@ -3321,12 +3319,7 @@
 		0D943C082C6555DB00D33BA5 /* RemoteXRSubImage.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteXRSubImage.messages.in; sourceTree = "<group>"; };
 		0D943C092C65560E00D33BA5 /* RemoteXRSubImageProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteXRSubImageProxy.h; sourceTree = "<group>"; };
 		0D943C0A2C65560E00D33BA5 /* RemoteXRSubImageProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteXRSubImageProxy.cpp; sourceTree = "<group>"; };
-		0DB88AE32C61F62300971BE1 /* DigitalCredentialsCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredentialsCoordinatorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		0DB88AE42C61F62300971BE1 /* DigitalCredentialsCoordinatorProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsCoordinatorProxyMessages.h; sourceTree = "<group>"; };
 		0DCBF4D926E2ED3200EA0E07 /* WebAuthenticatorCoordinatorProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAuthenticatorCoordinatorProxy.mm; sourceTree = "<group>"; };
-		0DEA715C2C59C934002C5961 /* DigitalCredentialsCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DigitalCredentialsCoordinatorProxy.messages.in; sourceTree = "<group>"; };
-		0DEA715E2C59C9A9002C5961 /* DigitalCredentialsCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsCoordinatorProxy.h; sourceTree = "<group>"; };
-		0DEA71602C59D9B1002C5961 /* DigitalCredentialsCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredentialsCoordinatorProxy.cpp; sourceTree = "<group>"; };
 		0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingSPI.h; sourceTree = "<group>"; };
 		0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsitePopUpPolicy.h; sourceTree = "<group>"; };
 		0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectPicker.h; path = ios/forms/WKFormSelectPicker.h; sourceTree = "<group>"; };
@@ -8861,25 +8854,6 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
-		0D20EA1A2C59E2CE00CA61BD /* DigitalCredentials */ = {
-			isa = PBXGroup;
-			children = (
-				0D20EA192C59E2CE00CA61BD /* DigitalCredentialsCoordinator.cpp */,
-				0D20EA1C2C59E2F900CA61BD /* DigitalCredentialsCoordinator.h */,
-			);
-			path = DigitalCredentials;
-			sourceTree = "<group>";
-		};
-		0DEA715D2C59C934002C5961 /* DigitalCredentials */ = {
-			isa = PBXGroup;
-			children = (
-				0DEA71602C59D9B1002C5961 /* DigitalCredentialsCoordinatorProxy.cpp */,
-				0DEA715E2C59C9A9002C5961 /* DigitalCredentialsCoordinatorProxy.h */,
-				0DEA715C2C59C934002C5961 /* DigitalCredentialsCoordinatorProxy.messages.in */,
-			);
-			path = DigitalCredentials;
-			sourceTree = "<group>";
-		};
 		0F45A32E239D896000294ABF /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -13852,7 +13826,6 @@
 				41D129D81F3D101400D15E47 /* Cache */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
 				512A9754180DF9270039A149 /* Databases */,
-				0D20EA1A2C59E2CE00CA61BD /* DigitalCredentials */,
 				9ACC07A925C812E700DC6386 /* EncryptedMedia */,
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
 				1CC23B1E288732F600D0A65A /* Extensions */,
@@ -14067,7 +14040,6 @@
 				512F588D12A8836F00629530 /* Authentication */,
 				9955A6E81C79809000EB6A93 /* Automation */,
 				1ABC3DF21899E415004F0626 /* Cocoa */,
-				0DEA715D2C59C934002C5961 /* DigitalCredentials */,
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
 				1CC23B1A288732A800D0A65A /* Extensions */,
 				515BE17B1D54EF5A00DD7C68 /* Gamepad */,
@@ -15201,8 +15173,6 @@
 				EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */,
 				51DAAEBF2AA198DE00DB2AA4 /* com.apple.WebKit.webpushd.relocatable.mac.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
-				0DB88AE32C61F62300971BE1 /* DigitalCredentialsCoordinatorProxyMessageReceiver.cpp */,
-				0DB88AE42C61F62300971BE1 /* DigitalCredentialsCoordinatorProxyMessages.h */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
 				1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */,

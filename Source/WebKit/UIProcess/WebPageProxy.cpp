@@ -329,7 +329,6 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
-#include "DigitalCredentialsCoordinatorProxy.h"
 #include "WebAuthenticatorCoordinatorProxy.h"
 #endif
 
@@ -1466,11 +1465,8 @@ void WebPageProxy::didAttachToRunningProcess()
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    ASSERT(!m_webAuthnCredentialsMessenger);
-    m_webAuthnCredentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
-
-    ASSERT(!m_digitalCredentialsMessenger);
-    m_digitalCredentialsMessenger = makeUnique<DigitalCredentialsCoordinatorProxy>(*this);
+    ASSERT(!m_credentialsMessenger);
+    m_credentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -2925,9 +2921,9 @@ void WebPageProxy::dispatchActivityStateChange()
     }
 
 #if ENABLE(WEB_AUTHN) && HAVE(WEB_AUTHN_AS_MODERN)
-    if ((changed & ActivityState::WindowIsActive) && m_webAuthnCredentialsMessenger) {
+    if ((changed & ActivityState::WindowIsActive) && m_credentialsMessenger) {
         if (protectedPageClient()->isViewWindowActive())
-            m_webAuthnCredentialsMessenger->makeActiveConditionalAssertion();
+            m_credentialsMessenger->makeActiveConditionalAssertion();
     }
 #endif
 
@@ -6035,7 +6031,6 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 {
 #if ENABLE(WEB_AUTHN)
     protectedWebsiteDataStore()->authenticatorManager().cancelRequest(webPageIDInMainFrameProcess(), frameID);
-    // FIXME: Implement equivalent Digital Credential Manager (https://webkit.org/b/277850).
 #endif
     if (RefPtr automationSession = configuration().processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
@@ -6228,7 +6223,6 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 
 #if ENABLE(WEB_AUTHN)
     protectedWebsiteDataStore()->authenticatorManager().cancelRequest(internals().webPageID, frameID);
-    // FIXME: Implement equivalent Digital Credential Manager (https://webkit.org/b/277850).
 #endif
 }
 
@@ -10274,8 +10268,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_webAuthnCredentialsMessenger = nullptr;
-    m_digitalCredentialsMessenger = nullptr;
+    m_credentialsMessenger = nullptr;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -10302,7 +10295,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(WEB_AUTHN)
     protectedWebsiteDataStore()->authenticatorManager().cancelRequest(internals().webPageID, std::nullopt);
-    // FIXME: Implement equivalent Digital Credential Manager (https://webkit.org/b/277850).
 #endif
 
     m_speechRecognitionPermissionManager = nullptr;
