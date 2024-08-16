@@ -99,8 +99,11 @@ static const Node& nearestBlockAncestor(const Node& node)
 {
     const Node* currentNode = &node;
     while (currentNode) {
-        if (!currentNode->isTextNode() && currentNode->renderer() && currentNode->renderer()->style().isDisplayBlockLevel())
-            return *currentNode;
+        if (!currentNode->isTextNode()) {
+            CheckedPtr renderer = currentNode->renderer();
+            if (renderer && renderer->style().isDisplayBlockLevel())
+                return *currentNode;
+        }
         currentNode = currentNode->parentNode();
     }
     return node.document();
@@ -132,12 +135,18 @@ static bool indexIsAtWordBoundary(const String& string, unsigned index)
 // https://wicg.github.io/scroll-to-text-fragment/#visible-text-node
 static bool isVisibleTextNode(const Node& node)
 {
-    return node.isTextNode() && node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+    if (!node.isTextNode())
+        return false;
+    if (CheckedPtr renderer = node.renderer())
+        return renderer->style().visibility() == Visibility::Visible;
+    return false;
 }
 
 static bool isVisibleTextNode(const Text& node)
 {
-    return node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+    if (CheckedPtr renderer = node.renderer())
+        return renderer->style().visibility() == Visibility::Visible;
+    return false;
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-node-list
@@ -245,7 +254,8 @@ static std::optional<SimpleRange> rangeOfStringInRange(const String& query, Simp
         Vector<Ref<Text>> textNodeList;
         // FIXME: this is O^2 since treeOrder will also do traversal, optimize.
         while (currentNode && currentNode->isDescendantOf(blockAncestor) && is_lteq(treeOrder(BoundaryPoint(*currentNode, 0), searchRange.end))) {
-            if (currentNode->renderer() && is<Element>(currentNode) && currentNode->renderer()->style().isDisplayBlockLevel())
+            CheckedPtr renderer = currentNode->renderer();
+            if (renderer && is<Element>(currentNode) && renderer->style().isDisplayBlockLevel())
                 break;
 
             if (isSearchInvisible(*currentNode)) {
