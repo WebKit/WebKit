@@ -305,25 +305,26 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         }
     }
 
-    auto resolveAndAddPseudoElementStyle = [&](const PseudoElementIdentifier& pseudoElementIdentifier) {
-        auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementIdentifier, update, parent().isInDisplayNoneTree);
+    auto resolveAndAddPseudoElementStyle = [&](const PseudoElementRequest& pseudoElementRequest) {
+        auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementRequest, update, parent().isInDisplayNoneTree);
         auto pseudoElementChange = [&] {
             if (pseudoElementUpdate) {
-                if (pseudoElementIdentifier.pseudoId == PseudoId::WebKitScrollbar)
+                if (pseudoElementRequest.pseudoId() == PseudoId::WebKitScrollbar)
                     return pseudoElementUpdate->change;
                 return pseudoElementUpdate->change == Change::None ? Change::None : Change::NonInherited;
             }
-            if (!existingStyle || !existingStyle->getCachedPseudoStyle(pseudoElementIdentifier))
+            if (!existingStyle || !existingStyle->getCachedPseudoStyle(pseudoElementRequest.identifier()))
                 return Change::None;
             // If ::first-letter goes aways rebuild the renderers.
-            return pseudoElementIdentifier.pseudoId == PseudoId::FirstLetter ? Change::Renderer : Change::NonInherited;
+            return pseudoElementRequest.pseudoId() == PseudoId::FirstLetter ? Change::Renderer : Change::NonInherited;
         }();
         update.change = std::max(update.change, pseudoElementChange);
         if (!pseudoElementUpdate)
             return pseudoElementChange;
         if (pseudoElementUpdate->recompositeLayer)
             update.recompositeLayer = true;
-        update.style->addCachedPseudoStyle(WTFMove(pseudoElementUpdate->style));
+        if (!pseudoElementRequest.nameArgument())
+            update.style->addCachedPseudoStyle(WTFMove(pseudoElementUpdate->style));
         return pseudoElementUpdate->change;
     };
     
@@ -344,11 +345,11 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
         RefPtr activeViewTransition = m_document.activeViewTransition();
         ASSERT(activeViewTransition);
-        for (auto& name : activeViewTransition->namedElements().keys()) {
-            resolveAndAddPseudoElementStyle({ PseudoId::ViewTransitionGroup, name });
-            resolveAndAddPseudoElementStyle({ PseudoId::ViewTransitionImagePair, name });
-            resolveAndAddPseudoElementStyle({ PseudoId::ViewTransitionNew, name });
-            resolveAndAddPseudoElementStyle({ PseudoId::ViewTransitionOld, name });
+        for (auto& [name, capturedElement] : activeViewTransition->namedElements().map()) {
+            resolveAndAddPseudoElementStyle({ { PseudoId::ViewTransitionGroup, name }, capturedElement->classList });
+            resolveAndAddPseudoElementStyle({ { PseudoId::ViewTransitionImagePair, name }, capturedElement->classList });
+            resolveAndAddPseudoElementStyle({ { PseudoId::ViewTransitionNew, name }, capturedElement->classList });
+            resolveAndAddPseudoElementStyle({ { PseudoId::ViewTransitionOld, name }, capturedElement->classList });
         }
     }
 
@@ -376,47 +377,47 @@ inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
         || display == DisplayType::FlowRoot;
 };
 
-std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree)
+std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree)
 {
     if (elementUpdate.style->display() == DisplayType::None)
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::Backdrop && !element.isInTopLayer())
+    if (pseudoElementRequest.pseudoId() == PseudoId::Backdrop && !element.isInTopLayer())
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
+    if (pseudoElementRequest.pseudoId() == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLine && !scope().resolver->usesFirstLineRules())
+    if (pseudoElementRequest.pseudoId() == PseudoId::FirstLine && !scope().resolver->usesFirstLineRules())
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::FirstLetter && !scope().resolver->usesFirstLetterRules())
+    if (pseudoElementRequest.pseudoId() == PseudoId::FirstLetter && !scope().resolver->usesFirstLetterRules())
         return { };
-    if (pseudoElementIdentifier.pseudoId == PseudoId::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
+    if (pseudoElementRequest.pseudoId() == PseudoId::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
         return { };
-    auto isViewTransitionPseudoElement = pseudoElementIdentifier.pseudoId == PseudoId::ViewTransition
-        || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionGroup
-        || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionImagePair
-        || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionNew
-        || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionOld;
+    auto isViewTransitionPseudoElement = pseudoElementRequest.pseudoId() == PseudoId::ViewTransition
+        || pseudoElementRequest.pseudoId() == PseudoId::ViewTransitionGroup
+        || pseudoElementRequest.pseudoId() == PseudoId::ViewTransitionImagePair
+        || pseudoElementRequest.pseudoId() == PseudoId::ViewTransitionNew
+        || pseudoElementRequest.pseudoId() == PseudoId::ViewTransitionOld;
     if (isViewTransitionPseudoElement)
         ASSERT(m_document.hasViewTransitionPseudoElementTree() && &element == m_document.documentElement());
 
-    if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.pseudoId))
-        return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);
+    if (!elementUpdate.style->hasPseudoStyle(pseudoElementRequest.pseudoId()))
+        return resolveAncestorPseudoElement(element, pseudoElementRequest.identifier(), elementUpdate);
 
-    if ((pseudoElementIdentifier.pseudoId == PseudoId::FirstLine || pseudoElementIdentifier.pseudoId == PseudoId::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
+    if ((pseudoElementRequest.pseudoId() == PseudoId::FirstLine || pseudoElementRequest.pseudoId() == PseudoId::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
         return { };
 
-    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementRequest.identifier());
 
-    auto resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, resolutionContext);
+    auto resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementRequest, resolutionContext);
     if (!resolvedStyle)
         return { };
 
-    auto animatedUpdate = createAnimatedElementUpdate(WTFMove(*resolvedStyle), { element, pseudoElementIdentifier }, elementUpdate.change, resolutionContext, isInDisplayNoneTree);
+    auto animatedUpdate = createAnimatedElementUpdate(WTFMove(*resolvedStyle), { element, pseudoElementRequest.identifier() }, elementUpdate.change, resolutionContext, isInDisplayNoneTree);
 
-    if (pseudoElementIdentifier.pseudoId == PseudoId::Before || pseudoElementIdentifier.pseudoId == PseudoId::After) {
+    if (pseudoElementRequest.pseudoId() == PseudoId::Before || pseudoElementRequest.pseudoId() == PseudoId::After) {
         if (scope().resolver->usesFirstLineRules()) {
             // ::first-line can inherit to ::before/::after
             if (auto firstLineContext = makeResolutionContextForInheritedFirstLine(elementUpdate, *elementUpdate.style)) {
-                auto firstLineStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, *firstLineContext);
+                auto firstLineStyle = scope().resolver->styleForPseudoElement(element, pseudoElementRequest.identifier(), *firstLineContext);
                 firstLineStyle->style->setPseudoElementType(PseudoId::FirstLine);
                 animatedUpdate.style->addCachedPseudoStyle(WTFMove(firstLineStyle->style));
             }

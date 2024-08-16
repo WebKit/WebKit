@@ -84,7 +84,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     }
     case MarkedText::Type::Highlight: {
-        auto renderStyle = renderer.parent()->getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &renderer.style());
+        auto renderStyle = renderer.parent()->getUncachedPseudoStyle(Style::PseudoElementIdentifier { PseudoId::Highlight, markedText.highlightName }, &renderer.style());
         computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
         break;
     }

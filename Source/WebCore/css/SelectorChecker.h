@@ -86,6 +86,7 @@ public:
         PseudoId pseudoId { PseudoId::None };
         AtomString pseudoElementNameArgument;
         std::optional<StyleScrollbarState> scrollbarState;
+        Vector<AtomString> classList;
         RefPtr<const ContainerNode> scope;
         const Element* hasScope { nullptr };
         bool matchesAllHasScopes { false };

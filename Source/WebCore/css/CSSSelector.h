@@ -26,6 +26,7 @@
 #include "RenderStyleConstants.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/FixedVector.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -38,6 +39,11 @@ struct PossiblyQuotedIdentifier {
 
     bool isNull() const { return identifier.isNull(); }
 };
+
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, PossiblyQuotedIdentifier quoted)
+{
+    return ts << quoted.identifier;
+}
 
 enum class SelectorSpecificityIncrement {
     ClassA = 0x10000,

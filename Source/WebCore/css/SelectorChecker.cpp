@@ -1273,7 +1273,24 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
 
             // Wildcard always matches.
             auto& argument = selector.argumentList()->first();
-            return argument == starAtom() || argument == checkingContext.pseudoElementNameArgument;
+            if (argument != starAtom() && argument != checkingContext.pseudoElementNameArgument)
+                return false;
+
+            // WTFReportBacktrace();
+            ALWAYS_LOG_WITH_STREAM(stream << "selector argument list: " << *selector.argumentList());
+            ALWAYS_LOG_WITH_STREAM(stream << "nameArgument: " << checkingContext.pseudoElementNameArgument);
+            ALWAYS_LOG_WITH_STREAM(stream << "checking context argument list: " << checkingContext.classList);
+
+            auto result = std::ranges::all_of(
+                selector.argumentList()->begin() + 1, selector.argumentList()->end(),
+                [&](const PossiblyQuotedIdentifier& classSelector) {
+                    return checkingContext.classList.contains(classSelector.identifier);
+                }
+            );
+
+            ALWAYS_LOG_WITH_STREAM(stream << "result: " << result << "\n");
+
+            return result;
         }
 
         default:

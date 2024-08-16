@@ -66,6 +66,7 @@ public:
     LayoutSize oldSize;
     RefPtr<MutableStyleProperties> oldProperties;
     WeakStyleable newElement;
+    Vector<AtomString> classList;
 
     RefPtr<MutableStyleProperties> groupStyleProperties;
 };

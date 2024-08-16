@@ -40,8 +40,8 @@ public:
 
     void updatePseudoElementTree(RenderElement&, StyleDifference minimalStyleDifference);
 private:
-    void buildPseudoElementGroup(const AtomString&, RenderElement&, RenderObject* = nullptr);
-    void updatePseudoElementGroup(const RenderStyle&, RenderElement&, RenderElement&, StyleDifference minimalStyleDifference);
+    void buildPseudoElementGroup(const AtomString&, const Vector<AtomString>&, RenderElement&, RenderObject* = nullptr);
+    void updatePseudoElementGroup(const RenderStyle&, RenderElement&, RenderElement&, const Vector<AtomString>&, StyleDifference minimalStyleDifference);
     RenderTreeUpdater& m_updater;
 };
 

@@ -41,25 +41,29 @@ public:
         ASSERT(pseudoId != PseudoId::None);
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameArgument)
-        : m_identifier({ pseudoId, nameArgument })
-    {
-        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
-    }
-
     PseudoElementRequest(const PseudoElementIdentifier& pseudoElementIdentifier)
         : m_identifier(pseudoElementIdentifier)
     {
         ASSERT(pseudoElementIdentifier.pseudoId != PseudoId::None);
     }
 
+    PseudoElementRequest(const PseudoElementIdentifier& pseudoElementIdentifier, Vector<AtomString> classList)
+        : m_identifier(pseudoElementIdentifier)
+        , m_classList(classList)
+    {
+        auto pseudoId = pseudoElementIdentifier.pseudoId;
+        ASSERT(pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
+    }
+
     const PseudoElementIdentifier& identifier() const { return m_identifier; }
     PseudoId pseudoId() const { return m_identifier.pseudoId; }
     const AtomString& nameArgument() const { return m_identifier.nameArgument; }
+    const Vector<AtomString>& classList() const { return m_classList; }
     const std::optional<StyleScrollbarState>& scrollbarState() const { return m_scrollbarState; }
 
 private:
     PseudoElementIdentifier m_identifier;
+    Vector<AtomString> m_classList;
     std::optional<StyleScrollbarState> m_scrollbarState;
 };
 

@@ -6801,7 +6801,7 @@ String Internals::highlightPseudoElementColor(const AtomString& highlightName, E
     if (!parentStyle)
         return { };
 
-    auto resolvedStyle = styleResolver.styleForPseudoElement(element, { PseudoId::Highlight, highlightName }, { parentStyle });
+    auto resolvedStyle = styleResolver.styleForPseudoElement(element, Style::PseudoElementIdentifier { PseudoId::Highlight, highlightName }, { parentStyle });
     if (!resolvedStyle)
         return { };
 

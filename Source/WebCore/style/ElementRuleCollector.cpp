@@ -508,6 +508,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
         context.pseudoId = m_pseudoElementRequest->pseudoId();
         context.pseudoElementNameArgument = m_pseudoElementRequest->nameArgument();
         context.scrollbarState = m_pseudoElementRequest->scrollbarState();
+        context.classList = m_pseudoElementRequest->classList();
     }
     context.styleScopeOrdinal = styleScopeOrdinal;
     context.selectorMatchingState = m_selectorMatchingState;
