@@ -669,7 +669,7 @@ void Heap::reportAbandonedObjectGraph()
     // we hasten the next collection by pretending that we've allocated more memory. 
     if (m_fullActivityCallback) {
         m_fullActivityCallback->didAllocate(*this,
-            m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
+            m_sizeAfterLastCollect - m_sizeAfterLastFullCollect + totalBytesAllocatedThisCycle() + m_bytesAbandonedSinceLastFullCollect);
     }
     m_bytesAbandonedSinceLastFullCollect += abandonedBytes;
 }
@@ -1429,7 +1429,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
     } else
-        m_bytesAllocatedBeforeLastEdenCollect = m_bytesAllocatedThisCycle;
+        m_bytesAllocatedBeforeLastEdenCollect = totalBytesAllocatedThisCycle();
 
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());
 
@@ -2320,7 +2320,7 @@ void Heap::willStartCollection()
         dataLogIf(Options::logGC(), "EdenCollection, ");
     }
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
-        m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
+        m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + totalBytesAllocatedThisCycle();
         m_extraMemorySize = 0;
         m_deprecatedExtraMemorySize = 0;
 #if ENABLE(RESOURCE_USAGE)
@@ -2331,7 +2331,7 @@ void Heap::willStartCollection()
             m_fullActivityCallback->willCollect();
     } else {
         ASSERT(m_collectionScope && m_collectionScope.value() == CollectionScope::Eden);
-        m_sizeBeforeLastEdenCollect = m_sizeAfterLastCollect + m_bytesAllocatedThisCycle;
+        m_sizeBeforeLastEdenCollect = m_sizeAfterLastCollect + totalBytesAllocatedThisCycle();
     }
 
     if (m_edenActivityCallback)
@@ -2390,7 +2390,7 @@ void Heap::updateAllocationLimits()
 {
     constexpr bool verbose = false;
     
-    dataLogLnIf(verbose, "\nbytesAllocatedThisCycle = ", m_bytesAllocatedThisCycle);
+    dataLogLnIf(verbose, "\nnonOversizedBytesAllocatedThisCycle = ", m_nonOversizedBytesAllocatedThisCycle, ", oversizedBytesAllocatedThisCycle", m_oversizedBytesAllocatedThisCycle);
     
     // Calculate our current heap size threshold for the purpose of figuring out when we should
     // run another collection. This isn't the same as either size() or capacity(), though it should
@@ -2461,7 +2461,9 @@ void Heap::updateAllocationLimits()
 
     m_sizeAfterLastCollect = currentHeapSize;
     dataLogLnIf(verbose, "sizeAfterLastCollect = ", m_sizeAfterLastCollect);
-    m_bytesAllocatedThisCycle = 0;
+    m_nonOversizedBytesAllocatedThisCycle = 0;
+    m_oversizedBytesAllocatedThisCycle = 0;
+    m_lastOversidedAllocationThisCycle = 0;
 
     dataLogIf(Options::logGC(), "=> ", currentHeapSize / 1024, "kb, ");
 }
@@ -2527,11 +2529,16 @@ void Heap::setGarbageCollectionTimerEnabled(bool enable)
         m_edenActivityCallback->setEnabled(enable);
 }
 
+constexpr size_t oversizedAllocationThreshold = 64 * KB;
 void Heap::didAllocate(size_t bytes)
 {
     if (m_edenActivityCallback)
-        m_edenActivityCallback->didAllocate(*this, m_bytesAllocatedThisCycle + m_bytesAbandonedSinceLastFullCollect);
-    m_bytesAllocatedThisCycle += bytes;
+        m_edenActivityCallback->didAllocate(*this, totalBytesAllocatedThisCycle() + m_bytesAbandonedSinceLastFullCollect);
+    if (bytes >= oversizedAllocationThreshold) {
+        m_oversizedBytesAllocatedThisCycle += bytes;
+        m_lastOversidedAllocationThisCycle = bytes;
+    } else
+        m_nonOversizedBytesAllocatedThisCycle += bytes;
     performIncrement(bytes);
 }
 
@@ -2759,20 +2766,46 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
             stopIfNecessary();
     }
     
-    if (UNLIKELY(Options::gcMaxHeapSize())) {
-        if (m_bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
-            return;
-    } else {
+    auto shouldRequestGC = [&] () -> bool {
+        bool logRequestGC = false;
+        // Don't log if we already have a request pending or if we have to come back later so we don't flood dataFile.
+        if (UNLIKELY(Options::logGC()))
+            logRequestGC = m_requests.isEmpty() && !deferralContext && !isDeferred();
+        if (UNLIKELY(Options::gcMaxHeapSize())) {
+            size_t bytesAllocatedThisCycle = totalBytesAllocatedThisCycle();
+            if (bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
+                return false;
+            dataLogLnIf(logRequestGC, "Requesting GC because bytes allocated this cycle: ", bytesAllocatedThisCycle, " exceed Options::gcMaxHeapSize(): ", Options::gcMaxHeapSize());
+            return true;
+        }
+
         size_t bytesAllowedThisCycle = m_maxEdenSize;
 
+        bool isCritical = false;
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-        if (overCriticalMemoryThreshold())
+        isCritical = overCriticalMemoryThreshold();
+        if (isCritical)
             bytesAllowedThisCycle = std::min(m_maxEdenSizeWhenCritical, bytesAllowedThisCycle);
 #endif
 
-        if (m_bytesAllocatedThisCycle <= bytesAllowedThisCycle)
-            return;
-    }
+        size_t bytesAllocatedThisCycle = totalBytesAllocatedThisCycle();
+        if (bytesAllocatedThisCycle <= bytesAllowedThisCycle)
+            return false;
+
+        // We don't want to GC if the last oversized allocation makes up too much of the memory allocated this cycle since it's likely
+        //  that object is still live and doesn't give us much indication about how much memory we could actually reclaim. That said,
+        // if the system is cricital or we have a small heap we want to be very agressive about reclaiming memory to reduce overall
+        // pressure on the system.
+        if (!isCritical && m_heapType == HeapType::Large) {
+            if (static_cast<double>(m_lastOversidedAllocationThisCycle) / bytesAllocatedThisCycle > 1.0 / 3.0)
+                return false;
+        }
+
+        dataLogLnIf(logRequestGC, "Requesting GC because bytes allocated this cycle: ", bytesAllocatedThisCycle, " exceed bytes allowed: ", bytesAllowedThisCycle, ConditionalDump(isCritical, " (critical)"), " normal bytes: ", m_nonOversizedBytesAllocatedThisCycle, " oversized bytes: ", m_oversizedBytesAllocatedThisCycle, " last oversized: ", m_lastOversidedAllocationThisCycle);
+        return true;
+    };
+    if (!shouldRequestGC())
+        return;
 
     if (deferralContext)
         deferralContext->m_shouldGC = true;

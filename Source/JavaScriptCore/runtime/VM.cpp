@@ -1699,8 +1699,8 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
 
     dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] QUERY", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
     JSLockHolder locker { *this };
-    if (deferredWorkTimer->hasAnyPendingWork()) {
-        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: No pending tasks", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
+    if (deferredWorkTimer->hasImminentlyScheduledWork()) {
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: DeferredWorkTimer hasImminentlyScheduledWork signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
         return;
     }
 
@@ -1731,17 +1731,17 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
         }
 
         auto timeSinceLastGC = secondsSinceEpoch - std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime).secondsSinceEpoch();
-        if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
-            auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
+        if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.totalBytesAllocatedThisCycle() && heap.m_bytesAllocatedBeforeLastEdenCollect) {
+            auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
-                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
+                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.totalBytesAllocatedThisCycle(), " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
                 heap.collectSync(CollectionScope::Eden);
                 heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
             }
         }
 
-        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: nothing met. ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: nothing met. ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.totalBytesAllocatedThisCycle(), " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
     }();
 
     heap.sweeper().doWorkUntil(*this, deadline);

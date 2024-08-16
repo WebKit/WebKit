@@ -206,7 +206,8 @@ void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& v
             return;
         }
 
-        if (++m_deferCount < deferCountThreshold) {
+        // deferredWorkTimer->hasImminentlyScheduledWork() typically means a wasm compilation is happening right now so we REALLY don't want to GC now.
+        if (++m_deferCount < deferCountThreshold || vm.deferredWorkTimer->hasImminentlyScheduledWork()) {
             m_delay = delay;
             setTimeUntilFire(delay);
             return;
@@ -249,7 +250,8 @@ void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& v
             return;
         }
 
-        if (++m_deferCount < deferCountThreshold) {
+        // deferredWorkTimer->hasImminentlyScheduledWork() typically means a wasm compilation is happening right now so we REALLY don't want to GC now.
+        if (++m_deferCount < deferCountThreshold || vm.deferredWorkTimer->hasImminentlyScheduledWork()) {
             m_delay = delay;
             setTimeUntilFire(delay);
             return;
