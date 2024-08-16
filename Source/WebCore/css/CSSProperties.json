@@ -9321,6 +9321,20 @@
                 "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-name"
             }
         },
+        "view-transition-class": {
+            "codegen-properties": {
+                "converter": "ViewTransitionClass",
+                "name-for-methods": "ViewTransitionClasses",
+                "parser-function": "consumeViewTransitionClass",
+                "parser-grammar-unused": "none | <custom-ident>+",
+                "parser-grammar-unused-reason": "Needs support for '+' multipliers.",
+                "settings-flag": "viewTransitionClassesEnabled"
+            },
+            "specification": {
+                "category": "css-view-transitions",
+                "url": "https://drafts.csswg.org/css-view-transitions-2/#view-transition-class-prop"
+            }
+        },
         "view-transition-name": {
             "codegen-properties": {
                 "converter": "ViewTransitionName",

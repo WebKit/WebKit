@@ -4341,6 +4341,29 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
+RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range)
+{
+    if (auto noneValue = consumeIdent<CSSValueNone>(range))
+        return noneValue;
+
+    CSSValueListBuilder list;
+    do {
+        if (range.peek().id() == CSSValueNone)
+            return nullptr;
+
+        auto ident = consumeCustomIdent(range);
+        if (!ident)
+            return nullptr;
+
+        list.append(ident.releaseNonNull());
+    } while (!range.atEnd());
+
+    if (list.isEmpty())
+        return nullptr;
+
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
 {
     if (auto noneValue = consumeIdent<CSSValueNone>(range))

@@ -443,6 +443,10 @@ PASS vector-effect (type: discrete) has testInterpolation function
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with linear easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with effect easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with keyframe easing
+PASS view-transition-class (type: discrete) has testInterpolation function
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with linear easing
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with effect easing
+PASS view-transition-class uses discrete animation when animating between "none" and "card scale-animation" with keyframe easing
 PASS view-transition-name (type: discrete) has testInterpolation function
 PASS view-transition-name uses discrete animation when animating between "none" and "header" with linear easing
 PASS view-transition-name uses discrete animation when animating between "none" and "header" with effect easing

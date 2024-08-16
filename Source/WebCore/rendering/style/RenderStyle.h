@@ -1121,6 +1121,7 @@ public:
 
     inline MathStyle mathStyle() const;
 
+    inline const Vector<Style::ScopedName>& viewTransitionClasses() const;
     inline std::optional<Style::ScopedName> viewTransitionName() const;
 
     void setDisplay(DisplayType value)
@@ -1770,6 +1771,7 @@ public:
     inline QuotesData* quotes() const;
     void setQuotes(RefPtr<QuotesData>&&);
 
+    inline void setViewTransitionClasses(const Vector<Style::ScopedName>&);
     inline void setViewTransitionName(std::optional<Style::ScopedName>);
 
     inline WillChangeData* willChange() const;
@@ -1876,6 +1878,7 @@ public:
     static constexpr ListStylePosition initialListStylePosition();
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
+    static inline Vector<Style::ScopedName> initialViewTransitionClasses();
     static inline std::optional<Style::ScopedName> initialViewTransitionName();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();

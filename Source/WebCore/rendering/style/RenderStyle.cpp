@@ -1923,6 +1923,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowAnchor);
         if (first.hasClip != second.hasClip)
             changingProperties.m_properties.set(CSSPropertyClip);
+        if (first.viewTransitionClasses != second.viewTransitionClasses)
+            changingProperties.m_properties.set(CSSPropertyViewTransitionClass);
         if (first.viewTransitionName != second.viewTransitionName)
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
         if (first.contentVisibility != second.contentVisibility)

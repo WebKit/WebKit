@@ -168,6 +168,7 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEdge(CSSPropertyID, CSSParserTokenRange&);
+RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
