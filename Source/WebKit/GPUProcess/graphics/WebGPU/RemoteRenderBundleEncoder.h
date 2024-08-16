@@ -42,6 +42,7 @@ class RenderBundleEncoder;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -79,6 +80,8 @@ private:
     RemoteRenderBundleEncoder& operator=(RemoteRenderBundleEncoder&&) = delete;
 
     WebCore::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

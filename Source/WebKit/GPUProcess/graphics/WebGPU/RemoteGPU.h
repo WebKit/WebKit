@@ -53,6 +53,7 @@ struct PresentationContextDescriptor;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -100,6 +101,8 @@ private:
     RemoteGPU(RemoteGPU&&) = delete;
     RemoteGPU& operator=(const RemoteGPU&) = delete;
     RemoteGPU& operator=(RemoteGPU&&) = delete;
+
+    RefPtr<IPC::Connection> connection() const;
 
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }

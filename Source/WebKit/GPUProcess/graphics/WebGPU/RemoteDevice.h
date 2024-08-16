@@ -55,6 +55,7 @@ enum class DeviceLostReason : uint8_t;
 }
 
 namespace IPC {
+class Connection;
 class Semaphore;
 class StreamServerConnection;
 }
@@ -114,6 +115,8 @@ private:
     RemoteDevice& operator=(RemoteDevice&&) = delete;
 
     WebCore::WebGPU::Device& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

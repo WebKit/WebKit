@@ -50,14 +50,7 @@
 #include <WebCore/WebGPUCreateImpl.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto didFailAssertion = !(assertion)) { \
-        auto connection = m_gpuConnectionToWebProcess.get(); \
-        if (!connection) \
-            return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
@@ -76,6 +69,14 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
 }
 
 RemoteGPU::~RemoteGPU() = default;
+
+RefPtr<IPC::Connection> RemoteGPU::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteGPU::initialize()
 {

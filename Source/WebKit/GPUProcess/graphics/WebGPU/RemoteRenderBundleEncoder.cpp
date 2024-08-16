@@ -38,14 +38,7 @@
 #include <WebCore/WebGPURenderBundleEncoder.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto didFailAssertion = !(assertion)) { \
-        auto connection = m_gpuConnectionToWebProcess.get(); \
-        if (!connection) \
-            return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
@@ -63,6 +56,14 @@ RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& 
 }
 
 RemoteRenderBundleEncoder::~RemoteRenderBundleEncoder() = default;
+
+RefPtr<IPC::Connection> RemoteRenderBundleEncoder::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteRenderBundleEncoder::destruct()
 {

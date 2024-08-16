@@ -68,6 +68,8 @@ public:
 private:
     RemoteMediaRecorder(GPUConnectionToWebProcess&, MediaRecorderIdentifier, Ref<WebCore::MediaRecorderPrivateWriter>&&, bool recordAudio);
 
+    RefPtr<IPC::Connection> connection() const;
+
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);

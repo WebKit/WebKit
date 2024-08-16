@@ -43,14 +43,7 @@
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto didFailAssertion = !(assertion)) { \
-        auto connection = m_connectionToWebProcess.get(); \
-        if (!connection) \
-            return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
@@ -77,6 +70,14 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
     disconnect();
+}
+
+RefPtr<IPC::Connection> RemoteSourceBufferProxy::connection() const
+{
+    RefPtr connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
 }
 
 void RemoteSourceBufferProxy::disconnect()

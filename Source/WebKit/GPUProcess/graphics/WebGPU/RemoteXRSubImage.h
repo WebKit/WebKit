@@ -52,6 +52,7 @@ class XRSubImage;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -87,6 +88,8 @@ private:
     RemoteXRSubImage& operator=(RemoteXRSubImage&&) = delete;
 
     WebCore::WebGPU::XRSubImage& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

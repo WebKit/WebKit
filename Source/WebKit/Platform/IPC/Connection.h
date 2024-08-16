@@ -124,6 +124,15 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)
 #define MESSAGE_CHECK_BASE_COROUTINE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, (void)0)
 
+#define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
+    if (UNLIKELY(!(assertion))) { \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
+        if (RefPtr processConnection = connection) \
+            processConnection->markCurrentlyDispatchedMessageAsInvalid(); \
+        return; \
+    } \
+} while (0)
+
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \

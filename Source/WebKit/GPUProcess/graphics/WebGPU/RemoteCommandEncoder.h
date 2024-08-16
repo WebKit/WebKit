@@ -42,6 +42,7 @@ class CommandEncoder;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -83,6 +84,8 @@ private:
     RemoteCommandEncoder& operator=(RemoteCommandEncoder&&) = delete;
 
     WebCore::WebGPU::CommandEncoder& backing() { return m_backing; }
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

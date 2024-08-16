@@ -36,14 +36,7 @@
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto didFailAssertion = !(assertion)) { \
-        auto connection = m_gpu->gpuConnectionToWebProcess(); \
-        if (!connection) \
-            return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
@@ -60,6 +53,14 @@ RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::Compos
 }
 
 RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
+
+RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
+{
+    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteCompositorIntegration::destruct()
 {

@@ -35,20 +35,7 @@
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUXRSubImage.h>
 
-#if PLATFORM(COCOA)
-#define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto* gpu = m_gpu.ptr()) { \
-            if (auto connection = gpu->gpuConnectionToWebProcess(); connection.get()) \
-                connection->terminateWebProcess(); \
-            \
-            return; \
-        } \
-    } \
-} while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 
@@ -63,6 +50,14 @@ RemoteXRSubImage::RemoteXRSubImage(WebCore::WebGPU::XRSubImage& xrSubImage, WebG
 }
 
 RemoteXRSubImage::~RemoteXRSubImage() = default;
+
+RefPtr<IPC::Connection> RemoteXRSubImage::connection() const
+{
+    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
+}
 
 void RemoteXRSubImage::destruct()
 {

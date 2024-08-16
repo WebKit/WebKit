@@ -52,6 +52,7 @@ class XRProjectionLayer;
 }
 
 namespace IPC {
+class Connection;
 class StreamServerConnection;
 }
 
@@ -87,6 +88,8 @@ private:
     RemoteXRProjectionLayer(RemoteXRProjectionLayer&&) = delete;
     RemoteXRProjectionLayer& operator=(const RemoteXRProjectionLayer&) = delete;
     RemoteXRProjectionLayer& operator=(RemoteXRProjectionLayer&&) = delete;
+
+    RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

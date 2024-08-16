@@ -38,14 +38,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) do { \
-    if (auto didFailAssertion = !(assertion)) { \
-        auto connection = m_gpuConnectionToWebProcess.get(); \
-        if (!connection) \
-            return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,6 +66,14 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
     m_writer->close();
+}
+
+RefPtr<IPC::Connection> RemoteMediaRecorder::connection() const
+{
+    RefPtr connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return nullptr;
+    return &connection->connection();
 }
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
