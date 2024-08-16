@@ -331,7 +331,7 @@
 #endif
 
 /* Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is. */
-#define BENABLE_MALLOC_HEAP_BREAKDOWN 0
+#define BENABLE_MALLOC_HEAP_BREAKDOWN 1
 
 /* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
 #define ENABLE_PHYSICAL_PAGE_MAP 0
