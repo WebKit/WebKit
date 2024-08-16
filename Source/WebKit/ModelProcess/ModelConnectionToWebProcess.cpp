@@ -169,6 +169,7 @@ void ModelConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& conn
         return;
 #endif
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ".", description(messageName).characters(), m_webProcessIdentifier.toUInt64());
+    m_modelProcess->parentProcessConnection()->send(Messages::ModelProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
 void ModelConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)

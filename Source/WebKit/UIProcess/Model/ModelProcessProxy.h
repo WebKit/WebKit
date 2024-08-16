@@ -69,6 +69,8 @@ public:
 private:
     explicit ModelProcessProxy();
 
+    void terminateWebProcess(WebCore::ProcessIdentifier);
+
     Type type() const final { return Type::Model; }
 
     void addSession(const WebsiteDataStore&);
