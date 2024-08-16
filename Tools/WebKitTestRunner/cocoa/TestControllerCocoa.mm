@@ -327,7 +327,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
     
-    [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
     [copiedConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
 
     m_mainWebView = makeUnique<PlatformWebView>((__bridge WKPageConfigurationRef)copiedConfiguration.get(), options);
