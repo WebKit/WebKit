@@ -1816,3 +1816,6 @@ tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass 
 
 # webkit.org/b/278178  [macOS Debug] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html is a flaky failure
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Pass Failure ]
+
+# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
