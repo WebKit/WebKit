@@ -3582,6 +3582,7 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
     WebCore::IntSize thumbSize();
     WebCore::IntRect trackBounds();
     Vector<double> tickRatios();
+    double thumbPosition();
 }
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchThumbPart {

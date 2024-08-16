@@ -33,7 +33,7 @@ namespace WebCore {
 class SliderTrackPart : public ControlPart {
 public:
     static Ref<SliderTrackPart> create(StyleAppearance);
-    WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
+    WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);
 
     IntSize thumbSize() const { return m_thumbSize; }
     void setThumbSize(IntSize thumbSize) { m_thumbSize = thumbSize; }
@@ -44,18 +44,22 @@ public:
     const Vector<double>& tickRatios() const { return m_tickRatios; }
     void setTickRatios(Vector<double>&& tickRatios) { m_tickRatios = WTFMove(tickRatios); }
 
+    double thumbPosition() const { return m_thumbPosition; }
+    void setThumbPosition(double thumbPosition) { m_thumbPosition = thumbPosition; }
+
 #if ENABLE(DATALIST_ELEMENT)
     void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;
 #endif
 
 private:
-    SliderTrackPart(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
+    SliderTrackPart(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);
 
     std::unique_ptr<PlatformControl> createPlatformControl() override;
 
     IntSize m_thumbSize;
     IntRect m_trackBounds;
     Vector<double> m_tickRatios;
+    double m_thumbPosition;
 };
 
 } // namespace WebCore
