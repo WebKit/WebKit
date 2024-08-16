@@ -1695,6 +1695,8 @@
     void enableFoveation(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        if (arg0)
+            arg0 = m_objectNames.get(arg0);
         m_context->enableFoveation(arg0);
     }
     void disableFoveation()

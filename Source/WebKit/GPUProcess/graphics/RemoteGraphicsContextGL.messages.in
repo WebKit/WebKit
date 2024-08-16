@@ -329,7 +329,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     [EnabledIf='webXRPromptAccepted()'] void BindExternalImage(uint32_t target, uint32_t arg1)
     [EnabledIf='webXRPromptAccepted()'] void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
 #endif
-    [EnabledIf='webXREnabled()'] void DeleteExternalSync(uint32_t arg0)
+    [EnabledIf='webXRPromptAccepted()'] void DeleteExternalSync(uint32_t arg0)
 #if ENABLE(WEBXR)
     [EnabledIf='webXREnabled()'] void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
     [EnabledIf='webXRPromptAccepted()'] void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous

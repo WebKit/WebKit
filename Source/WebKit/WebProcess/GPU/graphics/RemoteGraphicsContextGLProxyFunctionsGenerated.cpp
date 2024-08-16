@@ -3135,7 +3135,7 @@ bool RemoteGraphicsContextGLProxy::addFoveation(WebCore::IntSize physicalSizeLef
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::enableFoveation(GCGLuint arg0)
+void RemoteGraphicsContextGLProxy::enableFoveation(PlatformGLObject arg0)
 {
     if (isContextLost())
         return;
