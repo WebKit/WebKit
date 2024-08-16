@@ -3147,6 +3147,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
+    if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
+        NSLog(@"XXX accessibilityAttributeValue parameter: %@", parameter);
+    }
+
     AXTRACE(makeString("WebAccessibilityObjectWrapper accessibilityAttributeValue:"_s, String(attribute)));
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
@@ -3248,25 +3252,32 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return createNSArray(operationResult).autorelease();
     }
 
-    if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
+    // Note: we can't use UIElementsForSearchPredicate if we want the return type to be different; HIServices
+    // intercepts and parses calls to UIElementsForSearchPredicate.
+    if ([attribute isEqualToString:@"AXRangesForSearchPredicate"]) {
         auto criteria = accessibilitySearchCriteriaForSearchPredicate(*backingObject, dictionary);
         if (criteria.searchKeys.size() == 1 && criteria.searchKeys[0] == AccessibilitySearchKey::MisspelledWord) {
             // Request for the next/previous misspelling.
             auto textMarkerRange = AXSearchManager().findMatchingRange(WTFMove(criteria));
-            if (!textMarkerRange)
+            if (!textMarkerRange) {
                 return nil;
+            }
 
             RefPtr object = textMarkerRange->start().object();
-            if (!object)
+            if (!object) {
                 return nil;
+            }
 
             NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                object->wrapper(), @"AXSearchResultElement",
-                textMarkerRange->platformData().bridgingAutorelease(), @"AXSearchResultRange",
-                nil];
+                                           object->wrapper(), @"AXSearchResultElement",
+                                           textMarkerRange->platformData().bridgingAutorelease(), @"AXSearchResultRange",
+                                           nil];
             return [[NSArray alloc] initWithObjects:result, nil];
         }
+    }
 
+    if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
+        auto criteria = accessibilitySearchCriteriaForSearchPredicate(*backingObject, dictionary);
         NSArray *widgetChildren = nil;
         if (isMatchingPlugin(*backingObject, criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
