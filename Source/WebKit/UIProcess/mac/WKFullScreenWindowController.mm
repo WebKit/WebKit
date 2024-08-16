@@ -43,6 +43,7 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/VideoPresentationInterfaceMac.h>
 #import <WebCore/VideoPresentationModel.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
@@ -236,9 +237,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
 
     CGWindowID windowID = [[_webView window] windowNumber];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+    RetainPtr webViewContents = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, NSRectToCGRect(webViewFrame), { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque });
 
     // Using the returned CGImage directly would result in calls to the WindowServer every time
     // the image was painted. Instead, copy the image data into our own process to eliminate that
@@ -462,22 +462,14 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
 {
-    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+    OptionSet<WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions> options = {
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque,
+        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows
+    };
     if (captureAtNominalResolution)
-        options |= kCGSWindowCaptureNominalResolution;
-    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+        options.add(WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution);
 
-    if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
-        return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
-
-    // Fall back to the non-hardware capture path if we didn't get a snapshot
-    // (which usually happens if the window is fully off-screen).
-    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
-    if (captureAtNominalResolution)
-        imageOptions |= kCGWindowImageNominalResolution;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, CGRectNull, options);
 }
 
 - (void)finishedExitFullScreenAnimationAndExitImmediately:(bool)immediately

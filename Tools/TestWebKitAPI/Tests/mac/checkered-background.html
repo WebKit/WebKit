@@ -1,0 +1,28 @@
+<html>
+<head>
+    <style type='text/css'>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+        function setChecker(color1, color2, size)
+        {
+            const checkerCount = 20;
+            const canvas = document.querySelector('canvas');
+            context = canvas.getContext('2d');
+            size /= window.devicePixelRatio;
+            for (let i = 0; i < checkerCount; i++) {
+                for (let j = 0; j < checkerCount; j++) {
+                    context.fillStyle = (i + j) % 2 ? color1 : color2;
+                    context.fillRect(j * size, i * size, size, size);
+                }
+            }
+        }
+    </script>
+    </head>
+
+<body onload="setChecker('purple', 'magenta', 40)">
+    <canvas width='800px' height='500px'></canvas>
+</body>
+</html>

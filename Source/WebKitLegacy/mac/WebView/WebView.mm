@@ -218,6 +218,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteFileSystem.h>
+#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
@@ -9840,3 +9841,16 @@ void WebInstallMemoryPressureHandler(void)
         });
     }
 }
+
+#if !TARGET_OS_IPHONE
+@implementation WebView (WKWindowSnapshot)
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect
+{
+    RetainPtr snapshot = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot((CGSWindowID)[[self window] windowNumber], rect, { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows });
+    if (!snapshot)
+        return nil;
+
+    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
+}
+@end
+#endif

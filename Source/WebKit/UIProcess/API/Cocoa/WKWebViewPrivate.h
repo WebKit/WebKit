@@ -837,4 +837,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 @end
 
+@interface WKWebView (WKWindowSnapshot)
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect;
+@end
+
 #endif // !TARGET_OS_IPHONE

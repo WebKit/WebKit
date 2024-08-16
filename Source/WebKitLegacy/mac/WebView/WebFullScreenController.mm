@@ -44,6 +44,7 @@
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
@@ -204,9 +205,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
     
     CGWindowID windowID = [[_webView window] windowNumber];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr webViewContents = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, NSRectToCGRect(webViewFrame), { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque });
 
     // Screen updates to be re-enabled in beganEnterFullScreenWithInitialFrame:finalFrame:
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
