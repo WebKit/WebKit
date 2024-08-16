@@ -1487,6 +1487,7 @@ class WasmModuleBuilder {
     return new WebAssembly.Module(this.toBuffer(debug));
   }
 }
+globalThis.WasmModuleBuilder = WasmModuleBuilder;
 
 function wasmSignedLeb(val, max_len = 5) {
   let res = [];
@@ -1503,10 +1504,12 @@ function wasmSignedLeb(val, max_len = 5) {
   throw new Error(
       'Leb value <' + val + '> exceeds maximum length of ' + max_len);
 }
+globalThis.wasmSignedLeb = wasmSignedLeb;
 
 function wasmI32Const(val) {
   return [kExprI32Const, ...wasmSignedLeb(val, 5)];
 }
+globalThis.wasmI32Const = wasmI32Const;
 
 function wasmF32Const(f) {
   // Write in little-endian order at offset 0.
@@ -1515,6 +1518,7 @@ function wasmF32Const(f) {
     kExprF32Const, byte_view[0], byte_view[1], byte_view[2], byte_view[3]
   ];
 }
+globalThis.wasmI32Const = wasmI32Const;
 
 function wasmF64Const(f) {
   // Write in little-endian order at offset 0.
@@ -1524,3 +1528,4 @@ function wasmF64Const(f) {
     byte_view[3], byte_view[4], byte_view[5], byte_view[6], byte_view[7]
   ];
 }
+globalThis.wasmF64Const = wasmF64Const;
