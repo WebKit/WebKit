@@ -24,10 +24,8 @@ if (window.accessibilityController) {
     output += dumpAXSearchTraversal(accessibilityController.rootElement.childAtIndex(0));
     var secondTraversal;
     setTimeout(async function() {
-        await sleep(1000)
         // Expand the dropdown.
         accessibilityController.accessibleElementById("button-one").press();
-        // Wait an arbitrary amount of time to allow the accessibility tree to update.
         output += "\nSecond traversal:\n\n";
         const expectedText = "This text begins as hidden";
         await waitFor(() => {
@@ -48,45 +46,11 @@ if (window.accessibilityController) {
     }, 0);
 }
 
-(() => {
-    var t = {
-            641: () => {
-                $((function() {})),
-                    function() {}(jQuery), $(document).ready((function() {
-                        $(".dropdown").click((function(a) {
-                            $(this).next().slideToggle()
-                        }))
-                    }))
-            },
-        },
-        e = {};
-
-    function o(a) {
-        var s = e[a];
-        if (void 0 !== s) return s.exports;
-        var l = e[a] = {
-            exports: {}
-        };
-        return t[a](l, l.exports, o), l.exports
-    }
-    o.m = t, a = [], o.O = (t, e, s, l) => {
-        if (!e) {
-            var i = 1 / 0;
-            for (d = 0; d < a.length; d++) {
-                for (var [e, s, l] = a[d], n = !0, c = 0; c < e.length; c++)(!1 & l || i >= l) ? e.splice(c--, 1) : i = l;
-                var r = s();
-            }
-            return t
-        }
-        l = l || 0;
-        for (var d = a.length; d > 0 && a[d - 1][2] > l; d--) a[d] = a[d - 1];
-        a[d] = [e, s, l]
-    }, o.o = (a, t) => Object.prototype.hasOwnProperty.call(a, t), (() => {
-        o.O.j = t => 0 === a[t];
-    })(), o.O(void 0, [], (() => o(641))), o.O();
-    var s = o.O(s);
-})();
+$(document).ready(function () {
+    $(".dropdown").click((function(a) {
+        $(this).next().slideToggle();
+    }));
+});
 </script>
 </body>
 </html>
-
