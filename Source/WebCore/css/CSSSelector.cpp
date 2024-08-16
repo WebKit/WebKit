@@ -208,7 +208,8 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
         case CSSSelector::PseudoElement::ViewTransitionNew:
         case CSSSelector::PseudoElement::ViewTransitionOld:
             ASSERT(simpleSelector.argumentList() && simpleSelector.argumentList()->size());
-            if (simpleSelector.argumentList()->first().identifier == starAtom())
+            // Standalone universal selector gets 0 specificity.
+            if (simpleSelector.argumentList()->first().identifier == starAtom() && simpleSelector.argumentList()->size() == 1)
                 return 0;
             break;
         default:
@@ -536,7 +537,14 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case PseudoElement::ViewTransitionOld:
             case PseudoElement::ViewTransitionNew: {
                 builder.append("::"_s, cs->serializingValue(), '(');
-                serializeIdentifierOrStar(cs->argumentList()->first().identifier);
+                // Name or universal selector always comes first, followed by classes.
+                bool isFirst = true;
+                for (auto& nameOrClass : *cs->argumentList()) {
+                    if (!isFirst)
+                        builder.append('.');
+                    isFirst = false;
+                    serializeIdentifierOrStar(nameOrClass.identifier);
+                }
                 builder.append(')');
                 break;
             }

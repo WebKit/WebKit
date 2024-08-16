@@ -911,15 +911,41 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
         case CSSSelector::PseudoElement::ViewTransitionNew: {
-            auto& ident = block.consumeIncludingWhitespace();
+            Vector<PossiblyQuotedIdentifier> nameAndClasses;
+
+            // Check for implicit universal selector.
+            if (m_context.viewTransitionClassesEnabled && block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
+                nameAndClasses.append({ starAtom() });
+
+            // Parse name or explicit universal selector.
+            if (nameAndClasses.isEmpty()) {
+                const auto& ident = block.consume();
+                if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
+                    nameAndClasses.append({ ident.value().toAtomString() });
+                else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
+                    nameAndClasses.append({ starAtom() });
+                else
+                    return nullptr;
+            }
+
+            // Parse classes.
+            if (m_context.viewTransitionClassesEnabled) {
+                while (!block.atEnd() && !CSSTokenizer::isWhitespace(block.peek().type())) {
+                    if (block.peek().type() != DelimiterToken || block.consume().delimiter() != '.')
+                        return nullptr;
+
+                    if (block.peek().type() != IdentToken)
+                        return nullptr;
+                    nameAndClasses.append({ block.consume().value().toAtomString() });
+                }
+            }
+
+            block.consumeWhitespace();
+
             if (!block.atEnd())
                 return nullptr;
-            if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
-                selector->setArgumentList({ { ident.value().toAtomString() } });
-            else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
-                selector->setArgumentList({ { starAtom() } });
-            else
-                return nullptr;
+
+            selector->setArgumentList(FixedVector<PossiblyQuotedIdentifier> { WTFMove(nameAndClasses) });
             return selector;
         }
 
