@@ -6857,7 +6857,7 @@ TabsToLinks:
 
 TargetTextPseudoElementEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "::target-text pseudo-element"
   humanReadableDescription: "Enable the ::target-text CSS pseudo-element"
@@ -6865,9 +6865,9 @@ TargetTextPseudoElementEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 TelephoneNumberParsingEnabled:
   type: bool

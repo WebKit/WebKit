@@ -3447,10 +3447,11 @@ imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001.html [ Im
 imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-002.html [ ImageOnlyFailure ]
-# WPT support ::target-text (webkit.org/b/236817)
+# Implement highlight pseudo-element cascade / painting behaviors (webkit.org/b/278216)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-009.html [ ImageOnlyFailure ]
+# Incorrect test, needs WPT resync (webkit.org/b/277692)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 
