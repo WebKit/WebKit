@@ -386,7 +386,7 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // If we are encountering this anchor() instance for the first time, then we need to collect
     // all the relevant anchor-name strings that are referenced in this anchor function,
     // including the references in the fallback value.
-    if (!anchorPositionedState.finishedCollectingAnchorNames)
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FinishedCollectingAnchorNames)
         anchorValue.collectAnchorNames(anchorPositionedState.anchorNames);
 
     // An anchor() instance will be ready to be resolved when all referenced anchor-names
@@ -394,11 +394,11 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // should also have layout information for the anchor-positioned element alongside
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
-    if (!anchorPositionedState.readyToBeResolved)
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FoundAnchors)
         return Length(0, LengthType::Fixed);
 
     // Anchor value may now be resolved using layout information
-    anchorPositionedState.hasBeenResolved = true;
+    anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
@@ -428,6 +428,62 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
     return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+}
+
+static bool elementIsInContainingBlockChain(const RenderElement& element, const RenderElement& start)
+{
+    auto currentBlock = &start;
+    while ((currentBlock = currentBlock->containingBlock())) {
+        if (currentBlock == &element)
+            return true;
+    }
+    return false;
+}
+
+// See: https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element
+static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<const Element> anchorPositionedElement)
+{
+    CheckedPtr anchorRenderer = anchorElement->renderer();
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorRenderer && anchorPositionedRenderer);
+    CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
+    ASSERT(containingBlock);
+
+    if (!elementIsInContainingBlockChain(*containingBlock, *anchorRenderer))
+        return false;
+
+    // FIXME: Implement the rest of https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element.
+    return true;
+}
+
+
+static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, Ref<const Element> anchorPositionedElement)
+{
+    auto& anchorsForAnchorName = anchorPositionedElement->document().styleScope().anchorsForAnchorName();
+    const auto& anchors = anchorsForAnchorName.get(anchorName);
+
+    // FIXME: These should iterate through the anchor targets in reverse DOM order.
+    for (auto anchor : makeReversedRange(anchors)) {
+        ASSERT(anchor->renderer());
+        if (isAcceptableAnchorElement(anchor.get(), anchorPositionedElement))
+            return anchor.get();
+    }
+
+    return { };
+}
+
+void AnchorPositionEvaluator::findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement)
+{
+    auto* anchorPositionedState = anchorPositionedElement->document().styleScope().anchorPositionedStates().get(anchorPositionedElement);
+    ASSERT(anchorPositionedState && anchorPositionedState->stage == AnchorPositionResolutionStage::FinishedCollectingAnchorNames);
+
+    for (auto& anchorName : anchorPositionedState->anchorNames) {
+        auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositionedElement);
+        if (anchor.has_value())
+            anchorPositionedState->anchorElements.add(anchorName, anchor->get());
+    }
+
+    anchorPositionedState->stage = AnchorPositionResolutionStage::FoundAnchors;
 }
 
 } // namespace WebCore::Style

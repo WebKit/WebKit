@@ -142,8 +142,6 @@ private:
     const RenderStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const;
 
     AnchorPositionedElementAction updateAnchorPositioningState(Element&, const RenderStyle*);
-    void findAnchorsForAnchorPositionedElement(const Element& anchorPositionedElement, const Element* containingBlock);
-    std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, const Element* containingBlock);
 
     struct QueryContainerState {
         Change change { Change::None };

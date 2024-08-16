@@ -39,14 +39,19 @@ namespace Style {
 
 class BuilderState;
 
+enum class AnchorPositionResolutionStage : uint8_t {
+    Initial,
+    FinishedCollectingAnchorNames,
+    FoundAnchors,
+    Resolved,
+};
+
 struct AnchorPositionedState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     HashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
     HashSet<String> anchorNames;
-    bool finishedCollectingAnchorNames { false };
-    bool readyToBeResolved { false };
-    bool hasBeenResolved { false };
+    AnchorPositionResolutionStage stage;
 };
 
 using AnchorsForAnchorName = HashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
@@ -55,6 +60,7 @@ using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositi
 class AnchorPositionEvaluator {
 public:
     static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
+    static void findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement);
 };
 
 } // namespace Style
