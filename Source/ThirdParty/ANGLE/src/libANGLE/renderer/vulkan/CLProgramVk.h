@@ -239,6 +239,9 @@ class CLProgramVk : public CLProgramImpl
     angle::Result allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
                                         VkDescriptorSet *descriptorSetOut);
 
+    // Sets the status for given associated device programs
+    void setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status);
+
   private:
     CLContextVk *mContext;
     std::string mProgramOpts;

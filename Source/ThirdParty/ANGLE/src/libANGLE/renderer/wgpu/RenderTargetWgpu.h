@@ -35,6 +35,10 @@ class RenderTargetWgpu final : public FramebufferAttachmentRenderTarget
              const wgpu::TextureFormat &format);
     void reset();
 
+    angle::Result flushStagedUpdates(ContextWgpu *contextWgpu,
+                                     webgpu::ClearValuesArray *deferredClears = nullptr,
+                                     uint32_t deferredClearIndex              = 0);
+
     wgpu::TextureView getTextureView() { return mTextureView; }
     webgpu::ImageHelper *getImage() { return mImage; }
     webgpu::LevelIndex getLevelIndex() const { return mLevelIndex; }

@@ -424,12 +424,12 @@ angle::Result FramebufferWgpu::flushOneColorAttachmentUpdate(const gl::Context *
     {
         if (deferClears)
         {
-            ANGLE_TRY(drawRenderTarget->getImage()->flushStagedUpdates(
-                contextWgpu, &mDeferredClears, colorIndexGL));
+            ANGLE_TRY(
+                drawRenderTarget->flushStagedUpdates(contextWgpu, &mDeferredClears, colorIndexGL));
         }
         else
         {
-            ANGLE_TRY(drawRenderTarget->getImage()->flushStagedUpdates(contextWgpu));
+            ANGLE_TRY(drawRenderTarget->flushStagedUpdates(contextWgpu));
         }
     }
 
@@ -438,7 +438,7 @@ angle::Result FramebufferWgpu::flushOneColorAttachmentUpdate(const gl::Context *
         readRenderTarget = mRenderTargetCache.getColorRead(mState);
         if (readRenderTarget && readRenderTarget != drawRenderTarget)
         {
-            ANGLE_TRY(readRenderTarget->getImage()->flushStagedUpdates(contextWgpu));
+            ANGLE_TRY(readRenderTarget->flushStagedUpdates(contextWgpu));
         }
     }
 

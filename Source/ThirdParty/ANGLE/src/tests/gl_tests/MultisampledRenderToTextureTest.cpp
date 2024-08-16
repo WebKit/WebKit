@@ -472,7 +472,8 @@ TEST_P(MultisampledRenderToTextureTest, FramebufferCompleteness)
     // http://anglebug.com/42261786
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    if (getClientMajorVersion() >= 3)
+    if (getClientMajorVersion() >= 3 &&
+        EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"))
     {
         // Texture attachment for color attachment 1.
         GLTexture texture2;
@@ -547,9 +548,6 @@ TEST_P(MultisampledRenderToTextureTest, UnsizedTextureFormatSampleMissmatch)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_texture_rg"));
-
-    // Test failure introduced by Apple's changes (anglebug.com/40096755)
-    ANGLE_SKIP_TEST_IF(IsMetal() && IsAMD());
 
     GLsizei samples = 0;
     glGetIntegerv(GL_MAX_SAMPLES, &samples);
@@ -1903,6 +1901,10 @@ void MultisampledRenderToTextureES3Test::drawCopyDrawAttachDepthStencilClearThen
     bool useRenderbuffer)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+    // Use glFramebufferTexture2DMultisampleEXT for depth/stencil texture is only supported with
+    // GL_EXT_multisampled_render_to_texture2.
+    ANGLE_SKIP_TEST_IF(!useRenderbuffer &&
+                       !EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"));
     constexpr GLsizei kSize = 64;
 
     // http://anglebug.com/42263509
@@ -3285,28 +3287,45 @@ TEST_P(MultisampledRenderToTextureES3Test, DepthStencilInvalidate)
     ASSERT_NE(-1, positionLocation);
 
     // Setup vertices such that depth is varied from top to bottom.
-    std::array<Vector3, 6> quadVertices = {
+    std::array<Vector3, 6> redQuadVertices = {
         Vector3(-1.0f, 1.0f, 0.8f), Vector3(-1.0f, -1.0f, 0.2f), Vector3(1.0f, -1.0f, 0.2f),
         Vector3(-1.0f, 1.0f, 0.8f), Vector3(1.0f, -1.0f, 0.2f),  Vector3(1.0f, 1.0f, 0.8f),
     };
-    GLBuffer quadVertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * 6, quadVertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    GLBuffer redQuadVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, redQuadVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * 6, redQuadVertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(positionLocation);
+
+    // Green quad has the same depth.
+    std::array<Vector3, 6> greenQuadVertices = {
+        Vector3(-1.0f, 1.0f, 0.5f), Vector3(-1.0f, -1.0f, 0.5f), Vector3(1.0f, -1.0f, 0.5f),
+        Vector3(-1.0f, 1.0f, 0.5f), Vector3(1.0f, -1.0f, 0.5f),  Vector3(1.0f, 1.0f, 0.5f),
+    };
+    GLBuffer greenQuadVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, greenQuadVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * 6, greenQuadVertices.data(),
+                 GL_STATIC_DRAW);
 
     // Draw red into the framebuffer.
     glViewport(0, 0, kWidth, 1);
     glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
+    glBindBuffer(GL_ARRAY_BUFFER, redQuadVertexBuffer);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
     // Draw green such that half the samples of each pixel pass the depth test.
+    // Note: We don't use drawQuad() because it could internally create a vertex buffer
+    // or client array pointer on the fly. Those could break the render pass in some backends and
+    // force unresolve unwantedly. The unexpected unresolve would have written average depth value
+    // to all samples in the depth buffer.
     glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
     glDepthFunc(GL_GREATER);
-    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    glBindBuffer(GL_ARRAY_BUFFER, greenQuadVertexBuffer);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
     // Invalidate depth attachment
@@ -4358,43 +4377,48 @@ TEST_P(MultisampledRenderToTextureWithAdvancedBlendTest, RenderbufferClearThenDr
     drawTestCommon(true, InitMethod::Clear);
 }
 
-ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureTest,
-                                 PrintToStringParamName,
-                                 testing::Bool(),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
-                                 ES3_VULKAN()
-                                     .disable(Feature::SupportsExtendedDynamicState)
-                                     .disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-                                 ES3_VULKAN_SWIFTSHADER()
-                                     .enable(Feature::EnableMultisampledRenderToTexture)
-                                     .disable(Feature::PreferDynamicRendering),
-                                 ES3_VULKAN_SWIFTSHADER()
-                                     .enable(Feature::EnableMultisampledRenderToTexture)
-                                     .disable(Feature::PreferDynamicRendering)
-                                     .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(
+    MultisampledRenderToTextureTest,
+    PrintToStringParamName,
+    testing::Bool(),
+    ANGLE_ALL_TEST_PLATFORMS_ES2,
+    ANGLE_ALL_TEST_PLATFORMS_ES3,
+    ANGLE_ALL_TEST_PLATFORMS_ES31,
+    ES2_METAL().enable(Feature::EnableMultisampledRenderToTextureOnNonTilers),
+    ES3_METAL().enable(Feature::EnableMultisampledRenderToTextureOnNonTilers),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState)
+        .disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::EnableMultisampledRenderToTexture)
+        .disable(Feature::PreferDynamicRendering),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::EnableMultisampledRenderToTexture)
+        .disable(Feature::PreferDynamicRendering)
+        .enable(Feature::AsyncCommandQueue));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES3Test);
-ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES3Test,
-                                 PrintToStringParamName,
-                                 testing::Bool(),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
-                                 ES3_VULKAN()
-                                     .disable(Feature::SupportsExtendedDynamicState)
-                                     .disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsSPIRV14),
-                                 ES3_VULKAN_SWIFTSHADER()
-                                     .enable(Feature::EnableMultisampledRenderToTexture)
-                                     .disable(Feature::PreferDynamicRendering),
-                                 ES3_VULKAN_SWIFTSHADER()
-                                     .enable(Feature::EnableMultisampledRenderToTexture)
-                                     .disable(Feature::PreferDynamicRendering)
-                                     .enable(Feature::AsyncCommandQueue));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(
+    MultisampledRenderToTextureES3Test,
+    PrintToStringParamName,
+    testing::Bool(),
+    ANGLE_ALL_TEST_PLATFORMS_ES3,
+    ANGLE_ALL_TEST_PLATFORMS_ES31,
+    ES3_METAL().enable(Feature::EnableMultisampledRenderToTextureOnNonTilers),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState)
+        .disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsSPIRV14),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::EnableMultisampledRenderToTexture)
+        .disable(Feature::PreferDynamicRendering),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::EnableMultisampledRenderToTexture)
+        .disable(Feature::PreferDynamicRendering)
+        .enable(Feature::AsyncCommandQueue));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES31Test);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES31Test,

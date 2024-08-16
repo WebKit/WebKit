@@ -46,4 +46,14 @@ void RenderTargetWgpu::reset()
     mLayerIndex  = 0;
     mFormat      = nullptr;
 }
+
+angle::Result RenderTargetWgpu::flushStagedUpdates(ContextWgpu *contextWgpu,
+                                                   webgpu::ClearValuesArray *deferredClears,
+                                                   uint32_t deferredClearIndex)
+{
+    gl::LevelIndex targetLevel = mImage->toGlLevel(mLevelIndex);
+    ANGLE_TRY(mImage->flushSingleLevelUpdates(contextWgpu, targetLevel, deferredClears,
+                                              deferredClearIndex));
+    return angle::Result::Continue;
+}
 }  // namespace rx

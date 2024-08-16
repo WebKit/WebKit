@@ -166,7 +166,9 @@
         },
         "map_mac": {
             "D16_UNORM": "MTLPixelFormatDepth16Unorm",
-            "D24_UNORM_S8_UINT": "MTLPixelFormatDepth24Unorm_Stencil8",
+            "D24_UNORM_S8_UINT": "MTLPixelFormatDepth24Unorm_Stencil8"
+        },
+        "map_bc": {
             "BC1_RGBA_UNORM_BLOCK": "MTLPixelFormatBC1_RGBA",
             "BC1_RGBA_UNORM_SRGB_BLOCK": "MTLPixelFormatBC1_RGBA_sRGB",
             "BC2_RGBA_UNORM_BLOCK": "MTLPixelFormatBC2_RGBA",
@@ -220,7 +222,7 @@
             "R4G4B4A4_UNORM": "R8G8B8A8_UNORM",
             "D16_UNORM": "D32_FLOAT"
         },
-        "override_mac_bc1": {
+        "override_bc1": {
             "BC1_RGB_UNORM_BLOCK": {
                 "default": "BC1_RGBA_UNORM_BLOCK",
                 "swizzle": ["RGB1", "BC1_RGBA_UNORM_BLOCK"]
@@ -631,7 +633,7 @@
                 "writable": "false",
                 "blendable": "false",
                 "multisample": "true",
-                "resolve": "false",
+                "resolve": "supportStencilAutoResolve",
                 "colorRenderable": "false",
                 "depthRenderable": "true"
             },
@@ -663,48 +665,50 @@
                 "resolve": "supportDepthStencilAutoResolve",
                 "colorRenderable": "false",
                 "depthRenderable": "display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat()"
-            },
+            }
+        },
+        "caps_bc": {
             "MTLPixelFormatBC1_RGBA":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC1_RGBA_sRGB":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC2_RGBA":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC2_RGBA_sRGB":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC3_RGBA":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC3_RGBA_sRGB":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC4_RUnorm":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC4_RSnorm":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC5_RGUnorm":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC5_RGSnorm":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC6H_RGBUfloat":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC6H_RGBFloat":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC7_RGBAUnorm":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             },
             "MTLPixelFormatBC7_RGBAUnorm_sRGB":{
-                "filterable": "true"
+                "filterable": "display->supportsBCTextureCompression()"
             }
         },
         "caps_ios_platform": {

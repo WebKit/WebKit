@@ -17,6 +17,7 @@
 #include "libANGLE/Image.h"
 #include "libANGLE/MemoryObject.h"
 #include "libANGLE/Surface.h"
+#include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/ImageVk.h"

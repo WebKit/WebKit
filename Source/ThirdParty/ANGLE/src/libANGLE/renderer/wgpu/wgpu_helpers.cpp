@@ -94,11 +94,27 @@ angle::Result ImageHelper::initExternal(angle::FormatID intendedFormatID,
     return angle::Result::Continue;
 }
 
-angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu,
-                                              ClearValuesArray *deferredClears,
-                                              uint32_t deferredClearIndex)
+angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu)
 {
     if (mSubresourceQueue.empty())
+    {
+        return angle::Result::Continue;
+    }
+    for (gl::LevelIndex currentMipLevel = mFirstAllocatedLevel;
+         currentMipLevel < mFirstAllocatedLevel + getLevelCount(); ++currentMipLevel)
+    {
+        ANGLE_TRY(flushSingleLevelUpdates(contextWgpu, currentMipLevel));
+    }
+    return angle::Result::Continue;
+}
+
+angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
+                                                   gl::LevelIndex levelGL,
+                                                   ClearValuesArray *deferredClears,
+                                                   uint32_t deferredClearIndex)
+{
+    std::vector<SubresourceUpdate> *currentLevelQueue = getLevelUpdates(levelGL);
+    if (!currentLevelQueue || currentLevelQueue->empty())
     {
         return angle::Result::Continue;
     }
@@ -108,7 +124,9 @@ angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu,
     wgpu::ImageCopyTexture dst;
     dst.texture = mTexture;
     std::vector<wgpu::RenderPassColorAttachment> colorAttachments;
-    for (const SubresourceUpdate &srcUpdate : mSubresourceQueue)
+    wgpu::TextureView textureView;
+    ANGLE_TRY(createTextureView(levelGL, 0, textureView));
+    for (const SubresourceUpdate &srcUpdate : *currentLevelQueue)
     {
         if (!isTextureLevelInAllocatedImage(srcUpdate.targetLevel))
         {
@@ -127,10 +145,6 @@ angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu,
                 }
                 else
                 {
-
-                    wgpu::TextureView textureView;
-                    ANGLE_TRY(createTextureView(srcUpdate.targetLevel, 0, textureView));
-
                     colorAttachments.push_back(
                         CreateNewClearColorAttachment(srcUpdate.clearData.clearColor,
                                                       srcUpdate.clearData.depthSlice, textureView));
@@ -148,7 +162,7 @@ angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu,
     wgpu::CommandBuffer commandBuffer = encoder.Finish();
     queue.Submit(1, &commandBuffer);
     encoder = nullptr;
-    mSubresourceQueue.clear();
+    currentLevelQueue->clear();
 
     return angle::Result::Continue;
 }
@@ -206,23 +220,24 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     wgpu::ImageCopyBuffer imageCopyBuffer;
     imageCopyBuffer.layout = textureDataLayout;
     imageCopyBuffer.buffer = bufferHelper.getBuffer();
-    SubresourceUpdate subresourceUpdate(UpdateSource::Texture, levelGL, imageCopyBuffer);
-    mSubresourceQueue.emplace_back(std::move(subresourceUpdate));
+    appendSubresourceUpdate(levelGL,
+                            SubresourceUpdate(UpdateSource::Texture, levelGL, imageCopyBuffer));
     return angle::Result::Continue;
 }
 
 void ImageHelper::stageClear(gl::LevelIndex targetLevel, ClearValues clearValues)
 {
-    SubresourceUpdate subresourceUpdate(UpdateSource::Clear, targetLevel, clearValues);
-    mSubresourceQueue.emplace_back(std::move(subresourceUpdate));
+    appendSubresourceUpdate(targetLevel,
+                            SubresourceUpdate(UpdateSource::Clear, targetLevel, clearValues));
 }
 
 void ImageHelper::removeStagedUpdates(gl::LevelIndex levelToRemove)
 {
-    std::erase_if(mSubresourceQueue, [levelToRemove](const SubresourceUpdate &subUpdate) {
-        return subUpdate.updateSource == UpdateSource::Texture &&
-               subUpdate.targetLevel == levelToRemove;
-    });
+    std::vector<SubresourceUpdate> *updateToClear = getLevelUpdates(levelToRemove);
+    if (updateToClear)
+    {
+        updateToClear->clear();
+    }
 }
 
 void ImageHelper::resetImage()
@@ -364,6 +379,22 @@ bool ImageHelper::isTextureLevelInAllocatedImage(gl::LevelIndex textureLevel)
     }
     LevelIndex wgpuTextureLevel = toWgpuLevel(textureLevel);
     return wgpuTextureLevel < LevelIndex(mTextureDescriptor.mipLevelCount);
+}
+
+void ImageHelper::appendSubresourceUpdate(gl::LevelIndex level, SubresourceUpdate &&update)
+{
+    if (mSubresourceQueue.size() <= static_cast<size_t>(level.get()))
+    {
+        mSubresourceQueue.resize(level.get() + 1);
+    }
+    mSubresourceQueue[level.get()].emplace_back(std::move(update));
+}
+
+std::vector<SubresourceUpdate> *ImageHelper::getLevelUpdates(gl::LevelIndex level)
+{
+    return static_cast<size_t>(level.get()) < mSubresourceQueue.size()
+               ? &mSubresourceQueue[level.get()]
+               : nullptr;
 }
 
 BufferHelper::BufferHelper() {}

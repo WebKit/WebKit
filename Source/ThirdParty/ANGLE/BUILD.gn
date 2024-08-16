@@ -1753,7 +1753,8 @@ if (angle_enable_cgl) {
   }
 }
 
-if (is_android && symbol_level != 0) {
+if (is_android && symbol_level != 0 &&
+    (angle_standalone || build_with_chromium)) {
   action_foreach("compressed_symbols") {
     sources = []
     foreach(_library, angle_libraries) {

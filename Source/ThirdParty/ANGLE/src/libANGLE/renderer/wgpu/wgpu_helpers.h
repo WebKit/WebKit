@@ -82,9 +82,11 @@ class ImageHelper
                                angle::FormatID actualFormatID,
                                wgpu::Texture externalTexture);
 
-    angle::Result flushStagedUpdates(ContextWgpu *contextWgpu,
-                                     ClearValuesArray *deferredClears = nullptr,
-                                     uint32_t deferredClearIndex      = 0);
+    angle::Result flushStagedUpdates(ContextWgpu *contextWgpu);
+    angle::Result flushSingleLevelUpdates(ContextWgpu *contextWgpu,
+                                          gl::LevelIndex levelGL,
+                                          ClearValuesArray *deferredClears = nullptr,
+                                          uint32_t deferredClearIndex      = 0);
 
     wgpu::TextureDescriptor createTextureDescriptor(wgpu::TextureUsage usage,
                                                     wgpu::TextureDimension dimension,
@@ -144,6 +146,9 @@ class ImageHelper
     bool isInitialized() { return mInitialized; }
 
   private:
+    void appendSubresourceUpdate(gl::LevelIndex level, SubresourceUpdate &&update);
+    std::vector<SubresourceUpdate> *getLevelUpdates(gl::LevelIndex level);
+
     wgpu::Texture mTexture;
     wgpu::TextureDescriptor mTextureDescriptor = {};
     bool mInitialized                          = false;
@@ -152,7 +157,7 @@ class ImageHelper
     angle::FormatID mIntendedFormatID;
     angle::FormatID mActualFormatID;
 
-    std::vector<SubresourceUpdate> mSubresourceQueue;
+    std::vector<std::vector<SubresourceUpdate>> mSubresourceQueue;
 };
 struct BufferMapState
 {

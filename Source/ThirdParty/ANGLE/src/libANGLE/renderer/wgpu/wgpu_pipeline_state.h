@@ -135,6 +135,18 @@ class RenderPipelineDesc final
 
     bool setColorAttachmentFormat(size_t colorIndex, wgpu::TextureFormat format);
     bool setDepthStencilAttachmentFormat(wgpu::TextureFormat format);
+    bool setDepthFunc(wgpu::CompareFunction compareFunc);
+    bool setStencilFrontFunc(wgpu::CompareFunction compareFunc);
+    bool setStencilFrontOps(wgpu::StencilOperation failOp,
+                            wgpu::StencilOperation depthFailOp,
+                            wgpu::StencilOperation passOp);
+    bool setStencilBackFunc(wgpu::CompareFunction compareFunc);
+    bool setStencilBackOps(wgpu::StencilOperation failOp,
+                           wgpu::StencilOperation depthFailOp,
+                           wgpu::StencilOperation passOp);
+
+    bool setStencilReadMask(uint8_t readeMask);
+    bool setStencilWriteMask(uint8_t writeMask);
 
     size_t hash() const;
 

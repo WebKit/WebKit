@@ -219,6 +219,8 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
         }
     }
 
+    programImpl->setBuildStatus(linkDeviceList, CL_BUILD_IN_PROGRESS);
+
     // Perform link
     if (notify)
     {

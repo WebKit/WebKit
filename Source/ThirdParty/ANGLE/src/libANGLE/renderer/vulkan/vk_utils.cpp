@@ -1232,21 +1232,6 @@ GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID forma
     return formatSupportsLinearFiltering && !hintFastest ? GL_LINEAR : GL_NEAREST;
 }
 
-// Return the log of samples.  Assumes |sampleCount| is a power of 2.  The result can be used to
-// index an array based on sample count.  See for example TextureVk::PerSampleCountArray.
-size_t PackSampleCount(GLint sampleCount)
-{
-    if (sampleCount == 0)
-    {
-        sampleCount = 1;
-    }
-
-    // We currently only support up to 16xMSAA.
-    ASSERT(sampleCount <= VK_SAMPLE_COUNT_16_BIT);
-    ASSERT(gl::isPow2(sampleCount));
-    return gl::ScanForward(static_cast<uint32_t>(sampleCount));
-}
-
 namespace gl_vk
 {
 
