@@ -67,7 +67,7 @@ public:
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didClose(IPC::Connection&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final { }
 
     // WebCore::GraphicsContextGL overrides.
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;

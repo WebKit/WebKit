@@ -224,7 +224,7 @@ public:
     class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection&) = 0;
-        virtual void didReceiveInvalidMessage(Connection&, MessageName) = 0;
+        virtual void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) = 0;
         virtual void requestRemoteProcessTermination() { }
 
     protected:
@@ -460,7 +460,7 @@ public:
 
     void dispatchMessageReceiverMessage(MessageReceiver&, UniqueRef<Decoder>&&);
     // Can be called from any thread.
-    void dispatchDidReceiveInvalidMessage(MessageName);
+    void dispatchDidReceiveInvalidMessage(MessageName, int32_t indexOfObjectFailingDecoding);
     void dispatchDidCloseAndInvalidate();
 
     size_t pendingMessageCountForTesting() const;

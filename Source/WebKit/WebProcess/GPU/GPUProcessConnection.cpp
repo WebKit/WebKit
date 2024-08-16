@@ -180,7 +180,7 @@ void GPUProcessConnection::didClose(IPC::Connection&)
     m_clients.clear();
 }
 
-void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
+void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
 {
 }
 

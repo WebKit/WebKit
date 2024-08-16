@@ -138,7 +138,7 @@ public:
         m_didClose = true;
     }
 
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message) override
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message, int32_t) override
     {
         m_didReceiveInvalidMessage = message;
     }

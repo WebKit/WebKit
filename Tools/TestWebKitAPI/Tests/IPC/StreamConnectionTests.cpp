@@ -161,7 +161,7 @@ public:
         markClosed();
     }
 
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfDecodingFailure) final { ASSERT_NOT_REACHED(); }
 };
 
 class MockStreamMessageReceiver : public IPC::StreamMessageReceiver, public WaitForMessageMixin {

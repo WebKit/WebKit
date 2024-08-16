@@ -51,7 +51,7 @@ public:
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override { close(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override { close(); }
 
     void show();
     void close();

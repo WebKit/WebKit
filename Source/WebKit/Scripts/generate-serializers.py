@@ -100,6 +100,7 @@ class SerializedType(object):
         self.custom_encoder = False
         self.support_wkkeyedcoder = False
         self.disableMissingMemberCheck = False
+        self.debug_decoding_failure = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -137,6 +138,8 @@ class SerializedType(object):
                         self.custom_encoder = True
                     elif attribute == 'SupportWKKeyedCoder':
                         self.support_wkkeyedcoder = True
+                    elif attribute == 'DebugDecodingFailure':
+                        self.debug_decoding_failure = True
         self.templates = templates
         if other_metadata:
             if other_metadata == 'subclasses':
@@ -857,7 +860,8 @@ def decode_type(type):
     if type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
         result.append('    ' + type.namespace_and_name() + ' result;')
 
-    for member in type.serialized_members():
+    for i in range(len(type.serialized_members())):
+        member = type.serialized_members()[i]
         if member.condition is not None:
             result.append('#if ' + member.condition)
         sanitized_variable_name = sanitize_string_for_variable_name(member.name)
@@ -917,6 +921,9 @@ def decode_type(type):
                 result.append('        if (auto ' + sanitized_variable_name + 'Body = decoder.decode<IPC::FormDataReference>())')
                 result.append('            ' + sanitized_variable_name + '->setHTTPBody(' + sanitized_variable_name + 'Body->takeData());')
                 result.append('    }')
+            if type.debug_decoding_failure:
+                result.append('    if (UNLIKELY(!' + sanitized_variable_name + '))')
+                result.append('        decoder.setIndexOfDecodingFailure(' + str(i) + ');')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:

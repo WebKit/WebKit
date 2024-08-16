@@ -220,7 +220,7 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
         swConnection->connectionToServerLost();
 }
 
-void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
+void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
 {
 }
 
