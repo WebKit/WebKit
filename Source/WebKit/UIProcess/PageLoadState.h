@@ -128,7 +128,7 @@ public:
     };
 
     struct PendingAPIRequest {
-        WebCore::NavigationIdentifier navigationID;
+        Markable<WebCore::NavigationIdentifier> navigationID;
         String url;
     };
 
