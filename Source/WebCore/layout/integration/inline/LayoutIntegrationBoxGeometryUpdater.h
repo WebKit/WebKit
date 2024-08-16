@@ -59,6 +59,7 @@ private:
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateListMarkerDimensions(const RenderListMarker&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
+    void updateGeometryAfterLayout(const RenderElement&);
 
     BoxTree& boxTree() { return *m_boxTree; }
     const BoxTree& boxTree() const { return *m_boxTree; }

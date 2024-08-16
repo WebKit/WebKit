@@ -658,6 +658,9 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
 
+        if (inlineItem.isFloat() || inlineItem.isBox())
+            formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
+
         if (inlineItem.isFloat()) {
             lineCandidate.floatItem = &inlineItem;
             // This is a soft wrap opportunity, must be the only item in the list.
@@ -908,8 +911,6 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 {
     if (isFloatLayoutSuspended())
         return false;
-
-    formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(floatBox));
 
     auto& floatingContext = this->floatingContext();
     auto boxGeometry = [&]() -> BoxGeometry {

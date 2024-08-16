@@ -3943,17 +3943,17 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (auto* renderText = dynamicDowncast<RenderText>(renderer))
             setFullRepaintOnParentInlineBoxLayerIfNeeded(*renderText);
 
-        if (auto* inlineLevelBox = dynamicDowncast<RenderBlock>(renderer)) {
+        if (auto* inlineLevelBox = dynamicDowncast<RenderBox>(renderer)) {
             // FIXME: Move this to where the actual content change happens and call it on the parent IFC.
-            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && inlineLevelBox->normalChildNeedsLayout() && modernLineLayout();
+            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && inlineLevelBox->needsLayout() && modernLineLayout();
             if (shouldTriggerFullLayout)
                 modernLineLayout()->boxContentWillChange(*inlineLevelBox);
         }
 
-        auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
-        if (shouldRunInFlowLayout)
-            downcast<RenderElement>(renderer).layoutIfNeeded();
-        else if (!renderer.isOutOfFlowPositioned() && !renderer.isFloating())
+        if (box && box->style().display() == DisplayType::RubyAnnotation)
+            box->layoutIfNeeded();
+
+        if (is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderText>(renderer))
             renderer.clearNeedsLayout();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(AX_THREAD_TEXT_APIS)

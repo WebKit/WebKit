@@ -349,22 +349,7 @@ void BoxGeometryUpdater::setGeometriesForLayout()
         if (renderer.isFloating())
             continue;
 
-        if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer)) {
-            updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
-            continue;
-        }
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer)) {
-            updateListMarkerDimensions(*renderListMarker);
-            continue;
-        }
-        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
-            updateLineBreakBoxDimensions(*renderLineBreak);
-            continue;
-        }
-        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
-            updateInlineBoxDimensions(*renderInline);
-            continue;
-        }
+        updateGeometryAfterLayout(downcast<RenderElement>(renderer));
     }
 }
 
@@ -432,12 +417,22 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
 
 void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& box)
 {
-    auto* renderer = dynamicDowncast<RenderBox>(box.rendererForIntegration());
-    if (!renderer) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    updateLayoutBoxDimensions(*renderer);
+    updateGeometryAfterLayout(*dynamicDowncast<RenderBox>(box.rendererForIntegration()));
+}
+
+void BoxGeometryUpdater::updateGeometryAfterLayout(const RenderElement& renderer)
+{
+    if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer))
+        updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
+
+    if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer))
+        updateListMarkerDimensions(*renderListMarker);
+
+    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
+        updateLineBreakBoxDimensions(*renderLineBreak);
+
+    if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
+        updateInlineBoxDimensions(*renderInline);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const

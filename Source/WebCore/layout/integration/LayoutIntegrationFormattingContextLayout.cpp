@@ -34,8 +34,6 @@ namespace LayoutIntegration {
 
 void layoutWithFormattingContextForBox(const Layout::ElementBox& box, Layout::LayoutState& layoutState)
 {
-    ASSERT(box.establishesFormattingContext());
-
     auto& renderer = *box.rendererForIntegration();
     renderer.layoutIfNeeded();
 
