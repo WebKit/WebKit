@@ -6467,7 +6467,8 @@ class AddReviewerMixin(object):
         if len(reviewers) == 1:
             return reviewers[0]
         if reviewers:
-            return f'{", ".join(reviewers[:-1])} and {reviewers[-1]}'
+            conjunction = f'{"," if len(reviewers) > 2 else ""} and '
+            return f'{", ".join(reviewers[:-1])}{conjunction}{reviewers[-1]}'
         return 'NOBODY (OOPS!)'
 
 
@@ -6530,7 +6531,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     )
     RE_CHANGELOG = br'^(\+\+\+)\s+(.*/ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
-    SPLIT_RE = re.compile(r'(,\s*)|( and )')
+    SPLIT_RE = re.compile(r'\s+and\s+|,\s*and\s*|,\s*')
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=60, **kwargs)

@@ -400,17 +400,17 @@ MOCK: user.open_url: file://...
 Was that diff correct?
 Building WebKit
 Committed r49824: <https://commits.webkit.org/r49824>
-MOCK reopen_bug 50000 with comment 'Reverted r852, r963 and r3001 for reason:
+MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason Description
 
 Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
-MOCK reopen_bug 50005 with comment 'Reverted r852, r963 and r3001 for reason:
+MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason Description
 
 Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
-MOCK reopen_bug 50004 with comment 'Reverted r852, r963 and r3001 for reason:
+MOCK reopen_bug 50004 with comment 'Reverted r852, r963, and r3001 for reason:
 
 Reason Description
 
@@ -428,12 +428,12 @@ MOCK: user.open_url: file://...
 Was that diff correct?
 Building WebKit
 Committed r49824: <https://commits.webkit.org/r49824>
-MOCK reopen_bug 50000 with comment 'Reverted r852, r963 and r999 for reason:
+MOCK reopen_bug 50000 with comment 'Reverted r852, r963, and r999 for reason:
 
 Reason Description
 
 Committed r49824 (5@main): <https://commits.webkit.org/5@main>'
-MOCK reopen_bug 50005 with comment 'Reverted r852, r963 and r999 for reason:
+MOCK reopen_bug 50005 with comment 'Reverted r852, r963, and r999 for reason:
 
 Reason Description
 
