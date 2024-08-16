@@ -38,6 +38,7 @@
 namespace WebCore {
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
+struct PublicKeyCredentialDescriptor;
 }
 
 namespace fido {
@@ -56,6 +57,8 @@ WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<ui
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorGetAssertion
 WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt);
+
+WEBCORE_EXPORT Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<WebCore::PublicKeyCredentialDescriptor>& credentials, std::optional<PinParameters> = std::nullopt);
 
 // Represents CTAP requests with empty parameters, including
 // AuthenticatorGetInfo, AuthenticatorReset and AuthenticatorGetNextAssertion commands.

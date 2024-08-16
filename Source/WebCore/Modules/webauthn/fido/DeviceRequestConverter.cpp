@@ -34,6 +34,7 @@
 
 #include "CBORWriter.h"
 #include "PublicKeyCredentialCreationOptions.h"
+#include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialRequestOptions.h"
 #include "ResidentKeyRequirement.h"
 #include <wtf/Vector.h>
@@ -151,6 +152,31 @@ Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, c
     ASSERT(serializedParam);
 
     Vector<uint8_t> cborRequest({ static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorMakeCredential) });
+    cborRequest.appendVector(*serializedParam);
+    return cborRequest;
+}
+
+Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& credentials, std::optional<PinParameters> pin)
+{
+    CBORValue::MapValue cborMap;
+    cborMap[CBORValue(kCtapGetAssertionRpIdKey)] = CBORValue(rpId);
+    cborMap[CBORValue(kCtapGetAssertionClientDataHashKey)] = CBORValue(hash);
+
+    CBORValue::ArrayValue allowListArray;
+    for (const auto& descriptor : credentials)
+        allowListArray.append(convertDescriptorToCBOR(descriptor));
+    cborMap[CBORValue(kCtapGetAssertionAllowListKey)] = CBORValue(WTFMove(allowListArray));
+
+    if (pin) {
+        ASSERT(pin->protocol >= 0);
+        cborMap[CBORValue(kCtapGetAssertionPinUvAuthParamKey)] = CBORValue(WTFMove(pin->auth));
+        cborMap[CBORValue(kCtapGetAssertionPinUvAuthProtocolKey)] = CBORValue(pin->protocol);
+    }
+
+    auto serializedParam = CBORWriter::write(CBORValue(WTFMove(cborMap)));
+    ASSERT(serializedParam);
+
+    Vector<uint8_t> cborRequest({ static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorGetAssertion) });
     cborRequest.appendVector(*serializedParam);
     return cborRequest;
 }
