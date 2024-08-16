@@ -288,10 +288,14 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     else ()
         set(clangd_auto_setup_default OFF)
     endif ()
-    set(CLANGD_AUTO_SETUP ${clangd_auto_setup_default} CACHE BOOL
-        "Install a .clangd configuration file and a compile_commands.json symlink "
-        "in the root of the source tree to have out-of-the-box code completion "
-        "in editors.")
+    cmake_dependent_option(CLANGD_AUTO_SETUP
+        "Install a .clangd configuration file and a compile_commands.json symlink
+         in the root of the source tree to have out-of-the-box code completion
+         in editors."
+        ${clangd_auto_setup_default}
+        CMAKE_EXPORT_COMPILE_COMMANDS
+        OFF
+    )
 
     if (CLANGD_AUTO_SETUP)
         # update-compile-commands-symlink.conf
