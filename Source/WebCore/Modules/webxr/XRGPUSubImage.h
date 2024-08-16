@@ -31,7 +31,7 @@
 #include "GPUTextureViewDescriptor.h"
 #include "XRSubImage.h"
 
-#include <wtf/IsoMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ class GPUTexture;
 
 // https://github.com/immersive-web/WebXR-WebGPU-Binding/blob/main/explainer.md
 class XRGPUSubImage : public XRSubImage {
-    WTF_MAKE_ISO_ALLOCATED(XRGPUSubImage);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRGPUSubImage);
 public:
     static Ref<XRGPUSubImage> create(Ref<WebGPU::XRSubImage>&& backing)
     {
