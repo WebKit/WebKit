@@ -771,9 +771,12 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     bool implicitLigatures = true;
     bool implicitNumeric = true;
     do {
+        if (m_range.peek().id() == CSSValueNormal)
+            return false;
+
         if (!capsValue && (capsValue = CSSPropertyParsing::consumeFontVariantCaps(m_range)))
             continue;
-        
+
         if (!positionValue && (positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range)))
             continue;
 
