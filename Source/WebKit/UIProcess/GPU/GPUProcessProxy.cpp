@@ -388,7 +388,7 @@ void GPUProcessProxy::updateSandboxAccess(bool allowAudioCapture, bool allowVide
         m_hasSentMicrophoneSandboxExtension = true;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(connection()->getAuditToken(), extensions))
+    if (allowDisplayCapture && !m_hasSentDisplayCaptureSandboxExtension && addDisplayCaptureSandboxExtension(connection().getAuditToken(), extensions))
         m_hasSentDisplayCaptureSandboxExtension = true;
 #endif
 
@@ -475,7 +475,7 @@ void GPUProcessProxy::connectionWillOpen(IPC::Connection&)
 void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
     RELEASE_LOG(Process, "%p - GPUProcessProxy::processWillShutDown:", this);
-    ASSERT_UNUSED(connection, this->connection() == &connection);
+    ASSERT_UNUSED(connection, &this->connection() == &connection);
     if (singleton() == this)
         singleton() = nullptr;
 }

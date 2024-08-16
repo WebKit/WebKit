@@ -509,7 +509,7 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
     if (!m_webProcessProxy->hasConnection())
         return MachSendRight();
 
-    RefPtr connection = m_webProcessProxy->connection();
+    Ref connection = m_webProcessProxy->connection();
 
     // Don't fence if we have incoming synchronous messages, because we may not
     // be able to reply to the message until the fence times out.

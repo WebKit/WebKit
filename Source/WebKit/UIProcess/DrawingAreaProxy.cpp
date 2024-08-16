@@ -81,7 +81,7 @@ std::span<IPC::ReceiverName> DrawingAreaProxy::messageReceiverNames() const
 
 IPC::Connection* DrawingAreaProxy::messageSenderConnection() const
 {
-    return m_webProcessProxy->connection();
+    return &m_webProcessProxy->connection();
 }
 
 bool DrawingAreaProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)

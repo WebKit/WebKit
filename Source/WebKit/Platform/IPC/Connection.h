@@ -127,7 +127,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        (connection).markCurrentlyDispatchedMessageAsInvalid(); \
         { completion; } \
         return; \
     } \
@@ -136,7 +136,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, completion) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        (connection).markCurrentlyDispatchedMessageAsInvalid(); \
         { completion; } \
         co_return { }; \
     } \
@@ -145,7 +145,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        (connection).markCurrentlyDispatchedMessageAsInvalid(); \
         return (returnValue); \
     } \
 } while (0)

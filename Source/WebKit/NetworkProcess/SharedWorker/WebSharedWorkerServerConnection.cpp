@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_contentConnection.ptr())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_contentConnection.get())
 
 #define CONNECTION_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [webProcessIdentifier=%" PRIu64 "] WebSharedWorkerServerConnection::" fmt, this, m_webProcessIdentifier.toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [webProcessIdentifier=%" PRIu64 "] WebSharedWorkerServerConnection::" fmt, this, m_webProcessIdentifier.toUInt64(), ##__VA_ARGS__)

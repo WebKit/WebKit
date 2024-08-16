@@ -152,8 +152,7 @@ Ref<NetworkProcessProxy> NetworkProcessProxy::ensureDefaultNetworkProcess()
 void NetworkProcessProxy::terminate()
 {
     AuxiliaryProcessProxy::terminate();
-    if (auto* connection = this->connection())
-        connection->invalidate();
+    connection().invalidate();
 }
 
 void NetworkProcessProxy::requestTermination()
@@ -303,7 +302,7 @@ void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)
 
 void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
-    ASSERT_UNUSED(connection, this->connection() == &connection);
+    ASSERT_UNUSED(connection, &this->connection() == &connection);
 }
 
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
@@ -332,7 +331,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
         MESSAGE_CHECK(*identifier);
-        reply(NetworkProcessConnectionInfo { WTFMove(*identifier) , cookieAcceptPolicy, connection()->getAuditToken() });
+        reply(NetworkProcessConnectionInfo { WTFMove(*identifier) , cookieAcceptPolicy, connection().getAuditToken() });
 #else
         notImplemented();
 #endif
@@ -523,9 +522,9 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
             store->addSecKeyProxyStore(WTFMove(newSecKeyProxyStore));
         }
     }
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, *connection(), WTFMove(secKeyProxyStore));
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, connection(), WTFMove(secKeyProxyStore));
 #else
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, *connection(), nullptr);
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, connection(), nullptr);
 #endif
 
     RefPtr<WebPageProxy> page;
@@ -1803,8 +1802,7 @@ void NetworkProcessProxy::clearBundleIdentifier(CompletionHandler<void()>&& comp
 void NetworkProcessProxy::didExceedMemoryLimit()
 {
     AuxiliaryProcessProxy::terminate();
-    if (auto* connection = this->connection())
-        connection->invalidate();
+    connection().invalidate();
     networkProcessDidTerminate(ProcessTerminationReason::ExceededMemoryLimit);
 }
 #endif

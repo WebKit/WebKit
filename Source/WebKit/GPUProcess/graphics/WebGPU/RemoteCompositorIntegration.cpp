@@ -41,7 +41,7 @@
         auto connection = m_gpu->gpuConnectionToWebProcess(); \
         if (!connection) \
             return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, &connection->connection()); \
+        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
     } \
 } while (0)
 

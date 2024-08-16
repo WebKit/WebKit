@@ -42,7 +42,7 @@
 #include <WebCore/ApplePayShippingMethodUpdate.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, messageSenderConnection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, *messageSenderConnection())
 
 namespace WebKit {
 

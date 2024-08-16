@@ -48,7 +48,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, &connection, returnValue)
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinatorProxy);
 

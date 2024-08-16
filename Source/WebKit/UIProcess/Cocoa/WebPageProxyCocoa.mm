@@ -127,8 +127,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServicesUI)
 SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection)
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
@@ -188,14 +188,14 @@ void WebPageProxy::handleClickForDataDetectionResult(const DataDetectorElementIn
 
 void WebPageProxy::saveRecentSearches(IPC::Connection& connection, const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    MESSAGE_CHECK(!name.isNull());
+    MESSAGE_CHECK(!name.isNull(), connection);
 
     m_websiteDataStore->saveRecentSearches(name, searchItems);
 }
 
 void WebPageProxy::loadRecentSearches(IPC::Connection& connection, const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!name.isNull(), completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler({ }));
 
     m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
@@ -268,9 +268,10 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     if (files.size() == 1) {
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
-            ASSERT(legacyMainFrameProcess().connection() && legacyMainFrameProcess().connection()->getAuditToken());
-            if (legacyMainFrameProcess().connection() && legacyMainFrameProcess().connection()->getAuditToken()) {
-                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(legacyMainFrameProcess().connection()->getAuditToken())))
+            auto token = legacyMainFrameProcess().connection().getAuditToken();
+            ASSERT(token);
+            if (token) {
+                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *token))
                     fileReadHandle = WTFMove(*handle);
             } else if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly))
                 fileReadHandle = WTFMove(*handle);
@@ -452,7 +453,7 @@ ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const UR
 
 IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
 {
-    return page.legacyMainFrameProcess().connection();
+    return &page.legacyMainFrameProcess().connection();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
@@ -1241,7 +1242,7 @@ void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& element
 
 void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    MESSAGE_CHECK(uuid.isValid());
+    MESSAGE_CHECK(uuid.isValid(), connection);
 
     internals().textIndicatorDataForAnimationID.add(uuid, indicatorData);
 
@@ -1303,7 +1304,7 @@ void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimation(IPC::Connecti
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)
 {
-    MESSAGE_CHECK(uuid.isValid());
+    MESSAGE_CHECK(uuid.isValid(), connection);
 
     protectedPageClient()->removeTextAnimationForAnimationID(uuid);
 }

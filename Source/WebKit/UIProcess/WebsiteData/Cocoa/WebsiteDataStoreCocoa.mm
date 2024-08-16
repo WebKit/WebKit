@@ -882,7 +882,7 @@ void WebsiteDataStore::reinitializeManagedDomains()
 
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
-    return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement);
+    return WTF::hasEntitlement(networkProcess().connection().xpcConnection(), entitlement);
 }
 
 std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()

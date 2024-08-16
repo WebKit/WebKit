@@ -90,7 +90,7 @@
         auto connection = m_gpuConnectionToWebProcess.get(); \
         if (!connection) \
             return; \
-        MESSAGE_CHECK_BASE(!didFailAssertion, &connection->connection()); \
+        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
     } \
 } while (0)
 

@@ -126,13 +126,13 @@ public:
         return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
 
-    IPC::Connection* connection() const
+    IPC::Connection& connection() const
     {
-        ASSERT(m_connection);
-        return m_connection.get();
+        RELEASE_ASSERT(m_connection);
+        return *m_connection;
     }
 
-    RefPtr<IPC::Connection> protectedConnection() const { return connection(); }
+    Ref<IPC::Connection> protectedConnection() const { return connection(); }
 
     bool hasConnection() const
     {
@@ -348,7 +348,7 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
 
-    return connection()->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+    return connection().sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
 }
 
 template<typename T, typename C>

@@ -48,7 +48,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &this->ipcConnection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, ipcConnection())
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerToContextConnection);
 

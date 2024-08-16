@@ -752,7 +752,7 @@ bool ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IP
 
 IPC::Connection* ProvisionalPageProxy::messageSenderConnection() const
 {
-    return m_frameProcess->process().connection();
+    return &m_frameProcess->process().connection();
 }
 
 uint64_t ProvisionalPageProxy::messageSenderDestinationID() const

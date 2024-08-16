@@ -35,8 +35,8 @@
 
 namespace WebKit {
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection)
-#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
 static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
 {
@@ -52,7 +52,7 @@ NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess&
 
 void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
-    MESSAGE_CHECK(isValidClientOrigin(origin));
+    MESSAGE_CHECK(isValidClientOrigin(origin), connection);
 
     auto& channelsForOrigin = m_broadcastChannels.ensure(origin, [] { return NameToConnectionIdentifiersMap { }; }).iterator->value;
     auto& connectionIdentifiersForName = channelsForOrigin.ensure(name, [] { return Vector<IPC::Connection::UniqueID> { }; }).iterator->value;
@@ -62,7 +62,7 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
 
 void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
-    MESSAGE_CHECK(isValidClientOrigin(origin));
+    MESSAGE_CHECK(isValidClientOrigin(origin), connection);
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
@@ -79,7 +79,7 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
 
 void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), completionHandler());
+    MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());

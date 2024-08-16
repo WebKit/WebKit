@@ -34,7 +34,7 @@
 #include <WebCore/SpeechRecognitionUpdate.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, messageSenderConnection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, *messageSenderConnection())
 
 namespace WebKit {
 
@@ -172,7 +172,7 @@ void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate&
 
 IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
 {
-    return m_process->connection();
+    return &m_process->connection();
 }
 
 uint64_t SpeechRecognitionServer::messageSenderDestinationID() const

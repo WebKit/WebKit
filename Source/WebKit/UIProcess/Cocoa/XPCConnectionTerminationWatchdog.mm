@@ -47,7 +47,7 @@ XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProc
 #if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     , m_process(process.extensionProcess())
 #else
-    , m_xpcConnection(process.connection()->xpcConnection())
+    , m_xpcConnection(process.connection().xpcConnection())
 #endif
 {
     m_watchdogTimer.startOneShot(interval);

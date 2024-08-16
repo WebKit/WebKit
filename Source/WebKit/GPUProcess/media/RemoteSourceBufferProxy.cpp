@@ -43,7 +43,14 @@
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionToWebProcess.get()->connection())
+#define MESSAGE_CHECK(assertion) do { \
+    if (auto didFailAssertion = !(assertion)) { \
+        auto connection = m_connectionToWebProcess.get(); \
+        if (!connection) \
+            return; \
+        MESSAGE_CHECK_BASE(!didFailAssertion, connection->connection()); \
+    } \
+} while (0)
 
 namespace WebKit {
 

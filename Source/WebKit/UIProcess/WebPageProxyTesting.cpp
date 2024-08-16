@@ -65,7 +65,7 @@ bool WebPageProxyTesting::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& en
 
 IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
 {
-    return m_page->legacyMainFrameProcess().connection();
+    return &m_page->legacyMainFrameProcess().connection();
 }
 
 uint64_t WebPageProxyTesting::messageSenderDestinationID() const

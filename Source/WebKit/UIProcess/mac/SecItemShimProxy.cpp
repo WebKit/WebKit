@@ -48,7 +48,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebKit {
 
-#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
 // We received these dictionaries over IPC so they shouldn't contain any "in-memory" objects (rdar://104253249).
 static bool dictionaryContainsInMemoryObject(CFDictionaryRef dictionary)
