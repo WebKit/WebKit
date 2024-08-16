@@ -7592,6 +7592,10 @@ imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-pars
 imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-parse-pseudo-argument.html?first-pseudo=::view-transition-group(first%20) [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-parse-pseudo-argument.html?first-pseudo=::view-transition-group(first) [ Skip ]
 
+# View transitions Level 2 - types.
+# Test doesn't seem to pass on Chrome Canary.
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable-no-document-element-crashtest.html [ Skip ]
+
 # View transitions Level 2 - classes.
 imported/w3c/web-platform-tests/css/css-view-transitions/class-specificity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-entry.html [ ImageOnlyFailure ]
@@ -7607,9 +7611,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-vie
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-image-pair.html [ ImageOnlyFailure ]
 
 # View transitions Level 2 - cross document transitions.
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ ImageOnlyFailure ]
@@ -7617,17 +7618,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element
 # prerender not supported.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender.html [ Skip ]
-
-# View transitions Level 2 - types.
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early-mutation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-early.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-match-late-mutation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-matches.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable-no-document-element-crashtest.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-removed.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved-mutation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-reserved.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-stay.html [ Skip ]
 
 # View transitions Level 2 - nested view-transitions
 imported/w3c/web-platform-tests/css/css-view-transitions/nested/ [ Skip ]

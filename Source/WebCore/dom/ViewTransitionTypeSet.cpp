@@ -27,6 +27,8 @@
 #include "ViewTransitionTypeSet.h"
 
 #include "Document.h"
+#include "PseudoClassChangeInvalidation.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -49,20 +51,47 @@ void ViewTransitionTypeSet::initializeSetLike(DOMSetAdapter& setAdapter) const
 
 void ViewTransitionTypeSet::clearFromSetLike()
 {
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_document.documentElement()) {
+        styleInvalidation.emplace(
+            *m_document.documentElement(),
+            CSSSelector::PseudoClass::ActiveViewTransitionType,
+            Style::PseudoClassChangeInvalidation::AnyValue
+        );
+    }
+
     m_typeSet.clear();
 }
 
 void ViewTransitionTypeSet::addToSetLike(const AtomString& type)
 {
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_document.documentElement()) {
+        styleInvalidation.emplace(
+            *m_document.documentElement(),
+            CSSSelector::PseudoClass::ActiveViewTransitionType,
+            Style::PseudoClassChangeInvalidation::AnyValue
+        );
+    }
+
     m_typeSet.add(type);
 }
 
 bool ViewTransitionTypeSet::removeFromSetLike(const AtomString& type)
 {
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_document.documentElement()) {
+        styleInvalidation.emplace(
+            *m_document.documentElement(),
+            CSSSelector::PseudoClass::ActiveViewTransitionType,
+            Style::PseudoClassChangeInvalidation::AnyValue
+        );
+    }
+
     return m_typeSet.remove(type);
 }
 
-bool ViewTransitionTypeSet::has(const AtomString& type) const
+bool ViewTransitionTypeSet::hasType(const AtomString& type) const
 {
     return m_typeSet.contains(type);
 }

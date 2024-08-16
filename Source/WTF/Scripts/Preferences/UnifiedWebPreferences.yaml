@@ -7555,16 +7555,16 @@ ViewGestureDebuggingEnabled:
 ViewTransitionTypesEnabled:
   type: bool
   category: animation
-  status: testable
+  status: stable
   humanReadableName: "View Transition Types"
   humanReadableDescription: "Support specifying types for view transitions"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ViewTransitionsEnabled:
   type: bool

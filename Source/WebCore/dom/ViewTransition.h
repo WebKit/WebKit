@@ -182,7 +182,7 @@ public:
     bool documentElementIsCaptured() const;
 
     const ViewTransitionTypeSet& types() const { return m_types; }
-    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = newTypes; }
+    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = WTFMove(newTypes); }
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 

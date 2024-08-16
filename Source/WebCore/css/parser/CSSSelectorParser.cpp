@@ -32,6 +32,8 @@
 
 #include "CSSParserEnum.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSSelector.h"
 #include "CSSSelectorInlines.h"
 #include "CSSTokenizer.h"
@@ -275,6 +277,27 @@ static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTo
         list.append(WTFMove(item));
     }
     return FixedVector<PossiblyQuotedIdentifier> { WTFMove(list) };
+}
+
+static std::optional<FixedVector<PossiblyQuotedIdentifier>> consumeCommaSeparatedCustomIdentList(CSSParserTokenRange& range)
+{
+    Vector<PossiblyQuotedIdentifier> customIdents { };
+
+    do {
+        auto ident = CSSPropertyParserHelpers::consumeCustomIdentRaw(range, /* shouldLowercase */ true);
+        if (ident.isEmpty())
+            return std::nullopt;
+
+        customIdents.append({ AtomString { WTFMove(ident) }, false });
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    if (!range.atEnd())
+        return std::nullopt;
+
+    // The parsing code guarantees there has to be at least one custom ident.
+    ASSERT(!customIdents.isEmpty());
+
+    return FixedVector<PossiblyQuotedIdentifier> { WTFMove(customIdents) };
 }
 
 enum class CompoundSelectorFlag {
@@ -851,6 +874,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
             selector->setArgument(ident.value().toAtomString());
+            return selector;
+        }
+        case CSSSelector::PseudoClass::ActiveViewTransitionType: {
+            auto typeList = consumeCommaSeparatedCustomIdentList(block);
+            if (!typeList)
+                return nullptr;
+            selector->setArgumentList(WTFMove(*typeList));
             return selector;
         }
         default:

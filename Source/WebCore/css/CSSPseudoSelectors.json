@@ -75,6 +75,10 @@
         "active-view-transition": {
             "settings-flag": "viewTransitionsEnabled"
         },
+        "active-view-transition-type": {
+            "argument": "required",
+            "settings-flag": "viewTransitionTypesEnabled"
+        },
         "any-link": {
             "aliases": [
                 "-webkit-any-link"
