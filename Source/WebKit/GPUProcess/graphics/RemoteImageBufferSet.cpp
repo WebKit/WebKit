@@ -40,13 +40,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#define MESSAGE_CHECK(assertion, backend, message) do { \
-    if (UNLIKELY(!(assertion))) { \
-        backend.terminateWebProcess(message); \
-        return; \
-    } \
-} while (0)
-
 namespace WebKit {
 
 Ref<RemoteImageBufferSet> RemoteImageBufferSet::create(RemoteImageBufferSetIdentifier identifier, WebCore::RenderingResourceIdentifier displayListIdentifier, RemoteRenderingBackend& backend)
@@ -310,7 +303,5 @@ DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentSca
 #endif
 
 } // namespace WebKit
-
-#undef MESSAGE_CHECK
 
 #endif

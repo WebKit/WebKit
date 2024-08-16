@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteRenderBundle.h"
 #include "RemoteRenderBundleEncoderMessages.h"
 #include "StreamServerConnection.h"
@@ -37,17 +38,14 @@
 #include <WebCore/WebGPURenderBundleEncoder.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
 #define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto connection = m_gpuConnectionToWebProcess.get()) \
-            connection->terminateWebProcess(); \
-        return; \
+    if (auto didFailAssertion = !(assertion)) { \
+        auto connection = m_gpuConnectionToWebProcess.get(); \
+        if (!connection) \
+            return; \
+        MESSAGE_CHECK_BASE(!didFailAssertion, &connection->connection()); \
     } \
 } while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
 
 namespace WebKit {
 

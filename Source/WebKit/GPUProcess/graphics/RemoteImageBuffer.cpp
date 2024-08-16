@@ -36,12 +36,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <wtf/StdLibExtras.h>
 
-#define MESSAGE_CHECK(assertion, message) do { \
-    if (UNLIKELY(!(assertion))) { \
-        m_backend->terminateWebProcess(message); \
-        return; \
-    } \
-} while (0)
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_backend->gpuConnectionToWebProcess().connection(), message)
 
 namespace WebKit {
 
@@ -92,11 +87,11 @@ void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFor
 {
     assertIsCurrent(workQueue());
     auto memory = m_backend->sharedMemoryForGetPixelBuffer();
-    MESSAGE_CHECK(memory, "No shared memory for getPixelBufferForImageBuffer"_s);
-    MESSAGE_CHECK(WebCore::PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat), "Pixel format not supported"_s);
+    MESSAGE_CHECK(memory, "No shared memory for getPixelBufferForImageBuffer");
+    MESSAGE_CHECK(WebCore::PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat), "Pixel format not supported");
     WebCore::IntRect srcRect(srcPoint, srcSize);
     if (auto pixelBuffer = m_imageBuffer->getPixelBuffer(destinationFormat, srcRect)) {
-        MESSAGE_CHECK(pixelBuffer->bytes().size() <= memory->size(), "Shmem for return of getPixelBuffer is too small"_s);
+        MESSAGE_CHECK(pixelBuffer->bytes().size() <= memory->size(), "Shmem for return of getPixelBuffer is too small");
         memcpySpan(memory->mutableSpan(), pixelBuffer->bytes());
     } else
         memsetSpan(memory->mutableSpan(), 0);
@@ -108,7 +103,7 @@ void RemoteImageBuffer::getPixelBufferWithNewMemory(WebCore::SharedMemory::Handl
     assertIsCurrent(workQueue());
     m_backend->setSharedMemoryForGetPixelBuffer(nullptr);
     auto sharedMemory = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
-    MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped."_s);
+    MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped.");
     m_backend->setSharedMemoryForGetPixelBuffer(WTFMove(sharedMemory));
     getPixelBuffer(WTFMove(destinationFormat), WTFMove(srcPoint), WTFMove(srcSize), WTFMove(completionHandler));
 }

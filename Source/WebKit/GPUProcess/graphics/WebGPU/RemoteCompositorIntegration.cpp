@@ -36,20 +36,14 @@
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(COCOA)
 #define MESSAGE_CHECK(assertion) do { \
-    if (UNLIKELY(!(assertion))) { \
-        if (auto* gpu = m_gpu.ptr()) { \
-            if (auto connection = gpu->gpuConnectionToWebProcess(); connection.get()) \
-                connection->terminateWebProcess(); \
-            \
+    if (auto didFailAssertion = !(assertion)) { \
+        auto connection = m_gpu->gpuConnectionToWebProcess(); \
+        if (!connection) \
             return; \
-        } \
+        MESSAGE_CHECK_BASE(!didFailAssertion, &connection->connection()); \
     } \
 } while (0)
-#else
-#define MESSAGE_CHECK RELEASE_ASSERT
-#endif
 
 namespace WebKit {
 

@@ -38,7 +38,14 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (connection ? &connection->connection() : nullptr))
+#define MESSAGE_CHECK(assertion) do { \
+    if (auto didFailAssertion = !(assertion)) { \
+        auto connection = m_gpuConnectionToWebProcess.get(); \
+        if (!connection) \
+            return; \
+        MESSAGE_CHECK_BASE(!didFailAssertion, &connection->connection()); \
+    } \
+} while (0)
 
 namespace WebKit {
 using namespace WebCore;
@@ -70,7 +77,6 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
-    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
     m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
@@ -82,7 +88,6 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer:
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
-    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(m_description && WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames));

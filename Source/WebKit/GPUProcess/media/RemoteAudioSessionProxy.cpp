@@ -37,7 +37,7 @@
 #include <WebCore/AudioSession.h>
 #include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection()))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &connection())
 
 namespace WebKit {
 
