@@ -553,6 +553,8 @@ UIProcess/Automation/WebAutomationSession.cpp @no-unify
 UIProcess/Downloads/DownloadProxy.cpp
 UIProcess/Downloads/DownloadProxyMap.cpp
 
+UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy.cpp
+
 UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
@@ -629,6 +631,8 @@ WebProcess/Cache/WebCacheStorageProvider.cpp
 WebProcess/Databases/WebDatabaseProvider.cpp
 
 WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
+
+WebProcess/DigitalCredentials/DigitalCredentialsCoordinator.cpp
 
 WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 
@@ -884,6 +888,7 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
 WebProcess/XR/PlatformXRSystemProxy.cpp
 
+DigitalCredentialsCoordinatorProxyMessageReceiver.cpp
 IPCConnectionTesterMessageReceiver.cpp
 IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
