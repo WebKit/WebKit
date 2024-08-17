@@ -2378,7 +2378,14 @@ private:
         write(file.url().string());
         write(file.type());
         write(file.name());
-        write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
+        if (m_forStorage == SerializationForStorage::No)
+            write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
+        else {
+            if (auto lastModifiedOverride = file.lastModifiedOverride())
+                write(static_cast<double>(*lastModifiedOverride));
+            else
+                write(static_cast<double>(file.lastModified()));
+        }
     }
 
     void write(PredefinedColorSpace colorSpace)
