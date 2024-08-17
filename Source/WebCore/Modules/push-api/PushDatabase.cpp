@@ -514,7 +514,7 @@ void PushDatabase::insertRecord(const PushRecord& record, CompletionHandler<void
             if (!sql || sql->step() != SQLITE_DONE)
                 return completeOnMainQueue(WTFMove(completionHandler), std::optional<PushRecord> { });
 
-            record.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(m_db->lastInsertRowID());
+            record.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(m_db->lastInsertRowID());
         }
 
         transaction.commit();
@@ -572,7 +572,7 @@ void PushDatabase::removeRecordByIdentifier(PushSubscriptionIdentifier identifie
 static PushRecord makePushRecordFromRow(SQLiteStatementAutoResetScope& sql, int columnIndex)
 {
     return PushRecord {
-        .identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt64(columnIndex)),
+        .identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt64(columnIndex)),
         .subscriptionSetIdentifier = {
             .bundleIdentifier = sql->columnText(columnIndex + 1),
             .pushPartition = sql->columnText(columnIndex + 2),
@@ -632,7 +632,7 @@ void PushDatabase::getIdentifiers(CompletionHandler<void(HashSet<PushSubscriptio
         HashSet<PushSubscriptionIdentifier> result;
         auto sql = cachedStatementOnQueue("SELECT rowid FROM Subscriptions"_s);
         while (sql && sql->step() == SQLITE_ROW)
-            result.add(ObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt64(0)));
+            result.add(LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt64(0)));
 
         completeOnMainQueue(WTFMove(completionHandler), WTFMove(result));
     });
@@ -751,7 +751,7 @@ void PushDatabase::removeRecordsBySubscriptionSet(const PushSubscriptionSetIdent
                 return;
 
             while (sql->step() == SQLITE_ROW) {
-                auto identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt(1));
+                auto identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt(1));
                 auto topic = sql->columnText(2);
                 auto serverVAPIDPublicKey = sql->columnBlob(3);
                 removedPushRecords.append({ identifier, WTFMove(topic), WTFMove(serverVAPIDPublicKey) });
@@ -814,7 +814,7 @@ void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSub
 
             while (sql->step() == SQLITE_ROW) {
                 subscriptionSetID = sql->columnInt(0);
-                auto identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt(1));
+                auto identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt(1));
                 auto topic = sql->columnText(2);
                 auto serverVAPIDPublicKey = sql->columnBlob(3);
                 removedPushRecords.append({ identifier, WTFMove(topic), WTFMove(serverVAPIDPublicKey) });

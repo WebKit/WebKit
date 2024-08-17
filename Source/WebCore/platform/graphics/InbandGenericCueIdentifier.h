@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum class InbandGenericCueIdentifierType { };
-using InbandGenericCueIdentifier = ObjectIdentifier<InbandGenericCueIdentifierType>;
+using InbandGenericCueIdentifier = LegacyNullableObjectIdentifier<InbandGenericCueIdentifierType>;
 
 } // namespace WebCore
 

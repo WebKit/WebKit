@@ -101,7 +101,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentif
     if (!parsedIdentifier)
         return false;
 
-    identifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
+    identifier = LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
     return true;
 }
 

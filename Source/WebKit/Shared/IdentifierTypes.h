@@ -31,16 +31,16 @@
 namespace WebKit {
 
 struct AuthenticationChallengeIdentifierType;
-using AuthenticationChallengeIdentifier = ObjectIdentifier<AuthenticationChallengeIdentifierType>;
+using AuthenticationChallengeIdentifier = LegacyNullableObjectIdentifier<AuthenticationChallengeIdentifierType>;
 
 struct PageGroupIdentifierType;
-using PageGroupIdentifier = ObjectIdentifier<PageGroupIdentifierType>;
+using PageGroupIdentifier = LegacyNullableObjectIdentifier<PageGroupIdentifierType>;
 
 struct TapIdentifierType;
-using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
+using TapIdentifier = LegacyNullableObjectIdentifier<TapIdentifierType>;
 
 struct TextCheckerRequestType;
-using TextCheckerRequestID = ObjectIdentifier<TextCheckerRequestType>;
+using TextCheckerRequestID = LegacyNullableObjectIdentifier<TextCheckerRequestType>;
 
 struct EditorStateIdentifierType;
 using EditorStateIdentifier = MonotonicObjectIdentifier<EditorStateIdentifierType>;

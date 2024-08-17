@@ -81,7 +81,7 @@ enum class InspectorTargetType : uint8_t;
 
 namespace IPC {
 struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
 class Decoder;
 class FormDataReference;
 class SharedBufferReference;
@@ -324,27 +324,27 @@ using SessionID = WTF::UUID;
 template<typename> class ProcessQualified;
 template<typename> class RectEdges;
 
-using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
-using DictationContext = ObjectIdentifier<DictationContextType>;
+using BackForwardItemIdentifier = ProcessQualified<LegacyNullableObjectIdentifier<BackForwardItemIdentifierType>>;
+using DictationContext = LegacyNullableObjectIdentifier<DictationContextType>;
 using FloatBoxExtent = RectEdges<float>;
 using FramesPerSecond = unsigned;
 using IntDegrees = int32_t;
-using HTMLMediaElementIdentifier = ObjectIdentifier<MediaPlayerClientIdentifierType>;
+using HTMLMediaElementIdentifier = LegacyNullableObjectIdentifier<MediaPlayerClientIdentifierType>;
 using MediaControlsContextMenuItemID = uint64_t;
-using MediaKeySystemRequestIdentifier = ObjectIdentifier<MediaKeySystemRequestIdentifierType>;
-using MediaPlayerIdentifier = ObjectIdentifier<MediaPlayerIdentifierType>;
+using MediaKeySystemRequestIdentifier = LegacyNullableObjectIdentifier<MediaKeySystemRequestIdentifierType>;
+using MediaPlayerIdentifier = LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
-using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>;
-using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
+using MediaSessionIdentifier = LegacyNullableObjectIdentifier<MediaSessionIdentifierType>;
+using PageIdentifier = LegacyNullableObjectIdentifier<PageIdentifierType>;
 using PlatformDisplayID = uint32_t;
-using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerIdentifierType>>;
-using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
+using PlatformLayerIdentifier = ProcessQualified<LegacyNullableObjectIdentifier<PlatformLayerIdentifierType>>;
+using PlaybackTargetClientContextIdentifier = LegacyNullableObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 using PointerID = uint32_t;
-using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
-using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
-using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
-using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
+using ResourceLoaderIdentifier = LegacyNullableAtomicObjectIdentifier<ResourceLoader>;
+using ScrollingNodeID = ProcessQualified<LegacyNullableObjectIdentifier<ScrollingNodeIDType>>;
+using SleepDisablerIdentifier = LegacyNullableObjectIdentifier<SleepDisablerIdentifierType>;
+using UserMediaRequestIdentifier = LegacyNullableObjectIdentifier<UserMediaRequestIdentifierType>;
 
 } // namespace WebCore
 
@@ -563,19 +563,19 @@ enum class WindowKind : uint8_t;
 template<typename> class MonotonicObjectIdentifier;
 
 using ActivityStateChangeID = uint64_t;
-using GeolocationIdentifier = ObjectIdentifier<GeolocationIdentifierType>;
+using GeolocationIdentifier = LegacyNullableObjectIdentifier<GeolocationIdentifierType>;
 using LayerHostingContextID = uint32_t;
-using NetworkResourceLoadIdentifier = ObjectIdentifier<NetworkResourceLoadIdentifierType>;
-using PDFPluginIdentifier = ObjectIdentifier<PDFPluginIdentifierType>;
+using NetworkResourceLoadIdentifier = LegacyNullableObjectIdentifier<NetworkResourceLoadIdentifierType>;
+using PDFPluginIdentifier = LegacyNullableObjectIdentifier<PDFPluginIdentifierType>;
 using PlaybackSessionContextIdentifier = WebCore::HTMLMediaElementIdentifier;
 using SnapshotOptions = uint32_t;
 using SpeechRecognitionPermissionRequestCallback = CompletionHandler<void(std::optional<WebCore::SpeechRecognitionError>&&)>;
 using SpellDocumentTag = int64_t;
-using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
-using TextCheckerRequestID = ObjectIdentifier<TextCheckerRequestType>;
+using TapIdentifier = LegacyNullableObjectIdentifier<TapIdentifierType>;
+using TextCheckerRequestID = LegacyNullableObjectIdentifier<TextCheckerRequestType>;
 using TransactionID = MonotonicObjectIdentifier<TransactionIDType>;
-using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
-using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandler>;
+using WebPageProxyIdentifier = LegacyNullableObjectIdentifier<WebPageProxyIdentifierType>;
+using WebURLSchemeHandlerIdentifier = LegacyNullableObjectIdentifier<WebURLSchemeHandler>;
 using WebUndoStepID = uint64_t;
 
 class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, public IPC::MessageReceiver {

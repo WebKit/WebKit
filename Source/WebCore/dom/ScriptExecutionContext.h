@@ -341,7 +341,7 @@ public:
     WEBCORE_EXPORT HasResourceAccess canAccessResource(ResourceType) const;
 
     enum NotificationCallbackIdentifierType { };
-    using NotificationCallbackIdentifier = AtomicObjectIdentifier<NotificationCallbackIdentifierType>;
+    using NotificationCallbackIdentifier = LegacyNullableAtomicObjectIdentifier<NotificationCallbackIdentifierType>;
 
     WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
     WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);

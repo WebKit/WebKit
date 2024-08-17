@@ -77,7 +77,7 @@ bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& con
     if (!decoder.destinationID())
         return false;
 
-    auto identifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
+    auto identifier = LegacyNullableObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
     Locker lock(m_layersLock);
     if (auto* layer = m_layers.get(identifier))
         layer->didReceiveMessage(connection, decoder);

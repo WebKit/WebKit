@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class LibWebRTCSocketIdentifierType { };
-using LibWebRTCSocketIdentifier = AtomicObjectIdentifier<LibWebRTCSocketIdentifierType>;
+using LibWebRTCSocketIdentifier = LegacyNullableAtomicObjectIdentifier<LibWebRTCSocketIdentifierType>;
 
 } // namespace WebCore

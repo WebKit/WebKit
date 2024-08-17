@@ -56,7 +56,7 @@ public:
     virtual void enumerateMediaDevices(Document&, EnumerateDevicesCallback&&) = 0;
 
     enum DeviceChangeObserverTokenType { };
-    using DeviceChangeObserverToken = ObjectIdentifier<DeviceChangeObserverTokenType>;
+    using DeviceChangeObserverToken = LegacyNullableObjectIdentifier<DeviceChangeObserverTokenType>;
     virtual DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&) = 0;
     virtual void removeDeviceChangeObserver(DeviceChangeObserverToken) = 0;
 

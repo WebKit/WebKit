@@ -599,9 +599,9 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
         return;
 
     m_systemPreviewInfo.isPreview = true;
-    m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
+    m_systemPreviewInfo.element.elementIdentifier = LegacyNullableObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
     m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.legacyMainFrameProcess().coreProcessIdentifier() };
-    m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
+    m_systemPreviewInfo.element.webPageIdentifier = LegacyNullableObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }
 

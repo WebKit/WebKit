@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class RemoteMediaResourceIdentifierType { };
-using RemoteMediaResourceIdentifier = ObjectIdentifier<RemoteMediaResourceIdentifierType>;
+using RemoteMediaResourceIdentifier = LegacyNullableObjectIdentifier<RemoteMediaResourceIdentifierType>;
 
 } // namespace WebKit
 

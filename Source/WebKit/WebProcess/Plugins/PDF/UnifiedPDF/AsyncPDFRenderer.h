@@ -90,7 +90,7 @@ namespace WebKit {
 class PDFPresentationController;
 
 struct PDFTileRenderType;
-using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
+using PDFTileRenderIdentifier = LegacyNullableObjectIdentifier<PDFTileRenderType>;
 
 class AsyncPDFRenderer final : public WebCore::TiledBackingClient,
     public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AsyncPDFRenderer> {

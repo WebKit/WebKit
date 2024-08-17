@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class FetchIdentifierType { };
-using FetchIdentifier = ObjectIdentifier<FetchIdentifierType>;
+using FetchIdentifier = LegacyNullableObjectIdentifier<FetchIdentifierType>;
 
 }

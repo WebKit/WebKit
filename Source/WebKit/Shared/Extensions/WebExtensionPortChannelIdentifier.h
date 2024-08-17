@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct WebExtensionPortChannelIdentifierType;
-using WebExtensionPortChannelIdentifier = ObjectIdentifier<WebExtensionPortChannelIdentifierType>;
+using WebExtensionPortChannelIdentifier = LegacyNullableObjectIdentifier<WebExtensionPortChannelIdentifierType>;
 
 }

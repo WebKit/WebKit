@@ -153,7 +153,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!identifierValue)
         return false;
 
-    auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
+    auto identifier = LegacyNullableObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
     if (!identifier.isValid())
         return false;
 

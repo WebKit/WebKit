@@ -2697,14 +2697,14 @@ static std::optional<ItemIdentifiers> coreTextManipulationItemIdentifierFromStri
     if (!processID || !*processID || !frameID || !*frameID || !itemID || !*itemID)
         return std::nullopt;
 
-    return ItemIdentifiers { WebCore::ProcessQualified(ObjectIdentifier<WebCore::FrameIdentifierType>(*frameID),
-        ObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
-        ObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(*itemID) };
+    return ItemIdentifiers { WebCore::ProcessQualified(LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType>(*frameID),
+        LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
+        LegacyNullableObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(*itemID) };
 }
 
 static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString *identifier)
 {
-    return ObjectIdentifier<WebCore::TextManipulationTokenIdentifierType>(identifier.longLongValue);
+    return LegacyNullableObjectIdentifier<WebCore::TextManipulationTokenIdentifierType>(identifier.longLongValue);
 }
 
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler

@@ -48,7 +48,7 @@ namespace WebCore {
 class CAAudioStreamDescription;
 struct GraphicsContextGLAttributes;
 struct PageIdentifierType;
-using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
+using PageIdentifier = LegacyNullableObjectIdentifier<PageIdentifierType>;
 }
 
 namespace IPC {

@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct StorageAreaIdentifierType;
-using StorageAreaIdentifier = AtomicObjectIdentifier<StorageAreaIdentifierType>;
+using StorageAreaIdentifier = LegacyNullableAtomicObjectIdentifier<StorageAreaIdentifierType>;
 
 }

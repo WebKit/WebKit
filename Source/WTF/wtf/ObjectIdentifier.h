@@ -179,11 +179,10 @@ private:
     inline static bool m_generationProtected { false };
 };
 
-// FIXME: We should probably make NonNullable the default and rename the others to Legacy* during the transition.
-template<typename T, typename RawValue> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
-template<typename T, typename RawValue> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
-template<typename T, typename RawValue> using NonNullableObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
-template<typename T, typename RawValue> using NonNullableAtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
+template<typename T, typename RawValue> using LegacyNullableObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
+template<typename T, typename RawValue> using LegacyNullableAtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
+template<typename T, typename RawValue> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
+template<typename T, typename RawValue> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
 
 inline void add(Hasher& hasher, const ObjectIdentifierGenericBase<uint64_t>& identifier)
 {
@@ -293,8 +292,8 @@ bool operator<=(const ObjectIdentifierGeneric<T, ThreadSafety, uint64_t, support
 } // namespace WTF
 
 using WTF::AtomicObjectIdentifier;
-using WTF::NonNullableAtomicObjectIdentifier;
-using WTF::NonNullableObjectIdentifier;
+using WTF::LegacyNullableAtomicObjectIdentifier;
+using WTF::LegacyNullableObjectIdentifier;
 using WTF::ObjectIdentifierGenericBase;
 using WTF::ObjectIdentifierGeneric;
 using WTF::ObjectIdentifier;

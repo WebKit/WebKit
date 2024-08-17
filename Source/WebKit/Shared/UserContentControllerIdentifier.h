@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct UserContentControllerIdentifierType;
-using UserContentControllerIdentifier = ObjectIdentifier<UserContentControllerIdentifierType>;
+using UserContentControllerIdentifier = LegacyNullableObjectIdentifier<UserContentControllerIdentifierType>;
 
 }

@@ -43,7 +43,7 @@ namespace {
 static constexpr Seconds defaultTimeout = 1_s;
 
 enum TestObjectIdentifierTag { };
-using TestObjectIdentifier = ObjectIdentifier<TestObjectIdentifierTag>;
+using TestObjectIdentifier = LegacyNullableObjectIdentifier<TestObjectIdentifierTag>;
 
 struct MessageInfo {
     IPC::MessageName messageName;
@@ -306,7 +306,7 @@ public:
 protected:
     static TestObjectIdentifier defaultDestinationID()
     {
-        return ObjectIdentifier<TestObjectIdentifierTag>(77);
+        return LegacyNullableObjectIdentifier<TestObjectIdentifierTag>(77);
     }
 
     MockMessageReceiver m_mockClientReceiver;
@@ -326,7 +326,7 @@ TEST_P(StreamMessageTest, Send)
     serverQueue().dispatch([&] {
         assertIsCurrent(serverQueue());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            auto result = m_serverConnection->send(MockTestMessage1 { }, ObjectIdentifier<TestObjectIdentifierTag>(i));
+            auto result = m_serverConnection->send(MockTestMessage1 { }, LegacyNullableObjectIdentifier<TestObjectIdentifierTag>(i));
             EXPECT_EQ(result, IPC::Error::NoError);
         }
     });
@@ -344,7 +344,7 @@ TEST_P(StreamMessageTest, Send)
 
 TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
 {
-    auto other = ObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
+    auto other = LegacyNullableObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
     {
         serverQueue().dispatch([&] {
             assertIsCurrent(serverQueue());

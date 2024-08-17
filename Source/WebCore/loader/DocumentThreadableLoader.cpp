@@ -621,7 +621,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
-    auto identifier = AtomicObjectIdentifier<ResourceLoader> { std::numeric_limits<uint64_t>::max() };
+    auto identifier = LegacyNullableAtomicObjectIdentifier<ResourceLoader> { std::numeric_limits<uint64_t>::max() };
     if (RefPtr frame = m_document->frame()) {
         if (MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, m_document->protectedSecurityOrigin(), requestURL, MixedContentChecker::ShouldLogWarning::Yes))
             return;

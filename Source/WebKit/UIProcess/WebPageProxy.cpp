@@ -1393,8 +1393,8 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     auto accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty()) {
         registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() }, WebCore::FrameIdentifier {
-            ObjectIdentifier<WebCore::FrameIdentifierType>(0),
-            ObjectIdentifier<WebCore::ProcessIdentifierType>(0)
+            LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType>(),
+            LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>()
         });
     }
 #endif

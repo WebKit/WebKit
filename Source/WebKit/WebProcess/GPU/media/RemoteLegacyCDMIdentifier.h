@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class RemoteLegacyCDMIdentifierType { };
-using RemoteLegacyCDMIdentifier = ObjectIdentifier<RemoteLegacyCDMIdentifierType>;
+using RemoteLegacyCDMIdentifier = LegacyNullableObjectIdentifier<RemoteLegacyCDMIdentifierType>;
 
 } // namespace WebKit
 

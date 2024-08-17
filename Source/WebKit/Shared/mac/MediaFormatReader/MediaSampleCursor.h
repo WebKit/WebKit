@@ -48,7 +48,7 @@ namespace WebKit {
 class MediaTrackReader;
 
 enum class MediaSampleCursorIdentifierType { };
-using MediaSampleCursorIdentifier = AtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
+using MediaSampleCursorIdentifier = LegacyNullableAtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
 
 class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, private Identified<MediaSampleCursorIdentifier> {
 public:

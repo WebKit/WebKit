@@ -300,7 +300,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 - (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
 {
-    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID))) {
+    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID))) {
         TextStream ts(TextStream::LineMode::MultipleLine);
         {
             TextStream::GroupScope scope(ts);
@@ -308,7 +308,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
         }
         return ts.release();
     }
-    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
+    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
 }
 
 - (NSNumber *)_stableStateOverride
@@ -319,7 +319,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID
 {
-    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    CALayer* layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).layerWithIDForTesting({ LegacyNullableObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
     if (!layer)
         return nil;
 

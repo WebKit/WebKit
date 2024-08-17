@@ -40,7 +40,7 @@
 namespace WebKit {
 
 struct WebExtensionFrameIdentifierType;
-using WebExtensionFrameIdentifier = ObjectIdentifier<WebExtensionFrameIdentifierType>;
+using WebExtensionFrameIdentifier = LegacyNullableObjectIdentifier<WebExtensionFrameIdentifierType>;
 
 namespace WebExtensionFrameConstants {
 
@@ -82,7 +82,7 @@ inline WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrame
     if (isMainFrame(identifier))
         return page.mainWebFrame().frameID();
 
-    WebCore::FrameIdentifier result { ObjectIdentifier<WebCore::FrameIdentifierType> { identifier.toUInt64() }, WebCore::Process::identifier() };
+    WebCore::FrameIdentifier result { LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType> { identifier.toUInt64() }, WebCore::Process::identifier() };
     ASSERT(result.object().isValid());
     return result;
 }

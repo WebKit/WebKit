@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class PortIdentifierType { };
-using PortIdentifier = AtomicObjectIdentifier<PortIdentifierType>;
+using PortIdentifier = LegacyNullableAtomicObjectIdentifier<PortIdentifierType>;
 
 }

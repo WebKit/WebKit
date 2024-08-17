@@ -37,7 +37,7 @@ class LocalFrame;
 class SecurityOrigin;
 
 enum class OpaqueOriginIdentifierType { };
-using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>;
+using OpaqueOriginIdentifier = LegacyNullableAtomicObjectIdentifier<OpaqueOriginIdentifierType>;
 
 class SecurityOriginData {
 public:

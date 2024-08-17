@@ -358,7 +358,7 @@ public:
         bool done = false;
         bool removeResult = false;
 
-        db->removeRecordByIdentifier(ObjectIdentifier<PushSubscriptionIdentifierType>(rowIdentifier), [&done, &removeResult](bool result) {
+        db->removeRecordByIdentifier(LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(rowIdentifier), [&done, &removeResult](bool result) {
             removeResult = result;
             done = true;
         });
@@ -520,31 +520,31 @@ TEST_F(PushDatabaseTest, UpdatePublicToken)
 TEST_F(PushDatabaseTest, InsertRecord)
 {
     auto expectedRecord1 = record1;
-    expectedRecord1.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(1);
+    expectedRecord1.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(1);
     EXPECT_TRUE(expectedRecord1 == *insertResult1);
 
     auto expectedRecord2 = record2;
-    expectedRecord2.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(2);
+    expectedRecord2.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(2);
     EXPECT_TRUE(expectedRecord2 == *insertResult2);
 
     auto expectedRecord3 = record3;
-    expectedRecord3.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(3);
+    expectedRecord3.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(3);
     EXPECT_TRUE(expectedRecord3 == *insertResult3);
 
     auto expectedRecord4 = record4;
-    expectedRecord4.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(4);
+    expectedRecord4.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(4);
     EXPECT_TRUE(expectedRecord4 == *insertResult4);
 
     auto expectedRecord5 = record5;
-    expectedRecord5.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(5);
+    expectedRecord5.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(5);
     EXPECT_TRUE(expectedRecord5 == *insertResult5);
 
     auto expectedRecord6 = record6;
-    expectedRecord6.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(6);
+    expectedRecord6.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(6);
     EXPECT_TRUE(expectedRecord6 == *insertResult6);
     
     auto expectedRecord7 = record7;
-    expectedRecord7.identifier = ObjectIdentifier<PushSubscriptionIdentifierType>(7);
+    expectedRecord7.identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(7);
     EXPECT_TRUE(expectedRecord7 == *insertResult7);
 
     EXPECT_EQ(getPushSubscriptionSets(), expectedSubscriptionSets);
@@ -611,7 +611,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSet)
     PushRecord record8 = record3;
     auto insertResult = insertRecord(WTFMove(record8));
     EXPECT_TRUE(insertResult);
-    EXPECT_EQ(insertResult->identifier, ObjectIdentifier<PushSubscriptionIdentifierType>(8));
+    EXPECT_EQ(insertResult->identifier, LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(8));
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 8 }));
 
     Vector<PushSubscriptionSetRecord> expectedSubscriptionSets {
@@ -648,7 +648,7 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSetAndSecurityOrigin)
     PushRecord record8 = record3;
     auto insertResult = insertRecord(WTFMove(record8));
     EXPECT_TRUE(insertResult);
-    EXPECT_EQ(insertResult->identifier, ObjectIdentifier<PushSubscriptionIdentifierType>(8));
+    EXPECT_EQ(insertResult->identifier, LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(8));
     EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5, 8 }));
 
     Vector<PushSubscriptionSetRecord> expectedSubscriptionSets {

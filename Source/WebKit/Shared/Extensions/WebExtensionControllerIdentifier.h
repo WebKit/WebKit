@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class WebExtensionControllerIdentifierType { };
-using WebExtensionControllerIdentifier = ObjectIdentifier<WebExtensionControllerIdentifierType>;
+using WebExtensionControllerIdentifier = LegacyNullableObjectIdentifier<WebExtensionControllerIdentifierType>;
 
 }

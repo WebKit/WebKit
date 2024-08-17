@@ -31,7 +31,7 @@
 namespace WebKit {
 
 struct WebExtensionWindowIdentifierType;
-using WebExtensionWindowIdentifier = ObjectIdentifier<WebExtensionWindowIdentifierType>;
+using WebExtensionWindowIdentifier = LegacyNullableObjectIdentifier<WebExtensionWindowIdentifierType>;
 
 namespace WebExtensionWindowConstants {
 

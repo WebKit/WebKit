@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class TextCheckingRequestIdentifierType { };
-using TextCheckingRequestIdentifier = ObjectIdentifier<TextCheckingRequestIdentifierType>;
+using TextCheckingRequestIdentifier = LegacyNullableObjectIdentifier<TextCheckingRequestIdentifierType>;
 
 }

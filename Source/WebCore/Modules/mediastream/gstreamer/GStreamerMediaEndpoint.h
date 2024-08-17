@@ -200,7 +200,7 @@ private:
 
     UniqueRef<GStreamerDataChannelHandler> findOrCreateIncomingChannelHandler(GRefPtr<GstWebRTCDataChannel>&&);
 
-    using DataChannelHandlerIdentifier = ObjectIdentifier<GstWebRTCDataChannel>;
+    using DataChannelHandlerIdentifier = LegacyNullableObjectIdentifier<GstWebRTCDataChannel>;
     HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
 
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;

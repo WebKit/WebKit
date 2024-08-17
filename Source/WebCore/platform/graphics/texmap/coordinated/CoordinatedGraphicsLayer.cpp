@@ -192,7 +192,7 @@ Nicosia::PlatformLayer::LayerID CoordinatedGraphicsLayer::id() const
 
 auto CoordinatedGraphicsLayer::primaryLayerID() const -> PlatformLayerIdentifier
 {
-    return { ObjectIdentifier<PlatformLayerIdentifierType>(id()), Process::identifier() };
+    return { LegacyNullableObjectIdentifier<PlatformLayerIdentifierType>(id()), Process::identifier() };
 }
 
 bool CoordinatedGraphicsLayer::setChildren(Vector<Ref<GraphicsLayer>>&& children)

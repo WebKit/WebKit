@@ -63,7 +63,7 @@ namespace WebKit {
 class WebPageProxy;
 
 enum class MediaDevicePermissionRequestIdentifierType { };
-using MediaDevicePermissionRequestIdentifier = ObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
+using MediaDevicePermissionRequestIdentifier = LegacyNullableObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
 
 class UserMediaPermissionRequestManagerProxy
     : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>

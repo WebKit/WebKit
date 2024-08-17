@@ -21,14 +21,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = ObjectIdentifier<BackForwardItemIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = AtomicObjectIdentifier<DOMCacheIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using FrameIdentifierID = ObjectIdentifier<FrameIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = ObjectIdentifier<ScrollingNodeIDType>; }
-additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = LegacyNullableObjectIdentifier<BackForwardItemIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = LegacyNullableAtomicObjectIdentifier<DOMCacheIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using FrameIdentifierID = LegacyNullableObjectIdentifier<FrameIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = LegacyNullableAtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = LegacyNullableObjectIdentifier<PlatformLayerIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }
+additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = LegacyNullableObjectIdentifier<SharedWorkerObjectIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = LegacyNullableAtomicObjectIdentifier<WebLockIdentifierType>; }
 
 header: <WebCore/ProcessQualified.h>
 [Alias=class ProcessQualified<BackForwardItemIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BackForwardItemIdentifier {

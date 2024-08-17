@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class LayerHostingContextIdentifierType { };
-using LayerHostingContextIdentifier = ObjectIdentifier<LayerHostingContextIdentifierType>;
+using LayerHostingContextIdentifier = LegacyNullableObjectIdentifier<LayerHostingContextIdentifierType>;
 
 }

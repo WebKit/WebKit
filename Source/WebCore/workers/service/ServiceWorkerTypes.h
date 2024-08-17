@@ -66,16 +66,16 @@ enum class ServiceWorkerIsInspectable : bool { No, Yes };
 enum class ShouldNotifyWhenResolved : bool { No, Yes };
 
 enum class ServiceWorkerRegistrationIdentifierType { };
-using ServiceWorkerRegistrationIdentifier = AtomicObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
+using ServiceWorkerRegistrationIdentifier = LegacyNullableAtomicObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
 enum class ServiceWorkerJobIdentifierType { };
-using ServiceWorkerJobIdentifier = AtomicObjectIdentifier<ServiceWorkerJobIdentifierType>;
+using ServiceWorkerJobIdentifier = LegacyNullableAtomicObjectIdentifier<ServiceWorkerJobIdentifierType>;
 
 enum class SWServerToContextConnectionIdentifierType { };
-using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
+using SWServerToContextConnectionIdentifier = LegacyNullableObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 
 using SWServerConnectionIdentifierType = ProcessIdentifierType;
-using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
+using SWServerConnectionIdentifier = LegacyNullableObjectIdentifier<SWServerConnectionIdentifierType>;
 
 using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerClientData>;
 

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 enum class ImageOverlayDataDetectionResultIdentifierType { };
-using ImageOverlayDataDetectionResultIdentifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>;
+using ImageOverlayDataDetectionResultIdentifier = LegacyNullableObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>;
 
 } // namespace WebCore
 

@@ -43,7 +43,7 @@ inline WebCore::IntRect WebPage::bounds() const
 
 inline StorageNamespaceIdentifier WebPage::sessionStorageNamespaceIdentifier() const
 {
-    return ObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64());
+    return LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64());
 }
 
 inline void WebPage::setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds limit)

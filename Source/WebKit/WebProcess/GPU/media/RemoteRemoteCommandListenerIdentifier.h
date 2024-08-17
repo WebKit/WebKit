@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class RemoteRemoteCommandListenerIdentifierType { };
-using RemoteRemoteCommandListenerIdentifier = ObjectIdentifier<RemoteRemoteCommandListenerIdentifierType>;
+using RemoteRemoteCommandListenerIdentifier = LegacyNullableObjectIdentifier<RemoteRemoteCommandListenerIdentifierType>;
 
 } // namespace WebKit
 

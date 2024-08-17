@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class WebSocketIdentifierType { };
-using WebSocketIdentifier = AtomicObjectIdentifier<WebSocketIdentifierType>;
+using WebSocketIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketIdentifierType>;
 
 } // namespace WebCore

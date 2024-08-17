@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class ImageDecoderIdentifierType { };
-using ImageDecoderIdentifier = ObjectIdentifier<ImageDecoderIdentifierType>;
+using ImageDecoderIdentifier = LegacyNullableObjectIdentifier<ImageDecoderIdentifierType>;
 
 } // namespace WebCore

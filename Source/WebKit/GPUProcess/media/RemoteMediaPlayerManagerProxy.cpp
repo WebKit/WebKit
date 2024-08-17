@@ -146,14 +146,14 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(RunLoop::isMain());
-    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
+    if (auto* player = m_proxies.get(LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
 
 bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
     ASSERT(RunLoop::isMain());
-    if (auto* player = m_proxies.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
+    if (auto* player = m_proxies.get(LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         return player->didReceiveSyncMessage(connection, decoder, encoder);
     return false;
 }

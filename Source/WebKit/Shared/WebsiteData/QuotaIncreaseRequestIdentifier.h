@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class QuotaIncreaseRequestIdentifierType { };
-using QuotaIncreaseRequestIdentifier = AtomicObjectIdentifier<QuotaIncreaseRequestIdentifierType>;
+using QuotaIncreaseRequestIdentifier = LegacyNullableAtomicObjectIdentifier<QuotaIncreaseRequestIdentifierType>;
 
 } // namespace WebKit

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class ShapeDetectionIdentifierType { };
-using ShapeDetectionIdentifier = ObjectIdentifier<ShapeDetectionIdentifierType>;
+using ShapeDetectionIdentifier = LegacyNullableObjectIdentifier<ShapeDetectionIdentifierType>;
 
 } // namespace WebKit
 

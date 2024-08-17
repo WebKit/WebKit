@@ -3072,7 +3072,7 @@ uint64_t Internals::messagePortIdentifier(const MessagePort& port) const
 
 bool Internals::isMessagePortAlive(uint64_t messagePortIdentifier) const
 {
-    MessagePortIdentifier portIdentifier { Process::identifier(), AtomicObjectIdentifier<PortIdentifierType>(messagePortIdentifier) };
+    MessagePortIdentifier portIdentifier { Process::identifier(), LegacyNullableAtomicObjectIdentifier<PortIdentifierType>(messagePortIdentifier) };
     return MessagePort::isMessagePortAliveForTesting(portIdentifier);
 }
 
@@ -3092,7 +3092,7 @@ uint64_t Internals::elementIdentifier(Element& element) const
 
 bool Internals::isElementAlive(uint64_t elementIdentifier) const
 {
-    return Element::fromIdentifier(ObjectIdentifier<ElementIdentifierType>(elementIdentifier));
+    return Element::fromIdentifier(LegacyNullableObjectIdentifier<ElementIdentifierType>(elementIdentifier));
 }
 
 uint64_t Internals::pageIdentifier(const Document& document) const

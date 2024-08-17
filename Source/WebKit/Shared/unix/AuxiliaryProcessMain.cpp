@@ -69,7 +69,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         return false;
 
     if (auto processIdentifier = parseInteger<uint64_t>(span(argv[1])))
-        m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
+        m_parameters.processIdentifier = LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
     else
         return false;
 

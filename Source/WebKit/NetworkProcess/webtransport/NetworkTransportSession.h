@@ -51,8 +51,8 @@ class NetworkTransportSendStream;
 struct WebTransportSessionIdentifierType;
 struct WebTransportStreamIdentifierType;
 
-using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
-using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportSessionIdentifier = LegacyNullableObjectIdentifier<WebTransportSessionIdentifierType>;
+using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class NetworkTransportSession : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSession);

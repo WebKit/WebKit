@@ -263,13 +263,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
         RELEASE_ASSERT(RunLoop::isMain());
         MESSAGE_CHECK(decoder.destinationID());
-        if (auto* loader = m_networkResourceLoaders.get(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
+        if (auto* loader = m_networkResourceLoaders.get(LegacyNullableAtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             loader->didReceiveNetworkResourceLoaderMessage(connection, decoder);
         return;
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
-        if (auto* channel = m_networkSocketChannels.get(AtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
+        if (auto* channel = m_networkSocketChannels.get(LegacyNullableAtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             channel->didReceiveMessage(connection, decoder);
         return;
     }

@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct MediaSessionIdentifierType;
-using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>;
+using MediaSessionIdentifier = LegacyNullableObjectIdentifier<MediaSessionIdentifierType>;
 
 }

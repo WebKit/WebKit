@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct PDFPluginIdentifierType;
-using PDFPluginIdentifier = ObjectIdentifier<PDFPluginIdentifierType>;
+using PDFPluginIdentifier = LegacyNullableObjectIdentifier<PDFPluginIdentifierType>;
 
 }

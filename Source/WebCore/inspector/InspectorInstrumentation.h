@@ -107,7 +107,7 @@ struct Styleable;
 class WebGLProgram;
 #endif
 
-using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketChannel>;
 enum class StorageType : uint8_t;
 
 struct ComputedEffectTiming;

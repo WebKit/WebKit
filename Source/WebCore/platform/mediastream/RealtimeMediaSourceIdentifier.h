@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class RealtimeMediaSourceIdentifierType { };
-using RealtimeMediaSourceIdentifier = ObjectIdentifier<RealtimeMediaSourceIdentifierType>;
+using RealtimeMediaSourceIdentifier = LegacyNullableObjectIdentifier<RealtimeMediaSourceIdentifierType>;
 
 }

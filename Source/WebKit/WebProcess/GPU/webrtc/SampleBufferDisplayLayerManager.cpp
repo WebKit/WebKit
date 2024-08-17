@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SampleBufferDisplayLayerManager);
 
 void SampleBufferDisplayLayerManager::didReceiveLayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* layer = m_layers.get(ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
+    if (auto* layer = m_layers.get(LegacyNullableObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID())).get())
         layer->didReceiveMessage(connection, decoder);
 }
 

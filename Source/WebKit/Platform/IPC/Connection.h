@@ -170,7 +170,7 @@ class UnixMessage;
 class WorkQueueMessageReceiver;
 
 struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
 
 // Sync message sender is expected to hold this instance alive as long as the reply() is being
 // accessed. View type data types in replies, such as std::span, refer to data stored in
@@ -222,7 +222,7 @@ struct ConnectionAsyncReplyHandler {
 };
 
 enum class ConnectionSyncRequestIDType { };
-using ConnectionSyncRequestID = AtomicObjectIdentifier<ConnectionSyncRequestIDType>;
+using ConnectionSyncRequestID = LegacyNullableAtomicObjectIdentifier<ConnectionSyncRequestIDType>;
 
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
@@ -306,7 +306,7 @@ public:
     Client* client() const { return m_client; }
 
     enum UniqueIDType { };
-    using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
+    using UniqueID = LegacyNullableAtomicObjectIdentifier<UniqueIDType>;
     using DecoderOrError = Expected<UniqueRef<Decoder>, Error>;
 
     static RefPtr<Connection> connection(UniqueID);
@@ -822,7 +822,7 @@ template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(A
     ASSERT(decoderOrError.value()->messageReceiverName() == ReceiverName::AsyncReply);
     ASSERT(decoderOrError.value()->destinationID() == replyID.toUInt64());
     ASSERT(!isAsyncReplyHandlerWithDispatcher(replyID), "Not supported with AsyncReplyHandlerWithDispatcher");
-    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
+    auto handler = takeAsyncReplyHandler(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.value()->destinationID()));
     if (!handler) {
         ASSERT_NOT_REACHED();
         return Error::FailedToFindReplyHandler;

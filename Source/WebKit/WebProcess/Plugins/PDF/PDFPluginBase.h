@@ -84,7 +84,7 @@ class WebWheelEvent;
 struct WebHitTestResultData;
 
 enum class ByteRangeRequestIdentifierType;
-using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
+using ByteRangeRequestIdentifier = LegacyNullableObjectIdentifier<ByteRangeRequestIdentifierType>;
 
 enum class CheckValidRanges : bool { No, Yes };
 

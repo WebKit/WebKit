@@ -71,7 +71,7 @@ constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 20_s };
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
 enum class MessageIdentifierType { };
-using MessageIdentifier = AtomicObjectIdentifier<MessageIdentifierType>;
+using MessageIdentifier = LegacyNullableAtomicObjectIdentifier<MessageIdentifierType>;
 
 #if ENABLE(UNFAIR_LOCK)
 static UnfairLock s_connectionMapLock;
@@ -1053,7 +1053,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         return;
 
     if (message->messageReceiverName() == ReceiverName::AsyncReply) {
-        if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
+        if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
             replyHandlerWithDispatcher(message.moveToUniquePtr());
             return;
         }
@@ -1372,7 +1372,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     assertIsCurrent(dispatcher());
     RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
-        auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
+        auto handler = takeAsyncReplyHandler(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
         if (!handler) {
             markCurrentlyDispatchedMessageAsInvalid();
 #if ENABLE(IPC_TESTING_API)

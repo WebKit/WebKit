@@ -1224,7 +1224,7 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
 
     auto& streamConnection = jsStreamConnection->connection();
     enum JSIPCStreamTesterIdentifierType { };
-    auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
+    auto destination = LegacyNullableObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
     auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination);
     if (!sendResult.succeeded()) {
@@ -2363,8 +2363,8 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         if (!frameIdentifier || !processIdentifier)
             return false;
         encoder << WebCore::FrameIdentifier {
-            ObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
-            ObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
+            LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
+            LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
         };
         return true;
     }

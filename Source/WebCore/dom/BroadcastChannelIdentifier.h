@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class BroadcastChannelIdentifierType { };
-using BroadcastChannelIdentifier = AtomicObjectIdentifier<BroadcastChannelIdentifierType>;
+using BroadcastChannelIdentifier = LegacyNullableAtomicObjectIdentifier<BroadcastChannelIdentifierType>;
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ namespace WebKit {
 class MediaFormatReader;
 
 enum class MediaSampleCursorIdentifierType;
-using MediaSampleCursorIdentifier = AtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
+using MediaSampleCursorIdentifier = LegacyNullableAtomicObjectIdentifier<MediaSampleCursorIdentifierType>;
 
 class MediaTrackReader final : public CoreMediaWrapped<MediaTrackReader> {
 public:

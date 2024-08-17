@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct WebPageProxyIdentifierType;
-using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
+using WebPageProxyIdentifier = LegacyNullableObjectIdentifier<WebPageProxyIdentifierType>;
 
 }

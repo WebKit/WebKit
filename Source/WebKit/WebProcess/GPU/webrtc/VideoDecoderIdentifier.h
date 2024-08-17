@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class VideoDecoderIdentifierType { };
-using VideoDecoderIdentifier = AtomicObjectIdentifier<VideoDecoderIdentifierType>;
+using VideoDecoderIdentifier = LegacyNullableAtomicObjectIdentifier<VideoDecoderIdentifierType>;
 
 } // namespace WebKit

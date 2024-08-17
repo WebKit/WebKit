@@ -102,7 +102,7 @@ struct ScrollRectToVisibleOptions;
 enum class DateComponentsType : uint8_t;
 
 enum class AXIDType { };
-using AXID = ObjectIdentifier<AXIDType>;
+using AXID = LegacyNullableObjectIdentifier<AXIDType>;
 
 enum class AXAncestorFlag : uint8_t {
     // When the flags aren't initialized, it means the object hasn't been inserted into the tree,
