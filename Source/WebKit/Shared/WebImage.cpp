@@ -41,14 +41,14 @@ Ref<WebImage> WebImage::createEmpty()
 Ref<WebImage> WebImage::create(const IntSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
 {
     if (client) {
-        auto purpose = (options & ImageOptionsShareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
-        purpose = (options & ImageOptionsLocal) ? RenderingPurpose::ShareableLocalSnapshot : purpose;
+        auto purpose = options.contains(ImageOption::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
+        purpose = options.contains(ImageOption::Local) ? RenderingPurpose::ShareableLocalSnapshot : purpose;
         
         if (auto buffer = client->createImageBuffer(size, purpose, 1, colorSpace, ImageBufferPixelFormat::BGRA8, { }))
             return WebImage::create(buffer.releaseNonNull());
     }
 
-    if (options & ImageOptionsShareable) {
+    if (options.contains(ImageOption::Shareable)) {
         auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
         if (!buffer)
             return createEmpty();

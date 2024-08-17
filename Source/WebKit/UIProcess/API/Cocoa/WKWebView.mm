@@ -1252,21 +1252,21 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
     WebKit::SnapshotOptions snapshotOptions;
     if (snapshotConfiguration._usesContentsRect) {
-        snapshotOptions = WebKit::SnapshotOptionsFullContentRect;
+        snapshotOptions = WebKit::SnapshotOption::FullContentRect;
         // Let WebPage decide the image size.
         bitmapSize = WebCore::IntSize { };
     } else
-        snapshotOptions = WebKit::SnapshotOptionsInViewCoordinates;
+        snapshotOptions = WebKit::SnapshotOption::InViewCoordinates;
     if (!snapshotConfiguration._includesSelectionHighlighting)
-        snapshotOptions |= WebKit::SnapshotOptionsExcludeSelectionHighlighting;
+        snapshotOptions.add(WebKit::SnapshotOption::ExcludeSelectionHighlighting);
     if (snapshotConfiguration._usesTransparentBackground)
-        snapshotOptions |= WebKit::SnapshotOptionsTransparentBackground;
+        snapshotOptions.add(WebKit::SnapshotOption::TransparentBackground);
 
     // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
     // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
     // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
     // in snapshotConfiguration.afterScreenUpdates at that time.
-    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, snapshotOptions, [handler, snapshotWidth, imageHeight, usesContentRect = snapshotOptions & WebKit::SnapshotOptionsFullContentRect](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, snapshotOptions, [handler, snapshotWidth, imageHeight, usesContentRect = snapshotOptions.contains(WebKit::SnapshotOption::FullContentRect)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
         if (!imageHandle) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());

@@ -633,6 +633,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Gamepad/GamepadData.serialization.in \
 	Shared/GPUProcessConnectionParameters.serialization.in \
 	Shared/GoToBackForwardItemParameters.serialization.in \
+	Shared/ImageOptions.serialization.in \
 	Shared/InspectorExtensionTypes.serialization.in \
 	Shared/PlatformFontInfo.serialization.in \
 	Shared/ios/DynamicViewportSizeUpdate.serialization.in \

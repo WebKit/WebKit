@@ -5000,20 +5000,20 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    SnapshotOptions snapshotOptions = 0;
+    SnapshotOptions snapshotOptions;
     switch (region) {
     case WEBKIT_SNAPSHOT_REGION_VISIBLE:
-        snapshotOptions |= SnapshotOptionsVisibleContentRect;
+        snapshotOptions.add(SnapshotOption::VisibleContentRect);
         break;
     case WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT:
-        snapshotOptions |= SnapshotOptionsFullContentRect;
+        snapshotOptions.add(SnapshotOption::FullContentRect);
         break;
     }
 
     if (!(options & WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING))
-        snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+        snapshotOptions.add(SnapshotOption::ExcludeSelectionHighlighting);
     if (options & WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND)
-        snapshotOptions |= SnapshotOptionsTransparentBackground;
+        snapshotOptions.add(SnapshotOption::TransparentBackground);
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {

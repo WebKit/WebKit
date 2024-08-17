@@ -423,6 +423,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FullScreenMediaDetails.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/GoToBackForwardItemParameters.serialization.in
+    Shared/ImageOptions.serialization.in
     Shared/InspectorExtensionTypes.serialization.in
     Shared/JavaScriptCore.serialization.in
     Shared/LayerTreeContext.serialization.in

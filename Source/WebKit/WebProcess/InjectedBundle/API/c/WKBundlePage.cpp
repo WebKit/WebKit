@@ -475,7 +475,7 @@ WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef pageRef, WKRect
 WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef pageRef, WKRect rect, WKImageOptions options)
 {
     auto snapshotOptions = WebKit::snapshotOptionsFromImageOptions(options);
-    snapshotOptions |= WebKit::SnapshotOptionsInViewCoordinates;
+    snapshotOptions.add(WebKit::SnapshotOption::InViewCoordinates);
     RefPtr<WebKit::WebImage> webImage = WebKit::toImpl(pageRef)->scaledSnapshotWithOptions(WebKit::toIntRect(rect), 1, snapshotOptions);
     return toAPI(webImage.leakRef());
 }
