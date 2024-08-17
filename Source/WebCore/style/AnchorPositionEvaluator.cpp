@@ -430,13 +430,29 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
 }
 
-static bool elementIsInContainingBlockChain(const RenderElement& element, const RenderElement& start)
+static const RenderElement* penultimateContainingBlockChainElement(const RenderElement* descendant, const RenderElement* ancestor)
 {
-    auto currentBlock = &start;
-    while ((currentBlock = currentBlock->containingBlock())) {
-        if (currentBlock == &element)
-            return true;
+    auto* currentElement = descendant;
+    for (auto* nextElement = currentElement->containingBlock(); nextElement; nextElement = nextElement->containingBlock()) {
+        if (nextElement == ancestor)
+            return currentElement;
+        currentElement = nextElement;
     }
+    return nullptr;
+}
+
+static bool firstChildPrecedesSecondChild(const RenderObject* firstChild, const RenderObject* secondChild, const RenderBlock* containingBlock)
+{
+    auto positionedObjects = containingBlock->positionedObjects();
+    ASSERT(positionedObjects);
+    for (auto it = positionedObjects->begin(); it != positionedObjects->end(); ++it) {
+        auto child = it.get();
+        if (child == firstChild)
+            return true;
+        if (child == secondChild)
+            return false;
+    }
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -449,7 +465,14 @@ static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<cons
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
 
-    if (!elementIsInContainingBlockChain(*containingBlock, *anchorRenderer))
+    auto* penultimateElement = penultimateContainingBlockChainElement(anchorRenderer.get(), containingBlock.get());
+    if (!penultimateElement)
+        return false;
+
+    if (!penultimateElement->isOutOfFlowPositioned())
+        return true;
+
+    if (!firstChildPrecedesSecondChild(penultimateElement, anchorPositionedRenderer.get(), containingBlock.get()))
         return false;
 
     // FIXME: Implement the rest of https://drafts.csswg.org/css-anchor-position-1/#acceptable-anchor-element.
@@ -459,8 +482,7 @@ static bool isAcceptableAnchorElement(Ref<const Element> anchorElement, Ref<cons
 
 static std::optional<Ref<Element>> findLastAcceptableAnchorWithName(String anchorName, Ref<const Element> anchorPositionedElement)
 {
-    auto& anchorsForAnchorName = anchorPositionedElement->document().styleScope().anchorsForAnchorName();
-    const auto& anchors = anchorsForAnchorName.get(anchorName);
+    const auto& anchors = anchorPositionedElement->document().styleScope().anchorsForAnchorName().get(anchorName);
 
     // FIXME: These should iterate through the anchor targets in reverse DOM order.
     for (auto anchor : makeReversedRange(anchors)) {
