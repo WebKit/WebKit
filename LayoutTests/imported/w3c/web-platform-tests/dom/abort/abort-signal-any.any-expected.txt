@@ -9,4 +9,6 @@ PASS AbortSignal.any() signals are composable (using AbortController)
 PASS AbortSignal.any() works with signals returned by AbortSignal.timeout() (using AbortController)
 PASS AbortSignal.any() works with intermediate signals (using AbortController)
 PASS Abort events for AbortSignal.any() signals fire in the right order (using AbortController)
+PASS Dependent signals for AbortSignal.any() are marked aborted before abort events fire (using AbortController)
+PASS Dependent signals for AbortSignal.any() are aborted correctly for reentrant aborts (using AbortController)
 
