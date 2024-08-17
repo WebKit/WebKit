@@ -257,7 +257,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 .nextInChain = nullptr,
                 .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float3x2),
                 .hasDynamicOffset = static_cast<WGPUBool>(false),
-                .minBindingSize = 0
+                .minBindingSize = 0,
+                .bufferSizeForBinding = 0
             };
             descriptors[2] = createArgumentDescriptor(bufferLayout, *this, entry);
             bufferLayout.type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3);

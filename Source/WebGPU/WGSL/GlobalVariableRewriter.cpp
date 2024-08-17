@@ -1367,7 +1367,16 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
                 .webBinding = global.resource->binding,
                 .visibility = m_stage,
                 .bindingMember = bindingMemberForGlobal(global),
-                .name = global.declaration->name()
+                .name = global.declaration->name(),
+                .vertexArgumentBufferIndex = std::nullopt,
+                .vertexArgumentBufferSizeIndex = std::nullopt,
+                .vertexBufferDynamicOffset = std::nullopt,
+                .fragmentArgumentBufferIndex = std::nullopt,
+                .fragmentArgumentBufferSizeIndex = std::nullopt,
+                .fragmentBufferDynamicOffset = std::nullopt,
+                .computeArgumentBufferIndex = std::nullopt,
+                .computeArgumentBufferSizeIndex = std::nullopt,
+                .computeBufferDynamicOffset = std::nullopt
             };
 
             auto bufferSizeIt = m_bufferLengthMap.find(global.declaration);
