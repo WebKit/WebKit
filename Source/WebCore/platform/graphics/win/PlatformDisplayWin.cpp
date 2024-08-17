@@ -41,7 +41,7 @@ void PlatformDisplayWin::initializeEGLDisplay()
         EGL_FALSE,
         EGL_NONE,
     };
-    m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes);
+    m_eglDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes));
 
     PlatformDisplay::initializeEGLDisplay();
 }

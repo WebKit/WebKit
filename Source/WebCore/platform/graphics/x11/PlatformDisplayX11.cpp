@@ -96,45 +96,45 @@ void PlatformDisplayX11::sharedDisplayDidClose()
     m_display = nullptr;
 }
 
-EGLDisplay PlatformDisplayX11::gtkEGLDisplay()
+GLDisplay* PlatformDisplayX11::gtkEGLDisplay()
 {
-    if (m_eglDisplay != EGL_NO_DISPLAY)
-        return m_eglDisplayOwned ? EGL_NO_DISPLAY : m_eglDisplay;
+    if (m_eglDisplay)
+        return m_eglDisplayOwned ? nullptr : m_eglDisplay.get();
 
     if (!m_sharedDisplay)
-        return EGL_NO_DISPLAY;
+        return nullptr;
 
 #if USE(GTK4)
-    m_eglDisplay = gdk_x11_display_get_egl_display(m_sharedDisplay.get());
-    if (m_eglDisplay != EGL_NO_DISPLAY) {
+    m_eglDisplay = GLDisplay::create(gdk_x11_display_get_egl_display(m_sharedDisplay.get()));
+    if (m_eglDisplay) {
         m_eglDisplayOwned = false;
         PlatformDisplay::initializeEGLDisplay();
 #if ENABLE(WEBGL)
         m_anglePlatform = EGL_PLATFORM_X11_KHR;
         m_angleNativeDisplay = m_display;
 #endif
-        return m_eglDisplay;
+        return m_eglDisplay.get();
     }
 #endif
 
-    return EGL_NO_DISPLAY;
+    return nullptr;
 }
 #endif
 
 void PlatformDisplayX11::initializeEGLDisplay()
 {
 #if PLATFORM(GTK)
-    if (gtkEGLDisplay() != EGL_NO_DISPLAY)
+    if (gtkEGLDisplay())
         return;
 #endif
 
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, m_display, nullptr));
     else
-        m_eglDisplay = eglGetDisplay(m_display);
+        m_eglDisplay = GLDisplay::create(eglGetDisplay(m_display));
 
     PlatformDisplay::initializeEGLDisplay();
 

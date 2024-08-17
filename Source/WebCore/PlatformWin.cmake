@@ -56,6 +56,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextWrapper.cpp
+    platform/graphics/egl/GLDisplay.cpp
     platform/graphics/egl/GLFence.cpp
     platform/graphics/egl/GLFenceEGL.cpp
     platform/graphics/egl/GLFenceGL.cpp

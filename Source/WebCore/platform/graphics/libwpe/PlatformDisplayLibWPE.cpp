@@ -87,13 +87,13 @@ PlatformDisplayLibWPE::PlatformDisplayLibWPE(int hostFd)
             }();
 
         if (getPlatformDisplay)
-            m_eglDisplay = getPlatformDisplay(eglPlatform, eglNativeDisplay, nullptr);
+            m_eglDisplay = GLDisplay::create(getPlatformDisplay(eglPlatform, eglNativeDisplay, nullptr));
     }
 #endif
 
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        m_eglDisplay = eglGetDisplay(eglNativeDisplay);
-    if (m_eglDisplay == EGL_NO_DISPLAY) {
+    if (!m_eglDisplay)
+        m_eglDisplay = GLDisplay::create(eglGetDisplay(eglNativeDisplay));
+    if (!m_eglDisplay) {
         WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContext::lastErrorString());
         return;
     }
@@ -101,7 +101,7 @@ PlatformDisplayLibWPE::PlatformDisplayLibWPE(int hostFd)
     PlatformDisplay::initializeEGLDisplay();
 
 #if ENABLE(WEBGL)
-    if (m_eglDisplay != EGL_NO_DISPLAY) {
+    if (m_eglDisplay) {
         m_anglePlatform = eglPlatform;
         m_angleNativeDisplay = eglNativeDisplay;
     }
@@ -117,7 +117,7 @@ PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
 void PlatformDisplayLibWPE::initializeEGLDisplay()
 {
     if (!m_backend)
-        m_eglDisplay = eglGetCurrentDisplay();
+        m_eglDisplay = GLDisplay::create(eglGetCurrentDisplay());
     PlatformDisplay::initializeEGLDisplay();
 }
 

@@ -42,9 +42,9 @@ PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
 {
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr));
 
     PlatformDisplay::initializeEGLDisplay();
 

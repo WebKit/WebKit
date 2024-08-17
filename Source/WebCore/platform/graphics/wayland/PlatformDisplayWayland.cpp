@@ -96,51 +96,51 @@ void PlatformDisplayWayland::sharedDisplayDidClose()
     m_display = nullptr;
 }
 
-EGLDisplay PlatformDisplayWayland::gtkEGLDisplay()
+GLDisplay* PlatformDisplayWayland::gtkEGLDisplay()
 {
-    if (m_eglDisplay != EGL_NO_DISPLAY)
-        return m_eglDisplayOwned ? EGL_NO_DISPLAY : m_eglDisplay;
+    if (m_eglDisplay)
+        return m_eglDisplayOwned ? nullptr : m_eglDisplay.get();
 
     if (!m_sharedDisplay)
-        return EGL_NO_DISPLAY;
+        return nullptr;
 
 #if USE(GTK4)
-    m_eglDisplay = gdk_wayland_display_get_egl_display(m_sharedDisplay.get());
+    m_eglDisplay = GLDisplay::create(gdk_wayland_display_get_egl_display(m_sharedDisplay.get()));
 #else
     auto* window = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_realize(window);
     if (auto context = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(window), nullptr))) {
         gdk_gl_context_make_current(context.get());
-        m_eglDisplay = eglGetCurrentDisplay();
+        m_eglDisplay = GLDisplay::create(eglGetCurrentDisplay());
     }
     gtk_widget_destroy(window);
 #endif
 
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        return EGL_NO_DISPLAY;
+    if (!m_eglDisplay)
+        return nullptr;
 
     m_eglDisplayOwned = false;
     PlatformDisplay::initializeEGLDisplay();
-    return m_eglDisplay;
+    return m_eglDisplay.get();
 }
 #endif
 
 void PlatformDisplayWayland::initializeEGLDisplay()
 {
 #if PLATFORM(GTK)
-    if (gtkEGLDisplay() != EGL_NO_DISPLAY)
+    if (gtkEGLDisplay())
         return;
 #endif
 
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr);
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr));
 
-    if (m_eglDisplay == EGL_NO_DISPLAY && GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_WAYLAND_EXT, m_display, nullptr);
+    if (!m_eglDisplay && GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_WAYLAND_EXT, m_display, nullptr));
 
-    if (m_eglDisplay == EGL_NO_DISPLAY)
-        m_eglDisplay = eglGetDisplay(m_display);
+    if (!m_eglDisplay)
+        m_eglDisplay = GLDisplay::create(eglGetDisplay(m_display));
 
     PlatformDisplay::initializeEGLDisplay();
 }

@@ -95,17 +95,6 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
-#if !USE(LIBEPOXY)
-typedef EGLImage (EGLAPIENTRYP PFNEGLCREATEIMAGEPROC) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, const EGLAttrib*);
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEPROC) (EGLDisplay, EGLImage);
-#ifndef EGL_KHR_image_base
-#define EGL_KHR_image_base 1
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImage);
-typedef EGLImageKHR (EGLAPIENTRYP PFNEGLCREATEIMAGEKHRPROC) (EGLDisplay, EGLContext, EGLenum target, EGLClientBuffer, const EGLint* attribList);
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImageKHR);
-#endif
-#endif
-
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
@@ -178,15 +167,11 @@ PlatformDisplay& PlatformDisplay::sharedDisplay()
 }
 #endif
 
-PlatformDisplay::PlatformDisplay()
-    : m_eglDisplay(EGL_NO_DISPLAY)
-{
-}
+PlatformDisplay::PlatformDisplay() = default;
 
 #if PLATFORM(GTK)
 PlatformDisplay::PlatformDisplay(GdkDisplay* display)
     : m_sharedDisplay(display)
-    , m_eglDisplay(EGL_NO_DISPLAY)
 {
     if (m_sharedDisplay) {
         g_signal_connect(m_sharedDisplay.get(), "closed", G_CALLBACK(+[](GdkDisplay*, gboolean, gpointer userData) {
@@ -210,7 +195,7 @@ static HashSet<PlatformDisplay*>& eglDisplays()
 
 PlatformDisplay::~PlatformDisplay()
 {
-    if (m_eglDisplay != EGL_NO_DISPLAY && eglDisplays().remove(this))
+    if (m_eglDisplay && eglDisplays().remove(this))
         terminateEGLDisplay();
 
 #if PLATFORM(GTK)
@@ -244,65 +229,34 @@ EGLDisplay PlatformDisplay::eglDisplay() const
 {
     if (!m_eglDisplayInitialized)
         const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
-    return m_eglDisplay;
+    return m_eglDisplay ? m_eglDisplay->eglDisplay() : EGL_NO_DISPLAY;
 }
 
 bool PlatformDisplay::eglCheckVersion(int major, int minor) const
 {
     if (!m_eglDisplayInitialized)
         const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
-
-    return (m_eglMajorVersion > major) || ((m_eglMajorVersion == major) && (m_eglMinorVersion >= minor));
+    return m_eglDisplay ? m_eglDisplay->checkVersion(major, minor) : false;
 }
 
-const PlatformDisplay::EGLExtensions& PlatformDisplay::eglExtensions() const
+const GLDisplay::Extensions& PlatformDisplay::eglExtensions() const
 {
     if (!m_eglDisplayInitialized)
         const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
-    return m_eglExtensions;
+    static GLDisplay::Extensions empty;
+    return m_eglDisplay ? m_eglDisplay->extensions() : empty;
 }
 
 void PlatformDisplay::initializeEGLDisplay()
 {
     m_eglDisplayInitialized = true;
 
-    if (m_eglDisplay == EGL_NO_DISPLAY) {
-        m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (m_eglDisplay == EGL_NO_DISPLAY) {
+    if (!m_eglDisplay) {
+        m_eglDisplay = GLDisplay::create(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+        if (!m_eglDisplay) {
             WTFLogAlways("Cannot get default EGL display: %s\n", GLContext::lastErrorString());
             return;
         }
-    }
-
-    EGLint majorVersion, minorVersion;
-    if (eglInitialize(m_eglDisplay, &majorVersion, &minorVersion) == EGL_FALSE) {
-        WTFLogAlways("EGLDisplay Initialization failed: %s\n", GLContext::lastErrorString());
-        terminateEGLDisplay();
-        return;
-    }
-
-    m_eglMajorVersion = majorVersion;
-    m_eglMinorVersion = minorVersion;
-
-    {
-        const char* extensionsString = eglQueryString(m_eglDisplay, EGL_EXTENSIONS);
-        auto displayExtensions = StringView::fromLatin1(extensionsString).split(' ');
-        auto findExtension =
-            [&](auto extensionName) {
-                return std::any_of(displayExtensions.begin(), displayExtensions.end(),
-                    [&](auto extensionEntry) {
-                        return extensionEntry == extensionName;
-                    });
-            };
-
-        m_eglExtensions.KHR_image_base = findExtension("EGL_KHR_image_base"_s);
-        m_eglExtensions.KHR_surfaceless_context = findExtension("EGL_KHR_surfaceless_context"_s);
-        m_eglExtensions.KHR_fence_sync = findExtension("EGL_KHR_fence_sync"_s);
-        m_eglExtensions.KHR_wait_sync = findExtension("EGL_KHR_wait_sync"_s);
-        m_eglExtensions.ANDROID_native_fence_sync = findExtension("EGL_ANDROID_native_fence_sync"_s);
-        m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
-        m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
-        m_eglExtensions.MESA_image_dma_buf_export = findExtension("EGL_MESA_image_dma_buf_export"_s);
     }
 
     if (!m_eglDisplayOwned)
@@ -339,108 +293,29 @@ void PlatformDisplay::terminateEGLDisplay()
 #endif
     clearSharingGLContext();
     ASSERT(m_eglDisplayInitialized);
-    if (m_eglDisplay == EGL_NO_DISPLAY)
+    if (!m_eglDisplay)
         return;
 
-    if (m_eglDisplayOwned) {
-        eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        eglTerminate(m_eglDisplay);
-    }
-    m_eglDisplay = EGL_NO_DISPLAY;
+    if (m_eglDisplayOwned)
+        m_eglDisplay->terminate();
+    m_eglDisplay = nullptr;
 }
 
 EGLImage PlatformDisplay::createEGLImage(EGLContext context, EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attributes) const
 {
-    if (eglCheckVersion(1, 5)) {
-        static PFNEGLCREATEIMAGEPROC s_eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEPROC>(eglGetProcAddress("eglCreateImage"));
-        if (s_eglCreateImage)
-            return s_eglCreateImage(m_eglDisplay, context, target, clientBuffer, attributes.isEmpty() ? nullptr : attributes.data());
-        return EGL_NO_IMAGE;
-    }
-
-    if (!m_eglExtensions.KHR_image_base)
-        return EGL_NO_IMAGE;
-
-    Vector<EGLint> intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
-        return value;
-    });
-    static PFNEGLCREATEIMAGEKHRPROC s_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-    if (s_eglCreateImageKHR)
-        return s_eglCreateImageKHR(m_eglDisplay, context, target, clientBuffer, intAttributes.isEmpty() ? nullptr : intAttributes.data());
-    return EGL_NO_IMAGE_KHR;
+    return m_eglDisplay ? m_eglDisplay->createImage(context, target, clientBuffer, attributes) : EGL_NO_IMAGE_KHR;
 }
 
 bool PlatformDisplay::destroyEGLImage(EGLImage image) const
 {
-    if (eglCheckVersion(1, 5)) {
-        static PFNEGLDESTROYIMAGEPROC s_eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(eglGetProcAddress("eglDestroyImage"));
-        if (s_eglDestroyImage)
-            return s_eglDestroyImage(m_eglDisplay, image);
-        return false;
-    }
-
-    if (!m_eglExtensions.KHR_image_base)
-        return false;
-
-    static PFNEGLDESTROYIMAGEKHRPROC s_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-    if (s_eglDestroyImageKHR)
-        return s_eglDestroyImageKHR(m_eglDisplay, image);
-    return false;
+    return m_eglDisplay ? m_eglDisplay->destroyImage(image) : false;
 }
 
 #if USE(GBM)
-const Vector<PlatformDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
+const Vector<GLDisplay::DMABufFormat>& PlatformDisplay::dmabufFormats()
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [this] {
-        const auto& extensions = eglExtensions();
-        if (!extensions.EXT_image_dma_buf_import)
-            return;
-
-        static PFNEGLQUERYDMABUFFORMATSEXTPROC s_eglQueryDmaBufFormatsEXT = reinterpret_cast<PFNEGLQUERYDMABUFFORMATSEXTPROC>(eglGetProcAddress("eglQueryDmaBufFormatsEXT"));
-        if (!s_eglQueryDmaBufFormatsEXT)
-            return;
-
-        EGLint formatsCount;
-        if (!s_eglQueryDmaBufFormatsEXT(m_eglDisplay, 0, nullptr, &formatsCount) || !formatsCount)
-            return;
-
-        Vector<EGLint> formats(formatsCount);
-        if (!s_eglQueryDmaBufFormatsEXT(m_eglDisplay, formatsCount, reinterpret_cast<EGLint*>(formats.data()), &formatsCount))
-            return;
-
-        static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = extensions.EXT_image_dma_buf_import_modifiers ?
-            reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT")) : nullptr;
-
-        // For now we only support formats that can be created with a single GBM buffer for all planes.
-        static const Vector<EGLint> s_supportedFormats = {
-            DRM_FORMAT_XRGB8888, DRM_FORMAT_RGBX8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_BGRX8888,
-            DRM_FORMAT_ARGB8888, DRM_FORMAT_RGBA8888, DRM_FORMAT_ABGR8888, DRM_FORMAT_BGRA8888,
-            DRM_FORMAT_RGB565,
-            DRM_FORMAT_XRGB2101010, DRM_FORMAT_XBGR2101010, DRM_FORMAT_ARGB2101010, DRM_FORMAT_ABGR2101010,
-            DRM_FORMAT_XRGB16161616F, DRM_FORMAT_XBGR16161616F, DRM_FORMAT_ARGB16161616F, DRM_FORMAT_ABGR16161616F
-        };
-
-        m_dmabufFormats = WTF::compactMap(s_supportedFormats, [&](auto format) -> std::optional<DMABufFormat> {
-            if (!formats.contains(format))
-                return std::nullopt;
-
-            Vector<uint64_t, 1> dmabufModifiers = { DRM_FORMAT_MOD_INVALID };
-            if (s_eglQueryDmaBufModifiersEXT) {
-                EGLint modifiersCount;
-                if (s_eglQueryDmaBufModifiersEXT(m_eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) && modifiersCount) {
-                    Vector<EGLuint64KHR> modifiers(modifiersCount);
-                    if (s_eglQueryDmaBufModifiersEXT(m_eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount)) {
-                        dmabufModifiers.grow(modifiersCount);
-                        for (int i = 0; i < modifiersCount; ++i)
-                            dmabufModifiers[i] = modifiers[i];
-                    }
-                }
-            }
-            return DMABufFormat { static_cast<uint32_t>(format), WTFMove(dmabufModifiers) };
-        });
-    });
-    return m_dmabufFormats;
+    static Vector<GLDisplay::DMABufFormat> empty;
+    return m_eglDisplay ? m_eglDisplay->dmabufFormats() : empty;
 }
 #endif // USE(GBM)
 

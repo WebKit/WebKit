@@ -53,7 +53,7 @@ private:
     Type type() const final { return PlatformDisplay::Type::Wayland; }
 
 #if PLATFORM(GTK)
-    EGLDisplay gtkEGLDisplay() override;
+    GLDisplay* gtkEGLDisplay() override;
 #endif
     void initializeEGLDisplay() override;
 
