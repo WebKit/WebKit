@@ -8193,6 +8193,3 @@ webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
-
-# webkit.org/b/278195 NEW TEST(277207@main): [ MacOS iOS ] fast/forms/form-submission-crash-4.html is a flaky failure timeout (pre-existing failure in EWS)
-fast/forms/form-submission-crash-4.html [ Skip ]
