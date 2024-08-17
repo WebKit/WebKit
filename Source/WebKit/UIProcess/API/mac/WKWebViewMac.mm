@@ -703,6 +703,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
 - (void)showContextMenuForSelection:(id)sender
 {
+    _page->handleContextMenuKeyEvent();
 }
 
 #if ENABLE(DRAG_SUPPORT)
