@@ -372,15 +372,15 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
 
 static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newStyle)
 {
-    const RenderStyle& currentStyle = renderer->style();
+    const auto& currentStyle = renderer->style();
 
-    const PseudoStyleCache* pseudoStyleCache = currentStyle.cachedPseudoStyles();
+    const auto* pseudoStyleCache = currentStyle.cachedPseudoStyles();
     if (!pseudoStyleCache)
         return false;
 
     for (auto& cache : pseudoStyleCache->styles) {
-        PseudoId pseudoId = cache->pseudoElementType();
-        std::unique_ptr<RenderStyle> newPseudoStyle = renderer->getUncachedPseudoStyle({ pseudoId }, newStyle, newStyle);
+        Style::PseudoElementIdentifier pseudoElementIdentifier { cache->pseudoElementType(), cache->pseudoElementNameArgument() };
+        auto newPseudoStyle = renderer->getUncachedPseudoStyle(pseudoElementIdentifier, newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
         if (*newPseudoStyle != *cache) {

@@ -385,6 +385,13 @@ static void appendPossiblyQuotedIdentifier(StringBuilder& builder, const Possibl
         serializeString(identifier.identifier, builder);
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, PossiblyQuotedIdentifier identifier)
+{
+    StringBuilder builder;
+    appendPossiblyQuotedIdentifier(builder, identifier);
+    return ts << builder.toString();
+}
+
 static void appendCommaSeparatedPossiblyQuotedIdentifierList(StringBuilder& builder, const FixedVector<PossiblyQuotedIdentifier>& list)
 {
     builder.append(interleave(list, appendPossiblyQuotedIdentifier, ", "_s));
