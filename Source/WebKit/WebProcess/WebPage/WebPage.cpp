@@ -9865,7 +9865,7 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
         if (!target)
             continue;
 
-        auto textRects = RenderObject::absoluteTextRects(range, {
+        auto textRects = RenderObject::absoluteBorderAndTextRects(range, {
             RenderObject::BoundingRectBehavior::RespectClipping,
             RenderObject::BoundingRectBehavior::UseVisibleBounds,
             RenderObject::BoundingRectBehavior::IgnoreTinyRects,
@@ -9873,13 +9873,13 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
         });
 
         auto indexOfFirstRelevantTextRect = textRects.findIf([&](auto& textRect) {
-            return unobscuredContentRect.intersects(textRect);
+            return unobscuredContentRect.intersects(enclosingIntRect(textRect));
         });
 
         if (indexOfFirstRelevantTextRect == notFound)
             continue;
 
-        candidates.append({ target.releaseNonNull(), textRects[indexOfFirstRelevantTextRect].center() });
+        candidates.append({ target.releaseNonNull(), roundedIntPoint(textRects[indexOfFirstRelevantTextRect].center()) });
     }
 
     removeNonHitTestableCandidates();
