@@ -228,6 +228,10 @@ if ($LASTEXITCODE -ne 0) { throw "cmake --build failed with exit code $LASTEXITC
 
 Write-Host ":: Packaging ${output}"
 
+# Dump the entire tree of files in $WebKitBuild to the console.
+# This is useful for debugging.
+Get-ChildItem -Recurse $WebKitBuild | Format-List -Force | Out-String | Write-Host
+
 Remove-Item -Recurse -ErrorAction SilentlyContinue $output
 $null = mkdir -ErrorAction SilentlyContinue $output
 $null = mkdir -ErrorAction SilentlyContinue $output/include
@@ -236,6 +240,11 @@ $null = mkdir -ErrorAction SilentlyContinue $output/include/wtf
 
 Copy-Item -Recurse $WebKitBuild/lib $output
 Copy-Item -Recurse $WebKitBuild/bin $output
+
+# If there's a lib64, also copy it.
+if (Test-Path -Path $WebKitBuild/lib64) {
+    Copy-Item -Recurse $WebKitBuild/lib64/* $output/lib
+}
 
 Copy-Item $WebKitBuild/cmakeconfig.h $output/include/cmakeconfig.h
 
