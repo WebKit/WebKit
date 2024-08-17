@@ -151,7 +151,7 @@ if (WIN32)
 
     if (ENABLE_STATIC_JSC)
         set(bmalloc_LIBRARY_TYPE STATIC)
-        set(WTF_LIBRARY_TYPE OBJECT)
+        set(WTF_LIBRARY_TYPE STATIC)
         set(JavaScriptCore_LIBRARY_TYPE STATIC)
         set(PAL_LIBRARY_TYPE STATIC)
         set(WebCore_LIBRARY_TYPE STATIC)
