@@ -51,7 +51,7 @@ void StreamClientConnection::DedicatedConnectionClient::didClose(Connection& con
     m_receiver.didClose(connection);
 }
 
-void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage(Connection&, MessageName)
+void StreamClientConnection::DedicatedConnectionClient::didReceiveInvalidMessage(Connection&, MessageName, int32_t)
 {
     ASSERT_NOT_REACHED(); // The sender is expected to be trusted, so all invalid messages are programming errors.
 }

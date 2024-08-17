@@ -24,7 +24,7 @@ headers: "ArgumentCoders.h"
 
 enum class WebCore::UserInterfaceLayoutDirection : bool;
 
-[RValue] struct WebKit::WebPageCreationParameters {
+[RValue, DebugDecodingFailure] struct WebKit::WebPageCreationParameters {
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;

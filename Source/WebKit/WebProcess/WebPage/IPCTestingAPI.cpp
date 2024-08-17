@@ -170,7 +170,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void didClose(IPC::Connection&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final;
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t) final;
 
     static JSClassRef wrapperClass();
     static JSIPCConnection* unwrap(JSObjectRef);
@@ -244,7 +244,7 @@ private:
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
         bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
         void didClose(IPC::Connection&) final { }
-        void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { ASSERT_NOT_REACHED(); }
+        void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final { ASSERT_NOT_REACHED(); }
     } m_dummyMessageReceiver;
 };
 
@@ -781,7 +781,7 @@ void JSIPCConnection::didClose(IPC::Connection&)
 {
 }
 
-void JSIPCConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
+void JSIPCConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t)
 {
     ASSERT_NOT_REACHED();
 }

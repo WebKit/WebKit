@@ -116,7 +116,7 @@ private:
     void didReceiveMessage(Connection&, Decoder&) final;
     bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
     void didClose(Connection&) final;
-    void didReceiveInvalidMessage(Connection&, MessageName) final;
+    void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
 
     bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
     bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);

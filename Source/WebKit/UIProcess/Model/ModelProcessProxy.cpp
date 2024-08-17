@@ -195,7 +195,7 @@ void ModelProcessProxy::didClose(IPC::Connection&)
     modelProcessExited(ProcessTerminationReason::Crash); // May cause |this| to get deleted.
 }
 
-void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
+void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t)
 {
     logInvalidMessage(connection, messageName);
 

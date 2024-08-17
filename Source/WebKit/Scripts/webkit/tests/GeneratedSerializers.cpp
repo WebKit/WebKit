@@ -184,10 +184,16 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
 {
     auto firstMemberName = decoder.decode<FirstMemberType>();
+    if (UNLIKELY(!firstMemberName))
+        decoder.setIndexOfDecodingFailure(0);
 #if ENABLE(SECOND_MEMBER)
     auto secondMemberName = decoder.decode<SecondMemberType>();
+    if (UNLIKELY(!secondMemberName))
+        decoder.setIndexOfDecodingFailure(1);
 #endif
     auto nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
+    if (UNLIKELY(!nullableTestMember))
+        decoder.setIndexOfDecodingFailure(2);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {

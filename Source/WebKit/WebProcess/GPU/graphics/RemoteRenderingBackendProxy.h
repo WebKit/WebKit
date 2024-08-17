@@ -186,7 +186,7 @@ private:
 
     // Connection::Client
     void didClose(IPC::Connection&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final { }
     void disconnectGPUProcess();
     void ensureGPUProcessConnection();
 

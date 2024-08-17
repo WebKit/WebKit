@@ -491,7 +491,7 @@ void NetworkProcessProxy::didClose(IPC::Connection& connection)
     networkProcessDidTerminate(ProcessTerminationReason::Crash);
 }
 
-void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
+void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t)
 {
     logInvalidMessage(connection, messageName);
     terminate();

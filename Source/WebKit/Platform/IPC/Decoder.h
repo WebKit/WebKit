@@ -157,6 +157,13 @@ public:
 
     std::optional<Attachment> takeLastAttachment();
 
+    void setIndexOfDecodingFailure(int32_t indexOfObjectFailingDecoding)
+    {
+        if (m_indexOfObjectFailingDecoding == -1)
+            m_indexOfObjectFailingDecoding = indexOfObjectFailingDecoding;
+    }
+    int32_t indexOfObjectFailingDecoding() const { return m_indexOfObjectFailingDecoding; }
+
 private:
     Decoder(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
 
@@ -178,6 +185,8 @@ private:
 #endif
 
     uint64_t m_destinationID;
+
+    int32_t m_indexOfObjectFailingDecoding { -1 };
 };
 
 template<>

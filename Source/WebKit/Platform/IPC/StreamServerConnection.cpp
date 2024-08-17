@@ -128,7 +128,7 @@ void StreamServerConnection::didClose(Connection&)
     // Client is expected to listen to didClose from the main connection.
 }
 
-void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName)
+void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName, int32_t)
 {
     // The sender is expected to be trusted, so all invalid messages are programming errors.
     ASSERT_NOT_REACHED();
@@ -146,7 +146,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             return DispatchResult::HasNoMessages;
         IPC::Decoder decoder { *span, m_currentDestinationID };
         if (!decoder.isValid()) {
-            protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName());
+            protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indexOfObjectFailingDecoding());
             return DispatchResult::HasNoMessages;
         }
         if (decoder.messageName() == MessageName::SetStreamDestinationID) {
@@ -166,7 +166,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
         if (!currentReceiver) {
             auto key = std::make_pair(static_cast<uint8_t>(currentReceiverName), m_currentDestinationID);
             if (!ReceiversMap::isValidKey(key)) {
-                protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName());
+                protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indexOfObjectFailingDecoding());
                 return DispatchResult::HasNoMessages;
             }
             Locker locker { m_receiversLock };
@@ -192,7 +192,7 @@ bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, Re
 {
     auto destinationID = decoder.decode<uint64_t>();
     if (!destinationID) {
-        protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName());
+        protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indexOfObjectFailingDecoding());
         return false;
     }
     if (m_currentDestinationID != *destinationID) {
@@ -217,7 +217,7 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder&& decoder, StreamMess
         if (connection->ignoreInvalidMessageForTesting())
             return false;
 #endif // ENABLE(IPC_TESTING_API)
-        connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
+        connection->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indexOfObjectFailingDecoding());
         return false;
     }
     WakeUpClient result = WakeUpClient::No;
@@ -254,7 +254,7 @@ bool StreamServerConnection::dispatchOutOfStreamMessage(Decoder&& decoder)
             if (connection->ignoreInvalidMessageForTesting())
                 return false;
 #endif // ENABLE(IPC_TESTING_API)
-            connection->dispatchDidReceiveInvalidMessage(message->messageName());
+            connection->dispatchDidReceiveInvalidMessage(message->messageName(), message->indexOfObjectFailingDecoding());
             return false;
         }
     }
