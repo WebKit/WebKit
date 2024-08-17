@@ -87,14 +87,19 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
-Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin)
+Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, std::optional<Vector<PublicKeyCredentialDescriptor>>&& overrideExcludeCredentials)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(hash);
     cborMap[CBORValue(2)] = convertRpEntityToCBOR(options.rp);
     cborMap[CBORValue(3)] = convertUserEntityToCBOR(options.user);
     cborMap[CBORValue(4)] = convertParametersToCBOR(options.pubKeyCredParams);
-    if (!options.excludeCredentials.isEmpty()) {
+    if (overrideExcludeCredentials) {
+        CBORValue::ArrayValue excludeListArray;
+        for (const auto& descriptor : *overrideExcludeCredentials)
+            excludeListArray.append(convertDescriptorToCBOR(descriptor));
+        cborMap[CBORValue(5)] = CBORValue(WTFMove(excludeListArray));
+    } else if (!options.excludeCredentials.isEmpty()) {
         CBORValue::ArrayValue excludeListArray;
         for (const auto& descriptor : options.excludeCredentials)
             excludeListArray.append(convertDescriptorToCBOR(descriptor));
@@ -181,7 +186,7 @@ Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_
     return cborRequest;
 }
 
-Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin)
+Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, UVAvailability uvCapability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, std::optional<Vector<PublicKeyCredentialDescriptor>>&&)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(options.rpId);
