@@ -131,6 +131,8 @@ public:
     static RemoteInspector& singleton();
     friend class LazyNeverDestroyed<RemoteInspector>;
 
+    virtual ~RemoteInspector();
+
     void registerTarget(RemoteControllableTarget*);
     void unregisterTarget(RemoteControllableTarget*);
     void updateTarget(RemoteControllableTarget*);

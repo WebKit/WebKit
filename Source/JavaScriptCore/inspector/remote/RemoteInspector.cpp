@@ -42,6 +42,10 @@ bool RemoteInspector::startEnabled = true;
 std::atomic<bool> RemoteInspector::needMachSandboxExtension = false;
 #endif
 
+#if !PLATFORM(COCOA)
+RemoteInspector::~RemoteInspector() = default;
+#endif
+
 void RemoteInspector::startDisabled()
 {
     RemoteInspector::startEnabled = false;
