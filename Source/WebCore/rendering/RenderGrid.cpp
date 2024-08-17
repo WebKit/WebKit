@@ -2635,6 +2635,7 @@ void RenderGrid::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFl
     // FIXME: We should handle RTL and other writing modes also.
     if (style().direction() == TextDirection::LTR && isHorizontalWritingMode()) {
         auto gridAreaSize = LayoutSize { m_columnPositions.last(), m_rowPositions.last() };
+        gridAreaSize += { paddingEnd(), paddingAfter() };
         addLayoutOverflow({ { }, gridAreaSize });
     }
 }
