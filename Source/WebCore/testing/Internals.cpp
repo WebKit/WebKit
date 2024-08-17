@@ -88,6 +88,7 @@
 #include "FloatQuad.h"
 #include "FontCache.h"
 #include "FormController.h"
+#include "FragmentDirectiveGenerator.h"
 #include "FrameLoader.h"
 #include "FullscreenManager.h"
 #include "GCObservation.h"
@@ -2505,6 +2506,13 @@ Vector<Internals::TextIteratorState> Internals::statesOfTextIterator(const Range
     for (TextIterator it(simpleRange); !it.atEnd(); it.advance())
         states.append({ it.text().toString(), createLiveRange(it.range()) });
     return states;
+}
+
+String Internals::textFragmentDirectiveForRange(const Range& range)
+{
+    auto simpleRange = makeSimpleRange(range);
+    simpleRange.start.document().updateLayout();
+    return FragmentDirectiveGenerator(simpleRange).urlWithFragment().string();
 }
 
 #if !PLATFORM(MAC)

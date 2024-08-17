@@ -33,18 +33,11 @@ namespace WebCore {
 
 struct SimpleRange;
 
-struct TextDirective {
-    String textStart;
-    String textEnd;
-    String prefix;
-    String suffix;
-};
-
 class FragmentDirectiveGenerator {
 public:
     WEBCORE_EXPORT explicit FragmentDirectiveGenerator(const SimpleRange&);
 
-    URL urlWithFragment() const { return m_urlWithFragment; };
+    URL urlWithFragment() const { return m_urlWithFragment; }
 
 private:
     FragmentDirectiveGenerator() = delete;

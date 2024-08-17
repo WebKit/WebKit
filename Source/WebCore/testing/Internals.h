@@ -405,6 +405,8 @@ public:
     };
     Vector<TextIteratorState> statesOfTextIterator(const Range&);
 
+    String textFragmentDirectiveForRange(const Range&);
+
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
     ExceptionOr<uint64_t> lastSpellCheckRequestSequence();

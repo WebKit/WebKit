@@ -40,8 +40,9 @@
 
 namespace WebCore {
 
-constexpr int maxCharacters = 300;
-constexpr int minCharacter = 20;
+constexpr int maximumInlineStringLength = 300;
+constexpr int minimumInlineContextlessStringLength = 20;
+constexpr int numberOfWordsOfContext = 3;
 
 FragmentDirectiveGenerator::FragmentDirectiveGenerator(const SimpleRange& textFragmentRange)
 {
@@ -102,38 +103,49 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     String textDirectivePrefix = ":~:text="_s;
 
     auto url = textFragmentRange.startContainer().document().url();
-
     auto textFromRange = createLiveRange(textFragmentRange)->toString();
 
     VisiblePosition visibleEndPosition = VisiblePosition(Position(textFragmentRange.protectedEndContainer(), textFragmentRange.endOffset(), Position::PositionIsOffsetInAnchor));
     VisiblePosition visibleStartPosition = VisiblePosition(Position(textFragmentRange.protectedStartContainer(), textFragmentRange.startOffset(), Position::PositionIsOffsetInAnchor));
 
-    if (textFromRange.length() >= maxCharacters) {
-        String startText = percentEncodeFragmentDirectiveSpecialCharacters(nextWordsFromPosition(3, visibleStartPosition));
-        String endText = percentEncodeFragmentDirectiveSpecialCharacters(previousWordsFromPosition(3, visibleEndPosition));
+    std::optional<String> prefix;
+    std::optional<String> startText;
+    std::optional<String> endText;
+    std::optional<String> suffix;
 
-        url.setFragmentIdentifier(makeString(textDirectivePrefix, startText, ',', endText));
-    }
-    if (textFromRange.length() < maxCharacters && textFromRange.length() > minCharacter) {
-        StringBuilder textDirectiveBuilder;
-        textDirectiveBuilder.append(textDirectivePrefix);
-        textDirectiveBuilder.append(percentEncodeFragmentDirectiveSpecialCharacters(textFromRange));
-        url.setFragmentIdentifier(StringView(textDirectiveBuilder));
-    }
-    if (textFromRange.length() <= minCharacter) {
-        String prefix = percentEncodeFragmentDirectiveSpecialCharacters(previousWordsFromPosition(3, visibleStartPosition));
-        String suffix = percentEncodeFragmentDirectiveSpecialCharacters(nextWordsFromPosition(3, visibleEndPosition));
+    auto encodeComponent = [] (const String& component) -> std::optional<String> {
+        auto encodedComponent = percentEncodeFragmentDirectiveSpecialCharacters(component);
+        if (encodedComponent.isEmpty())
+            return std::nullopt;
+        return encodedComponent;
+    };
 
-        url.setFragmentIdentifier(makeString(textDirectivePrefix,
-            percentEncodeFragmentDirectiveSpecialCharacters(prefix), "-,"_s,
-            percentEncodeFragmentDirectiveSpecialCharacters(textFromRange), ",-"_s,
-            percentEncodeFragmentDirectiveSpecialCharacters(suffix)));
+    if (textFromRange.length() >= maximumInlineStringLength) {
+        startText = encodeComponent(nextWordsFromPosition(numberOfWordsOfContext, visibleStartPosition));
+        endText = encodeComponent(previousWordsFromPosition(numberOfWordsOfContext, visibleEndPosition));
+    } else if (textFromRange.length() > minimumInlineContextlessStringLength)
+        startText = encodeComponent(textFromRange);
+    else {
+        prefix = encodeComponent(previousWordsFromPosition(numberOfWordsOfContext, visibleStartPosition));
+        startText = encodeComponent(textFromRange);
+        suffix = encodeComponent(nextWordsFromPosition(numberOfWordsOfContext, visibleEndPosition));
     }
+
+    Vector<String> components;
+    if (prefix)
+        components.append(makeString(*prefix, '-'));
+    if (startText)
+        components.append(*startText);
+    if (endText)
+        components.append(*endText);
+    if (suffix)
+        components.append(makeString('-', *suffix));
+
+    url.setFragmentIdentifier(makeString(textDirectivePrefix, makeStringByJoining(components, ","_s)));
 
     m_urlWithFragment = url;
 
     LOG_WITH_STREAM(TextFragment, stream << m_urlWithFragment);
-
 }
 
 } // namespace WebCore

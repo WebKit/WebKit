@@ -633,6 +633,8 @@ enum RenderingMode {
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
     sequence<TextIteratorState> statesOfTextIterator(Range range);
 
+    DOMString textFragmentDirectiveForRange(Range range);
+
     undefined setDelegatesScrolling(boolean enabled);
 
     unsigned long long lastSpellCheckRequestSequence();
