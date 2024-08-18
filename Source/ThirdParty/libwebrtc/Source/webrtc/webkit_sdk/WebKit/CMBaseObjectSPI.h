@@ -47,6 +47,10 @@ enum {
     kCMBaseObjectError_ValueNotAvailable = -12783,
 };
 
+enum {
+    kCMBaseObjectDescriptionOffset_NotPresent = 0,
+};
+
 typedef struct OpaqueCMBaseObject *CMBaseObjectRef;
 typedef struct OpaqueCMBaseClass *CMBaseClassID;
 typedef struct OpaqueCMBaseProtocol *CMBaseProtocolID;
@@ -95,6 +99,8 @@ typedef struct {
    CMBaseObjectSetPropertyFunction setProperty;
    OSStatus (*notificationBarrier)(CMBaseObjectRef);
    const CMBaseProtocolTable *protocolTable;
+   size_t offsetToDescriptionStringWithinStorage;
+   OSStatus (*isDefunct)(CMBaseObjectRef, Boolean*);
 } CMBaseClass;
 #pragma pack(pop)
 

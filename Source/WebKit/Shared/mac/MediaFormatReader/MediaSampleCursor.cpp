@@ -396,7 +396,9 @@ OSStatus MediaSampleCursor::getSyncInfo(MTPluginSampleCursorSyncInfo* syncInfo) 
 {
     return getMediaSample([&](auto& sample) {
         *syncInfo = {
-            .fullSync = (sample.second->flags & MediaSample::IsSync) != 0
+            .fullSync = (sample.second->flags & MediaSample::IsSync) != 0,
+            .partialSync = false,
+            .droppable = false,
         };
     });
 }

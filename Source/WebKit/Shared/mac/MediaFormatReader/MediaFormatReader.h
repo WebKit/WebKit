@@ -106,6 +106,8 @@ constexpr MediaFormatReader::WrapperClass MediaFormatReader::wrapperClass()
         .copyTrackArray = [](WrapperRef reader, CFArrayRef* trackArrayCopy) {
             return unwrap(reader)->copyTrackArray(trackArrayCopy);
         },
+        .parseAdditionalFragments = nullptr,
+        .establishCombinedDataRateProfileForTracks = nullptr,
     };
 }
 

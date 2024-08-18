@@ -126,6 +126,8 @@ constexpr MediaTrackReader::WrapperClass MediaTrackReader::wrapperClass()
         .getTrackInfo = [](MTPluginTrackReaderRef trackReader, MTPersistentTrackID* trackID, CMMediaType* mediaType) {
             return unwrap(trackReader)->getTrackInfo(trackID, mediaType);
         },
+        .getTrackEditCount = nullptr,
+        .getTrackEditWithIndex = nullptr,
         .createCursorAtPresentationTimeStamp = [](MTPluginTrackReaderRef trackReader, CMTime timestamp, MTPluginSampleCursorRef* cursor) {
             return unwrap(trackReader)->createCursorAtPresentationTimeStamp(timestamp, cursor);
         },

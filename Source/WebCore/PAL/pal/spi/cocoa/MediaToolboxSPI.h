@@ -103,6 +103,7 @@ typedef struct OpaqueMTPluginTrackReader *MTPluginTrackReaderRef;
 
 typedef OSStatus (*MTPluginFormatReaderFunction_CopyTrackArray)(MTPluginFormatReaderRef, CFArrayRef*);
 typedef OSStatus (*MTPluginFormatReaderFunction_ParseAdditionalFragments)(MTPluginFormatReaderRef, uint32_t, uint32_t*);
+typedef OSStatus (*MTPluginFormatReaderFunction_EstablishCombinedDataRateProfileForTracks)(MTPluginFormatReaderRef, CFArrayRef, int64_t*, uint32_t, CMTime*);
 typedef OSStatus (*MTPluginSampleCursorFunction_Copy)(MTPluginSampleCursorRef, MTPluginSampleCursorRef*);
 typedef OSStatus (*MTPluginSampleCursorFunction_StepInDecodeOrderAndReportStepsTaken)(MTPluginSampleCursorRef, int64_t, int64_t*);
 typedef OSStatus (*MTPluginSampleCursorFunction_StepInPresentationOrderAndReportStepsTaken)(MTPluginSampleCursorRef, int64_t, int64_t*);
@@ -121,6 +122,10 @@ typedef OSStatus (*MTPluginSampleCursorFunction_CopyUnrefinedSampleLocation)(MTP
 typedef OSStatus (*MTPluginSampleCursorFunction_RefineSampleLocation)(MTPluginSampleCursorRef, MTPluginSampleCursorStorageRange, const uint8_t*, size_t, MTPluginSampleCursorStorageRange*);
 typedef OSStatus (*MTPluginSampleCursorFunction_CopyExtendedSampleDependencyAttributes)(MTPluginSampleCursorRef, CFDictionaryRef*);
 typedef OSStatus (*MTPluginSampleCursorFunction_GetPlayableHorizon)(MTPluginSampleCursorRef, CMTime*);
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 150000)
+// Defined in <MediaToolbox/MTPluginFormatReader.h> in Sequoia and later.
+typedef OSStatus (*MTPluginSampleCursorFunction_CopyPostDecodeProcessingMetadata)(MTPluginSampleCursorRef, CFDictionaryRef);
+#endif
 typedef OSStatus (*MTPluginTrackReaderFunction_GetTrackInfo)(MTPluginTrackReaderRef, MTPersistentTrackID*, CMMediaType*);
 typedef CMItemCount (*MTPluginTrackReaderFunction_GetTrackEditCount)(MTPluginTrackReaderRef);
 typedef OSStatus (*MTPluginTrackReaderFunction_GetTrackEditWithIndex)(MTPluginTrackReaderRef, CMItemCount, CMTimeMapping*);
@@ -155,6 +160,7 @@ typedef struct {
     unsigned long version;
     MTPluginFormatReaderFunction_CopyTrackArray copyTrackArray;
     MTPluginFormatReaderFunction_ParseAdditionalFragments parseAdditionalFragments;
+    MTPluginFormatReaderFunction_EstablishCombinedDataRateProfileForTracks establishCombinedDataRateProfileForTracks;
 } MTPluginFormatReaderClass;
 
 typedef struct {
@@ -182,6 +188,7 @@ typedef struct {
     MTPluginSampleCursorFunction_RefineSampleLocation refineSampleLocation;
     MTPluginSampleCursorFunction_CopyExtendedSampleDependencyAttributes copyExtendedSampleDependencyAttributes;
     MTPluginSampleCursorFunction_GetPlayableHorizon getPlayableHorizon;
+    MTPluginSampleCursorFunction_CopyPostDecodeProcessingMetadata copyPostDecodeProcessingMetadata;
 } MTPluginSampleCursorClass;
 
 typedef struct {

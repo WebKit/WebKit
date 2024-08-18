@@ -129,6 +129,8 @@ constexpr CMBaseClass CoreMediaWrapped<Wrapped>::wrapperClass()
     return {
         .version = kCMBaseObject_ClassVersion_1,
         .derivedStorageSize = size,
+        .equal = nullptr,
+        .invalidate = nullptr,
         .finalize = [](CMBaseObjectRef object) {
             Wrapped::unwrap(object)->finalize();
         },
@@ -138,6 +140,11 @@ constexpr CMBaseClass CoreMediaWrapped<Wrapped>::wrapperClass()
         .copyProperty = [](CMBaseObjectRef object, CFStringRef key, CFAllocatorRef allocator, void* copiedValue) {
             return Wrapped::unwrap(object)->copyProperty(key, allocator, copiedValue);
         },
+        .setProperty = nullptr,
+        .notificationBarrier = nullptr,
+        .protocolTable = nullptr,
+        .offsetToDescriptionStringWithinStorage = kCMBaseObjectDescriptionOffset_NotPresent,
+        .isDefunct = nullptr,
     };
 };
 

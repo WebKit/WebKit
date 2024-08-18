@@ -151,17 +151,25 @@ constexpr MediaSampleCursor::WrapperClass MediaSampleCursor::wrapperClass()
         .getSyncInfo = [](MTPluginSampleCursorRef sampleCursor, MTPluginSampleCursorSyncInfo* syncInfo) -> OSStatus {
             return unwrap(sampleCursor)->getSyncInfo(syncInfo);
         },
+        .getDependencyInfo = nullptr,
+        .testReorderingBoundary = nullptr,
         .copySampleLocation = [](MTPluginSampleCursorRef sampleCursor, MTPluginSampleCursorStorageRange* storageRange, MTPluginByteSourceRef* byteSource) {
             return unwrap(sampleCursor)->copySampleLocation(storageRange, byteSource);
         },
+        .copyChunkDetails = nullptr,
         .copyFormatDescription = [](MTPluginSampleCursorRef sampleCursor, CMFormatDescriptionRef* formatDescription) {
             return unwrap(sampleCursor)->copyFormatDescription(formatDescription);
         },
+        .createSampleBuffer = nullptr,
+        .copyUnrefinedSampleLocation = nullptr,
+        .refineSampleLocation = nullptr,
+        .copyExtendedSampleDependencyAttributes = nullptr,
 #if HAVE(MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON)
         .getPlayableHorizon = [](MTPluginSampleCursorRef sampleCursor, CMTime* playableHorizon) {
             return unwrap(sampleCursor)->getPlayableHorizon(playableHorizon);
         },
 #endif
+        .copyPostDecodeProcessingMetadata = nullptr,
     };
 }
 
