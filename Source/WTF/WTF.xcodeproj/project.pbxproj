@@ -824,7 +824,7 @@
 		E32AB5022B5CE35D00B9FAAE /* LazyUniqueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = E32AB5002B5CE35D00B9FAAE /* LazyUniqueRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E336674A2722551100259122 /* Int128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33667492722550900259122 /* Int128.cpp */; };
 		E336BD2F2BAB8A0400E8471C /* CharacterProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = E336BD2E2BAB8A0400E8471C /* CharacterProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E34745D22945E33700F670F2 /* simdutf_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E34745D02945E33700F670F2 /* simdutf_impl.cpp */; };
+		E33E83ED2C719900002FBCCD /* simdutf_impl.cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E83EC2C719900002FBCCD /* simdutf_impl.cpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34745D32945E33700F670F2 /* simdutf_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = E34745D12945E33700F670F2 /* simdutf_impl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3618AB92AD8C4BA00DA7E43 /* ButterflyArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E3618AB82AD8C4B900DA7E43 /* ButterflyArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
@@ -848,6 +848,7 @@
 		E38C82692BECAE9D0071EF52 /* SIMDHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
+		E39664762C7198AA00F91F3A /* SIMDUTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39664752C7198AA00F91F3A /* SIMDUTF.cpp */; };
 		E396C11D2BE885D9000CBAE1 /* neon.h in Headers */ = {isa = PBXBuildFile; fileRef = E396C1192BE885D9000CBAE1 /* neon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E396C11E2BE885D9000CBAE1 /* sve.h in Headers */ = {isa = PBXBuildFile; fileRef = E396C11A2BE885D9000CBAE1 /* sve.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3ABBABE2BE88FBE00D84916 /* simde.h in Headers */ = {isa = PBXBuildFile; fileRef = E3ABBABD2BE88FBE00D84916 /* simde.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1769,7 +1770,7 @@
 		E336BD2E2BAB8A0400E8471C /* CharacterProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterProperties.h; sourceTree = "<group>"; };
 		E339C163244B4E8700359DA9 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRef.h; sourceTree = "<group>"; };
 		E33D5F871FBED66700BF625E /* RecursableLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursableLambda.h; sourceTree = "<group>"; };
-		E34745D02945E33700F670F2 /* simdutf_impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simdutf_impl.cpp; sourceTree = "<group>"; };
+		E33E83EC2C719900002FBCCD /* simdutf_impl.cpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = simdutf_impl.cpp.h; sourceTree = "<group>"; };
 		E34745D12945E33700F670F2 /* simdutf_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simdutf_impl.h; sourceTree = "<group>"; };
 		E34CD0D022810A020020D299 /* Packed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Packed.h; sourceTree = "<group>"; };
 		E3538D4C276220880075DA50 /* EmbeddedFixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmbeddedFixedVector.h; sourceTree = "<group>"; };
@@ -1805,6 +1806,7 @@
 		E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SIMDHelpers.h; sourceTree = "<group>"; };
 		E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilderJSON.cpp; sourceTree = "<group>"; };
 		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
+		E39664752C7198AA00F91F3A /* SIMDUTF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SIMDUTF.cpp; sourceTree = "<group>"; };
 		E396C1192BE885D9000CBAE1 /* neon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neon.h; sourceTree = "<group>"; };
 		E396C11A2BE885D9000CBAE1 /* sve.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sve.h; sourceTree = "<group>"; };
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
@@ -2392,6 +2394,7 @@
 				0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */,
 				862A8D32278DE74A0014120C /* SignedPtr.h */,
 				E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */,
+				E39664752C7198AA00F91F3A /* SIMDUTF.cpp */,
 				E38C7CD72C366A1800BB9B18 /* SIMDUTF.h */,
 				A8A4730A151A825B004123FF /* SimpleStats.h */,
 				795212021F42588800BD6421 /* SingleRootGraph.h */,
@@ -2972,7 +2975,7 @@
 		E34745CE2945E33600F670F2 /* simdutf */ = {
 			isa = PBXGroup;
 			children = (
-				E34745D02945E33700F670F2 /* simdutf_impl.cpp */,
+				E33E83EC2C719900002FBCCD /* simdutf_impl.cpp.h */,
 				E34745D12945E33700F670F2 /* simdutf_impl.h */,
 			);
 			path = simdutf;
@@ -3453,6 +3456,7 @@
 				E3ABBABE2BE88FBE00D84916 /* simde.h in Headers */,
 				E38C82692BECAE9D0071EF52 /* SIMDHelpers.h in Headers */,
 				E38C7CD82C366A1800BB9B18 /* SIMDUTF.h in Headers */,
+				E33E83ED2C719900002FBCCD /* simdutf_impl.cpp.h in Headers */,
 				E34745D32945E33700F670F2 /* simdutf_impl.h in Headers */,
 				E361DB63289115D000B2A2B8 /* simple_decimal_conversion.h in Headers */,
 				DD3DC8F727A4BF8E007E5B61 /* SimpleStats.h in Headers */,
@@ -4078,7 +4082,7 @@
 				0FA6F38F20CC580F00A03DCD /* SegmentedVector.cpp in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
 				5311BD531EA71CAD00525281 /* Signals.cpp in Sources */,
-				E34745D22945E33700F670F2 /* simdutf_impl.cpp in Sources */,
+				E39664762C7198AA00F91F3A /* SIMDUTF.cpp in Sources */,
 				A748745217A0BDAE00FA04CB /* SixCharacterHash.cpp in Sources */,
 				A8A47425151A825B004123FF /* SizeLimits.cpp in Sources */,
 				0FA6F39320CC73A300A03DCD /* SmallSet.cpp in Sources */,

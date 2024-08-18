@@ -535,6 +535,7 @@ set(WTF_SOURCES
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp
+    SIMDUTF.cpp
     SafeStrerror.cpp
     Seconds.cpp
     SegmentedVector.cpp
@@ -583,8 +584,6 @@ set(WTF_SOURCES
     persistence/PersistentCoders.cpp
     persistence/PersistentDecoder.cpp
     persistence/PersistentEncoder.cpp
-
-    simdutf/simdutf_impl.cpp
 
     text/ASCIILiteral.cpp
     text/AtomString.cpp
@@ -743,7 +742,7 @@ else ()
     # We need to disable preprocessor related warnings manually here.
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53431
     set_source_files_properties(
-        simdutf/simdutf_impl.cpp
+        SIMDUTF.cpp
         text/Base64.cpp
         PROPERTIES COMPILE_FLAGS "-Wno-error=undef -Wno-undef")
 endif ()
