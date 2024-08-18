@@ -2990,7 +2990,7 @@ sub setPathForRunningWebKitApp
 
     if (isAnyWindows()) {
         my $productBinaryDir = executableProductDir();
-        my $winBin = sourceDir() . "/WebKitLibraries/win/bin64/";
+        my $winBin = sourceDir() . "/WebKitLibraries/win/bin/";
         $env->{PATH} = join(':', $productBinaryDir, $winBin, $env->{PATH} || "");
     }
 }
@@ -3066,9 +3066,9 @@ sub setupWindowsWebKitEnvironment()
 {
     my $lib;
     if ($ENV{WEBKIT_LIBRARIES}) {
-        $lib = File::Spec->catfile($ENV{WEBKIT_LIBRARIES}, 'bin64');
+        $lib = File::Spec->catfile($ENV{WEBKIT_LIBRARIES}, 'bin');
     } else  {
-        $lib = File::Spec->catfile(sourceDir(), 'WebKitLibraries', 'win', 'bin64');
+        $lib = File::Spec->catfile(sourceDir(), 'WebKitLibraries', 'win', 'bin');
     }
     $ENV{PATH} = $lib . ';' . $ENV{PATH};
 }
