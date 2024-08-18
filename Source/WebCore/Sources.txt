@@ -2793,6 +2793,7 @@ rendering/RenderWidget.cpp
 rendering/StyledMarkedText.cpp
 rendering/TableLayout.cpp
 rendering/TextBoxPainter.cpp
+rendering/TextBoxTrimmer.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp
 rendering/TextPainter.cpp

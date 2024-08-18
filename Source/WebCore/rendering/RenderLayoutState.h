@@ -104,6 +104,8 @@ public:
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
     std::optional<TextBoxTrim> textBoxTrim() { return m_textBoxTrim; }
+    void setTextBoxTrim(std::optional<TextBoxTrim> textBoxTrim) { m_textBoxTrim = textBoxTrim; }
+
     bool hasTextBoxTrimStart() const { return m_textBoxTrim && m_textBoxTrim->trimFirstFormattedLine; }
     bool hasTextBoxTrimEnd(const RenderBlockFlow& candidate) const { return m_textBoxTrim && m_textBoxTrim->trimLastFormattedLineOnTarget.get() == &candidate; }
 
@@ -111,7 +113,6 @@ public:
     void removeTextBoxTrimStart();
 
     void addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
-    void resetTextBoxTrim() { m_textBoxTrim = { }; }
 
     void pushBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming.append(blockStartTrimming); }
     std::optional<bool> blockStartTrimming() const { return m_blockStartTrimming.isEmpty() ? std::nullopt : std::optional(m_blockStartTrimming.last()); }
