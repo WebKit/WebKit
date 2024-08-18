@@ -1397,8 +1397,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
 
     if (RefPtr loader = document.loader(); loader && !m_didCollectInitialAdjustments) {
         m_initialVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
-        m_visibilityAdjustmentSelectors.appendVector(m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
-            return { { }, selectors };
+        m_visibilityAdjustmentSelectors.appendVector(m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<Markable<ElementIdentifier>, TargetedElementSelectors> {
+            return { std::nullopt, selectors };
         }));
         m_startTimeForSelectorBasedVisibilityAdjustment = ApproximateTime::now();
         m_didCollectInitialAdjustments = true;
@@ -1669,8 +1669,8 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
             auto foundElement = findElementFromSelectors(selectors).element;
             return foundElement && elementsToReset.contains(*foundElement);
         });
-        m_visibilityAdjustmentSelectors = m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
-            return { { }, selectors };
+        m_visibilityAdjustmentSelectors = m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<Markable<ElementIdentifier>, TargetedElementSelectors> {
+            return { std::nullopt, selectors };
         });
     } else {
         // There are no initial adjustments after resetting.

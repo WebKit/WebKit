@@ -10449,7 +10449,7 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 #if USE(SYSTEM_PREVIEW)
 void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
 {
-    RefPtr element = Element::fromIdentifier(systemPreviewInfo.element.elementIdentifier);
+    RefPtr element = systemPreviewInfo.element.elementIdentifier ? Element::fromIdentifier(*systemPreviewInfo.element.elementIdentifier) : nullptr;
     if (!is<HTMLAnchorElement>(element))
         return;
 

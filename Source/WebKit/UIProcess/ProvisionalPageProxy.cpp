@@ -329,7 +329,7 @@ inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const s
     if (!m_mainFrame || m_mainFrame->frameID() != frameID)
         return false;
 
-    return !navigationID || !*navigationID || *navigationID == m_navigationID;
+    return !navigationID || *navigationID == m_navigationID;
 }
 
 void ProvisionalPageProxy::didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, FrameIdentifier frameID)

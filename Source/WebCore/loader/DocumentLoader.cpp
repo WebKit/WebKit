@@ -1541,7 +1541,6 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
 
 void DocumentLoader::setNavigationID(NavigationIdentifier navigationID)
 {
-    ASSERT(navigationID);
     m_navigationID = navigationID;
 }
 

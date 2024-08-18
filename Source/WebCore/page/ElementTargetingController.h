@@ -97,7 +97,7 @@ private:
     HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Timer m_selectorBasedVisibilityAdjustmentTimer;
-    Vector<std::pair<ElementIdentifier, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
+    Vector<std::pair<Markable<ElementIdentifier>, TargetedElementSelectors>> m_visibilityAdjustmentSelectors;
     Vector<TargetedElementSelectors> m_initialVisibilityAdjustmentSelectors;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;

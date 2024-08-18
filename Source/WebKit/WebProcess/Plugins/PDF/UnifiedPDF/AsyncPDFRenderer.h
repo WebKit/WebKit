@@ -75,11 +75,10 @@ struct TileForGridHash {
 };
 
 template<> struct HashTraits<WebKit::TileForGrid> : GenericHashTraits<WebKit::TileForGrid> {
-    static const bool emptyValueIsZero = false;
-    static WebKit::TileForGrid emptyValue()  { return { WebCore::TileGridIdentifier { std::numeric_limits<uint64_t>::max() }, { -1, -1 } }; }
-    static WebKit::TileForGrid deletedValue() { return { WebCore::TileGridIdentifier { 0 }, { -1, -1 } }; }
-    static void constructDeletedValue(WebKit::TileForGrid& tileForGrid) { tileForGrid = deletedValue(); }
-    static bool isDeletedValue(const WebKit::TileForGrid& tileForGrid) { return tileForGrid == deletedValue(); }
+    static constexpr bool emptyValueIsZero = true;
+    static WebKit::TileForGrid emptyValue() { return { HashTraits<WebCore::TileGridIdentifier>::emptyValue(), { 0, 0 } }; }
+    static void constructDeletedValue(WebKit::TileForGrid& tileForGrid) { HashTraits<WebCore::TileGridIdentifier>::constructDeletedValue(tileForGrid.gridIdentifier); }
+    static bool isDeletedValue(const WebKit::TileForGrid& tileForGrid) { return tileForGrid.gridIdentifier.isHashTableDeletedValue(); }
 };
 template<> struct DefaultHash<WebKit::TileForGrid> : TileForGridHash { };
 

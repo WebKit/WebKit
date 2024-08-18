@@ -1977,7 +1977,7 @@ struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
     WebCore::PageIdentifier webPageIdentifier;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
-    WebCore::ElementIdentifier elementIdentifier;
+    Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
 
 struct WebCore::ElementAnimationContext {
@@ -4154,7 +4154,7 @@ enum class WebCore::ScrollSnapStop : bool;
     float offset;
     WebCore::ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    WebCore::ElementIdentifier snapTargetID;
+    Markable<WebCore::ElementIdentifier> snapTargetID;
     bool isFocused;
     Vector<size_t> snapAreaIndices;
 };

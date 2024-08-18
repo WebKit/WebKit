@@ -3092,7 +3092,7 @@ uint64_t Internals::elementIdentifier(Element& element) const
 
 bool Internals::isElementAlive(uint64_t elementIdentifier) const
 {
-    return Element::fromIdentifier(LegacyNullableObjectIdentifier<ElementIdentifierType>(elementIdentifier));
+    return Element::fromIdentifier(ObjectIdentifier<ElementIdentifierType>(elementIdentifier));
 }
 
 uint64_t Internals::pageIdentifier(const Document& document) const

@@ -63,7 +63,6 @@ header: <wtf/ObjectIdentifier.h>
 template: class WebKit::WebURLSchemeHandler
 template: enum class WebCore::AXIDType
 template: enum class WebCore::BackgroundFetchRecordIdentifierType
-template: enum class WebCore::ElementIdentifierType
 template: enum class WebCore::FetchIdentifierType
 template: enum class WebCore::ImageDecoderIdentifierType
 template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
@@ -160,6 +159,7 @@ template: struct WebKit::WebTransportStreamIdentifierType
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
+template: enum class WebCore::ElementIdentifierType
 template: struct WebCore::NavigationIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()

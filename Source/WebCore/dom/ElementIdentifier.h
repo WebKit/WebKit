@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class ElementIdentifierType { };
-using ElementIdentifier = LegacyNullableObjectIdentifier<ElementIdentifierType>;
+using ElementIdentifier = ObjectIdentifier<ElementIdentifierType>;
 
 }

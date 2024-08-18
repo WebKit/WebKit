@@ -74,7 +74,6 @@ public:
 
     RawValue toUInt64() const { return toRawValue(); } // Use `toRawValue` instead.
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
@@ -107,7 +106,6 @@ public:
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
 
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
@@ -149,21 +147,18 @@ public:
     explicit constexpr ObjectIdentifierGeneric(RawValue identifier)
         : ObjectIdentifierGenericBase<RawValue>(identifier)
     {
+        ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
     }
 
     bool isValid() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::isValidIdentifier(ObjectIdentifierGenericBase<RawValue>::toRawValue()); }
+    explicit operator bool() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::toRawValue(); }
 
     ObjectIdentifierGeneric() requires (supportsNullState == SupportsObjectIdentifierNullState::Yes) = default;
 
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase<RawValue>(HashTableDeletedValue) { }
 
-    std::optional<ObjectIdentifierGeneric> asOptional() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes)
-    {
-        return *this ? std::optional { *this } : std::nullopt;
-    }
-
     struct MarkableTraits {
-        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier; }
+        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier.toRawValue(); }
         static constexpr ObjectIdentifierGeneric emptyValue() { return ObjectIdentifierGeneric(InvalidIdValue); }
     };
 
