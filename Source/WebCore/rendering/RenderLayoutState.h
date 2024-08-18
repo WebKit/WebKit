@@ -27,6 +27,7 @@
 
 #include "LayoutRect.h"
 #include "LocalFrameViewLayoutContext.h"
+#include "StyleTextEdge.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,6 +46,7 @@ class RenderLayoutState {
 public:
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
+        TextEdge propagatedTextBoxEdge { };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
     };
     struct LineClamp {

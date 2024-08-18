@@ -82,10 +82,7 @@ public:
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
 
-    // FIXME: Maybe it's time to subclass inline box types.
-    TextEdge textBoxEdge() const { return m_style.textBoxEdge; }
     TextEdge lineFitEdge() const { return m_style.lineFitEdge; }
-    TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
     bool hasTextEmphasis() const { return (hasContent() || isAtomicInlineLevelBox()) && m_textEmphasis.has_value(); };
@@ -167,9 +164,7 @@ private:
     struct Style {
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
-        TextEdge textBoxEdge;
         TextEdge lineFitEdge;
-        TextBoxTrim textBoxTrim;
         OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };

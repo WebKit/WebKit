@@ -38,22 +38,11 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textBoxEdge(), style.lineFitEdge(), style.textBoxTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.lineFitEdge(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
         m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
-    if (m_style.textBoxEdge.under == TextEdgeType::Auto) {
-        ASSERT(m_style.textBoxEdge.over == TextEdgeType::Auto);
-        // This property specifies the metrics to use for text-box-trim effects. Values have the same meanings as for line-fit-edge; the auto keyword uses the value of line-fit-edge
-        // on the root inline of the the affected line box, interpreting leading (the initial value) as text.
-        // https://drafts.csswg.org/css-inline-3/#text-box-edge
-        m_style.textBoxEdge = m_style.lineFitEdge;
-        if (m_style.textBoxEdge.under == TextEdgeType::Leading) {
-            ASSERT(m_style.textBoxEdge.over == TextEdgeType::Leading);
-            m_style.textBoxEdge = { TextEdgeType::Text, TextEdgeType::Text };
-        }
-    }
 }
 
 inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)

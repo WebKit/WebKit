@@ -255,17 +255,12 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
 
     if (inlineLevelBox.isInlineBox()) {
         auto ascentAndDescent = [&]() -> InlineLevelBox::AscentAndDescent {
-            auto textBoxTrim = inlineLevelBox.textBoxTrim();
             auto fontBaseline = lineBox.baselineType();
-            if (inlineLevelBox.isRootInlineBox() || textBoxTrim == TextBoxTrim::None)
+            if (inlineLevelBox.isRootInlineBox())
                 return primaryFontMetricsForInlineBox(inlineLevelBox, fontBaseline);
 
             auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();
             auto [ascent, descent] = ascentAndDescentWithTextBoxEdgeForInlineBox(inlineLevelBox, fontMetrics, fontBaseline);
-            if (textBoxTrim == TextBoxTrim::TrimEnd)
-                ascent = fontMetrics.intAscent(fontBaseline);
-            if (textBoxTrim == TextBoxTrim::TrimStart)
-                descent = fontMetrics.intDescent(fontBaseline);
             return { ascent, descent };
         }();
 
@@ -632,17 +627,34 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
     }
 }
 
+static TextEdge effectiveTextBoxEdge(const InlineLevelBox& rootInlineBox, const BlockLayoutState& blockLayoutState)
+{
+    // TextBoxEdge property specifies the metrics to use for text-box-trim effects. Values have the same meanings as for line-fit-edge;
+    // the auto keyword uses the value of line-fit-edge on the root inline of the the affected line box,
+    // interpreting leading (the initial value) as text.
+    // https://drafts.csswg.org/css-inline-3/#text-box-edge
+    auto textBoxEdge = blockLayoutState.textBoxEdge();
+    if (textBoxEdge.under != TextEdgeType::Auto)
+        return textBoxEdge;
+
+    auto lineFitEdge = rootInlineBox.lineFitEdge();
+    if (lineFitEdge.under == TextEdgeType::Leading)
+        return { TextEdgeType::Text, TextEdgeType::Text };
+    return lineFitEdge;
+}
+
 InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineBoxLogicalHeight, InlineLevelBox& rootInlineBox) const
 {
     auto textBoxTrim = blockLayoutState().textBoxTrim();
-    auto shouldTrimBlockStartOfLineBox = isFirstLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::Start) && rootInlineBox.textBoxEdge().over != TextEdgeType::Auto;
-    auto shouldTrimBlockEndOfLineBox = isLastLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::End) && rootInlineBox.textBoxEdge().under != TextEdgeType::Auto;
+    auto textBoxEdge = effectiveTextBoxEdge(rootInlineBox, blockLayoutState());
+    auto shouldTrimBlockStartOfLineBox = isFirstLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::Start) && textBoxEdge.over != TextEdgeType::Auto;
+    auto shouldTrimBlockEndOfLineBox = isLastLine() && textBoxTrim.contains(BlockLayoutState::TextBoxTrimSide::End) && textBoxEdge.under != TextEdgeType::Auto;
     if (!shouldTrimBlockStartOfLineBox && !shouldTrimBlockEndOfLineBox)
         return lineBoxLogicalHeight;
 
     if (shouldTrimBlockEndOfLineBox) {
         auto textBoxEdgeUnderForRootInlineBox = [&] {
-            switch (rootInlineBox.textBoxEdge().under) {
+            switch (textBoxEdge.under) {
             case TextEdgeType::Text:
                 return 0.f;
             case TextEdgeType::Alphabetic:
@@ -662,7 +674,7 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineB
     }
     if (shouldTrimBlockStartOfLineBox) {
         auto textBoxEdgeOverForRootInlineBox = [&] {
-            switch (rootInlineBox.textBoxEdge().over) {
+            switch (textBoxEdge.over) {
             case TextEdgeType::Text:
                 return 0.f;
             case TextEdgeType::CapHeight:

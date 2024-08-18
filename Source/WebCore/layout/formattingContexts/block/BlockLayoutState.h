@@ -27,6 +27,7 @@
 
 #include "Font.h"
 #include "PlacedFloats.h"
+#include "StyleTextEdge.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -59,13 +60,14 @@ public:
         LayoutUnit pageLogicalTop;
     };
 
-    BlockLayoutState(PlacedFloats&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
+    BlockLayoutState(PlacedFloats&, std::optional<LineClamp> = { }, TextBoxTrim = { }, TextEdge = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
     PlacedFloats& placedFloats() { return m_placedFloats; }
     const PlacedFloats& placedFloats() const { return m_placedFloats; }
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
+    TextEdge textBoxEdge() const { return m_textBoxEdge; }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     const std::optional<LineGrid>& lineGrid() const { return m_lineGrid; }
@@ -74,14 +76,16 @@ private:
     PlacedFloats& m_placedFloats;
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
+    TextEdge m_textBoxEdge;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
     std::optional<LineGrid> m_lineGrid;
 };
 
-inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
+inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, TextEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
     : m_placedFloats(placedFloats)
     , m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
+    , m_textBoxEdge(textBoxEdge)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
     , m_lineGrid(lineGrid)
 {
