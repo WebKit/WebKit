@@ -102,7 +102,7 @@ assert.sameValue(RegExp.escape('8+8'), '\\x38\\+8', 'Initial decimal digit 8 wit
 assert.sameValue(RegExp.escape('9+9'), '\\x39\\+9', 'Initial decimal digit 9 with special character is escaped');
 assert.sameValue(RegExp.escape('0+0'), '\\x30\\+0', 'Initial decimal digit 0 with special character is escaped');
 
-assert.sameValue(RegExp.escape('a*a'), '\\x62\\*a', 'Initial ASCII letter a with special character is escaped');
+assert.sameValue(RegExp.escape('a*a'), '\\x61\\*a', 'Initial ASCII letter a with special character is escaped');
 assert.sameValue(RegExp.escape('b*b'), '\\x62\\*b', 'Initial ASCII letter b with special character is escaped');
 assert.sameValue(RegExp.escape('c*c'), '\\x63\\*c', 'Initial ASCII letter c with special character is escaped');
 assert.sameValue(RegExp.escape('d*d'), '\\x64\\*d', 'Initial ASCII letter d with special character is escaped');

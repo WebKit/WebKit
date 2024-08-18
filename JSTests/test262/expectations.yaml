@@ -29,26 +29,26 @@ test/built-ins/AsyncFromSyncIteratorPrototype/throw/iterator-result-rejected-pro
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-null.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError but got a Object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError but got a Object'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but got a Object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but got a Object'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-result-poisoned-wrapper.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-get-return-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-poisoned-return.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a CatchError to be thrown asynchronously but thrown value was not an object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a CatchError to be thrown asynchronously but thrown value was not an object'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-not-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Thrown value was not an object!'
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -100,9 +100,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/RegExp/escape/initial-char-escape.js:
-  default: 'Test262Error: Initial ASCII letter a with special character is escaped Expected SameValue(«\x61\*a», «\x62\*a») to be true'
-  strict mode: 'Test262Error: Initial ASCII letter a with special character is escaped Expected SameValue(«\x61\*a», «\x62\*a») to be true'
 test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
   default: 'Test262Error: Expected a CustomError but got a Test262Error'
   strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
@@ -169,6 +166,9 @@ test/built-ins/Temporal/Duration/prototype/add/result-out-of-range-1.js:
 test/built-ins/Temporal/Duration/prototype/add/result-out-of-range-2.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/round/end-of-month-round-up.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/round/largestunit-correct-rebalancing.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -335,8 +335,8 @@ test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
 test/built-ins/Temporal/PlainDate/argument-convert.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
   default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
   strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
@@ -356,125 +356,125 @@ test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-stri
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDate/from/argument-leap-second.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-object-invalid.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-object-valid.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-string-time-separators.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/limits.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-primitive.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/one-of-era-erayear-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/options-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/from/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/with-year-month-day-need-constrain.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/with-year-month-day.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/with-year-monthCode-day-need-constrain.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/with-year-monthCode-day.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/limits.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-days.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-months-weeks.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-months.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-weeks-days.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-weeks.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-years-months-days.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-years-months.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-years-weeks.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/add-years.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/argument-duration-max.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/balance-smaller-units-basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/options-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/overflow-constrain.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/add/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/calendarId/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
@@ -497,56 +497,56 @@ test/built-ins/Temporal/PlainDate/prototype/since/wrapping-at-end-of-month.js:
   default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
   strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«-1», «0») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/argument-duration-max.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/balance-smaller-units-basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/options-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-constrain.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/subtract/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-separators.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-with-time-designator.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/leap-second.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/limits.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/plaintime-propertybag-no-time-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/time-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] to have the same contents. order of operations'
@@ -566,26 +566,26 @@ test/built-ins/Temporal/PlainDate/prototype/until/wrapping-at-end-of-month.js:
   default: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: Jan 29th to Feb 28th is 30 days, not one month: months result: Expected SameValue(«1», «0») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/copy-properties-not-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/options-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDate/prototype/with/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/with/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
@@ -596,8 +596,8 @@ test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
 test/built-ins/Temporal/PlainDate/subclass.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/calendar-case-insensitive.js:
   default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
   strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
@@ -617,125 +617,125 @@ test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-iso-
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/from/argument-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-comma-decimal-separator.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-offset.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-optional-data.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-subsecond.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-time-separators.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-timezone.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/leap-second.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/limits.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-primitive.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/options-object.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
   default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/from/overflow-default-constrain.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/overflow-reject.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/parser.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/from/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/hour-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/microsecond-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/millisecond-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/minute-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/nanosecond-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/order-of-operations.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/ambiguous-date.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/argument-duration-max.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/argument-duration.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/balance-negative-time-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/hour-overflow.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/negative-duration.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/options-empty.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/add/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/calendarId/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
@@ -746,170 +746,170 @@ test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-cale
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/prototype/round/balance.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/rounding-direction.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-non-integer.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-one-day.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingincrement-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-ceil.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-expand.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-floor.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfCeil.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfEven.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfExpand.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfFloor.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfTrunc.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfexpand-is-default.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-trunc.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/round/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/ambiguous-date.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-duration-max.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-duration.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string-fractional-units-rounding-mode.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/argument-string.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/balance-negative-time-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/hour-overflow.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/negative-duration.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/options-empty.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/toPlainDate/limits.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/argument-object-insufficient-data.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/basic.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/copy-properties-not-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/multiple-unrecognized-properties-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/options-empty.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-object-insufficient-data.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-date-with-utc-offset.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-separators.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-with-time-designator.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-without-time-designator.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-time.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/leap-second.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/no-argument-default-to-midnight.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/plaintime-propertybag-no-time-units.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/subclassing-ignored.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
@@ -920,11 +920,11 @@ test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
 test/built-ins/Temporal/PlainDateTime/second-undefined.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/subclass.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «string») to be true'
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
   default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
@@ -964,6 +964,36 @@ test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-leng
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-canonical-invalid-index-prototype-chain-set.js:
+  default: 'Test262Error: 1 setter should be unreachable! (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: 1 setter should be unreachable! (Testing with BigInt64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-canonical-invalid-index-reflect-set.js:
+  default: 'Test262Error: value should not be coerced Expected SameValue(«32», «0») to be true'
+  strict mode: 'Test262Error: value should not be coerced Expected SameValue(«32», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-valid-index-prototype-chain-set.js:
+  default: 'Test262Error: 0 setter should be unreachable! (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: 0 setter should be unreachable! (Testing with BigInt64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/BigInt/key-is-valid-index-reflect-set.js:
+  default: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2», «0») to be true (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2», «0») to be true (Testing with BigInt64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-canonical-invalid-index-prototype-chain-set.js:
+  default: 'Test262Error: 1 setter should be unreachable! (Testing with Float64Array.)'
+  strict mode: 'Test262Error: 1 setter should be unreachable! (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-canonical-invalid-index-reflect-set.js:
+  default: 'Test262Error: value should not be coerced Expected SameValue(«160», «0») to be true'
+  strict mode: 'Test262Error: value should not be coerced Expected SameValue(«160», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-prototype-chain-set.js:
+  default: 'Test262Error: 0 setter should be unreachable! (Testing with Float64Array.)'
+  strict mode: 'Test262Error: 0 setter should be unreachable! (Testing with Float64Array.)'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-reflect-set.js:
+  default: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2.3», «0») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2.3», «0») to be true (Testing with Float64Array.)'
+test/harness/asyncHelpers-throwsAsync-func-throws-sync.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: assert.throwsAsync did not reject improper function function () {'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: assert.throwsAsync did not reject improper function function () {'
+test/harness/asyncHelpers-throwsAsync-no-arg.js:
+  default: "Test262:AsyncTestFailure:Test262Error: Test262Error: Expected a Test262Error, but a 'TypeError' was thrown. Expected SameValue(«function TypeError() {"
+  strict mode: "Test262:AsyncTestFailure:Test262Error: Test262Error: Expected a Test262Error, but a 'TypeError' was thrown. Expected SameValue(«function TypeError() {"
 test/intl402/DateTimeFormat/canonicalize-calendar.js:
   default: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
   strict mode: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
@@ -988,12 +1018,18 @@ test/intl402/DateTimeFormat/timezone-legacy-non-iana.js:
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
   strict mode: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
+test/intl402/DurationFormat/constructor-option-read-order.js:
+  default: 'Test262Error: Expected [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits] and [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
+  strict mode: 'Test262Error: Expected [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits] and [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
   default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
   strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
 test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-digital-en.js:
   default: 'Test262Error: value for entry 6 Expected SameValue(«123456788», «123456789») to be true'
   strict mode: 'Test262Error: value for entry 6 Expected SameValue(«123456788», «123456789») to be true'
+test/intl402/DurationFormat/prototype/resolvedOptions/return-keys-order-default.js:
+  default: 'Test262Error: Expected [locale, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits, numberingSystem] and [locale, numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
+  strict mode: 'Test262Error: Expected [locale, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits, numberingSystem] and [locale, numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'

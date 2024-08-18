@@ -23,8 +23,8 @@ const validateNativeFunctionSource = function(source) {
   // `/\p{Space_Separator}/u`
   const UnicodeSpaceSeparator = /[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/;
 
-  const isNewline = (c) => /[\u000A\u000D\u2028\u2029]/u.test(c);
-  const isWhitespace = (c) => /[\u0009\u000B\u000C\u0020\u00A0\uFEFF]/u.test(c) || UnicodeSpaceSeparator.test(c);
+  const isNewline = (c) => /[\u000A\u000D\u2028\u2029]/.test(c);
+  const isWhitespace = (c) => /[\u0009\u000B\u000C\u0020\u00A0\uFEFF]/.test(c) || UnicodeSpaceSeparator.test(c);
 
   let pos = 0;
 
