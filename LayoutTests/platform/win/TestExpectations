@@ -4211,3 +4211,8 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ Im
 imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure Pass ]
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
+
+# Skip few dump render tree tests.
+# webkit.org/b/278297
+animations/3d/change-transform-in-end-event.html [ Skip ]
+animations/3d/state-at-end-event-transform.html [ Skip ]
