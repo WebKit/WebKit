@@ -43,6 +43,7 @@
 #include "StorageAccessStatus.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebBackForwardCache.h"
+#include "WebFrameProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
@@ -2429,7 +2430,14 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             return;
         }
 
-        newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(callback));
+        if (RefPtr mainFrame = newPage->mainFrame()) {
+            mainFrame->setNavigationCallback([callback = WTFMove(callback)](auto pageID, auto) mutable {
+                callback(pageID);
+            });
+            return;
+        }
+
+        callback(std::nullopt);
     };
 
     m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));

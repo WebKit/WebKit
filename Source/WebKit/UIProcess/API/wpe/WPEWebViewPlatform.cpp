@@ -27,6 +27,7 @@
 #include "WPEWebViewPlatform.h"
 
 #if ENABLE(WPE_PLATFORM)
+#include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "NativeWebKeyboardEvent.h"
@@ -126,7 +127,9 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
     m_pageProxy->windowScreenDidChange(m_displayID);
     m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
-    m_pageProxy->initializeWebPage();
+
+    auto& openerInfo = m_pageProxy->configuration().openerInfo();
+    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 }
 
 ViewPlatform::~ViewPlatform()

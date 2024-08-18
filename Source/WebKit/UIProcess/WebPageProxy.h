@@ -794,7 +794,7 @@ public:
 
     void setPageLoadStateObserver(std::unique_ptr<PageLoadStateObserverBase>&&);
 
-    void initializeWebPage();
+    void initializeWebPage(const Site&);
     void setDrawingArea(std::unique_ptr<DrawingAreaProxy>&&);
 
     WeakPtr<SecKeyProxyStore> secKeyProxyStore(const WebCore::AuthenticationChallenge&);
@@ -1617,8 +1617,8 @@ public:
     void didChooseFilesForOpenPanel(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void didCancelForOpenPanel();
 
-    WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&, std::optional<RemotePageParameters>&&, bool isProcessSwap = false, RefPtr<API::WebsitePolicies>&& = nullptr, std::optional<WebCore::FrameIdentifier>&& mainFrameIdentifier = std::nullopt);
-    WebPageCreationParameters creationParametersForProvisionalPage(WebProcessProxy&, DrawingAreaProxy&, RefPtr<API::WebsitePolicies>&&, std::optional<WebCore::FrameIdentifier> mainFrameIdentifier);
+    WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&, WebCore::FrameIdentifier mainFrameIdentifier, std::optional<RemotePageParameters>&&, bool isProcessSwap = false, RefPtr<API::WebsitePolicies>&& = nullptr);
+    WebPageCreationParameters creationParametersForProvisionalPage(WebProcessProxy&, DrawingAreaProxy&, RefPtr<API::WebsitePolicies>&&, WebCore::FrameIdentifier mainFrameIdentifier);
     WebPageCreationParameters creationParametersForRemotePage(WebProcessProxy&, DrawingAreaProxy&, RemotePageParameters&&);
 
     void resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&&);
@@ -2316,8 +2316,6 @@ public:
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
 
-    void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
-
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
     void beginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelTextRecognitionForVideoInElementFullScreen();
@@ -2541,7 +2539,6 @@ private:
     void requestPointerLock();
 #endif
 
-    void didCreateMainFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void didCreateSubframe(IPC::Connection&, WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, const String& frameName);
 
     void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&);
@@ -2673,11 +2670,11 @@ private:
         Crash
     };
 
-    void launchProcess(const WebCore::RegistrableDomain&, ProcessLaunchReason);
+    void launchProcess(const Site&, ProcessLaunchReason);
     void swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy>);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
-    void finishAttachingToWebProcess(ProcessLaunchReason);
+    void finishAttachingToWebProcess(const Site&, ProcessLaunchReason);
 
     RefPtr<API::Navigation> launchProcessForReload();
 

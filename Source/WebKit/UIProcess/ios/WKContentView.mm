@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "AccessibilityIOS.h"
 #import "Connection.h"
+#import "FrameProcess.h"
 #import "FullscreenClient.h"
 #import "GPUProcessProxy.h"
 #import "Logging.h"
@@ -39,6 +40,7 @@
 #import "PickerDismissalReason.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
+#import "Site.h"
 #import "SmartMagnificationController.h"
 #import "UIKitSPI.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -262,7 +264,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     ASSERT(_pageClient);
 
     _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
-    _page->initializeWebPage();
+    auto& openerInfo = _page->configuration().openerInfo();
+    _page->initializeWebPage(openerInfo ? openerInfo->site : WebKit::Site(aboutBlankURL()));
 
     [self _updateRuntimeProtocolConformanceIfNeeded];
 

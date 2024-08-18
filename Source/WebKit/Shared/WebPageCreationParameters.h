@@ -324,7 +324,7 @@ struct WebPageCreationParameters {
 
     std::optional<RemotePageParameters> remotePageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
-    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+    WebCore::FrameIdentifier mainFrameIdentifier;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;

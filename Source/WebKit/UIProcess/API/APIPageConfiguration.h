@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "Site.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
@@ -102,8 +103,14 @@ public:
     WebKit::BrowsingContextGroup& browsingContextGroup() const;
     void setBrowsingContextGroup(RefPtr<WebKit::BrowsingContextGroup>&&);
 
-    RefPtr<WebKit::WebProcessProxy> openerProcess() const;
-    void setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&&);
+    struct OpenerInfo {
+        Ref<WebKit::WebProcessProxy> process;
+        WebKit::Site site;
+        WebCore::FrameIdentifier frameID;
+        bool operator==(const OpenerInfo&) const;
+    };
+    const std::optional<OpenerInfo>& openerInfo() const;
+    void setOpenerInfo(std::optional<OpenerInfo>&&);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
@@ -471,7 +478,7 @@ private:
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
-        RefPtr<WebKit::WebProcessProxy> openerProcess;
+        std::optional<OpenerInfo> openerInfo;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
         WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;
 

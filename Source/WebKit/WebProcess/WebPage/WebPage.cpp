@@ -541,7 +541,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_layerHostingMode(parameters.layerHostingMode)
     , m_drawingArea(DrawingArea::create(*this, parameters))
     , m_webPageTesting(makeUnique<WebPageTesting>(*this))
-    , m_mainFrame(WebFrame::create(*this, parameters.remotePageParameters ? parameters.remotePageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
+    , m_mainFrame(WebFrame::create(*this, parameters.mainFrameIdentifier))
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
@@ -679,6 +679,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
     auto frameType = parameters.remotePageParameters ? Frame::FrameType::Remote : Frame::FrameType::Local;
+    ASSERT(!parameters.remotePageParameters || parameters.remotePageParameters->frameTreeParameters.frameID == parameters.mainFrameIdentifier);
 
     PageConfiguration pageConfiguration(
         pageID,
@@ -844,8 +845,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
     m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame());
-    if (!parameters.remotePageParameters)
-        send(Messages::WebPageProxy::DidCreateMainFrame(m_mainFrame->frameID()));
 
     if (auto& remotePageParameters = parameters.remotePageParameters) {
         for (auto& childParameters : remotePageParameters->frameTreeParameters.children)

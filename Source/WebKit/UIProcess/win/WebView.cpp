@@ -237,7 +237,9 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     WebProcessPool& processPool = pageConfiguration->processPool();
     m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
-    m_page->initializeWebPage();
+
+    auto& openerInfo = m_page->configuration().openerInfo();
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 

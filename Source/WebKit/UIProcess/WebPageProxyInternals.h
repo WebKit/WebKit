@@ -284,7 +284,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 
     CompletionHandler<void(bool)> serviceWorkerLaunchCompletionHandler;
-    CompletionHandler<void(std::optional<WebCore::PageIdentifier>)> serviceWorkerOpenWindowCompletionCallback;
 
 #if ENABLE(SPEECH_SYNTHESIS)
     std::optional<SpeechSynthesisData> optionalSpeechSynthesisData;

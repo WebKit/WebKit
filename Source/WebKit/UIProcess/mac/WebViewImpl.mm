@@ -34,6 +34,7 @@
 #import "APIPageConfiguration.h"
 #import "AppKitSPI.h"
 #import "CoreTextHelpers.h"
+#import "FrameProcess.h"
 #import "FullscreenClient.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
@@ -51,6 +52,7 @@
 #import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "Site.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
@@ -1306,7 +1308,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
-    m_page->initializeWebPage();
+    auto& openerInfo = m_page->configuration().openerInfo();
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 
     registerDraggedTypes();
 

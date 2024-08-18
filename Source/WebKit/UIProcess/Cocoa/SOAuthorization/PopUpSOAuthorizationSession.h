@@ -35,6 +35,7 @@ OBJC_CLASS WKWebView;
 
 namespace API {
 class NavigationAction;
+class PageConfiguration;
 }
 
 namespace WebKit {
@@ -45,13 +46,13 @@ public:
     using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
     using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
 
-    static Ref<SOAuthorizationSession> create(RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
+    static Ref<SOAuthorizationSession> create(Ref<API::PageConfiguration>&&, RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
     ~PopUpSOAuthorizationSession();
 
     void close(WKWebView *);
 
 private:
-    PopUpSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
+    PopUpSOAuthorizationSession(Ref<API::PageConfiguration>&&, RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
 
     void shouldStartInternal() final;
     void fallBackToWebPathInternal() final;
@@ -60,6 +61,7 @@ private:
 
     void initSecretWebView();
 
+    Ref<API::PageConfiguration> m_configuration;
     NewPageCallback m_newPageCallback;
     UIClientCallback m_uiClientCallback;
 

@@ -115,7 +115,6 @@ messages -> WebPageProxy {
     SetNetworkRequestsInProgress(bool networkRequestsInProgress)
 
     # Frame lifetime messages
-    DidCreateMainFrame(WebCore::FrameIdentifier frameID)
     DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
 
     # Frame load messages

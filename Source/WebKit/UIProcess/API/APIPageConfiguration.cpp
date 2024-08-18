@@ -111,15 +111,17 @@ void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& g
     m_data.browsingContextGroup = WTFMove(group);
 }
 
-RefPtr<WebKit::WebProcessProxy> PageConfiguration::openerProcess() const
+auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
 {
-    return m_data.openerProcess;
+    return m_data.openerInfo;
 }
 
-void PageConfiguration::setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&& process)
+void PageConfiguration::setOpenerInfo(std::optional<OpenerInfo>&& info)
 {
-    m_data.openerProcess = WTFMove(process);
+    m_data.openerInfo = WTFMove(info);
 }
+
+bool PageConfiguration::OpenerInfo::operator==(const OpenerInfo&) const = default;
 
 WebProcessPool& PageConfiguration::processPool() const
 {
@@ -302,6 +304,8 @@ void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebPr
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
+    if (preferences().siteIsolationEnabled())
+        return true;
     if (RefPtr processPool = m_data.processPool.getIfExists(); processPool && isInspectorProcessPool(*processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> false because of WebInspector pool", this);

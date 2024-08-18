@@ -36,6 +36,8 @@ class BrowsingContextGroup;
 class WebPreferences;
 class WebProcessProxy;
 
+// Note: This object should only be referenced by WebFrameProxy because its destructor is an
+// important part of managing the lifetime of a frame and the process used by the frame.
 class FrameProcess : public RefCounted<FrameProcess>, public CanMakeWeakPtr<FrameProcess> {
 public:
     ~FrameProcess();
