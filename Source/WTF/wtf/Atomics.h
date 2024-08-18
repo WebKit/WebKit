@@ -85,12 +85,6 @@ struct Atomic {
         return compareExchangeWeak(expected, desired, std::memory_order_relaxed);
     }
 
-    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
-    {
-        T expectedOrActual = expected;
-        return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
-    }
-
     // WARNING: This does not have strong fencing guarantees when it fails. For example, stores could
     // sink below it in that case.
     ALWAYS_INLINE T compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
