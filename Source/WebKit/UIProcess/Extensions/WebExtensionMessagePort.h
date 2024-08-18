@@ -53,7 +53,7 @@ public:
     ~WebExtensionMessagePort();
 
     enum class ErrorType : uint8_t {
-        Unknown,
+        Unknown = 1,
         NotConnected,
         MessageInvalid,
     };

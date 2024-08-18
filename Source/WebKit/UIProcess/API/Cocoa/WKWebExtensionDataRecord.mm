@@ -62,17 +62,17 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
     return _webExtensionDataRecord->uniqueIdentifier();
 }
 
-- (NSSet<WKWebExtensionDataType> *)dataTypes
+- (NSSet<WKWebExtensionDataType> *)containedDataTypes
 {
     return toAPI(_webExtensionDataRecord->types());
 }
 
-- (unsigned long long)totalSize
+- (NSUInteger)totalSizeInBytes
 {
     return _webExtensionDataRecord->totalSize();
 }
 
-- (unsigned long long)sizeOfDataTypes:(NSSet<WKWebExtensionDataType> *)dataTypes
+- (NSUInteger)sizeInBytesOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes
 {
     return _webExtensionDataRecord->sizeOfTypes(WebKit::toWebExtensionDataTypes(dataTypes));
 }
@@ -106,17 +106,17 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
     return nil;
 }
 
-- (NSSet<WKWebExtensionDataType> *)dataTypes
+- (NSSet<WKWebExtensionDataType> *)containedDataTypes
 {
     return nil;
 }
 
-- (unsigned long long)totalSize
+- (NSUInteger)totalSizeInBytes
 {
     return 0;
 }
 
-- (unsigned long long)sizeOfDataTypes:(NSSet<WKWebExtensionDataType> *)dataTypes
+- (NSUInteger)sizeInBytesOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes
 {
     return 0;
 }

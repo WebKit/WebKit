@@ -133,7 +133,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 + (NSSet<WKWebExtensionDataType> *)allExtensionDataTypes
 {
-    return [NSSet setWithObjects:WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSync, nil];
+    return [NSSet setWithObjects:WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSynchronized, nil];
 }
 
 - (void)fetchDataRecordsOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes completionHandler:(void (^)(NSArray<WKWebExtensionDataRecord *> *))completionHandler
@@ -160,7 +160,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
     });
 }
 
-- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes forDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes fromDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)())completionHandler
 {
     NSParameterAssert([dataTypes isKindOfClass:NSSet.class]);
     NSParameterAssert([dataRecords isKindOfClass:NSArray.class]);
@@ -353,7 +353,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
     completionHandler(nil);
 }
 
-- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes forDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)())completionHandler
+- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes fromDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)())completionHandler
 {
     completionHandler();
 }

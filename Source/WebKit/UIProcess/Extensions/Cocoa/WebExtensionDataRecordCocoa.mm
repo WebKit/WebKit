@@ -54,7 +54,7 @@ void WebExtensionDataRecord::addError(NSString *debugDescription, WebExtensionDa
         [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorSessionStorageFailed, debugDescription)];
         break;
     case WebExtensionDataType::Sync:
-        [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorSyncStorageFailed, debugDescription)];
+        [m_errors.get() addObject:createDataRecordError(WKWebExtensionDataRecordErrorSynchronizedStorageFailed, debugDescription)];
         break;
     default:
         ASSERT_NOT_REACHED();

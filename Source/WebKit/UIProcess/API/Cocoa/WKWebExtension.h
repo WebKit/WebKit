@@ -38,7 +38,8 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract Indicates a ``WKWebExtension`` error. */
-WK_EXTERN NSErrorDomain const WKWebExtensionErrorDomain NS_SWIFT_NAME(WKWebExtension.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_EXTERN NSErrorDomain const WKWebExtensionErrorDomain NS_SWIFT_NAME(WKWebExtension.errorDomain) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtension`` domain.
@@ -64,7 +65,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionErrorDomain, WKWebExtensionError) {
 
 /*! @abstract This notification is sent whenever a ``WKWebExtension`` has new errors or errors were cleared. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(WKWebExtension.errorsWereUpdatedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(WKWebExtension.errorsWereUpdatedNotification) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract A ``WKWebExtension`` object encapsulates a web extension’s resources that are defined by a `manifest.json`` file.

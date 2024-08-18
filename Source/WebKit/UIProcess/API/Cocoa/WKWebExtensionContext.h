@@ -47,7 +47,8 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract Indicates a ``WKWebExtensionContext`` error. */
-WK_EXTERN NSErrorDomain const WKWebExtensionContextErrorDomain NS_SWIFT_NAME(WKWebExtensionContext.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_EXTERN NSErrorDomain const WKWebExtensionContextErrorDomain NS_SWIFT_NAME(WKWebExtensionContext.errorDomain) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionContext`` domain.
@@ -89,35 +90,35 @@ typedef NS_ENUM(NSInteger, WKWebExtensionContextPermissionStatus) {
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly granted permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereGrantedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereGrantedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly denied permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereDeniedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionsWereDeniedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed granted permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionsWereRemovedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionsWereRemovedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed denied permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionsWereRemovedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionsWereRemovedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly granted permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereGrantedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereGrantedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly denied permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereDeniedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification NS_SWIFT_NAME(WKWebExtensionContext.permissionMatchPatternsWereDeniedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed granted permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionMatchPatternsWereRemovedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.grantedPermissionMatchPatternsWereRemovedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly removed denied permission match patterns. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionMatchPatternsWereRemovedNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(WKWebExtensionContext.deniedPermissionMatchPatternsWereRemovedNotification) NS_SWIFT_NONISOLATED;
 
 /*! @abstract Constants for specifying ``WKWebExtensionContext`` information in notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -125,11 +126,11 @@ typedef NSString * WKWebExtensionContextNotificationUserInfoKey NS_TYPED_EXTENSI
 
 /*! @abstract The corresponding value represents the affected permissions in ``WKWebExtensionContext`` notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyPermissions;
+WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyPermissions NS_SWIFT_NONISOLATED;
 
 /*! @abstract The corresponding value represents the affected permission match patterns in ``WKWebExtensionContext`` notifications. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyMatchPatterns;
+WK_EXTERN WKWebExtensionContextNotificationUserInfoKey const WKWebExtensionContextNotificationUserInfoKeyMatchPatterns NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract A ``WKWebExtensionContext`` object represents the runtime environment for a web extension.
