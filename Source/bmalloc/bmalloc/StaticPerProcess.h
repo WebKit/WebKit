@@ -81,11 +81,11 @@ private:
     {
         using Storage = typename StaticPerProcessStorageTraits<T>::Storage;
         LockHolder lock(Storage::s_mutex);
-        if (!Storage::s_object.load(std::memory_order_consume)) {
+        if (!Storage::s_object.load(std::memory_order_relaxed)) {
             T* t = new (&Storage::s_memory) T(lock);
-            Storage::s_object.store(t, std::memory_order_release);
+            Storage::s_object.store(t, std::memory_order_relaxed);
         }
-        return Storage::s_object.load(std::memory_order_consume);
+        return Storage::s_object.load(std::memory_order_relaxed);
     }
 };
 
