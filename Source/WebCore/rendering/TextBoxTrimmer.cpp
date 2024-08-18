@@ -127,28 +127,20 @@ void TextBoxTrimmer::adjustTextBoxTrimStatusBeforeLayout(const RenderBlockFlow* 
     auto& layoutState = *m_blockContainer->view().frameView().layoutContext().layoutState();
     m_previousTextBoxTrimStatus = layoutState.textBoxTrim();
     m_shouldRestoreTextBoxTrimStatus = true;
-    layoutState.setTextBoxTrim({ });
 
-    if (textBoxTrimValue == TextBoxTrim::TrimStart || textBoxTrimValue == TextBoxTrim::TrimBoth)
-        layoutState.addTextBoxTrimStart();
-
+    auto shouldTrimFirstFormattedLine = textBoxTrimValue == TextBoxTrim::TrimStart || textBoxTrimValue == TextBoxTrim::TrimBoth;
     if (textBoxTrimValue == TextBoxTrim::TrimEnd || textBoxTrimValue == TextBoxTrim::TrimBoth) {
         if (!lastFormattedLineRoot && m_blockContainer->childrenInline()) {
             // Trimming is explicitly set on this inline formatting context. Let's assume last line part of this block container.
-            layoutState.addTextBoxTrimEnd(*m_blockContainer);
-            return;
-        }
-
-        if (lastFormattedLineRoot) {
-            layoutState.addTextBoxTrimEnd(*lastFormattedLineRoot);
+            lastFormattedLineRoot = m_blockContainer.get();
+        } else if (lastFormattedLineRoot) {
             // This is the dedicated "last line" layout on the last formatting context, where we should not trim the first line
             // unless this IFC includes it too.
-            if (layoutState.hasTextBoxTrimStart()) {
-                if (auto* firstFormattedLine = firstFormattedLineRoot(*m_blockContainer); firstFormattedLine != lastFormattedLineRoot)
-                    layoutState.removeTextBoxTrimStart();
-            }
+            if (shouldTrimFirstFormattedLine)
+                shouldTrimFirstFormattedLine = firstFormattedLineRoot(*m_blockContainer) == lastFormattedLineRoot;
         }
     }
+    layoutState.setTextBoxTrim(RenderLayoutState::TextBoxTrim { shouldTrimFirstFormattedLine, lastFormattedLineRoot });
 }
 
 void TextBoxTrimmer::adjustTextBoxTrimStatusAfterLayout()
