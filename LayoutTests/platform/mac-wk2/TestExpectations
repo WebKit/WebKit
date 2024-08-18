@@ -1819,3 +1819,6 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.
 
 # webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
+
+# webkit.org/b/278288 REGRESSION (280191@main): [ macOS wk2 ] media/media-source/media-managedmse-stall-endofstream.html is a flaky failure
+media/media-source/media-managedmse-stall-endofstream.html [ Pass Failure ]
