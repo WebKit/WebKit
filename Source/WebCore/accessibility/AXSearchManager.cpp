@@ -335,13 +335,16 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
 {
     // Currently, this method only supports searching for the next/previous misspelling.
     // FIXME: support other types of ranges, like italicized.
-    if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord
-        || !criteria.startObject || criteria.resultsLimit != 1) {
+    if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord || criteria.resultsLimit != 1) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
     }
 
+    // If there's no start object, it means we want to search everything.
     RefPtr startObject = criteria.startObject;
+    if (!startObject)
+        startObject = criteria.anchorObject;
+
     bool forward = criteria.searchDirection == AccessibilitySearchDirection::Next;
     if (match(startObject, criteria)) {
         AXTextMarkerRange startRange { startObject->treeID(), startObject->objectID(), criteria.startRange };
