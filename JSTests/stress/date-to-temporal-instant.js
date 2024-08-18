@@ -40,9 +40,7 @@ function shouldThrow(func, errorType, message) {
     shouldBe(epochDateInstant.toString(), epochInstant.toString());
     shouldBe(epochDateInstant.epochNanoseconds, epochInstant.epochNanoseconds);
     
-    shouldBe(epochDateInstant.epochSeconds, 0);
     shouldBe(epochDateInstant.epochMilliseconds, 0);
-    shouldBe(epochDateInstant.epochMicroseconds, 0n);
     shouldBe(epochDateInstant.epochNanoseconds, 0n);
 
 }
@@ -54,9 +52,7 @@ function shouldThrow(func, errorType, message) {
     shouldBe(dateToInstant.toString(), temporalInstant.toString());
     shouldBe(dateToInstant.epochNanoseconds, temporalInstant.epochNanoseconds);
     
-    shouldBe(dateToInstant.epochSeconds, 1_000_000_000);
     shouldBe(dateToInstant.epochMilliseconds, 1_000_000_000_000);
-    shouldBe(dateToInstant.epochMicroseconds, 1_000_000_000_000_000n);
     shouldBe(dateToInstant.epochNanoseconds, 1_000_000_000_000_000_000n);
 }
 
@@ -67,9 +63,7 @@ function shouldThrow(func, errorType, message) {
     shouldBe(dateToInstant.toString(), temporalInstant.toString());
     shouldBe(dateToInstant.epochNanoseconds, temporalInstant.epochNanoseconds);
 
-    shouldBe(dateToInstant.epochSeconds, -1_000_000_000);
     shouldBe(dateToInstant.epochMilliseconds, -1_000_000_000_000);
-    shouldBe(dateToInstant.epochMicroseconds, -1_000_000_000_000_000n);
     shouldBe(dateToInstant.epochNanoseconds, -1_000_000_000_000_000_000n);
 }
 
@@ -80,9 +74,7 @@ function shouldThrow(func, errorType, message) {
     shouldBe(dateToInstant.toString(), temporalInstant.toString());
     shouldBe(dateToInstant.epochNanoseconds, temporalInstant.epochNanoseconds);
     
-    shouldBe(dateToInstant.epochSeconds, 86400_0000_0000);
     shouldBe(dateToInstant.epochMilliseconds, 86400_0000_0000_000);
-    shouldBe(dateToInstant.epochMicroseconds, 86400_0000_0000_000_000n);
     shouldBe(dateToInstant.epochNanoseconds, 86400_0000_0000_000_000_000n);
 }
 
@@ -93,8 +85,6 @@ function shouldThrow(func, errorType, message) {
     shouldBe(dateToInstant.toString(), temporalInstant.toString());
     shouldBe(dateToInstant.epochNanoseconds, temporalInstant.epochNanoseconds);
     
-    shouldBe(dateToInstant.epochSeconds, -86400_0000_0000);
     shouldBe(dateToInstant.epochMilliseconds, -86400_0000_0000_000);
-    shouldBe(dateToInstant.epochMicroseconds, -86400_0000_0000_000_000n);
     shouldBe(dateToInstant.epochNanoseconds, -86400_0000_0000_000_000_000n);
 }

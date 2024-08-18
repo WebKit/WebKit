@@ -100,31 +100,15 @@ public:
     constexpr ExactTime(const ExactTime&) = default;
     constexpr explicit ExactTime(Int128 epochNanoseconds) : m_epochNanoseconds(epochNanoseconds) { }
 
-    static constexpr ExactTime fromEpochSeconds(int64_t epochSeconds)
-    {
-        return ExactTime(Int128 { epochSeconds } * ExactTime::nsPerSecond);
-    }
     static constexpr ExactTime fromEpochMilliseconds(int64_t epochMilliseconds)
     {
         return ExactTime(Int128 { epochMilliseconds } * ExactTime::nsPerMillisecond);
     }
-    static constexpr ExactTime fromEpochMicroseconds(int64_t epochMicroseconds)
-    {
-        return ExactTime(Int128 { epochMicroseconds } * ExactTime::nsPerMicrosecond);
-    }
     static ExactTime fromISOPartsAndOffset(int32_t y, uint8_t mon, uint8_t d, unsigned h, unsigned min, unsigned s, unsigned ms, unsigned micros, unsigned ns, int64_t offset);
 
-    int64_t epochSeconds() const
-    {
-        return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerSecond);
-    }
     int64_t epochMilliseconds() const
     {
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMillisecond);
-    }
-    int64_t epochMicroseconds() const
-    {
-        return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMicrosecond);
     }
     constexpr Int128 epochNanoseconds() const
     {
