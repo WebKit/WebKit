@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <span>
-#include <type_traits>
 #include <wtf/NeverDestroyed.h>
 
 namespace WTF {
@@ -81,7 +81,7 @@ private:
     using Entry = std::pair<KeyType, ValueType>;
     Entry* cacheBuffer() { return reinterpret_cast_ptr<Entry*>(m_cacheBuffer); }
 
-    std::aligned_storage_t<sizeof(Entry), std::alignment_of_v<Entry>> m_cacheBuffer[capacity];
+    alignas(Entry) std::byte m_cacheBuffer[capacity * sizeof(Entry)];
     size_t m_size { 0 };
 };
 
