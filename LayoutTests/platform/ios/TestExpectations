@@ -7554,3 +7554,6 @@ compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.
 
 # webkit.org/b/278346 REGRESSION(281587@main - 281612@main): [ iOS Debug ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html is a constant crash
 [ Debug ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Crash ]
+
+# webkit.org/b/278349 [ iOS ] imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html is a flaky image failure
+imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html [ Pass ImageOnlyFailure ]
