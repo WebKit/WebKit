@@ -5893,7 +5893,7 @@ webkit.org/b/229810 fast/mediastream/get-display-media-capabilities.html [ Skip 
 
 webkit.org/b/228204 media/video-presentation-mode.html [ Pass Timeout ]
 
-webkit.org/b/217621 [ Release ] media/video-buffering-allowed.html [ Pass Timeout ]
+webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
 webkit.org/b/228087 [ Debug ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
