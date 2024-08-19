@@ -370,7 +370,7 @@ const float MenuListButtonPaddingAfter = 19;
 LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto padding = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
+    auto padding = emSize->computeLength<float>({ &style, nullptr, nullptr, nullptr });
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         if (style.direction() == TextDirection::RTL)
@@ -422,7 +422,7 @@ static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& e
     Document& document = element.document();
     auto emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
     // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
-    int pixels = emSize->computeLength<int>({ style, document.renderStyle(), nullptr, document.renderView() });
+    int pixels = emSize->computeLength<int>({ &style, document.renderStyle(), nullptr, document.renderView() });
 
     auto paddingBox = LengthBox(0, pixels, 0, pixels);
     if (!style.isHorizontalWritingMode())
@@ -574,7 +574,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     }
 
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto emPixels = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
+    auto emPixels = emSize->computeLength<float>({ &style, nullptr, nullptr, nullptr });
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
@@ -946,7 +946,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // Since the element might not be in a document, just pass nullptr for the root element style,
     // the parent element style, and the render view.
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    int pixels = emSize->computeLength<int>({ style, nullptr, nullptr, nullptr });
+    int pixels = emSize->computeLength<int>({ &style, nullptr, nullptr, nullptr });
 
     auto paddingBox = LengthBox(0, pixels, 0, pixels);
     if (!style.isHorizontalWritingMode())
@@ -1867,7 +1867,7 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     constexpr int searchFieldDecorationEmSize = 1;
     constexpr int searchFieldDecorationMargin = 4;
 
-    CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
+    CSSToLengthConversionData conversionData { &style, nullptr, nullptr, nullptr };
 
     auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EM);
     auto size = emSize->computeLength<float>(conversionData);

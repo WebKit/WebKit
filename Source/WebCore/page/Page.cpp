@@ -71,7 +71,6 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
-#include "FilterRenderingMode.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FragmentDirectiveGenerator.h"
@@ -4345,24 +4344,6 @@ void Page::recomputeTextAutoSizingInAllFrames()
 }
 
 #endif
-
-OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
-{
-    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
-#if USE(CORE_IMAGE)
-    if (settings().acceleratedFiltersEnabled())
-        modes.add(FilterRenderingMode::Accelerated);
-#endif
-#if USE(SKIA)
-    if (settings().acceleratedCompositingEnabled())
-        modes.add(FilterRenderingMode::Accelerated);
-#endif
-#if USE(GRAPHICS_CONTEXT_FILTERS)
-    if (settings().graphicsContextFiltersEnabled())
-        modes.add(FilterRenderingMode::GraphicsContext);
-#endif
-    return modes;
-}
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const
 {

@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const Style::BuilderContext& builderContext)
-    : m_style(&style)
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle* style, const Style::BuilderContext& builderContext)
+    : m_style(style)
     , m_rootStyle(builderContext.rootElementStyle)
     , m_parentStyle(&builderContext.parentStyle)
     , m_renderView(builderContext.document->renderView())
@@ -48,8 +48,8 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
 {
 }
 
-CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, const Element* elementForContainerUnitResolution)
-    : m_style(&style)
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, const Element* elementForContainerUnitResolution)
+    : m_style(style)
     , m_rootStyle(rootStyle)
     , m_parentStyle(parentStyle)
     , m_renderView(renderView)

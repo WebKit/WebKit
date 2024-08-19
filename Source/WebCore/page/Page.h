@@ -217,7 +217,6 @@ enum class CanWrap : bool;
 enum class DidWrap : bool;
 enum class DisabledAdaptations : uint8_t;
 enum class EventTrackingRegionsEventType : uint8_t;
-enum class FilterRenderingMode : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 enum class MediaPlaybackTargetContextMockState : uint8_t;
@@ -604,8 +603,6 @@ public:
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
     WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
 #endif
-
-    OptionSet<FilterRenderingMode> preferredFilterRenderingModes() const;
 
     const FloatBoxExtent& fullscreenInsets() const { return m_fullscreenInsets; }
     WEBCORE_EXPORT void setFullscreenInsets(const FloatBoxExtent&);

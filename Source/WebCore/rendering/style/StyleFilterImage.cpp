@@ -124,10 +124,10 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
     if (!image || image->isNull())
         return &Image::nullImage();
 
-    auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
+    auto preferredFilterRenderingModes = renderer->document().preferredFilterRenderingModes();
     auto sourceImageRect = FloatRect { { }, size };
 
-    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
+    auto cssFilter = CSSFilter::create(const_cast<RenderElement*>(renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
 

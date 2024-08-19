@@ -81,9 +81,6 @@ private:
     std::variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
 
-Color parseColor(const String& colorString, CanvasBase&);
-Color parseColor(const String& colorString, ScriptExecutionContext&);
-
 inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
     if (!std::holds_alternative<Ref<CanvasGradient>>(m_style))

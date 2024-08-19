@@ -5777,7 +5777,7 @@ void RenderLayer::updateFilterPaintingStrategy()
     }
 
     ensureLayerFilters();
-    m_filters->setPreferredFilterRenderingModes(renderer().page().preferredFilterRenderingModes());
+    m_filters->setPreferredFilterRenderingModes(renderer().document().preferredFilterRenderingModes());
     m_filters->setFilterScale({ page().deviceScaleFactor(), page().deviceScaleFactor() });
 }
 

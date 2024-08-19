@@ -87,6 +87,7 @@ class ServiceWorkerContainer;
 class SocketProvider;
 class WebCoreOpaqueRoot;
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class FilterRenderingMode : uint8_t;
 enum class LoadedFromOpaqueSource : bool;
 enum class TaskSource : uint8_t;
 
@@ -179,6 +180,8 @@ public:
     JSC::ScriptExecutionStatus jscScriptExecutionStatus() const;
 
     URL currentSourceURL() const;
+
+    OptionSet<FilterRenderingMode> preferredFilterRenderingModes() const;
 
     // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject&);

@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "EmptyScriptExecutionContext.h"
 #include "ErrorEvent.h"
+#include "FilterRenderingMode.h"
 #include "FontLoadRequest.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMExceptionHandling.h"
@@ -339,6 +340,24 @@ URL ScriptExecutionContext::currentSourceURL() const
         return IterationStatus::Done;
     });
     return sourceURL;
+}
+
+OptionSet<FilterRenderingMode> ScriptExecutionContext::preferredFilterRenderingModes() const
+{
+    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
+#if USE(CORE_IMAGE)
+    if (settingsValues().acceleratedFiltersEnabled)
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
+#if USE(SKIA)
+    if (settingsValues().acceleratedCompositingEnabled)
+        modes.add(FilterRenderingMode::Accelerated);
+#endif
+#if USE(GRAPHICS_CONTEXT_FILTERS)
+    if (settingsValues().graphicsContextFiltersEnabled)
+        modes.add(FilterRenderingMode::GraphicsContext);
+#endif
+    return modes;
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)

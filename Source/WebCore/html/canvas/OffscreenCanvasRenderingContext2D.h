@@ -55,6 +55,11 @@ private:
     OffscreenCanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&);
     bool isOffscreen2d() const final { return true; }
     RefPtr<ImageBuffer> transferToImageBuffer() final;
+
+    std::optional<FilterOperations> setFilterStringWithoutUpdatingStyle(const String&) final;
+    RefPtr<Filter> createFilter(const FloatRect& bounds) const final;
+    IntOutsets calculateFilterOutsets(const FloatRect& bounds) const final;
+
     const FontProxy* fontProxy() final;
 };
 
