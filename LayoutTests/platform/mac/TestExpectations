@@ -2508,3 +2508,6 @@ inspector/console/webcore-logging.html [ Pass Failure ]
 # webkit.org/b/278239 [macOS Release] 2 tests in media/video are flaky failure (failing in EWS)
 [ Release ] media/video-playsinline.html [ Pass Failure ]
 [ Release ] media/video-webkit-playsinline.html [ Pass Failure ]
+
+# webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
+imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
