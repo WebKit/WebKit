@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -25,43 +25,48 @@
 
 #pragma once
 
-#if PLATFORM(WAYLAND)
+#include <optional>
+#include <wtf/Noncopyable.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/text/WTFString.h>
 
-#include "PlatformDisplay.h"
-#include <wayland-client.h>
+typedef struct _GdkDisplay GdkDisplay;
 
 namespace WebCore {
+class GLDisplay;
+}
 
-class PlatformDisplayWayland : public PlatformDisplay {
+namespace WebKit {
+
+class Display {
+    WTF_MAKE_NONCOPYABLE(Display);
+    friend class LazyNeverDestroyed<Display>;
 public:
-    static std::unique_ptr<PlatformDisplay> create();
-#if PLATFORM(GTK)
-    static std::unique_ptr<PlatformDisplay> create(GdkDisplay*);
-    explicit PlatformDisplayWayland(GdkDisplay*);
-#endif
-    explicit PlatformDisplayWayland(struct wl_display*);
+    static Display& singleton();
+    ~Display();
 
-    virtual ~PlatformDisplayWayland();
+    WebCore::GLDisplay* glDisplay() const;
+    bool glDisplayIsSharedWithGtk() const { return glDisplay() && !m_glDisplayOwned; }
 
-    struct wl_display* native() const { return m_display; }
+    bool isX11() const;
+    bool isWayland() const;
+
+    String accessibilityBusAddress() const;
 
 private:
-#if PLATFORM(GTK)
-    void sharedDisplayDidClose() override;
+    Display();
+#if PLATFORM(X11)
+    bool initializeGLDisplayX11() const;
+    String accessibilityBusAddressX11() const;
+#endif
+#if PLATFORM(WAYLAND)
+    bool initializeGLDisplayWayland() const;
 #endif
 
-    Type type() const final { return PlatformDisplay::Type::Wayland; }
-
-#if PLATFORM(GTK)
-    GLDisplay* gtkEGLDisplay() override;
-#endif
-    void initializeEGLDisplay() override;
-
-    struct wl_display* m_display { nullptr };
+    GRefPtr<GdkDisplay> m_gdkDisplay;
+    mutable std::unique_ptr<WebCore::GLDisplay> m_glDisplay;
+    mutable bool m_glInitialized { false };
+    mutable bool m_glDisplayOwned { false };
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayWayland, Wayland)
-
-#endif // PLATFORM(WAYLAND)
+} // namespace WebKit

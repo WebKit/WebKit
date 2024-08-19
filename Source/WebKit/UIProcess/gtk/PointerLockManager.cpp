@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PointerLockManager.h"
 
+#include "Display.h"
 #include "NativeWebMouseEvent.h"
 #include "WebPageProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PointerEvent.h>
 #include <WebCore/PointerID.h>
@@ -51,11 +51,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockManager);
 std::unique_ptr<PointerLockManager> PointerLockManager::create(WebPageProxy& webPage, const FloatPoint& position, const FloatPoint& globalPosition, WebMouseEventButton button, unsigned short buttons, OptionSet<WebEventModifier> modifiers)
 {
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+    if (Display::singleton().isWayland())
         return makeUnique<PointerLockManagerWayland>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
 #if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+    if (Display::singleton().isX11())
         return makeUnique<PointerLockManagerX11>(webPage, position, globalPosition, button, buttons, modifiers);
 #endif
     ASSERT_NOT_REACHED();

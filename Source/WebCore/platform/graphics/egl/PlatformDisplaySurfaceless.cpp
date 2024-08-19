@@ -33,19 +33,26 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
 {
-    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless());
-}
-
-PlatformDisplaySurfaceless::PlatformDisplaySurfaceless()
-{
+    std::unique_ptr<GLDisplay> glDisplay;
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
+        glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
+        glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
+    else
+        glDisplay = GLDisplay::create(eglGetDisplay(EGL_DEFAULT_DISPLAY));
 
-    PlatformDisplay::initializeEGLDisplay();
+    if (!glDisplay) {
+        WTFLogAlways("Could not create EGL display: %s. Aborting...", GLContext::lastErrorString());
+        CRASH();
+    }
 
+    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless(WTFMove(glDisplay)));
+}
+
+PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(std::unique_ptr<GLDisplay>&& glDisplay)
+    : PlatformDisplay(WTFMove(glDisplay))
+{
 #if ENABLE(WEBGL)
     m_anglePlatform = EGL_PLATFORM_SURFACELESS_MESA;
     m_angleNativeDisplay = EGL_DEFAULT_DISPLAY;

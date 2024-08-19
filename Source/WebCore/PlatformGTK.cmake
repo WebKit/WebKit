@@ -59,7 +59,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/gtk/GdkCairoUtilities.h
     platform/graphics/gtk/GdkSkiaUtilities.h
 
-    platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
 
     platform/gtk/GRefPtrGtk.h

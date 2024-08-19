@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "Display.h"
 #include "PageLoadState.h"
 #include "WebKitAuthenticationDialog.h"
 #include "WebKitScriptDialogImpl.h"
@@ -28,7 +29,6 @@
 #include <WebCore/Color.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformScreen.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
@@ -256,7 +256,7 @@ void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&
 
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support maximize, so we resize the window to the screen size.
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+    if (WebKit::Display::singleton().isX11()) {
         const char* underXvfb = g_getenv("UNDER_XVFB");
         if (!g_strcmp0(underXvfb, "yes")) {
             auto screenRect = WebCore::screenAvailableRect(nullptr);
@@ -304,7 +304,7 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
 
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support maximize, so we resize the window to the default size.
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+    if (WebKit::Display::singleton().isX11()) {
         const char* underXvfb = g_getenv("UNDER_XVFB");
         if (!g_strcmp0(underXvfb, "yes")) {
             int x, y;

@@ -37,12 +37,6 @@ typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
 
-#if PLATFORM(GTK)
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GdkDisplay GdkDisplay;
-#endif
-
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 #include "GRefPtrGStreamer.h"
 
@@ -70,12 +64,6 @@ public:
     virtual ~PlatformDisplay();
 
     enum class Type {
-#if PLATFORM(X11)
-        X11,
-#endif
-#if PLATFORM(WAYLAND)
-        Wayland,
-#endif
 #if PLATFORM(WIN)
         Windows,
 #endif
@@ -103,10 +91,6 @@ public:
     const Vector<GLDisplay::DMABufFormat>& dmabufFormats();
 #endif
 
-#if PLATFORM(GTK)
-    virtual GLDisplay* gtkEGLDisplay() { return nullptr; }
-#endif
-
 #if ENABLE(WEBGL)
     EGLDisplay angleEGLDisplay() const;
     EGLContext angleSharingGLContext();
@@ -124,26 +108,10 @@ public:
     unsigned msaaSampleCount() const;
 #endif
 
-#if USE(ATSPI)
-    virtual String accessibilityBusAddress() const;
-#endif
-
 protected:
-    PlatformDisplay();
-#if PLATFORM(GTK)
-    explicit PlatformDisplay(GdkDisplay*);
-#endif
-
-    virtual void initializeEGLDisplay();
-
-#if PLATFORM(GTK)
-    virtual void sharedDisplayDidClose();
-
-    GRefPtr<GdkDisplay> m_sharedDisplay;
-#endif
+    explicit PlatformDisplay(std::unique_ptr<GLDisplay>&&);
 
     std::unique_ptr<GLDisplay> m_eglDisplay;
-    bool m_eglDisplayOwned { true };
     std::unique_ptr<GLContext> m_sharingGLContext;
 
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
@@ -152,8 +120,6 @@ protected:
 #endif
 
 private:
-    static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
-
 #if USE(SKIA)
     void invalidateSkiaGLContexts();
 #endif
@@ -164,7 +130,6 @@ private:
 
     void terminateEGLDisplay();
 
-    bool m_eglDisplayInitialized { false };
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     mutable EGLDisplay m_angleEGLDisplay { nullptr };
     EGLContext m_angleSharingGLContext { nullptr };

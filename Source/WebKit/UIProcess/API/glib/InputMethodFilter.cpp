@@ -23,8 +23,11 @@
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <wtf/SetForScope.h>
+
+#if PLATFORM(GTK)
+#include "Display.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -128,10 +131,10 @@ bool InputMethodFilter::isViewFocused() const
     if (!isEnabled() || !m_context)
         return false;
 
-#if ENABLE(DEVELOPER_MODE) && PLATFORM(X11)
+#if ENABLE(DEVELOPER_MODE) && PLATFORM(GTK)
     // Xvfb doesn't support toplevel focus, so the WebView is never focused. We simply assume the WebView is focused
     // since it's the only application running.
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
+    if (Display::singleton().isX11()) {
         if (!g_strcmp0(g_getenv("UNDER_XVFB"), "yes"))
             return true;
     }

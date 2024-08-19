@@ -33,6 +33,10 @@
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(GTK)
+#include "Display.h"
+#endif
+
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 #endif
@@ -143,6 +147,20 @@ static String drmPrimaryDeviceForEGLDisplay(EGLDisplay eglDisplay)
     return String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
 }
 
+static EGLDisplay currentEGLDisplay()
+{
+#if PLATFORM(GTK)
+    if (auto* glDisplay = Display::singleton().glDisplay())
+        return glDisplay->eglDisplay();
+#endif
+
+    auto eglDisplay = eglGetCurrentDisplay();
+    if (eglDisplay != EGL_NO_DISPLAY)
+        return eglDisplay;
+
+    return eglGetDisplay(EGL_DEFAULT_DISPLAY);
+}
+
 const String& drmPrimaryDevice()
 {
     static LazyNeverDestroyed<String> primaryDevice;
@@ -155,7 +173,7 @@ const String& drmPrimaryDevice()
         }
 #endif
 
-        auto eglDisplay = WebCore::PlatformDisplay::sharedDisplay().eglDisplay();
+        auto eglDisplay = currentEGLDisplay();
         if (eglDisplay != EGL_NO_DISPLAY) {
             primaryDevice.construct(drmPrimaryDeviceForEGLDisplay(eglDisplay));
             return;
@@ -184,7 +202,7 @@ const String& drmRenderNodeDevice()
             return;
         }
 
-        auto eglDisplay = WebCore::PlatformDisplay::sharedDisplay().eglDisplay();
+        auto eglDisplay = currentEGLDisplay();
         if (eglDisplay != EGL_NO_DISPLAY) {
             renderNodeDevice.construct(drmRenderNodeForEGLDisplay(eglDisplay));
             return;
