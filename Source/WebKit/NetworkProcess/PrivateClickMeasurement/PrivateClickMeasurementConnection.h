@@ -53,7 +53,6 @@ private:
     OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final;
     void connectionReceivedEvent(xpc_object_t) final;
 #endif
-    void sendDebugModeIsEnabledMessageIfNecessary() const;
 
     WeakPtr<NetworkSession> m_networkSession;
 };

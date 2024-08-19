@@ -41,9 +41,6 @@ namespace WebKit::WebPushD {
 void Connection::newConnectionWasInitialized() const
 {
     ASSERT(m_connection);
-    if (networkSession().sessionID().isEphemeral())
-        return;
-
     sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
