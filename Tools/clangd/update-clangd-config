@@ -61,7 +61,7 @@ def is_dir_virtually_empty(dir_path: Union[Path, str]) -> None:
 def gen_template_environment():
     env = {}
     env["header_file_platform_specific_flags"] = \
-        "-xobjective-cpp," if sys.platform == "darwin" else ""
+        "-xobjective-c++," if sys.platform == "darwin" else ""
     return env
 
 # This warning is better placed in the code than in the template file, as
