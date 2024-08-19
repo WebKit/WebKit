@@ -548,7 +548,7 @@ heap/GCRequest.cpp
 heap/GCSegmentedArray.cpp
 heap/GigacageAlignedMemoryAllocator.cpp
 heap/HandleSet.cpp
-heap/Heap.cpp
+heap/Heap.cpp @no-unify
 heap/HeapCell.cpp
 heap/HeapCellType.cpp
 heap/HeapFinalizerCallback.cpp
