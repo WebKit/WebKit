@@ -386,6 +386,8 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
         if (m_client->shouldEnableSharedArrayBuffer())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
+        if (m_client->shouldEnableLockdownMode())
+            xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-captive-portal-mode", true);
         if (m_client->shouldDisableJITCage())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit-cage", true);
     }

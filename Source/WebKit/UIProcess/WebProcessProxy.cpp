@@ -566,9 +566,6 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("service-worker-process"_s, "1"_s);
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("registrable-domain"_s, m_registrableDomain->string());
     }
-
-    if (shouldEnableLockdownMode())
-        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s, "1"_s);
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)

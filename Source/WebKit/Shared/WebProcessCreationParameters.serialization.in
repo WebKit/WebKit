@@ -74,6 +74,7 @@
     bool attrStyleEnabled;
     bool shouldThrowExceptionForGlobalConstantRedeclaration;
     WebCore::CrossOriginMode crossOriginMode;
+    bool isLockdownModeEnabled;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices;
