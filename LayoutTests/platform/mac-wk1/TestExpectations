@@ -860,6 +860,7 @@ accessibility/dynamic-colspan.html [ Skip ]
 accessibility/dynamic-table-descendants.html [ Skip ]
 
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
+accessibility/indeterminate-progressbar-custom-element.html [ Skip ]
 accessibility/progress-indeterminate-value.html [ Skip ]
 
 # Missing AccessibilityUIElement::brailleLabel and AccessibilityUIElement::brailleRoleDescription implementations.
