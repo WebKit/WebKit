@@ -1,3 +1,14 @@
+=================
+WebKitGTK 2.45.90
+=================
+
+What's new in WebKitGTK 2.45.90?
+
+  - Add explicit fencing support when available.
+  - Use RGBA as the pixel format for texture backed SkSurfaces.
+  - Fix build with gstreamer versions < 1.22.
+  - Translatation updates: Slovenian.
+
 ================
 WebKitGTK 2.45.6
 ================
