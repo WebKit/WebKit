@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 #include "PALSwift.h"
 
 namespace WebCore {

@@ -47,12 +47,11 @@ static CString toHex(WTF::Vector<uint8_t>&& hash)
 
 static void expect(PAL::CryptoDigest::Algorithm algorithm, const CString& input, int repeat, const CString& expected)
 {
-    auto cryptoDigest = PAL::CryptoDigest::create(algorithm);
-
+    Vector<uint8_t> in { input.span() };
     for (int i = 0; i < repeat; ++i)
-        cryptoDigest->addBytes(input.span());
+        in.append(input.span());
 
-    CString actual = toHex(cryptoDigest->computeHash());
+    CString actual = toHex(*PAL::CryptoDigest::computeHash(algorithm, in.span()));
 
     ASSERT_EQ(expected.length(), actual.length());
     ASSERT_STREQ(expected.data(), actual.data());
@@ -65,6 +64,16 @@ static void expectSHA1(const CString& input, int repeat, const CString& expected
 
 static void expectSHA224(const CString& input, int repeat, const CString& expected)
 {
+    auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_224);
+
+    for (int i = 0; i < repeat; ++i)
+        cryptoDigest->addBytes(input.span());
+
+    CString actual = toHex(cryptoDigest->computeHash());
+
+    ASSERT_EQ(expected.length(), actual.length());
+    ASSERT_STREQ(expected.data(), actual.data());
+
     expect(PAL::CryptoDigest::Algorithm::SHA_224, input, repeat, expected);
 }
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 #include "PALSwift.h"
 #endif
 #include <CommonCrypto/CommonCrypto.h>
@@ -190,34 +190,34 @@ String CryptoDigest::toHexString()
     return String::fromUTF8(result.span());
 }
 
-std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, UseCryptoKit useCryptoKit)
+#if ENABLE(CRYPTO_KIT)
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, std::span<const uint8_t> data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        switch (algo) {
-        case CryptoDigest::Algorithm::SHA_1:
-            return PAL::Digest::sha1(data.span());
-        case CryptoDigest::Algorithm::SHA_256:
-            return PAL::Digest::sha256(data.span());
-        case CryptoDigest::Algorithm::SHA_384:
-            return PAL::Digest::sha384(data.span());
-        case CryptoDigest::Algorithm::SHA_512:
-            return PAL::Digest::sha512(data.span());
-        case CryptoDigest::Algorithm::SHA_224:
-            RELEASE_ASSERT_NOT_REACHED();
-            return std::nullopt;
-        }
+    switch (algo) {
+    case CryptoDigest::Algorithm::SHA_1:
+        return PAL::Digest::sha1(data);
+    case CryptoDigest::Algorithm::SHA_256:
+        return PAL::Digest::sha256(data);
+    case CryptoDigest::Algorithm::SHA_384:
+        return PAL::Digest::sha384(data);
+    case CryptoDigest::Algorithm::SHA_512:
+        return PAL::Digest::sha512(data);
+    case CryptoDigest::Algorithm::SHA_224:
         return std::nullopt;
     }
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unsupported HASH Algorithm");
+    return std::nullopt;
+}
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
-
+std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, std::span<const uint8_t> data)
+{
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
-    ASSERT(digest->m_context);
+    if (!digest->m_context)
+        return std::nullopt;
     digest->m_context->algorithm = algo;
     digest->m_context->ccContext = createCryptoDigest(algo);
-    digest->addBytes(data.span());
+    digest->addBytes(data);
     return digest->computeHash();
 }
+#endif
 } // namespace PAL

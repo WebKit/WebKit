@@ -44,12 +44,16 @@ Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t len
     return { std::span { byteArray, length } };
 }
 
+static inline Vector<uint8_t> sha256(std::span<const uint8_t> input)
+{
+    auto rv = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, input);
+    RELEASE_ASSERT_WITH_MESSAGE(rv, "SHA256 digest output NULL");
+    return *rv;
+}
+
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto rpIdUTF8 = rpId.utf8();
-    crypto->addBytes(rpIdUTF8.span());
-    return crypto->computeHash();
+    return sha256(rpId.utf8().span());
 }
 
 Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&& y)
@@ -183,9 +187,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(clientDataJson.span());
-    return crypto->computeHash();
+    return sha256(clientDataJson.span());
 }
 
 Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)

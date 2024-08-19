@@ -90,11 +90,11 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
 
 String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOriginData& origin)
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto originString = origin.toString().utf8();
-    crypto->addBytes(originString.span());
-    crypto->addBytes(salt);
-    return base64URLEncodeToString(crypto->computeHash());
+    Vector<uint8_t> input { origin.toString().utf8().span() };
+    input.append(std::span { salt });
+    auto hash = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, input.span());
+    RELEASE_ASSERT_WITH_MESSAGE(hash, "SHA256 output null.");
+    return base64URLEncodeToString(*hash);
 }
 
 } // namespace StorageUtilities

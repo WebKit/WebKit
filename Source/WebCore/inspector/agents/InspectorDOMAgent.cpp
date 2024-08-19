@@ -1905,10 +1905,9 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     PAL::TextEncoding documentEncoding = element.document().textEncoding();
     const PAL::TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : PAL::UTF8Encoding();
     auto content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), PAL::UnencodableHandling::Entities);
-    auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(content.span());
-    auto digest = cryptoDigest->computeHash();
-    return makeString("sha256-"_s, base64Encoded(digest));
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, content);
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA256 output null.");
+    return makeString("sha256-"_s, base64Encoded(*digest));
 }
 
 Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth)

@@ -479,6 +479,13 @@ void PrivateClickMeasurementManager::attribute(SourceSite&& sourceSite, Attribut
     });
 }
 
+static inline Vector<uint8_t> sha256(std::span<const uint8_t> input)
+{
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, input);
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA256 output null");
+    return *digest;
+}
+
 void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMeasurement& attribution, WebCore::PCM::AttributionReportEndpoint attributionReportEndpoint)
 {
     if (!featureEnabled() || !attribution.attributionTriggerData())
@@ -500,10 +507,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
             if (!publicKeyData)
                 return;
 
-            auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-            crypto->addBytes(publicKeyData->span());
-
-            auto keyID = base64URLEncodeToString(crypto->computeHash());
+            auto keyID = base64URLEncodeToString(sha256(publicKeyData->span()));
             if (keyID != attribution.sourceSecretToken()->keyIDBase64URL)
                 return;
 
@@ -519,10 +523,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
                     if (!publicKeyData)
                         return;
 
-                    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-                    crypto->addBytes(publicKeyData->span());
-
-                    auto keyID = base64URLEncodeToString(crypto->computeHash());
+                    auto keyID = base64URLEncodeToString(sha256(publicKeyData->span()));
                     if (keyID != attribution.attributionTriggerData()->destinationSecretToken->keyIDBase64URL)
                         return;
 
@@ -544,10 +545,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         if (!publicKeyData)
             return;
 
-        auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-        crypto->addBytes(publicKeyData->span());
-
-        auto keyID = base64URLEncodeToString(crypto->computeHash());
+        auto keyID = base64URLEncodeToString(sha256(publicKeyData->span()));
         if (!attribution.attributionTriggerData()->destinationSecretToken || keyID != attribution.attributionTriggerData()->destinationSecretToken->keyIDBase64URL)
             return;
 

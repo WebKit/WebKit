@@ -31,39 +31,33 @@
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyEC.h"
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 #include <pal/PALSwiftUtils.h>
 #endif
 
 namespace WebCore {
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 
-static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
-    const auto* priv = std::get_if<CKPlatformECKeyContainer>(&key);
-    if (!priv)
-        return Exception { ExceptionCode::OperationError };
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    auto rv = (*priv)->sign(data.span(), toCKHashFunction(hash));
+    auto rv = key.platformKey()->sign(data.span(), toCKHashFunction(hash));
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(rv.result);
 }
 
-static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
+static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
 {
-    const auto* pub = std::get_if<CKPlatformECKeyContainer>(&key);
-    if (!pub)
-        return Exception { ExceptionCode::OperationError };
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    return (*pub)->verify(data.span(), signature.span(), toCKHashFunction(hash)).errorCode == Cpp::ErrorCodes::Success;
+    return key.platformKey()->verify(data.span(), signature.span(), toCKHashFunction(hash)).errorCode == Cpp::ErrorCodes::Success;
 }
-#endif
-
-static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, size_t keyLengthInBytes, const Vector<uint8_t>& data)
+#else
+static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
+    auto keyLengthInBytes = key.keySizeInBytes();
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
@@ -71,24 +65,15 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
     if (!cryptoDigestAlgorithm)
         return Exception { ExceptionCode::OperationError };
-    auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
-    if (!digest)
+    auto digestData = PAL::CryptoDigest::computeHash(*cryptoDigestAlgorithm, data.span());
+    if (!digestData)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.span());
-    auto digestData = digest->computeHash();
 
     // The signature produced by CCECCryptorSignHash is in DER format.
     // tag + length(1) + tag + length(1) + InitialOctet(?) + keyLength in bytes + tag + length(1) + InitialOctet(?) + keyLength in bytes
     Vector<uint8_t> signature(8 + keyLengthInBytes * 2);
     size_t signatureSize = signature.size();
-#if HAVE(SWIFT_CPP_INTEROP)
-    const auto* priv = std::get_if<CCPlatformECKeyContainer>(&key);
-    if (!priv)
-        return Exception { ExceptionCode::OperationError };
-    CCCryptorStatus status = CCECCryptorSignHash((*priv).get(), digestData.data(), digestData.size(), signature.data(), &signatureSize);
-#else
-    CCCryptorStatus status = CCECCryptorSignHash(key.get(), digestData.data(), digestData.size(), signature.data(), &signatureSize);
-#endif
+    CCCryptorStatus status = CCECCryptorSignHash(key.platformKey().get(), digestData->data(), digestData->size(), signature.data(), &signatureSize);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -129,8 +114,9 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     return WTFMove(newSignature);
 }
 
-static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, size_t keyLengthInBytes, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
+static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
 {
+    auto keyLengthInBytes = key.keySizeInBytes();
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
         return Exception { ExceptionCode::OperationError };
@@ -138,11 +124,9 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
     if (!cryptoDigestAlgorithm)
         return Exception { ExceptionCode::OperationError };
-    auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
-    if (!digest)
+    auto digestData = PAL::CryptoDigest::computeHash(*cryptoDigestAlgorithm, data.span());
+    if (!digestData)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.span());
-    auto digestData = digest->computeHash();
 
     if (signature.size() != keyLengthInBytes * 2)
         return false;
@@ -181,37 +165,23 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     newSignature.append(signature.subspan(sStart, keyLengthInBytes * 2 - sStart));
 
     uint32_t valid;
-#if HAVE(SWIFT_CPP_INTEROP)
-    const auto* pub = std::get_if<CCPlatformECKeyContainer>(&key);
-    if (!pub)
-        return Exception { ExceptionCode::OperationError };
-    CCCryptorStatus status = CCECCryptorVerifyHash((*pub).get(), digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);
-#else
-    CCCryptorStatus status = CCECCryptorVerifyHash(key.get(), digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);
-#endif
+    CCCryptorStatus status = CCECCryptorVerifyHash(key.platformKey().get(), digestData->data(), digestData->size(), newSignature.data(), newSignature.size(), &valid);
     if (status) {
         WTFLogAlways("ERROR: CCECCryptorVerifyHash() returns error=%d", status);
         return false;
     }
     return valid;
 }
-
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data, [[maybe_unused]] UseCryptoKit useCryptoKit)
-{
-#if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return signECDSACryptoKit(parameters.hashIdentifier, key.platformKey(), data);
 #endif
-    return signECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBytes(), data);
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
+{
+    return signECDSA(parameters.hashIdentifier, key, data);
 }
 
-ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, [[maybe_unused]] UseCryptoKit useCryptoKit)
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return verifyECDSACryptoKit(parameters.hashIdentifier, key.platformKey(), signature, data);
-#endif
-    return verifyECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBytes(), signature, data);
+    return verifyECDSA(parameters.hashIdentifier, key, signature, data);
 }
 
 } // namespace WebCore

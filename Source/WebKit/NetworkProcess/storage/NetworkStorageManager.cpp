@@ -85,11 +85,11 @@ static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
 
 static String encode(const String& string, FileSystem::Salt salt)
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto utf8String = string.utf8();
-    crypto->addBytes(utf8String.span());
-    crypto->addBytes(salt);
-    return base64URLEncodeToString(crypto->computeHash());
+    Vector<uint8_t> utf8String { string.utf8().span() };
+    utf8String.append(std::span { salt });
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, utf8String.span());
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA256 output null.");
+    return base64URLEncodeToString(*digest);
 }
 
 static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)

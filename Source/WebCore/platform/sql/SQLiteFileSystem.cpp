@@ -149,18 +149,16 @@ std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String&
     
 String SQLiteFileSystem::computeHashForFileName(StringView fileName)
 {
-    auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto utf8FileName = fileName.utf8();
-    cryptoDigest->addBytes(utf8FileName.span());
-    auto digest = cryptoDigest->computeHash();
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, fileName.utf8().span());
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA256 output null.");
     
     // Convert digest to hex.
     char* start = 0;
-    unsigned digestLength = digest.size();
+    unsigned digestLength = digest->size();
     CString result = CString::newUninitialized(digestLength * 2, start);
     char* buffer = start;
     for (size_t i = 0; i < digestLength; ++i) {
-        snprintf(buffer, 3, "%02X", digest.at(i));
+        snprintf(buffer, 3, "%02X", digest->at(i));
         buffer += 2;
     }
     return String::fromUTF8(result.span());

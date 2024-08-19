@@ -104,9 +104,9 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
 
 static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(span(clientDataJson));
-    return crypto->computeHash();
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, span(clientDataJson));
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA256 output null.");
+    return *digest;
 }
 #endif
 
@@ -611,10 +611,14 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     }
 
     NSData *nsPublicKeyData = (NSData *)publicKeyDataRep.get();
-    auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-    digest->addBytes(span(nsPublicKeyData));
-    auto credentialId = digest->computeHash();
-    RetainPtr nsCredentialId = toNSData(credentialId.span());
+    auto credentialId = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_1, span(nsPublicKeyData));
+    if (!credentialId) {
+        createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
+        return nullptr;
+    }
+
+
+    RetainPtr nsCredentialId = toNSData(credentialId->span());
 
     auto query = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)kSecClassKey, (id)kSecClass,

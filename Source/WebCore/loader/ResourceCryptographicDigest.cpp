@@ -147,23 +147,26 @@ static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ResourceCryptographi
     ASSERT_NOT_REACHED();
     return PAL::CryptoDigest::Algorithm::SHA_512;
 }
-
-ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, std::span<const uint8_t> bytes)
+static inline Vector<uint8_t> computeHash(ResourceCryptographicDigest::Algorithm algorithm, std::span<const uint8_t> input)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
-    cryptoDigest->addBytes(bytes);
-    return { algorithm, cryptoDigest->computeHash() };
+    cryptoDigest->addBytes(input);
+    return cryptoDigest->computeHash();
+}
+ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, std::span<const uint8_t> bytes)
+{
+    return { algorithm, computeHash(algorithm, bytes) };
 }
 
 ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const FragmentedSharedBuffer* buffer)
 {
-    auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
+    Vector<uint8_t> input;
     if (buffer) {
         buffer->forEachSegment([&](auto segment) {
-            cryptoDigest->addBytes(segment);
+            input.append(segment);
         });
     }
-    return { algorithm, cryptoDigest->computeHash() };
+    return { algorithm, computeHash(algorithm, input.span()) };
 }
 
 }

@@ -78,13 +78,10 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     }
     NSData *nsPublicKeyData = (NSData *)publicKeyDataRef.get();
 
-    Vector<uint8_t> credentialId;
-    {
-        auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-        digest->addBytes(span(nsPublicKeyData));
-        credentialId = digest->computeHash();
-    }
+    auto digest = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_1, span(nsPublicKeyData));
+    RELEASE_ASSERT_WITH_MESSAGE(digest, "SHA1 output null.");
 
+    Vector<uint8_t> credentialId = *digest;
     Vector<uint8_t> cosePublicKey;
     {
         // COSE Encoding

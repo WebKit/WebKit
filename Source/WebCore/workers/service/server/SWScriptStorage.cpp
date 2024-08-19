@@ -50,11 +50,9 @@ SWScriptStorage::SWScriptStorage(const String& directory)
 
 String SWScriptStorage::sha2Hash(const String& input) const
 {
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(m_salt);
-    auto inputUTF8 = input.utf8();
-    crypto->addBytes(inputUTF8.span());
-    return base64URLEncodeToString(crypto->computeHash());
+    auto hash = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, input.utf8().span());
+    RELEASE_ASSERT_WITH_MESSAGE(hash, "SHA256 output null.");
+    return base64URLEncodeToString(*hash);
 }
 
 String SWScriptStorage::sha2Hash(const URL& input) const

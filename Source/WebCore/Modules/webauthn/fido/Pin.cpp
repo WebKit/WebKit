@@ -44,14 +44,13 @@
 #include "DeviceResponseConverter.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 #include <pal/PALSwift.h>
 #endif
 #include <pal/crypto/CryptoDigest.h>
 
 namespace fido {
 using namespace WebCore;
-static constexpr auto useCryptoKit = UseCryptoKit::Yes;
 using CBOR = cbor::CBORValue;
 
 namespace pin {
@@ -68,7 +67,7 @@ static bool hasAtLeastFourCodepoints(const String& pin)
 // makePinAuth returns `LEFT(HMAC-SHA-256(secret, data), 16)`.
 static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
-    auto result = CryptoAlgorithmHMAC::platformSign(key, data, useCryptoKit);
+    auto result = CryptoAlgorithmHMAC::platformSign(key, data);
     ASSERT(!result.hasException());
     auto pinAuth = result.releaseReturnValue();
     pinAuth.shrink(16);
@@ -170,7 +169,7 @@ std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CB
 
     const auto& x = xIt->second.getByteString();
     const auto& y = yIt->second.getByteString();
-    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
     if (!peerKey)
         return std::nullopt;
 
@@ -241,36 +240,37 @@ Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&)
     return encodePinCommand(Subcommand::kGetKeyAgreement);
 }
 
+static inline Vector<uint8_t> sha256(std::span<const uint8_t> input)
+{
+    auto rv = PAL::CryptoDigest::computeHash(PAL::CryptoDigest::Algorithm::SHA_256, input);
+    RELEASE_ASSERT_WITH_MESSAGE(rv, "SHA256 output NULL");
+    return *rv;
+}
+
 std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const CryptoKeyEC& peerKey)
 {
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
     // 2. Use ECDH and SHA-256 to compute the shared AES-CBC key.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey, useCryptoKit);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey);
     if (!sharedKeyResult)
         return std::nullopt;
 
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->span());
-    auto sharedKeyHash = crypto->computeHash();
-
-    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, sha256(sharedKeyResult->span()), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT(sharedKey);
 
     // The following encodes the public key of the above key pair into COSE format.
-    auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw(useCryptoKit);
+    auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw();
     ASSERT(!rawPublicKeyResult.hasException());
     auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
 
     // The following calculates a SHA-256 digest of the PIN, and shrink to the left 16 bytes.
-    crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(pin.span());
-    auto pinHash = crypto->computeHash();
+    auto pinHash = sha256(pin.span());
     pinHash.shrink(16);
 
     return TokenRequest(sharedKey.releaseNonNull(), WTFMove(coseKey), WTFMove(pinHash));
@@ -311,24 +311,22 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
     // 2. Use ECDH and SHA-256 to compute the shared AES-CBC key.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey, useCryptoKit);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey);
     if (!sharedKeyResult)
         return std::nullopt;
 
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->span());
-    auto sharedKeyHash = crypto->computeHash();
+    auto sharedKeyHash = sha256(sharedKeyResult->span());
 
-    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, Vector { sharedKeyHash }, true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
+    auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, sharedKeyHash.span(), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
     ASSERT(sharedKey);
 
     // The following encodes the public key of the above key pair into COSE format.
-    auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw(useCryptoKit);
+    auto rawPublicKeyResult = downcast<CryptoKeyEC>(*keyPair.publicKey).exportRaw();
     ASSERT(!rawPublicKeyResult.hasException());
     auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
 
@@ -344,7 +342,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
     auto newPinEnc = CryptoAlgorithmAESCBC::platformEncrypt({ }, *sharedKey, paddedPin, CryptoAlgorithmAESCBC::Padding::No);
     ASSERT(!newPinEnc.hasException());
 
-    auto pinUvAuthParam = CryptoAlgorithmHMAC::platformSign(*hmacKey, newPinEnc.returnValue(), useCryptoKit);
+    auto pinUvAuthParam = CryptoAlgorithmHMAC::platformSign(*hmacKey, newPinEnc.returnValue());
     ASSERT(!pinUvAuthParam.hasException());
 
     return SetPinRequest(sharedKey.releaseNonNull(), WTFMove(coseKey), newPinEnc.releaseReturnValue(), pinUvAuthParam.releaseReturnValue());

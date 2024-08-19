@@ -27,13 +27,14 @@
 #include "CryptoAlgorithmEd25519.h"
 
 #include "CryptoKeyOKP.h"
-#if HAVE(SWIFT_CPP_INTEROP)
+#if ENABLE(CRYPTO_KIT)
 #include <pal/PALSwift.h>
-#endif
+#else
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
+#endif
 
 namespace WebCore {
-
+#if !ENABLE(CRYPTO_KIT)
 static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const Vector<uint8_t>& data)
 {
     if (sk.size() != ed25519KeySize)
@@ -59,9 +60,9 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, const Vector<
     const struct ccdigest_info* di = ccsha512_di();
     return !cced25519_verify(di, data.size(), data.data(), signature.data(), key.data());
 }
-#if HAVE(SWIFT_CPP_INTEROP)
+#else
 
-static ExceptionOr<Vector<uint8_t>> signEd25519CryptoKit(const Vector<uint8_t>&sk, const Vector<uint8_t>& data)
+static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>&sk, const Vector<uint8_t>& data)
 {
     if (sk.size() != ed25519KeySize)
         return Exception { ExceptionCode::OperationError };
@@ -71,7 +72,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519CryptoKit(const Vector<uint8_t>&s
     return WTFMove(rv.result);
 }
 
-static ExceptionOr<bool>  verifyEd25519CryptoKit(const Vector<uint8_t>& pubKey, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+static ExceptionOr<bool>  verifyEd25519(const Vector<uint8_t>& pubKey, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
     if (pubKey.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;
@@ -80,25 +81,13 @@ static ExceptionOr<bool>  verifyEd25519CryptoKit(const Vector<uint8_t>& pubKey, 
 }
 #endif
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmEd25519::platformSign(const CryptoKeyOKP& key, const Vector<uint8_t>& data, UseCryptoKit useCryptoKit)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmEd25519::platformSign(const CryptoKeyOKP& key, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return signEd25519CryptoKit(key.platformKey(), data);
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return signEd25519(key.platformKey(), data);
 }
 
-ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, UseCryptoKit useCryptoKit)
+ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return verifyEd25519CryptoKit(key.platformKey(), signature, data);
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return verifyEd25519(key.platformKey(), signature, data);
 }
 
