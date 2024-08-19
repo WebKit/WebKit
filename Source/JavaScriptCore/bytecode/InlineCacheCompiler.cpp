@@ -1796,6 +1796,24 @@ Ref<InlineCacheHandler> InlineCacheCompiler::generateSlowPathHandler(VM& vm, Acc
     return handler;
 }
 
+template<typename Visitor>
+void InlineCacheHandler::propagateTransitions(Visitor& visitor) const
+{
+    if (m_accessCase)
+        m_accessCase->propagateTransitions(visitor);
+}
+
+template void InlineCacheHandler::propagateTransitions(AbstractSlotVisitor&) const;
+template void InlineCacheHandler::propagateTransitions(SlotVisitor&) const;
+
+template<typename Visitor>
+void InlineCacheHandler::visitAggregateImpl(Visitor& visitor)
+{
+    if (m_accessCase)
+        m_accessCase->visitAggregate(visitor);
+}
+DEFINE_VISIT_AGGREGATE(InlineCacheHandler);
+
 void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCase, CCallHelpers::JumpList& fallThrough)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -4483,7 +4501,8 @@ static void ensureReferenceAndAddWatchpoint(VM&, PolymorphicAccessJITStubRoutine
     additionalWatchpointSet.add(watchpoint);
 }
 
-RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBlock, std::span<const Ref<AccessCase>> cases)
+template<typename Container>
+RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBlock, const Container& cases)
 {
     // Accidentally, it already includes megamorphic case. Then we just return it.
     for (auto accessCase : cases) {
@@ -6678,56 +6697,40 @@ MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SetPrivateBrand handler"_s, "SetPrivateBrand handler");
 }
 
-AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess& poly, CodeBlock* codeBlock, Ref<AccessCase>&& accessCase)
+AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, Vector<AccessCase*, 16>&& poly, CodeBlock* codeBlock, AccessCase& accessCase)
 {
     SuperSamplerScope superSamplerScope(false);
 
-    dataLogLnIf(InlineCacheCompilerInternal::verbose, "Regenerate with m_list: ", listDump(poly.m_list));
-
-    if (!accessCase->couldStillSucceed())
+    if (!accessCase.couldStillSucceed())
         return AccessGenerationResult::MadeNoChanges;
 
+    // Now add things to the new list. Note that at this point, we will still have old cases that
+    // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
     auto sets = collectAdditionalWatchpoints(vm(), accessCase);
     for (auto* set : sets) {
         if (!set->isStillValid())
             return AccessGenerationResult::MadeNoChanges;
     }
 
-    for (auto& alreadyListedCase : poly.m_list) {
-        if (alreadyListedCase.ptr() != accessCase.ptr()) {
-            if (alreadyListedCase->canReplace(accessCase.get()))
+    for (auto& alreadyListedCase : poly) {
+        if (alreadyListedCase != &accessCase) {
+            if (alreadyListedCase->canReplace(accessCase))
                 return AccessGenerationResult::MadeNoChanges;
         }
     }
+    poly.append(&accessCase);
+    dataLogLnIf(InlineCacheCompilerInternal::verbose, "Generate with m_list: ", listDump(poly));
 
     Vector<WatchpointSet*, 8> additionalWatchpointSets;
-    if (auto megamorphicCase = tryFoldToMegamorphic(codeBlock, poly.m_list.span()))
-        accessCase = megamorphicCase.releaseNonNull();
-    else
-        additionalWatchpointSets.appendVector(WTFMove(sets));
+    if (auto megamorphicCase = tryFoldToMegamorphic(codeBlock, poly.span()))
+        return compileOneAccessCaseHandler(poly, codeBlock, *megamorphicCase, WTFMove(additionalWatchpointSets));
 
+    additionalWatchpointSets.appendVector(WTFMove(sets));
     ASSERT(m_stubInfo.useDataIC);
-    auto result = compileOneAccessCaseHandler(poly, codeBlock, accessCase.get(), WTFMove(additionalWatchpointSets));
-    if (result.generatedSomeCode()) {
-        if (auto* handler = result.handler()) {
-            Ref resultCase { *handler->accessCase() };
-            if (isMegamorphic(resultCase->m_type)) {
-                poly.m_list.shrink(0);
-                poly.m_list.append(WTFMove(resultCase));
-            } else if (resultCase.ptr() != accessCase.ptr()) {
-                for (auto& alreadyListedCase : poly.m_list) {
-                    if (alreadyListedCase.ptr() == accessCase.ptr()) {
-                        alreadyListedCase = WTFMove(resultCase);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return result;
+    return compileOneAccessCaseHandler(poly, codeBlock, accessCase, WTFMove(additionalWatchpointSets));
 }
 
-AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(PolymorphicAccess& poly, CodeBlock* codeBlock, AccessCase& accessCase, Vector<WatchpointSet*, 8>&& additionalWatchpointSets)
+AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Vector<AccessCase*, 16>& poly, CodeBlock* codeBlock, AccessCase& accessCase, Vector<WatchpointSet*, 8>&& additionalWatchpointSets)
 {
     ASSERT(useHandlerIC());
 
@@ -6760,7 +6763,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
         AccessGenerationResult::Kind resultKind;
         if (isMegamorphic(accessCase.m_type))
             resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
-        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
+        else if (poly.size() >= Options::maxAccessVariantListSize())
             resultKind = AccessGenerationResult::GeneratedFinalCode;
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
@@ -6783,7 +6786,7 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(Polymorp
         AccessGenerationResult::Kind resultKind;
         if (isMegamorphic(accessCase.m_type))
             resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
-        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
+        else if (poly.size() >= Options::maxAccessVariantListSize())
             resultKind = AccessGenerationResult::GeneratedFinalCode;
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
@@ -7692,7 +7695,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteNonConfigurable
 MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&) { return { }; }
-AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*, Ref<AccessCase>&&) { return { }; }
+AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, Vector<AccessCase*, 16>&&, CodeBlock*, AccessCase&) { return { }; }
 #endif
 
 PolymorphicAccess::PolymorphicAccess() = default;
@@ -7840,14 +7843,18 @@ bool InlineCacheHandler::visitWeak(VM& vm)
     for (auto& callLinkInfo : Base::span())
         callLinkInfo.visitWeak(vm);
 
-    if (!m_stubRoutine)
-        return true;
-
-    m_stubRoutine->visitWeak(vm);
-    for (StructureID weakReference : m_stubRoutine->weakStructures()) {
-        Structure* structure = weakReference.decode();
-        if (!vm.heap.isMarked(structure))
+    if (m_accessCase) {
+        if (!m_accessCase->visitWeak(vm))
             return false;
+    }
+
+    if (m_stubRoutine) {
+        m_stubRoutine->visitWeak(vm);
+        for (StructureID weakReference : m_stubRoutine->weakStructures()) {
+            Structure* structure = weakReference.decode();
+            if (!vm.heap.isMarked(structure))
+                return false;
+        }
     }
 
     return true;

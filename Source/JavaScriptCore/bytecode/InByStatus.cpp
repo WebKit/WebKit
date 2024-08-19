@@ -117,7 +117,7 @@ InByStatus InByStatus::computeFor(
 #if ENABLE(DFG_JIT)
 InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(locker, profiledBlock->vm(), stubInfo);
     if (!isInlineable(summary))
         return InByStatus(summary);
     
@@ -150,9 +150,9 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
     }
 
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->m_stub.get();
-        if (list->size() == 1) {
-            const AccessCase& access = list->at(0);
+        auto list = stubInfo->listedAccessCases(locker);
+        if (list.size() == 1) {
+            const AccessCase& access = *list.at(0);
             switch (access.type()) {
             case AccessCase::InMegamorphic:
             case AccessCase::IndexedMegamorphicIn: {
@@ -174,8 +174,8 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
             }
         }
 
-        for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
-            const AccessCase& access = list->at(listIndex);
+        for (unsigned listIndex = 0; listIndex < list.size(); ++listIndex) {
+            const AccessCase& access = *list.at(listIndex);
             if (access.viaGlobalProxy())
                 return InByStatus(TakesSlowPath);
 

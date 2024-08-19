@@ -144,9 +144,9 @@ public:
     // This returns true if it has marked everything that it will ever mark.
     template<typename Visitor> void propagateTransitions(Visitor&);
         
-    StubInfoSummary summary(VM&) const;
+    StubInfoSummary summary(const ConcurrentJSLocker&, VM&) const;
     
-    static StubInfoSummary summary(VM&, const StructureStubInfo*);
+    static StubInfoSummary summary(const ConcurrentJSLocker&, VM&, const StructureStubInfo*);
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
@@ -233,7 +233,11 @@ public:
 
     bool useHandlerIC() const { return useDataIC && Options::useHandlerIC(); }
 
+    Vector<AccessCase*, 16> listedAccessCases(const AbstractLocker&) const;
+
 private:
+    AccessGenerationResult upgradeForPolyProtoIfNecessary(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, const Vector<AccessCase*, 16>&, AccessCase&);
+
     ALWAYS_INLINE bool considerRepatchingCacheImpl(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
         DisallowGC disallowGC;
@@ -411,8 +415,8 @@ public:
     };
 
     JSGlobalObject* m_globalObject { nullptr };
-    std::unique_ptr<PolymorphicAccess> m_stub;
 private:
+    std::unique_ptr<PolymorphicAccess> m_stub;
     RefPtr<InlineCacheHandler> m_inlinedHandler;
     RefPtr<InlineCacheHandler> m_handler;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
