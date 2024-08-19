@@ -181,10 +181,10 @@ public:
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
 
 #if PLATFORM(MAC)
-    WebCore::PlatformLayerIdentifier pageScalingLayerID() const { return m_pageScalingLayerID.value(); }
+    WebCore::PlatformLayerIdentifier pageScalingLayerID() const { return m_pageScalingLayerID.unsafeValue(); }
     void setPageScalingLayerID(WebCore::PlatformLayerIdentifier layerID) { m_pageScalingLayerID = layerID; }
 
-    WebCore::PlatformLayerIdentifier scrolledContentsLayerID() const { return m_scrolledContentsLayerID.value(); }
+    WebCore::PlatformLayerIdentifier scrolledContentsLayerID() const { return m_scrolledContentsLayerID.unsafeValue(); }
     void setScrolledContentsLayerID(WebCore::PlatformLayerIdentifier layerID) { m_scrolledContentsLayerID = layerID; }
 #endif
 

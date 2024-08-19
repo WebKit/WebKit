@@ -403,8 +403,8 @@ bool OverloadResolver::unify(const TypeVariable* variable, const Type* argumentT
     // 2) unify(Var(T), Type(u32); Failed! Can't unify AbstractFloat and u32
     auto variablePromotionRank = conversionRank(resolvedType, argumentType);
     auto argumentConversionRank = conversionRank(argumentType, resolvedType);
-    logLn("variablePromotionRank: ", variablePromotionRank.value(), ", argumentConversionRank: ", argumentConversionRank.value());
-    if (variablePromotionRank.value() < argumentConversionRank.value())
+    logLn("variablePromotionRank: ", variablePromotionRank.unsafeValue(), ", argumentConversionRank: ", argumentConversionRank.unsafeValue());
+    if (variablePromotionRank.unsafeValue() < argumentConversionRank.unsafeValue())
         return assign(*variable, argumentType);
 
     return !!argumentConversionRank;
@@ -554,7 +554,7 @@ std::optional<unsigned> OverloadResolver::resolve(ValueVariable variable) const
 ConversionRank OverloadResolver::conversionRank(const Type* from, const Type* to) const
 {
     auto rank = ::WGSL::conversionRank(from, to);
-    logLn("conversionRank(from: ", *from, ", to: ", *to, ") = ", rank.value());
+    logLn("conversionRank(from: ", *from, ", to: ", *to, ") = ", rank.unsafeValue());
     return rank;
 }
 
