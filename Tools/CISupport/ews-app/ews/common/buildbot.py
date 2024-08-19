@@ -48,7 +48,6 @@ class Buildbot():
         'api-mac': 'mac',
         'mac-wk1': 'mac',
         'mac-wk2': 'mac',
-        'mac-intel-wk2': 'mac',
         'mac-wk2-stress': 'mac',
         'mac-debug-wk1': 'mac-debug',
         'mac-AS-debug-wk2': 'mac-AS-debug',
