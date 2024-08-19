@@ -162,8 +162,8 @@ private:
     std::unique_ptr<PendingCallbacks> m_pendingCallbacks;
     Vector<xmlChar> m_bufferedText;
 
-    ContainerNode* m_currentNode { nullptr };
-    Vector<ContainerNode*> m_currentNodeStack;
+    CheckedPtr<ContainerNode> m_currentNode;
+    Vector<CheckedPtr<ContainerNode>> m_currentNodeStack;
 
     RefPtr<Text> m_leafTextNode;
 
