@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- This tests that we allow loading external scripts with matching SRI attributes when the CSP contains 'strict-dynamic'. -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'nonce-dummy' 'strict-dynamic' 'sha256-rlj3VyA1NVoQyZJJUxOqJOzLFauqQjXDoMdgCtJgsuo='">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script nonce="dummy">
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+      }
+    </script>
+  </head>
+  <body>
+    <script src="resources/external-script.js" integrity="sha256-rlj3VyA1NVoQyZJJUxOqJOzLFauqQjXDoMdgCtJgsuo="></script>
+    <script nonce="dummy">
+      function loadScriptDynamically() {
+        var script = document.createElement('script');
+        script.src = "resources/non-parser-inserted-script.js";
+        document.body.appendChild(script);
+      }
+      loadScriptDynamically();
+    </script>
+  </body>
+</html>

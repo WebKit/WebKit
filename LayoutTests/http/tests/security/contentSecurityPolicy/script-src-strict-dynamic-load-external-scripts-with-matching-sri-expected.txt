@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: external script matching hash allowed
+CONSOLE MESSAGE: non-parser-inserted script allowed by strict-dynamic
+

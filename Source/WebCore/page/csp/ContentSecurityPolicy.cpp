@@ -271,7 +271,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
             begin = buffer.position();
         }
     });
-    
+
 
     if (m_scriptExecutionContext)
         applyPolicyToScriptExecutionContext();
@@ -479,7 +479,7 @@ bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
 
 bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber& contextLine, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
 {
-    if (!shouldPerformEarlyCSPCheck() || m_policies.isEmpty())
+    if (shouldPerformEarlyCSPCheck() || m_policies.isEmpty())
         return true;
 
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
@@ -907,7 +907,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
-    
+
     // WPT indicate modern Reporting API expect valid status code, regardless of protocol:
     //     content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
     //     content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html
@@ -1151,7 +1151,7 @@ void ContentSecurityPolicy::setUpgradeInsecureRequests(bool upgradeInsecureReque
         upgradeURL.setProtocol("http"_s);
     else if (upgradeURL.protocolIs("wss"_s))
         upgradeURL.setProtocol("ws"_s);
-    
+
     m_insecureNavigationRequestsToUpgrade.add(SecurityOriginData::fromURL(upgradeURL));
 }
 
