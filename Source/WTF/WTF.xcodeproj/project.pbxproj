@@ -123,6 +123,7 @@
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
 		7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */; };
 		7AAF9CA42AC4C39100E73DD3 /* PlatformEnableGlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */; };
+		7AC314232C6FCF18002CBAFD /* SchedulePairCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC314222C6FCF18002CBAFD /* SchedulePairCocoa.mm */; };
 		7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		7B8A1DC82A336B9000A4CE4E /* SequenceLocked.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8A1DC72A336B9000A4CE4E /* SequenceLocked.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -149,7 +150,6 @@
 		A3E4DD931F3A803400DED0B4 /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3E4DD911F3A803400DED0B4 /* TextStream.cpp */; };
 		A3EE5C3A21FFAC5F00FABD61 /* OSAllocatorPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3EE5C3921FFAC5E00FABD61 /* OSAllocatorPOSIX.cpp */; };
 		A3EE5C3D21FFAC7D00FABD61 /* SchedulePairCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3EE5C3B21FFAC7C00FABD61 /* SchedulePairCF.cpp */; };
-		A3EE5C4021FFACA200FABD61 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3EE5C3F21FFACA200FABD61 /* SchedulePairMac.mm */; };
 		A5BA15F3182433A900A82E69 /* StringCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F2182433A900A82E69 /* StringCocoa.mm */; };
 		A5BA15F51824348000A82E69 /* StringImplCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F41824348000A82E69 /* StringImplCocoa.mm */; };
 		A5BA15FA182435A600A82E69 /* AtomStringImplCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F7182435A600A82E69 /* AtomStringImplCF.cpp */; };
@@ -1270,6 +1270,7 @@
 		7A6EBA3220746C33004F9C44 /* MachSendRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachSendRight.h; sourceTree = "<group>"; };
 		7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		7AAF9CA32AC4C39100E73DD3 /* PlatformEnableGlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableGlib.h; sourceTree = "<group>"; };
+		7AC314222C6FCF18002CBAFD /* SchedulePairCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairCocoa.mm; sourceTree = "<group>"; };
 		7AF023B32061E16C00A8EFD6 /* ProcessPrivilege.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessPrivilege.h; sourceTree = "<group>"; };
 		7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessPrivilege.cpp; sourceTree = "<group>"; };
 		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
@@ -1347,7 +1348,6 @@
 		A3E4DD921F3A803400DED0B4 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; };
 		A3EE5C3921FFAC5E00FABD61 /* OSAllocatorPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPOSIX.cpp; sourceTree = "<group>"; };
 		A3EE5C3B21FFAC7C00FABD61 /* SchedulePairCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePairCF.cpp; sourceTree = "<group>"; };
-		A3EE5C3F21FFACA200FABD61 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
 		A5BA15F2182433A900A82E69 /* StringCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringCocoa.mm; sourceTree = "<group>"; };
 		A5BA15F41824348000A82E69 /* StringImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplCocoa.mm; sourceTree = "<group>"; };
 		A5BA15F7182435A600A82E69 /* AtomStringImplCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringImplCF.cpp; sourceTree = "<group>"; };
@@ -2563,7 +2563,6 @@
 			children = (
 				A331D96021F24A0A009F02AA /* FileSystemMac.mm */,
 				53534F291EC0E10E00141B2F /* MachExceptions.defs */,
-				A3EE5C3F21FFACA200FABD61 /* SchedulePairMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3049,6 +3048,7 @@
 				E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */,
 				1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */,
 				1CA85CA7241B0B110071C2F5 /* RuntimeApplicationChecksCocoa.h */,
+				7AC314222C6FCF18002CBAFD /* SchedulePairCocoa.mm */,
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				466D69102BA4E433005D43F4 /* SpanCocoa.h */,
 				EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */,
@@ -4077,7 +4077,7 @@
 				1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp in Sources */,
 				46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */,
 				A3EE5C3D21FFAC7D00FABD61 /* SchedulePairCF.cpp in Sources */,
-				A3EE5C4021FFACA200FABD61 /* SchedulePairMac.mm in Sources */,
+				7AC314232C6FCF18002CBAFD /* SchedulePairCocoa.mm in Sources */,
 				0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */,
 				0FA6F38F20CC580F00A03DCD /* SegmentedVector.cpp in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
