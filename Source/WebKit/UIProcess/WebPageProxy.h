@@ -576,7 +576,7 @@ using TapIdentifier = LegacyNullableObjectIdentifier<TapIdentifierType>;
 using TextCheckerRequestID = LegacyNullableObjectIdentifier<TextCheckerRequestType>;
 using TransactionID = MonotonicObjectIdentifier<TransactionIDType>;
 using WebPageProxyIdentifier = LegacyNullableObjectIdentifier<WebPageProxyIdentifierType>;
-using WebURLSchemeHandlerIdentifier = LegacyNullableObjectIdentifier<WebURLSchemeHandler>;
+using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandler>;
 using WebUndoStepID = uint64_t;
 
 class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, public IPC::MessageReceiver {

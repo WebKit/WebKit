@@ -3067,12 +3067,10 @@ static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overl
 
     auto [foundElement, elementBounds] = *elementAndBounds;
     auto identifierValue = parseInteger<uint64_t>(foundElement->attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
-    if (!identifierValue)
+    if (!identifierValue || !*identifierValue)
         return;
 
-    auto identifier = LegacyNullableObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
-    if (!identifier.isValid())
-        return;
+    auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
 
     auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
     if (!dataDetectionResults)

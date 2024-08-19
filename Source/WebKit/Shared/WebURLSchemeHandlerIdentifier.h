@@ -31,6 +31,6 @@ namespace WebKit {
 
 class WebURLSchemeHandler;
 
-using WebURLSchemeHandlerIdentifier = LegacyNullableObjectIdentifier<WebURLSchemeHandler>;
+using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandler>;
 
 }

@@ -61,8 +61,8 @@ void GenericTextTrackCueMap::remove(InbandGenericCueIdentifier inbandCueIdentifi
 
 void GenericTextTrackCueMap::remove(TextTrackCue& publicCue)
 {
-    if (auto cueIdentifier = m_cueToDataMap.take(&publicCue))
-        m_dataToCueMap.remove(cueIdentifier);
+    if (auto cueIdentifier = m_cueToDataMap.takeOptional(&publicCue))
+        m_dataToCueMap.remove(*cueIdentifier);
 }
 
 inline InbandGenericTextTrack::InbandGenericTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)

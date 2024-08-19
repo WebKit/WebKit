@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum class BackgroundFetchRecordIdentifierType { };
-using BackgroundFetchRecordIdentifier = LegacyNullableObjectIdentifier<BackgroundFetchRecordIdentifierType>;
+using BackgroundFetchRecordIdentifier = ObjectIdentifier<BackgroundFetchRecordIdentifierType>;
 
 } // namespace WebCore
 

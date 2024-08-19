@@ -39,7 +39,7 @@ struct GenericCueData {
     enum class Status : uint8_t { Uninitialized, Partial, Complete };
 
     GenericCueData() = default;
-    GenericCueData(InbandGenericCueIdentifier uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status)
+    GenericCueData(Markable<InbandGenericCueIdentifier> uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status)
         : m_uniqueId(uniqueId)
         , m_startTime(startTime)
         , m_endTime(endTime)
@@ -64,7 +64,7 @@ struct GenericCueData {
     bool isValid() const { return !!m_uniqueId; }
     bool equalNotConsideringTimesOrId(const GenericCueData&) const;
 
-    InbandGenericCueIdentifier m_uniqueId;
+    Markable<InbandGenericCueIdentifier> m_uniqueId;
     MediaTime m_startTime;
     MediaTime m_endTime;
     AtomString m_id;
@@ -88,7 +88,7 @@ public:
     static Ref<InbandGenericCue> create() { return adoptRef(*new InbandGenericCue); }
     static Ref<InbandGenericCue> create(GenericCueData&& cueData) { return adoptRef(*new InbandGenericCue(WTFMove(cueData))); }
 
-    InbandGenericCueIdentifier uniqueId() const { return m_cueData.m_uniqueId; }
+    InbandGenericCueIdentifier uniqueId() const { return *m_cueData.m_uniqueId; }
 
     MediaTime startTime() const { return m_cueData.m_startTime; }
     void setStartTime(const MediaTime& startTime) { m_cueData.m_startTime = startTime; }

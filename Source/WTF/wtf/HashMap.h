@@ -166,6 +166,7 @@ public:
 
     MappedTakeType take(const KeyType&); // efficient combination of get with remove
     MappedTakeType take(iterator);
+    std::optional<MappedTakeType> takeOptional(const KeyType&);
     MappedTakeType takeFirst();
 
     // Alternate versions of find() / contains() / get() / remove() that find the object
@@ -563,6 +564,15 @@ auto HashMap<T, U, V, W, MappedTraits, Y>::take(iterator it) -> MappedTakeType
     auto value = MappedTraits::take(WTFMove(it->value));
     remove(it);
     return value;
+}
+
+template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
+auto HashMap<T, U, V, W, MappedTraits, Y>::takeOptional(const KeyType& key) -> std::optional<MappedTakeType>
+{
+    auto it = find(key);
+    if (it == end())
+        return std::nullopt;
+    return take(it);
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
