@@ -2030,3 +2030,6 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK

@@ -440,6 +440,8 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
 }
 #endif
 
+#undef MESSAGE_CHECK
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

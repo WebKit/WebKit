@@ -160,6 +160,8 @@ void SecItemShimProxy::secItemRequestSync(IPC::Connection& connection, const Sec
     secItemRequest(connection, data, WTFMove(completionHandler));
 }
 
+#undef MESSAGE_CHECK_COMPLETION
+
 } // namespace WebKit
 
 #endif // ENABLE(SEC_ITEM_SHIM)
