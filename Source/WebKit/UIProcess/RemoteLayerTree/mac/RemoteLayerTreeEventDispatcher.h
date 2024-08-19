@@ -135,6 +135,13 @@ private:
 
     void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
 
+    void startFingerDownSignpostInterval();
+    void endFingerDownSignpostInterval();
+    void startMomentumSignpostInterval();
+    void endMomentumSignpostInterval();
+
+    void didStartRubberbanding();
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
     void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID);
@@ -158,6 +165,9 @@ private:
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+
+    std::atomic<bool> m_fingerDownIntervalIsActive = false;
+    std::atomic<bool> m_momentumIntervalIsActive = false;
 
     enum class SynchronizationState : uint8_t {
         Idle,
