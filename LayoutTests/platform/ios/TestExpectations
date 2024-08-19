@@ -7536,3 +7536,6 @@ imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html 
 
 # webkit.org/b/278332 [ iOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
 imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
+
+# webkit.org/b/278333 [ iOS ] media/remove-video-best-media-element-in-main-frame-crash.html is a flaky timeout
+media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
