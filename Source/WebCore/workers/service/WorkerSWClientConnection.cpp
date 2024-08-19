@@ -566,12 +566,8 @@ void WorkerSWClientConnection::addCookieChangeSubscriptions(ServiceWorkerRegistr
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->addCookieChangeSubscriptions(registrationIdentifier, WTFMove(subscriptions), [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
-                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier);
-                if (!callback) {
-                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to add cookie change subscriptions"_s });
-                    return;
-                }
-                callback(WTFMove(result));
+                if (auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier))
+                    callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });
     });
@@ -586,12 +582,8 @@ void WorkerSWClientConnection::removeCookieChangeSubscriptions(ServiceWorkerRegi
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->removeCookieChangeSubscriptions(registrationIdentifier, WTFMove(subscriptions), [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
-                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier);
-                if (!callback) {
-                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to remove cookie change subscriptions"_s });
-                    return;
-                }
-                callback(WTFMove(result));
+                if (auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier))
+                    callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });
     });
@@ -606,12 +598,8 @@ void WorkerSWClientConnection::cookieChangeSubscriptions(ServiceWorkerRegistrati
         Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         connection->cookieChangeSubscriptions(registrationIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
-                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_cookieChangeSubscriptionsCallback.take(requestIdentifier);
-                if (!callback) {
-                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to retrieve cookie change subscriptions"_s });
-                    return;
-                }
-                callback(WTFMove(result));
+                if (auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_cookieChangeSubscriptionsCallback.take(requestIdentifier))
+                    callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });
     });

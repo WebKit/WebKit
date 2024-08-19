@@ -361,14 +361,14 @@ CookieStoreManager& ServiceWorkerRegistration::cookies()
 
 void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
     Vector<CookieChangeSubscription> cookieChangeSubscriptions;
     cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
     for (auto& subscription : subscriptions) {
-        if (isContextStopped()) {
-            promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
-            return;
-        }
-
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
         String url;
         if (subscription.url.isNull())
@@ -389,14 +389,14 @@ void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreG
 
 void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
     Vector<CookieChangeSubscription> cookieChangeSubscriptions;
     cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
     for (auto& subscription : subscriptions) {
-        if (isContextStopped()) {
-            promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
-            return;
-        }
-
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
         String url;
         if (subscription.url.isNull())
@@ -417,6 +417,11 @@ void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieSto
 
 void ServiceWorkerRegistration::cookieChangeSubscriptions(Ref<DeferredPromise>&& promise)
 {
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
     protectedContainer()->cookieChangeSubscriptions(identifier(), WTFMove(promise));
 }
 
