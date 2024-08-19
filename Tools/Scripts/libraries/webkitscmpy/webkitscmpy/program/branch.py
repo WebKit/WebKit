@@ -161,13 +161,15 @@ class Branch(Command):
 
                 # Asking for a radar here will prevent race conditions with the bug importer
                 needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
+                radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
                 if not getattr(args, 'defaults', None) and needs_radar and not isinstance(Tracker.instance(), radar.Tracker):
-                    sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
-                    sys.stdout.flush()
-                    input = Terminal.input(': ')
-                    if re.match(r'\d+', input):
-                        input = '<rdar://problem/{}>'.format(input)
-                    rdar_to_cc = Tracker.from_string(input) or False
+                    if args.cc_radar or (radar_cc_default and args.cc_radar is not False):
+                        sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                        sys.stdout.flush()
+                        input = Terminal.input(': ')
+                        if re.match(r'\d+', input):
+                            input = '<rdar://problem/{}>'.format(input)
+                        rdar_to_cc = Tracker.from_string(input) or False
 
                 issue = Tracker.instance().create(
                     title=args.issue,
