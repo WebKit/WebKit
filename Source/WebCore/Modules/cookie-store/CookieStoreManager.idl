@@ -31,6 +31,6 @@
     SecureContext
 ] interface CookieStoreManager {
     Promise<undefined> subscribe(sequence<CookieStoreGetOptions> subscriptions);
-    Promise<sequence<CookieStoreGetOptions>> getSubscriptions();
     Promise<undefined> unsubscribe(sequence<CookieStoreGetOptions> subscriptions);
+    Promise<sequence<CookieStoreGetOptions>> getSubscriptions();
 };

@@ -1939,6 +1939,7 @@ CookieStoreManagerEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 CoreMathMLEnabled:
   type: bool

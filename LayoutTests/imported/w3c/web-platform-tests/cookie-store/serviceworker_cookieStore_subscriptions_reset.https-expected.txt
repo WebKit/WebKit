@@ -1,4 +1,4 @@
 
-FAIL cookiechange subscriptions reset across service worker unregistrations promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookiechange subscriptions persist across service worker updates promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS cookiechange subscriptions reset across service worker unregistrations
+PASS cookiechange subscriptions persist across service worker updates
 

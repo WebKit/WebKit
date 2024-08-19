@@ -33,6 +33,7 @@
 #include "SWServerWorker.h"
 #include "ServiceWorkerTypes.h"
 #include "ServiceWorkerUpdateViaCache.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -421,6 +422,21 @@ std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderVal
     m_preloadState.headerValue = WTFMove(headerValue);
     protectedServer()->storeRegistrationForWorker(*activeWorker);
     return { };
+}
+
+void SWServerRegistration::addCookieChangeSubscriptions(Vector<CookieChangeSubscription>&& subscriptions)
+{
+    m_cookieChangeSubscriptions.add(subscriptions.begin(), subscriptions.end());
+}
+
+void SWServerRegistration::removeCookieChangeSubscriptions(Vector<CookieChangeSubscription>&& subscriptions)
+{
+    m_cookieChangeSubscriptions.remove(subscriptions.begin(), subscriptions.end());
+}
+
+Vector<CookieChangeSubscription> SWServerRegistration::cookieChangeSubscriptions() const
+{
+    return copyToVector(m_cookieChangeSubscriptions);
 }
 
 } // namespace WebCore

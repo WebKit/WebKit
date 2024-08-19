@@ -64,6 +64,10 @@ messages -> WebSWServerConnection NotRefCounted {
     RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
     RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
 
+    [EnabledBy=CookieStoreManagerEnabled] AddCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] RemoveCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] CookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData> result)
+
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
 #endif

@@ -27,6 +27,8 @@
 #include "ServiceWorkerContainer.h"
 
 #include "ContentSecurityPolicy.h"
+#include "CookieChangeSubscription.h"
+#include "CookieStoreGetOptions.h"
 #include "DOMPromiseProxy.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
@@ -36,6 +38,7 @@
 #include "Exception.h"
 #include "FrameLoader.h"
 #include "IDLTypes.h"
+#include "JSCookieStoreGetOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSNavigationPreloadState.h"
 #include "JSPushSubscription.h"
@@ -59,10 +62,12 @@
 #include "TrustedType.h"
 #include "WorkerFetchResult.h"
 #include "WorkerSWClientConnection.h"
+#include <wtf/Ref.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 
 #define CONTAINER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
 #define CONTAINER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
@@ -600,6 +605,11 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
     return *m_swConnection;
 }
 
+Ref<SWClientConnection> ServiceWorkerContainer::ensureProtectedSWClientConnection()
+{
+    return ensureSWClientConnection();
+}
+
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
@@ -758,6 +768,39 @@ void ServiceWorkerContainer::getNavigationPreloadState(ServiceWorkerRegistration
 {
     ensureSWClientConnection().getNavigationPreloadState(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
+    });
+}
+
+void ServiceWorkerContainer::addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier identifier, Vector<CookieChangeSubscription>&& subscriptions, Ref<DeferredPromise>&& promise)
+{
+    ensureProtectedSWClientConnection()->addCookieChangeSubscriptions(identifier, WTFMove(subscriptions), [promise = WTFMove(promise)](auto&& result) mutable {
+        if (result.hasException())
+            promise->reject(Exception { result.releaseException() });
+        else
+            promise->resolve();
+    });
+}
+
+void ServiceWorkerContainer::removeCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier identifier, Vector<CookieChangeSubscription>&& subscriptions, Ref<DeferredPromise>&& promise)
+{
+    ensureProtectedSWClientConnection()->removeCookieChangeSubscriptions(identifier, WTFMove(subscriptions), [promise = WTFMove(promise)](auto&& result) mutable {
+        if (result.hasException())
+            promise->reject(Exception { result.releaseException() });
+        else
+            promise->resolve();
+    });
+}
+
+void ServiceWorkerContainer::cookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier identifier, Ref<DeferredPromise>&& promise)
+{
+    ensureProtectedSWClientConnection()->cookieChangeSubscriptions(identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+        if (result.hasException())
+            promise->reject(Exception { result.releaseException() });
+        else {
+            promise->resolve<IDLSequence<IDLDictionary<CookieStoreGetOptions>>>(WTF::map(result.releaseReturnValue(), [](CookieChangeSubscription&& subscription) {
+                return CookieStoreGetOptions { WTFMove(subscription.name), WTFMove(subscription.url) };
+            }));
+        }
     });
 }
 

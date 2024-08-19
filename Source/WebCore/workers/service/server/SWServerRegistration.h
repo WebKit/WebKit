@@ -25,13 +25,16 @@
 
 #pragma once
 
+#include "CookieChangeSubscription.h"
 #include "NavigationPreloadState.h"
 #include "SWServer.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
 #include "Timer.h"
+#include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/Identified.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
@@ -113,6 +116,10 @@ public:
     WEBCORE_EXPORT std::optional<ExceptionData> setNavigationPreloadHeaderValue(String&&);
     const NavigationPreloadState& navigationPreloadState() const { return m_preloadState; }
 
+    WEBCORE_EXPORT void addCookieChangeSubscriptions(Vector<CookieChangeSubscription>&&);
+    WEBCORE_EXPORT void removeCookieChangeSubscriptions(Vector<CookieChangeSubscription>&&);
+    WEBCORE_EXPORT Vector<CookieChangeSubscription> cookieChangeSubscriptions() const;
+
 private:
     SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&&);
 
@@ -132,6 +139,8 @@ private:
     RefPtr<SWServerWorker> m_installingWorker;
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
+
+    HashSet<CookieChangeSubscription> m_cookieChangeSubscriptions;
 
     WallTime m_lastUpdateTime;
     

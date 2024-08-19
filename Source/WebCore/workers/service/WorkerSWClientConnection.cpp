@@ -31,6 +31,7 @@
 #include "BackgroundFetchRecordInformation.h"
 #include "BackgroundFetchRequest.h"
 #include "CacheQueryOptions.h"
+#include "CookieChangeSubscription.h"
 #include "NotificationData.h"
 #include "RetrieveRecordsOptions.h"
 #include "SecurityOrigin.h"
@@ -41,6 +42,7 @@
 #include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -114,11 +116,15 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
     auto retrieveRecordResponseBodyCallbacks = std::exchange(m_retrieveRecordResponseBodyCallbacks, { });
     for (auto& callback : retrieveRecordResponseBodyCallbacks.values())
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "context stopped"_s }));
+
+    auto cookieChangeSubscriptionsCallbacks = std::exchange(m_cookieChangeSubscriptionsCallback, { });
+    for (auto& callback : cookieChangeSubscriptionsCallbacks.values())
+        callback(Exception { ExceptionCode::AbortError, "context stopped"_s });
 }
 
 void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_matchRegistrationRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
@@ -134,7 +140,7 @@ void WorkerSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin,
 
 void WorkerSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_getRegistrationsRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = crossThreadCopy(WTFMove(topOrigin)), clientURL = crossThreadCopy(clientURL)]() mutable {
@@ -150,7 +156,7 @@ void WorkerSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, 
 
 void WorkerSWClientConnection::whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_whenRegistrationReadyRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, topOrigin = topOrigin.isolatedCopy(), clientURL = crossThreadCopy(clientURL)]() mutable {
@@ -246,7 +252,7 @@ void WorkerSWClientConnection::scheduleJob(ServiceWorkerOrClientIdentifier ident
 
 void WorkerSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, ServiceWorkerOrClientIdentifier contextIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_unregisterRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, contextIdentifier]() mutable {
@@ -267,7 +273,7 @@ void WorkerSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData&)
 
 void WorkerSWClientConnection::subscribeToPushService(ServiceWorkerRegistrationIdentifier registrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_subscribeToPushServiceRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, applicationServerKey]() mutable {
@@ -283,7 +289,7 @@ void WorkerSWClientConnection::subscribeToPushService(ServiceWorkerRegistrationI
 
 void WorkerSWClientConnection::unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier registrationIdentifier, PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_unsubscribeFromPushServiceRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, subscriptionIdentifier]() mutable {
@@ -299,7 +305,7 @@ void WorkerSWClientConnection::unsubscribeFromPushService(ServiceWorkerRegistrat
 
 void WorkerSWClientConnection::getPushSubscription(ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushSubscriptionCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_getPushSubscriptionRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -315,7 +321,7 @@ void WorkerSWClientConnection::getPushSubscription(ServiceWorkerRegistrationIden
 
 void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationIdentifier registrationIdentifier, GetPushPermissionStateCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_getPushPermissionStateCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -331,7 +337,7 @@ void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationI
 
 void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, GetNotificationsCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_getNotificationsCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, serviceWorkerRegistrationURL = serviceWorkerRegistrationURL.isolatedCopy(), tag = tag.isolatedCopy()]() mutable {
@@ -347,7 +353,7 @@ void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistra
 
 void WorkerSWClientConnection::enableNavigationPreload(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_voidCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -363,7 +369,7 @@ void WorkerSWClientConnection::enableNavigationPreload(ServiceWorkerRegistration
 
 void WorkerSWClientConnection::disableNavigationPreload(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_voidCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -379,7 +385,7 @@ void WorkerSWClientConnection::disableNavigationPreload(ServiceWorkerRegistratio
 
 void WorkerSWClientConnection::setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier registrationIdentifier, String&& headerValue, ExceptionOrVoidCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_voidCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, headerValue = WTFMove(headerValue).isolatedCopy()]() mutable {
@@ -395,7 +401,7 @@ void WorkerSWClientConnection::setNavigationPreloadHeaderValue(ServiceWorkerRegi
 
 void WorkerSWClientConnection::getNavigationPreloadState(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrNavigationPreloadStateCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_navigationPreloadStateCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -411,7 +417,7 @@ void WorkerSWClientConnection::getNavigationPreloadState(ServiceWorkerRegistrati
 
 void WorkerSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_backgroundFetchInformationCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy(), requests = crossThreadCopy(WTFMove(requests)), options = WTFMove(options).isolatedCopy()]() mutable {
@@ -427,7 +433,7 @@ void WorkerSWClientConnection::startBackgroundFetch(ServiceWorkerRegistrationIde
 
 void WorkerSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_backgroundFetchInformationCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy()]() mutable {
@@ -443,7 +449,7 @@ void WorkerSWClientConnection::backgroundFetchInformation(ServiceWorkerRegistrat
 
 void WorkerSWClientConnection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier registrationIdentifier, BackgroundFetchIdentifiersCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_backgroundFetchIdentifiersCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
@@ -459,7 +465,7 @@ void WorkerSWClientConnection::backgroundFetchIdentifiers(ServiceWorkerRegistrat
 
 void WorkerSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, AbortBackgroundFetchCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_abortBackgroundFetchCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy()]() mutable {
@@ -475,7 +481,7 @@ void WorkerSWClientConnection::abortBackgroundFetch(ServiceWorkerRegistrationIde
 
 void WorkerSWClientConnection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& recordOptions, MatchBackgroundFetchCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_matchBackgroundFetchCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, backgroundFetchIdentifier = backgroundFetchIdentifier.isolatedCopy(), recordOptions = WTFMove(recordOptions).isolatedCopy()]() mutable {
@@ -505,7 +511,7 @@ static ExceptionOr<ResourceResponse> fromCrossThreadData(ExceptionOr<ResourceRes
 
 void WorkerSWClientConnection::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_retrieveRecordResponseCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, recordIdentifier]() mutable {
@@ -521,7 +527,7 @@ void WorkerSWClientConnection::retrieveRecordResponse(BackgroundFetchRecordIdent
 
 void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
 {
-    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
     m_retrieveRecordResponseBodyCallbacks.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([thread = m_thread, requestIdentifier, recordIdentifier]() mutable {
@@ -546,6 +552,66 @@ void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordI
                 iterator->value(WTFMove(buffer));
                 if (isDone)
                     callbacks.remove(iterator);
+            }, WorkerRunLoop::defaultMode());
+        });
+    });
+}
+
+void WorkerSWClientConnection::addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
+    m_voidCallbacks.add(requestIdentifier, WTFMove(callback));
+
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, subscriptions = crossThreadCopy(WTFMove(subscriptions))]() mutable {
+        Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        connection->addCookieChangeSubscriptions(registrationIdentifier, WTFMove(subscriptions), [thread = WTFMove(thread), requestIdentifier](auto&& result) {
+            thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
+                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier);
+                if (!callback) {
+                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to add cookie change subscriptions"_s });
+                    return;
+                }
+                callback(WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        });
+    });
+}
+
+void WorkerSWClientConnection::removeCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
+    m_voidCallbacks.add(requestIdentifier, WTFMove(callback));
+
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier, subscriptions = crossThreadCopy(WTFMove(subscriptions))]() mutable {
+        Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        connection->removeCookieChangeSubscriptions(registrationIdentifier, WTFMove(subscriptions), [thread = WTFMove(thread), requestIdentifier](auto&& result) {
+            thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
+                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_voidCallbacks.take(requestIdentifier);
+                if (!callback) {
+                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to remove cookie change subscriptions"_s });
+                    return;
+                }
+                callback(WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        });
+    });
+}
+
+void WorkerSWClientConnection::cookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&& callback)
+{
+    auto requestIdentifier = SWClientRequestIdentifier::generate();
+    m_cookieChangeSubscriptionsCallback.add(requestIdentifier, WTFMove(callback));
+
+    callOnMainThread([thread = m_thread, requestIdentifier, registrationIdentifier]() mutable {
+        Ref connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        connection->cookieChangeSubscriptions(registrationIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
+            thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
+                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_cookieChangeSubscriptionsCallback.take(requestIdentifier);
+                if (!callback) {
+                    callback(Exception { ExceptionCode::InvalidStateError, "Unable to retrieve cookie change subscriptions"_s });
+                    return;
+                }
+                callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });
     });
