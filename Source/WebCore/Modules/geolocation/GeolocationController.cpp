@@ -31,8 +31,11 @@
 #include "GeolocationClient.h"
 #include "GeolocationError.h"
 #include "GeolocationPositionData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GeolocationController);
 
 GeolocationController::GeolocationController(Page& page, GeolocationClient& client)
     : m_page(page)

@@ -31,13 +31,14 @@
 #include "AudioContext.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class AudioParamTimeline {
+    WTF_MAKE_TZONE_ALLOCATED(AudioParamTimeline);
     WTF_MAKE_NONCOPYABLE(AudioParamTimeline);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioParamTimeline() = default;
 
@@ -64,7 +65,7 @@ public:
 
 private:
     class ParamEvent {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ParamEvent);
     public:
         enum Type {
             SetValue,

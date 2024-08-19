@@ -47,10 +47,13 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel);
 
 WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalScope& context, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
     : m_workerGlobalScope(context)
@@ -145,6 +148,8 @@ void WorkerThreadableWebSocketChannel::resume()
     if (m_bridge)
         m_bridge->resume();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerThreadableWebSocketChannelPeer, WorkerThreadableWebSocketChannel::Peer);
 
 WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider)
     : m_workerClientWrapper(WTFMove(clientWrapper))

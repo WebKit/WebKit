@@ -33,6 +33,7 @@
 #include "SpeechSynthesisErrorCode.h"
 #include "SpeechSynthesisVoice.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -102,7 +103,7 @@ private:
 };
 
 class SpeechSynthesisUtteranceActivity {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpeechSynthesisUtteranceActivity);
 public:
     SpeechSynthesisUtteranceActivity(Ref<SpeechSynthesisUtterance>&& utterance)
         : m_utterance(utterance)

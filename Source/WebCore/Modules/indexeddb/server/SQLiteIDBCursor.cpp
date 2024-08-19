@@ -34,6 +34,7 @@
 #include "SQLiteIDBTransaction.h"
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -41,6 +42,8 @@ namespace IDBServer {
 
 static const size_t prefetchLimit = 256;
 static const size_t prefetchSizeLimit = 1 * MB;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteIDBCursor);
 
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransaction& transaction, const IDBCursorInfo& info)
 {

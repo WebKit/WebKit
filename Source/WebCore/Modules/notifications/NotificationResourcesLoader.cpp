@@ -33,12 +33,15 @@
 #include "NotificationResources.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
 // 2.5. Resources
 // https://notifications.spec.whatwg.org/#resources
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationResourcesLoader);
 
 NotificationResourcesLoader::NotificationResourcesLoader(Notification& notification)
     : m_notification(notification)

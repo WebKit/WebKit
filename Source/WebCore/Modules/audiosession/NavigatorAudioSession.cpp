@@ -30,8 +30,11 @@
 
 #include "DOMAudioSession.h"
 #include "Navigator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorAudioSession);
 
 NavigatorAudioSession::NavigatorAudioSession() = default;
 

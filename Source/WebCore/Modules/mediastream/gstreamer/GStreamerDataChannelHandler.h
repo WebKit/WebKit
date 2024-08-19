@@ -29,6 +29,7 @@
 
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class RTCDataChannelHandlerClient;
 struct RTCDataChannelInit;
 
 class GStreamerDataChannelHandler final : public RTCDataChannelHandler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerDataChannelHandler);
 public:
     explicit GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataChannel>&&);
     ~GStreamerDataChannelHandler();

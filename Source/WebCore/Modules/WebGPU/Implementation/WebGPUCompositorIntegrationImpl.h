@@ -34,6 +34,7 @@
 #include <WebGPU/WebGPU.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -52,7 +53,7 @@ namespace WebCore::WebGPU {
 class ConvertToBackingContext;
 
 class CompositorIntegrationImpl final : public CompositorIntegration {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CompositorIntegrationImpl);
 public:
     static Ref<CompositorIntegrationImpl> create(ConvertToBackingContext& convertToBackingContext)
     {

@@ -35,13 +35,14 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CIContext;
 
 namespace WebCore {
 
 class WEBCORE_EXPORT ARKitBadgeSystemImage final : public SystemImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ARKitBadgeSystemImage);
 public:
     static Ref<ARKitBadgeSystemImage> create(Image& image)
     {

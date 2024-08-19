@@ -32,9 +32,12 @@
 #include "SQLiteIDBCursor.h"
 #include "SQLiteTransaction.h"
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteIDBTransaction);
 
 SQLiteIDBTransaction::SQLiteIDBTransaction(SQLiteIDBBackingStore& backingStore, const IDBTransactionInfo& info)
     : m_info(info)

@@ -30,13 +30,14 @@
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelState.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct DetachedRTCDataChannel {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DetachedRTCDataChannel);
     WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
         : identifier(identifier)

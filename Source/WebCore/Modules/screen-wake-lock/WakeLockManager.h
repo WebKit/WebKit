@@ -29,6 +29,7 @@
 #include "VisibilityChangeClient.h"
 #include "WakeLockType.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,7 +40,7 @@ class SleepDisabler;
 class WakeLockSentinel;
 
 class WakeLockManager final : public VisibilityChangeClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WakeLockManager);
 public:
     explicit WakeLockManager(Document&);
     ~WakeLockManager();

@@ -32,6 +32,7 @@
 #include "WebGPUDeviceImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
 
@@ -146,6 +147,8 @@ static bool isFallbackAdapter(WGPUAdapter adapter)
     wgpuAdapterGetProperties(adapter, &properties);
     return properties.adapterType == WGPUAdapterType_CPU;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AdapterImpl);
 
 AdapterImpl::AdapterImpl(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingContext& convertToBackingContext)
     : Adapter(adapterName(adapter.get()), supportedFeatures(adapter.get()), supportedLimits(adapter.get()), WebGPU::isFallbackAdapter(adapter.get()))

@@ -28,8 +28,11 @@
 
 #include "Navigator.h"
 #include "Permissions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorPermissions);
 
 NavigatorPermissions::NavigatorPermissions(Navigator& navigator)
     : m_navigator(navigator)

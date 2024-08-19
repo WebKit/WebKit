@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "SpeechRecognitionRequest.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionRequest);
 
 SpeechRecognitionRequest::SpeechRecognitionRequest(SpeechRecognitionRequestInfo&& requestInfo)
     : m_info(WTFMove(requestInfo))

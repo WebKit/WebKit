@@ -24,6 +24,7 @@
 #include "GRefPtrGStreamer.h"
 #include "GStreamerPeerConnectionBackend.h"
 #include "RTCDtlsTransportBackend.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ namespace WebCore {
 class GStreamerDtlsTransportBackendObserver;
 
 class GStreamerDtlsTransportBackend final : public RTCDtlsTransportBackend, public CanMakeWeakPtr<GStreamerDtlsTransportBackend> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerDtlsTransportBackend);
 
 public:
     explicit GStreamerDtlsTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&&);

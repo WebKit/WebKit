@@ -32,12 +32,15 @@
 #include "LegacyCDMSession.h"
 #include "ContentType.h"
 #include "MediaPlayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/SoftLinking.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateMediaPlayer);
 
 bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
 {

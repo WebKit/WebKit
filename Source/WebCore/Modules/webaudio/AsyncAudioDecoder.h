@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -42,7 +43,7 @@ class AudioBuffer;
 using DecodingTaskPromise = WTF::NativePromise<Ref<WebCore::AudioBuffer>, Exception>;
 
 class AsyncAudioDecoder final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AsyncAudioDecoder);
     WTF_MAKE_NONCOPYABLE(AsyncAudioDecoder);
 public:
     AsyncAudioDecoder();

@@ -23,8 +23,11 @@
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
 #include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpSenderTransformBackend);
 
 static inline GStreamerRtpSenderTransformBackend::MediaType mediaTypeFromSender(const GstWebRTCRTPSender&)
 {

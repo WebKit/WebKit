@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class MediaStreamPrivate;
 struct MediaRecorderPrivateOptions;
 
 class WEBCORE_EXPORT MediaRecorderProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderProvider);
 public:
     MediaRecorderProvider() = default;
     virtual ~MediaRecorderProvider() = default;

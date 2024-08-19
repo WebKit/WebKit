@@ -49,6 +49,7 @@
 #include "WebAuthenticationUtils.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -107,6 +108,8 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
 }
 
 } // namespace AuthenticatorCoordinatorInternal
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
     : m_client(WTFMove(client))

@@ -31,6 +31,7 @@
 #include "IndexKey.h"
 #include "MemoryBackingStoreTransaction.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -38,7 +39,7 @@ namespace IDBServer {
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore final : public IDBBackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MemoryIDBBackingStore, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
     WEBCORE_EXPORT ~MemoryIDBBackingStore();

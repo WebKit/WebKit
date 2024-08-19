@@ -33,8 +33,11 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace fido {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoHidPacket);
 
 FidoHidPacket::FidoHidPacket(Vector<uint8_t>&& data, uint32_t channelId)
     : m_data(WTFMove(data))

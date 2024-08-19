@@ -37,6 +37,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/MakeString.h>
 
@@ -266,6 +267,8 @@ static std::unique_ptr<SQLiteDatabase> openAndMigrateDatabase(const String& path
     auto database = WTFMove(*result);
     return database.moveToUniquePtr();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushDatabase);
 
 void PushDatabase::create(const String& path, CreationHandler&& completionHandler)
 {

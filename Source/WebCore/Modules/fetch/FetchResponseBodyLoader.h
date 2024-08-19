@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 class FetchResponse;
 
 class FetchResponseBodyLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FetchResponseBodyLoader);
 public:
     explicit FetchResponseBodyLoader(FetchResponse&);
     virtual ~FetchResponseBodyLoader() = default;

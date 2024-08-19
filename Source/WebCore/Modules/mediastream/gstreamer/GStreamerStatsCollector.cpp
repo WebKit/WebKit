@@ -31,6 +31,7 @@
 #undef GST_USE_UNSTABLE_API
 
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
@@ -252,7 +253,7 @@ RTCStatsReport::IceCandidatePairStats::IceCandidatePairStats(const GstStructure*
 }
 
 struct ReportHolder : public ThreadSafeRefCounted<ReportHolder> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ReportHolder);
     WTF_MAKE_NONCOPYABLE(ReportHolder);
 public:
     ReportHolder(DOMMapAdapter* adapter, const GstStructure* additionalStats)

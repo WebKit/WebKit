@@ -56,8 +56,11 @@
 #include "WebGPUXRProjectionLayerImpl.h"
 #include "WebGPUXRSubImageImpl.h"
 #include "WebGPUXRViewImpl.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
 
 WGPUAdapter DowncastConvertToBackingContext::convertToBacking(const Adapter& adapter)
 {

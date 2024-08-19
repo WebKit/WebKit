@@ -28,6 +28,7 @@
 #include "IDBCursorInfo.h"
 #include "IndexValueStore.h"
 #include "MemoryCursor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -35,6 +36,7 @@ namespace IDBServer {
 class MemoryIndex;
 
 class MemoryIndexCursor : public MemoryCursor {
+    WTF_MAKE_TZONE_ALLOCATED(MemoryIndexCursor);
 public:
     MemoryIndexCursor(MemoryIndex&, const IDBCursorInfo&);
     virtual ~MemoryIndexCursor();

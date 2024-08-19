@@ -35,6 +35,7 @@
 #include "ResourceResponse.h"
 #include <JavaScriptCore/TypedArrays.h>
 #include <span>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -147,7 +148,7 @@ private:
     void processReceivedError();
 
     class Loader final : public FetchLoaderClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Loader);
     public:
         Loader(FetchResponse&, NotificationCallback&&);
         ~Loader();

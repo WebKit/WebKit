@@ -46,6 +46,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -134,6 +135,8 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
 
     return std::make_pair(command, argument);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSession);
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {

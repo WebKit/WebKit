@@ -34,8 +34,11 @@
 #include "Navigator.h"
 #include "Page.h"
 #include "RequestCookieConsentOptions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorCookieConsent);
 
 void NavigatorCookieConsent::requestCookieConsent(Navigator& navigator, RequestCookieConsentOptions&& options, Ref<DeferredPromise>&& promise)
 {

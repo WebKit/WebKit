@@ -28,9 +28,12 @@
 
 #include "BlobLoader.h"
 #include "FormData.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormDataConsumer);
 
 FormDataConsumer::FormDataConsumer(const FormData& formData, ScriptExecutionContext& context, Callback&& callback)
     : m_formData(formData.copy())

@@ -33,6 +33,7 @@
 #include "PermissionState.h"
 #include "PermissionStatus.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class Page;
 
 class MainThreadPermissionObserver final : public PermissionObserver {
     WTF_MAKE_NONCOPYABLE(MainThreadPermissionObserver);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MainThreadPermissionObserver);
 public:
     MainThreadPermissionObserver(ThreadSafeWeakPtr<PermissionStatus>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
     ~MainThreadPermissionObserver();

@@ -44,6 +44,7 @@
 #include "StaticRange.h"
 #include "TextIndicator.h"
 #include "TextIterator.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -215,6 +216,8 @@ static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& rang
         range.endOffset()
     };
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AppHighlightStorage);
 
 AppHighlightStorage::AppHighlightStorage(Document& document)
     : m_document(document)

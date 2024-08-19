@@ -30,13 +30,14 @@
 #include "Page.h"
 #include "UserMediaClient.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class UserMediaRequest;
 
 class UserMediaController : public Supplement<Page> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaController);
 public:
     explicit UserMediaController(UserMediaClient*);
     ~UserMediaController();

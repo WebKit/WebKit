@@ -31,14 +31,15 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FFTFrame;
 
 class RealtimeAnalyser {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeAnalyser);
     WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RealtimeAnalyser(NoiseInjectionPolicy);
     virtual ~RealtimeAnalyser();

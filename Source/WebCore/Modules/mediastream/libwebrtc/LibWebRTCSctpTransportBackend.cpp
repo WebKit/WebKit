@@ -29,6 +29,7 @@
 
 #include "LibWebRTCDtlsTransportBackend.h"
 #include "LibWebRTCProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -119,6 +120,8 @@ void LibWebRTCSctpTransportBackendObserver::OnStateChange(webrtc::SctpTransportI
         protectedThis->updateState(WTFMove(info));
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSctpTransportBackend);
 
 LibWebRTCSctpTransportBackend::LibWebRTCSctpTransportBackend(rtc::scoped_refptr<webrtc::SctpTransportInterface>&& backend, rtc::scoped_refptr<webrtc::DtlsTransportInterface>&& dtlsBackend)
     : m_backend(WTFMove(backend))

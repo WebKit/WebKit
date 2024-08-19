@@ -38,6 +38,7 @@
 #import <dlfcn.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -80,6 +81,8 @@ static RetainPtr<CGPDFPageRef> systemPreviewLogo()
     });
     return logoPage;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitBadgeSystemImage);
 
 RenderingResourceIdentifier ARKitBadgeSystemImage::imageIdentifier() const
 {

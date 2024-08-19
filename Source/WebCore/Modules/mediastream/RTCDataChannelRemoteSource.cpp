@@ -30,8 +30,11 @@
 #include "ProcessQualified.h"
 #include "RTCDataChannelHandler.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteSource);
 
 RTCDataChannelRemoteSource::RTCDataChannelRemoteSource(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
     : m_identifier(identifier)

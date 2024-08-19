@@ -30,6 +30,7 @@
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCIceCandidate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -181,6 +182,8 @@ void LibWebRTCIceTransportBackendObserver::processSelectedCandidatePairChanged(c
         protectedThis->m_client->onSelectedCandidatePairChanged(WTFMove(local), WTFMove(remote));
     });
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCIceTransportBackend);
 
 LibWebRTCIceTransportBackend::LibWebRTCIceTransportBackend(rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))

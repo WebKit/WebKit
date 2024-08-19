@@ -30,6 +30,7 @@
 #include "LegacyCDMSession.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ public:
 };
 
 class WEBCORE_EXPORT LegacyCDM final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyCDM);
 public:
     explicit LegacyCDM(const String& keySystem);
 

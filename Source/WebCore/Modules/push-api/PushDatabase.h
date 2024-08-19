@@ -35,6 +35,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -86,7 +87,7 @@ struct PushTopics {
 };
 
 class PushDatabase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PushDatabase, WEBCORE_EXPORT);
 public:
     using CreationHandler = CompletionHandler<void(std::unique_ptr<PushDatabase>&&)>;
 

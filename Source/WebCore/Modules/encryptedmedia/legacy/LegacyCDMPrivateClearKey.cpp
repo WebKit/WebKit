@@ -33,8 +33,11 @@
 #include "ContentType.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaResourceLoader.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDMPrivateClearKey);
 
 bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
 {

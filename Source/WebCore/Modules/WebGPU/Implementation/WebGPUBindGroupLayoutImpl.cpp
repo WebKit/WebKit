@@ -30,8 +30,11 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BindGroupLayoutImpl);
 
 BindGroupLayoutImpl::BindGroupLayoutImpl(WebGPUPtr<WGPUBindGroupLayout>&& bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(bindGroupLayout))

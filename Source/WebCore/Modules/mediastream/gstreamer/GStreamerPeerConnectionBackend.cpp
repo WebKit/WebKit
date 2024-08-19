@@ -42,11 +42,14 @@
 #include "RealtimeOutgoingAudioSourceGStreamer.h"
 #include "RealtimeOutgoingVideoSourceGStreamer.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_pc_backend_debug
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCLogObserver);
 
 class WebRTCLogObserver : public WebCoreLogObserver {
 public:

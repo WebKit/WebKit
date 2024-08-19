@@ -33,8 +33,11 @@
 #include "PermissionsPolicy.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaController);
 
 ASCIILiteral UserMediaController::supplementName()
 {

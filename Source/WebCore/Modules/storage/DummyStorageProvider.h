@@ -29,11 +29,12 @@
 #include "StorageConnection.h"
 #include "StorageEstimate.h"
 #include "StorageProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class DummyStorageProvider final : public StorageProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DummyStorageProvider);
 public:
     DummyStorageProvider() = default;
 

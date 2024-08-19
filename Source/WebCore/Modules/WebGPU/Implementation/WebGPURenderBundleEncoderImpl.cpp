@@ -34,8 +34,11 @@
 #include "WebGPURenderBundleImpl.h"
 #include "WebGPURenderPipelineImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundleEncoderImpl);
 
 RenderBundleEncoderImpl::RenderBundleEncoderImpl(WebGPUPtr<WGPURenderBundleEncoder>&& renderBundleEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(renderBundleEncoder))

@@ -35,6 +35,7 @@
 #include "MultiCacheQueryOptions.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -151,7 +152,7 @@ Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(DOMCacheEngine::CacheInfo&& inf
 }
 
 class ConnectionStorageLock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ConnectionStorageLock);
 
 public:
     ConnectionStorageLock(Ref<CacheStorageConnection>&& connection, const ClientOrigin& origin)

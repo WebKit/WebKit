@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class ModelPlayer;
 class ModelPlayerClient;
 
 class WEBCORE_EXPORT ModelPlayerProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ModelPlayerProvider);
 public:
     virtual ~ModelPlayerProvider();
 

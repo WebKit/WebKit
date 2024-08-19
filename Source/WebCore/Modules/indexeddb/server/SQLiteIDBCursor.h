@@ -34,6 +34,7 @@
 #include "SQLiteStatement.h"
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ namespace IDBServer {
 class SQLiteIDBTransaction;
 
 class SQLiteIDBCursor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SQLiteIDBCursor);
     WTF_MAKE_NONCOPYABLE(SQLiteIDBCursor);
 public:
     static std::unique_ptr<SQLiteIDBCursor> maybeCreate(SQLiteIDBTransaction&, const IDBCursorInfo&);

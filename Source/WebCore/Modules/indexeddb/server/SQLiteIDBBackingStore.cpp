@@ -51,6 +51,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -235,6 +236,8 @@ static ASCIILiteral indexInfoTableSchemaTemp()
 {
     return TABLE_SCHEMA_PREFIX "_Temp_IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteIDBBackingStore);
 
 SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     : m_identifier(identifier)

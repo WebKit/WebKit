@@ -35,8 +35,11 @@
 #include <WebGPU/WebGPUExt.h>
 
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModuleImpl);
 
 ShaderModuleImpl::ShaderModuleImpl(WebGPUPtr<WGPUShaderModule>&& shaderModule, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(shaderModule))

@@ -31,8 +31,11 @@
 #include "WebGPUBindGroupLayoutImpl.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePipelineImpl);
 
 ComputePipelineImpl::ComputePipelineImpl(WebGPUPtr<WGPUComputePipeline>&& computePipeline, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(computePipeline))

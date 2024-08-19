@@ -31,8 +31,11 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardItemPasteboardDataSource);
 
 ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource(ClipboardItem& item, const PasteboardItemInfo& info)
     : ClipboardItemDataSource(item)

@@ -45,6 +45,7 @@
 #include "SharedBuffer.h"
 #include "markup.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -66,6 +67,8 @@ static FileReaderLoader::ReadType readTypeForMIMEType(const String& type)
         return FileReaderLoader::ReadAsText;
     return FileReaderLoader::ReadAsArrayBuffer;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ClipboardItemBindingsDataSource);
 
 ClipboardItemBindingsDataSource::ClipboardItemBindingsDataSource(ClipboardItem& item, Vector<KeyValuePair<String, Ref<DOMPromise>>>&& itemPromises)
     : ClipboardItemDataSource(item)

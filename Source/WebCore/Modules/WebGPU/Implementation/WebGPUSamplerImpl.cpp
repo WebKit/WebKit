@@ -30,8 +30,11 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SamplerImpl);
 
 SamplerImpl::SamplerImpl(WebGPUPtr<WGPUSampler>&& sampler, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(sampler))

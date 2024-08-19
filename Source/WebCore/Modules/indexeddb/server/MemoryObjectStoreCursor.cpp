@@ -29,9 +29,12 @@
 #include "IDBGetResult.h"
 #include "Logging.h"
 #include "MemoryObjectStore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryObjectStoreCursor);
 
 MemoryObjectStoreCursor::MemoryObjectStoreCursor(MemoryObjectStore& objectStore, const IDBCursorInfo& info)
     : MemoryCursor(info)

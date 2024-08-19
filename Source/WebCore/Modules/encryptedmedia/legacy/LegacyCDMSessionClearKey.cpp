@@ -32,6 +32,7 @@
 #include <JavaScriptCore/TypedArrayAdaptors.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
@@ -39,6 +40,8 @@
 
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionClearKey);
 
 CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient& client)
     : m_client(client)
