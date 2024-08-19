@@ -5552,6 +5552,7 @@
         "web-platform-tests/css/css-text/text-align/text-align-start-019.html",
         "web-platform-tests/css/css-text/text-align/text-align-start-020.html",
         "web-platform-tests/css/css-text/text-align/text-align-start-021.html",
+        "web-platform-tests/css/css-text/text-autospace/text-autospace-001-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-break-001-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-001-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-001.html",
