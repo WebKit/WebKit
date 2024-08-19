@@ -7509,7 +7509,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requ
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Skip ]
 
 # These failures include UUIDs that change every run.
-imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-back-same-document.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html [ Failure ]

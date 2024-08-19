@@ -42,6 +42,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
 NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
     : ContextDestructionObserver(context)
+    , m_urlString(historyItem->urlString())
     , m_id(WTF::UUID::createVersion4())
     , m_associatedHistoryItem(WTFMove(historyItem))
 {
@@ -62,7 +63,7 @@ const String& NavigationHistoryEntry::url() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_associatedHistoryItem->urlString();
+    return m_urlString;
 }
 
 String NavigationHistoryEntry::key() const

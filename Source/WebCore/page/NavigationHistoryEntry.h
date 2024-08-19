@@ -66,6 +66,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    const String m_urlString;
     const WTF::UUID m_id;
     Ref<HistoryItem> m_associatedHistoryItem;
 };
