@@ -697,6 +697,7 @@ public:
     using ControlType = ControlData;
     using CallType = CallLinkInfo::CallType;
     using ResultList = Vector<ExpressionType, 8>;
+    using ArgumentList = Vector<ExpressionType, 8>;
     using ControlEntry = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::ControlEntry;
     using TypedExpression = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::TypedExpression;
     using Stack = FunctionParser<BBQJIT>::Stack;
@@ -1182,7 +1183,7 @@ public:
 
     void emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value index, Value value);
 
-    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result);
 
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
 
@@ -1204,7 +1205,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t typeIndex, ExpressionType& result);
 
-    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<Value>& args, Value& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, ArgumentList& args, Value& result);
 
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, Value structValue, const StructType& structType, uint32_t fieldIndex, Value& result);
 
@@ -1725,7 +1726,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType& target, ControlType& data);
 
-    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& arguments, Stack&);
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& arguments, Stack&);
 
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType& data);
 
@@ -1778,17 +1779,17 @@ public:
     template<typename Func, size_t N>
     void emitCCall(Func function, const Vector<Value, N>& arguments, Value& result);
 
-    void emitTailCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments);
-    PartialResult WARN_UNUSED_RETURN addCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results, CallType callType = CallType::Call);
+    void emitTailCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments);
+    PartialResult WARN_UNUSED_RETURN addCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
 
-    void emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results);
-    void emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments);
+    void emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results);
+    void emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments);
     void addRTTSlowPathJump(TypeIndex, GPRReg);
     void emitSlowPathRTTCheck(MacroAssembler::Label, TypeIndex, GPRReg);
 
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results, CallType callType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results);
 
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 

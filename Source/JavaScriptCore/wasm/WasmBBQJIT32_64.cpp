@@ -1175,25 +1175,25 @@ void BBQJIT::truncInBounds(TruncationKind truncationKind, Location operandLocati
     case TruncationKind::I64TruncF32S: {
         auto operand = Value::pinned(TypeKind::F32, operandLocation);
         consume(result);
-        emitCCall(Math::i64_trunc_s_f32, Vector<Value> { operand }, result);
+        emitCCall(Math::i64_trunc_s_f32, ArgumentList { operand }, result);
         break;
     }
     case TruncationKind::I64TruncF64S: {
         auto operand = Value::pinned(TypeKind::F64, operandLocation);
         consume(result);
-        emitCCall(Math::i64_trunc_s_f64, Vector<Value> { operand }, result);
+        emitCCall(Math::i64_trunc_s_f64, ArgumentList { operand }, result);
         break;
     }
     case TruncationKind::I64TruncF32U: {
         auto operand = Value::pinned(TypeKind::F32, operandLocation);
         consume(result);
-        emitCCall(Math::i64_trunc_u_f32, Vector<Value> { operand }, result);
+        emitCCall(Math::i64_trunc_u_f32, ArgumentList { operand }, result);
         break;
     }
     case TruncationKind::I64TruncF64U: {
         auto operand = Value::pinned(TypeKind::F64, operandLocation);
         consume(result);
-        emitCCall(Math::i64_trunc_u_f64, Vector<Value> { operand }, result);
+        emitCCall(Math::i64_trunc_u_f64, ArgumentList { operand }, result);
         break;
     }
     }
@@ -1494,7 +1494,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, Express
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result)
 {
     // Allocate an uninitialized array whose length matches the argument count
     // FIXME: inline the allocation.
@@ -1970,7 +1970,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNewDefault(uint32_t typeIndex,
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, Vector<Value>& args, Value& result)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, ArgumentList& args, Value& result)
 {
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -2635,7 +2635,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32ConvertSI64(Value operand, Value&
         BLOCK(
             auto arg = Value::pinned(TypeKind::I64, operandLocation);
             consume(result);
-            emitCCall(Math::f32_convert_s_i64, Vector<Value> { arg }, result);
+            emitCCall(Math::f32_convert_s_i64, ArgumentList { arg }, result);
         )
     )
 }
@@ -2648,7 +2648,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32ConvertUI64(Value operand, Value&
         BLOCK(
             auto arg = Value::pinned(TypeKind::I64, operandLocation);
             consume(result);
-            emitCCall(Math::f32_convert_u_i64, Vector<Value> { arg }, result);
+            emitCCall(Math::f32_convert_u_i64, ArgumentList { arg }, result);
         )
     )
 }
@@ -2672,7 +2672,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64ConvertSI64(Value operand, Value&
         BLOCK(
             auto arg = Value::pinned(TypeKind::I64, operandLocation);
             consume(result);
-            emitCCall(Math::f64_convert_s_i64, Vector<Value> { arg }, result);
+            emitCCall(Math::f64_convert_s_i64, ArgumentList { arg }, result);
         )
     )
 }
@@ -2685,7 +2685,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64ConvertUI64(Value operand, Value&
         BLOCK(
             auto arg = Value::pinned(TypeKind::I64, operandLocation);
             consume(result);
-            emitCCall(Math::f64_convert_u_i64, Vector<Value> { arg }, result);
+            emitCCall(Math::f64_convert_u_i64, ArgumentList { arg }, result);
         )
     )
 }
@@ -2736,7 +2736,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Floor(Value operand, Value& resul
         BLOCK(
             auto arg = Value::pinned(TypeKind::F32, operandLocation);
             consume(result);
-            emitCCall(Math::floorFloat, Vector<Value> { arg }, result);
+            emitCCall(Math::floorFloat, ArgumentList { arg }, result);
         )
     )
 }
@@ -2749,7 +2749,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Floor(Value operand, Value& resul
         BLOCK(
             auto arg = Value::pinned(TypeKind::F64, operandLocation);
             consume(result);
-            emitCCall(Math::floorDouble, Vector<Value> { arg }, result);
+            emitCCall(Math::floorDouble, ArgumentList { arg }, result);
         )
     )
 }
@@ -2762,7 +2762,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Ceil(Value operand, Value& result
         BLOCK(
             auto arg = Value::pinned(TypeKind::F32, operandLocation);
             consume(result);
-            emitCCall(Math::ceilFloat, Vector<Value> { arg }, result);
+            emitCCall(Math::ceilFloat, ArgumentList { arg }, result);
         )
     )
 }
@@ -2775,7 +2775,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Ceil(Value operand, Value& result
         BLOCK(
             auto arg = Value::pinned(TypeKind::F64, operandLocation);
             consume(result);
-            emitCCall(Math::ceilDouble, Vector<Value> { arg }, result);
+            emitCCall(Math::ceilDouble, ArgumentList { arg }, result);
         )
     )
 }
@@ -2788,7 +2788,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Nearest(Value operand, Value& res
         BLOCK(
             auto arg = Value::pinned(TypeKind::F32, operandLocation);
             consume(result);
-            emitCCall(Math::f32_nearest, Vector<Value> { arg }, result);
+            emitCCall(Math::f32_nearest, ArgumentList { arg }, result);
         )
     )
 }
@@ -2801,7 +2801,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Nearest(Value operand, Value& res
         BLOCK(
             auto arg = Value::pinned(TypeKind::F64, operandLocation);
             consume(result);
-            emitCCall(Math::f64_nearest, Vector<Value> { arg }, result);
+            emitCCall(Math::f64_nearest, ArgumentList { arg }, result);
         )
     )
 }
@@ -2814,7 +2814,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Trunc(Value operand, Value& resul
         BLOCK(
             auto arg = Value::pinned(TypeKind::F32, operandLocation);
             consume(result);
-            emitCCall(Math::truncFloat, Vector<Value> { arg }, result);
+            emitCCall(Math::truncFloat, ArgumentList { arg }, result);
         )
     )
 }
@@ -2827,7 +2827,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Trunc(Value operand, Value& resul
         BLOCK(
             auto arg = Value::pinned(TypeKind::F64, operandLocation);
             consume(result);
-            emitCCall(Math::truncDouble, Vector<Value> { arg }, result);
+            emitCCall(Math::truncDouble, ArgumentList { arg }, result);
         )
     )
 }
@@ -3442,7 +3442,7 @@ Location BBQJIT::allocateRegisterPair()
     } while (1);
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results)
 {
     Value callee = args.takeLast();
     const TypeDefinition& signature = originalSignature.expand();

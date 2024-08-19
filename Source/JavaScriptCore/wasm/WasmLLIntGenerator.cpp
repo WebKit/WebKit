@@ -215,6 +215,7 @@ public:
     using ControlEntry = FunctionParser<LLIntGenerator>::ControlEntry;
     using ControlStack = FunctionParser<LLIntGenerator>::ControlStack;
     using ResultList = FunctionParser<LLIntGenerator>::ResultList;
+    using ArgumentList = FunctionParser<LLIntGenerator>::ResultList;
     using Stack = FunctionParser<LLIntGenerator>::Stack;
     using TypedExpression = FunctionParser<LLIntGenerator>::TypedExpression;
 
@@ -321,7 +322,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t index, ArgumentList& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
@@ -331,7 +332,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
-    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, ArgumentList& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
@@ -366,7 +367,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
-    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&);
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, Stack& returnValues);
@@ -379,9 +380,9 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -552,7 +553,7 @@ private:
 
     void finalizePreviousBlockForCatch(ControlType&, Stack&);
 
-    void addCallBuiltin(LLIntBuiltin, const Vector<ExpressionType> args, ResultList& results);
+    void addCallBuiltin(LLIntBuiltin, const ArgumentList args, ResultList& results);
 
     struct SwitchEntry {
         WasmInstructionStream::Offset offset;
@@ -1277,7 +1278,7 @@ auto LLIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
     return { };
 }
 
-auto LLIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
+auto LLIntGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&) -> PartialResult
 {
     m_usesExceptions = true;
     // We have to materialize the arguments here since it might include constants or
@@ -1489,7 +1490,7 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
     return { };
 }
 
-auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -1515,7 +1516,7 @@ auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     return { };
 }
 
-auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -1547,7 +1548,7 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     return { };
 }
 
-auto LLIntGenerator::addCallRef(const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto LLIntGenerator::addCallRef(const TypeDefinition& signature, ArgumentList& args, ResultList& results) -> PartialResult
 {
     ExpressionType callee = args.takeLast();
 
@@ -1662,7 +1663,7 @@ auto LLIntGenerator::addCrash() -> PartialResult
     return { };
 }
 
-void LLIntGenerator::addCallBuiltin(LLIntBuiltin builtin, const Vector<ExpressionType> args, ResultList& results)
+void LLIntGenerator::addCallBuiltin(LLIntBuiltin builtin, const ArgumentList args, ResultList& results)
 {
     const TypeDefinition& signature = TypeInformation::signatureForLLIntBuiltin(builtin);
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
@@ -2097,7 +2098,7 @@ auto LLIntGenerator::addArrayNewDefault(uint32_t index, ExpressionType size, Exp
     return { };
 }
 
-auto LLIntGenerator::addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addArrayNewFixed(uint32_t index, ArgumentList& args, ExpressionType& result) -> PartialResult
 {
     // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
     if (!args.size()) {
@@ -2196,7 +2197,7 @@ auto LLIntGenerator::addArrayInitData(uint32_t dstTypeIndex, ExpressionType dst,
     return { };
 }
 
-auto LLIntGenerator::addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addStructNew(uint32_t index, ArgumentList& args, ExpressionType& result) -> PartialResult
 {
     // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
     if (!args.size()) {

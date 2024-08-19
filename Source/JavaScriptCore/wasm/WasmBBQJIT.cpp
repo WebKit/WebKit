@@ -2630,7 +2630,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32Popcnt(Value operand, Value& resu
                 // We avoid this by consuming the result before passing it to emitCCall, which also saves us the mov for spilling.
                 consume(result);
                 auto arg = Value::pinned(TypeKind::I32, operandLocation);
-                emitCCall(&operationPopcount32, Vector<Value> { arg }, result);
+                emitCCall(&operationPopcount32, ArgumentList { arg }, result);
             }
         )
     )
@@ -2655,7 +2655,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI64Popcnt(Value operand, Value& resu
                 // We avoid this by consuming the result before passing it to emitCCall, which also saves us the mov for spilling.
                 consume(result);
                 auto arg = Value::pinned(TypeKind::I64, operandLocation);
-                emitCCall(&operationPopcount64, Vector<Value> { arg }, result);
+                emitCCall(&operationPopcount64, ArgumentList { arg }, result);
             }
         )
     )
@@ -3547,7 +3547,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addDelegateToUnreachable(ControlType& t
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& arguments, Stack&)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addThrow(unsigned exceptionIndex, ArgumentList& arguments, Stack&)
 {
 
     LOG_INSTRUCTION("Throw", arguments);
@@ -4012,7 +4012,7 @@ void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSigna
     }
 }
 
-void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments)
+void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments)
 {
     const auto& callingConvention = wasmCallingConvention();
     CallInformation callInfo = callingConvention.callInformationFor(signature, CallRole::Callee);
@@ -4028,9 +4028,9 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     ASSERT(callInfo.results.size() == wasmCallerInfo.results.size());
     ASSERT(arguments.size() == callInfo.params.size());
 
-    Vector<Value> resolvedArguments;
+    ArgumentList resolvedArguments;
     resolvedArguments.reserveInitialCapacity(arguments.size() + isX86());
-    Vector<Location> parameterLocations;
+    Vector<Location, 8> parameterLocations;
     parameterLocations.reserveInitialCapacity(arguments.size() + isX86());
 
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
@@ -4116,7 +4116,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
 }
 
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType callType)
 {
     if (callType == CallType::TailCall) {
         emitTailCall(functionIndex, signature, arguments);
@@ -4162,7 +4162,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const T
     return { };
 }
 
-void BBQJIT::emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results)
+void BBQJIT::emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results)
 {
     ASSERT(!RegisterSetBuilder::argumentGPRS().contains(calleeCode, IgnoreVectors));
 
@@ -4196,7 +4196,7 @@ void BBQJIT::emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRR
     LOG_INSTRUCTION(opcode, calleeIndex, arguments, "=> ", results);
 }
 
-void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, Vector<Value>& arguments)
+void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments)
 {
     ASSERT(!RegisterSetBuilder::argumentGPRS().contains(calleeCode, IgnoreVectors));
     m_jit.loadPtr(Address(calleeCode), calleeCode);
@@ -4224,10 +4224,10 @@ void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstanc
     ASSERT(callInfo.results.size() == wasmCallerInfo.results.size());
     ASSERT(arguments.size() == callInfo.params.size());
 
-    Vector<Value> resolvedArguments;
+    ArgumentList resolvedArguments;
     const unsigned calleeArgument = 1;
     resolvedArguments.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
-    Vector<Location> parameterLocations;
+    Vector<Location, 8> parameterLocations;
     parameterLocations.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
 
     // It's ok if we clobber our Wasm::Callee at this point since we can't hit a GC safepoint / throw an exception until we've tail called into the callee.
@@ -4344,7 +4344,7 @@ void BBQJIT::emitSlowPathRTTCheck(MacroAssembler::Label returnLabel, TypeIndex t
     emitThrowException(ExceptionType::BadSignature);
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType)
 {
     Value calleeIndex = args.takeLast();
     const TypeDefinition& signature = originalSignature.expand();

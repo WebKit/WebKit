@@ -1633,7 +1633,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, Express
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result)
 {
     // Allocate an uninitialized array whose length matches the argument count
     // FIXME: inline the allocation.
@@ -2150,7 +2150,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNewDefault(uint32_t typeIndex,
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, Vector<Value>& args, Value& result)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, ArgumentList& args, Value& result)
 {
     Vector<Value, 8> arguments = {
         instanceValue(),
@@ -4546,7 +4546,7 @@ Location BBQJIT::allocateRegisterPair()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results)
 {
     Value callee = args.takeLast();
     const TypeDefinition& signature = originalSignature.expand();

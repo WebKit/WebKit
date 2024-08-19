@@ -113,6 +113,8 @@ struct FunctionParserTypes {
     using ControlStack = Vector<ControlEntry, 16>;
 
     using ResultList = Vector<ExpressionType, 8>;
+
+    using ArgumentList = Vector<ExpressionType, 8>;
 };
 
 template<typename Context>
@@ -127,6 +129,7 @@ public:
     using TypedExpression = typename FunctionParser::TypedExpression;
     using Stack = typename FunctionParser::Stack;
     using ResultList = typename FunctionParser::ResultList;
+    using ArgumentList = typename FunctionParser::ArgumentList;
 
     FunctionParser(Context&, std::span<const uint8_t> function, const TypeDefinition&, const ModuleInformation&);
 
@@ -177,7 +180,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseBody();
     PartialResult WARN_UNUSED_RETURN parseExpression();
     PartialResult WARN_UNUSED_RETURN parseUnreachableExpression();
-    PartialResult WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
+    PartialResult WARN_UNUSED_RETURN unifyControl(ArgumentList&, unsigned level);
     PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&);
     PartialResult WARN_UNUSED_RETURN checkLocalInitialized(uint32_t);
     PartialResult WARN_UNUSED_RETURN unify(const ControlType&);
@@ -2121,7 +2124,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size(), "array_new_fixed: found ", m_expressionStack.size(), " operands on stack; expected ", argc, " operands");
 
             // Allocate stack space for arguments
-            Vector<ExpressionType> args;
+            ArgumentList args;
             size_t firstArgumentIndex = m_expressionStack.size() - argc;
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argc), "can't allocate enough memory for array.new_fixed "_s, argc, " values"_s);
             args.grow(argc);
@@ -2419,7 +2422,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             const auto* structType = typeDefinition->expand().template as<StructType>();
             WASM_PARSER_FAIL_IF(structType->fieldCount() > m_expressionStack.size(), "struct.new "_s, typeIndex, " requires "_s, structType->fieldCount(), " values, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
 
-            Vector<ExpressionType> args;
+            ArgumentList args;
             size_t firstArgumentIndex = m_expressionStack.size() - structType->fieldCount();
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new "_s, structType->fieldCount(), " values"_s);
             args.grow(structType->fieldCount());
@@ -2900,7 +2903,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(calleeSignature.argumentCount() > m_expressionStack.size(), "call function index "_s, functionIndex, " has "_s, calleeSignature.argumentCount(), " arguments, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
 
         size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature.argumentCount();
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's "_s, calleeSignature.argumentCount(), " arguments"_s);
         args.grow(calleeSignature.argumentCount());
         for (size_t i = 0; i < calleeSignature.argumentCount(); ++i) {
@@ -2969,7 +2972,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isI32(), "non-i32 call_indirect index "_s, m_expressionStack.last().type());
 
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for "_s, argumentCount, " call_indirect arguments"_s);
         args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
@@ -3034,7 +3037,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's value.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
         args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
@@ -3249,7 +3252,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's "_s, exceptionSignature.argumentCount(), " arguments"_s);
         args.grow(exceptionSignature.argumentCount());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {

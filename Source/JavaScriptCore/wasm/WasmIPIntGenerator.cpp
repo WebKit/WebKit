@@ -175,6 +175,7 @@ public:
     using ExpressionType = Value;
     using CallType = CallLinkInfo::CallType;
     using ResultList = Vector<Value, 8>;
+    using ArgumentList = Vector<Value, 8>;
 
     using ExpressionList = Vector<Value, 1>;
     using ControlEntry = FunctionParser<IPIntGenerator>::ControlEntry;
@@ -297,7 +298,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t, Vector<ExpressionType>&, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t, ArgumentList&, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType, ExpressionType&);
@@ -305,7 +306,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
-    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t, ArgumentList&, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType);
@@ -464,7 +465,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
-    PartialResult WARN_UNUSED_RETURN addThrow(unsigned, Vector<ExpressionType>&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned, ArgumentList&, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, const Stack&);
@@ -479,9 +480,9 @@ public:
 
     // Calls
 
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t, const TypeDefinition&, Vector<ExpressionType>&, ResultList&, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, Vector<ExpressionType>&, ResultList&, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -902,7 +903,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI31GetU(ExpressionType, Expr
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNew(uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewData(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewElem(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewFixed(uint32_t, Vector<ExpressionType>&, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewFixed(uint32_t, ArgumentList&, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayNewDefault(uint32_t, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) IPINT_UNIMPLEMENTED
@@ -951,7 +952,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArrayInitData(uint32_t dstAr
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, Vector<ExpressionType>&, ExpressionType&) IPINT_UNIMPLEMENTED
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, ArgumentList&, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNewDefault(uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) IPINT_UNIMPLEMENTED
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) IPINT_UNIMPLEMENTED
@@ -1958,7 +1959,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDelegateToUnreachable(Contro
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>&, Stack&)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrow(unsigned exceptionIndex, ArgumentList&, Stack&)
 {
     auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(4);
@@ -2211,7 +2212,7 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
     }
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
@@ -2230,7 +2231,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const T
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
@@ -2253,7 +2254,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition& type, ArgumentList&, ResultList& results)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
