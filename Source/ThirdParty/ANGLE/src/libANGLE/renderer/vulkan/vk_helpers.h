@@ -1332,10 +1332,21 @@ constexpr uint32_t kInfiniteCmdCount = 0xFFFFFFFF;
 class CommandBufferHelperCommon : angle::NonCopyable
 {
   public:
-    void bufferWrite(ContextVk *contextVk,
-                     VkAccessFlags writeAccessType,
-                     PipelineStage writeStage,
-                     BufferHelper *buffer);
+    void bufferWrite(VkAccessFlags writeAccessType, PipelineStage writeStage, BufferHelper *buffer);
+
+    void bufferRead(VkAccessFlags readAccessType, PipelineStage readStage, BufferHelper *buffer)
+    {
+        bufferReadImpl(readAccessType, readStage, buffer);
+        setBufferReadQueueSerial(buffer);
+    }
+
+    void bufferRead(VkAccessFlags readAccessType,
+                    const gl::ShaderBitSet &readShaderStages,
+                    BufferHelper *buffer)
+    {
+        bufferReadImpl(readAccessType, readShaderStages, buffer);
+        setBufferReadQueueSerial(buffer);
+    }
 
     bool usesBuffer(const BufferHelper &buffer) const
     {
@@ -1345,6 +1356,13 @@ class CommandBufferHelperCommon : angle::NonCopyable
     bool usesBufferForWrite(const BufferHelper &buffer) const
     {
         return buffer.writtenByCommandBuffer(mQueueSerial);
+    }
+
+    bool getAndResetHasHostVisibleBufferWrite()
+    {
+        bool hostBufferWrite           = mIsAnyHostVisibleBufferWritten;
+        mIsAnyHostVisibleBufferWritten = false;
+        return hostBufferWrite;
     }
 
     void executeBarriers(Renderer *renderer, CommandsState *commandsState);
@@ -1451,6 +1469,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     void addCommandDiagnosticsCommon(std::ostringstream *out);
 
+    void setBufferReadQueueSerial(BufferHelper *buffer);
+
     // Allocator used by this class.
     SecondaryCommandBlockAllocator mCommandAllocator;
 
@@ -1481,6 +1501,9 @@ class CommandBufferHelperCommon : angle::NonCopyable
     EventMaps mRefCountedEvents;
     // The list of RefCountedEvents that should be garbage collected when it gets reset.
     RefCountedEventCollector mRefCountedEventCollector;
+
+    // Check for any buffer write commands recorded for host-visible buffers
+    bool mIsAnyHostVisibleBufferWritten = false;
 };
 
 class SecondaryCommandBufferCollector;
@@ -1517,24 +1540,6 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
     void markOpen() { mCommandBuffer.open(); }
     void markClosed() { mCommandBuffer.close(); }
 #endif
-
-    void bufferRead(ContextVk *contextVk,
-                    VkAccessFlags readAccessType,
-                    PipelineStage readStage,
-                    BufferHelper *buffer)
-    {
-        bufferReadImpl(readAccessType, readStage, buffer);
-        setBufferReadQueueSerial(contextVk, buffer);
-    }
-
-    void bufferRead(ContextVk *contextVk,
-                    VkAccessFlags readAccessType,
-                    const gl::ShaderBitSet &readShaderStages,
-                    BufferHelper *buffer)
-    {
-        bufferReadImpl(readAccessType, readShaderStages, buffer);
-        setBufferReadQueueSerial(contextVk, buffer);
-    }
 
     void imageRead(ContextVk *contextVk,
                    VkImageAspectFlags aspectFlags,
@@ -1582,7 +1587,6 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
   private:
     angle::Result initializeCommandBuffer(Context *context);
     angle::Result endCommandBuffer(Context *context);
-    void setBufferReadQueueSerial(ContextVk *contextVk, BufferHelper *buffer);
 
     OutsideRenderPassCommandBuffer mCommandBuffer;
     bool mIsCommandBufferEnded = false;
@@ -1776,23 +1780,6 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                     VkImageAspectFlags aspectFlags,
                     ImageLayout imageLayout,
                     ImageHelper *image);
-
-    void bufferRead(ContextVk *contextVk,
-                    VkAccessFlags readAccessType,
-                    PipelineStage readStage,
-                    BufferHelper *buffer)
-    {
-        bufferReadImpl(readAccessType, readStage, buffer);
-        buffer->setQueueSerial(mQueueSerial);
-    }
-    void bufferRead(ContextVk *contextVk,
-                    VkAccessFlags readAccessType,
-                    const gl::ShaderBitSet &readShaderStages,
-                    BufferHelper *buffer)
-    {
-        bufferReadImpl(readAccessType, readShaderStages, buffer);
-        buffer->setQueueSerial(mQueueSerial);
-    }
 
     void colorImagesDraw(gl::LevelIndex level,
                          uint32_t layerStart,

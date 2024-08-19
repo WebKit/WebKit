@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <type_traits>
 #include "mtl_command_buffer.h"
 #if ANGLE_MTL_SIMULATE_DISCARD_FRAMEBUFFER
 #    include <random>
@@ -1387,9 +1388,10 @@ void RenderCommandEncoder::reset()
     mCommands.clear();
 }
 
+template <typename ObjCAttachmentDescriptor>
 bool RenderCommandEncoder::finalizeLoadStoreAction(
     const RenderPassAttachmentDesc &cppRenderPassAttachment,
-    MTLRenderPassAttachmentDescriptor *objCRenderPassAttachment)
+    ObjCAttachmentDescriptor *objCRenderPassAttachment)
 {
     if (!objCRenderPassAttachment.texture)
     {
@@ -1418,7 +1420,9 @@ bool RenderCommandEncoder::finalizeLoadStoreAction(
     }
 
     // Check if we need to disable MTLLoadActionLoad & MTLStoreActionStore
-    if (cppRenderPassAttachment.texture->shouldNotLoadStore())
+    mtl::TextureRef mainTextureRef = cppRenderPassAttachment.texture;
+    ASSERT(mainTextureRef->get() == objCRenderPassAttachment.texture);
+    if (mainTextureRef->shouldNotLoadStore())
     {
         // Disable Load.
         if (objCRenderPassAttachment.loadAction == MTLLoadActionLoad)
@@ -1434,6 +1438,19 @@ bool RenderCommandEncoder::finalizeLoadStoreAction(
         else if (objCRenderPassAttachment.storeAction == MTLStoreActionStoreAndMultisampleResolve)
         {
             objCRenderPassAttachment.storeAction = MTLStoreActionMultisampleResolve;
+        }
+    }
+
+    // If the texture has emulated format such as RGB, we need to clear the texture so that the
+    // alpha channel will always be one. Otherwise DontCare loadAction would have set the alpha
+    // channel to garbage values.
+    if constexpr (std::is_same_v<ObjCAttachmentDescriptor, MTLRenderPassColorAttachmentDescriptor>)
+    {
+        if (objCRenderPassAttachment.loadAction == MTLLoadActionDontCare &&
+            mainTextureRef->getColorWritableMask() != MTLColorWriteMaskAll)
+        {
+            objCRenderPassAttachment.loadAction = MTLLoadActionClear;
+            objCRenderPassAttachment.clearColor = MTLClearColorMake(0, 0, 0, kEmulatedAlphaValue);
         }
     }
 

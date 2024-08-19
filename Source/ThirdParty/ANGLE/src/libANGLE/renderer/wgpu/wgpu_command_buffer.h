@@ -146,7 +146,10 @@ struct SetPipelineCommand
 
 struct SetScissorRectCommand
 {
-    uint64_t pad;
+    uint32_t x;
+    uint32_t y;
+    uint32_t width;
+    uint32_t height;
 };
 
 struct SetStencilReferenceCommand
@@ -161,7 +164,12 @@ struct SetVertexBufferCommand
 
 struct SetViewportCommand
 {
-    uint64_t pad;
+    float x;
+    float y;
+    float width;
+    float height;
+    float minDepth;
+    float maxDepth;
 };
 
 struct WriteTimestampCommand
@@ -200,10 +208,14 @@ class CommandBuffer
               uint32_t firstVertex,
               uint32_t firstInstance);
     void setPipeline(wgpu::RenderPipeline pipeline);
+    void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
 
     void clear();
 
     bool hasCommands() const { return mCommandCount > 0; }
+    bool hasSetScissorCommand() const { return mHasSetScissorCommand; }
+    bool hasSetViewportCommand() const { return mHasSetViewportCommand; }
 
     void recordCommands(wgpu::RenderPassEncoder encoder);
 
@@ -243,6 +255,8 @@ class CommandBuffer
     size_t mCurrentCommandBlock = 0;
 
     size_t mCommandCount = 0;
+    bool mHasSetScissorCommand  = false;
+    bool mHasSetViewportCommand = false;
 
     // std::unordered_set required because it does not move elements and stored command reference
     // addresses in the set

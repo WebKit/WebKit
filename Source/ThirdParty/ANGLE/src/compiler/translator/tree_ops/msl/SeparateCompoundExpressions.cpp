@@ -10,6 +10,7 @@
 #include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/msl/SeparateCompoundExpressions.h"
+#include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/util.h"
 
 using namespace sh;
@@ -261,11 +262,7 @@ class Separator : public TIntermRebuild
             return;
         }
         auto &bindingMap = getCurrBindingMap();
-        const Name name  = mIdGen.createNewName();
-        TType *newType   = new TType(newExpr.getType());
-        newType->setQualifier(EvqTemporary);
-        newType->setInterfaceBlock(nullptr);
-        auto *var  = new TVariable(&mSymbolTable, name.rawName(), newType, name.symbolType());
+        auto *var        = CreateTempVariable(&mSymbolTable, &newExpr.getType(), EvqTemporary);
         auto *decl = new TIntermDeclaration(var, &newExpr);
         pushStmt(*decl);
         mExprMap[&oldExpr] = new TIntermSymbol(var);
@@ -498,11 +495,7 @@ class Separator : public TIntermRebuild
         TIntermTyped *then  = node.getTrueExpression();
         TIntermTyped *else_ = node.getFalseExpression();
 
-        const Name name = mIdGen.createNewName();
-        TType *newType  = new TType(node.getType());
-        newType->setInterfaceBlock(nullptr);
-        auto *var = new TVariable(&mSymbolTable, name.rawName(), newType, name.symbolType());
-
+        auto *var               = CreateTempVariable(&mSymbolTable, &node.getType(), EvqTemporary);
         TIntermTyped *newElse   = pullMappedExpr(else_, false);
         TIntermBlock *elseBlock = &buildBlockWithTailAssign(*var, *newElse);
         TIntermTyped *newThen   = pullMappedExpr(then, true);

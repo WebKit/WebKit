@@ -103,6 +103,11 @@ class ResourceUse final
         return mSerials.size() > queuSerial.getIndex() &&
                mSerials[queuSerial.getIndex()] > queuSerial.getSerial();
     }
+    bool operator>=(const QueueSerial &queueSerial) const
+    {
+        return mSerials.size() > queueSerial.getIndex() &&
+               mSerials[queueSerial.getIndex()] >= queueSerial.getSerial();
+    }
 
     // Returns true if all serials are less than or equal
     bool operator<=(const AtomicQueueSerialFixedArray &serials) const

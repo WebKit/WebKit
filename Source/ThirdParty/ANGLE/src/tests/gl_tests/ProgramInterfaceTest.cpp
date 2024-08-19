@@ -1288,6 +1288,8 @@ void main() {
 // Regression test for crash report in http://anglebug.com/42264603.
 TEST_P(ProgramInterfaceTestES31, ReloadFromCacheShouldNotCrash)
 {
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+
     // TODO(jiajia.qin@intel.com): Don't skip this test once non-simple SSBO sentences are supported
     // on d3d backend. http://anglebug.com/40644618
     ANGLE_SKIP_TEST_IF(IsD3D11());

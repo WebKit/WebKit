@@ -107,7 +107,7 @@ TIntermSymbol *CopyToTempVariable(TSymbolTable *symbolTable,
                                   TIntermTyped *node,
                                   TIntermSequence *prependStatements)
 {
-    TVariable *temp              = CreateTempVariable(symbolTable, &node->getType());
+    TVariable *temp              = CreateTempVariable(symbolTable, &node->getType(), EvqTemporary);
     TIntermDeclaration *tempDecl = CreateTempInitDeclarationNode(temp, node);
     prependStatements->push_back(tempDecl);
 
@@ -1051,8 +1051,8 @@ class RewriteRowMajorMatricesTraverser : public TIntermTraverser
                 //
                 // In either case, use that temp value as the value to assign to |baseExpression|.
 
-                TVariable *temp =
-                    CreateTempVariable(mSymbolTable, &originalExpression->getAsTyped()->getType());
+                TVariable *temp = CreateTempVariable(
+                    mSymbolTable, &originalExpression->getAsTyped()->getType(), EvqTemporary);
                 TIntermDeclaration *tempDecl = nullptr;
 
                 valueExpression = new TIntermSymbol(temp);

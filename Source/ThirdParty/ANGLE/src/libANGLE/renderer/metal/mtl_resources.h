@@ -279,7 +279,9 @@ class Texture final : public Resource,
 
     angle::Result resize(ContextMtl *context, uint32_t width, uint32_t height);
 
-    // For render target
+    // Get the color write mask to restrict writing to certain color channels in this texture. It's
+    // used for textures having emulated mtl::Format such as RGB which should always have alpha
+    // value being one.
     MTLColorWriteMask getColorWritableMask() const { return *mColorWritableMask; }
     void setColorWritableMask(MTLColorWriteMask mask) { *mColorWritableMask = mask; }
 

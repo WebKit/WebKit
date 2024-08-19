@@ -131,24 +131,22 @@ def write_or_verify_file(filename, content, verify_only):
 
 
 def run_generator(verify_only, temp_dir):
-    chromium_args = generate_buildbot_json.BBJSONGenerator.parse_args([])
-    chromium_generator = generate_buildbot_json.BBJSONGenerator(chromium_args)
-    chromium_generator.load_configuration_files()
-
     override_args = ['--pyl-files-dir', THIS_DIR]
     if verify_only:
         override_args += ['--output-dir', temp_dir]
-    angle_args = generate_buildbot_json.BBJSONGenerator.parse_args(override_args)
-    angle_generator = generate_buildbot_json.BBJSONGenerator(angle_args)
-    angle_generator.load_configuration_files()
-    angle_generator.resolve_configuration_files()
+    args = generate_buildbot_json.BBJSONGenerator.parse_args(override_args)
+    generator = generate_buildbot_json.BBJSONGenerator(args)
+    generator.load_configuration_files()
+    generator.resolve_configuration_files()
+
+    chromium_mixins = generator.load_pyl_file(os.path.join(TESTING_BBOT_DIR, 'mixins.pyl'))
 
     seen_mixins = set()
-    for waterfall in angle_generator.waterfalls:
+    for waterfall in generator.waterfalls:
         seen_mixins = seen_mixins.union(waterfall.get('mixins', set()))
         for bot_name, tester in waterfall['machines'].items():
             seen_mixins = seen_mixins.union(tester.get('mixins', set()))
-    for suite in angle_generator.test_suites.values():
+    for suite in generator.test_suites.values():
         if isinstance(suite, list):
             # Don't care about this, it's a composition, which shouldn't include a
             # swarming mixin.
@@ -161,8 +159,8 @@ def run_generator(verify_only, temp_dir):
     for mixin in seen_mixins:
         if mixin in found_mixins:
             continue
-        assert (mixin in chromium_generator.mixins), 'Error with %s mixin' % mixin
-        found_mixins[mixin] = chromium_generator.mixins[mixin]
+        assert (mixin in chromium_mixins), 'Error with %s mixin' % mixin
+        found_mixins[mixin] = chromium_mixins[mixin]
 
     pp = pprint.PrettyPrinter(indent=2)
 
@@ -177,12 +175,12 @@ def run_generator(verify_only, temp_dir):
         print('infra/specs/mixins.pyl dirty')
         return 1
 
-    if angle_generator.main() != 0:
+    if generator.main() != 0:
         print('buildbot (pyl to json) generation failed')
         return 1
 
     if verify_only:
-        for waterfall in angle_generator.waterfalls:
+        for waterfall in generator.waterfalls:
             filename = waterfall['name'] + '.json'  # angle.json, might have more in future
             with open(os.path.join(temp_dir, filename)) as f:
                 content = f.read()

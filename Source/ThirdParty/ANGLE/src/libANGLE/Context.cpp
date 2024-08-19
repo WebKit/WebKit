@@ -600,7 +600,8 @@ Context::Context(egl::Display *display,
              memoryProgramCache != nullptr,
              GetContextPriority(attribs),
              GetRobustAccess(attribs),
-             GetProtectedContent(attribs)),
+             GetProtectedContent(attribs),
+             GetIsExternal(attribs)),
       mShared(shareContext != nullptr || shareTextures != nullptr || shareSemaphores != nullptr),
       mDisplayTextureShareGroup(shareTextures != nullptr),
       mDisplaySemaphoreShareGroup(shareSemaphores != nullptr),
@@ -628,7 +629,6 @@ Context::Context(egl::Display *display,
       mFrameCapture(new angle::FrameCapture),
       mRefCount(0),
       mOverlay(mImplementation.get()),
-      mIsExternal(GetIsExternal(attribs)),
       mIsDestroyed(false)
 {
     for (angle::SubjectIndex uboIndex = kUniformBuffer0SubjectIndex;
@@ -3832,6 +3832,28 @@ Extensions Context::generateSupportedExtensions() const
     supportedExtensions.requestExtensionANGLE            = true;
     supportedExtensions.multiDrawANGLE                   = true;
     supportedExtensions.programBinaryReadinessQueryANGLE = true;
+
+    const Limitations &limitations                  = getLimitations();
+    const angle::FrontendFeatures &frontendFeatures = mDisplay->getFrontendFeatures();
+
+    if (limitations.multidrawEmulated &&
+        !frontendFeatures.alwaysEnableEmulatedMultidrawExtensions.enabled && !mWebGLContext)
+    {
+        supportedExtensions.multiDrawANGLE       = false;
+        supportedExtensions.multiDrawIndirectEXT = false;
+    }
+
+    if (limitations.baseInstanceBaseVertexEmulated &&
+        !frontendFeatures.alwaysEnableEmulatedMultidrawExtensions.enabled && !mWebGLContext)
+    {
+        supportedExtensions.baseVertexBaseInstanceANGLE = false;
+    }
+
+    if (limitations.baseInstanceEmulated &&
+        !frontendFeatures.alwaysEnableEmulatedMultidrawExtensions.enabled && !mWebGLContext)
+    {
+        supportedExtensions.baseInstanceEXT = false;
+    }
 
     // Enable the no error extension if the context was created with the flag.
     supportedExtensions.noErrorKHR = skipValidation();

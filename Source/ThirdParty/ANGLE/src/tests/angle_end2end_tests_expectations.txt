@@ -298,6 +298,8 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 346561003 MAC NVIDIA OPENGL : WebGL2UniformBufferTest.LargeArrayOfStructs/* = SKIP
 355607623 MAC INTEL OPENGL : WebGL2GLSLTest.BasicInfiniteLoop/* = SKIP
 355607623 WIN INTEL OPENGL : WebGL2GLSLTest.BasicInfiniteLoop/* = SKIP
+42263073 MAC AMD OPENGL : ClipDistanceAPPLETest.EachClipDistance/* = SKIP
+42263073 MAC AMD OPENGL : ClipCullDistanceTest.EachClipDistance/ES3_OpenGL__ANGLE = SKIP
 
 // BlitFramebufferTest.ScissoredMultisampleStencil failures
 42262159 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
@@ -806,9 +808,6 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 42264029 IOS OPENGL : IOSurfaceClientBufferTest.ReadFromToP010IOSurface/* = SKIP
 42264029 IOS OPENGL : IOSurfaceClientBufferTest.MakeCurrent/* = SKIP
 
-42263073 MAC AMD OPENGL : ClipDistanceAPPLETest.EachClipDistance/* = SKIP
-42263073 MAC AMD OPENGL : ClipCullDistanceTest.EachClipDistance/ES3_OpenGL__ANGLE = SKIP
-
 42266239 IOS OPENGL : ClipDistanceAPPLETest.OneClipDistance/* = SKIP
 42266239 IOS OPENGL : ClipDistanceAPPLETest.EachClipDistance/* = SKIP
 42266239 IOS OPENGL : ClipDistanceAPPLETest.Octagon/* = SKIP
@@ -818,6 +817,15 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 42266306 IOS OPENGL : ShaderBinaryTest.* = SKIP
 42266325 IOS OPENGL : FramebufferExtensionsTest.ColorBufferHalfFloat/* = SKIP
 40050022 IOS OPENGL : WebGL2CompatibilityTest.DrawWithZeroSizedBuffer/* = SKIP
+359136169 IOS OPENGL : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB/* = SKIP
+359136169 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
+359136169 IOS OPENGL : GLSLTest_ES3.LotsOfFieldsInStruct/* = SKIP
+359136169 IOS OPENGL : GLSLTest_ES3.VaryingStructWithInlineDefinition2/* = SKIP
+359136169 IOS OPENGL : IOSurfaceClientBufferTest.ReadFromRGBX8888IOSurface/* = SKIP
+359136169 IOS OPENGL : IOSurfaceClientBufferTest.RenderToRGBX8888IOSurface/* = SKIP
+359136169 IOS OPENGL : IOSurfaceClientBufferTest.SetMaxLevelWouldInvalidateRenderTargetBug/* = SKIP
+359136169 IOS METAL : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
+359136169 IOS OPENGL : RobustResourceInitTestES3.MaskedStencilClearBuffer/* = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -918,7 +926,7 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 42265148 MAC INTEL OPENGL : DrawTextureTest.CorrectNdcForOddViewportDimensions/* = SKIP
 
 // Indexed indirect draw offset bug
-42265912 D3D11 : DrawBaseInstanceTest.DrawElementsInstancedBaseInstance/ES3_D3D11__DynamicDraw* = SKIP
+42265912 D3D11 : DrawBaseInstanceTest.DrawElementsInstancedBaseInstance/ES3_D3D11_*__DynamicDraw* = SKIP
 
 // ASAN flakes with Vulkan / SwiftShader / AsyncCommandQueue
 42265368 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncCommandQueue* = SKIP
@@ -1453,6 +1461,16 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 42266974 WGPU : Texture2DTest.*Multiple* = SKIP
 42266974 WGPU : Texture2DTest.*Copy* = SKIP
 42266974 WGPU : Texture2DTest.*Mutable* = SKIP
+360083331 LINUX INTEL WGPU : ClearTest.ClearColorThenClearNonExistingDepthStencil/* = SKIP
+360083331 LINUX INTEL WGPU : ClearTest.DepthRangefIsClamped/* = SKIP
+360083331 LINUX INTEL WGPU : ClearTest.RGBA8Framebuffer/* = SKIP
+360083331 LINUX INTEL WGPU : ClearTest.TextureUploadAndRGBA8Framebuffer/* = SKIP
+360083331 LINUX INTEL WGPU : RendererTest.BufferData/* = SKIP
+360083331 LINUX INTEL WGPU : RendererTest.RequestedRendererCreated/* = SKIP
+360083331 LINUX INTEL WGPU : Texture2DTest.NPOTSubImageParameters/* = SKIP
+360083331 LINUX INTEL WGPU : Texture2DTest.QueryBinding/* = SKIP
+360083331 LINUX INTEL WGPU : Texture2DTest.SubImageValidationOverflow/* = SKIP
+360083331 LINUX INTEL WGPU : Texture2DTest.ZeroSizedUploads/* = SKIP
 
 // Linux/UHD 630 failures caused by OS/driver upgrade.
 42267119 LINUX INTEL OPENGL : AtomicCounterBufferTest31.AtomicCounterReadCompute/* = SKIP

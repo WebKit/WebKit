@@ -217,6 +217,14 @@
                 "Attempts to detect undefined behavior when in WebGL mode and reject shaders if any detected."
             ],
             "issue": "http://crbug.com/350528343"
+        },
+        {
+            "name": "always_enable_emulated_multidraw_extensions",
+            "category": "Workarounds",
+            "description": [
+                "Enable multi-draw and base vertex base instance extensions for non-WebGL contexts if they are emulated."
+            ],
+            "issue": "http://anglebug.com/355645824"
         }
     ]
 }

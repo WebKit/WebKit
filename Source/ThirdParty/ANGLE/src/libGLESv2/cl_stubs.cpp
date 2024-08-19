@@ -5,6 +5,7 @@
 //
 // cl_stubs.cpp: Stubs for CL entry points.
 
+#include "libANGLE/cl_utils.h"
 #include "libGLESv2/cl_stubs_autogen.h"
 
 #include "libGLESv2/proc_table_cl.h"
@@ -144,7 +145,7 @@ cl_int SetDefaultDeviceCommandQueue(cl_context context,
                                     cl_command_queue command_queue)
 {
     WARN_NOT_SUPPORTED(SetDefaultDeviceCommandQueue);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int GetDeviceAndHostTimer(cl_device_id device,
@@ -152,13 +153,13 @@ cl_int GetDeviceAndHostTimer(cl_device_id device,
                              cl_ulong *host_timestamp)
 {
     WARN_NOT_SUPPORTED(GetDeviceAndHostTimer);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int GetHostTimer(cl_device_id device, cl_ulong *host_timestamp)
 {
     WARN_NOT_SUPPORTED(GetHostTimer);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_context CreateContext(const cl_context_properties *properties,
@@ -216,7 +217,7 @@ cl_int SetContextDestructorCallback(cl_context context,
                                     void *user_data)
 {
     WARN_NOT_SUPPORTED(SetContextDestructorCallback);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_command_queue CreateCommandQueueWithProperties(cl_context context,
@@ -303,6 +304,7 @@ cl_mem CreatePipe(cl_context context,
                   const cl_pipe_properties *properties)
 {
     WARN_NOT_SUPPORTED(CreatePipe);
+    cl::gClErrorTls = CL_INVALID_OPERATION;
     return 0;
 }
 
@@ -360,7 +362,7 @@ cl_int GetPipeInfo(cl_mem pipe,
                    size_t *param_value_size_ret)
 {
     WARN_NOT_SUPPORTED(GetPipeInfo);
-    return 0;
+    return CL_INVALID_MEM_OBJECT;
 }
 
 cl_int SetMemObjectDestructorCallback(cl_mem memobj,
@@ -507,7 +509,7 @@ cl_int SetProgramReleaseCallback(cl_program program,
                                  void *user_data)
 {
     WARN_NOT_SUPPORTED(SetProgramReleaseCallback);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int SetProgramSpecializationConstant(cl_program program,
@@ -516,7 +518,7 @@ cl_int SetProgramSpecializationConstant(cl_program program,
                                         const void *spec_value)
 {
     WARN_NOT_SUPPORTED(SetProgramSpecializationConstant);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int UnloadPlatformCompiler(cl_platform_id platform)
@@ -588,7 +590,7 @@ cl_int SetKernelArg(cl_kernel kernel, cl_uint arg_index, size_t arg_size, const 
 cl_int SetKernelArgSVMPointer(cl_kernel kernel, cl_uint arg_index, const void *arg_value)
 {
     WARN_NOT_SUPPORTED(SetKernelArgSVMPointer);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int SetKernelExecInfo(cl_kernel kernel,
@@ -597,7 +599,7 @@ cl_int SetKernelExecInfo(cl_kernel kernel,
                          const void *param_value)
 {
     WARN_NOT_SUPPORTED(SetKernelExecInfo);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int GetKernelInfo(cl_kernel kernel,
@@ -642,7 +644,7 @@ cl_int GetKernelSubGroupInfo(cl_kernel kernel,
                              size_t *param_value_size_ret)
 {
     WARN_NOT_SUPPORTED(GetKernelSubGroupInfo);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int WaitForEvents(cl_uint num_events, const cl_event *event_list)
@@ -1063,7 +1065,7 @@ cl_int EnqueueSVMFree(cl_command_queue command_queue,
                       cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMFree);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int EnqueueSVMMemcpy(cl_command_queue command_queue,
@@ -1076,7 +1078,7 @@ cl_int EnqueueSVMMemcpy(cl_command_queue command_queue,
                         cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMMemcpy);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int EnqueueSVMMemFill(cl_command_queue command_queue,
@@ -1089,7 +1091,7 @@ cl_int EnqueueSVMMemFill(cl_command_queue command_queue,
                          cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMMemFill);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int EnqueueSVMMap(cl_command_queue command_queue,
@@ -1102,7 +1104,7 @@ cl_int EnqueueSVMMap(cl_command_queue command_queue,
                      cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMMap);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int EnqueueSVMUnmap(cl_command_queue command_queue,
@@ -1112,7 +1114,7 @@ cl_int EnqueueSVMUnmap(cl_command_queue command_queue,
                        cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMUnmap);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 cl_int EnqueueSVMMigrateMem(cl_command_queue command_queue,
@@ -1125,7 +1127,7 @@ cl_int EnqueueSVMMigrateMem(cl_command_queue command_queue,
                             cl_event *event)
 {
     WARN_NOT_SUPPORTED(EnqueueSVMMigrateMem);
-    return 0;
+    return CL_INVALID_OPERATION;
 }
 
 void *GetExtensionFunctionAddressForPlatform(cl_platform_id platform, const char *func_name)
