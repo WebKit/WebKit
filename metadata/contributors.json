@@ -5644,6 +5644,14 @@
    },
    {
       "emails" : [
+         "maximilian@igalia.com"
+      ],
+      "github" : "eugeneia",
+      "name" : "Max Rottenkolber",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "mvujovic@adobe.com",
          "maxvujovic@gmail.com"
       ],
