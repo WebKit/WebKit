@@ -56,6 +56,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/cpp"
     "${WEBKIT_DIR}/UIProcess/Authentication"
     "${WEBKIT_DIR}/UIProcess/Automation"
+    "${WEBKIT_DIR}/UIProcess/DigitalCredentials"
     "${WEBKIT_DIR}/UIProcess/Downloads"
     "${WEBKIT_DIR}/UIProcess/Gamepad"
     "${WEBKIT_DIR}/UIProcess/GPU"
@@ -239,6 +240,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     Shared/Notifications/NotificationManagerMessageHandler
 
+    UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy
     UIProcess/DrawingAreaProxy
 
     UIProcess/Media/RemoteMediaSessionCoordinatorProxy

@@ -389,6 +389,7 @@ class AuthenticationChallengeProxy;
 class BrowsingContextGroup;
 class CallbackID;
 class ContextMenuContextData;
+class DigitalCredentialsCoordinatorProxy;
 class DownloadProxy;
 class DrawingAreaProxy;
 class GamepadData;
@@ -3228,7 +3229,8 @@ private:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_credentialsMessenger;
+    std::unique_ptr<DigitalCredentialsCoordinatorProxy> m_digitalCredentialsMessenger;
+    std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_webAuthnCredentialsMessenger;
 #endif
 
 #if ENABLE(DATA_DETECTION)

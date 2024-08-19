@@ -28,10 +28,12 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include "ModelProcessModelPlayerManager.h"
 #include "ModelProcessModelPlayerProxy.h"
 #include "ModelProcessModelPlayerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/TransformationMatrix.h>
 
 namespace WebKit {

@@ -386,8 +386,10 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
+#include "DigitalCredentialsCoordinator.h"
 #include "WebAuthenticatorCoordinator.h"
 #include <WebCore/AuthenticatorCoordinator.h>
+#include <WebCore/CredentialRequestCoordinatorClient.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -739,6 +741,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(WEB_AUTHN)
     pageConfiguration.authenticatorCoordinatorClient = makeUnique<WebAuthenticatorCoordinator>(*this);
+    pageConfiguration.credentialRequestCoordinatorClient = makeUnique<DigitalCredentialsCoordinator>(*this);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

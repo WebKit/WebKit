@@ -146,6 +146,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
+    "${WEBKIT_DIR}/WebProcess/DigitalCredentials"
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"

@@ -6087,6 +6087,22 @@ struct WebCore::MockWebAuthenticationConfiguration {
     std::optional<WebCore::MockWebAuthenticationConfiguration::CcidConfiguration> ccid;
 };
 
+struct WebCore::OpenID4VPRequest {
+};
+
+[Nested] struct WebCore::IdentityRequestProvider {
+    WebCore::IdentityCredentialProtocol protocol;
+    WebCore::OpenID4VPRequest request;
+};
+
+struct WebCore::DigitalCredentialRequestOptions {
+    Vector<WebCore::IdentityRequestProvider> providers;
+};
+
+enum class WebCore::IdentityCredentialProtocol : uint8_t {
+    Openid4vp
+};
+
 #endif // ENABLE(WEB_AUTHN)
 
 #if ENABLE(MEDIA_STREAM)

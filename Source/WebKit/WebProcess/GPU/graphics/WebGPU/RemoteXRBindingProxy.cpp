@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
 #include "RemoteXRBindingMessages.h"
 #include "RemoteXRProjectionLayerProxy.h"
