@@ -1341,6 +1341,9 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             handleLabelChanged(parent.get());
         }
 
+        for (const auto& describedObject : parent->descriptionForObjects())
+            postNotification(downcast<AccessibilityObject>(describedObject.get()), nullptr, AXExtendedDescriptionChanged);
+
         if (parent->hasTagName(captionTag))
             foundTableCaption = true;
         else if (foundTableCaption && parent->isTable()) {
@@ -4401,7 +4404,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::IsExpanded });
             break;
         case AXExtendedDescriptionChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::ExtendedDescription });
+            tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::ExtendedDescription } });
             break;
         case AXFocusableStateChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::CanSetFocusAttribute });
