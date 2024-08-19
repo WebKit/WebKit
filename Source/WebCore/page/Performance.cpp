@@ -57,7 +57,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Performance);
 
-constexpr Seconds highTimePrecision { 20_us };
 static Seconds timePrecision { 1_ms };
 
 Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
@@ -94,14 +93,12 @@ ReducedResolutionSeconds Performance::nowInReducedResolutionSeconds() const
 
 Seconds Performance::reduceTimeResolution(Seconds seconds)
 {
-    double resolution = timePrecision.seconds();
-    double reduced = std::floor(seconds.seconds() / resolution) * resolution;
-    return Seconds(reduced);
+    return seconds.reduceTimeResolution(timePrecision);
 }
 
 void Performance::allowHighPrecisionTime()
 {
-    timePrecision = highTimePrecision;
+    timePrecision = Seconds::highTimePrecision();
 }
 
 Seconds Performance::timeResolution()
