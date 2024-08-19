@@ -863,6 +863,40 @@ imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [
 media/media-source/media-source-init-segment-duration.html
 # --- End Media Source Tests ---
 
+# --- Start WebVTT Tests ---
+## --- Start W3C Imported WebVTT Tests ---
+
+# imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video tests are marked as [ ImageOnlyFailure ] by default
+# Add newly passing tests to this file as Apple-port-specific bugs are fixed:
+
+# Newly Passing WebVTT Tests:
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center_position_50.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center_position_gt_50.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_center_position_lt_50.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_end.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/align_start.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/disable_controls_reposition.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/dom_override_cue_text.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/dom_override_cue_text_while_paused.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_90.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/background_properties.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/background_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/background_shorthand_css_relative_url.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/color_hex.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/color_hsla.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_normal_wrapped.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_nowrap_wrapped.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_pre.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_namespace.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_root_selector.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_namespace.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/snap-to-line.html [ Pass ]
+
+## --- End W3C Imported WebVTT Tests ---
+# --- End WebVTT Tests
+
 # FIXME: Needs bugzilla
 editing/mac/input/undo-grouping-on-text-insertion.html [ Skip ]
 

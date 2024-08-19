@@ -802,7 +802,7 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
     record.profile = 0;
     record.level = 10;
     record.bitDepth = 8;
-    record.videoFullRangeFlag = VPConfigurationRange::FullRange;
+    record.videoFullRangeFlag = VPConfigurationRange::VideoRange;
     record.chromaSubsampling = VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
     record.colorPrimaries = header.colorSpace ? VPConfigurationColorPrimaries::Unspecified : VPConfigurationColorPrimaries::BT_601_7;
     record.transferCharacteristics =  header.colorSpace ? VPConfigurationTransferCharacteristics::Unspecified : VPConfigurationTransferCharacteristics::BT_601_7;
