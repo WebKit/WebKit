@@ -334,8 +334,8 @@ WKWebView *WebExtensionTab::webView() const
     auto *configuredExtensionController = webView.configuration.webExtensionController;
     auto *expectedExtensionController = extensionContext()->extensionController()->wrapper();
     if (!configuredExtensionController || configuredExtensionController != expectedExtensionController) {
-        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with a WKWebExtensionController", webView);
-        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "%{public}@ returned by webViewForWebExtensionContext: is not configured with the same WKWebExtensionController as extension context; %{public}@ != %{public}@", webView, configuredExtensionController, expectedExtensionController);
+        RELEASE_LOG_ERROR_IF(!configuredExtensionController, Extensions, "web view %p returned by webViewForWebExtensionContext: is not configured with a WKWebExtensionController", webView);
+        RELEASE_LOG_ERROR_IF(configuredExtensionController && configuredExtensionController != expectedExtensionController, Extensions, "web view %p returned by webViewForWebExtensionContext: is not configured with the same WKWebExtensionController as extension context; %{public}@ != %{public}@", webView, configuredExtensionController, expectedExtensionController);
         ASSERT_NOT_REACHED();
         return nil;
     }
