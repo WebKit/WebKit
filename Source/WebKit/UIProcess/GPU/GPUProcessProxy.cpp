@@ -80,8 +80,6 @@
 #include "MediaCapability.h"
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -830,7 +828,5 @@ void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionH
 #endif
 
 } // namespace WebKit
-
-#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)
