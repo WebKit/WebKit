@@ -57,7 +57,7 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
     if (m_tickRatios.isEmpty())
         return;
 
-    static constexpr IntSize sliderTickSize = { 1, 3 };
+    static constexpr FloatSize sliderTickSize = { 1, 3 };
     static constexpr int sliderTickOffsetFromTrackCenter = -9;
 
     bool isHorizontal = type() == StyleAppearance::SliderHorizontal;
