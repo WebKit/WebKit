@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 namespace JSC {
@@ -50,7 +51,8 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 
 class ScriptModuleLoader final : private ModuleScriptLoaderClient {
-    WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScriptModuleLoader);
+    WTF_MAKE_NONCOPYABLE(ScriptModuleLoader);
 public:
     enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
     enum class ModuleType : uint8_t { Invalid, JavaScript, WebAssembly, JSON };

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/MarkingConstraint.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class VM;
@@ -36,7 +37,7 @@ namespace WebCore {
 class JSHeapData;
 
 class DOMGCOutputConstraint : public JSC::MarkingConstraint {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DOMGCOutputConstraint);
 public:
     DOMGCOutputConstraint(JSC::VM&, JSHeapData&);
     ~DOMGCOutputConstraint();

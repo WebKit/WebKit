@@ -29,13 +29,14 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 template<typename IDLType>
 class DOMPromiseProxy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMPromiseProxy);
 public:
     using Value = typename IDLType::StorageType;
 
@@ -61,7 +62,7 @@ private:
 
 template<>
 class DOMPromiseProxy<IDLUndefined> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMPromiseProxy);
 public:
     DOMPromiseProxy() = default;
     ~DOMPromiseProxy() = default;
@@ -86,7 +87,7 @@ private:
 // FontFace and FontFaceSet.
 template<typename IDLType>
 class DOMPromiseProxyWithResolveCallback {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMPromiseProxyWithResolveCallback);
 public:
     using ResolveCallback = Function<typename IDLType::ParameterType()>;
 

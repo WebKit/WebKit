@@ -29,11 +29,12 @@
 
 #include "ScriptBufferSourceProvider.h"
 #include <JavaScriptCore/SourceProvider.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class WebAssemblyScriptBufferSourceProvider final : public JSC::BaseWebAssemblySourceProvider, public AbstractScriptBufferHolder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebAssemblyScriptBufferSourceProvider);
 public:
     static Ref<WebAssemblyScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, URL&& sourceURL, Ref<JSC::ScriptFetcher>&& scriptFetcher)
     {

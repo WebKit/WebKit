@@ -33,6 +33,7 @@
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ template<typename ImplementationClass> struct JSDOMCallbackConverterTraits;
 // (and synchronization would be slow).
 
 class JSCallbackData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(JSCallbackData, WEBCORE_EXPORT);
 public:
     enum class CallbackType { Function, Object, FunctionOrObject };
 

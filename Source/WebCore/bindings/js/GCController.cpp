@@ -39,6 +39,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -48,6 +49,8 @@ static void collect()
     JSLockHolder lock(commonVM());
     commonVM().heap.collectNow(Async, CollectionScope::Full);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GCController);
 
 GCController& GCController::singleton()
 {

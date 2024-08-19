@@ -27,7 +27,7 @@
 
 #include "ScriptBuffer.h"
 #include <JavaScriptCore/SourceProvider.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class AbstractScriptBufferHolder;
@@ -49,7 +49,7 @@ public:
 };
 
 class ScriptBufferSourceProvider final : public JSC::SourceProvider, public AbstractScriptBufferHolder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ScriptBufferSourceProvider);
 public:
     static Ref<ScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String sourceURL, String preRedirectURL, const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
     {

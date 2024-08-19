@@ -61,9 +61,12 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/Symbol.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptModuleLoader);
 
 ScriptModuleLoader::ScriptModuleLoader(ScriptExecutionContext* context, OwnerType ownerType)
     : m_context(context)
