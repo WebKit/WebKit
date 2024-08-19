@@ -1936,7 +1936,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRunString, (JSGlobalObject* globalObject, CallF
         return JSValue::encode(jsUndefined());
     }
     
-    return JSValue::encode(realm);
+    return JSValue::encode(realm->globalThis());
 }
 
 static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
