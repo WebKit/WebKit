@@ -28,6 +28,7 @@ PACKAGES=(
     libkate
     libpng
     libseccomp
+    libsysprof-capture
     libsystemd
     libtasn1
     libtool
