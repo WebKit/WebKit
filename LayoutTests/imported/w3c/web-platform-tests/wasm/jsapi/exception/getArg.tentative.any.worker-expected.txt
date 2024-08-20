@@ -2,8 +2,6 @@
 PASS Missing arguments
 PASS Invalid exception argument
 PASS Index out of bounds
-FAIL Getting out-of-range argument assert_throws_js: function "() => exn.getArg(tag, value)" threw object "TypeError: Expect an integer argument in the range: [0, 2^32 - 1]" ("TypeError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
+PASS Getting out-of-range argument
 PASS getArg
 

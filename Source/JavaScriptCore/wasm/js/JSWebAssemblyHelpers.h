@@ -41,7 +41,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue value)
+ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue value, ErrorType errorType = ErrorType::TypeError)
 {
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -58,7 +58,11 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
             return static_cast<uint32_t>(truncedValue);
     }
 
-    throwException(globalObject, throwScope, createTypeError(globalObject, "Expect an integer argument in the range: [0, 2^32 - 1]"_s));
+    constexpr auto message = "Expect an integer argument in the range: [0, 2^32 - 1]"_s;
+    if (errorType == ErrorType::RangeError)
+        throwRangeError(globalObject, throwScope, message);
+    else
+        throwTypeError(globalObject, throwScope, message);
     return { };
 }
 

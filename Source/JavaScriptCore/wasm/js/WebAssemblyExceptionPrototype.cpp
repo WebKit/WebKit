@@ -112,7 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
     if (UNLIKELY(!tag))
         return throwVMTypeError(globalObject, throwScope, formatMessage("First argument must be a WebAssembly.Tag"_s));
 
-    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(1));
+    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(1), ErrorType::RangeError);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     if (UNLIKELY(jsException->tag() != tag->tag()))
