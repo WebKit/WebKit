@@ -25,6 +25,7 @@
 
 #include "TabSize.h"
 #include "TextFlags.h"
+#include "TextSpacing.h"
 #include "WritingMode.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/text/StringView.h>
@@ -155,6 +156,9 @@ public:
 
     const String& textAsString() const { return m_text; }
 
+    void setTextSpacingState(TextSpacing::SpacingState spacingState) { m_textSpacingState = spacingState; }
+    TextSpacing::SpacingState textSpacingState() const { return m_textSpacingState; }
+
 private:
     String m_text;
 
@@ -169,6 +173,9 @@ private:
 
     float m_expansion;
     ExpansionBehavior m_expansionBehavior;
+
+    TextSpacing::SpacingState m_textSpacingState;
+
     unsigned m_allowTabs : 1;
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.

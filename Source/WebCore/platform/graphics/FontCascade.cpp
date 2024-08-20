@@ -308,7 +308,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     }
 
     bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
-    float* cacheEntry = protectedFonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, glyphOverflow);
+    float* cacheEntry = protectedFonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, !textAutospace().isNoAutospace(), glyphOverflow);
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
@@ -628,6 +628,10 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 {
     if (s_codePath != CodePath::Auto)
         return s_codePath;
+
+    // FIXME: add support for text-autospace on simple path (rdar://133319627).
+    if (textAutospace().hasIdeographAlpha())
+        return CodePath::Complex;
 
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050

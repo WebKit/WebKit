@@ -103,12 +103,12 @@ public:
         add(glyph, font, advance, offsetInString);
     }
 
-    void add(Glyph glyph, const Font& font, GlyphBufferAdvance advance, GlyphBufferStringOffset offsetInString)
+    void add(Glyph glyph, const Font& font, GlyphBufferAdvance advance, GlyphBufferStringOffset offsetInString, FloatPoint origin = { })
     {
         m_fonts.append(&font);
         m_glyphs.append(glyph);
         m_advances.append(advance);
-        m_origins.append(makeGlyphBufferOrigin());
+        m_origins.append(makeGlyphBufferOrigin(origin));
         m_offsetsInString.append(offsetInString);
     }
 
