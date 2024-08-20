@@ -312,7 +312,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setGlobal(uint32_t index, Value value)
         emitMove(value, Location::fromGlobal(offset));
         consume(value);
         if (isRefType(type))
-            emitWriteBarrier(wasmScratchGPR);
+            emitWriteBarrier(GPRInfo::wasmContextInstancePointer);
         break;
     }
     case Wasm::GlobalInformation::BindingMode::Portable: {
