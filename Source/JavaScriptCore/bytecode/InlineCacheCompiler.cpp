@@ -4192,6 +4192,10 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
         // We *always* know that the proxy function, if non-null, is a cell.
         jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
+#if CPU(ARM_THUMB2)
+        // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
+        JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
+#endif
         m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, nullptr);
         auto* callLinkInfo = m_callLinkInfos[index].get();
         callLinkInfo->setUpCall(CallLinkInfo::Call);
