@@ -524,6 +524,7 @@ accessibility/aria-table-selection-support.html [ Skip ]
 
 # AccessibilityUIElement::customContent is not implemented.
 accessibility/dynamic-aria-describedby-subtree.html [ Skip ]
+accessibility/dynamic-aria-describedby-text.html [ Skip ]
 
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=263715
 accessibility/focus-inside-modal.html [ Skip ]
