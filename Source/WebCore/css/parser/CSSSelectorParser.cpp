@@ -209,19 +209,15 @@ MutableCSSSelectorList CSSSelectorParser::consumeNestedComplexForgivingSelectorL
     });
 }
 
-bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context, CSSParserEnum::IsNestedContext isNestedContext)
+bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context)
 {
     range.consumeWhitespace();
-    CSSSelectorParser parser(context, nullptr, isNestedContext);
+    CSSSelectorParser parser(context, nullptr);
 
     // @supports requires that all arguments parse.
     parser.m_disableForgivingParsing = true;
 
-    std::unique_ptr<MutableCSSSelector> mutableSelector;
-    if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
-        mutableSelector = parser.consumeNestedComplexSelector(range);
-    else
-        mutableSelector = parser.consumeComplexSelector(range);
+    auto mutableSelector = parser.consumeComplexSelector(range);
 
     if (parser.m_failedParsing || !range.atEnd() || !mutableSelector)
         return false;
