@@ -761,13 +761,11 @@ void WritingToolsController::respondToReappliedEditing(EditCommandComposition* c
 
 std::optional<SimpleRange> WritingToolsController::activeSessionRange() const
 {
-    auto range = WTF::switchOn(m_state,
-        [](std::monostate) -> SimpleRange { RELEASE_ASSERT_NOT_REACHED(); },
-        [](const ProofreadingState& state) { return makeSimpleRange(state.contextRange); },
-        [](const CompositionState& state) { return state.reappliedCommands.last()->currentContextRange(); }
+    return WTF::switchOn(m_state,
+        [](std::monostate) -> std::optional<SimpleRange> { return std::nullopt; },
+        [](const ProofreadingState& state) -> std::optional<SimpleRange> { return makeSimpleRange(state.contextRange); },
+        [](const CompositionState& state) -> std::optional<SimpleRange> { return state.reappliedCommands.last()->currentContextRange(); }
     );
-
-    return range;
 }
 
 template<WritingTools::Session::Type Type>
