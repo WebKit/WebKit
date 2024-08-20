@@ -244,7 +244,9 @@ TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
         auto newPreferences = adoptNS([[configuration preferences] copy]);
         WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)newPreferences.get(), false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
         [configuration setPreferences:newPreferences.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [configuration _setRelatedWebView:originalWebView.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
         [newWebView synchronouslyLoadTestPageNamed:@"simple"];

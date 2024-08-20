@@ -507,7 +507,9 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     [webView1 loadTestPageNamed:@"getUserMedia2"];
     TestWebKitAPI::Util::run(&done);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     done = false;
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
@@ -577,7 +579,9 @@ TEST(WebKit, TransferTrackBetweenSameProcessPages)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
 
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);

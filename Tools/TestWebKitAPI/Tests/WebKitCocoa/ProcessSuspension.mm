@@ -66,7 +66,9 @@ TEST(ProcessSuspension, DestroyWebPageDuringWebProcessSuspension)
 
     auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = configuration1.get().processPool;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration2.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(100, 0, 100, 100) configuration:configuration2.get() addToWindow:YES]);
     [webView2 synchronouslyLoadTestPageNamed:@"large-red-square-image"];
 

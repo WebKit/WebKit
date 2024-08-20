@@ -3197,7 +3197,9 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     configuration._corsDisablingPatterns = corsDisablingPatterns();
     configuration._crossOriginAccessControlCheckEnabled = NO;
     configuration._processDisplayName = processDisplayName();
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration._relatedWebView = relatedWebView();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     configuration._requiredWebExtensionBaseURL = baseURL();
     configuration._shouldRelaxThirdPartyCookieBlocking = YES;
 
@@ -3913,7 +3915,9 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         // The devtools_page needs to load in the Inspector's process instead of the extension's web process.
         // Force this by relating the web view to the Inspector's web view and sharing the same process pool and data store.
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         configuration._relatedWebView = inspectorWebView;
+        ALLOW_DEPRECATED_DECLARATIONS_END
         configuration._processDisplayName = inspectorWebViewConfiguration._processDisplayName;
         configuration.processPool = inspectorWebViewConfiguration.processPool;
         configuration.websiteDataStore = inspectorWebViewConfiguration.websiteDataStore;

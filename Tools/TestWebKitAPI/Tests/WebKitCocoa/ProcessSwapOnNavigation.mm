@@ -5426,7 +5426,9 @@ static void runProcessSwapDueToRelatedWebViewTest(NSURL* relatedViewURL, NSURL* 
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5473,7 +5475,9 @@ TEST(ProcessSwap, RelatedWebViewBeforeWebProcessLaunch)
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5522,7 +5526,9 @@ TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5581,7 +5587,9 @@ TEST(ProcessSwap, TerminatedSuspendedPageProcess)
     @autoreleasepool {
         auto webViewConfiguration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
         [webViewConfiguration2 setProcessPool:processPool.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [webViewConfiguration2 _setRelatedWebView:webView.get()]; // Make sure it uses the same process.
+        ALLOW_DEPRECATED_DECLARATIONS_END
         auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
         [webView2 setNavigationDelegate:delegate.get()];
 
@@ -6034,7 +6042,9 @@ TEST(ProcessSwap, ProcessSwapInRelatedView)
 
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [webView2Configuration _setRelatedWebView:webView1.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);

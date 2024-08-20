@@ -615,6 +615,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (WKWebView *)_relatedWebView
 {
+    // FIXME: Remove when rdar://134318457, rdar://134318538 and rdar://125369363 are complete.
     if (RefPtr page = _pageConfiguration->relatedPage())
         return page->cocoaView().autorelease();
     return nil;

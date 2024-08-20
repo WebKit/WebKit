@@ -41,7 +41,9 @@ TEST(WebKit, WKPageConfigurationEmpty)
     ASSERT_NOT_NULL(WKPageConfigurationGetContext(configuration.get()));
     ASSERT_NOT_NULL(WKPageConfigurationGetUserContentController(configuration.get()));
     ASSERT_NOT_NULL(WKPageConfigurationGetPreferences(configuration.get()));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     ASSERT_NULL(WKPageConfigurationGetRelatedPage(configuration.get()));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static bool didFinishLoad;

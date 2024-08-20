@@ -47,8 +47,10 @@ void PlatformWebView::initialize(WKPageConfigurationRef pageConfiguration)
         configuration.get().userContentController = (WKUserContentController *)controller;
     if (auto* dataStore = WKPageConfigurationGetWebsiteDataStore(pageConfiguration))
         configuration.get().websiteDataStore = (WKWebsiteDataStore *)dataStore;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (auto* relatedPage = WKPageConfigurationGetRelatedPage(pageConfiguration))
         configuration.get()._relatedWebView = WKPageGetWebView(relatedPage);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto* preferences = WKPageConfigurationGetPreferences(pageConfiguration))
         configuration.get().preferences = (WKPreferences *)preferences;
 
@@ -78,7 +80,9 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     
     WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto relatedConfiguration = adoptWK(WKPageCopyPageConfiguration(relatedPage));
     if (auto* preferences = WKPageConfigurationGetPreferences(relatedConfiguration.get()))

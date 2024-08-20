@@ -77,8 +77,11 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
             break;
         }
     }
-    if (shouldUseSameProcess == ShouldUseSameProcess::Yes)
+    if (shouldUseSameProcess == ShouldUseSameProcess::Yes) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         configuration2.get()._relatedWebView = webView1.get();
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration2.get()]);
     [webView2 synchronouslyLoadRequest:server.request()];
 
@@ -170,8 +173,11 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
             break;
         }
     }
-    if (shouldUseSameProcess == ShouldUseSameProcess::Yes)
+    if (shouldUseSameProcess == ShouldUseSameProcess::Yes) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         configuration2.get()._relatedWebView = webView1.get();
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    }
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration2.get()]);
     [webView2 synchronouslyLoadRequest:server.request()];
 

@@ -347,6 +347,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     _configuration = adoptNS([configuration copy]);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {
         WKProcessPool *processPool = [_configuration processPool];
         WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
@@ -357,6 +358,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
         [_configuration setProcessPool:relatedWebViewProcessPool];
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
 
@@ -454,8 +456,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration withPool:(WebKit::WebProcessPool&)pool
 {
     pageConfiguration->setPreferences([_configuration preferences]->_preferences.get());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (WKWebView *relatedWebView = [_configuration _relatedWebView])
         pageConfiguration->setRelatedPage(relatedWebView->_page.get());
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (WKWebView *webViewToCloneSessionStorageFrom = [_configuration _webViewToCloneSessionStorageFrom])
         pageConfiguration->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
 
