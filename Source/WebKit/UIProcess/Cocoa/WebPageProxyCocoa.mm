@@ -1242,7 +1242,7 @@ void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& element
 
 void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    MESSAGE_CHECK(uuid.isValid(), connection);
+    MESSAGE_CHECK_COMPLETION(uuid.isValid(), connection, completionHandler({ }));
 
     internals().textIndicatorDataForAnimationID.add(uuid, indicatorData);
 

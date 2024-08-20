@@ -37,6 +37,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page.legacyMainFrameProcess().connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_page.legacyMainFrameProcess().connection(), completion)
 
 namespace WebKit {
 
@@ -127,7 +128,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
     }
 
     if (PlatformXR::isImmersive(mode)) {
-        MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::Idle);
+        MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle, completionHandler({ }));
         setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions, [](bool) mutable { });
         m_immersiveSessionGrantedFeatures = std::nullopt;
     }
@@ -185,7 +186,7 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
 void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem);
+    MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::SessionRunning || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, completionHandler({ }));
     if (m_immersiveSessionState != ImmersiveSessionState::SessionRunning) {
         completionHandler({ });
         return;
@@ -280,17 +281,18 @@ bool PlatformXRSystem::webXREnabled() const
     return m_page.preferences().webXREnabled();
 }
 
-}
-
 #if !USE(APPLE_INTERNAL_SDK)
-namespace WebKit {
 
 PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 {
     return nullptr;
 }
 
-}
-#endif
+#endif // !USE(APPLE_INTERNAL_SDK)
+
+} // namespace WebKit
+
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(WEBXR)
