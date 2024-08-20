@@ -222,7 +222,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(const RetainPtr<NSURLRequest>& request)
 
 RetainPtr<id> CoreIPCNSURLRequest::toID() const
 {
-    auto dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:19]);
+    auto dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:43]); // Initialized with the count of members in CoreIPCNSURLRequestData
 
     SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);
@@ -310,7 +310,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
     SET_DICT_FROM_PRIMITIVE(isWebSearchContent, NSInteger, Bool);
 
     if (m_data.contentDispositionEncodingFallbackArray) {
-        auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:(*m_data.contentDispositionEncodingFallbackArray).size()]);
+        auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data.contentDispositionEncodingFallbackArray->size()]);
         for (auto& value : *m_data.contentDispositionEncodingFallbackArray)
             [array addObject:value.toID().get()];
         [dict setObject:array.get() forKey:@"contentDispositionEncodingFallbackArray"];
