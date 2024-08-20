@@ -428,6 +428,10 @@
             ]
         },
         {
+            "name": "deleteSession",
+            "description": "Closes the automation session. Deletion of browsing contexts is handled by separate previous closeBrowsingContext commands."
+        },
+        {
             "name": "switchToBrowsingContext",
             "description": "Activates the specified browsing context and optional frame, which gives them focus (causing the 'focus' DOM event to fire, and 'blur' DOM event to fire for the previous browsing context and frame).",
             "parameters": [

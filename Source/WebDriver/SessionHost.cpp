@@ -88,4 +88,11 @@ void SessionHost::dispatchMessage(const String& message)
     responseHandler(WTFMove(response));
 }
 
+#if !USE(GLIB)
+bool SessionHost::isRemoteBrowser() const
+{
+    return false;
+}
+#endif
+
 } // namespace WebDriver
