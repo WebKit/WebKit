@@ -8085,6 +8085,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         return self.setUpBuildStep()
 
     def setUpCommonProperties(self):
+        self.setProperty('buildnumber', '2345')
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -8188,7 +8189,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!) and no valid reviewer found')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no valid reviewer found, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'Commit message contains \(OOPS!\) and no valid reviewer found, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_unoffical_reviewers(self):
@@ -8214,7 +8215,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\nFailed to access https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json\n')
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'No reviewer information in commit message, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_failure_no_reviewer(self):
@@ -8224,7 +8225,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\n')
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'No reviewer information in commit message, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_failure_no_changelog(self):

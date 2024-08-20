@@ -6639,7 +6639,9 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             rc = FAILURE
 
         if rc == FAILURE:
-            self.setProperty('comment_text', f"{self.summary}, blocking PR #{self.getProperty('github.number')}")
+            build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+            url_to_show = f'[Build #{self.getProperty("buildnumber", "")}]({build_url})'
+            self.setProperty('comment_text', f"{self.summary}, blocking PR #{self.getProperty('github.number')}. Details: {url_to_show}")
             self.setProperty('build_finish_summary', 'Commit message validation failed')
             self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
         defer.returnValue(rc)
