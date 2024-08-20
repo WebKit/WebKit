@@ -65,6 +65,8 @@ public:
     void connectToBrowser(Function<void (std::optional<String> error)>&&);
     void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
 
+    bool isRemoteBrowser() const;
+
     struct CommandResponse {
         RefPtr<JSON::Object> responseObject;
         bool isError { false };

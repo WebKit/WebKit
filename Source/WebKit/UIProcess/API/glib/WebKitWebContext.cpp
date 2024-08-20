@@ -323,6 +323,7 @@ void WebKitAutomationClient::requestAutomationSession(const String& sessionIdent
 
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
+    g_signal_emit_by_name(webContext->priv->automationSession.get(), "will-close");
     webContext->priv->processPool->setAutomationSession(nullptr);
     webContext->priv->automationSession = nullptr;
 }
