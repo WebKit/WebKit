@@ -2707,7 +2707,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
                 BaselineJITRegisters::GetByVal::baseJSR.payloadGPR(),
                 BaselineJITRegisters::GetByVal::propertyJSR.payloadGPR(),
             });
-        move(TrustedImmPtr(nullptr), BaselineJITRegisters::GetByVal::profileGPR);
+        addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::GetByVal::profileGPR);
         JITGetByValGenerator gen(
             codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
             BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, resultRegs, BaselineJITRegisters::GetByVal::profileGPR, BaselineJITRegisters::GetByVal::stubInfoGPR);
@@ -2728,7 +2728,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         gen.generateDataICFastPath(*this);
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByVal::stubInfoGPR, Address(BaselineJITRegisters::GetByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByValOptimize,
-            resultRegs, BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR, nullptr);
+            resultRegs, BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, BaselineJITRegisters::GetByVal::stubInfoGPR, BaselineJITRegisters::GetByVal::profileGPR);
 
         addGetByVal(gen, slowPath.get());
         addSlowPathGenerator(WTFMove(slowPath));
@@ -5784,7 +5784,7 @@ void SpeculativeJIT::compile(Node* node)
                     BaselineJITRegisters::InByVal::baseJSR.payloadGPR(),
                     BaselineJITRegisters::InByVal::propertyJSR.payloadGPR(),
                 });
-            move(TrustedImmPtr(nullptr), BaselineJITRegisters::InByVal::profileGPR);
+            addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::InByVal::profileGPR);
             JITInByValGenerator gen(
                 codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
                 BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, resultRegs, BaselineJITRegisters::InByVal::profileGPR, BaselineJITRegisters::InByVal::stubInfoGPR);
@@ -5799,7 +5799,7 @@ void SpeculativeJIT::compile(Node* node)
             auto slowPath = slowPathICCall(
                 slowCases, this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR, Address(BaselineJITRegisters::InByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByValOptimize,
                 DontSpill, ExceptionCheckRequirement::CheckNeeded,
-                resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, nullptr);
+                resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, BaselineJITRegisters::InByVal::profileGPR);
 
             addInByVal(gen, slowPath.get());
             addSlowPathGenerator(WTFMove(slowPath));
@@ -6846,7 +6846,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
             BaselineJITRegisters::GetByValWithThis::propertyJSR.payloadGPR(),
             BaselineJITRegisters::GetByValWithThis::thisJSR.payloadGPR(),
         });
-    move(TrustedImmPtr(nullptr), BaselineJITRegisters::GetByValWithThis::profileGPR);
+    addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::GetByValWithThis::profileGPR);
     JITGetByValWithThisGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByValWithThis, usedRegisters,
         BaselineJITRegisters::GetByValWithThis::baseJSR, BaselineJITRegisters::GetByValWithThis::propertyJSR, BaselineJITRegisters::GetByValWithThis::thisJSR, resultRegs, BaselineJITRegisters::GetByValWithThis::profileGPR, BaselineJITRegisters::GetByValWithThis::stubInfoGPR);
@@ -6867,7 +6867,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
     gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, Address(BaselineJITRegisters::GetByValWithThis::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationGetByValWithThisOptimize,
-        resultRegs.payloadGPR(), BaselineJITRegisters::GetByValWithThis::baseJSR, BaselineJITRegisters::GetByValWithThis::propertyJSR, BaselineJITRegisters::GetByValWithThis::thisJSR, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, nullptr);
+        resultRegs.payloadGPR(), BaselineJITRegisters::GetByValWithThis::baseJSR, BaselineJITRegisters::GetByValWithThis::propertyJSR, BaselineJITRegisters::GetByValWithThis::thisJSR, BaselineJITRegisters::GetByValWithThis::stubInfoGPR, BaselineJITRegisters::GetByValWithThis::profileGPR);
 
     addGetByValWithThis(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
@@ -7119,7 +7119,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
             BaselineJITRegisters::InByVal::baseJSR.payloadGPR(),
             BaselineJITRegisters::InByVal::propertyJSR.payloadGPR(),
         });
-    move(TrustedImmPtr(nullptr), BaselineJITRegisters::InByVal::profileGPR);
+    addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::InByVal::profileGPR);
     JITInByValGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
         BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, resultRegs, BaselineJITRegisters::InByVal::profileGPR, BaselineJITRegisters::InByVal::stubInfoGPR);
@@ -7131,7 +7131,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::InByVal::stubInfoGPR, Address(BaselineJITRegisters::InByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByValOptimize,
         DontSpill, ExceptionCheckRequirement::CheckNeeded,
-        resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, nullptr);
+        resultRegs, BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, BaselineJITRegisters::InByVal::stubInfoGPR, BaselineJITRegisters::InByVal::profileGPR);
 
     addInByVal(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
@@ -7167,6 +7167,7 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
             BaselineJITRegisters::InByVal::baseJSR.payloadGPR(),
             BaselineJITRegisters::InByVal::propertyJSR.payloadGPR(),
         });
+    addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::InByVal::profileGPR);
     JITInByValGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, type, usedRegisters,
         BaselineJITRegisters::InByVal::baseJSR, BaselineJITRegisters::InByVal::propertyJSR, resultRegs, BaselineJITRegisters::InByVal::profileGPR, BaselineJITRegisters::InByVal::stubInfoGPR);
@@ -7285,7 +7286,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
                 BaselineJITRegisters::PutByVal::propertyJSR.payloadGPR(),
                 BaselineJITRegisters::PutByVal::valueJSR.payloadGPR(),
             });
-        move(TrustedImmPtr(nullptr), BaselineJITRegisters::PutByVal::profileGPR);
+        addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::PutByVal::profileGPR);
         JITPutByValGenerator gen(
             codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy), usedRegisters,
             BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::profileGPR, BaselineJITRegisters::PutByVal::stubInfoGPR);
@@ -7305,7 +7306,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         gen.generateDataICFastPath(*this);
         auto slowPath = slowPathICCall(
             slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
-            NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);
+            NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
         addPutByVal(gen, slowPath.get());
         addSlowPathGenerator(WTFMove(slowPath));
@@ -7444,7 +7445,7 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs baseRegs
             BaselineJITRegisters::GetByVal::baseJSR.payloadGPR(),
             BaselineJITRegisters::GetByVal::propertyJSR.payloadGPR(),
         });
-    move(TrustedImmPtr(nullptr), BaselineJITRegisters::GetByVal::profileGPR);
+    addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::GetByVal::profileGPR);
     JITGetByValGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetPrivateName, usedRegisters,
         BaselineJITRegisters::GetByVal::baseJSR, BaselineJITRegisters::GetByVal::propertyJSR, resultRegs, BaselineJITRegisters::GetByVal::profileGPR, BaselineJITRegisters::GetByVal::stubInfoGPR);
@@ -7561,7 +7562,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
             BaselineJITRegisters::PutByVal::propertyJSR.payloadGPR(),
             BaselineJITRegisters::PutByVal::valueJSR.payloadGPR(),
         });
-    move(TrustedImmPtr(nullptr), BaselineJITRegisters::PutByVal::profileGPR);
+    addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::PutByVal::profileGPR);
     JITPutByValGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, usedRegisters,
         BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::profileGPR, BaselineJITRegisters::PutByVal::stubInfoGPR);
@@ -7576,7 +7577,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     gen.generateDataICFastPath(*this);
     auto slowPath = slowPathICCall(
         slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
-        NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);
+        NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
     addPutByVal(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
@@ -8174,7 +8175,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
                     BaselineJITRegisters::PutByVal::propertyJSR.payloadGPR(),
                     BaselineJITRegisters::PutByVal::valueJSR.payloadGPR(),
                 });
-            move(TrustedImmPtr(nullptr), BaselineJITRegisters::PutByVal::profileGPR);
+            addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::PutByVal::profileGPR);
             JITPutByValGenerator gen(
                 codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, usedRegisters,
                 BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::profileGPR, BaselineJITRegisters::PutByVal::stubInfoGPR);
@@ -8194,7 +8195,7 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
             gen.generateDataICFastPath(*this);
             auto slowPath = slowPathICCall(
                 slowCases, this, stubInfoConstant, BaselineJITRegisters::PutByVal::stubInfoGPR, Address(BaselineJITRegisters::PutByVal::stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operation,
-                NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, nullptr);
+                NoResult, BaselineJITRegisters::PutByVal::baseJSR, BaselineJITRegisters::PutByVal::propertyJSR, BaselineJITRegisters::PutByVal::valueJSR, BaselineJITRegisters::PutByVal::stubInfoGPR, BaselineJITRegisters::PutByVal::profileGPR);
 
             addPutByVal(gen, slowPath.get());
             addSlowPathGenerator(WTFMove(slowPath));

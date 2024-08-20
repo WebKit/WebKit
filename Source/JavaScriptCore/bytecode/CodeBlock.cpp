@@ -1640,6 +1640,9 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         if (auto* statuses = dfgCommon->recordedStatuses.get())
             statuses->finalize(vm);
+
+        if (auto* jitData = dfgJITData())
+            jitData->finalizeUnconditionally();
     }
 #endif // ENABLE(DFG_JIT)
 

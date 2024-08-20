@@ -214,6 +214,13 @@ class ArrayProfile {
 public:
     explicit ArrayProfile() = default;
 
+    void clear()
+    {
+        m_lastSeenStructureID = { };
+        m_arrayProfileFlags = { };
+        m_observedArrayModes = { };
+    }
+
     static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
     void setMayBeLargeTypedArray() { m_arrayProfileFlags.add(ArrayProfileFlag::MayBeLargeTypedArray); }
     bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }

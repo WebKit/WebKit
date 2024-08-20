@@ -2549,11 +2549,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         if (accessCase.m_type == AccessCase::IndexedArrayStorageStore) {
             isOutOfBounds.link(&jit);
-            if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg) {
-                auto skip = jit.branchTestPtr(CCallHelpers::Zero, m_stubInfo.m_arrayProfileGPR);
+            if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg)
                 jit.or32(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ArrayProfileFlag::MayStoreHole)), CCallHelpers::Address(m_stubInfo.m_arrayProfileGPR, ArrayProfile::offsetOfArrayProfileFlags()));
-                skip.link(&jit);
-            }
             jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(scratchGPR, ArrayStorage::numValuesInVectorOffset()));
             jit.branch32(CCallHelpers::Below, scratch2GPR, CCallHelpers::Address(scratchGPR, ArrayStorage::lengthOffset())).linkTo(storeResult, &jit);
 
@@ -2564,11 +2561,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         } else {
             isOutOfBounds.link(&jit);
             failAndIgnore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, CCallHelpers::Address(scratchGPR, Butterfly::offsetOfVectorLength())));
-            if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg) {
-                auto skip = jit.branchTestPtr(CCallHelpers::Zero, m_stubInfo.m_arrayProfileGPR);
+            if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg)
                 jit.or32(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ArrayProfileFlag::MayStoreHole)), CCallHelpers::Address(m_stubInfo.m_arrayProfileGPR, ArrayProfile::offsetOfArrayProfileFlags()));
-                skip.link(&jit);
-            }
             jit.add32(CCallHelpers::TrustedImm32(1), propertyGPR, scratch2GPR);
             jit.store32(scratch2GPR, CCallHelpers::Address(scratchGPR, Butterfly::offsetOfPublicLength()));
             jit.jump().linkTo(storeResult, &jit);
