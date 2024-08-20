@@ -53,25 +53,63 @@ void lowerMacros(Code& code)
                 Kind oldKind = inst.kind;
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
+                Vector<Arg> finalDestinations;
 
                 unsigned resultCount = cCallResultCount(code, value);
                 
                 Vector<ShufflePair, 16> shufflePairs;
                 bool hasRegisterSource = false;
-                unsigned offset = 1;
-                auto addNextPair = [&](Width width) {
+                unsigned airArgsOffset = 1; // Skip the Special Arg in CCall.
+                unsigned destinationsOffset = 0;
+                auto addNextPair = [&](Type type) {
+                    Width width = cCallArgumentRegisterWidth(type);
+                    // CCall takes (special, callee, *<results>, *<args>).
+                    // Here, we're iterating over the arguments (including the
+                    // callee), so skip over the results (if any).
+                    if (airArgsOffset == 2)
+                        airArgsOffset += resultCount;
+#if USE(JSVALUE32_64)
+                    auto splitHiLo = [] (Arg& arg, Arg& hi, Arg& lo) {
+                        if (arg.isTmpPair()) {
+                            hi = arg.tmpHi();
+                            lo = arg.tmpLo();
+                        } else if (arg.isCallArg()) {
+                            hi = Air::Arg::callArg(arg.offset() + bytesForWidth(Width32));
+                            lo = arg;
+                        } else
+                            RELEASE_ASSERT_NOT_REACHED();
+                    };
+                    if (type == Int64) {
+                        Arg srcHi, srcLo, dstHi, dstLo;
+                        splitHiLo(inst.args[airArgsOffset], srcHi, srcLo);
+                        splitHiLo(destinations[destinationsOffset], dstHi, dstLo);
+                        ShufflePair pairHi(srcHi, dstHi, Width32);
+                        shufflePairs.append(pairHi);
+                        ShufflePair pairLo(srcLo, dstLo, Width32);
+                        shufflePairs.append(pairLo);
+                        hasRegisterSource |= srcHi.isReg() | srcLo.isReg();
+                        finalDestinations.append(dstHi);
+                        finalDestinations.append(dstLo);
+                        ++airArgsOffset;
+                        ++destinationsOffset;
+                        return;
+                    }
+#endif
                     // Skip the special Arg in CCall
-                    ShufflePair pair(inst.args[offset + resultCount + 1], destinations[offset], width);
+                    ShufflePair pair(inst.args[airArgsOffset], destinations[destinationsOffset], width);
                     shufflePairs.append(pair);
                     hasRegisterSource |= pair.src().isReg();
-                    ++offset;
+                    finalDestinations.append(destinations[destinationsOffset]);
+                    ++airArgsOffset;
+                    ++destinationsOffset;
                 };
-                for (unsigned i = 1; i < value->numChildren(); ++i) {
+                for (unsigned i = 0; i < value->numChildren(); ++i) {
                     Value* child = value->child(i);
                     for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++)
-                        addNextPair(cCallArgumentRegisterWidth(child->type()));
+                        addNextPair(child->type());
                 }
-                ASSERT(offset = inst.args.size());
+                ASSERT(airArgsOffset == inst.args.size());
+                ASSERT(destinationsOffset == destinations.size());
                 
                 if (UNLIKELY(hasRegisterSource))
                     insertionSet.insertInst(instIndex, createShuffle(inst.origin, Vector<ShufflePair>(shufflePairs)));
@@ -98,13 +136,13 @@ void lowerMacros(Code& code)
                 }
 
                 // Indicate that we're using our original callee argument.
-                destinations[0] = inst.args[1];
+                finalDestinations[0] = inst.args[1];
 
                 // Save where the original instruction put its result.
                 Arg resultDst0 = resultCount >= 1 ? inst.args[2] : Arg();
                 Arg resultDst1 = resultCount >= 2 ? inst.args[3] : Arg();
 
-                inst = buildCCall(code, inst.origin, destinations);
+                inst = buildCCall(code, inst.origin, finalDestinations);
                 if (oldKind.effects)
                     inst.kind.effects = true;
 
@@ -124,12 +162,17 @@ void lowerMacros(Code& code)
                 case Int32:
                     insertionSet.insert(instIndex + 1, Move32, value, cCallResult(code, value, 0), resultDst0);
                     break;
-                case Int64:
-                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 0), resultDst0);
+                case Int64: {
 #if USE(JSVALUE32_64)
-                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 1), resultDst1);
+                    Arg result = cCallResult(code, value, 0);
+                    ASSERT(result.isTmpPair() && resultDst0.isTmpPair());
+                    insertionSet.insert(instIndex + 1, Move, value, result.tmpHi(), resultDst0.tmpHi());
+                    insertionSet.insert(instIndex + 1, Move, value, result.tmpLo(), resultDst0.tmpLo());
+#else
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 0), resultDst0);
 #endif
                     break;
+                }
                 case V128:
                     ASSERT(is64Bit());
                     insertionSet.insert(instIndex + 1, MoveVector, value, cCallResult(code, value, 0), resultDst0);
