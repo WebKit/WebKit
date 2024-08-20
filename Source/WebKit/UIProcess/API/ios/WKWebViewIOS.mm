@@ -1139,7 +1139,8 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    [self _updateOverlayRegions:layerTreeTransaction.changedLayerProperties() destroyedLayers:layerTreeTransaction.destroyedLayers()];
+    if ([_configuration _overlayRegionsEnabled])
+        [self _updateOverlayRegions:layerTreeTransaction.changedLayerProperties() destroyedLayers:layerTreeTransaction.destroyedLayers()];
 #endif
 }
 
@@ -1363,6 +1364,9 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
 
 - (void)_updateOverlayRegionsForCustomContentView
 {
+    if (![_configuration _overlayRegionsEnabled])
+        return;
+
     if (![self _scrollViewCanHaveOverlayRegions:_scrollView.get()]) {
         [_scrollView _updateOverlayRegionsBehavior:NO];
         return;

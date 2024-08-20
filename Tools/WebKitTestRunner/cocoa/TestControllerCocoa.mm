@@ -175,6 +175,10 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
         [configuration _setAllowTopNavigationToDataURLs:YES];
         [configuration _setApplePayEnabled:YES];
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+        [configuration _setOverlayRegionsEnabled:YES];
+#endif
+
         globalWebsiteDataStoreDelegateClient() = adoptNS([[TestWebsiteDataStoreDelegate alloc] init]);
         [[configuration websiteDataStore] set_delegate:globalWebsiteDataStoreDelegateClient().get()];
 
