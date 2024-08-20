@@ -329,7 +329,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintInfo.context().save();
         FloatRoundedRect roundedInnerRect = FloatRoundedRect(style().getRoundedInnerBorderFor(borderRect,
             paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true));
-        BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
+        BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), roundedInnerRect);
     }
 
     if (m_widget && !isSkippedContentRoot())

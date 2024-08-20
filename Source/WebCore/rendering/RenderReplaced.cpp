@@ -286,7 +286,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             paintInfo.context().save();
             auto pixelSnappedRoundedRect = style().getRoundedInnerBorderFor(paintRect,
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
-            BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
+            BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), pixelSnappedRoundedRect);
         }
     }
 

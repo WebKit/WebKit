@@ -178,8 +178,8 @@ bool RoundedRect::isRenderable() const
 
 void RoundedRect::adjustRadii()
 {
-    int maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
-    int maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
+    auto maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
+    auto maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
 
     if (maxRadiusWidth <= 0 || maxRadiusHeight <= 0) {
         m_radii.scale(0.0f);
