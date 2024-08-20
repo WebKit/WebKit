@@ -68,6 +68,9 @@ public:
 
     void connectToService(WaitForServiceToExist);
 
+    String bundleIdentifier() const { return m_bundleIdentifier; }
+    String pushPartition() const { return m_pushPartition; }
+
     void sendPushMessage(PushMessageForTesting&&, CompletionHandler<void(String)>&&);
     void getPushPermissionState(const String& scope, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(const String& scope, CompletionHandler<void(bool)>&&);
