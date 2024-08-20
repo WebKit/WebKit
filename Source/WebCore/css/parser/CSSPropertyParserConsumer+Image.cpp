@@ -75,11 +75,11 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTo
 {
     if (range.peek().type() == IdentToken) {
         if ((axis == DeprecatedGradientPointAxis::Horizontal && consumeIdent<CSSValueLeft>(range)) || (axis == DeprecatedGradientPointAxis::Vertical && consumeIdent<CSSValueTop>(range)))
-            return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(0, CSSUnitType::Percentage);
         if ((axis == DeprecatedGradientPointAxis::Horizontal && consumeIdent<CSSValueRight>(range)) || (axis == DeprecatedGradientPointAxis::Vertical && consumeIdent<CSSValueBottom>(range)))
-            return CSSPrimitiveValue::create(100, CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(100, CSSUnitType::Percentage);
         if (consumeIdent<CSSValueCenter>(range))
-            return CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(50, CSSUnitType::Percentage);
         return nullptr;
     }
     RefPtr<CSSPrimitiveValue> result = consumePercent(range);

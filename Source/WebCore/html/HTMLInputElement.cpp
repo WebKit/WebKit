@@ -2274,7 +2274,7 @@ static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
     return StyleGradientImage::create(
         StyleGradientImage::LinearData {
             {
-                AngleRaw { CSSUnitType::CSS_DEG, 90 }
+                AngleRaw { CSSUnitType::Degree, 90 }
             },
             CSSGradientRepeat::NonRepeating,
             {

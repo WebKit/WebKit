@@ -46,34 +46,34 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
         return CSS_UNKNOWN;
 
     switch (primitiveValue->primitiveType()) {
-    case CSSUnitType::CSS_ATTR:                         return CSS_ATTR;
-    case CSSUnitType::CSS_CM:                           return CSS_CM;
-    case CSSUnitType::CSS_DEG:                          return CSS_DEG;
-    case CSSUnitType::CSS_DIMENSION:                    return CSS_DIMENSION;
-    case CSSUnitType::CSS_EM:                           return CSS_EMS;
-    case CSSUnitType::CSS_EX:                           return CSS_EXS;
-    case CSSUnitType::CSS_FONT_FAMILY:                  return CSS_STRING;
-    case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
-    case CSSUnitType::CSS_HZ:                           return CSS_HZ;
-    case CSSUnitType::CSS_IDENT:                        return CSS_IDENT;
-    case CSSUnitType::CSS_INTEGER:                      return CSS_NUMBER;
+    case CSSUnitType::Attribute:                         return CSS_ATTR;
+    case CSSUnitType::Centimeter:                           return CSS_CM;
+    case CSSUnitType::Degree:                          return CSS_DEG;
+    case CSSUnitType::Dimension:                    return CSS_DIMENSION;
+    case CSSUnitType::Em:                           return CSS_EMS;
+    case CSSUnitType::Ex:                           return CSS_EXS;
+    case CSSUnitType::FontFamily:                  return CSS_STRING;
+    case CSSUnitType::Gradian:                         return CSS_GRAD;
+    case CSSUnitType::Hertz:                           return CSS_HZ;
+    case CSSUnitType::Ident:                        return CSS_IDENT;
+    case CSSUnitType::Integer:                      return CSS_NUMBER;
     case CSSUnitType::CustomIdent:                      return CSS_IDENT;
-    case CSSUnitType::CSS_IN:                           return CSS_IN;
-    case CSSUnitType::CSS_KHZ:                          return CSS_KHZ;
-    case CSSUnitType::CSS_MM:                           return CSS_MM;
-    case CSSUnitType::CSS_MS:                           return CSS_MS;
-    case CSSUnitType::CSS_NUMBER:                       return CSS_NUMBER;
-    case CSSUnitType::CSS_PC:                           return CSS_PC;
-    case CSSUnitType::CSS_PERCENTAGE:                   return CSS_PERCENTAGE;
-    case CSSUnitType::CSS_PROPERTY_ID:                  return CSS_IDENT;
-    case CSSUnitType::CSS_PT:                           return CSS_PT;
-    case CSSUnitType::CSS_PX:                           return CSS_PX;
-    case CSSUnitType::CSS_RAD:                          return CSS_RAD;
-    case CSSUnitType::CSS_RGBCOLOR:                     return CSS_RGBCOLOR;
-    case CSSUnitType::CSS_S:                            return CSS_S;
-    case CSSUnitType::CSS_STRING:                       return CSS_STRING;
-    case CSSUnitType::CSS_URI:                          return CSS_URI;
-    case CSSUnitType::CSS_VALUE_ID:                     return CSS_IDENT;
+    case CSSUnitType::Inch:                           return CSS_IN;
+    case CSSUnitType::Kilohertz:                          return CSS_KHZ;
+    case CSSUnitType::Millimeter:                           return CSS_MM;
+    case CSSUnitType::Millisecond:                           return CSS_MS;
+    case CSSUnitType::Number:                       return CSS_NUMBER;
+    case CSSUnitType::Pica:                           return CSS_PC;
+    case CSSUnitType::Percentage:                   return CSS_PERCENTAGE;
+    case CSSUnitType::PropertyID:                  return CSS_IDENT;
+    case CSSUnitType::Point:                           return CSS_PT;
+    case CSSUnitType::Pixel:                           return CSS_PX;
+    case CSSUnitType::Radian:                          return CSS_RAD;
+    case CSSUnitType::RgbColor:                     return CSS_RGBCOLOR;
+    case CSSUnitType::Second:                            return CSS_S;
+    case CSSUnitType::String:                       return CSS_STRING;
+    case CSSUnitType::Uri:                          return CSS_URI;
+    case CSSUnitType::ValueID:                     return CSS_IDENT;
 
     // All other, including newer types, should return UNKNOWN.
     default:                                            return CSS_UNKNOWN;
@@ -84,24 +84,24 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
 {
     auto numericType = [&]() -> std::optional<CSSUnitType> {
         switch (unitType) {
-        case CSS_CM:            return CSSUnitType::CSS_CM;
-        case CSS_DEG:           return CSSUnitType::CSS_DEG;
-        case CSS_DIMENSION:     return CSSUnitType::CSS_DIMENSION;
-        case CSS_EMS:           return CSSUnitType::CSS_EM;
-        case CSS_EXS:           return CSSUnitType::CSS_EX;
-        case CSS_GRAD:          return CSSUnitType::CSS_GRAD;
-        case CSS_HZ:            return CSSUnitType::CSS_HZ;
-        case CSS_IN:            return CSSUnitType::CSS_IN;
-        case CSS_KHZ:           return CSSUnitType::CSS_KHZ;
-        case CSS_MM:            return CSSUnitType::CSS_MM;
-        case CSS_MS:            return CSSUnitType::CSS_MS;
-        case CSS_NUMBER:        return CSSUnitType::CSS_NUMBER;
-        case CSS_PC:            return CSSUnitType::CSS_PC;
-        case CSS_PERCENTAGE:    return CSSUnitType::CSS_PERCENTAGE;
-        case CSS_PT:            return CSSUnitType::CSS_PT;
-        case CSS_PX:            return CSSUnitType::CSS_PX;
-        case CSS_RAD:           return CSSUnitType::CSS_RAD;
-        case CSS_S:             return CSSUnitType::CSS_S;
+        case CSS_CM:            return CSSUnitType::Centimeter;
+        case CSS_DEG:           return CSSUnitType::Degree;
+        case CSS_DIMENSION:     return CSSUnitType::Dimension;
+        case CSS_EMS:           return CSSUnitType::Em;
+        case CSS_EXS:           return CSSUnitType::Ex;
+        case CSS_GRAD:          return CSSUnitType::Gradian;
+        case CSS_HZ:            return CSSUnitType::Hertz;
+        case CSS_IN:            return CSSUnitType::Inch;
+        case CSS_KHZ:           return CSSUnitType::Kilohertz;
+        case CSS_MM:            return CSSUnitType::Millimeter;
+        case CSS_MS:            return CSSUnitType::Millisecond;
+        case CSS_NUMBER:        return CSSUnitType::Number;
+        case CSS_PC:            return CSSUnitType::Pica;
+        case CSS_PERCENTAGE:    return CSSUnitType::Percentage;
+        case CSS_PT:            return CSSUnitType::Point;
+        case CSS_PX:            return CSSUnitType::Pixel;
+        case CSS_RAD:           return CSSUnitType::Radian;
+        case CSS_S:             return CSSUnitType::Second;
         default:                return std::nullopt;
         }
     }();

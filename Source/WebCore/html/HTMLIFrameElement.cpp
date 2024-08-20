@@ -109,7 +109,7 @@ void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedNa
         // a presentational hint that the border should be off if set to zero.
         if (!parseHTMLInteger(value).value_or(0)) {
             // Add a rule that nulls out our border width.
-            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::Pixel);
         }
         break;
     default:

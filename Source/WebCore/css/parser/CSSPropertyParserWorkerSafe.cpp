@@ -317,7 +317,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyleAngle(CSSParserTokenRange& rang
     RefPtr angle = CSSPropertyParserHelpers::consumeAngle(rangeAfterAngle, mode);
     if (!angle)
         return nullptr;
-    if (!angle->isCalculated() && !CSSPropertyParserHelpers::isFontStyleAngleInRange(angle->doubleValue(CSSUnitType::CSS_DEG)))
+    if (!angle->isCalculated() && !CSSPropertyParserHelpers::isFontStyleAngleInRange(angle->doubleValue(CSSUnitType::Degree)))
         return nullptr;
     range = rangeAfterAngle;
     return angle;

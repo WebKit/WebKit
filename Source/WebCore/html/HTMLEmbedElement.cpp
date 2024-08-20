@@ -83,8 +83,8 @@ void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedNam
 {
     if (name == hiddenAttr) {
         ASSERT(!value.isNull());
-        addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
-        addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, 0, CSSUnitType::CSS_PX);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::Pixel);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, 0, CSSUnitType::Pixel);
     } else
         HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }

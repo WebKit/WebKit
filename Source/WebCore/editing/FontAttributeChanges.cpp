@@ -81,10 +81,10 @@ Ref<MutableStyleProperties> FontChanges::createStyleProperties() const
         style->setProperty(CSSPropertyFontWeight, *m_bold ? CSSValueBold : CSSValueNormal);
 
     if (m_fontSize)
-        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(*m_fontSize, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(*m_fontSize, CSSUnitType::Pixel));
 
     if (m_fontSizeDelta)
-        style->setProperty(CSSPropertyWebkitFontSizeDelta, CSSPrimitiveValue::create(*m_fontSizeDelta, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyWebkitFontSizeDelta, CSSPrimitiveValue::create(*m_fontSizeDelta, CSSUnitType::Pixel));
 
     return style;
 }
@@ -94,9 +94,9 @@ static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
     if (shadow.offset.isZero() && !shadow.blurRadius)
         return nullptr;
 
-    auto width = CSSPrimitiveValue::create(shadow.offset.width(), CSSUnitType::CSS_PX);
-    auto height = CSSPrimitiveValue::create(shadow.offset.height(), CSSUnitType::CSS_PX);
-    auto blurRadius = CSSPrimitiveValue::create(shadow.blurRadius, CSSUnitType::CSS_PX);
+    auto width = CSSPrimitiveValue::create(shadow.offset.width(), CSSUnitType::Pixel);
+    auto height = CSSPrimitiveValue::create(shadow.offset.height(), CSSUnitType::Pixel);
+    auto blurRadius = CSSPrimitiveValue::create(shadow.blurRadius, CSSUnitType::Pixel);
     auto color = CSSValuePool::singleton().createColorValue(shadow.color);
     return CSSValueList::createCommaSeparated(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
 }

@@ -48,9 +48,9 @@ StaticCSSValuePool::StaticCSSValuePool()
         m_identifierValues[enumToUnderlyingType(keyword)].construct(CSSValue::StaticCSSValue, keyword);
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
-        m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        m_percentValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
-        m_numberValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
+        m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::Pixel);
+        m_percentValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::Percentage);
+        m_numberValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::Number);
     }
 }
 

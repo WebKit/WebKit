@@ -160,7 +160,7 @@ void VTTCueBox::applyCSSPropertiesWithRegion()
 
     // the 'left' property must be set to left
     std::visit(WTF::makeVisitor([&] (double left) {
-        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::Percentage);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
@@ -211,14 +211,14 @@ void VTTCueBox::applyCSSProperties()
 
     // the 'top' property must be set to top
     std::visit(WTF::makeVisitor([&] (double top) {
-        setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_CQH);
+        setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::ContainerQueryHeight);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyTop, CSSValueAuto);
     }), cue->top());
 
     // the 'left' property must be set to left
     std::visit(WTF::makeVisitor([&] (double left) {
-        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_CQW);
+        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::ContainerQueryWidth);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
@@ -231,14 +231,14 @@ void VTTCueBox::applyCSSProperties()
 
     // the 'width' property must be set to width
     std::visit(WTF::makeVisitor([&] (double width) {
-        setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::CSS_CQW);
+        setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::ContainerQueryWidth);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
     }), cue->width());
 
     // the 'height' property must be set to height
     std::visit(WTF::makeVisitor([&] (double height) {
-        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_CQH);
+        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::ContainerQueryHeight);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     }), cue->height());
@@ -256,7 +256,7 @@ void VTTCueBox::applyCSSProperties()
     // The font shorthand property on the (root) list of WebVTT Node Objects
     // must be set to 5vh sans-serif. [CSS-VALUES]
     // NOTE: We use 'cqh' rather than 'vh' as the video element is not a proper viewport.
-    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::CSS_CQMIN, cue->fontSizeIsImportant() ? IsImportant::Yes : IsImportant::No);
+    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::ContainerQueryMinimum, cue->fontSizeIsImportant() ? IsImportant::Yes : IsImportant::No);
 
     if (!cue->snapToLines()) {
         setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);

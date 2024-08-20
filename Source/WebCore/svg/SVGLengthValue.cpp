@@ -102,27 +102,27 @@ template<typename CharacterType> static inline SVGLengthType parseLengthType(Str
 static inline SVGLengthType primitiveTypeToLengthType(CSSUnitType primitiveType)
 {
     switch (primitiveType) {
-    case CSSUnitType::CSS_UNKNOWN:
+    case CSSUnitType::Unknown:
         return SVGLengthType::Unknown;
-    case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::Number:
         return SVGLengthType::Number;
-    case CSSUnitType::CSS_PERCENTAGE:
+    case CSSUnitType::Percentage:
         return SVGLengthType::Percentage;
-    case CSSUnitType::CSS_EM:
+    case CSSUnitType::Em:
         return SVGLengthType::Ems;
-    case CSSUnitType::CSS_EX:
+    case CSSUnitType::Ex:
         return SVGLengthType::Exs;
-    case CSSUnitType::CSS_PX:
+    case CSSUnitType::Pixel:
         return SVGLengthType::Pixels;
-    case CSSUnitType::CSS_CM:
+    case CSSUnitType::Centimeter:
         return SVGLengthType::Centimeters;
-    case CSSUnitType::CSS_MM:
+    case CSSUnitType::Millimeter:
         return SVGLengthType::Millimeters;
-    case CSSUnitType::CSS_IN:
+    case CSSUnitType::Inch:
         return SVGLengthType::Inches;
-    case CSSUnitType::CSS_PT:
+    case CSSUnitType::Point:
         return SVGLengthType::Points;
-    case CSSUnitType::CSS_PC:
+    case CSSUnitType::Pica:
         return SVGLengthType::Picas;
     default:
         return SVGLengthType::Unknown;
@@ -135,31 +135,31 @@ static inline CSSUnitType lengthTypeToPrimitiveType(SVGLengthType lengthType)
 {
     switch (lengthType) {
     case SVGLengthType::Unknown:
-        return CSSUnitType::CSS_UNKNOWN;
+        return CSSUnitType::Unknown;
     case SVGLengthType::Number:
-        return CSSUnitType::CSS_NUMBER;
+        return CSSUnitType::Number;
     case SVGLengthType::Percentage:
-        return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::Percentage;
     case SVGLengthType::Ems:
-        return CSSUnitType::CSS_EM;
+        return CSSUnitType::Em;
     case SVGLengthType::Exs:
-        return CSSUnitType::CSS_EX;
+        return CSSUnitType::Ex;
     case SVGLengthType::Pixels:
-        return CSSUnitType::CSS_PX;
+        return CSSUnitType::Pixel;
     case SVGLengthType::Centimeters:
-        return CSSUnitType::CSS_CM;
+        return CSSUnitType::Centimeter;
     case SVGLengthType::Millimeters:
-        return CSSUnitType::CSS_MM;
+        return CSSUnitType::Millimeter;
     case SVGLengthType::Inches:
-        return CSSUnitType::CSS_IN;
+        return CSSUnitType::Inch;
     case SVGLengthType::Points:
-        return CSSUnitType::CSS_PT;
+        return CSSUnitType::Point;
     case SVGLengthType::Picas:
-        return CSSUnitType::CSS_PC;
+        return CSSUnitType::Pica;
     }
 
     ASSERT_NOT_REACHED();
-    return CSSUnitType::CSS_UNKNOWN;
+    return CSSUnitType::Unknown;
 }
 
 SVGLengthValue::SVGLengthValue(SVGLengthMode lengthMode, const String& valueAsString)
@@ -241,7 +241,7 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
 SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value, const CSSToLengthConversionData& conversionData, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
     auto primitiveType = value.primitiveType();
-    if (primitiveType == CSSUnitType::CSS_NUMBER && shouldConvertNumberToPxLength == ShouldConvertNumberToPxLength::Yes)
+    if (primitiveType == CSSUnitType::Number && shouldConvertNumberToPxLength == ShouldConvertNumberToPxLength::Yes)
         return { value.floatValue(), SVGLengthType::Pixels };
 
     auto lengthType = primitiveTypeToLengthType(primitiveType);
@@ -265,7 +265,7 @@ Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const Element* elemen
         SVGLengthContext context { svgElement.get() };
         auto computedValue = context.convertValueToUserUnits(valueInSpecifiedUnits(), lengthType(), lengthMode());
         if (!computedValue.hasException())
-            return CSSPrimitiveValue::create(computedValue.releaseReturnValue(), CSSUnitType::CSS_PX);
+            return CSSPrimitiveValue::create(computedValue.releaseReturnValue(), CSSUnitType::Pixel);
     }
 
     return CSSPrimitiveValue::create(valueInSpecifiedUnits(), lengthTypeToPrimitiveType(lengthType()));

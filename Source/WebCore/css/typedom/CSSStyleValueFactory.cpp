@@ -186,93 +186,93 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             return static_reference_cast<CSSStyleValue>(result.releaseReturnValue());
         }
         switch (primitiveValue->primitiveType()) {
-        case CSSUnitType::CSS_NUMBER:
-        case CSSUnitType::CSS_INTEGER:
+        case CSSUnitType::Number:
+        case CSSUnitType::Integer:
             return Ref<CSSStyleValue> { CSSNumericFactory::number(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_PERCENTAGE:
+        case CSSUnitType::Percentage:
             return Ref<CSSStyleValue> { CSSNumericFactory::percent(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_EM:
+        case CSSUnitType::Em:
             return Ref<CSSStyleValue> { CSSNumericFactory::em(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_REM:
+        case CSSUnitType::RootEm:
             return Ref<CSSStyleValue> { CSSNumericFactory::rem(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_EX:
+        case CSSUnitType::Ex:
             return Ref<CSSStyleValue> { CSSNumericFactory::ex(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CAP:
+        case CSSUnitType::CapHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::cap(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RCAP:
+        case CSSUnitType::RootCapHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::rcap(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CH:
+        case CSSUnitType::CharacterWidth:
             return Ref<CSSStyleValue> { CSSNumericFactory::ch(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RCH:
+        case CSSUnitType::RootCharacterWidth:
             return Ref<CSSStyleValue> { CSSNumericFactory::rch(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_IC:
+        case CSSUnitType::IdeographicCharacter:
             return Ref<CSSStyleValue> { CSSNumericFactory::ic(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RIC:
+        case CSSUnitType::RootIdeographicCharacter:
             return Ref<CSSStyleValue> { CSSNumericFactory::ric(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_LH:
+        case CSSUnitType::LineHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::lh(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RLH:
+        case CSSUnitType::RootLineHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::rlh(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_VW:
+        case CSSUnitType::ViewportWidth:
             return Ref<CSSStyleValue> { CSSNumericFactory::vw(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_VH:
+        case CSSUnitType::ViewportHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::vh(primitiveValue->doubleValue()) };
         // FIXME: Add CSSNumericFactory::vi & ::vb
-        case CSSUnitType::CSS_VMIN:
+        case CSSUnitType::ViewportMinimum:
             return Ref<CSSStyleValue> { CSSNumericFactory::vmin(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_VMAX:
+        case CSSUnitType::ViewportMaximum:
             return Ref<CSSStyleValue> { CSSNumericFactory::vmax(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CM:
+        case CSSUnitType::Centimeter:
             return Ref<CSSStyleValue> { CSSNumericFactory::cm(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_MM:
+        case CSSUnitType::Millimeter:
             return Ref<CSSStyleValue> { CSSNumericFactory::mm(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_Q:
+        case CSSUnitType::Quarter:
             return Ref<CSSStyleValue> { CSSNumericFactory::q(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_IN:
+        case CSSUnitType::Inch:
             return Ref<CSSStyleValue> { CSSNumericFactory::in(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_PT:
+        case CSSUnitType::Point:
             return Ref<CSSStyleValue> { CSSNumericFactory::pt(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_PC:
+        case CSSUnitType::Pica:
             return Ref<CSSStyleValue> { CSSNumericFactory::pc(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_PX:
+        case CSSUnitType::Pixel:
             return Ref<CSSStyleValue> { CSSNumericFactory::px(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::Degree:
             return Ref<CSSStyleValue> { CSSNumericFactory::deg(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::Gradian:
             return Ref<CSSStyleValue> { CSSNumericFactory::grad(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::Radian:
             return Ref<CSSStyleValue> { CSSNumericFactory::rad(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_TURN:
+        case CSSUnitType::Turn:
             return Ref<CSSStyleValue> { CSSNumericFactory::turn(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_S:
+        case CSSUnitType::Second:
             return Ref<CSSStyleValue> { CSSNumericFactory::s(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_MS:
+        case CSSUnitType::Millisecond:
             return Ref<CSSStyleValue> { CSSNumericFactory::ms(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_HZ:
+        case CSSUnitType::Hertz:
             return Ref<CSSStyleValue> { CSSNumericFactory::hz(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_KHZ:
+        case CSSUnitType::Kilohertz:
             return Ref<CSSStyleValue> { CSSNumericFactory::kHz(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::DotsPerInch:
             return Ref<CSSStyleValue> { CSSNumericFactory::dpi(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_DPCM:
+        case CSSUnitType::DotsPerCentimeter:
             return Ref<CSSStyleValue> { CSSNumericFactory::dpcm(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::DotsPerPixel:
             return Ref<CSSStyleValue> { CSSNumericFactory::dppx(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_FR:
+        case CSSUnitType::Fraction:
             return Ref<CSSStyleValue> { CSSNumericFactory::fr(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQW:
+        case CSSUnitType::ContainerQueryWidth:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqw(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQH:
+        case CSSUnitType::ContainerQueryHeight:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqh(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQI:
+        case CSSUnitType::ContainerQueryInline:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqi(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQB:
+        case CSSUnitType::ContainerQueryBlock:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqb(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQMIN:
+        case CSSUnitType::ContainerQueryMinimum:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmin(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CQMAX:
+        case CSSUnitType::ContainerQueryMaximum:
             return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_IDENT:
+        case CSSUnitType::Ident:
             // Per the specification, the CSSKeywordValue's value slot should be set to the serialization
             // of the identifier. As a result, the identifier will be lowercase:
             // https://drafts.css-houdini.org/css-typed-om-1/#reify-ident
@@ -332,9 +332,9 @@ RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForCustomProperty
 {
     return WTF::switchOn(syntaxValue, [&](const Length& length) -> RefPtr<CSSStyleValue> {
         if (length.isFixed())
-            return CSSUnitValue::create(length.value(), CSSUnitType::CSS_PX);
+            return CSSUnitValue::create(length.value(), CSSUnitType::Pixel);
         if (length.isPercent())
-            return CSSUnitValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+            return CSSUnitValue::create(length.percent(), CSSUnitType::Percentage);
         // FIXME: Calc.
         return nullptr;
     }, [&](const CSSCustomPropertyValue::NumericSyntaxValue& numericValue) -> RefPtr<CSSStyleValue>  {

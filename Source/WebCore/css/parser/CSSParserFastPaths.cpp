@@ -120,10 +120,10 @@ static inline bool parseSimpleLength(std::span<const CharacterType> characters, 
 {
     if (characters.size() > 2 && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'p') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'x')) {
         characters = characters.first(characters.size() - 2);
-        unit = CSSUnitType::CSS_PX;
+        unit = CSSUnitType::Pixel;
     } else if (!characters.empty() && characters.back() == '%') {
         characters = characters.first(characters.size() - 1);
-        unit = CSSUnitType::CSS_PERCENTAGE;
+        unit = CSSUnitType::Percentage;
     }
 
     auto parsedNumber = parseCSSNumber(characters);
@@ -140,17 +140,17 @@ static inline bool parseSimpleAngle(std::span<const CharacterType> characters, R
     if (characters.size() >= 4) {
         if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'd') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'e') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'g')) {
             characters = characters.first(characters.size() - 3);
-            unit = CSSUnitType::CSS_DEG;
+            unit = CSSUnitType::Degree;
         } else if (isASCIIAlphaCaselessEqual(characters[characters.size() - 3], 'r') && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'a') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'd')) {
             characters = characters.first(characters.size() - 3);
-            unit = CSSUnitType::CSS_RAD;
+            unit = CSSUnitType::Radian;
         } else if (requireUnits == RequireUnits::Yes)
             return false;
     } else {
         if (requireUnits == RequireUnits::Yes || !characters.size())
             return false;
 
-        unit = CSSUnitType::CSS_DEG;
+        unit = CSSUnitType::Degree;
     }
 
     auto parsedNumber = parseCSSNumber(characters);
@@ -161,10 +161,10 @@ static inline bool parseSimpleAngle(std::span<const CharacterType> characters, R
 template <typename CharacterType>
 static inline bool parseSimpleNumberOrPercentage(std::span<const CharacterType> characters, ValueRange valueRange, CSSUnitType& unit, double& number)
 {
-    unit = CSSUnitType::CSS_NUMBER;
+    unit = CSSUnitType::Number;
     if (!characters.empty() && characters.back() == '%') {
         characters = characters.first(characters.size() - 1);
-        unit = CSSUnitType::CSS_PERCENTAGE;
+        unit = CSSUnitType::Percentage;
     }
 
     auto parsedNumber = parseCSSNumber(characters);
@@ -186,7 +186,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
     ASSERT(!string.isEmpty());
 
     double number;
-    auto unit = CSSUnitType::CSS_NUMBER;
+    auto unit = CSSUnitType::Number;
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.span8(), unit, number))
@@ -196,10 +196,10 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
             return nullptr;
     }
 
-    if (unit == CSSUnitType::CSS_NUMBER) {
+    if (unit == CSSUnitType::Number) {
         if (number && cssParserMode != SVGAttributeMode)
             return nullptr;
-        unit = CSSUnitType::CSS_PX;
+        unit = CSSUnitType::Pixel;
     }
 
     if (number < 0 && valueRange == ValueRange::NonNegative)
@@ -314,7 +314,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
     if (current.empty())
         return std::nullopt;
 
-    if (expectedUnitType == CSSUnitType::CSS_NUMBER && (current.front() == '.' || current.front() == '%'))
+    if (expectedUnitType == CSSUnitType::Number && (current.front() == '.' || current.front() == '%'))
         return std::nullopt;
 
     if (current.front() == '.') {
@@ -330,18 +330,18 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
         localValue += percentage;
     }
 
-    if (expectedUnitType == CSSUnitType::CSS_PERCENTAGE && current.front() != '%')
+    if (expectedUnitType == CSSUnitType::Percentage && current.front() != '%')
         return std::nullopt;
 
     if (current.front() == '%') {
-        expectedUnitType = CSSUnitType::CSS_PERCENTAGE;
+        expectedUnitType = CSSUnitType::Percentage;
         localValue = localValue / 100.0 * 255.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
         current = current.subspan(1);
     } else
-        expectedUnitType = CSSUnitType::CSS_NUMBER;
+        expectedUnitType = CSSUnitType::Number;
 
     while (!current.empty() && isASCIIWhitespace<CharacterType>(current.front()))
         current = current.subspan(1);
@@ -551,7 +551,7 @@ template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseLegac
 
     double hue;
     auto angleChars = characters.first(delimiter);
-    auto angleUnit = CSSUnitType::CSS_DEG;
+    auto angleUnit = CSSUnitType::Degree;
     if (!parseSimpleAngle(angleChars, RequireUnits::No, angleUnit, hue))
         return std::nullopt;
 
@@ -625,7 +625,7 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
 
     // FIXME: rgb() and rgba() are now synonyms, so we should collapse these two clauses together. webkit.org/b/276761
     if (mightBeRGBA(characters)) {
-        auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
+        auto expectedUnitType = CSSUnitType::Unknown;
 
         auto current = characters.subspan(5);
         auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
@@ -646,7 +646,7 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
     }
 
     if (mightBeRGB(characters)) {
-        auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
+        auto expectedUnitType = CSSUnitType::Unknown;
 
         auto current = characters.subspan(4);
         auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
@@ -809,13 +809,13 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
-        CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+        CSSUnitType unit = CSSUnitType::Number;
         double number;
         if (!parseSimpleLength(std::span<const CharType> { pos, argumentLength }, unit, number))
             return false;
-        if (!number && unit == CSSUnitType::CSS_NUMBER)
-            unit = CSSUnitType::CSS_PX;
-        if (unit == CSSUnitType::CSS_NUMBER || (unit == CSSUnitType::CSS_PERCENTAGE && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
+        if (!number && unit == CSSUnitType::Number)
+            unit = CSSUnitType::Pixel;
+        if (unit == CSSUnitType::Number || (unit == CSSUnitType::Percentage && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
             return false;
         arguments.append(CSSPrimitiveValue::create(number, unit));
         pos += argumentLength + 1;
@@ -832,13 +832,13 @@ static RefPtr<CSSValue> parseTransformAngleArgument(CharType*& pos, CharType* en
         return nullptr;
 
     unsigned argumentLength = static_cast<unsigned>(delimiter);
-    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+    CSSUnitType unit = CSSUnitType::Number;
     double number;
     if (!parseSimpleAngle(std::span<const CharType> { pos, argumentLength }, RequireUnits::Yes, unit, number))
         return nullptr;
 
-    if (!number && unit == CSSUnitType::CSS_NUMBER)
-        unit = CSSUnitType::CSS_DEG;
+    if (!number && unit == CSSUnitType::Number)
+        unit = CSSUnitType::Degree;
 
     pos += argumentLength + 1;
 
@@ -856,7 +856,7 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
         auto number = parseCSSNumber(std::span<const CharType> { pos, argumentLength });
         if (!number)
             return false;
-        arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::CSS_NUMBER));
+        arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::Number));
         pos += argumentLength + 1;
         --expectedCount;
     }
@@ -1048,7 +1048,7 @@ static RefPtr<CSSValue> parseDisplay(StringView string)
 static RefPtr<CSSValue> parseOpacity(StringView string)
 {
     double number;
-    auto unit = CSSUnitType::CSS_NUMBER;
+    auto unit = CSSUnitType::Number;
 
     if (string.is8Bit()) {
         if (!parseSimpleNumberOrPercentage(string.span8(), ValueRange::NonNegative, unit, number))

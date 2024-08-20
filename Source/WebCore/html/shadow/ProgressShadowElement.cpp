@@ -91,7 +91,7 @@ ProgressValueElement::ProgressValueElement(Document& document)
 
 void ProgressValueElement::setInlineSizePercentage(double size)
 {
-    setInlineStyleProperty(CSSPropertyInlineSize, size, CSSUnitType::CSS_PERCENTAGE);
+    setInlineStyleProperty(CSSPropertyInlineSize, size, CSSUnitType::Percentage);
 }
 
 Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)

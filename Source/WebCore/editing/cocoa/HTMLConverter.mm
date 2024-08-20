@@ -458,8 +458,8 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // FIXME: Use isStringType(CSSUnitType)?
         auto primitiveType = primitiveValue->primitiveType();
-        if (primitiveType == CSSUnitType::CSS_STRING || primitiveType == CSSUnitType::CSS_URI
-            || primitiveType == CSSUnitType::CSS_IDENT || primitiveType == CSSUnitType::CSS_ATTR) {
+        if (primitiveType == CSSUnitType::String || primitiveType == CSSUnitType::URI
+            || primitiveType == CSSUnitType::Ident || primitiveType == CSSUnitType::Attribute) {
             auto stringValue = value.cssText();
             if (stringValue.length()) {
                 result = stringValue;
@@ -642,26 +642,26 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
 {
     // FIXME: Use CSSPrimitiveValue::computeValue.
     switch (primitiveValue.primitiveType()) {
-    case CSSUnitType::CSS_PX:
-        result = primitiveValue.floatValue(CSSUnitType::CSS_PX);
+    case CSSUnitType::Pixel:
+        result = primitiveValue.floatValue(CSSUnitType::Pixel);
         return true;
-    case CSSUnitType::CSS_PT:
-        result = 4 * primitiveValue.floatValue(CSSUnitType::CSS_PT) / 3;
+    case CSSUnitType::Point:
+        result = 4 * primitiveValue.floatValue(CSSUnitType::Point) / 3;
         return true;
-    case CSSUnitType::CSS_PC:
-        result = 16 * primitiveValue.floatValue(CSSUnitType::CSS_PC);
+    case CSSUnitType::Pica:
+        result = 16 * primitiveValue.floatValue(CSSUnitType::Pica);
         return true;
-    case CSSUnitType::CSS_CM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 2.54;
+    case CSSUnitType::Centimeter:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::Pica) / 2.54;
         return true;
-    case CSSUnitType::CSS_MM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 25.4;
+    case CSSUnitType::Millimeter:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::Pica) / 25.4;
         return true;
-    case CSSUnitType::CSS_Q:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / (25.4 * 4.0);
+    case CSSUnitType::Quarter:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::Pica) / (25.4 * 4.0);
         return true;
-    case CSSUnitType::CSS_IN:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_IN);
+    case CSSUnitType::Inch:
+        result = 96 * primitiveValue.floatValue(CSSUnitType::Inch);
         return true;
     default:
         return false;

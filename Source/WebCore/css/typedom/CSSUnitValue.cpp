@@ -46,18 +46,18 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnitValue);
 CSSUnitType CSSUnitValue::parseUnit(const String& unit)
 {
     if (unit == "number"_s)
-        return CSSUnitType::CSS_NUMBER;
+        return CSSUnitType::Number;
     if (unit == "percent"_s)
-        return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::Percentage;
     return CSSParserToken::stringToUnitType(unit);
 }
 
 ASCIILiteral CSSUnitValue::unit() const
 {
     switch (m_unit) {
-    case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::Number:
         return "number"_s;
-    case CSSUnitType::CSS_PERCENTAGE:
+    case CSSUnitType::Percentage:
         return "percent"_s;
     default:
         break;
@@ -79,7 +79,7 @@ void CSSUnitValue::serialize(StringBuilder& builder, OptionSet<SerializationArgu
 ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& unit)
 {
     auto parsedUnit = parseUnit(unit);
-    if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
+    if (parsedUnit == CSSUnitType::Unknown)
         return Exception { ExceptionCode::TypeError };
     auto type = CSSNumericType::create(parsedUnit);
     if (!type)
@@ -104,31 +104,31 @@ static double conversionToCanonicalUnitsScaleFactor(CSSUnitType unit)
     constexpr double picasPerInch = 6;
 
     switch (unit) {
-    case CSSUnitType::CSS_MS:
+    case CSSUnitType::Millisecond:
         return 0.001;
-    case CSSUnitType::CSS_CM:
+    case CSSUnitType::Centimeter:
         return pixelsPerCentimeter;
-    case CSSUnitType::CSS_DPCM:
+    case CSSUnitType::DotsPerCentimeter:
         return 1.0 / pixelsPerCentimeter;
-    case CSSUnitType::CSS_MM:
+    case CSSUnitType::Millimeter:
         return pixelsPerCentimeter / 10;
-    case CSSUnitType::CSS_Q:
+    case CSSUnitType::Quarter:
         return pixelsPerCentimeter / 40;
-    case CSSUnitType::CSS_IN:
+    case CSSUnitType::Inch:
         return pixelsPerInch;
-    case CSSUnitType::CSS_DPI:
+    case CSSUnitType::DotsPerInch:
         return 1.0 / pixelsPerInch;
-    case CSSUnitType::CSS_PT:
+    case CSSUnitType::Point:
         return pixelsPerInch / pointsPerInch;
-    case CSSUnitType::CSS_PC:
+    case CSSUnitType::Pica:
         return pixelsPerInch / picasPerInch;
-    case CSSUnitType::CSS_RAD:
+    case CSSUnitType::Radian:
         return 180 / piDouble;
-    case CSSUnitType::CSS_GRAD:
+    case CSSUnitType::Gradian:
         return 0.9;
-    case CSSUnitType::CSS_TURN:
+    case CSSUnitType::Turn:
         return 360;
-    case CSSUnitType::CSS_KHZ:
+    case CSSUnitType::Kilohertz:
         return 1000;
     default:
         return 1.0;
@@ -148,12 +148,12 @@ auto CSSUnitValue::toSumValue() const -> std::optional<SumValue>
 {
     // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
     auto canonicalUnit = canonicalUnitTypeForUnitType(m_unit);
-    if (canonicalUnit == CSSUnitType::CSS_UNKNOWN)
+    if (canonicalUnit == CSSUnitType::Unknown)
         canonicalUnit = m_unit;
     
     auto convertedValue = m_value * conversionToCanonicalUnitsScaleFactor(unitEnum()) / conversionToCanonicalUnitsScaleFactor(canonicalUnit);
 
-    if (m_unit == CSSUnitType::CSS_NUMBER)
+    if (m_unit == CSSUnitType::Number)
         return { { { convertedValue, { } } } };
     return { { { convertedValue, { { canonicalUnit, 1 } } } } };
 }
@@ -184,7 +184,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyZIndex:
         return round(value) != value;
     case CSSPropertyTabSize:
-        return value < 0 || (unit == CSSUnitType::CSS_NUMBER && round(value) != value);
+        return value < 0 || (unit == CSSUnitType::Number && round(value) != value);
     case CSSPropertyOrphans:
     case CSSPropertyWidows:
     case CSSPropertyColumnCount:

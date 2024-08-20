@@ -256,7 +256,7 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     if (primitiveValue.isLength()) {
         Length length = primitiveValue.computeLength<Length>(conversionData);
-        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
+        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::QuirkyEm);
         return length;
     }
 
@@ -277,7 +277,7 @@ inline Length BuilderConverter::convertLengthAllowingNumber(const BuilderState& 
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isNumberOrInteger())
-        return convertLength(builderState, CSSPrimitiveValue::create(primitiveValue.doubleValue(), CSSUnitType::CSS_PX));
+        return convertLength(builderState, CSSPrimitiveValue::create(primitiveValue.doubleValue(), CSSUnitType::Pixel));
     return convertLength(builderState, value);
 }
 
@@ -524,7 +524,7 @@ inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderSt
 template<typename T>
 inline T BuilderConverter::convertNumber(BuilderState&, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).value<T>(CSSUnitType::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(value).value<T>(CSSUnitType::Number);
 }
 
 template<typename T>
@@ -540,7 +540,7 @@ inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState&, c
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNoLimit)
         return -1;
-    return primitiveValue.value<short>(CSSUnitType::CSS_NUMBER);
+    return primitiveValue.value<short>(CSSUnitType::Number);
 }
 
 template<CSSPropertyID>
@@ -1053,7 +1053,7 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
             result *= 3;
         else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
-        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
+        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::Em);
         width = convertComputedLength<float>(builderState, emsValue);
         break;
     }
@@ -1617,7 +1617,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
 
 inline FontSelectionValue BuilderConverter::convertFontStyleAngle(const CSSValue& value)
 {
-    return normalizedFontItalicValue(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::CSS_DEG));
+    return normalizedFontItalicValue(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::Degree));
 }
 
 // The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".

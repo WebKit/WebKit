@@ -155,7 +155,7 @@ static inline RefPtr<CSSPrimitiveValue> computedStyleValueForColorStopPosition(c
             return CSSPrimitiveValue::create(angle.value, angle.type);
         },
         [](PercentRaw percent) -> RefPtr<CSSPrimitiveValue> {
-            return CSSPrimitiveValue::create(percent.value, CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(percent.value, CSSUnitType::Percentage);
         }
     );
 }
@@ -184,10 +184,10 @@ static Ref<CSSPrimitiveValue> computedStyleValue(const StyleGradientDeprecatedPo
 {
     return WTF::switchOn(coordinate.value,
         [](NumberRaw number) -> Ref<CSSPrimitiveValue> {
-            return CSSPrimitiveValue::create(number.value, CSSUnitType::CSS_NUMBER);
+            return CSSPrimitiveValue::create(number.value, CSSUnitType::Number);
         },
         [](PercentRaw percent) -> Ref<CSSPrimitiveValue> {
-            return CSSPrimitiveValue::create(percent.value, CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(percent.value, CSSUnitType::Percentage);
         }
     );
 }

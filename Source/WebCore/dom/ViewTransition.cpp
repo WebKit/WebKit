@@ -793,8 +793,8 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
     }
 
     LayoutSize cssSize = adjustLayoutSizeForAbsoluteZoom(size, renderer.style());
-    props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(cssSize.width(), CSSUnitType::CSS_PX));
-    props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(cssSize.height(), CSSUnitType::CSS_PX));
+    props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(cssSize.width(), CSSUnitType::Pixel));
+    props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(cssSize.height(), CSSUnitType::Pixel));
     return props;
 }
 

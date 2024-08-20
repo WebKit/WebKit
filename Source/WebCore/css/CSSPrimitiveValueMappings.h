@@ -106,7 +106,7 @@ private:
     const CSSPrimitiveValue& numericValue() const
     {
         auto& value = downcast<CSSPrimitiveValue>(m_value);
-        ASSERT(value.primitiveType() == CSSUnitType::CSS_NUMBER || value.primitiveType() == CSSUnitType::CSS_INTEGER);
+        ASSERT(value.primitiveType() == CSSUnitType::Number || value.primitiveType() == CSSUnitType::Integer);
         return value;
     }
 
@@ -144,10 +144,10 @@ template<> inline LineClampValue fromCSSValue(const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    if (primitiveValue.primitiveType() == CSSUnitType::CSS_INTEGER)
+    if (primitiveValue.primitiveType() == CSSUnitType::Integer)
         return LineClampValue(primitiveValue.value<int>(), LineClamp::LineCount);
 
-    if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
+    if (primitiveValue.primitiveType() == CSSUnitType::Percentage)
         return LineClampValue(primitiveValue.value<int>(), LineClamp::Percentage);
 
     ASSERT(primitiveValue.valueID() == CSSValueNone);

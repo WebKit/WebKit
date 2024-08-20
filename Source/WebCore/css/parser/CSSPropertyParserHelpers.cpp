@@ -259,7 +259,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
                 bool isPercentage = primitiveValue->isPercentage();
                 double maxAllowed = isPercentage ? 100.0 : 1.0;
                 if (primitiveValue->doubleValue() > maxAllowed)
-                    primitiveValue = CSSPrimitiveValue::create(maxAllowed, isPercentage ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_NUMBER);
+                    primitiveValue = CSSPrimitiveValue::create(maxAllowed, isPercentage ? CSSUnitType::Percentage : CSSUnitType::Number);
             }
             parsedValue = WTFMove(primitiveValue);
         }
@@ -1931,7 +1931,7 @@ static bool consumePerspectiveFunctionArgument(CSSParserTokenRange& range, const
         return true;
     }
     if (auto perspective = consumeNumberRaw(range, ValueRange::NonNegative)) {
-        arguments.append(CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX));
+        arguments.append(CSSPrimitiveValue::create(perspective->value, CSSUnitType::Pixel));
         return true;
     }
     return false;
@@ -2813,7 +2813,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         }
 
         if (!angle)
-            angle = CSSPrimitiveValue::create(0, CSSUnitType::CSS_DEG);
+            angle = CSSPrimitiveValue::create(0, CSSUnitType::Degree);
 
         auto radius = CSSValuePair::create(radiusX.releaseNonNull(), radiusY.releaseNonNull());
         return CSSShapeSegmentValue::createArc(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(radius), sweep.value_or(CSSValueCcw), size.value_or(CSSValueSmall), angle.releaseNonNull());
@@ -3387,7 +3387,7 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
     // FIXME: Does not seem right to create "0px" here. We'd like to omit "0px" when serializing if there is also no image.
     RefPtr<CSSPrimitiveValue> offset;
     if (range.atEnd())
-        offset = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
+        offset = CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
     else {
         offset = consumeLengthOrPercent(range, context.mode);
         if (!offset)
@@ -3795,10 +3795,10 @@ static RefPtr<CSSPrimitiveValue> consumeGridBreadth(CSSParserTokenRange& range, 
     const CSSParserToken& token = range.peek();
     if (isGridBreadthIdent(token.id()))
         return consumeIdent(range);
-    if (token.type() == DimensionToken && token.unitType() == CSSUnitType::CSS_FR) {
+    if (token.type() == DimensionToken && token.unitType() == CSSUnitType::Fraction) {
         if (range.peek().numericValue() < 0)
             return nullptr;
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_FR);
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::Fraction);
     }
     return consumeLengthOrPercent(range, mode, ValueRange::NonNegative);
 }

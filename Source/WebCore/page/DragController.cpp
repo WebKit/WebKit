@@ -1516,7 +1516,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
         Ref image = HTMLImageElement::create(*document);
         image->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(size.width()));
         image->setAttributeWithoutSynchronization(HTMLNames::heightAttr, AtomString::number(size.height()));
-        image->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSUnitType::CSS_PERCENTAGE);
+        image->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSUnitType::Percentage);
         image->setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForCSS(Color { Color::black.colorWithAlphaByte(13) }));
         image->setIsDroppedImagePlaceholder();
         fragment->appendChild(WTFMove(image));

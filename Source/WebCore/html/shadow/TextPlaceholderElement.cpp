@@ -46,8 +46,8 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
     setInlineStyleProperty(CSSPropertyDisplay, size.width() ? CSSValueInlineBlock : CSSValueBlock);
     setInlineStyleProperty(CSSPropertyVerticalAlign, CSSValueTop);
     setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, IsImportant::Yes);
-    setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
-    setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::CSS_PX);
+    setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::Pixel);
+    setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::Pixel);
 }
 
 auto TextPlaceholderElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult

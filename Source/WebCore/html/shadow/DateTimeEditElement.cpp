@@ -183,9 +183,9 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
     // prevent selected fields from appearing squished. To fix, pull fields closer
     // together by applying a negative margin.
     if (text.startsWith(' '))
-        element->setInlineStyleProperty(CSSPropertyMarginInlineStart, -1, CSSUnitType::CSS_PX);
+        element->setInlineStyleProperty(CSSPropertyMarginInlineStart, -1, CSSUnitType::Pixel);
     if (text.endsWith(' '))
-        element->setInlineStyleProperty(CSSPropertyMarginInlineEnd, -1, CSSUnitType::CSS_PX);
+        element->setInlineStyleProperty(CSSPropertyMarginInlineEnd, -1, CSSUnitType::Pixel);
 
     element->appendChild(Text::create(m_editElement.document(), WTFMove(text)));
     m_editElement.fieldsWrapperElement().appendChild(element);

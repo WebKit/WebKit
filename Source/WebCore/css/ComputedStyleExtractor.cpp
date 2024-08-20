@@ -249,7 +249,7 @@ static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
 {
     // These values can be percentages or numbers.
     if (length.isPercent())
-        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::Percentage);
     ASSERT(length.isFixed());
     return CSSPrimitiveValue::create(length.value());
 }
@@ -413,7 +413,7 @@ static Ref<CSSValue> textAutospaceFromStyle(const RenderStyle& style)
 
 static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle& style)
 {
-    return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::CSS_PX);
+    return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::Pixel);
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle& style)
@@ -431,7 +431,7 @@ static inline Ref<CSSValue> valueForReflection(const StyleReflection* reflection
     // FIXME: Consider omitting 0px when the mask is null.
     RefPtr<CSSPrimitiveValue> offset;
     if (reflection->offset().isPercentOrCalculated())
-        offset = CSSPrimitiveValue::create(reflection->offset().percent(), CSSUnitType::CSS_PERCENTAGE);
+        offset = CSSPrimitiveValue::create(reflection->offset().percent(), CSSUnitType::Percentage);
     else
         offset = zoomAdjustedPixelValue(reflection->offset().value(), style);
 
@@ -684,7 +684,7 @@ Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const Re
 static Ref<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const RenderStyle& style)
 {
     if (length.isPercent())
-        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::Percentage);
 
     return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
 }
@@ -818,7 +818,7 @@ RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& 
 {
     auto translateLengthAsCSSValue = [&](const Length& length) {
         if (length.isZero())
-            return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
+            return CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
         return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
     };
 
@@ -871,28 +871,28 @@ RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& 
     }
     // rotate
     case TransformOperation::Type::RotateX:
-        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::Degree));
     case TransformOperation::Type::RotateY:
-        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::Degree));
     case TransformOperation::Type::RotateZ:
-        return CSSFunctionValue::create(CSSValueRotateZ, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueRotateZ, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::Degree));
     case TransformOperation::Type::Rotate:
-        return CSSFunctionValue::create(CSSValueRotate, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueRotate, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::Degree));
     case TransformOperation::Type::Rotate3D: {
         auto& rotate = uncheckedDowncast<RotateTransformOperation>(operation);
-        return CSSFunctionValue::create(CSSValueRotate3d, CSSPrimitiveValue::create(rotate.x()), CSSPrimitiveValue::create(rotate.y()), CSSPrimitiveValue::create(rotate.z()), CSSPrimitiveValue::create(rotate.angle(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueRotate3d, CSSPrimitiveValue::create(rotate.x()), CSSPrimitiveValue::create(rotate.y()), CSSPrimitiveValue::create(rotate.z()), CSSPrimitiveValue::create(rotate.angle(), CSSUnitType::Degree));
     }
     // skew
     case TransformOperation::Type::SkewX:
-        return CSSFunctionValue::create(CSSValueSkewX, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleX(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueSkewX, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleX(), CSSUnitType::Degree));
     case TransformOperation::Type::SkewY:
-        return CSSFunctionValue::create(CSSValueSkewY, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleY(), CSSUnitType::CSS_DEG));
+        return CSSFunctionValue::create(CSSValueSkewY, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleY(), CSSUnitType::Degree));
     case TransformOperation::Type::Skew: {
         auto& skew = uncheckedDowncast<SkewTransformOperation>(operation);
         if (!skew.angleY())
-            return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::CSS_DEG));
-        return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::CSS_DEG),
-            CSSPrimitiveValue::create(skew.angleY(), CSSUnitType::CSS_DEG));
+            return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::Degree));
+        return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::Degree),
+            CSSPrimitiveValue::create(skew.angleY(), CSSUnitType::Degree));
     }
     // perspective
     case TransformOperation::Type::Perspective:
@@ -989,7 +989,7 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
     if (!rotate || is<RenderInline>(renderer))
         return CSSPrimitiveValue::create(CSSValueNone);
 
-    auto angle = CSSPrimitiveValue::create(rotate->angle(), CSSUnitType::CSS_DEG);
+    auto angle = CSSPrimitiveValue::create(rotate->angle(), CSSUnitType::Degree);
     if (!rotate->is3DOperation() || (!rotate->x() && !rotate->y() && rotate->z()))
         return angle;
     if (rotate->x() && !rotate->y() && !rotate->z())
@@ -1053,7 +1053,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
                 break;
             case FilterOperation::Type::HueRotate:
                 filterValue = CSSFunctionValue::create(CSSValueHueRotate,
-                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::CSS_DEG));
+                    CSSPrimitiveValue::create(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount(), CSSUnitType::Degree));
                 break;
             case FilterOperation::Type::Invert:
                 filterValue = CSSFunctionValue::create(CSSValueInvert,
@@ -1100,7 +1100,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
 static Ref<CSSValue> specifiedValueForGridTrackBreadth(const GridLength& trackBreadth, const RenderStyle& style)
 {
     if (!trackBreadth.isLength())
-        return CSSPrimitiveValue::create(trackBreadth.flex(), CSSUnitType::CSS_FR);
+        return CSSPrimitiveValue::create(trackBreadth.flex(), CSSUnitType::Fraction);
 
     const Length& trackBreadthLength = trackBreadth.length();
     if (trackBreadthLength.isAuto())
@@ -1118,7 +1118,7 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
         if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex())
-            return CSSPrimitiveValue::create(trackSize.maxTrackBreadth().flex(), CSSUnitType::CSS_FR);
+            return CSSPrimitiveValue::create(trackSize.maxTrackBreadth().flex(), CSSUnitType::Fraction);
         return CSSFunctionValue::create(CSSValueMinmax, specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style),
             specifiedValueForGridTrackBreadth(trackSize.maxTrackBreadth(), style));
     }
@@ -1492,12 +1492,12 @@ static Ref<CSSPrimitiveValue> valueForTransitionBehavior(bool allowsDiscreteTran
 
 static Ref<CSSPrimitiveValue> valueForAnimationDuration(double duration)
 {
-    return CSSPrimitiveValue::create(duration, CSSUnitType::CSS_S);
+    return CSSPrimitiveValue::create(duration, CSSUnitType::Second);
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationDelay(double delay)
 {
-    return CSSPrimitiveValue::create(delay, CSSUnitType::CSS_S);
+    return CSSPrimitiveValue::create(delay, CSSUnitType::Second);
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationIterationCount(double iterationCount)
@@ -1935,7 +1935,7 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     case PathOperation::Type::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
-        auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
+        auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::Degree);
         RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
         return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
     }
@@ -2134,7 +2134,7 @@ static Ref<CSSValue> textUnderlineOffsetToCSSValue(const TextUnderlineOffset& te
     if (textUnderlineOffset.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
     ASSERT(textUnderlineOffset.isLength());
-    return CSSPrimitiveValue::create(textUnderlineOffset.lengthValue(), CSSUnitType::CSS_PX);
+    return CSSPrimitiveValue::create(textUnderlineOffset.lengthValue(), CSSUnitType::Pixel);
 }
 
 static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style, const TextDecorationThickness& textDecorationThickness)
@@ -2147,7 +2147,7 @@ static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style,
     ASSERT(textDecorationThickness.isLength());
     const auto& length = textDecorationThickness.length();
     if (length.isPercent())
-        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::Percentage);
     return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
 }
 
@@ -2439,7 +2439,7 @@ static Ref<CSSPrimitiveValue> fontWeight(const RenderStyle& style)
 
 static Ref<CSSPrimitiveValue> fontStretch(FontSelectionValue stretch)
 {
-    return CSSPrimitiveValue::create(static_cast<float>(stretch), CSSUnitType::CSS_PERCENTAGE);
+    return CSSPrimitiveValue::create(static_cast<float>(stretch), CSSUnitType::Percentage);
 }
 
 static Ref<CSSPrimitiveValue> fontStretch(const RenderStyle& style)
@@ -2452,7 +2452,7 @@ static Ref<CSSValue> fontStyle(std::optional<FontSelectionValue> italic, FontSty
     if (auto keyword = fontStyleKeyword(italic, axis))
         return CSSPrimitiveValue::create(keyword.value());
     float angle = *italic;
-    return CSSFontStyleWithAngleValue::create(CSSPrimitiveValue::create(angle, CSSUnitType::CSS_DEG));
+    return CSSFontStyleWithAngleValue::create(CSSPrimitiveValue::create(angle, CSSUnitType::Degree));
 }
 
 static Ref<CSSValue> fontStyle(const RenderStyle& style)
@@ -2998,7 +2998,7 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
 
 static Ref<CSSValueList> valueForOffsetRotate(const OffsetRotation& rotation)
 {
-    auto angle = CSSPrimitiveValue::create(rotation.angle(), CSSUnitType::CSS_DEG);
+    auto angle = CSSPrimitiveValue::create(rotation.angle(), CSSUnitType::Degree);
     if (rotation.hasAuto())
         return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto), WTFMove(angle));
     return CSSValueList::createSpaceSeparated(WTFMove(angle));
@@ -3607,7 +3607,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueAuto);
         return zoomAdjustedPixelValue(style.columnWidth(), style);
     case CSSPropertyTabSize:
-        return CSSPrimitiveValue::create(style.tabSize().widthInPixels(1.0), style.tabSize().isSpaces() ? CSSUnitType::CSS_NUMBER : CSSUnitType::CSS_PX);
+        return CSSPrimitiveValue::create(style.tabSize().widthInPixels(1.0), style.tabSize().isSpaces() ? CSSUnitType::Number : CSSUnitType::Pixel);
     case CSSPropertyCursor: {
         auto value = createConvertingToCSSValueID(style.cursor());
         auto* cursors = style.cursors();
@@ -3853,7 +3853,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.lineClamp().isNone())
             return CSSPrimitiveValue::create(CSSValueNone);
         if (style.lineClamp().isPercentage())
-            return CSSPrimitiveValue::create(style.lineClamp().value(), CSSUnitType::CSS_PERCENTAGE);
+            return CSSPrimitiveValue::create(style.lineClamp().value(), CSSUnitType::Percentage);
         return CSSPrimitiveValue::createInteger(style.lineClamp().value());
     case CSSPropertyLineHeight:
         return lineHeight(style, valueType);
@@ -4120,7 +4120,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueAuto);
         if (style.textSizeAdjust().isNone())
             return CSSPrimitiveValue::create(CSSValueNone);
-        return CSSPrimitiveValue::create(style.textSizeAdjust().percentage(), CSSUnitType::CSS_PERCENTAGE);
+        return CSSPrimitiveValue::create(style.textSizeAdjust().percentage(), CSSUnitType::Percentage);
 #endif
     case CSSPropertyWebkitTextStrokeColor:
         return currentColorOrValidColor(style, style.textStrokeColor());
