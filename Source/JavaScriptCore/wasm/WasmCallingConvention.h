@@ -81,7 +81,7 @@ enum class CallRole : uint8_t {
 };
 
 struct CallInformation {
-    CallInformation(ArgumentLocation passedThisArgument, Vector<ArgumentLocation>&& parameters, Vector<ArgumentLocation, 1>&& returnValues, size_t stackOffset)
+    CallInformation(ArgumentLocation passedThisArgument, Vector<ArgumentLocation, 8>&& parameters, Vector<ArgumentLocation, 1>&& returnValues, size_t stackOffset)
         : thisArgument(passedThisArgument)
         , params(WTFMove(parameters))
         , results(WTFMove(returnValues))
@@ -111,7 +111,7 @@ struct CallInformation {
     bool resultsIncludeI64 : 1 { false };
     bool argumentsOrResultsIncludeV128 : 1 { false };
     ArgumentLocation thisArgument;
-    Vector<ArgumentLocation> params;
+    Vector<ArgumentLocation, 8> params;
     Vector<ArgumentLocation, 1> results;
     // As a callee this includes CallerFrameAndPC as a caller it does not.
     size_t headerAndArgumentStackSizeInBytes;
@@ -309,7 +309,7 @@ public:
         headerSize += sizeof(Register);
 
         size_t argStackOffset = headerSize;
-        Vector<ArgumentLocation> params(signature.argumentCount());
+        Vector<ArgumentLocation, 8> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
             argumentsOrResultsIncludeV128 |= signature.argumentType(i).isV128();
@@ -400,7 +400,7 @@ public:
         ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(stackOffset) : ValueLocation::stack(stackOffset), widthForBytes(sizeof(void*)) };
         stackOffset += sizeof(Register);
 
-        Vector<ArgumentLocation> params;
+        Vector<ArgumentLocation, 8> params;
         for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
             params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
@@ -590,7 +590,7 @@ public:
         headerSize += sizeof(Register);
 
         size_t argStackOffset = headerSize;
-        Vector<ArgumentLocation> params(signature.argumentCount());
+        Vector<ArgumentLocation, 8> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
             ASSERT(!signature.argumentType(i).isV128());

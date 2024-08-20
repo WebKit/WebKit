@@ -884,7 +884,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
     uint32_t fprIndex = maxGPRIndex;
     uint32_t stackIndex = 1;
 
-    Vector<VirtualRegister> registerArguments(gprCount + fprCount);
+    Vector<VirtualRegister, 32> registerArguments(gprCount + fprCount);
     for (uint32_t i = 0; i < gprCount + fprCount; i++)
         registerArguments[i] = push(NoConsistencyCheck);
 
@@ -1084,7 +1084,6 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
 
     block = ControlType::loop(signature, m_stackSize, WTFMove(body), WTFMove(continuation));
 
-    Vector<unsigned> unresolvedOffsets;
     Vector<VirtualRegister> osrEntryData;
     for (uint32_t i = 0; i < m_codeBlock->m_numArguments; i++)
         osrEntryData.append(m_normalizedArguments[i]);
