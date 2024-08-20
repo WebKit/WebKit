@@ -1698,7 +1698,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/gap/masonry-gap-0
 
 webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/grid-placement/masonry-grid-placement-named-lines-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-cols-001.html [ ImageOnlyFailure ]
 webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-cols-004.html [ ImageOnlyFailure ]
 webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-cols-005.html [ ImageOnlyFailure ]
 webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-rows-001.html [ ImageOnlyFailure ]
