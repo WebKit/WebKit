@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ControlFactory.h"
+#pragma once
 
-#include "EmptyControlFactory.h"
-#include <wtf/NeverDestroyed.h>
+#if USE(THEME_ADWAITA)
+
+#include "ControlAdwaita.h"
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA) && !USE(THEME_ADWAITA)
-RefPtr<ControlFactory> ControlFactory::create()
-{
-    return adoptRef(new EmptyControlFactory());
-}
-#endif
+class ToggleButtonAdwaita final : public ControlAdwaita {
+public:
+    ToggleButtonAdwaita(ControlPart&, ControlFactoryAdwaita&);
 
-ControlFactory& ControlFactory::shared()
-{
-    static MainThreadNeverDestroyed<RefPtr<ControlFactory>> shared { create() };
-    return *shared.get();
-}
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
+
+private:
+    void drawCheckbox(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
+    void drawRadio(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
+};
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

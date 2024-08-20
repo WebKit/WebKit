@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,26 @@
  */
 
 #include "config.h"
-#include "ControlFactory.h"
+#include "ControlAdwaita.h"
 
-#include "EmptyControlFactory.h"
-#include <wtf/NeverDestroyed.h>
+#if USE(THEME_ADWAITA)
 
 namespace WebCore {
+using namespace WebCore::Adwaita;
 
-#if !PLATFORM(COCOA) && !USE(THEME_ADWAITA)
-RefPtr<ControlFactory> ControlFactory::create()
+ControlAdwaita::ControlAdwaita(ControlPart& owningPart, ControlFactoryAdwaita& controlFactory)
+    : PlatformControl(owningPart)
+    , m_controlFactory(controlFactory)
 {
-    return adoptRef(new EmptyControlFactory());
 }
-#endif
 
-ControlFactory& ControlFactory::shared()
+Color ControlAdwaita::accentColor(const ControlStyle& style)
 {
-    static MainThreadNeverDestroyed<RefPtr<ControlFactory>> shared { create() };
-    return *shared.get();
+    if (style.accentColor.isValid())
+        return style.accentColor;
+    return systemAccentColor();
 }
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

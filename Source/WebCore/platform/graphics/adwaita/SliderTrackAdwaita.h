@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2024 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ControlFactory.h"
+#pragma once
 
-#include "EmptyControlFactory.h"
-#include <wtf/NeverDestroyed.h>
+#if USE(THEME_ADWAITA)
+
+#include "ControlAdwaita.h"
+#include "SliderTrackPart.h"
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA) && !USE(THEME_ADWAITA)
-RefPtr<ControlFactory> ControlFactory::create()
-{
-    return adoptRef(new EmptyControlFactory());
-}
-#endif
+class SliderTrackAdwaita final : public ControlAdwaita {
+public:
+    SliderTrackAdwaita(ControlPart&, ControlFactoryAdwaita&);
 
-ControlFactory& ControlFactory::shared()
-{
-    static MainThreadNeverDestroyed<RefPtr<ControlFactory>> shared { create() };
-    return *shared.get();
-}
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
+
+private:
+    const SliderTrackPart& owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart); }
+};
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)
