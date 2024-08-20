@@ -378,14 +378,6 @@ Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&&
                 protectedThis->didReceiveInitializationSegment(WTFMove(segment));
         });
 
-        parser->setDidParseVideoPlaybackConfigurationCallback([weakThis] (MediaPlayerVideoPlaybackConfiguration configuration) {
-            ASSERT(isMainThread());
-            if (RefPtr protectedThis = weakThis.get()) {
-                if (RefPtr player = protectedThis->player())
-                    player->setVideoPlaybackConfiguration(configuration);
-            }
-        });
-
         parser->setDidProvideMediaDataCallback([weakThis] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
             ASSERT(isMainThread());
             if (RefPtr protectedThis = weakThis.get())

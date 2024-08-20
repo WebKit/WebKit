@@ -40,7 +40,6 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
-    VideoPlaybackConfigurationChanged(WebCore::MediaPlayer::VideoPlaybackConfiguration configuration);
 
     CurrentTimeChanged(struct WebKit::MediaTimeUpdateData timeData)
 

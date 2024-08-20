@@ -158,10 +158,6 @@ std::optional<MediaPlayerIdentifier>VideoPresentationInterfaceIOS::playerIdentif
     return m_playbackSessionInterface->playerIdentifier();
 }
 
-void VideoPresentationInterfaceIOS::setVideoSpatial(bool)
-{
-}
-
 void VideoPresentationInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
 {
     m_playbackSessionInterface->setPlayerIdentifier(WTFMove(identifier));
