@@ -93,73 +93,73 @@ static TypedArrayType toTypedArrayType(AccessCase::AccessType accessType)
     switch (accessType) {
     case AccessCase::IndexedTypedArrayInt8Load:
     case AccessCase::IndexedTypedArrayInt8Store:
-    case AccessCase::IndexedTypedArrayInt8InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
         return TypeInt8;
     case AccessCase::IndexedTypedArrayUint8Load:
     case AccessCase::IndexedTypedArrayUint8Store:
-    case AccessCase::IndexedTypedArrayUint8InHit:
+    case AccessCase::IndexedTypedArrayUint8In:
     case AccessCase::IndexedResizableTypedArrayUint8Load:
     case AccessCase::IndexedResizableTypedArrayUint8Store:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
         return TypeUint8;
     case AccessCase::IndexedTypedArrayUint8ClampedLoad:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
     case AccessCase::IndexedResizableTypedArrayUint8ClampedLoad:
     case AccessCase::IndexedResizableTypedArrayUint8ClampedStore:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
         return TypeUint8Clamped;
     case AccessCase::IndexedTypedArrayInt16Load:
     case AccessCase::IndexedTypedArrayInt16Store:
-    case AccessCase::IndexedTypedArrayInt16InHit:
+    case AccessCase::IndexedTypedArrayInt16In:
     case AccessCase::IndexedResizableTypedArrayInt16Load:
     case AccessCase::IndexedResizableTypedArrayInt16Store:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
         return TypeInt16;
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayUint16Store:
-    case AccessCase::IndexedTypedArrayUint16InHit:
+    case AccessCase::IndexedTypedArrayUint16In:
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayUint16Store:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
         return TypeUint16;
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayInt32Store:
-    case AccessCase::IndexedTypedArrayInt32InHit:
+    case AccessCase::IndexedTypedArrayInt32In:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
         return TypeInt32;
     case AccessCase::IndexedTypedArrayUint32Load:
     case AccessCase::IndexedTypedArrayUint32Store:
-    case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayUint32In:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
         return TypeUint32;
     case AccessCase::IndexedTypedArrayFloat16Load:
     case AccessCase::IndexedTypedArrayFloat16Store:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
+    case AccessCase::IndexedTypedArrayFloat16In:
     case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat16Store:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
         return TypeFloat16;
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat32Store:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
+    case AccessCase::IndexedTypedArrayFloat32In:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
         return TypeFloat32;
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedTypedArrayFloat64Store:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayFloat64In:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
         return TypeFloat64;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -189,16 +189,16 @@ static bool forResizableTypedArray(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayFloat16Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
         return true;
     default:
         return false;
@@ -285,29 +285,29 @@ static bool needsScratchFPR(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedNoIndexingInMiss:
-    // Indexed TypedArray InHit does not need FPR since it does not load a value.
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    // Indexed TypedArray In does not need FPR since it does not load a value.
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
         return false;
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedTypedArrayFloat16Load:
@@ -434,26 +434,26 @@ static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedNoIndexingInMiss:
     case AccessCase::IndexedProxyObjectIn:
@@ -563,26 +563,26 @@ static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedProxyObjectIn:
     case AccessCase::IndexedMegamorphicIn:
@@ -696,26 +696,26 @@ static bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedMegamorphicIn:
     case AccessCase::InstanceOfMegamorphic:
@@ -829,26 +829,26 @@ static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
         return false;
     }
@@ -956,26 +956,26 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
     case AccessCase::IndexedMegamorphicIn:
     case AccessCase::InstanceOfMegamorphic:
@@ -2110,26 +2110,26 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
     case AccessCase::IndexedResizableTypedArrayFloat16Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit: {
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
 
@@ -2244,16 +2244,14 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         succeed();
 
         isOutOfBounds.link(&jit);
-        if (forInBy(accessCase.m_type)) {
-            allocator.restoreReusedRegistersByPopping(jit, preservedState);
-            m_failAndRepatch.append(jit.jump());
-        } else {
-            if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg)
-                jit.or32(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ArrayProfileFlag::OutOfBounds)), CCallHelpers::Address(m_stubInfo.m_arrayProfileGPR, ArrayProfile::offsetOfArrayProfileFlags()));
+        if (m_stubInfo.m_arrayProfileGPR != InvalidGPRReg)
+            jit.or32(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ArrayProfileFlag::OutOfBounds)), CCallHelpers::Address(m_stubInfo.m_arrayProfileGPR, ArrayProfile::offsetOfArrayProfileFlags()));
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(false), valueRegs);
+        else
             jit.moveTrustedValue(jsUndefined(), valueRegs);
-            allocator.restoreReusedRegistersByPopping(jit, preservedState);
-            succeed();
-        }
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
         return;
     }
 
@@ -3853,26 +3851,26 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedArrayStorageInHit:
     case AccessCase::IndexedScopedArgumentsInHit:
     case AccessCase::IndexedDirectArgumentsInHit:
-    case AccessCase::IndexedTypedArrayInt8InHit:
-    case AccessCase::IndexedTypedArrayUint8InHit:
-    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedTypedArrayInt16InHit:
-    case AccessCase::IndexedTypedArrayUint16InHit:
-    case AccessCase::IndexedTypedArrayInt32InHit:
-    case AccessCase::IndexedTypedArrayUint32InHit:
-    case AccessCase::IndexedTypedArrayFloat16InHit:
-    case AccessCase::IndexedTypedArrayFloat32InHit:
-    case AccessCase::IndexedTypedArrayFloat64InHit:
-    case AccessCase::IndexedResizableTypedArrayInt8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8InHit:
-    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
-    case AccessCase::IndexedResizableTypedArrayInt16InHit:
-    case AccessCase::IndexedResizableTypedArrayUint16InHit:
-    case AccessCase::IndexedResizableTypedArrayInt32InHit:
-    case AccessCase::IndexedResizableTypedArrayUint32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat16InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
-    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedTypedArrayInt8In:
+    case AccessCase::IndexedTypedArrayUint8In:
+    case AccessCase::IndexedTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedTypedArrayInt16In:
+    case AccessCase::IndexedTypedArrayUint16In:
+    case AccessCase::IndexedTypedArrayInt32In:
+    case AccessCase::IndexedTypedArrayUint32In:
+    case AccessCase::IndexedTypedArrayFloat16In:
+    case AccessCase::IndexedTypedArrayFloat32In:
+    case AccessCase::IndexedTypedArrayFloat64In:
+    case AccessCase::IndexedResizableTypedArrayInt8In:
+    case AccessCase::IndexedResizableTypedArrayUint8In:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedIn:
+    case AccessCase::IndexedResizableTypedArrayInt16In:
+    case AccessCase::IndexedResizableTypedArrayUint16In:
+    case AccessCase::IndexedResizableTypedArrayInt32In:
+    case AccessCase::IndexedResizableTypedArrayUint32In:
+    case AccessCase::IndexedResizableTypedArrayFloat16In:
+    case AccessCase::IndexedResizableTypedArrayFloat32In:
+    case AccessCase::IndexedResizableTypedArrayFloat64In:
     case AccessCase::IndexedStringInHit:
         // These need to be handled by generateWithGuard(), since the guard is part of the
         // algorithm. We can be sure that nobody will call generate() directly for these since they
