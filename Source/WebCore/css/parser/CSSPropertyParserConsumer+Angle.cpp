@@ -62,10 +62,10 @@ std::optional<AngleRaw> AngleKnownTokenTypeDimensionConsumer::consume(CSSParserT
 
     auto unitType = token.unitType();
     switch (unitType) {
-    case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_RAD:
-    case CSSUnitType::CSS_GRAD:
-    case CSSUnitType::CSS_TURN:
+    case CSSUnitType::Degree:
+    case CSSUnitType::Radian:
+    case CSSUnitType::Gradian:
+    case CSSUnitType::Turn:
         break;
     default:
         return std::nullopt;
@@ -87,7 +87,7 @@ std::optional<AngleRaw> AngleKnownTokenTypeNumberConsumer::consume(CSSParserToke
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(AngleRaw { CSSUnitType::CSS_DEG, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(AngleRaw { CSSUnitType::Degree, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }

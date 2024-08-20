@@ -65,10 +65,10 @@ std::optional<ResolutionRaw> ResolutionKnownTokenTypeDimensionConsumer::consume(
 
     auto unitType = token.unitType();
     switch (unitType) {
-    case CSSUnitType::CSS_DPPX:
-    case CSSUnitType::CSS_X:
-    case CSSUnitType::CSS_DPI:
-    case CSSUnitType::CSS_DPCM:
+    case CSSUnitType::DotsPerPixel:
+    case CSSUnitType::MultiplicationFactor:
+    case CSSUnitType::DotsPerInch:
+    case CSSUnitType::DotsPerCentimeter:
         break;
 
     default:

@@ -64,8 +64,8 @@ std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTok
 
     auto unitType = token.unitType();
     switch (unitType) {
-    case CSSUnitType::CSS_MS:
-    case CSSUnitType::CSS_S:
+    case CSSUnitType::Millisecond:
+    case CSSUnitType::Second:
         break;
 
     default:
@@ -93,7 +93,7 @@ std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenR
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(TimeRaw { CSSUnitType::Millisecond, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }

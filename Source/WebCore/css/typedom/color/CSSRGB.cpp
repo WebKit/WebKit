@@ -129,7 +129,7 @@ ExceptionOr<void> CSSRGB::setAlpha(CSSColorPercent&& alpha)
 ExceptionOr<RectifiedCSSColorRGBComp> CSSRGB::rectifyCSSColorRGBComp(CSSColorRGBComp&& component)
 {
     return switchOn(WTFMove(component), [](double value) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::Percentage) } };
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
         if (numericValue->type().matchesNumber() || numericValue->type().matches<CSSNumericBaseType::Percent>())
             return { WTFMove(numericValue) };

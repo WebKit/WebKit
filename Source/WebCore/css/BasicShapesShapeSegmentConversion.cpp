@@ -85,7 +85,7 @@ Ref<CSSShapeSegmentValue> toCSSShapeSegmentValue(const RenderStyle& style, const
             return CSSShapeSegmentValue::createArc(segment.affinity(), lengthPointToCSSValue(segment.offset(), style), lengthSizeToCSSValue(segment.ellipseSize(), style),
                 segment.sweep() == RotationDirection::Clockwise ? CSSValueCw : CSSValueCcw,
                 segment.arcSize() == ShapeArcSegment::ArcSize::Large ? CSSValueLarge : CSSValueSmall,
-                CSSPrimitiveValue::create(segment.angle(), CSSUnitType::CSS_DEG));
+                CSSPrimitiveValue::create(segment.angle(), CSSUnitType::Degree));
         },
         [&](const ShapeCloseSegment&) {
             return CSSShapeSegmentValue::createClose();

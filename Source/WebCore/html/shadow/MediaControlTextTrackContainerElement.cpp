@@ -290,7 +290,7 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
 
     // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
     if (document().page()->group().ensureCaptionPreferences().captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
-        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::CSS_PX, important ? IsImportant::Yes : IsImportant::No);
+        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::Pixel, important ? IsImportant::Yes : IsImportant::No);
 }
 
 void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeeded()
@@ -337,10 +337,10 @@ void MediaControlTextTrackContainerElement::updateTextTrackStyle()
 {
     if (m_textTrackRepresentation) {
         setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
-        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyLeft, 0, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyTop, 0, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyLeft, 0, CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyTop, 0, CSSUnitType::Pixel);
         return;
     }
 

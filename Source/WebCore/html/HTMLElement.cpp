@@ -146,7 +146,7 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 
 void HTMLElement::applyBorderAttributeToStyle(const AtomString& value, MutableStyleProperties& style)
 {
-    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
+    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::Pixel);
     addPropertyToPresentationalHintStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
@@ -781,13 +781,13 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
         return;
     if (dimensionValue->type == HTMLDimension::Type::Percentage) {
         if (allowPercentage == AllowPercentage::Yes)
-            addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_PERCENTAGE);
+            addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Percentage);
         return;
     }
     if (useCSSPX == UseCSSPXAsUnitType::Yes)
-        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_PX);
+        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Pixel);
     else
-        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_NUMBER);
+        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::Number);
 }
 
 // https://www.w3.org/TR/html4/sgml/dtd.html#Length, including pixel and percentage values.

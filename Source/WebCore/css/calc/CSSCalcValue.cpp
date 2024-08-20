@@ -343,7 +343,7 @@ inline double CSSCalcValue::clampToPermittedRange(double value) const
     value = CSSCalcOperationNode::convertToTopLevelValue(value);
     // If an <angle> must be converted due to exceeding the implementation-defined range of supported values,
     // it must be clamped to the nearest supported multiple of 360deg.
-    if (primitiveType() == CSSUnitType::CSS_DEG && std::isinf(value))
+    if (primitiveType() == CSSUnitType::Degree && std::isinf(value))
         return 0;
     return m_shouldClampToNonNegative && value < 0 ? 0 : value;
 }

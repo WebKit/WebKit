@@ -540,7 +540,7 @@ void CSSToStyleMap::mapNinePieceImageSlice(const CSSBorderImageSliceValue& value
     auto side = [](const CSSPrimitiveValue& value) -> Length {
         if (value.isPercentage())
             return { value.doubleValue(), LengthType::Percent };
-        return { value.intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed };
+        return { value.intValue(CSSUnitType::Number), LengthType::Fixed };
     };
     auto& slices = value.slices();
     image.setImageSlices({ side(slices.top()), side(slices.right()), side(slices.bottom()), side(slices.left()) });
@@ -587,7 +587,7 @@ Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& side)
     if (value.isNumber())
         return { value.floatValue(), LengthType::Relative };
     if (value.isPercentage())
-        return { value.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent };
+        return { value.doubleValue(CSSUnitType::Percentage), LengthType::Percent };
     auto& conversionData = m_builderState.cssToLengthConversionData();
     if (value.isCalculatedPercentageWithLength())
         return Length { value.cssCalcValue()->createCalculationValue(conversionData) };

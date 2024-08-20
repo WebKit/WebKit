@@ -185,7 +185,7 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
         return Ref { mathInvert->value() };
 
     if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
+        if (unitValue->unitEnum() == CSSUnitType::Number) {
             if (unitValue->value() == 0.0 || unitValue->value() == -0.0)
                 return Exception { ExceptionCode::RangeError };
             return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unitEnum()) };
@@ -260,7 +260,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<C
         std::optional<size_t> nonNumberUnitIndex;
         for (size_t i = 0; i < values.size(); ++i) {
             auto unit = downcast<CSSUnitValue>(values[i].get()).unitEnum();
-            if (unit == CSSUnitType::CSS_NUMBER)
+            if (unit == CSSUnitType::Number)
                 continue;
             if (nonNumberUnitIndex) {
                 multipleUnitsFound = true;
@@ -272,7 +272,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<C
             double product = 1;
             for (const Ref<CSSNumericValue>& value : values)
                 product *= downcast<CSSUnitValue>(value.get()).value();
-            auto unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unitEnum() : CSSUnitType::CSS_NUMBER;
+            auto unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unitEnum() : CSSUnitType::Number;
             return { CSSUnitValue::create(product, unit) };
         }
     }
@@ -349,7 +349,7 @@ static RefPtr<CSSUnitValue> createCSSUnitValueFromAddend(CSSNumericValue::Addend
     if (addend.units.size() > 1)
         return nullptr;
     if (addend.units.isEmpty())
-        return CSSUnitValue::create(addend.value, CSSUnitType::CSS_NUMBER);
+        return CSSUnitValue::create(addend.value, CSSUnitType::Number);
     auto unit = addend.units.begin();
     if (unit->value != 1)
         return nullptr;
@@ -386,7 +386,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
     parsedUnits.reserveInitialCapacity(units.size());
     for (auto& unit : units) {
         auto parsedUnit = CSSUnitValue::parseUnit(unit);
-        if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
+        if (parsedUnit == CSSUnitType::Unknown)
             return Exception { ExceptionCode::SyntaxError, "Invalid unit parameter"_s };
         parsedUnits.append(parsedUnit);
     }

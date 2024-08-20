@@ -914,7 +914,7 @@ bool CSSPropertyParser::consumeColumns(bool important)
 
 struct InitialNumericValue {
     double number;
-    CSSUnitType type { CSSUnitType::CSS_NUMBER };
+    CSSUnitType type { CSSUnitType::Number };
 };
 using InitialValue = std::variant<CSSValueID, InitialNumericValue>;
 
@@ -1044,7 +1044,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
-        return InitialNumericValue { 0, CSSUnitType::CSS_S };
+        return InitialNumericValue { 0, CSSUnitType::Second };
     case CSSPropertyAnimationFillMode:
     case CSSPropertyAnimationName:
     case CSSPropertyAnimationTimeline:
@@ -1122,7 +1122,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyFloodOpacity:
     case CSSPropertyStrokeOpacity:
     case CSSPropertyOpacity:
-        return InitialNumericValue { 1, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 1, CSSUnitType::Number };
     case CSSPropertyAnimationPlayState:
         return CSSValueRunning;
     case CSSPropertyAnimationTimingFunction:
@@ -1149,7 +1149,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBackgroundPositionY:
     case CSSPropertyWebkitMaskPositionX:
     case CSSPropertyWebkitMaskPositionY:
-        return InitialNumericValue { 0, CSSUnitType::CSS_PERCENTAGE };
+        return InitialNumericValue { 0, CSSUnitType::Percentage };
     case CSSPropertyBackgroundRepeat:
     case CSSPropertyMaskRepeat:
         return CSSValueRepeat;
@@ -1186,12 +1186,12 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueSeparate;
     case CSSPropertyBorderImageOutset:
     case CSSPropertyMaskBorderOutset:
-        return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 0, CSSUnitType::Number };
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyMaskBorderRepeat:
         return CSSValueStretch;
     case CSSPropertyBorderImageSlice:
-        return InitialNumericValue { 100, CSSUnitType::CSS_PERCENTAGE };
+        return InitialNumericValue { 100, CSSUnitType::Percentage };
     case CSSPropertyBoxSizing:
         return CSSValueContentBox;
     case CSSPropertyCaptionSide:
@@ -1229,7 +1229,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyListStyleType:
         return CSSValueDisc;
     case CSSPropertyMaskBorderSlice:
-        return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 0, CSSUnitType::Number };
     case CSSPropertyMaskComposite:
         return CSSValueAdd;
     case CSSPropertyMaskMode:
@@ -1241,15 +1241,15 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyOffsetDistance:
     case CSSPropertyTransformOriginZ:
     case CSSPropertyWebkitTextStrokeWidth:
-        return InitialNumericValue { 0, CSSUnitType::CSS_PX };
+        return InitialNumericValue { 0, CSSUnitType::Pixel };
     case CSSPropertyOrphans:
     case CSSPropertyWidows:
-        return InitialNumericValue { 2, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 2, CSSUnitType::Number };
     case CSSPropertyPerspectiveOriginX:
     case CSSPropertyPerspectiveOriginY:
     case CSSPropertyTransformOriginX:
     case CSSPropertyTransformOriginY:
-        return InitialNumericValue { 50, CSSUnitType::CSS_PERCENTAGE };
+        return InitialNumericValue { 50, CSSUnitType::Percentage };
     case CSSPropertyPosition:
         return CSSValueStatic;
     case CSSPropertyPrintColorAdjust:
@@ -1269,11 +1269,11 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyStrokeLinejoin:
         return CSSValueMiter;
     case CSSPropertyStrokeMiterlimit:
-        return InitialNumericValue { 4, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 4, CSSUnitType::Number };
     case CSSPropertyStrokeWidth:
-        return InitialNumericValue { 1, CSSUnitType::CSS_PX };
+        return InitialNumericValue { 1, CSSUnitType::Pixel };
     case CSSPropertyTabSize:
-        return InitialNumericValue { 8, CSSUnitType::CSS_NUMBER };
+        return InitialNumericValue { 8, CSSUnitType::Number };
     case CSSPropertyTextAlign:
         return CSSValueStart;
     case CSSPropertyTextDecorationStyle:
@@ -1362,7 +1362,7 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         break;
     case CSSPropertyBorderImageOutset:
     case CSSPropertyMaskBorderOutset:
-        if (isNumericQuad(value, 0, CSSUnitType::CSS_NUMBER))
+        if (isNumericQuad(value, 0, CSSUnitType::Number))
             return true;
         break;
     case CSSPropertyBorderImageRepeat:
@@ -1372,13 +1372,13 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         break;
     case CSSPropertyBorderImageSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 100, CSSUnitType::CSS_PERCENTAGE))
+            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 100, CSSUnitType::Percentage))
                 return true;
         }
         break;
     case CSSPropertyBorderImageWidth:
         if (auto widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
-            if (!widthValue->overridesBorderWidths() && isNumber(widthValue->widths(), 1, CSSUnitType::CSS_NUMBER))
+            if (!widthValue->overridesBorderWidths() && isNumber(widthValue->widths(), 1, CSSUnitType::Number))
                 return true;
         }
         break;
@@ -1390,7 +1390,7 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         break;
     case CSSPropertyMaskBorderSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 0, CSSUnitType::CSS_NUMBER))
+            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 0, CSSUnitType::Number))
                 return true;
         }
         return false;
@@ -1416,7 +1416,7 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
         return nameLiteral(value);
     }, [](InitialNumericValue initialValue) {
         switch (initialValue.type) {
-        case CSSUnitType::CSS_NUMBER:
+        case CSSUnitType::Number:
             if (initialValue.number == 0.0)
                 return "0"_s;
             if (initialValue.number == 1.0)
@@ -1428,7 +1428,7 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
             if (initialValue.number == 8.0)
                 return "8"_s;
             break;
-        case CSSUnitType::CSS_PERCENTAGE:
+        case CSSUnitType::Percentage:
             if (initialValue.number == 0.0)
                 return "0%"_s;
             if (initialValue.number == 50.0)
@@ -1436,13 +1436,13 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
             if (initialValue.number == 100.0)
                 return "100%"_s;
             break;
-        case CSSUnitType::CSS_PX:
+        case CSSUnitType::Pixel:
             if (initialValue.number == 0.0)
                 return "0px"_s;
             if (initialValue.number == 1.0)
                 return "1px"_s;
             break;
-        case CSSUnitType::CSS_S:
+        case CSSUnitType::Second:
             if (initialValue.number == 0.0)
                 return "0s"_s;
             break;
@@ -1509,7 +1509,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
                 else if (flexShrink == unsetValue)
                     flexShrink = number->value;
                 else if (!number->value) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
-                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
+                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
                 else
                     return false;
             } else if (!flexBasis) {
@@ -1533,7 +1533,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
         // if turned back on for nested columns, etc.). We have layout test coverage of both
         // scenarios.
         if (!flexBasis)
-            flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PERCENTAGE);
+            flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Percentage);
     }
 
     if (!m_range.atEnd())
@@ -2512,7 +2512,7 @@ bool CSSPropertyParser::consumePrefixedPerspective(bool important)
     if (auto perspective = consumeNumberRaw(m_range)) {
         if (perspective->value < 0)
             return false;
-        Ref value = CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX);
+        Ref value = CSSPrimitiveValue::create(perspective->value, CSSUnitType::Pixel);
         addProperty(CSSPropertyPerspective, CSSPropertyWebkitPerspective, WTFMove(value), important);
         return m_range.atEnd();
     }

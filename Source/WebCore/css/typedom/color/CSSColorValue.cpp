@@ -55,7 +55,7 @@ std::variant<RefPtr<CSSColorValue>, RefPtr<CSSStyleValue>> CSSColorValue::parse(
 ExceptionOr<RectifiedCSSColorPercent> CSSColorValue::rectifyCSSColorPercent(CSSColorPercent&& colorPercent)
 {
     return switchOn(WTFMove(colorPercent), [](double value) -> ExceptionOr<RectifiedCSSColorPercent> {
-        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::Percentage) } };
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorPercent> {
         if (numericValue->type().matches<CSSNumericBaseType::Percent>())
             return { WTFMove(numericValue) };
@@ -73,7 +73,7 @@ ExceptionOr<RectifiedCSSColorPercent> CSSColorValue::rectifyCSSColorPercent(CSSC
 ExceptionOr<RectifiedCSSColorAngle> CSSColorValue::rectifyCSSColorAngle(CSSColorAngle&& colorAngle)
 {
     return switchOn(WTFMove(colorAngle), [](double value) -> ExceptionOr<RectifiedCSSColorAngle> {
-        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_DEG) } };
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Degree) } };
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
         if (numericValue->type().matches<CSSNumericBaseType::Angle>())
             return { WTFMove(numericValue) };
@@ -91,7 +91,7 @@ ExceptionOr<RectifiedCSSColorAngle> CSSColorValue::rectifyCSSColorAngle(CSSColor
 ExceptionOr<RectifiedCSSColorNumber> CSSColorValue::rectifyCSSColorNumber(CSSColorNumber&& colorNumber)
 {
     return switchOn(WTFMove(colorNumber), [](double value) -> ExceptionOr<RectifiedCSSColorNumber> {
-        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_NUMBER) } };
+        return { RefPtr<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Number) } };
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorNumber> {
         if (numericValue->type().matchesNumber())
             return { WTFMove(numericValue) };

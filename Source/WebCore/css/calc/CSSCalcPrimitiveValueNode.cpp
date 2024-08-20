@@ -108,7 +108,7 @@ void CSSCalcPrimitiveValueNode::add(const CSSCalcPrimitiveValueNode& node, UnitC
         break;
     case UnitConversion::Canonicalize: {
         auto canonicalType = canonicalUnitTypeForUnitType(valueType);
-        ASSERT(canonicalType != CSSUnitType::CSS_UNKNOWN);
+        ASSERT(canonicalType != CSSUnitType::Unknown);
         double leftValue = value->doubleValue(canonicalType);
         double rightValue = node.doubleValue(canonicalType, { });
         m_value = CSSPrimitiveValue::create(leftValue + rightValue, canonicalType);

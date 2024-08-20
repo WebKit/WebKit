@@ -594,10 +594,10 @@ Node::InsertedIntoAncestorResult HTMLAttachmentElement::insertedIntoAncestor(Ins
 {
     auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
     if (isWideLayout()) {
-        setInlineStyleProperty(CSSPropertyMarginLeft, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginRight, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginTop, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginBottom, 1, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginLeft, 1, CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyMarginRight, 1, CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyMarginTop, 1, CSSUnitType::Pixel);
+        setInlineStyleProperty(CSSPropertyMarginBottom, 1, CSSUnitType::Pixel);
     }
 
 #if ATTACHMENT_LOG_DOCUMENT_TRAFFIC

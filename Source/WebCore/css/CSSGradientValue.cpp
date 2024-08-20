@@ -97,8 +97,8 @@ template<StopPositionResolution resolution> static inline std::optional<Length> 
 
     if constexpr (resolution == StopPositionResolution::Deprecated) {
         if (position->isPercentage())
-            return Length(position->floatValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
-        return Length(position->floatValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed);
+            return Length(position->floatValue(CSSUnitType::Percentage), LengthType::Percent);
+        return Length(position->floatValue(CSSUnitType::Number), LengthType::Fixed);
     } else
         return Style::BuilderConverter::convertLength(state, *position);
 }
@@ -109,7 +109,7 @@ static inline std::variant<std::monostate, AngleRaw, PercentRaw> computeAngularS
         return std::monostate { };
 
     if (position->isPercentage())
-        return { PercentRaw { position->doubleValue(CSSUnitType::CSS_PERCENTAGE) } };
+        return { PercentRaw { position->doubleValue(CSSUnitType::Percentage) } };
 
     if (position->isAngle())
         return { AngleRaw { position->primitiveType(), position->doubleValue() } };
@@ -137,8 +137,8 @@ static decltype(auto) computeAngularStops(const CSSGradientColorStopList& stops,
 static StyleGradientDeprecatedPoint::Coordinate resolvePointCoordinate(const Ref<CSSPrimitiveValue>& coordinate, Style::BuilderState&)
 {
     if (coordinate->isPercentage())
-        return { PercentRaw { coordinate->doubleValue(CSSUnitType::CSS_PERCENTAGE) } };
-    return { NumberRaw { coordinate->doubleValue(CSSUnitType::CSS_NUMBER) } };
+        return { PercentRaw { coordinate->doubleValue(CSSUnitType::Percentage) } };
+    return { NumberRaw { coordinate->doubleValue(CSSUnitType::Number) } };
 }
 
 static StyleGradientDeprecatedPoint resolvePoint(const CSSGradientDeprecatedPoint& point, Style::BuilderState& state)
@@ -503,7 +503,7 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
 static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
 {
     for (auto& stop : stops) {
-        double position = stop.position->doubleValue(CSSUnitType::CSS_NUMBER);
+        double position = stop.position->doubleValue(CSSUnitType::Number);
         if (!position)
             builder.append(", from("_s, stop.color->cssText(), ')');
         else if (position == 1)
@@ -734,7 +734,7 @@ static bool isCenterPosition(const CSSValue& value)
     if (isValueID(value, CSSValueCenter))
         return true;
     auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
-    return number && number->doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
+    return number && number->doubleValue(CSSUnitType::Percentage) == 50;
 }
 
 static bool isCenterPosition(const CSSGradientPosition& position)

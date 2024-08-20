@@ -52,12 +52,12 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(LengthRaw value
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(NumberRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
-    return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_NUMBER);
+    return CSSPrimitiveValue::create(value.value, CSSUnitType::Number);
 }
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(PercentRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
-    return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_PERCENTAGE);
+    return CSSPrimitiveValue::create(value.value, CSSUnitType::Percentage);
 }
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(ResolutionRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
@@ -72,7 +72,7 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(TimeRaw value, 
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(NoneRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
-    return CSSPrimitiveValue::create(std::numeric_limits<double>::quiet_NaN(), CSSUnitType::CSS_NUMBER);
+    return CSSPrimitiveValue::create(std::numeric_limits<double>::quiet_NaN(), CSSUnitType::Number);
 }
 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(SymbolRaw value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)

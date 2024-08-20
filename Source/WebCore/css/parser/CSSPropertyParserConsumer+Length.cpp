@@ -69,59 +69,59 @@ std::optional<LengthRaw> LengthKnownTokenTypeDimensionConsumer::consume(CSSParse
 
     auto unitType = token.unitType();
     switch (unitType) {
-    case CSSUnitType::CSS_QUIRKY_EM:
+    case CSSUnitType::QuirkyEm:
         if (!isUASheetBehavior(options.parserMode))
             return std::nullopt;
         FALLTHROUGH;
-    case CSSUnitType::CSS_EM:
-    case CSSUnitType::CSS_REM:
-    case CSSUnitType::CSS_LH:
-    case CSSUnitType::CSS_RLH:
-    case CSSUnitType::CSS_CAP:
-    case CSSUnitType::CSS_RCAP:
-    case CSSUnitType::CSS_CH:
-    case CSSUnitType::CSS_RCH:
-    case CSSUnitType::CSS_IC:
-    case CSSUnitType::CSS_RIC:
-    case CSSUnitType::CSS_EX:
-    case CSSUnitType::CSS_REX:
-    case CSSUnitType::CSS_PX:
-    case CSSUnitType::CSS_CM:
-    case CSSUnitType::CSS_MM:
-    case CSSUnitType::CSS_IN:
-    case CSSUnitType::CSS_PT:
-    case CSSUnitType::CSS_PC:
-    case CSSUnitType::CSS_VW:
-    case CSSUnitType::CSS_VH:
-    case CSSUnitType::CSS_VMIN:
-    case CSSUnitType::CSS_VMAX:
-    case CSSUnitType::CSS_VB:
-    case CSSUnitType::CSS_VI:
-    case CSSUnitType::CSS_SVW:
-    case CSSUnitType::CSS_SVH:
-    case CSSUnitType::CSS_SVMIN:
-    case CSSUnitType::CSS_SVMAX:
-    case CSSUnitType::CSS_SVB:
-    case CSSUnitType::CSS_SVI:
-    case CSSUnitType::CSS_LVW:
-    case CSSUnitType::CSS_LVH:
-    case CSSUnitType::CSS_LVMIN:
-    case CSSUnitType::CSS_LVMAX:
-    case CSSUnitType::CSS_LVB:
-    case CSSUnitType::CSS_LVI:
-    case CSSUnitType::CSS_DVW:
-    case CSSUnitType::CSS_DVH:
-    case CSSUnitType::CSS_DVMIN:
-    case CSSUnitType::CSS_DVMAX:
-    case CSSUnitType::CSS_DVB:
-    case CSSUnitType::CSS_DVI:
-    case CSSUnitType::CSS_Q:
-    case CSSUnitType::CSS_CQW:
-    case CSSUnitType::CSS_CQH:
-    case CSSUnitType::CSS_CQI:
-    case CSSUnitType::CSS_CQB:
-    case CSSUnitType::CSS_CQMIN:
-    case CSSUnitType::CSS_CQMAX:
+    case CSSUnitType::Em:
+    case CSSUnitType::RootEm:
+    case CSSUnitType::LineHeight:
+    case CSSUnitType::RootLineHeight:
+    case CSSUnitType::CapHeight:
+    case CSSUnitType::RootCapHeight:
+    case CSSUnitType::CharacterWidth:
+    case CSSUnitType::RootCharacterWidth:
+    case CSSUnitType::IdeographicCharacter:
+    case CSSUnitType::RootIdeographicCharacter:
+    case CSSUnitType::Ex:
+    case CSSUnitType::RootEx:
+    case CSSUnitType::Pixel:
+    case CSSUnitType::Centimeter:
+    case CSSUnitType::Millimeter:
+    case CSSUnitType::Inch:
+    case CSSUnitType::Point:
+    case CSSUnitType::Pica:
+    case CSSUnitType::ViewportWidth:
+    case CSSUnitType::ViewportHeight:
+    case CSSUnitType::ViewportMinimum:
+    case CSSUnitType::ViewportMaximum:
+    case CSSUnitType::ViewportBlock:
+    case CSSUnitType::ViewportInline:
+    case CSSUnitType::SmallViewportWidth:
+    case CSSUnitType::SmallViewportHeight:
+    case CSSUnitType::SmallViewportMinimum:
+    case CSSUnitType::SmallViewportMaximum:
+    case CSSUnitType::SmallViewportBlock:
+    case CSSUnitType::SmallViewportInline:
+    case CSSUnitType::LargeViewportWidth:
+    case CSSUnitType::LargeViewportHeight:
+    case CSSUnitType::LargeViewportMinimum:
+    case CSSUnitType::LargeViewportMaximum:
+    case CSSUnitType::LargeViewportBlock:
+    case CSSUnitType::LargeViewportInline:
+    case CSSUnitType::DynamicViewportWidth:
+    case CSSUnitType::DynamicViewportHeight:
+    case CSSUnitType::DynamicViewportMinimum:
+    case CSSUnitType::DynamicViewportMaximum:
+    case CSSUnitType::DynamicViewportBlock:
+    case CSSUnitType::DynamicViewportInline:
+    case CSSUnitType::Quarter:
+    case CSSUnitType::ContainerQueryWidth:
+    case CSSUnitType::ContainerQueryHeight:
+    case CSSUnitType::ContainerQueryInline:
+    case CSSUnitType::ContainerQueryBlock:
+    case CSSUnitType::ContainerQueryMinimum:
+    case CSSUnitType::ContainerQueryMaximum:
         break;
     default:
         return std::nullopt;
@@ -143,7 +143,7 @@ std::optional<LengthRaw> LengthKnownTokenTypeNumberConsumer::consume(CSSParserTo
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(LengthRaw { CSSUnitType::CSS_PX, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(LengthRaw { CSSUnitType::Pixel, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }

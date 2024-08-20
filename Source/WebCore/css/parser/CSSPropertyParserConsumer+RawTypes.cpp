@@ -39,12 +39,12 @@ void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
 
 void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_NUMBER));
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::Number));
 }
 
 void serializationForCSS(StringBuilder& builder, const PercentRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::Percentage));
 }
 
 void serializationForCSS(StringBuilder& builder, const LengthRaw& value)

@@ -114,7 +114,7 @@ static EvaluationResult evaluateResolutionComparison(float resolution, const std
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->floatValue(CSSUnitType::CSS_DPPX);
+    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->floatValue(CSSUnitType::DotsPerPixel);
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;

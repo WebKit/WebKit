@@ -240,12 +240,12 @@ static CSSUnitType primitiveTypeForCombination(const CSSCalcExpressionNode& node
     if (is<CSSCalcPrimitiveValueNode>(node))
         return node.primitiveType();
     
-    return CSSUnitType::CSS_UNKNOWN;
+    return CSSUnitType::Unknown;
 }
 
 static CSSCalcPrimitiveValueNode::UnitConversion conversionToAddValuesWithTypes(CSSUnitType firstType, CSSUnitType secondType)
 {
-    if (firstType == CSSUnitType::CSS_UNKNOWN || secondType == CSSUnitType::CSS_UNKNOWN)
+    if (firstType == CSSUnitType::Unknown || secondType == CSSUnitType::Unknown)
         return CSSCalcPrimitiveValueNode::UnitConversion::Invalid;
 
     auto firstCategory = calculationCategoryForCombination(firstType);
@@ -671,13 +671,13 @@ void CSSCalcOperationNode::combineChildren()
         }
         if (isInverseTrigNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
-            Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
+            Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::Degree));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
         if ((isAbsOrSignNode() || isHypotNode()) && canCombineAllChildren()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
-            auto combinedUnitType = isSignNode() ? CSSUnitType::CSS_NUMBER : m_children[0]->primitiveType();
+            auto combinedUnitType = isSignNode() ? CSSUnitType::Number : m_children[0]->primitiveType();
             Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
             m_children.clear();
             m_children.append(WTFMove(newChild));
@@ -725,11 +725,11 @@ void CSSCalcOperationNode::combineChildren()
 
         RefPtr<CSSCalcExpressionNode> lastNonNumberNode;
         for (auto& child : m_children) {
-            if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER) {
+            if (primitiveTypeForCombination(child) != CSSUnitType::Number) {
                 lastNonNumberNode = child.ptr();
                 continue;
             }
-            multiplier *= downcast<CSSCalcPrimitiveValueNode>(child.get()).doubleValue(CSSUnitType::CSS_NUMBER, { });
+            multiplier *= downcast<CSSCalcPrimitiveValueNode>(child.get()).doubleValue(CSSUnitType::Number, { });
             ++numberNodeCount;
         }
         
@@ -779,7 +779,7 @@ void CSSCalcOperationNode::combineChildren()
             }
 
             for (Ref child : m_children) {
-                if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER)
+                if (primitiveTypeForCombination(child) != CSSUnitType::Number)
                     newChildren.append(WTFMove(child));
             }
         }
@@ -791,7 +791,7 @@ void CSSCalcOperationNode::combineChildren()
     if ((isMinOrMaxNode() || isHypotNode() || isClampNode()) && canCombineAllChildren()) {
         auto combinedUnitType = m_children[0]->primitiveType();
         auto involvesPercentageComparisons = [&]() {
-            return combinedUnitType == CSSUnitType::CSS_PERCENTAGE && m_children.size() > 1;
+            return combinedUnitType == CSSUnitType::Percentage && m_children.size() > 1;
         };
 
         if (isMinOrMaxNode() && allowsNegativePercentageReference() && involvesPercentageComparisons())
@@ -817,7 +817,7 @@ void CSSCalcOperationNode::combineChildren()
 
     if (calcOperator() == CalcOperator::Atan2) {
         double resolvedValue = doubleValue(m_children[0]->primitiveType(), { });
-        Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
+        Ref newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::Degree));
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }
@@ -982,10 +982,10 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
     auto unitCategory = category();
     switch (unitCategory) {
     case CalculationCategory::Number:
-        return CSSUnitType::CSS_NUMBER;
+        return CSSUnitType::Number;
     case CalculationCategory::Percent: {
         if (m_children.isEmpty())
-            return CSSUnitType::CSS_UNKNOWN;
+            return CSSUnitType::Unknown;
 
         if (m_children.size() == 1)
             return m_children[0]->primitiveType();
@@ -1001,7 +1001,7 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
             unsigned i = 1;
 
             CSSUnitType firstType = m_children[0]->primitiveType();
-            CSSUnitType secondType = CSSUnitType::CSS_UNKNOWN;
+            CSSUnitType secondType = CSSUnitType::Unknown;
 
             for (; i < m_children.size(); ++i) {
                 secondType = m_children[i]->primitiveType();
@@ -1014,7 +1014,7 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
                 return firstType;
             }
 
-            CSSUnitType thirdType = CSSUnitType::CSS_UNKNOWN;
+            CSSUnitType thirdType = CSSUnitType::Unknown;
             for (; i < m_children.size(); ++i) {
                 thirdType = m_children[i]->primitiveType();
                 if (secondType != thirdType)
@@ -1026,13 +1026,13 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
                 return secondType;
             }
 
-            return CSSUnitType::CSS_UNKNOWN;
+            return CSSUnitType::Unknown;
         }
 
         CSSUnitType firstType = m_children[0]->primitiveType();
         for (auto& child : m_children) {
             if (firstType != child->primitiveType())
-                return CSSUnitType::CSS_UNKNOWN;
+                return CSSUnitType::Unknown;
         }
         return firstType;
     }
@@ -1049,10 +1049,10 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
     case CalculationCategory::PercentLength:
     case CalculationCategory::PercentNumber:
     case CalculationCategory::Other:
-        return CSSUnitType::CSS_UNKNOWN;
+        return CSSUnitType::Unknown;
     }
     ASSERT_NOT_REACHED();
-    return CSSUnitType::CSS_UNKNOWN;
+    return CSSUnitType::Unknown;
 }
 
 std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(const CSSToLengthConversionData& conversionData) const
@@ -1084,12 +1084,12 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType, const CSSCalcSymb
 
     return evaluate(m_children.map([&] (auto& child) {
         CSSUnitType childType = unitType;
-        if (allowNumbers && unitType != CSSUnitType::CSS_NUMBER && child->primitiveType() == CSSUnitType::CSS_NUMBER)
-            childType = CSSUnitType::CSS_NUMBER;
-        if (isTrigNode() && unitType != CSSUnitType::CSS_NUMBER)
-            childType = CSSUnitType::CSS_RAD;
+        if (allowNumbers && unitType != CSSUnitType::Number && child->primitiveType() == CSSUnitType::Number)
+            childType = CSSUnitType::Number;
+        if (isTrigNode() && unitType != CSSUnitType::Number)
+            childType = CSSUnitType::Radian;
         if (isInverseTrigNode())
-            childType = CSSUnitType::CSS_NUMBER;
+            childType = CSSUnitType::Number;
         if (isAtan2Node() || isAbsOrSignNode())
             childType = child->primitiveType();
         return child->doubleValue(childType, symbolTable);

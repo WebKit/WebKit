@@ -46,11 +46,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
     case 1:
         switch (toASCIILower(data[0])) {
         case 'q':
-            return CSSUnitType::CSS_Q;
+            return CSSUnitType::Quarter;
         case 's':
-            return CSSUnitType::CSS_S;
+            return CSSUnitType::Second;
         case 'x':
-            return CSSUnitType::CSS_X;
+            return CSSUnitType::MultiplicationFactor;
         }
         break;
     case 2:
@@ -58,67 +58,67 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
         case 'c':
             switch (toASCIILower(data[1])) {
             case 'h':
-                return CSSUnitType::CSS_CH;
+                return CSSUnitType::CharacterWidth;
             case 'm':
-                return CSSUnitType::CSS_CM;
+                return CSSUnitType::Centimeter;
             }
             break;
         case 'e':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSUnitType::CSS_EM;
+                return CSSUnitType::Em;
             case 'x':
-                return CSSUnitType::CSS_EX;
+                return CSSUnitType::Ex;
             }
             break;
         case 'f':
             if (toASCIILower(data[1]) == 'r')
-                return CSSUnitType::CSS_FR;
+                return CSSUnitType::Fraction;
             break;
         case 'h':
             if (toASCIILower(data[1]) == 'z')
-                return CSSUnitType::CSS_HZ;
+                return CSSUnitType::Hertz;
             break;
         case 'i':
             switch (toASCIILower(data[1])) {
             case 'c':
-                return CSSUnitType::CSS_IC;
+                return CSSUnitType::IdeographicCharacter;
             case 'n':
-                return CSSUnitType::CSS_IN;
+                return CSSUnitType::Inch;
             }
             break;
         case 'l':
             if (toASCIILower(data[1]) == 'h')
-                return CSSUnitType::CSS_LH;
+                return CSSUnitType::LineHeight;
             break;
         case 'm':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSUnitType::CSS_MM;
+                return CSSUnitType::Millimeter;
             case 's':
-                return CSSUnitType::CSS_MS;
+                return CSSUnitType::Millisecond;
             }
             break;
         case 'p':
             switch (toASCIILower(data[1])) {
             case 'c':
-                return CSSUnitType::CSS_PC;
+                return CSSUnitType::Pica;
             case 't':
-                return CSSUnitType::CSS_PT;
+                return CSSUnitType::Point;
             case 'x':
-                return CSSUnitType::CSS_PX;
+                return CSSUnitType::Pixel;
             }
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
             case 'b':
-                return CSSUnitType::CSS_VB;
+                return CSSUnitType::ViewportBlock;
             case 'h':
-                return CSSUnitType::CSS_VH;
+                return CSSUnitType::ViewportHeight;
             case 'i':
-                return CSSUnitType::CSS_VI;
+                return CSSUnitType::ViewportInline;
             case 'w':
-                return CSSUnitType::CSS_VW;
+                return CSSUnitType::ViewportWidth;
             }
             break;
         }
@@ -128,18 +128,18 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
         case 'c':
             if (toASCIILower(data[1]) == 'a') {
                 if (toASCIILower(data[2]) == 'p')
-                    return CSSUnitType::CSS_CAP;
+                    return CSSUnitType::CapHeight;
             }
             if (toASCIILower(data[1]) == 'q') {
                 switch (toASCIILower(data[2])) {
                 case 'b':
-                    return CSSUnitType::CSS_CQB;
+                    return CSSUnitType::ContainerQueryBlock;
                 case 'h':
-                    return CSSUnitType::CSS_CQH;
+                    return CSSUnitType::ContainerQueryHeight;
                 case 'i':
-                    return CSSUnitType::CSS_CQI;
+                    return CSSUnitType::ContainerQueryInline;
                 case 'w':
-                    return CSSUnitType::CSS_CQW;
+                    return CSSUnitType::ContainerQueryWidth;
                 }
             }
             break;
@@ -147,22 +147,22 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
             switch (toASCIILower(data[1])) {
             case 'e':
                 if (toASCIILower(data[2]) == 'g')
-                    return CSSUnitType::CSS_DEG;
+                    return CSSUnitType::Degree;
                 break;
             case 'p':
                 if (toASCIILower(data[2]) == 'i')
-                    return CSSUnitType::CSS_DPI;
+                    return CSSUnitType::DotsPerInch;
                 break;
             case 'v':
                 switch (toASCIILower(data[2])) {
                 case 'b':
-                    return CSSUnitType::CSS_DVB;
+                    return CSSUnitType::DynamicViewportBlock;
                 case 'h':
-                    return CSSUnitType::CSS_DVH;
+                    return CSSUnitType::DynamicViewportHeight;
                 case 'i':
-                    return CSSUnitType::CSS_DVI;
+                    return CSSUnitType::DynamicViewportInline;
                 case 'w':
-                    return CSSUnitType::CSS_DVW;
+                    return CSSUnitType::DynamicViewportWidth;
                 }
                 break;
             }
@@ -171,43 +171,43 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
             if (toASCIILower(data[1]) == 'v') {
                 switch (toASCIILower(data[2])) {
                 case 'b':
-                    return CSSUnitType::CSS_LVB;
+                    return CSSUnitType::LargeViewportBlock;
                 case 'h':
-                    return CSSUnitType::CSS_LVH;
+                    return CSSUnitType::LargeViewportHeight;
                 case 'i':
-                    return CSSUnitType::CSS_LVI;
+                    return CSSUnitType::LargeViewportInline;
                 case 'w':
-                    return CSSUnitType::CSS_LVW;
+                    return CSSUnitType::LargeViewportWidth;
                 }
             }
             break;
         case 'k':
             if (toASCIILower(data[1]) == 'h' && toASCIILower(data[2]) == 'z')
-                return CSSUnitType::CSS_KHZ;
+                return CSSUnitType::Kilohertz;
             break;
         case 'r':
             switch (toASCIILower(data[1])) {
             case 'a':
                 if (toASCIILower(data[2]) == 'd')
-                    return CSSUnitType::CSS_RAD;
+                    return CSSUnitType::Radian;
                 break;
             case 'c':
                 if (toASCIILower(data[2]) == 'h')
-                    return CSSUnitType::CSS_RCH;
+                    return CSSUnitType::RootCharacterWidth;
                 break;
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
-                    return CSSUnitType::CSS_REM;
+                    return CSSUnitType::RootEm;
                 if (toASCIILower(data[2]) == 'x')
-                    return CSSUnitType::CSS_REX;
+                    return CSSUnitType::RootEx;
                 break;
             case 'i':
                 if (toASCIILower(data[2]) == 'c')
-                    return CSSUnitType::CSS_RIC;
+                    return CSSUnitType::RootIdeographicCharacter;
                 break;
             case 'l':
                 if (toASCIILower(data[2]) == 'h')
-                    return CSSUnitType::CSS_RLH;
+                    return CSSUnitType::RootLineHeight;
                 break;
             }
             break;
@@ -215,13 +215,13 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
             if (toASCIILower(data[1]) == 'v') {
                 switch (toASCIILower(data[2])) {
                 case 'b':
-                    return CSSUnitType::CSS_SVB;
+                    return CSSUnitType::SmallViewportBlock;
                 case 'h':
-                    return CSSUnitType::CSS_SVH;
+                    return CSSUnitType::SmallViewportHeight;
                 case 'i':
-                    return CSSUnitType::CSS_SVI;
+                    return CSSUnitType::SmallViewportInline;
                 case 'w':
-                    return CSSUnitType::CSS_SVW;
+                    return CSSUnitType::SmallViewportWidth;
                 }
             }
             break;
@@ -235,11 +235,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
                 switch (toASCIILower(data[2])) {
                 case 'c':
                     if (toASCIILower(data[3]) == 'm')
-                        return CSSUnitType::CSS_DPCM;
+                        return CSSUnitType::DotsPerCentimeter;
                     break;
                 case 'p':
                     if (toASCIILower(data[3]) == 'x')
-                        return CSSUnitType::CSS_DPPX;
+                        return CSSUnitType::DotsPerPixel;
                     break;
                 }
                 break;
@@ -247,15 +247,15 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
             break;
         case 'g':
             if (toASCIILower(data[1]) == 'r' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'd')
-                return CSSUnitType::CSS_GRAD;
+                return CSSUnitType::Gradian;
             break;
         case 'r':
             if (toASCIILower(data[1]) == 'c' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'p')
-                return CSSUnitType::CSS_RCAP;
+                return CSSUnitType::RootCapHeight;
             break;
         case 't':
             if (toASCIILower(data[1]) == 'u' && toASCIILower(data[2]) == 'r' && toASCIILower(data[3]) == 'n')
-                return CSSUnitType::CSS_TURN;
+                return CSSUnitType::Turn;
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
@@ -263,11 +263,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
                 switch (toASCIILower(data[2])) {
                 case 'a':
                     if (toASCIILower(data[3]) == 'x')
-                        return CSSUnitType::CSS_VMAX;
+                        return CSSUnitType::ViewportMaximum;
                     break;
                 case 'i':
                     if (toASCIILower(data[3]) == 'n')
-                        return CSSUnitType::CSS_VMIN;
+                        return CSSUnitType::ViewportMinimum;
                     break;
                 }
                 break;
@@ -279,18 +279,18 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
         switch (toASCIILower(data[0])) {
         case '_':
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
-                return CSSUnitType::CSS_QUIRKY_EM;
+                return CSSUnitType::QuirkyEm;
             break;
         case 'c':
             if (toASCIILower(data[1]) == 'q' && toASCIILower(data[2]) == 'm') {
                 switch (toASCIILower(data[3])) {
                 case 'a':
                     if (toASCIILower(data[4]) == 'x')
-                        return CSSUnitType::CSS_CQMAX;
+                        return CSSUnitType::ContainerQueryMaximum;
                     break;
                 case 'i':
                     if (toASCIILower(data[4]) == 'n')
-                        return CSSUnitType::CSS_CQMIN;
+                        return CSSUnitType::ContainerQueryMinimum;
                     break;
                 }
             }
@@ -300,11 +300,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
                 switch (toASCIILower(data[3])) {
                 case 'a':
                     if (toASCIILower(data[4]) == 'x')
-                        return CSSUnitType::CSS_DVMAX;
+                        return CSSUnitType::DynamicViewportMaximum;
                     break;
                 case 'i':
                     if (toASCIILower(data[4]) == 'n')
-                        return CSSUnitType::CSS_DVMIN;
+                        return CSSUnitType::DynamicViewportMinimum;
                     break;
                 }
             }
@@ -314,11 +314,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
                 switch (toASCIILower(data[3])) {
                 case 'a':
                     if (toASCIILower(data[4]) == 'x')
-                        return CSSUnitType::CSS_LVMAX;
+                        return CSSUnitType::LargeViewportMaximum;
                     break;
                 case 'i':
                     if (toASCIILower(data[4]) == 'n')
-                        return CSSUnitType::CSS_LVMIN;
+                        return CSSUnitType::LargeViewportMinimum;
                     break;
                 }
             }
@@ -328,11 +328,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
                 switch (toASCIILower(data[3])) {
                 case 'a':
                     if (toASCIILower(data[4]) == 'x')
-                        return CSSUnitType::CSS_SVMAX;
+                        return CSSUnitType::SmallViewportMaximum;
                     break;
                 case 'i':
                     if (toASCIILower(data[4]) == 'n')
-                        return CSSUnitType::CSS_SVMIN;
+                        return CSSUnitType::SmallViewportMinimum;
                     break;
                 }
             }
@@ -340,7 +340,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(std::span<const CharacterType> data)
         }
         break;
     }
-    return CSSUnitType::CSS_UNKNOWN;
+    return CSSUnitType::Unknown;
 }
 
 CSSUnitType CSSParserToken::stringToUnitType(StringView stringView)
@@ -385,7 +385,7 @@ CSSParserToken::CSSParserToken(double numericValue, NumericValueType numericValu
     , m_blockType(NotBlock)
     , m_numericValueType(numericValueType)
     , m_numericSign(sign)
-    , m_unit(static_cast<unsigned>(CSSUnitType::CSS_NUMBER))
+    , m_unit(static_cast<unsigned>(CSSUnitType::Number))
     , m_numericValue(numericValue)
 {
     initValueFromStringView(originalText);
@@ -433,7 +433,7 @@ void CSSParserToken::convertToPercentage()
 {
     ASSERT(m_type == NumberToken);
     m_type = PercentageToken;
-    m_unit = static_cast<unsigned>(CSSUnitType::CSS_PERCENTAGE);
+    m_unit = static_cast<unsigned>(CSSUnitType::Percentage);
 }
 
 StringView CSSParserToken::originalText() const

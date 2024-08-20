@@ -48,7 +48,7 @@ CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPri
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
-    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_X)));
+    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), CSSPrimitiveValue::create(1.0, CSSUnitType::MultiplicationFactor)));
 }
 
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution)

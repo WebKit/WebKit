@@ -157,10 +157,10 @@ template<typename T> CSSValueID identifierForStyleProperty(T& style, CSSProperty
     auto value = extractPropertyValue(style, propertyID);
     if (auto fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value.get())) {
         ASSERT(propertyID == CSSPropertyFontStyle);
-        return fontStyleValue->obliqueAngle().doubleValue(CSSUnitType::CSS_DEG) >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
+        return fontStyleValue->obliqueAngle().doubleValue(CSSUnitType::Degree) >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
     }
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
-        if (propertyID == CSSPropertyFontWeight && primitiveValue->doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
+        if (propertyID == CSSPropertyFontWeight && primitiveValue->doubleValue(CSSUnitType::Number) >= boldThreshold())
             return CSSValueBold;
         auto identifier = primitiveValue->valueID();
         if (identifier == CSSValueOblique) {
@@ -1967,7 +1967,7 @@ static bool isCSSValueLength(CSSPrimitiveValue* value)
 int legacyFontSizeFromCSSValue(Document& document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
 {
     if (isCSSValueLength(value)) {
-        int pixelFontSize = value->intValue(CSSUnitType::CSS_PX);
+        int pixelFontSize = value->intValue(CSSUnitType::Pixel);
         int legacyFontSize = Style::legacyFontSizeForPixelSize(pixelFontSize, shouldUseFixedFontDefaultSize, document);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;

@@ -56,7 +56,7 @@ float SizesAttributeParser::computeLength(double value, CSSUnitType type, const 
     // the pointer to it for the duration of the unit evaluation. This is acceptible because the style always comes from the
     // RenderView, which has its font information hardcoded in resolveForDocument() to be -webkit-standard, whose operations
     // don't require a font selector.
-    if (type == CSSUnitType::CSS_EX || type == CSSUnitType::CSS_CAP || type == CSSUnitType::CSS_CH || type == CSSUnitType::CSS_IC) {
+    if (type == CSSUnitType::Ex || type == CSSUnitType::CapHeight || type == CSSUnitType::CharacterWidth || type == CSSUnitType::IdeographicCharacter) {
         RefPtr<FontSelector> fontSelector = style.fontCascade().fontSelector();
         style.fontCascade().update(nullptr);
         float result = CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value);
@@ -162,7 +162,7 @@ unsigned SizesAttributeParser::effectiveSizeDefaultValue()
     if (!renderer)
         return 0;
     auto& style = renderer->style();
-    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ style, &style, renderer->parentStyle(), renderer }, CSSUnitType::CSS_VW, 100.0));
+    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ style, &style, renderer->parentStyle(), renderer }, CSSUnitType::ViewportWidth, 100.0));
 }
 
 Ref<const Document> SizesAttributeParser::protectedDocument() const

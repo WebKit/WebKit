@@ -569,11 +569,11 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomProp
 static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
 {
     auto mmLength = [](double mm) {
-        return CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM).get().computeLength<Length>({ });
+        return CSSPrimitiveValue::create(mm, CSSUnitType::Millimeter).get().computeLength<Length>({ });
     };
 
     auto inchLength = [](double inch) {
-        return CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN).get().computeLength<Length>({ });
+        return CSSPrimitiveValue::create(inch, CSSUnitType::Inch).get().computeLength<Length>({ });
     };
 
     static NeverDestroyed<Length> a5Width(mmLength(148));

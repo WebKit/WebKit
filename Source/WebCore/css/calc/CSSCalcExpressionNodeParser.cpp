@@ -113,10 +113,10 @@ enum ParseState {
 static const CSSCalcSymbolTable getConstantTable()
 {
     return {
-        { CSSValuePi, CSSUnitType::CSS_NUMBER, piDouble }, { CSSValueE, CSSUnitType::CSS_NUMBER, std::exp(1.0) },
-        { CSSValueNegativeInfinity, CSSUnitType::CSS_NUMBER, -1 * std::numeric_limits<double>::infinity() },
-        { CSSValueInfinity, CSSUnitType::CSS_NUMBER, std::numeric_limits<double>::infinity() },
-        { CSSValueNaN, CSSUnitType::CSS_NUMBER, std::numeric_limits<double>::quiet_NaN() },
+        { CSSValuePi, CSSUnitType::Number, piDouble }, { CSSValueE, CSSUnitType::Number, std::exp(1.0) },
+        { CSSValueNegativeInfinity, CSSUnitType::Number, -1 * std::numeric_limits<double>::infinity() },
+        { CSSValueInfinity, CSSUnitType::Number, std::numeric_limits<double>::infinity() },
+        { CSSValueNaN, CSSUnitType::Number, std::numeric_limits<double>::quiet_NaN() },
     };
 }
 

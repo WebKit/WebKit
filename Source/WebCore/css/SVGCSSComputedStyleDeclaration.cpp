@@ -38,13 +38,13 @@ static RefPtr<CSSPrimitiveValue> createCSSValue(GlyphOrientation orientation)
 {
     switch (orientation) {
     case GlyphOrientation::Degrees0:
-        return CSSPrimitiveValue::create(0.0f, CSSUnitType::CSS_DEG);
+        return CSSPrimitiveValue::create(0.0f, CSSUnitType::Degree);
     case GlyphOrientation::Degrees90:
-        return CSSPrimitiveValue::create(90.0f, CSSUnitType::CSS_DEG);
+        return CSSPrimitiveValue::create(90.0f, CSSUnitType::Degree);
     case GlyphOrientation::Degrees180:
-        return CSSPrimitiveValue::create(180.0f, CSSUnitType::CSS_DEG);
+        return CSSPrimitiveValue::create(180.0f, CSSUnitType::Degree);
     case GlyphOrientation::Degrees270:
-        return CSSPrimitiveValue::create(270.0f, CSSUnitType::CSS_DEG);
+        return CSSPrimitiveValue::create(270.0f, CSSUnitType::Degree);
     case GlyphOrientation::Auto:
         return nullptr;
     }
@@ -61,8 +61,8 @@ static Ref<CSSValue> createCSSValue(const Vector<SVGLengthValue>& dashes)
     for (auto& length : dashes) {
         auto primitiveValue = length.toCSSPrimitiveValue();
         // Computed lengths should always be in 'px' unit.
-        if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::CSS_PX)
-            list.append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
+        if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::Pixel)
+            list.append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::Pixel), CSSUnitType::Pixel));
         else
             list.append(WTFMove(primitiveValue));
     }
@@ -167,8 +167,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::create(CSSValueSub);
         case BaselineShift::Length: {
             auto computedValue = svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
-            if (computedValue->isLength() && computedValue->primitiveType() != CSSUnitType::CSS_PX)
-                return CSSPrimitiveValue::create(computedValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX);
+            if (computedValue->isLength() && computedValue->primitiveType() != CSSUnitType::Pixel)
+                return CSSPrimitiveValue::create(computedValue->doubleValue(CSSUnitType::Pixel), CSSUnitType::Pixel);
             return computedValue;
         }
         }
