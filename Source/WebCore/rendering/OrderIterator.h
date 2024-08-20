@@ -40,6 +40,23 @@ class RenderObject;
     
 class OrderIterator {
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = RenderBox;
+    using difference_type = std::ptrdiff_t;
+    using pointer = RenderBox*;
+    using reference = RenderBox&;
+    pointer operator*() const;
+
+    OrderIterator& operator++();
+    // Post Increment
+    OrderIterator operator++(int);
+
+    bool operator==(const OrderIterator& other) const;
+    bool operator!=(const OrderIterator& other) const;
+
+    OrderIterator begin();
+    OrderIterator end();
+
     friend class OrderIteratorPopulator;
 
     explicit OrderIterator(RenderBox&);

@@ -49,6 +49,40 @@ RenderBox* OrderIterator::first()
     return next();
 }
 
+OrderIterator OrderIterator::begin()
+{
+    OrderIterator it(*this);
+    it.reset();
+    return it;
+}
+
+OrderIterator OrderIterator::end()
+{
+    OrderIterator it(*this);
+    it.m_currentChild = nullptr;
+    it.m_orderValuesIterator = m_orderValues.end();
+    return it;
+}
+
+OrderIterator& OrderIterator::operator++()
+{
+    next();
+    return *this;
+}
+
+OrderIterator OrderIterator::operator++(int)
+{
+    OrderIterator temp = *this;
+    ++(*this);
+    return temp;
+}
+
+RenderBox* OrderIterator::operator*() const { return currentChild(); }
+
+
+bool OrderIterator::operator==(const OrderIterator& other) const { return m_orderValuesIterator == other.m_orderValuesIterator; }
+bool OrderIterator::operator!=(const OrderIterator& other) const { return m_orderValuesIterator != other.m_orderValuesIterator; }
+
 RenderBox* OrderIterator::next()
 {
     do {
