@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -203,7 +203,7 @@ asm (
 
     "pushfq" "\n"
 
-    // MacroAssemblerX86Common::probe() has already generated code to store some values.
+    // MacroAssemblerX86_64::probe() has already generated code to store some values.
     // Together with the rbp and rflags pushed above, the top of stack now looks like this:
     //     rbp[-1 * ptrSize]: rflags
     //     rbp[0 * ptrSize]: rbp / previousCallFrame
@@ -403,7 +403,7 @@ asm (
 
     "pushfq" "\n"
 
-    // MacroAssemblerX86Common::probe() has already generated code to store some values.
+    // MacroAssemblerX86_64::probe() has already generated code to store some values.
     // Together with the rbp and rflags pushed above, the top of stack now looks like this:
     //     rbp[-1 * ptrSize]: rflags
     //     rbp[0 * ptrSize]: rbp / previousCallFrame
@@ -628,7 +628,7 @@ asm (
 //
 // Specifically, the saved stack pointer register will point to the stack
 // position before we push the Probe::State frame. The saved rip will point to
-// the address of the instruction immediately following the probe. 
+// the address of the instruction immediately following the probe.
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
@@ -655,12 +655,12 @@ void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth sav
     call(RegisterID::eax, CFunctionPtrTag);
 }
 
-MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUID(unsigned level)
+MacroAssemblerX86_64::CPUID MacroAssemblerX86_64::getCPUID(unsigned level)
 {
     return getCPUIDEx(level, 0);
 }
 
-MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUIDEx(unsigned level, unsigned count)
+MacroAssemblerX86_64::CPUID MacroAssemblerX86_64::getCPUIDEx(unsigned level, unsigned count)
 {
     CPUID result { };
     __asm__ (
@@ -671,7 +671,7 @@ MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUIDEx(unsigned leve
     return result;
 }
 
-void MacroAssemblerX86Common::collectCPUFeatures()
+void MacroAssemblerX86_64::collectCPUFeatures()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
@@ -712,15 +712,15 @@ void MacroAssemblerX86Common::collectCPUFeatures()
     });
 }
 
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse3CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_supplementalSSE3CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_1CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_2CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_avxCheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_avx2CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_lzcntCheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_bmi1CheckState = CPUIDCheckState::NotChecked;
-MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_popcntCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_sse3CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_supplementalSSE3CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_sse4_1CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_sse4_2CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_avxCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_avx2CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_lzcntCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_bmi1CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_popcntCheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

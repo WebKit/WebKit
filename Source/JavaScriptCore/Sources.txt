@@ -57,7 +57,7 @@ assembler/MacroAssemblerARMv7.cpp @no-unify
 assembler/MacroAssemblerCodeRef.cpp
 assembler/MacroAssemblerPrinter.cpp
 assembler/MacroAssemblerRISCV64.cpp @no-unify
-assembler/MacroAssemblerX86Common.cpp @no-unify
+assembler/MacroAssemblerX86_64.cpp @no-unify
 assembler/PerfLog.cpp
 assembler/Printer.cpp
 assembler/ProbeContext.cpp
