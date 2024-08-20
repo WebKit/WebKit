@@ -2511,3 +2511,6 @@ inspector/console/webcore-logging.html [ Pass Failure ]
 
 # webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/278318 [macOS Debug] ASSERTION FAILED: m_wrapper on media/video-playsinline.html, also flaky failure in Release
+[ Debug ] media/video-playsinline.html [ Pass Crash ]
