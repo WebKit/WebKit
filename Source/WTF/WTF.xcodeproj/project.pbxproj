@@ -847,6 +847,7 @@
 		E38C7CD82C366A1800BB9B18 /* SIMDUTF.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C7CD72C366A1800BB9B18 /* SIMDUTF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38C82692BECAE9D0071EF52 /* SIMDHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
+		E391CB482C746E1F000C994C /* StringBuilderJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = E391CB472C746E1F000C994C /* StringBuilderJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
 		E39664762C7198AA00F91F3A /* SIMDUTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39664752C7198AA00F91F3A /* SIMDUTF.cpp */; };
 		E396C11D2BE885D9000CBAE1 /* neon.h in Headers */ = {isa = PBXBuildFile; fileRef = E396C1192BE885D9000CBAE1 /* neon.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1805,6 +1806,7 @@
 		E38C7CD72C366A1800BB9B18 /* SIMDUTF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SIMDUTF.h; sourceTree = "<group>"; };
 		E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SIMDHelpers.h; sourceTree = "<group>"; };
 		E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilderJSON.cpp; sourceTree = "<group>"; };
+		E391CB472C746E1F000C994C /* StringBuilderJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringBuilderJSON.h; sourceTree = "<group>"; };
 		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
 		E39664752C7198AA00F91F3A /* SIMDUTF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SIMDUTF.cpp; sourceTree = "<group>"; };
 		E396C1192BE885D9000CBAE1 /* neon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neon.h; sourceTree = "<group>"; };
@@ -2608,6 +2610,7 @@
 				A8A47325151A825B004123FF /* StringBuilder.h */,
 				A8A47325151A825B004123EE /* StringBuilderInternals.h */,
 				E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */,
+				E391CB472C746E1F000C994C /* StringBuilderJSON.h */,
 				E3DA37E6287AD1A10066808F /* StringCommon.cpp */,
 				430B47871AAAAC1A001223DA /* StringCommon.h */,
 				A8A47326151A825B004123FF /* StringConcatenate.h */,
@@ -3494,6 +3497,7 @@
 				DDF307D827C086DF006A526F /* StringBuffer.h in Headers */,
 				DDF307CC27C086DF006A526F /* StringBuilder.h in Headers */,
 				DDF307D927C086DF006A526F /* StringBuilderInternals.h in Headers */,
+				E391CB482C746E1F000C994C /* StringBuilderJSON.h in Headers */,
 				DDF307DE27C086DF006A526F /* StringCommon.h in Headers */,
 				DDF307EA27C086DF006A526F /* StringConcatenate.h in Headers */,
 				DDF307ED27C086DF006A526F /* StringConcatenateCF.h in Headers */,

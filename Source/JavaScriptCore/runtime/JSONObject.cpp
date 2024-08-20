@@ -42,6 +42,7 @@
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringBuilderJSON.h>
 #include <wtf/text/StringCommon.h>
 
 // Turn this on to log information about fastStringify usage, with a focus on why it failed.
@@ -668,13 +669,27 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
 // since there is no side effect, the full general purpose Stringifier can be used
 // and the only cost of the fast stringifying attempt is the time wasted.
 
-template<typename CharType>
+enum class BufferMode : uint8_t {
+    StaticBuffer,
+    DynamicBuffer,
+};
+
+enum class FailureReason : uint8_t {
+    BufferFull,
+    Found16BitEarly,
+    Found16BitLate,
+    StackOverflow,
+    Unknown,
+};
+
+template<typename CharType, BufferMode bufferMode>
 class FastStringifier {
 public:
     // Returns null string if the fast case fails.
-    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, bool& retryWith16Bit);
+    static String stringify(JSGlobalObject&, JSValue, JSValue replacer, JSValue space, std::optional<FailureReason>&);
 
-    static constexpr unsigned bufferSize = 8192;
+    static constexpr unsigned staticBufferSize = bufferMode == BufferMode::StaticBuffer ? 8192 : 8;
+    static constexpr unsigned dynamicBufferInlineCapacity = bufferMode == BufferMode::StaticBuffer ? 0 : 1024;
 
 private:
     explicit FastStringifier(JSGlobalObject&);
@@ -683,7 +698,11 @@ private:
 
     void append(char, char, char, char);
     void append(char, char, char, char, char);
-    template<typename T> void recordFailure(T&& reason);
+    template<typename T> void recordFailure(FailureReason, T&& reason);
+    template<typename T> void recordFailure(T&& reason)
+    {
+        recordFailure(FailureReason::Unknown, std::forward<T>(reason));
+    }
     void recordBufferFull();
     String firstGetterSetterPropertyName(JSObject&) const;
     void recordFastPropertyEnumerationFailure(JSObject&);
@@ -697,21 +716,26 @@ private:
 
     static unsigned usableBufferSize(unsigned availableBufferSize);
 
+    CharType* buffer();
+    const CharType* buffer() const;
+
     JSGlobalObject& m_globalObject;
     VM& m_vm;
     unsigned m_length { 0 }; // length of content already filled into m_buffer.
     unsigned m_capacity { 0 };
     bool m_checkedObjectPrototype { false };
     bool m_checkedArrayPrototype { false };
-    bool m_retryWith16BitFastStringifier { false };
+    std::optional<FailureReason> m_failureReason;
+    Vector<CharType, dynamicBufferInlineCapacity> m_dynamicBuffer;
+    uint8_t* m_stackLimit { nullptr };
 
-    CharType m_buffer[bufferSize];
+    CharType m_buffer[staticBufferSize];
 };
 
 #if !FAST_STRINGIFY_LOG_USAGE
 
-template<typename CharType>
-inline void FastStringifier<CharType>::logOutcome(ASCIILiteral)
+template<typename CharType, BufferMode bufferMode>
+inline void FastStringifier<CharType, bufferMode>::logOutcome(ASCIILiteral)
 {
 }
 
@@ -737,22 +761,40 @@ static void logOutcomeImpl(String&& outcome)
     }
 }
 
-template<typename CharType>
-void FastStringifier<CharType>::logOutcome(ASCIILiteral outcome)
+template<typename CharType, BufferMode bufferMode>
+void FastStringifier<CharType, bufferMode>::logOutcome(ASCIILiteral outcome)
 {
     logOutcomeImpl(String { outcome });
 }
 
-template<typename CharType>
-void FastStringifier<CharType>::logOutcome(String&& outcome)
+template<typename CharType, BufferMode bufferMode>
+void FastStringifier<CharType, bufferMode>::logOutcome(String&& outcome)
 {
     logOutcomeImpl(WTFMove(outcome));
 }
 
 #endif
 
-template<typename CharType>
-inline unsigned FastStringifier<CharType>::usableBufferSize(unsigned availableBufferSize)
+template<typename CharType, BufferMode bufferMode>
+ALWAYS_INLINE CharType* FastStringifier<CharType, bufferMode>::buffer()
+{
+    if constexpr (bufferMode == BufferMode::StaticBuffer)
+        return m_buffer;
+    else
+        return m_dynamicBuffer.data();
+}
+
+template<typename CharType, BufferMode bufferMode>
+ALWAYS_INLINE const CharType* FastStringifier<CharType, bufferMode>::buffer() const
+{
+    if constexpr (bufferMode == BufferMode::StaticBuffer)
+        return m_buffer;
+    else
+        return m_dynamicBuffer.data();
+}
+
+template<typename CharType, BufferMode bufferMode>
+inline unsigned FastStringifier<CharType, bufferMode>::usableBufferSize(unsigned availableBufferSize)
 {
     // FastStringifier relies on m_capacity (i.e. the remaining usable capacity) in m_buffer
     // to limit recursion. Hence, we need to compute an appropriate m_capacity value.
@@ -818,22 +860,28 @@ inline unsigned FastStringifier<CharType>::usableBufferSize(unsigned availableBu
     return usableBufferSize;
 }
 
-template<typename CharType>
-inline FastStringifier<CharType>::FastStringifier(JSGlobalObject& globalObject)
+template<typename CharType, BufferMode bufferMode>
+inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
     , m_vm(globalObject.vm())
 {
-    m_capacity = m_length + usableBufferSize(bufferSize);
+    if constexpr (bufferMode == BufferMode::StaticBuffer)
+        m_capacity = m_length + usableBufferSize(staticBufferSize);
+    else {
+        m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
+        m_capacity = dynamicBufferInlineCapacity;
+        m_stackLimit = bitwise_cast<uint8_t*>(m_vm.softStackLimit());
+    }
 }
 
-template<typename CharType>
-inline bool FastStringifier<CharType>::haveFailure() const
+template<typename CharType, BufferMode bufferMode>
+inline bool FastStringifier<CharType, bufferMode>::haveFailure() const
 {
-    return m_length > bufferSize;
+    return !!m_failureReason;
 }
 
-template<typename CharType>
-inline String FastStringifier<CharType>::result() const
+template<typename CharType, BufferMode bufferMode>
+inline String FastStringifier<CharType, bufferMode>::result() const
 {
     if (haveFailure())
         return { };
@@ -845,25 +893,25 @@ inline String FastStringifier<CharType>::result() const
     }
     logOutcome("success"_s);
 #endif
-    return std::span { m_buffer, m_length };
+    return std::span { buffer(), m_length };
 }
 
-template<typename CharType>
-template<typename T> inline void FastStringifier<CharType>::recordFailure(T&& reason)
+template<typename CharType, BufferMode bufferMode>
+template<typename T> inline void FastStringifier<CharType, bufferMode>::recordFailure(FailureReason failureReason, T&& reason)
 {
     if (!haveFailure())
         logOutcome(std::forward<T>(reason));
-    m_length = bufferSize + 1;
+    m_failureReason = failureReason;
 }
 
-template<typename CharType>
-inline void FastStringifier<CharType>::recordBufferFull()
+template<typename CharType, BufferMode bufferMode>
+inline void FastStringifier<CharType, bufferMode>::recordBufferFull()
 {
-    recordFailure("buffer full"_s);
+    recordFailure(FailureReason::BufferFull, "buffer full"_s);
 }
 
-template<typename CharType>
-ALWAYS_INLINE bool FastStringifier<CharType>::hasRemainingCapacity(unsigned size)
+template<typename CharType, BufferMode bufferMode>
+ALWAYS_INLINE bool FastStringifier<CharType, bufferMode>::hasRemainingCapacity(unsigned size)
 {
     ASSERT(!haveFailure());
     ASSERT(size > 0);
@@ -873,33 +921,45 @@ ALWAYS_INLINE bool FastStringifier<CharType>::hasRemainingCapacity(unsigned size
     return hasRemainingCapacitySlow(size);
 }
 
-template<typename CharType>
-bool FastStringifier<CharType>::hasRemainingCapacitySlow(unsigned size)
+template<typename CharType, BufferMode bufferMode>
+bool FastStringifier<CharType, bufferMode>::hasRemainingCapacitySlow(unsigned size)
 {
     ASSERT(!haveFailure());
+    if constexpr (bufferMode == BufferMode::StaticBuffer) {
+        unsigned unusedBufferSize = staticBufferSize - m_length;
+        unsigned usableSize = usableBufferSize(unusedBufferSize);
+        if (usableSize < size)
+            return false;
 
-    unsigned unusedBufferSize = bufferSize - m_length;
-    unsigned usableSize = usableBufferSize(unusedBufferSize);
-    if (usableSize < size)
-        return false;
+        m_capacity = m_length + usableSize;
+        ASSERT(m_capacity - m_length >= size);
+        return true;
+    } else {
+        size_t newSize = std::max<size_t>(m_dynamicBuffer.size() * 2, m_dynamicBuffer.size() + size);
+        if (UNLIKELY(newSize > StringImpl::MaxLength))
+            return false;
 
-    m_capacity = m_length + usableSize;
-    ASSERT(m_capacity - m_length >= size);
-    return true;
+        if (UNLIKELY(!m_dynamicBuffer.tryGrow(newSize)))
+            return false;
+
+        m_capacity = m_dynamicBuffer.size();
+        ASSERT(m_capacity - m_length >= size);
+        return true;
+    }
 }
 
 #if !FAST_STRINGIFY_LOG_USAGE
 
-template<typename CharType>
-inline void FastStringifier<CharType>::recordFastPropertyEnumerationFailure(JSObject&)
+template<typename CharType, BufferMode bufferMode>
+inline void FastStringifier<CharType, bufferMode>::recordFastPropertyEnumerationFailure(JSObject&)
 {
     recordFailure("!canPerformFastPropertyEnumerationForJSONStringify"_s);
 }
 
 #else
 
-template<typename CharType>
-String FastStringifier<CharType>::firstGetterSetterPropertyName(JSObject& object) const
+template<typename CharType, BufferMode bufferMode>
+String FastStringifier<CharType, bufferMode>::firstGetterSetterPropertyName(JSObject& object) const
 {
     auto scope = DECLARE_THROW_SCOPE(m_vm);
     PropertyNameArray names(m_vm, PropertyNameMode::Strings, PrivateSymbolMode::Include);
@@ -915,8 +975,8 @@ String FastStringifier<CharType>::firstGetterSetterPropertyName(JSObject& object
     RELEASE_AND_RETURN(scope, "not found"_s);
 }
 
-template<typename CharType>
-void FastStringifier<CharType>::recordFastPropertyEnumerationFailure(JSObject& object)
+template<typename CharType, BufferMode bufferMode>
+void FastStringifier<CharType, bufferMode>::recordFastPropertyEnumerationFailure(JSObject& object)
 {
     auto& structure = *object.structure();
     if (structure.typeInfo().overridesGetOwnPropertySlot())
@@ -939,8 +999,8 @@ void FastStringifier<CharType>::recordFastPropertyEnumerationFailure(JSObject& o
 
 #endif
 
-template<typename CharType>
-inline bool FastStringifier<CharType>::mayHaveToJSON(JSObject& object) const
+template<typename CharType, BufferMode bufferMode>
+inline bool FastStringifier<CharType, bufferMode>::mayHaveToJSON(JSObject& object) const
 {
     if (auto function = object.structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToJSON))
         return !function.isUndefined();
@@ -954,38 +1014,45 @@ inline bool FastStringifier<CharType>::mayHaveToJSON(JSObject& object) const
     return false;
 }
 
-template<typename CharType>
-inline void FastStringifier<CharType>::append(char a, char b, char c, char d)
+template<typename CharType, BufferMode bufferMode>
+inline void FastStringifier<CharType, bufferMode>::append(char a, char b, char c, char d)
 {
     if (UNLIKELY(!hasRemainingCapacity(4))) {
         recordBufferFull();
         return;
     }
-    m_buffer[m_length] = a;
-    m_buffer[m_length + 1] = b;
-    m_buffer[m_length + 2] = c;
-    m_buffer[m_length + 3] = d;
+    buffer()[m_length] = a;
+    buffer()[m_length + 1] = b;
+    buffer()[m_length + 2] = c;
+    buffer()[m_length + 3] = d;
     m_length += 4;
 }
 
-template<typename CharType>
-inline void FastStringifier<CharType>::append(char a, char b, char c, char d, char e)
+template<typename CharType, BufferMode bufferMode>
+inline void FastStringifier<CharType, bufferMode>::append(char a, char b, char c, char d, char e)
 {
     if (UNLIKELY(!hasRemainingCapacity(5))) {
         recordBufferFull();
         return;
     }
-    m_buffer[m_length] = a;
-    m_buffer[m_length + 1] = b;
-    m_buffer[m_length + 2] = c;
-    m_buffer[m_length + 3] = d;
-    m_buffer[m_length + 4] = e;
+    buffer()[m_length] = a;
+    buffer()[m_length + 1] = b;
+    buffer()[m_length + 2] = c;
+    buffer()[m_length + 3] = d;
+    buffer()[m_length + 4] = e;
     m_length += 5;
 }
 
-template<typename CharType>
-void FastStringifier<CharType>::append(JSValue value)
+template<typename CharType, BufferMode bufferMode>
+void FastStringifier<CharType, bufferMode>::append(JSValue value)
 {
+    if constexpr (bufferMode == BufferMode::DynamicBuffer) {
+        if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < m_stackLimit)) {
+            recordFailure(FailureReason::StackOverflow, "stack overflow"_s);
+            return;
+        }
+    }
+
     if (value.isNull()) {
         append('n', 'u', 'l', 'l');
         return;
@@ -1009,7 +1076,7 @@ void FastStringifier<CharType>::append(JSValue value)
             return;
         }
         if constexpr (sizeof(CharType) == 1) {
-            char* cursor = bitwise_cast<char*>(m_buffer) + m_length;
+            char* cursor = bitwise_cast<char*>(buffer()) + m_length;
             auto result = std::to_chars(cursor, cursor + maxInt32StringLength, number);
             ASSERT(result.ec != std::errc::value_too_large);
             m_length += result.ptr - cursor;
@@ -1018,7 +1085,7 @@ void FastStringifier<CharType>::append(JSValue value)
             auto result = std::to_chars(temporary.data(), temporary.data() + maxInt32StringLength, number);
             ASSERT(result.ec != std::errc::value_too_large);
             unsigned lengthToCopy = result.ptr - temporary.data();
-            WTF::copyElements(bitwise_cast<uint16_t*>(&m_buffer[m_length]), bitwise_cast<const uint8_t*>(temporary.data()), lengthToCopy);
+            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), lengthToCopy);
             m_length += lengthToCopy;
         }
         return;
@@ -1035,14 +1102,14 @@ void FastStringifier<CharType>::append(JSValue value)
             return;
         }
         if constexpr (sizeof(CharType) == 1) {
-            WTF::double_conversion::StringBuilder builder { reinterpret_cast<char*>(&m_buffer[m_length]), sizeof(NumberToStringBuffer) };
+            WTF::double_conversion::StringBuilder builder { reinterpret_cast<char*>(buffer() + m_length), sizeof(NumberToStringBuffer) };
             WTF::double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortest(number, &builder);
             m_length += builder.position();
         } else {
             NumberToStringBuffer temporary;
             WTF::double_conversion::StringBuilder builder { temporary.data(), sizeof(NumberToStringBuffer) };
             WTF::double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortest(number, &builder);
-            WTF::copyElements(bitwise_cast<uint16_t*>(&m_buffer[m_length]), bitwise_cast<const uint8_t*>(temporary.data()), builder.position());
+            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), builder.position());
             m_length += builder.position();
         }
         return;
@@ -1157,45 +1224,60 @@ void FastStringifier<CharType>::append(JSValue value)
             return false;
         };
 
+        auto stringLength = string.data.length();
         if constexpr (sizeof(CharType) == 1) {
             if (UNLIKELY(!string.data.is8Bit())) {
-                m_retryWith16BitFastStringifier = m_length < (m_capacity / 2);
-                recordFailure("16-bit string"_s);
+                if constexpr (bufferMode == BufferMode::DynamicBuffer)
+                    recordFailure(FailureReason::Unknown, "16-bit string"_s);
+                else
+                    recordFailure(m_length < (m_capacity / 2) ? FailureReason::Found16BitEarly : FailureReason::Found16BitLate, "16-bit string"_s);
                 return;
             }
-            auto stringLength = string.data.length();
             if (UNLIKELY(!hasRemainingCapacity(1 + stringLength + 1))) {
                 recordBufferFull();
                 return;
             }
-            m_buffer[m_length] = '"';
-            if (UNLIKELY(charactersCopySameType(string.data.span8(), m_buffer + m_length + 1))) {
-                recordFailure("string character needs escaping"_s);
+            buffer()[m_length] = '"';
+            if (LIKELY(!charactersCopySameType(string.data.span8(), buffer() + m_length + 1))) {
+                buffer()[m_length + 1 + stringLength] = '"';
+                m_length += 1 + stringLength + 1;
                 return;
             }
-            m_buffer[m_length + 1 + stringLength] = '"';
-            m_length += 1 + stringLength + 1;
         } else {
-            auto stringLength = string.data.length();
             if (UNLIKELY(!hasRemainingCapacity(1 + stringLength + 1))) {
                 recordBufferFull();
                 return;
             }
-            m_buffer[m_length] = '"';
+            buffer()[m_length] = '"';
             if (string.data.is8Bit()) {
-                if (UNLIKELY(charactersCopyUpconvert(string.data.span8(), m_buffer + m_length + 1))) {
-                    recordFailure("string character needs escaping"_s);
+                if (LIKELY(!charactersCopyUpconvert(string.data.span8(), buffer() + m_length + 1))) {
+                    buffer()[m_length + 1 + stringLength] = '"';
+                    m_length += 1 + stringLength + 1;
                     return;
                 }
             } else {
-                if (UNLIKELY(charactersCopySameType(string.data.span16(), m_buffer + m_length + 1))) {
-                    recordFailure("string character needs escaping or surrogate pair handling"_s);
+                if (LIKELY(!charactersCopySameType(string.data.span16(), buffer() + m_length + 1))) {
+                    buffer()[m_length + 1 + stringLength] = '"';
+                    m_length += 1 + stringLength + 1;
                     return;
                 }
             }
-            m_buffer[m_length + 1 + stringLength] = '"';
-            m_length += 1 + stringLength + 1;
         }
+
+        if (UNLIKELY(!hasRemainingCapacity(1 + static_cast<size_t>(stringLength) * 6 + 1))) {
+            recordBufferFull();
+            return;
+        }
+        auto* output = buffer() + m_length + 1;
+        if constexpr (sizeof(CharType) == 2) {
+            if (string.data.is8Bit())
+                WTF::appendEscapedJSONStringContent(output, string.data.span8());
+            else
+                WTF::appendEscapedJSONStringContent(output, string.data.span16());
+        } else
+            WTF::appendEscapedJSONStringContent(output, string.data.span8());
+        *output++ = '"';
+        m_length = output - buffer();
         return;
     }
 
@@ -1226,7 +1308,7 @@ void FastStringifier<CharType>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length++] = '{';
+        buffer()[m_length++] = '{';
         if (UNLIKELY(!structure.canPerformFastPropertyEnumeration())) {
             recordFastPropertyEnumerationFailure(object);
             return;
@@ -1255,15 +1337,15 @@ void FastStringifier<CharType>::append(JSValue value)
             if (value.isUndefined())
                 return true;
 
-            bool needComma = m_buffer[m_length - 1] != '{';
+            bool needComma = buffer()[m_length - 1] != '{';
             unsigned nameLength = name.length();
             if (UNLIKELY(!hasRemainingCapacity(needComma + 1 + nameLength + 2))) {
                 recordBufferFull();
                 return false;
             }
             if (needComma)
-                m_buffer[m_length++] = ',';
-            m_buffer[m_length] = '"';
+                buffer()[m_length++] = ',';
+            buffer()[m_length] = '"';
             auto characters = name.span8();
             for (unsigned i = 0; i < nameLength; ++i) {
                 auto character = characters[i];
@@ -1271,10 +1353,10 @@ void FastStringifier<CharType>::append(JSValue value)
                     recordFailure("property name character needs escaping"_s);
                     return false;
                 }
-                m_buffer[m_length + 1 + i] = character;
+                buffer()[m_length + 1 + i] = character;
             }
-            m_buffer[m_length + 1 + nameLength] = '"';
-            m_buffer[m_length + 1 + nameLength + 1] = ':';
+            buffer()[m_length + 1 + nameLength] = '"';
+            buffer()[m_length + 1 + nameLength + 1] = ':';
             m_length += 1 + nameLength + 2;
             append(value);
             return !haveFailure();
@@ -1285,7 +1367,7 @@ void FastStringifier<CharType>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length++] = '}';
+        buffer()[m_length++] = '}';
         return;
     }
 
@@ -1314,14 +1396,14 @@ void FastStringifier<CharType>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length++] = '[';
+        buffer()[m_length++] = '[';
         for (unsigned i = 0, length = array.length(); i < length; ++i) {
             if (i) {
                 if (UNLIKELY(!hasRemainingCapacity())) {
                     recordBufferFull();
                     return;
                 }
-                m_buffer[m_length++] = ',';
+                buffer()[m_length++] = ',';
             }
             if (UNLIKELY(!array.canGetIndexQuickly(i))) {
                 recordFailure("!canGetIndexQuickly"_s);
@@ -1335,7 +1417,7 @@ void FastStringifier<CharType>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length++] = ']';
+        buffer()[m_length++] = ']';
         return;
     }
 
@@ -1348,8 +1430,8 @@ void FastStringifier<CharType>::append(JSValue value)
     }
 }
 
-template<typename CharType>
-inline String FastStringifier<CharType>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, bool& retryWith16Bit)
+template<typename CharType, BufferMode bufferMode>
+inline String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space, std::optional<FailureReason>& failureReason)
 {
     if (replacer.isObject()) {
         logOutcome("replacer"_s);
@@ -1361,20 +1443,32 @@ inline String FastStringifier<CharType>::stringify(JSGlobalObject& globalObject,
     }
     FastStringifier stringifier(globalObject);
     stringifier.append(value);
-    retryWith16Bit = stringifier.m_retryWith16BitFastStringifier;
+    failureReason = stringifier.m_failureReason;
     return stringifier.result();
 }
 
-static inline String stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
+static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
 {
     VM& vm = globalObject.vm();
     uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     if (LIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) >= stackLimit)) {
-        bool retryWith16Bit = false;
-        if (String result = FastStringifier<LChar>::stringify(globalObject, value, replacer, space, retryWith16Bit); !result.isNull())
+        std::optional<FailureReason> failureReason;
+        failureReason = std::nullopt;
+        if (String result = FastStringifier<LChar, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
             return result;
-        if (retryWith16Bit) {
-            if (String result = FastStringifier<UChar>::stringify(globalObject, value, replacer, space, retryWith16Bit); !result.isNull())
+        if (failureReason == FailureReason::Found16BitEarly) {
+            failureReason = std::nullopt;
+            if (String result = FastStringifier<UChar, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+                return result;
+
+            if (failureReason == FailureReason::BufferFull) {
+                failureReason = std::nullopt;
+                if (String result = FastStringifier<UChar, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
+                    return result;
+            }
+        } else if (failureReason == FailureReason::BufferFull) {
+            failureReason = std::nullopt;
+            if (String result = FastStringifier<LChar, BufferMode::DynamicBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())
                 return result;
         }
     }
