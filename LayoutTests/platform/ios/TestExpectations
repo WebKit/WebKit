@@ -7522,9 +7522,6 @@ fast/forms/ios/focus-checkbox.html [ Pass Timeout ]
 fast/forms/ios/focus-checked-checkbox.html [ Pass Timeout ]
 fast/forms/ios/focus-checked-radio.html [ Pass Timeout ]
 
-# webkit.org/b/278323 REGRESSION(282170@main): [ iOS ] css3/filters/backdrop-filter-page-scale.html is a flaky image failure
-css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/278329 [ iOS ] imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html is a flaky failure
 imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ Pass Failure ]
 

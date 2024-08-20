@@ -3,9 +3,13 @@
 <head>
 <meta charset="utf-8">
     <script>
-        window.onload = async function() {
-            if (window.testRunner)
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+        async function test() {
+            if (window.testRunner) {
                 await window.testRunner.setPageScaleFactor(2, 0, 0);
+                window.testRunner.notifyDone();
+            }
         }
     </script>
 <style>
@@ -17,7 +21,7 @@ div {
 
 </style>
 </head>
-<body>
+<body onload="test()">
   Hello
   <div></div>
 </body>
