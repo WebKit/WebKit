@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
@@ -8195,6 +8196,37 @@ TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginToCOOPAndCOEPSame
 {
     // We expect a swap because the redirect doesn't have COOP=same-origin and COEP=require-corp.
     runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
+}
+
+TEST(ProcessSwap, ClientRedirectAfterCOOPIframeIgnored)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/main.html"_s, { "<script>window.open('opened.html')</script>"_s } },
+        { "/opened.html"_s, { "<iframe src='iframe.html'></iframe><script> onload = ()=>{ window.location = 'https://webkit.org/navigate-back-to-example.html' } </script>"_s } },
+        { "/iframe.html"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "hi"_s } },
+        { "/navigate-back-to-example.html"_s, { "<script> window.location = 'https://example.com/check-opener.html' </script>"_s } },
+        { "/check-opener.html"_s, { "<script>try { alert(window.opener) } catch (e) { alert(e) }</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    __block RetainPtr<WKWebView> opened;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        [opened setNavigationDelegate:navigationDelegate.get()];
+        return opened.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main.html"]]];
+    while (!opened)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ([opened _test_waitForAlert], "[object Window]");
 }
 
 TEST(ProcessSwap, NavigatingSameOriginWithoutCOOPWithRedirect)
