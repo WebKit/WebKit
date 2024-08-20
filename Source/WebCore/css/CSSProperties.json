@@ -738,7 +738,8 @@
                 "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
-                "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
+                "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -9674,7 +9675,8 @@
                     "normal"
                 ],
                 "codegen-properties": {
-                    "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
+                    "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
+                    "parser-exported": true
                 },
                 "specification": {
                     "category": "css-fonts-4",
@@ -9937,7 +9939,7 @@
         "@font-palette-values": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-function": "consumeFamilyNameList",
+                    "parser-function": "consumeFontPaletteValuesFontFamily",
                     "parser-grammar-unused": "<family-name>#",
                     "parser-grammar-unused-reason": "Needs support for special 'family-name' processing."
                 },
@@ -10353,6 +10355,7 @@
         },
         "<font-stretch-absolute>": {
             "grammar": "normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded",
+            "exported": true,
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#stretchmappings"

@@ -38,7 +38,6 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
-#include "CSSPropertyParserWorkerSafe.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
 #include "CanvasFilterContextSwitcher.h"

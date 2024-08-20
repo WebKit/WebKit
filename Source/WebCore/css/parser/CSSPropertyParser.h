@@ -25,7 +25,6 @@
 #include "CSSCustomPropertySyntax.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
-#include "CSSPropertyParserWorkerSafe.h"
 #include "StyleRuleType.h"
 #include <wtf/text/StringView.h>
 

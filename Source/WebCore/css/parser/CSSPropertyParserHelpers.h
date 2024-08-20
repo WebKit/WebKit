@@ -39,7 +39,6 @@
 #include "CSSValuePool.h"
 #include "GridArea.h"
 #include "Length.h"
-#include "SystemFontDatabase.h"
 #include <variant>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -48,11 +47,6 @@ namespace WebCore {
 
 class CSSGridLineNamesValue;
 
-namespace WebKitFontFamilyNames {
-enum class FamilyNamesIndex;
-}
-
-enum class FontTechnology : uint8_t;
 
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
@@ -70,40 +64,11 @@ enum class AllowedFilterFunctions {
 RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread, bool isWebkitBoxShadow = false);
 
-struct FontStyleRaw {
-    CSSValueID style;
-    std::optional<AngleRaw> angle;
-};
-using FontWeightRaw = std::variant<CSSValueID, double>;
-using FontSizeRaw = std::variant<CSSValueID, LengthOrPercentRaw>;
-using LineHeightRaw = std::variant<CSSValueID, double, LengthOrPercentRaw>;
-using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
-
-struct FontRaw {
-    std::optional<FontStyleRaw> style;
-    std::optional<CSSValueID> variantCaps;
-    std::optional<FontWeightRaw> weight;
-    std::optional<CSSValueID> stretch;
-    FontSizeRaw size;
-    std::optional<LineHeightRaw> lineHeight;
-    Vector<FontFamilyRaw> family;
-};
 
 RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
-std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
-AtomString concatenateFamilyName(CSSParserTokenRange&);
-AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
-// https://drafts.csswg.org/css-fonts-4/#family-name-value
-Vector<AtomString> consumeFamilyNameListRaw(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFamilyNameList(CSSParserTokenRange&);
-std::optional<FontRaw> consumeFontRaw(CSSParserTokenRange&, CSSParserMode);
-const AtomString& genericFontFamily(CSSValueID);
-WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
-
-bool isFontStyleAngleInRange(double angleInDegrees);
 
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
 
@@ -119,14 +84,6 @@ bool isGridBreadthIdent(CSSValueID);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
@@ -231,16 +188,6 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
-// @font-face descriptor consumers:
-
-RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
-Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, bool singleValue = false);
-String consumeFontFormat(CSSParserTokenRange&, bool rejectStringValues = false);
-
-// @font-palette-values descriptor consumers:
-
-RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange&, const CSSParserContext&);
-
 // @counter-style descriptor consumers:
 
 RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&, const CSSParserContext&);
@@ -251,27 +198,6 @@ RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange&, const CSSParserCon
 RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
-
-// Template and inline implementations are at the bottom of the file for readability.
-
-inline bool isFontStyleAngleInRange(double angleInDegrees)
-{
-    return angleInDegrees >= -90 && angleInDegrees <= 90;
-}
-
-inline bool isSystemFontShorthand(CSSValueID valueID)
-{
-    // This needs to stay in sync with SystemFontDatabase::FontShorthand.
-    static_assert(CSSValueStatusBar - CSSValueCaption == static_cast<SystemFontDatabase::FontShorthandUnderlyingType>(SystemFontDatabase::FontShorthand::StatusBar));
-    return valueID >= CSSValueCaption && valueID <= CSSValueStatusBar;
-}
-
-inline SystemFontDatabase::FontShorthand lowerFontShorthand(CSSValueID valueID)
-{
-    // This needs to stay in sync with SystemFontDatabase::FontShorthand.
-    ASSERT(isSystemFontShorthand(valueID));
-    return static_cast<SystemFontDatabase::FontShorthand>(valueID - CSSValueCaption);
-}
 
 } // namespace CSSPropertyParserHelpers
 

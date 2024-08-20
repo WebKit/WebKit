@@ -48,6 +48,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Integer.h"
@@ -163,7 +164,6 @@ CSSPropertyID cssPropertyID(StringView string)
 }
     
 using namespace CSSPropertyParserHelpers;
-using namespace CSSPropertyParserHelpersWorkerSafe;
 
 CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSSParserContext& context, Vector<CSSProperty, 256>* parsedProperties, bool consumeWhitespace)
     : m_range(range)
@@ -694,7 +694,7 @@ bool CSSPropertyParser::consumeFont(bool important)
             continue;
         if (!fontWeight && (fontWeight = consumeFontWeight(range)))
             continue;
-        if (!fontStretch && (fontStretch = consumeFontStretchKeywordValue(range)))
+        if (!fontStretch && (fontStretch = CSSPropertyParsing::consumeFontStretchAbsolute(range)))
             continue;
         break;
     }

@@ -30,8 +30,8 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
-#include "CSSPropertyParserWorkerSafe.h"
 #include "CSSSegmentedFontFace.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -383,7 +383,7 @@ static CodePointsMap codePointsFromString(StringView stringView)
 
 ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(const String& fontShorthand, const String& string)
 {
-    auto font = CSSPropertyParserWorkerSafe::parseFont(fontShorthand, HTMLStandardMode);
+    auto font = CSSPropertyParserHelpers::parseFont(fontShorthand, HTMLStandardMode);
     if (!font)
         return Exception { ExceptionCode::SyntaxError };
 
