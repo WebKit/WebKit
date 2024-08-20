@@ -658,7 +658,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
 
-        if (inlineItem.isFloat() || inlineItem.isBox())
+        if (inlineItem.isFloat() || inlineItem.isBox() || (inlineItem.isOpaque() && inlineItem.layoutBox().isRubyAnnotationBox()))
             formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
 
         if (inlineItem.isFloat()) {

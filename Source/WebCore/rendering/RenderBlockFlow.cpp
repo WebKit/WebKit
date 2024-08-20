@@ -3850,9 +3850,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
                 modernLineLayout()->boxContentWillChange(*inlineLevelBox);
         }
 
-        if (box && box->style().display() == DisplayType::RubyAnnotation)
-            box->layoutIfNeeded();
-
         if (is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderText>(renderer))
             renderer.clearNeedsLayout();
 

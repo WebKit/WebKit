@@ -27,15 +27,24 @@
 #include "LayoutIntegrationFormattingContextLayout.h"
 
 #include "LayoutIntegrationBoxGeometryUpdater.h"
-#include "RenderElement.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox& box, Layout::LayoutState& layoutState)
+void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> widthConstraint, Layout::LayoutState& layoutState)
 {
-    auto& renderer = *box.rendererForIntegration();
+    auto& renderer = downcast<RenderBox>(*box.rendererForIntegration());
+
+    if (widthConstraint) {
+        renderer.setOverridingLogicalWidthLength({ *widthConstraint, LengthType::Fixed });
+        renderer.setNeedsLayout(MarkOnlyThis);
+    }
+
     renderer.layoutIfNeeded();
+
+    if (widthConstraint)
+        renderer.clearOverridingLogicalWidthLength();
 
     auto updater = BoxGeometryUpdater { layoutState };
     updater.updateGeometryAfterLayout(box);

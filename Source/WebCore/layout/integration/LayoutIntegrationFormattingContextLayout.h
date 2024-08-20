@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "LayoutUnit.h"
+
 namespace WebCore {
 
 namespace Layout {
@@ -35,7 +37,7 @@ class LayoutState;
 
 namespace LayoutIntegration {
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox&, Layout::LayoutState&);
+void layoutWithFormattingContextForBox(const Layout::ElementBox&, std::optional<LayoutUnit> widthConstraint, Layout::LayoutState&);
 
 }
 }
