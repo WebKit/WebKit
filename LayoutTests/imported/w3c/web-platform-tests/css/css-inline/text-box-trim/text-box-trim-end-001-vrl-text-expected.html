@@ -16,15 +16,17 @@
 .vrl { writing-mode: vertical-rl; }
 .vlr { writing-mode: vertical-lr; }
 .auto .target, .text .target { line-height: 150px; }
-.auto .offset, .text .offset { inset-block-start: -25px; }
+.auto .offset, .text .offset { inset-block-start: 25px; }
+.alphabetic .target { line-height: 130px; }
+.alphabetic .offset { inset-block-start: 35px;}
 .cap .target { line-height: 130px; }
 .cap .offset { inset-block-start: -35px; }
 .ex .target { line-height: 90px; }
 .ex .offset { inset-block-start: -55px; }
-.vlr.alphabetic .target { line-height: 130px; }
-.vlr.alphabetic .offset { inset-block-start: -35px;}
+.vlr.cap .offset { inset-block-start: 35px; }
+.vlr.ex .offset { inset-block-start: 55px; }
 </style>
-<div class="auto">
+<div class="vrl text">
 <div class="spacer"></div>
 <div class="target">
   <span class="offset">ApÉx</span>

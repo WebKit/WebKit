@@ -3,19 +3,8 @@
 <link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-edge">
 <link rel="help" href="https://drafts.csswg.org/css-inline-3/#text-box-trim">
 <link rel="match" href="text-box-trim-end-001-ref.html">
-<script src="support/variant-class.js"></script>
-<meta name="variant" content="?class=auto">
-<meta name="variant" content="?class=text">
-<meta name="variant" content="?class=alphabetic">
-<meta name="variant" content="?class=vrl,auto">
-<meta name="variant" content="?class=vrl,text">
-<meta name="variant" content="?class=vrl,alphabetic">
-<meta name="variant" content="?class=vlr,auto">
-<meta name="variant" content="?class=vlr,text">
-<meta name="variant" content="?class=vlr,cap">
-<meta name="variant" content="?class=vlr,ex">
 <style>
-@import "support/MetricsTestFont.css";
+@import "support/TestMetricsFont.css";
 
 .spacer {
   background: lightgray;
@@ -33,6 +22,8 @@
 .cap        .target { text-box-edge: cap; }
 .ex         .target { text-box-edge: ex; }
 </style>
+<div class="auto">
 <div class="spacer"></div>
 <div class="target">ApÉx</div>
 <div class="spacer"></div>
+</div>
