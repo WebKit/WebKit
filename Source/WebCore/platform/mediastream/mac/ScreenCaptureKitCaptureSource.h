@@ -75,14 +75,6 @@ public:
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
 
-    enum class SnapshotOptions : uint8_t {
-        IgnoreShadows = 1 << 0,
-        IgnoreFraming = 1 << 1,
-        NominalResolution = 1 << 2,
-        ShouldBeOpaque = 1 << 3,
-    };
-    WEBCORE_EXPORT static RetainPtr<CGImageRef> captureWindowSnapshot(CGWindowID, CGRect, OptionSet<ScreenCaptureKitCaptureSource::SnapshotOptions>);
-
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef>);
     void sessionFailedWithError(RetainPtr<NSError>&&, const String&);

@@ -1076,9 +1076,4 @@ static BOOL isJavaScriptURL(NSURL *url)
     [webView _setHeaderBannerLayer:nil];
 }
 
-- (NSImage *)windowSnapshotInRect:(CGRect)rect
-{
-    return [_webView _windowSnapshotInRect:rect];
-}
-
 @end

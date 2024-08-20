@@ -115,7 +115,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
-#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextRecognitionResult.h>
@@ -4530,17 +4529,33 @@ void WebViewImpl::hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse res
     m_domPasteMenuDelegate = nil;
 }
 
-static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution, ForceSoftwareCapturingViewportSnapshot)
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
 {
-    // FIXME: remove `ForceSoftwareCapturingViewportSnapshot` parameter in followup patch.
-    OptionSet<WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions> options = {
-        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::ShouldBeOpaque,
-        WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows
-    };
-    if (captureAtNominalResolution)
-        options.add(WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::NominalResolution);
+    // FIXME <https://webkit.org/b/277572>: CGSHWCaptureWindowList is currently bugged where
+    // the kCGSCaptureIgnoreGlobalClipShape option has no effect and the resulting screenshot
+    // still contains the window's rounded corners. There are WPT tests relying on comparing
+    // WebDriver's screenshots that cannot tolerate this inconsistency, especially due to
+    // CGSHWCaptureWindowList not always succeeding. So for WebDriver only, we bypass that bug
+    // and always use deprecated CGWindowListCreateImage instead.
 
-    return WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot(windowID, CGRectNull, options);
+    if (forceSoftwareCapturing == ForceSoftwareCapturingViewportSnapshot::No) {
+        CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+        if (captureAtNominalResolution)
+            options |= kCGSWindowCaptureNominalResolution;
+        RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+
+        if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
+            return checked_cf_cast<CGImageRef>(CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0));
+    }
+
+    // Fall back to the non-hardware capture path if we didn't get a snapshot
+    // (which usually happens if the window is fully off-screen).
+    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
+    if (captureAtNominalResolution)
+        imageOptions |= kCGWindowImageNominalResolution;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()

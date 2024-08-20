@@ -475,9 +475,4 @@ static BOOL areEssentiallyEqual(double a, double b)
     return WebDragDestinationActionAny;
 }
 
-- (NSImage *)windowSnapshotInRect:(CGRect)rect
-{
-    return [_webView _windowSnapshotInRect:rect];
-}
-
 @end

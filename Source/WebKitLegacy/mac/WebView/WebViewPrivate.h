@@ -1053,12 +1053,6 @@ typedef struct WebEdgeInsets {
 - (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 @end
 
-#if !TARGET_OS_IPHONE
-@interface WebView (WKWindowSnapshot)
-- (NSImage *)_windowSnapshotInRect:(CGRect)rect;
-@end
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

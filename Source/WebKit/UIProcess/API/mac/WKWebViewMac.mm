@@ -32,7 +32,6 @@
 #import "WKTextAnimationType.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
@@ -1794,16 +1793,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end // WKWebView (WKPrivateMac)
-
-@implementation WKWebView (WKWindowSnapshot)
-- (NSImage *)_windowSnapshotInRect:(CGRect)rect
-{
-    RetainPtr snapshot = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot((CGSWindowID)[[self window] windowNumber], rect, { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows });
-    if (!snapshot)
-        return nil;
-
-    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
-}
-@end
 
 #endif // PLATFORM(MAC)
