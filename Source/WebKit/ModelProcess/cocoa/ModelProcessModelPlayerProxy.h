@@ -45,6 +45,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS WKModelProcessModelLayer;
+OBJC_CLASS WKSRKEntity;
 
 namespace WebCore {
 class Model;
@@ -126,6 +127,7 @@ private:
     RetainPtr<WKModelProcessModelLayer> m_layer;
     RefPtr<WebCore::REModelLoader> m_loader;
     RefPtr<WebCore::REModel> m_model;
+    RetainPtr<WKSRKEntity> m_modelRKEntity;
     REPtr<RESceneRef> m_scene;
 
     WebCore::Color m_backgroundColor;
@@ -133,7 +135,6 @@ private:
     simd_float3 m_originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
     float m_pitch { 0 };
     float m_yaw { 0 };
-    REAnimationPlaybackToken m_animationPlaybackToken { kInvalidAnimationToken };
 
     RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
 };

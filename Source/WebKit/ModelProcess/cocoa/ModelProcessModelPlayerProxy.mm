@@ -33,7 +33,9 @@
 #import "ModelConnectionToWebProcess.h"
 #import "ModelProcessModelPlayerManagerProxy.h"
 #import "ModelProcessModelPlayerMessages.h"
+#import "RealityKitBridging.h"
 #import "WKModelProcessModelLayer.h"
+#import "WebKitSwiftSoftLink.h"
 #import <RealitySystemSupport/RealitySystemSupport.h>
 #import <SurfBoardServices/SurfBoardServices.h>
 #import <WebCore/Color.h>
@@ -237,9 +239,7 @@ void ModelProcessModelPlayerProxy::updateTransform()
     if (!m_model || !m_layer)
         return;
 
-    auto transformComponent = REEntityGetOrAddComponentByClass(m_model->rootEntity(), RETransformComponentGetComponentType());
-    RETransformComponentSetLocalSRT(transformComponent, m_transformSRT);
-    RENetworkMarkComponentDirty(transformComponent);
+    [m_modelRKEntity setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
 }
 
 void ModelProcessModelPlayerProxy::updateOpacity()
@@ -247,19 +247,7 @@ void ModelProcessModelPlayerProxy::updateOpacity()
     if (!m_model || !m_layer)
         return;
 
-    auto opacity = std::max(0.0f, [m_layer opacity]);
-
-    if (opacity >= 1.0f) {
-        // If the hosting layer is completely opaque, remove any fade component that might have been set
-        // previously.
-        REEntityRemoveComponentByClass(m_model->rootEntity(), REHierarchicalFadeComponentGetComponentType());
-        // FIXME: Do we need to mark anything as dirty when removing a component?
-        return;
-    }
-
-    auto hierarchicalFadeComponent = REEntityGetOrAddComponentByClass(m_model->rootEntity(), REHierarchicalFadeComponentGetComponentType());
-    REHierarchicalFadeComponentSetOpacity(hierarchicalFadeComponent, opacity);
-    RENetworkMarkComponentDirty(hierarchicalFadeComponent);
+    [m_modelRKEntity setOpacity:[m_layer opacity]];
 }
 
 void ModelProcessModelPlayerProxy::startAnimating()
@@ -267,60 +255,7 @@ void ModelProcessModelPlayerProxy::startAnimating()
     if (!m_model || !m_layer)
         return;
 
-    auto animationLibraryComponent = REEntityGetComponentByClass(m_model->rootEntity(), REAnimationLibraryComponentGetComponentType());
-    if (!animationLibraryComponent)
-        return;
-
-    auto animationLibraryAsset = REAnimationLibraryComponentGetAnimationLibraryAsset(animationLibraryComponent);
-    if (!animationLibraryAsset)
-        return;
-
-    auto engine = REEngineGetShared();
-    auto serviceLocator = REEngineGetServiceLocator(engine);
-    auto assetManager = REServiceLocatorGetAssetManager(serviceLocator);
-
-    auto animationLibraryDefinition = adoptRE(REAnimationLibraryDefinitionCreateFromAnimationLibraryAsset(assetManager, animationLibraryAsset));
-    if (!animationLibraryDefinition)
-        return;
-
-    // FIXME: Allow passing in the name of the animation to run, and then loop over all the
-    // entries in the animationLibraryDefinition, extracting the root timelines and getting
-    // their names via RETimelineDefinitionGetName().
-
-    auto animationAsset = REAnimationLibraryDefinitionGetEntryAsset(animationLibraryDefinition.get(), 0);
-    if (!animationAsset)
-        return;
-
-    auto extractRootTimelineDefinition = [] (auto animationAsset) -> REPtr<RETimelineDefinitionRef> {
-        auto animationAssetType = REAssetHandleAssetType(animationAsset);
-        if (animationAssetType == kREAssetTypeTimeline)
-            return adoptRE(RETimelineDefinitionCreateFromTimeline(animationAsset));
-        if (animationAssetType == kREAssetTypeAnimationScene) {
-            auto rootTimelineAsset = REAnimationSceneAssetGetRootTimeline(animationAsset);
-            return adoptRE(RETimelineDefinitionCreateFromTimeline(rootTimelineAsset));
-        }
-        return nullptr;
-    };
-
-    auto rootTimelineDefinition = extractRootTimelineDefinition(animationAsset);
-    if (!rootTimelineDefinition) {
-        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy Could not extract root timeline from animation asset due to unknown asset type id=%" PRIu64 " type=%@", this, m_id.toUInt64(), (NSString *)REAssetGetType(animationAsset));
-        return;
-    }
-
-    // FIXME: Allow passing in options to control looping behavior.
-
-    // Wrap animation asset in an infinitely repeating clip.
-
-    auto repeatingTimelineClipDefinition = adoptRE(RETimelineDefinitionCreateTimelineClip("Repeater", assetManager, rootTimelineDefinition.get()));
-    RETimelineDefinitionSetClipLoopBehavior(repeatingTimelineClipDefinition.get(), kREAnimationLoopBehaviorRepeat);
-    double duration = std::numeric_limits<double>::infinity();
-    RETimelineDefinitionSetClipDuration(repeatingTimelineClipDefinition.get(), &duration);
-    auto repeatingTimelineAsset = adoptRE(RETimelineDefinitionCreateTimelineAsset(repeatingTimelineClipDefinition.get(), assetManager));
-
-    auto animationComponent = REEntityGetOrAddComponentByClass(m_model->rootEntity(), REAnimationComponentGetComponentType());
-    auto animationHandoffDescription = REAnimationHandoffDefaultDescEx();
-    m_animationPlaybackToken = REAnimationComponentPlay(animationComponent, repeatingTimelineAsset.get(), animationHandoffDescription, kREAnimationMarkComponentsDirty);
+    [m_modelRKEntity startAnimating];
 }
 
 // MARK: - WebCore::RELoaderClient
@@ -337,10 +272,11 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
     m_loader = nullptr;
     m_model = WTFMove(model);
+    if (m_model->rootEntity())
+        m_modelRKEntity = adoptNS([allocWKSRKEntityInstance() initWithCoreEntity:m_model->rootEntity()]);
 
-    auto modelBoundingBox = REEntityComputeMeshBounds(m_model->rootEntity(), true, matrix_identity_float4x4, kREEntityStatusNone);
-    m_originalBoundingBoxExtents = REAABBExtents(modelBoundingBox);
-    m_originalBoundingBoxCenter = REAABBCenter(modelBoundingBox);
+    m_originalBoundingBoxExtents = [m_modelRKEntity boundingBoxExtents];
+    m_originalBoundingBoxCenter = [m_modelRKEntity boundingBoxCenter];
 
     REPtr<REEntityRef> hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(hostingEntity.get(), "WebKit:EntityWithRootComponent");

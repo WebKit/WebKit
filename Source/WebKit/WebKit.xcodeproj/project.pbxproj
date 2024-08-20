@@ -1384,7 +1384,10 @@
 		526C5722284ADCBC00E08955 /* CtapCcidDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 526C5720284ADCBC00E08955 /* CtapCcidDriver.h */; };
 		526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 526C5721284ADCBC00E08955 /* CtapCcidDriver.cpp */; };
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5274A4BB2C7082AC00B1A742 /* RealityKitBridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 5289527E2C7077B000D0357E /* RealityKitBridging.h */; };
 		527DA5E32B698159004E6A68 /* CoreIPCCVPixelBufferRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */; };
+		5289527F2C7077B000D0357E /* RealityKitBridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 5289527E2C7077B000D0357E /* RealityKitBridging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		528952812C70797900D0357E /* RKEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528952802C70797900D0357E /* RKEntity.swift */; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52A69BEA286CFFAC00893E8F /* CryptoTokenKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A69BE9286CFFAC00893E8F /* CryptoTokenKit.framework */; };
 		52B060F92B745E4D009B1666 /* CoreIPCCVPixelBufferRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52B060F82B745E00009B1666 /* CoreIPCCVPixelBufferRef.mm */; };
@@ -5921,6 +5924,8 @@
 		527D1AEC2AD0A5BB00D145E5 /* WebUserContentControllerDataTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentControllerDataTypes.serialization.in; sourceTree = "<group>"; };
 		527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCVPixelBufferRef.h; sourceTree = "<group>"; };
 		527DA5E42B69815F004E6A68 /* CoreIPCCVPixelBufferRef.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCVPixelBufferRef.serialization.in; sourceTree = "<group>"; };
+		5289527E2C7077B000D0357E /* RealityKitBridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RealityKitBridging.h; sourceTree = "<group>"; };
+		528952802C70797900D0357E /* RKEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RKEntity.swift; sourceTree = "<group>"; };
 		52A69BE9286CFFAC00893E8F /* CryptoTokenKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoTokenKit.framework; path = System/Library/Frameworks/CryptoTokenKit.framework; sourceTree = SDKROOT; };
 		52B060F82B745E00009B1666 /* CoreIPCCVPixelBufferRef.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCVPixelBufferRef.mm; sourceTree = "<group>"; };
 		52C05BA72874996C00D80C59 /* MockCcidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCcidService.h; sourceTree = "<group>"; };
@@ -12675,6 +12680,15 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		5260053F2C707686005D813A /* RealityKit */ = {
+			isa = PBXGroup;
+			children = (
+				5289527E2C7077B000D0357E /* RealityKitBridging.h */,
+				528952802C70797900D0357E /* RKEntity.swift */,
+			);
+			path = RealityKit;
+			sourceTree = "<group>";
+		};
 		52CDC5BC2731DA0C00A3E3EB /* Virtual */ = {
 			isa = PBXGroup;
 			children = (
@@ -13613,6 +13627,7 @@
 				A14F9B602B686DAE00AD9C56 /* LinearMediaKit */,
 				A14F9B332B68467F00AD9C56 /* MarketplaceKit */,
 				B66F88BE2B6D1D6000FB1734 /* Preview */,
+				5260053F2C707686005D813A /* RealityKit */,
 				449A79EE2BAE299C0033BF53 /* TextAnimation */,
 				F48EC3512B75837200D1B886 /* TextExtraction */,
 				A14F9B652B686E0200AD9C56 /* module.modulemap */,
@@ -16767,6 +16782,7 @@
 				1A0C227E2451130A00ED614D /* QuickLookThumbnailingSoftLink.h in Headers */,
 				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
 				93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */,
+				5274A4BB2C7082AC00B1A742 /* RealityKitBridging.h in Headers */,
 				E539DFED2A44A78600769F09 /* RealitySimulationServicesSPI.h in Headers */,
 				5CB6AE442609799C00B6ED5A /* ReasonSPI.h in Headers */,
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
@@ -17810,6 +17826,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1098E682BB6410800449EE0 /* LinearMediaKitExtras.h in Headers */,
+				5289527F2C7077B000D0357E /* RealityKitBridging.h in Headers */,
 				A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */,
 				A14F9B762B68CA6C00AD9C56 /* WKSLinearMediaPlayer.h in Headers */,
 				A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */,
@@ -20179,6 +20196,7 @@
 				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,
 				B66F88C02B6D1F2300FB1734 /* PreviewWindowController.swift in Sources */,
+				528952812C70797900D0357E /* RKEntity.swift in Sources */,
 				440DB5B72C1914DC0021639B /* TextAnimationManager.swift in Sources */,
 				F48EC3532B75837F00D1B886 /* WKTextExtractionItem.swift in Sources */,
 				F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */,

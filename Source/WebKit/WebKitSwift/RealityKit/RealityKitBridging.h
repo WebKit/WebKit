@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <Foundation/Foundation.h>
 
-#import <wtf/SoftLinking.h>
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaContentMetadata)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTrack)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSRKEntity)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSTextAnimationManager)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditable)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionLink)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+#import <simd/simd.h>
+
+typedef struct REEntity *REEntityRef;
+
+NS_ASSUME_NONNULL_BEGIN
+
+typedef struct {
+    simd_float3 scale;
+    simd_quatf rotation;
+    simd_float3 translation;
+} WKEntityTransform;
+
+@interface WKSRKEntity : NSObject
+@property (nonatomic, readonly) simd_float3 boundingBoxExtents;
+@property (nonatomic, readonly) simd_float3 boundingBoxCenter;
+@property (nonatomic) WKEntityTransform transform;
+@property (nonatomic) float opacity;
+
+- (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;
+- (void)startAnimating;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // defined(TARGET_OS_VISION) && TARGET_OS_VISION
