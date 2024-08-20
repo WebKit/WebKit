@@ -42,7 +42,7 @@ namespace Layout {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, FormattingContextLayoutFunction&& formattingContextLayoutFunction)
     : m_type(type)
     , m_rootContainer(rootContainer)
     , m_securityOrigin(document.securityOrigin())
@@ -151,9 +151,9 @@ void LayoutState::destroyInlineContentCache(const ElementBox& formattingContextR
     m_inlineContentCaches.remove(&formattingContextRoot);
 }
 
-void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box)
+void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint)
 {
-    return m_formattingContextLayoutFunction(box, *this);
+    return m_formattingContextLayoutFunction(box, widthConstraint, *this);
 }
 
 }

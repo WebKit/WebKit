@@ -71,7 +71,7 @@ public:
     InlineLayoutState& layoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& layoutState() const { return m_inlineLayoutState; }
 
-    void layoutWithFormattingContextForBox(const ElementBox&);
+    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint = { });
 
     enum class EscapeReason {
         InkOverflowNeedsInitialContiningBlockForStrokeWidth

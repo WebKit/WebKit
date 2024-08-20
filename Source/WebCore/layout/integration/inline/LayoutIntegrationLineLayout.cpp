@@ -476,24 +476,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
         renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
-        auto relayoutRubyAnnotationIfNeeded = [&] {
-            if (!layoutBox.isRubyAnnotationBox())
-                return;
-            // Annotation inline-block may get resized during inline layout (when base is wider) and
-            // we need to apply this new size on the annotation content by running layout.
-            auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
-            if (!needsResizing)
-                return;
-            auto logicalMarginBoxSize = Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).size();
-            if (logicalMarginBoxSize == renderer.size())
-                return;
-            renderer.setSize(logicalMarginBoxSize);
-            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxSize.width(), LengthType::Fixed });
-            renderer.setNeedsLayout(MarkOnlyThis);
-            renderer.layoutIfNeeded();
-            renderer.clearOverridingLogicalWidthLength();
-        };
-        relayoutRubyAnnotationIfNeeded();
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;

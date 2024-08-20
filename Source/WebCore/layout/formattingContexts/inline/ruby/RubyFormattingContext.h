@@ -42,21 +42,21 @@ class RubyFormattingContext {
 public:
     // Line building
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
-    static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
-    static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, const InlineFormattingContext&);
-    static HashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, const InlineFormattingContext&);
-    static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line&, InlineLayoutUnit spaceToDistribute, const InlineFormattingContext&);
+    static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext&);
+    static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, InlineFormattingContext&);
+    static HashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, InlineFormattingContext&);
+    static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line&, InlineLayoutUnit spaceToDistribute, InlineFormattingContext&);
 
     // Line box building
     static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
 
     // Display content building
-    static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const InlineDisplay::Box& baseDisplayBox, InlineLayoutUnit baseContentWidth, const InlineFormattingContext&);
-    static InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBoxLogicalRect, const InlineFormattingContext&);
-    static InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBoxLogicalRect, const InlineFormattingContext&);
+    static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const InlineDisplay::Box& baseDisplayBox, InlineLayoutUnit baseContentWidth, InlineFormattingContext&);
+    static InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBoxLogicalRect, InlineFormattingContext&);
+    static InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBoxLogicalRect, InlineFormattingContext&);
 
-    static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, const InlineFormattingContext&);
-    static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, const InlineFormattingContext&);
+    static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);
+    static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);
 
     enum class RubyBasesMayNeedResizing : bool { No, Yes };
     static void applyAlignmentOffsetList(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing, InlineFormattingContext&);
@@ -69,7 +69,7 @@ public:
 private:
     using MaximumLayoutBoundsStretchMap = HashMap<const InlineLevelBox*, InlineLevelBox::AscentAndDescent>;
     static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, MaximumLayoutBoundsStretchMap&, const InlineFormattingContext&);
-    static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, const InlineFormattingContext&);
+    static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext&);
 };
 
 } // namespace Layout

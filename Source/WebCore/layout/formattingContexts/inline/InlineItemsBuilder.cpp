@@ -866,7 +866,7 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItemList
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemList& inlineItemList)
 {
     if (layoutBox.isRubyAnnotationBox())
-        return;
+        return inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
 
     if (layoutBox.isAtomicInlineLevelBox()) {
         m_isTextAndForcedLineBreakOnlyContent = false;

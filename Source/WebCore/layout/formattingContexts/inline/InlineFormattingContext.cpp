@@ -547,9 +547,9 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
     inlineContentCache.clearMaximumIntrinsicWidthLineContent();
 }
 
-void InlineFormattingContext::layoutWithFormattingContextForBox(const ElementBox& box)
+void InlineFormattingContext::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint)
 {
-    m_globalLayoutState.layoutWithFormattingContextForBox(box);
+    m_globalLayoutState.layoutWithFormattingContextForBox(box, widthConstraint);
 }
 
 
