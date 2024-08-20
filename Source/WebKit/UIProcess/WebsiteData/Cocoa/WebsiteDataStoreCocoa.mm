@@ -167,19 +167,11 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     URL httpsProxy = m_configuration->httpsProxy();
     
     bool isSafari = false;
-    bool isMiniBrowser = false;
 #if PLATFORM(IOS_FAMILY)
     isSafari = WebCore::IOSApplication::isMobileSafari();
-    isMiniBrowser = WebCore::IOSApplication::isMiniBrowser();
 #elif PLATFORM(MAC)
     isSafari = WebCore::MacApplication::isSafari();
-    isMiniBrowser = WebCore::MacApplication::isMiniBrowser();
 #endif
-    // FIXME: Remove these once Safari adopts _WKWebsiteDataStoreConfiguration.httpProxy and .httpsProxy.
-    if (!httpProxy.isValid() && (isSafari || isMiniBrowser))
-        httpProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey] };
-    if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
-        httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
     auto& directories = resolvedDirectories();
 #if HAVE(ALTERNATIVE_SERVICE)
