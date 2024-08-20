@@ -267,6 +267,23 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is " << imageLoading << " new image " << newImage.get());
         }
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        // Adaptive image glyphs need to load both the high fidelity HEIC and the
+        // fallback PNG resource, as both resources are treated as an atomic unit.
+        if (imageElement && imageElement->isMultiRepresentationHEIC()) {
+            auto fallbackURL = imageElement->src();
+            if (!fallbackURL.isNull()) {
+                ResourceRequest resourceRequest(fallbackURL);
+                resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*imageElement));
+
+                auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
+                request.setInitiator(*imageElement);
+
+                document->protectedCachedResourceLoader()->requestImage(WTFMove(request));
+            }
+        }
+#endif
+
         // If we do not have an image here, it means that a cross-site
         // violation occurred, or that the image was blocked via Content
         // Security Policy, or the page is being dismissed. Trigger an
