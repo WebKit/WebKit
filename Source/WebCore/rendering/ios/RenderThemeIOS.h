@@ -194,8 +194,6 @@ private:
 
     void adjustButtonLikeControlStyle(RenderStyle&, const Element&) const;
 
-    FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
-
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const override;
 
     Color pictureFrameColor(const RenderObject&) override;

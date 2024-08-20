@@ -2670,6 +2670,7 @@ rendering/BaselineAlignment.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
 rendering/BorderPainter.cpp
+rendering/BorderShape.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/CaretRectComputation.cpp

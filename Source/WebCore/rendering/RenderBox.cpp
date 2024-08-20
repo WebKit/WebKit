@@ -28,6 +28,7 @@
 
 #include "BackgroundPainter.h"
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -787,30 +788,11 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
     return logicalHeight;
 }
 
-RoundedRect RenderBox::borderRoundedRect() const
-{
-    auto& style = this->style();
-    LayoutRect bounds = frameRect();
-    bounds.setLocation({ });
-
-    return style.getRoundedBorderFor(bounds);
-}
-
+// FIXME: Despite the name, this returns rounded borders based on the padding box, which seems wrong.
 RoundedRect::Radii RenderBox::borderRadii() const
 {
-    auto& style = this->style();
-    LayoutRect bounds = frameRect();
-
-    unsigned borderLeft = style.borderLeftWidth();
-    unsigned borderTop = style.borderTopWidth();
-    bounds.moveBy(LayoutPoint(borderLeft, borderTop));
-    bounds.contract(borderLeft + style.borderRightWidth(), borderTop + style.borderBottomWidth());
-    return style.getRoundedBorderFor(bounds).radii();
-}
-
-RoundedRect RenderBox::roundedBorderBoxRect() const
-{
-    return style().getRoundedInnerBorderFor(borderBoxRect());
+    auto borderShape = BorderShape::shapeForBorderRect(style(), paddingBoxRectIncludingScrollbar());
+    return borderShape.deprecatedRoundedRect().radii();
 }
 
 LayoutRect RenderBox::paddingBoxRect() const
@@ -1579,8 +1561,10 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, cons
     LayoutPoint adjustedLocation = accumulatedOffset + location();
     LayoutRect borderRect = borderBoxRect();
     borderRect.moveBy(adjustedLocation);
-    RoundedRect border = style().getRoundedBorderFor(borderRect);
-    return hitTestLocation.intersects(border);
+
+    auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
+    // To handle non-round corners, BorderShape should do the hit-testing.
+    return hitTestLocation.intersects(borderShape.deprecatedRoundedRect());
 }
 
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
@@ -1707,7 +1691,8 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         stateSaver.save();
-        paintInfo.context().clipRoundedRect(style().getRoundedBorderFor(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
+        auto borderShape = BorderShape::shapeForBorderRect(style(), paintRect);
+        borderShape.clipToOuterShape(paintInfo.context(), document().deviceScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
 

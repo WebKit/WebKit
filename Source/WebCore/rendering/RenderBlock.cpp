@@ -25,6 +25,7 @@
 #include "RenderBlock.h"
 
 #include "AXObjectCache.h"
+#include "BorderShape.h"
 #include "DocumentInlines.h"
 #include "Editor.h"
 #include "Element.h"
@@ -1168,9 +1169,10 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         auto borderRect = LayoutRect(paintOffset, size());
 
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
-            auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRoundedRect << " event listener types " << style().eventListenerRegionTypes());
-            paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
+            auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderShape.deprecatedRoundedRect() << " event listener types " << style().eventListenerRegionTypes());
+            bool overrideUserModifyIsEditable = isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable();
+            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style(), overrideUserModifyIsEditable);
         }
 
         if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))

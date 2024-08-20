@@ -30,6 +30,7 @@
 #include "BackgroundPainter.h"
 #include "BitmapImage.h"
 #include "BlendingKeyframes.h"
+#include "BorderShape.h"
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
 #include "CanvasRenderingContext2DBase.h"
@@ -782,7 +783,8 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
 
     FloatRoundedRect backdropFiltersRect;
     if (renderBox->style().hasBorderRadius() && !renderBox->hasClip()) {
-        auto roundedBoxRect = renderBox->borderRoundedRect();
+        auto borderShape = BorderShape::shapeForBorderRect(renderBox->style(), renderBox->borderBoxRect());
+        auto roundedBoxRect = borderShape.deprecatedRoundedRect();
         roundedBoxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
     } else {
@@ -1080,7 +1082,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     if (usesCompositedScrolling) {
         // If it's scrollable, it has to be a box.
-        FloatRoundedRect contentsClippingRect = downcast<RenderBox>(renderer()).roundedBorderBoxRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        auto& renderBox = downcast<RenderBox>(renderer());
+        auto borderShape = BorderShape::shapeForBorderRect(renderBox.style(), renderBox.borderBoxRect());
+        FloatRoundedRect contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
         needsDescendantsClippingLayer = contentsClippingRect.isRounded();
     } else
         needsDescendantsClippingLayer = RenderLayerCompositor::clipsCompositingDescendants(m_owningLayer);

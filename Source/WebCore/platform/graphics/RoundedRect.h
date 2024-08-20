@@ -55,6 +55,9 @@ public:
 
     bool isZero() const;
 
+    bool areRenderableInRect(const LayoutRect&) const;
+    void makeRenderableInRect(const LayoutRect&);
+
     void includeLogicalEdges(const RoundedRectRadii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 

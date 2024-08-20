@@ -30,6 +30,7 @@
 #include "AutoTableLayout.h"
 #include "BackgroundPainter.h"
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CollapsedBorderValue.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
@@ -846,7 +847,8 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         stateSaver.save();
-        paintInfo.context().clipRoundedRect(style().getRoundedBorderFor(rect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
+        auto borderShape = BorderShape::shapeForBorderRect(style(), rect);
+        borderShape.clipToOuterShape(paintInfo.context(), document().deviceScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
 

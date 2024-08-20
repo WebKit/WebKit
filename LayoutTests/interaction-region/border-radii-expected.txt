@@ -21,17 +21,17 @@ uniform half pill diagonal tongue degenerate big border changing default explici
         (interaction (347,20) width=75.50 height=52)
         (cornerRadius 0 0 10 10),
         (interaction (446.50,19) width=103 height=54)
-        (clipPath add rounded rect (0,0) width=103.28 height=54
-          (top-left width=2 height=2)
-          (top-right width=16 height=16)
-          (bottom-left width=18 height=18)
-          (bottom-right width=10 height=10)),
+        (clipPath add rounded rect (0,0) width=103.50 height=54
+          (top-left width=2.00 height=2)
+          (top-right width=16.03 height=16)
+          (bottom-left width=18.04 height=18)
+          (bottom-right width=10.02 height=10)),
         (interaction (573.50,10) width=138.50 height=72)
-        (clipPath add rounded rect (0,0) width=138.20 height=72
+        (clipPath add rounded rect (0,0) width=138 height=72
           (top-left width=0 height=0)
-          (top-right width=16 height=16)
+          (top-right width=15.98 height=16)
           (bottom-left width=0 height=0)
-          (bottom-right width=18 height=18)),
+          (bottom-right width=17.97 height=18)),
         (interaction (10,102) width=90.50 height=52)
         (cornerRadius 20.00),
         (interaction (124.50,102) width=76.50 height=52)

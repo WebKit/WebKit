@@ -28,6 +28,7 @@
 
 #include "BorderData.h"
 #include "BorderEdge.h"
+#include "BorderShape.h"
 #include "CachedImage.h"
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
@@ -178,23 +179,8 @@ std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, con
     if (!decorationHasAllSimpleEdges(edges))
         return std::nullopt;
 
-    auto outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    auto innerBorder = style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-    Path path;
-    auto pixelSnappedOuterBorder = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    if (pixelSnappedOuterBorder.isRounded())
-        path.addRoundedRect(pixelSnappedOuterBorder);
-    else
-        path.addRect(pixelSnappedOuterBorder.rect());
-
-    auto pixelSnappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    if (pixelSnappedInnerBorder.isRounded())
-        path.addRoundedRect(pixelSnappedInnerBorder);
-    else
-        path.addRect(pixelSnappedInnerBorder.rect());
-
-    return path;
+    auto borderShape = BorderShape::shapeForBorderRect(style, rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    return borderShape.pathForBorderArea(deviceScaleFactor);
 }
 
 static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdges& edges, BoxSide side)
@@ -279,9 +265,26 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (paintNinePieceImage(rect, style, style.borderImage()))
         return;
 
-    RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect unadjustedInnerBorder = (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge) : innerBorder;
+    auto borderShape = BorderShape::shapeForBorderRect(style, rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+
+    // To handle corner styles other than `round`, we'll have to plumb the borderShape through all the border painting functions.
+    auto outerBorder = borderShape.deprecatedRoundedRect();
+    auto innerBorder = borderShape.deprecatedInnerRoundedRect();
+    auto unadjustedInnerBorder = innerBorder;
+
+    switch (bleedAvoidance) {
+    case BackgroundBleedNone:
+    case BackgroundBleedShrinkBackground:
+    case BackgroundBleedUseTransparencyLayer:
+        break;
+    case BackgroundBleedBackgroundOverBorder: {
+        auto shrunkBorderRect = borderRectAdjustedForBleedAvoidance(rect, bleedAvoidance);
+        auto shrunkBorderShape = BorderShape::shapeForBorderRect(style, shrunkBorderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+        innerBorder = shrunkBorderShape.deprecatedInnerRoundedRect();
+        break;
+    }
+    }
+
     auto edges = borderEdges(style, document().deviceScaleFactor(), m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder), includeLogicalLeftEdge, includeLogicalRightEdge);
     bool haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
@@ -1480,7 +1483,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
     }
 }
 
-LayoutRect BorderPainter::borderInnerRectAdjustedForBleedAvoidance(const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
+LayoutRect BorderPainter::borderRectAdjustedForBleedAvoidance(const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
 {
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder)
         return rect;

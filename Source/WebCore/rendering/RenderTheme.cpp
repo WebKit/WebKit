@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "BorderShape.h"
 #include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
@@ -771,11 +772,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
 
     float deviceScaleFactor = box.document().deviceScaleFactor();
     auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-    auto borderRect = FloatRoundedRect(box.style().getRoundedBorderFor(LayoutRect(zoomedRect)));
+    auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(zoomedRect));
     auto controlStyle = extractControlStyleForRenderer(box);
     auto& context = paintInfo.context();
 
-    context.drawControlPart(part, borderRect, deviceScaleFactor, controlStyle);
+    context.drawControlPart(part, borderShape.deprecatedPixelSnappedRoundedRect(deviceScaleFactor), deviceScaleFactor, controlStyle);
     return false;
 }
 

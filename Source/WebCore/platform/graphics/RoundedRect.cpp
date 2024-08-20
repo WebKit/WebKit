@@ -137,6 +137,34 @@ void RoundedRect::Radii::excludeLogicalEdges(bool isHorizontal, bool excludeLogi
     }
 }
 
+bool RoundedRect::Radii::areRenderableInRect(const LayoutRect& rect) const
+{
+    return topLeft().width() >= 0 && topLeft().height() >= 0
+        && bottomLeft().width() >= 0 && bottomLeft().height() >= 0
+        && topRight().width() >= 0 && topRight().height() >= 0
+        && bottomRight().width() >= 0 && bottomRight().height() >= 0
+        && topLeft().width() + topRight().width() <= rect.width()
+        && bottomLeft().width() + bottomRight().width() <= rect.width()
+        && topLeft().height() + bottomLeft().height() <= rect.height()
+        && topRight().height() + bottomRight().height() <= rect.height();
+}
+
+void RoundedRect::Radii::makeRenderableInRect(const LayoutRect& rect)
+{
+    auto maxRadiusWidth = std::max(topLeft().width() + topRight().width(), bottomLeft().width() + bottomRight().width());
+    auto maxRadiusHeight = std::max(topLeft().height() + bottomLeft().height(), topRight().height() + bottomRight().height());
+
+    if (maxRadiusWidth <= 0 || maxRadiusHeight <= 0) {
+        scale(0);
+        return;
+    }
+
+    float widthRatio = static_cast<float>(rect.width()) / maxRadiusWidth;
+    float heightRatio = static_cast<float>(rect.height()) / maxRadiusHeight;
+    scale(widthRatio < heightRatio ? widthRatio : heightRatio);
+
+}
+
 RoundedRect::RoundedRect(const LayoutUnit& x, const LayoutUnit& y, const LayoutUnit& width, const LayoutUnit& height)
     : m_rect(x, y, width, height)
 {
@@ -166,28 +194,12 @@ void RoundedRect::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeft
 
 bool RoundedRect::isRenderable() const
 {
-    return m_radii.topLeft().width() >= 0 && m_radii.topLeft().height() >= 0
-        && m_radii.bottomLeft().width() >= 0 && m_radii.bottomLeft().height() >= 0
-        && m_radii.topRight().width() >= 0 && m_radii.topRight().height() >= 0
-        && m_radii.bottomRight().width() >= 0 && m_radii.bottomRight().height() >= 0
-        && m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
-        && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()
-        && m_radii.topLeft().height() + m_radii.bottomLeft().height() <= m_rect.height()
-        && m_radii.topRight().height() + m_radii.bottomRight().height() <= m_rect.height();
+    return m_radii.areRenderableInRect(m_rect);
 }
 
 void RoundedRect::adjustRadii()
 {
-    auto maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
-    auto maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
-
-    if (maxRadiusWidth <= 0 || maxRadiusHeight <= 0) {
-        m_radii.scale(0.0f);
-        return;
-    }
-    float widthRatio = static_cast<float>(m_rect.width()) / maxRadiusWidth;
-    float heightRatio = static_cast<float>(m_rect.height()) / maxRadiusHeight;
-    m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
+    m_radii.makeRenderableInRect(m_rect);
 }
 
 bool RoundedRect::intersectsQuad(const FloatQuad& quad) const

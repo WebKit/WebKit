@@ -27,6 +27,7 @@
 #include "BackgroundPainter.h"
 
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CachedImage.h"
 #include "ColorBlending.h"
 #include "FloatRoundedRect.h"
@@ -496,10 +497,14 @@ RoundedRect BackgroundPainter::backgroundRoundedRectAdjustedForBleedAvoidance(co
 
 RoundedRect BackgroundPainter::backgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator& inlineBoxIterator, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    RoundedRect border = m_renderer.style().getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    auto borderShape = BorderShape::shapeForBorderRect(m_renderer.style(), borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    // BorderShape needs to be plumbed through all of border painting to handle non-round corner shapes.
+    RoundedRect border = borderShape.deprecatedRoundedRect();
+
     if (inlineBoxIterator && (inlineBoxIterator->nextInlineBox() || inlineBoxIterator->previousInlineBox())) {
-        RoundedRect segmentBorder = m_renderer.style().getRoundedBorderFor(LayoutRect(0_lu, 0_lu, borderRect.width(), borderRect.height()), includeLogicalLeftEdge, includeLogicalRightEdge);
-        border.setRadii(segmentBorder.radii());
+        auto segmentBorderRect = LayoutRect { { }, borderRect.size() };
+        auto segmentBorderShape = BorderShape::shapeForBorderRect(m_renderer.style(), segmentBorderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+        border.setRadii(segmentBorderShape.radii());
     }
     return border;
 }
@@ -817,8 +822,9 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
     if (context.paintingDisabled() || !style.boxShadow())
         return;
 
-    RoundedRect borderRect = (shadowStyle == ShadowStyle::Inset) ? style.getRoundedInnerBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge)
-        : style.getRoundedBorderFor(paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    auto borderShape = BorderShape::shapeForBorderRect(style, paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    // BorderShape needs to do shadow painting to handle non-round corner shapes.
+    RoundedRect borderRect = (shadowStyle == ShadowStyle::Inset) ? borderShape.deprecatedInnerRoundedRect() : borderShape.deprecatedRoundedRect();
 
     if (!borderRect.isRenderable())
         borderRect.adjustRadii();

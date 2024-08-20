@@ -30,6 +30,7 @@
 #include "config.h"
 #include "BoxShape.h"
 
+#include "BorderShape.h"
 #include "RenderBoxInlines.h"
 #include <wtf/MathExtras.h>
 
@@ -70,27 +71,40 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
         if (!style.hasBorderRadius())
             return RoundedRect(renderer.marginBoxRect(), RoundedRect::Radii());
 
-        LayoutRect marginBox = renderer.marginBoxRect();
-        RoundedRect::Radii radii = computeMarginBoxShapeRadii(style.getRoundedBorderFor(renderer.borderBoxRect()).radii(), renderer);
+        auto marginBox = renderer.marginBoxRect();
+        auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
+        RoundedRect::Radii radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
         radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
         return RoundedRect(marginBox, radii);
     }
     case CSSBoxType::PaddingBox:
-        return style.getRoundedInnerBorderFor(renderer.borderBoxRect());
+        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedInnerRoundedRect();
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
-    case CSSBoxType::ContentBox:
-        return renderer.roundedContentBoxRect(renderer.borderBoxRect());
+    case CSSBoxType::ContentBox: {
+        auto borderBoxRect = renderer.borderBoxRect();
+        auto contentBoxRect = renderer.contentBoxRect();
+
+        // top, right, bottom, left.
+        auto contentBoxInsets = RectEdges<LayoutUnit> {
+            contentBoxRect.y() - borderBoxRect.y(),
+            borderBoxRect.maxX() - contentBoxRect.maxX(),
+            borderBoxRect.maxY() - contentBoxRect.maxY(),
+            contentBoxRect.x() - borderBoxRect.x()
+        };
+
+        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect(), contentBoxInsets).deprecatedInnerRoundedRect();
+    }
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
-        return style.getRoundedBorderFor(renderer.borderBoxRect());
+        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
     }
 
     ASSERT_NOT_REACHED();
-    return style.getRoundedBorderFor(renderer.borderBoxRect());
+    return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
 }
 
 LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
