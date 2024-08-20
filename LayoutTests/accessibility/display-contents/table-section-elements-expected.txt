@@ -1,0 +1,49 @@
+This test ensures the acessibility tree is correct when table section elements (e.g. thead, tbody) have display:contents.
+
+PASS: table.rowCount === 3 === true
+PASS: table.columnCount === 2 === true
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === 'r0c0'
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === 'r0c1'
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === 'r1c0'
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === 'r1c1'
+PASS: table.cellForColumnAndRow(0, 2).domIdentifier === 'r2c0'
+PASS: table.cellForColumnAndRow(1, 2).domIdentifier === 'r2c1'
+
+{#table AXRole: AXTable}
+
+{#r0-t0 AXRole: AXRow}
+
+{#r0c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Author}
+
+{#r0c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Title}
+
+{#r1 AXRole: AXRow}
+
+{#r1c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Stephen Hawking}
+
+{#r1c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: A Brief History of Time}
+
+{#r2 AXRole: AXRow}
+
+{#r2c0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Carl Sagan}
+
+{#r2c1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Cosmos}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Author	Title
+Stephen Hawking	A Brief History of Time
+Carl Sagan	Cosmos
