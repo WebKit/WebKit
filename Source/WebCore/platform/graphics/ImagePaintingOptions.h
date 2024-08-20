@@ -43,6 +43,9 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, ImageOrientation::Orientation>
         || std::is_same_v<Type, InterpolationQuality>
         || std::is_same_v<Type, AllowImageSubsampling>
+#if USE(SKIA)
+        ||  std::is_same_v<Type, StrictImageClamping>
+#endif
         || std::is_same_v<Type, ShowDebugBackground>;
 
     // This is a single-argument initializer to support pattern of
@@ -88,6 +91,9 @@ struct ImagePaintingOptions {
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
     AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
     ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
+#if USE(SKIA)
+    StrictImageClamping strictImageClamping() const { return m_strictImageClamping; }
+#endif
 
 private:
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
@@ -98,6 +104,9 @@ private:
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
     void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
     void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
+#if USE(SKIA)
+    void setOption(StrictImageClamping strictImageClamping) { m_strictImageClamping = strictImageClamping; }
+#endif
 
     BlendMode m_blendMode : 5 { BlendMode::Normal };
     DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };
@@ -106,6 +115,9 @@ private:
     InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
     AllowImageSubsampling m_allowImageSubsampling : 1 { AllowImageSubsampling::No };
     ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
+#if USE(SKIA)
+    StrictImageClamping m_strictImageClamping: 1 { StrictImageClamping::Yes };
+#endif
 };
 static_assert(sizeof(ImagePaintingOptions) <= sizeof(uint64_t), "Pass by value");
 
