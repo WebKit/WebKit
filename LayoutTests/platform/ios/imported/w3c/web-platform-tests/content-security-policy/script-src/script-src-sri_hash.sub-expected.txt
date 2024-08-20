@@ -5,6 +5,7 @@ External scripts with matching SRI hash should be allowed.
 
 PASS Load all the tests.
 PASS matching integrity
+PASS matching integrity (case-insensitive algorithm)
 PASS multiple matching integrity
 PASS no integrity
 PASS matching plus unsupported integrity
