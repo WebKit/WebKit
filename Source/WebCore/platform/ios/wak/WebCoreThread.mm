@@ -44,7 +44,6 @@
 #import <Foundation/NSInvocation.h>
 #import <JavaScriptCore/InitializeThreading.h>
 #import <JavaScriptCore/JSLock.h>
-#import <libkern/OSAtomic.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
