@@ -652,13 +652,14 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineB
     if (!shouldTrimBlockStartOfLineBox && !shouldTrimBlockEndOfLineBox)
         return lineBoxLogicalHeight;
 
+    auto& primaryFontMetrics = rootInlineBox.primarymetricsOfPrimaryFont();
     if (shouldTrimBlockEndOfLineBox) {
-        auto textBoxEdgeUnderForRootInlineBox = [&] {
+        auto textBoxEdgeUnderForRootInlineBox = [&]() -> InlineLayoutUnit {
             switch (textBoxEdge.under) {
             case TextEdgeType::Text:
                 return 0.f;
             case TextEdgeType::Alphabetic:
-                return rootInlineBox.descent();
+                return primaryFontMetrics.intDescent();
             case TextEdgeType::CJKIdeographic:
             case TextEdgeType::CJKIdeographicInk:
                 ASSERT_NOT_IMPLEMENTED_YET();
@@ -678,9 +679,9 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineB
             case TextEdgeType::Text:
                 return 0.f;
             case TextEdgeType::CapHeight:
-                return rootInlineBox.ascent() - rootInlineBox.primarymetricsOfPrimaryFont().capHeight().value_or(0);
+                return primaryFontMetrics.intAscent() - primaryFontMetrics.capHeight().value_or(0);
             case TextEdgeType::ExHeight:
-                return rootInlineBox.ascent() - rootInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0);
+                return primaryFontMetrics.intAscent() - primaryFontMetrics.xHeight().value_or(0);
             case TextEdgeType::CJKIdeographic:
             case TextEdgeType::CJKIdeographicInk:
                 ASSERT_NOT_IMPLEMENTED_YET();
