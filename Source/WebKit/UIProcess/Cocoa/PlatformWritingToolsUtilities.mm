@@ -110,12 +110,6 @@ WebCore::WritingTools::TextSuggestion::State convertToWebTextSuggestionState(WTT
         return WebCore::WritingTools::TextSuggestion::State::Rejected;
     case WTTextSuggestionStateInvalid:
         return WebCore::WritingTools::TextSuggestion::State::Invalid;
-
-    // FIXME: Remove this default case once the WTTextSuggestionStateAccepted case is no longer in the build.
-    default:
-        ASSERT_NOT_REACHED();
-        return WebCore::WritingTools::TextSuggestion::State::Invalid;
-    }
 }
 
 WebCore::WritingTools::Action convertToWebAction(WTAction action)
