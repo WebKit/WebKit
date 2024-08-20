@@ -237,9 +237,6 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
     } else {
         Ref input = inputElement();
         input->setValue(itemText(listIndex));
-        if (input->document().settings().searchInputIncrementalAttributeAndSearchEventEnabled()
-            && fireEvents)
-            input->onSearch();
         input->select();
     }
 }

@@ -51,7 +51,6 @@ using namespace HTMLNames;
 
 SearchInputType::SearchInputType(HTMLInputElement& element)
     : BaseTextInputType(Type::Search, element)
-    , m_searchEventTimer(*this, &SearchInputType::searchEventTimerFired)
 {
     ASSERT(needsShadowSubtree());
 }
@@ -147,8 +146,6 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     if (key == "U+001B"_s) {
         Ref<HTMLInputElement> protectedInputElement(*element());
         protectedInputElement->setValue(emptyString(), DispatchChangeEvent);
-        if (protectedInputElement->document().settings().searchInputIncrementalAttributeAndSearchEventEnabled())
-            protectedInputElement->onSearch();
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
     }
@@ -162,40 +159,6 @@ void SearchInputType::removeShadowSubtree()
     m_cancelButton = nullptr;
 }
 
-void SearchInputType::startSearchEventTimer()
-{
-    ASSERT(element());
-    ASSERT(element()->renderer());
-    unsigned length = element()->innerTextValue().length();
-
-    if (!length) {
-        m_searchEventTimer.startOneShot(0_ms);
-        return;
-    }
-
-    // After typing the first key, we wait 0.5 seconds.
-    // After the second key, 0.4 seconds, then 0.3, then 0.2 from then on.
-    m_searchEventTimer.startOneShot(std::max(200_ms, 600_ms - 100_ms * length));
-}
-
-void SearchInputType::stopSearchEventTimer()
-{
-    m_searchEventTimer.stop();
-}
-
-void SearchInputType::searchEventTimerFired()
-{
-    ASSERT(element());
-    element()->onSearch();
-}
-
-bool SearchInputType::searchEventsShouldBeDispatched() const
-{
-    ASSERT(element());
-    return element()->document().settings().searchInputIncrementalAttributeAndSearchEventEnabled()
-        && element()->hasAttributeWithoutSynchronization(incrementalAttr);
-}
-
 void SearchInputType::didSetValueByUserEdit()
 {
     ASSERT(element());
@@ -203,9 +166,6 @@ void SearchInputType::didSetValueByUserEdit()
         if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
             renderer->updateCancelButtonVisibility();
     }
-    // If the incremental attribute is set, then dispatch the search event
-    if (searchEventsShouldBeDispatched())
-        startSearchEventTimer();
 
     TextFieldInputType::didSetValueByUserEdit();
 }

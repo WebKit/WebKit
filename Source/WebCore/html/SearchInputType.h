@@ -45,8 +45,6 @@ public:
         return adoptRef(*new SearchInputType(element));
     }
 
-    void stopSearchEventTimer();
-
 private:
     explicit SearchInputType(HTMLInputElement&);
 
@@ -65,13 +63,8 @@ private:
     float decorationWidth() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
 
-    void searchEventTimerFired();
-    bool searchEventsShouldBeDispatched() const;
-    void startSearchEventTimer();
-
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
     RefPtr<HTMLElement> m_cancelButton;
-    Timer m_searchEventTimer;
 };
 
 } // namespace WebCore

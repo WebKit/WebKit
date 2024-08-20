@@ -276,7 +276,6 @@ public:
     void setCanReceiveDroppedFiles(bool);
 
     void addSearchResult();
-    void onSearch();
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
