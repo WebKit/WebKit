@@ -45,7 +45,8 @@ static NSString * const fallbackTitle = @"";
 
 static std::optional<String> getDefaultSidebarTitleFromExtension(WebExtension& extension)
 {
-    return toOptional(extension.sidebarTitle());
+    return toOptional(extension.sidebarTitle())
+        .value_or(extension.displayName());
 }
 
 static std::optional<String> getDefaultSidebarPathFromExtension(WebExtension& extension)
@@ -66,7 +67,7 @@ WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, WebExtens
 WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, WebExtensionWindow& window) : WebExtensionSidebar(context, std::nullopt, window, IsDefault::No) { };
 
 WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, std::optional<Ref<WebExtensionTab>> tab, std::optional<Ref<WebExtensionWindow>> window, IsDefault isDefault)
-    : m_context(context), m_tab(tab), m_window(window), m_isDefault(isDefault)
+    : m_extensionContext(context), m_tab(tab), m_window(window), m_isDefault(isDefault)
 {
     ASSERT(!(m_tab && m_window));
 
@@ -81,8 +82,8 @@ WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, std::opti
 
 std::optional<Ref<WebExtensionContext>> WebExtensionSidebar::extensionContext() const
 {
-    if (m_context.ptr())
-        return m_context.get();
+    if (auto *context = m_extensionContext.get())
+        return *context;
     return std::nullopt;
 }
 
@@ -98,11 +99,12 @@ const std::optional<Ref<WebExtensionWindow>> WebExtensionSidebar::window() const
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionSidebar::parent() const
 {
-    if (!m_context.ptr() || isDefaultSidebar())
+    if (!extensionContext() || isDefaultSidebar())
         return std::nullopt;
 
-    return m_tab.and_then([this](auto const& tab) { return m_context->getSidebar(*tab->window()); })
-        .value_or(m_context->defaultSidebar());
+    return m_tab.and_then([this](auto const& tab) -> std::optional<Ref<WebExtensionSidebar>> {
+        return tab->window() ? m_extensionContext->getSidebar(*(tab->window())) : std::nullopt;
+    }).value_or(m_extensionContext->defaultSidebar());
 }
 
 void WebExtensionSidebar::propertiesDidChange()
@@ -153,7 +155,11 @@ String WebExtensionSidebar::title() const
 
 void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
 {
-    m_titleOverride = titleOverride;
+    if (!titleOverride && isDefaultSidebar() && extensionContext())
+        m_titleOverride = getDefaultSidebarTitleFromExtension(extensionContext().value()->extension());
+    else
+        m_titleOverride = titleOverride;
+
     propertiesDidChange();
 }
 
@@ -203,7 +209,11 @@ String WebExtensionSidebar::sidebarPath() const
 
 void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)
 {
-    m_sidebarPathOverride = sidebarPath;
+    if (!sidebarPath && isDefaultSidebar() && extensionContext())
+        m_sidebarPathOverride = getDefaultSidebarPathFromExtension(extensionContext().value()->extension());
+    else
+        m_sidebarPathOverride = sidebarPath;
+
     propertiesDidChange();
 }
 

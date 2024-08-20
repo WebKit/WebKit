@@ -2659,18 +2659,18 @@ WebExtensionSidebar& WebExtensionContext::defaultSidebar()
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionWindow const& window)
 {
-    if (auto *windowAction = m_sidebarWindowMap.get(window))
-        return *windowAction;
+    if (RefPtr windowSidebar = m_sidebarWindowMap.get(window))
+        return *windowSidebar;
 
-    return Ref { defaultSidebar() };
+    return std::nullopt;
 }
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExtensionTab const& tab)
 {
-    if (auto *tabAction = m_sidebarTabMap.get(tab))
-        return *tabAction;
+    if (RefPtr tabSidebar = m_sidebarTabMap.get(tab))
+        return *tabSidebar;
 
-    return Ref { defaultSidebar() };
+    return std::nullopt;
 }
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)

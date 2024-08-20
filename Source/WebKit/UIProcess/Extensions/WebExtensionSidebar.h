@@ -99,7 +99,7 @@ private:
     std::optional<String> m_titleOverride;
     std::optional<String> m_sidebarPathOverride;
 
-    WeakRef<WebExtensionContext> m_context;
+    WeakPtr<WebExtensionContext> m_extensionContext;
     const std::optional<Ref<WebExtensionTab>> m_tab;
     const std::optional<Ref<WebExtensionWindow>> m_window;
 

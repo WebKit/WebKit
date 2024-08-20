@@ -321,6 +321,7 @@ void WebExtensionContext::sidebarSetTitle(const std::optional<WebExtensionWindow
         completionHandler(makeUnexpected(sidebar.error()));
         return;
     }
+    sidebar.value()->setTitle(title);
 
     completionHandler({ });
 }
