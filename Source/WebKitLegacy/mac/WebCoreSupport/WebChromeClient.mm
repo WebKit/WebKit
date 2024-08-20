@@ -564,15 +564,6 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& promp
     return !result.isNull();
 }
 
-void WebChromeClient::setStatusbarText(const String& status)
-{
-    // We want the temporaries allocated here to be released even before returning to the 
-    // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
-    @autoreleasepool {
-        CallUIDelegate(m_webView, @selector(webView:setStatusText:), (NSString *)status);
-    }
-}
-
 void WebChromeClient::invalidateRootView(const IntRect&)
 {
 }

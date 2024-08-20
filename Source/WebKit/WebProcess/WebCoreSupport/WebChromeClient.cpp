@@ -612,15 +612,6 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     return !result.isNull();
 }
 
-void WebChromeClient::setStatusbarText(const String& statusbarText)
-{
-    // Notify the bundle client.
-    auto page = protectedPage();
-    page->injectedBundleUIClient().willSetStatusbarText(page.ptr(), statusbarText);
-
-    page->send(Messages::WebPageProxy::SetStatusText(statusbarText));
-}
-
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     return protectedPage()->keyboardUIMode();

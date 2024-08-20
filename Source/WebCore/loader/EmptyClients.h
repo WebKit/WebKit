@@ -103,8 +103,6 @@ class EmptyChromeClient : public ChromeClient {
     RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const final;
     RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const final;
 
-    void setStatusbarText(const String&) final { }
-
     KeyboardUIMode keyboardUIMode() final { return KeyboardAccessDefault; }
 
     bool hoverSupportedByPrimaryPointingDevice() const final { return false; };

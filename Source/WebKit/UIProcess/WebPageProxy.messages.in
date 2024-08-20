@@ -35,7 +35,6 @@ messages -> WebPageProxy {
     DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
-    SetStatusText(String statusText)
     SetFocus(bool focused)
     TakeFocus(enum:uint8_t WebCore::FocusDirection direction)
     FocusFromServiceWorker() -> ()
