@@ -237,10 +237,10 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                 JSValue result;
                 switch (type.kind) {
                 case TypeKind::I32:
-                    result = jsNumber(*access.operator()<int32_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * bytesForWidth(Width::Width64)));
+                    result = jsNumber(*access.operator()<int32_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
                     break;
                 case TypeKind::I64:
-                    result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * bytesForWidth(Width::Width64)));
+                    result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
                     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
                     break;
                 case TypeKind::F32:
@@ -250,7 +250,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                     result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
                     break;
                 default:
-                    result = *access.operator()<JSValue>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * bytesForWidth(Width::Width64));
+                    result = *access.operator()<JSValue>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
                     break;
                 }
                 resultArray->initializeIndex(initializationScope, i, result);
