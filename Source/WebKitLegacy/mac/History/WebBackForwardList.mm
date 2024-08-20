@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferencesPrivate.h"
+#import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/BackForwardCache.h>
@@ -98,9 +99,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    [WebView _initializeWebKit];
 #endif
 }
 

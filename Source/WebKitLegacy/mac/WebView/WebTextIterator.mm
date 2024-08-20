@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/Range.h>
 #import <WebCore/TextIterator.h>
@@ -47,9 +48,7 @@
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    [WebView _initializeWebKit];
 #endif
 }
 

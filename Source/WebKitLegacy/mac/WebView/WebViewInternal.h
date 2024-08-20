@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,6 +144,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 @interface WebView (WebViewInternal)
 
 + (BOOL)shouldIncludeInWebKitStatistics;
++ (void)_initializeWebKit;
 
 - (WebCore::LocalFrame*)_mainCoreFrame;
 - (WebFrame *)_selectedOrMainFrame;

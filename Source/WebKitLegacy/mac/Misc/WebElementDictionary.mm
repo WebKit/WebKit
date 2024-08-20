@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
 #import "WebView.h"
+#import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/DragController.h>
@@ -71,9 +72,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    [WebView _initializeWebKit];
 #endif
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Igalia S.L
  *
@@ -5019,9 +5019,7 @@ IGNORE_WARNINGS_END
     initialized = YES;
 
 #if !PLATFORM(IOS_FAMILY)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    [WebView _initializeWebKit];
 #endif
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();
@@ -8641,6 +8639,21 @@ FORWARD(toggleUnderline)
 + (BOOL)shouldIncludeInWebKitStatistics
 {
     return NO;
+}
+
++ (void)_initializeWebKit
+{
+    // The following JSC options must be disabled because UIWebViews don't have the
+    // needed entitlements to use them.
+    JSC::Options::usePollingTraps() = true;
+    JSC::Options::useSharedArrayBuffer() = false;
+    JSC::Options::useWasm() = false;
+    JSC::Options::useWasmFastMemory() = false;
+    JSC::Options::useWasmFaultSignalHandler() = false;
+
+    JSC::initialize();
+    WTF::initializeMainThread();
+    WebCore::populateJITOperations();
 }
 
 - (BOOL)_becomingFirstResponderFromOutside

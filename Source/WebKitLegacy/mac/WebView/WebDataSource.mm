@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,9 +154,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 {
     if (self == [WebDataSource class]) {
 #if !PLATFORM(IOS_FAMILY)
-        JSC::initialize();
-        WTF::initializeMainThread();
-        WebCore::populateJITOperations();
+        [WebView _initializeWebKit];
 #endif
     }
 }

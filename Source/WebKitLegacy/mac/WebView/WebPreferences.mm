@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #import "WebNSURLExtras.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesDefinitions.h"
+#import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/AudioSession.h>
@@ -385,9 +386,7 @@ public:
 + (void)initialize
 {
 #if PLATFORM(MAC)
-    JSC::initialize();
-    WTF::initializeMainThread();
-    WebCore::populateJITOperations();
+    [WebView _initializeWebKit];
 #endif
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
