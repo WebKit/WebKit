@@ -2079,7 +2079,7 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForS
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameter = searchPredicateForSearchCriteria(context, nullptr, startRange, forward, 1, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    auto searchResults = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameter);
+    auto searchResults = attributeValueForParameter(@"AXRangesForSearchPredicate", parameter);
     if (![searchResults isKindOfClass:[NSArray class]] || ![searchResults count])
         return nullptr;
 
