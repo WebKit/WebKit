@@ -108,11 +108,12 @@ public:
         bool hasStaleContent { false };
     };
 
+    bool getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
+
 private:
     void setTileNeedsDisplayInRect(const TileIndex&, TileInfo&, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords);
 
     IntRect rectForTileIndex(const TileIndex&) const;
-    bool getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
     IntRect ensureTilesForRect(const FloatRect&, CoverageType);

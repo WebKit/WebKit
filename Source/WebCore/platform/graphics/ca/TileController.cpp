@@ -183,8 +183,9 @@ void TileController::setContentsScale(float contentsScale)
     tileGrid().setScale(scale);
 
     if (m_client && scale != oldScale)
-        m_client->tilingScaleFactorDidChange(*this, scale);
+        m_client->tilingScaleFactorDidChange(*this, { oldScale, scale });
 
+    tileGrid().setScale(scale);
     tileGrid().setNeedsDisplay();
 }
 
@@ -755,6 +756,26 @@ double TileController::retainedTileBackingStoreMemory() const
 IntRect TileController::tileCoverageRect() const
 {
     return tileGrid().tileCoverageRect();
+}
+
+bool TileController::containsCoverageRect(const Vector<TileIndex>& tileIndices) const
+{
+    auto coverageRect = m_coverageRect;
+    coverageRect.scale(tilingScaleFactor());
+
+    TileIndex coverageTopLeft, coverageBottomRight;
+    if (tileGrid().getTileIndexRangeForRect(IntRect(coverageRect), coverageTopLeft, coverageBottomRight)) {
+        auto coverageTilesCount = (coverageBottomRight.x() - coverageTopLeft.x() + 1) * (coverageBottomRight.y() - coverageTopLeft.y() + 1);
+        auto coverageTilesContained = 0;
+
+        for (auto tileIndex : tileIndices) {
+            if (tileIndex.x() >= coverageTopLeft.x() && tileIndex.x() <= coverageBottomRight.x()
+                && tileIndex.y() >= coverageTopLeft.y() && tileIndex.y() <= coverageBottomRight.y())
+                coverageTilesContained++;
+        }
+        return coverageTilesContained == coverageTilesCount;
+    }
+    return false;
 }
 
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()

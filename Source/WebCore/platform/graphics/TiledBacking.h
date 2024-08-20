@@ -74,6 +74,11 @@ enum class TiledBackingScrollability : uint8_t {
 using TileIndex = IntPoint;
 class TiledBacking;
 
+struct TilingScaleFactorUpdate {
+    float oldScaleFactor;
+    float newScaleFactor;
+};
+
 class TiledBackingClient : public CanMakeWeakPtr<TiledBackingClient> {
 public:
     virtual ~TiledBackingClient() = default;
@@ -87,7 +92,7 @@ public:
     virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
 
     virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
-    virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
+    virtual void tilingScaleFactorDidChange(TiledBacking&, TilingScaleFactorUpdate) = 0;
 };
 
 
@@ -115,6 +120,8 @@ public:
     virtual void setCoverageRect(const FloatRect&) = 0;
     virtual FloatRect coverageRect() const = 0;
     virtual bool tilesWouldChangeForCoverageRect(const FloatRect&) const = 0;
+
+    virtual bool containsCoverageRect(const Vector<TileIndex>&) const = 0;
 
     virtual void setTiledScrollingIndicatorPosition(const FloatPoint&) = 0;
     virtual void setTopContentInset(float) = 0;

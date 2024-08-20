@@ -92,6 +92,8 @@ public:
     FloatRect coverageRect() const final { return m_coverageRect; }
     std::optional<FloatRect> layoutViewportRect() const { return m_layoutViewportRect; }
 
+    bool containsCoverageRect(const Vector<TileIndex>&) const final;
+
     void setTileSizeUpdateDelayDisabledForTesting(bool) final;
 
     unsigned blankPixelCount() const;

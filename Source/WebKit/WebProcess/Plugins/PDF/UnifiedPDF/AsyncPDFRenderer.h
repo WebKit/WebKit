@@ -148,7 +148,7 @@ private:
     void willRepaintAllTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
     void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
-    void tilingScaleFactorDidChange(WebCore::TiledBacking&, float) final;
+    void tilingScaleFactorDidChange(WebCore::TiledBacking&, WebCore::TilingScaleFactorUpdate) final;
 
     void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
@@ -203,7 +203,26 @@ private:
         RefPtr<WebCore::ImageBuffer> buffer;
         TileRenderInfo tileInfo;
     };
-    HashMap<TileForGrid, RenderedTile> m_rendereredTiles;
+    using RenderedTileMap = HashMap<TileForGrid, RenderedTile>;
+    RenderedTileMap m_renderedTiles;
+
+    class StaleTileState {
+    public:
+        explicit StaleTileState(float scaleFactor);
+
+        void setStaleTiles(RenderedTileMap& staleTiles) { m_staleTiles = std::exchange(staleTiles, { }); }
+        RenderedTileMap& staleTiles() { return m_staleTiles; }
+        const RenderedTileMap& staleTiles() const { return m_staleTiles; }
+
+        void setTilingScaleFactor(float tilingScaleFactor) { m_scaleFactor = tilingScaleFactor; }
+        float tilingScaleFactor() const { return m_scaleFactor; }
+
+    private:
+        RenderedTileMap m_staleTiles;
+        float m_scaleFactor;
+    };
+
+    std::optional<StaleTileState> m_staleTileState;
 
     using PDFPageIndexSet = HashSet<PDFDocumentLayout::PageIndex, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
     using PDFPageIndexToPreviewHash = HashMap<PDFDocumentLayout::PageIndex, PagePreviewRequest, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
