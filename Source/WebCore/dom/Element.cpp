@@ -461,13 +461,15 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
 #else
         UNUSED_PARAM(platformEvent);
 #endif
-        if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap)
+
+        if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && !isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent)
             return ShouldIgnoreMouseEvent::No;
 
         if (RefPtr pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent, platformEvent.pointerId(), platformEvent.pointerType())) {
             pointerCaptureController.dispatchEvent(*pointerEvent, &element);
             if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
                 return ShouldIgnoreMouseEvent::Yes;
+
             if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
                 didNotSwallowEvent = false;
                 if (pointerEvent->type() == eventNames().pointerdownEvent)
@@ -521,12 +523,15 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (Quirks::StorageAccessResult::ShouldCancelEvent == protectedDocument()->quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser, isSyntheticClick))
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
-    ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
-    dispatchEvent(mouseEvent);
-    if (mouseEvent->defaultPrevented())
-        eventIsDefaultPrevented = Element::EventIsDefaultPrevented::Yes;
-    if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
-        didNotSwallowEvent = false;
+    bool shouldNotDispatchMouseEvent = isAnyClick(mouseEvent) || mouseEvent->type() == eventNames().contextmenuEvent;
+    if (!shouldNotDispatchMouseEvent) {
+        ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
+        dispatchEvent(mouseEvent);
+        if (mouseEvent->defaultPrevented())
+            eventIsDefaultPrevented = Element::EventIsDefaultPrevented::Yes;
+        if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
+            didNotSwallowEvent = false;
+    }
 
     // The document should not receive dblclick for non-primary buttons.
     if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
