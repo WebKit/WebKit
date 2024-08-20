@@ -76,6 +76,8 @@
 
 #endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
+#if PLATFORM(IOS_FAMILY) || HAVE(NSTEXTPLACEHOLDER_RECTS)
+
 @implementation WKTextSelectionRect {
     WebCore::SelectionGeometry _selectionGeometry;
     CGFloat _scaleFactor;
@@ -173,3 +175,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
+
+#endif
