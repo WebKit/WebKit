@@ -85,8 +85,13 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
         return;
     }
 
-    // FIXME: <https://webkit.org/b/277322> mediation requirement,
-    // which is waiting on https://github.com/WICG/digital-credentials/pull/149
+    // validate each provider
+    for (auto& provider : options.digital->providers) {
+        if (auto errorMessage = provider->validate(document)) {
+            promise.reject(Exception { ExceptionCode::TypeError, errorMessage });
+            return;
+        }
+    }
 
     document->page()->credentialRequestCoordinator().discoverFromExternalSource(*document, WTFMove(options), WTFMove(promise));
 }

@@ -24,9 +24,21 @@
  */
 
 #pragma once
-
+#include <wtf/Vector.h>
 namespace WebCore {
 
-struct OpenID4VPRequest { };
+class URL;
+class Document;
+
+
+struct OpenID4VPRequest {
+    Vector<String> expected_origins;
+
+    String validate(const Document&);
+
+private:
+    bool isSignedRequest();
+    String processExpectedOrigins(const Document&);
+};
 
 } // namespace WebCore
