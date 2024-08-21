@@ -5891,9 +5891,10 @@ class PrintConfiguration(steps.ShellSequence):
         self.setProperty('xcode_version', xcode_version)
         os_version_builder = self.getProperty('os_version_builder', '')
         xcode_version_builder = self.getProperty('xcode_version_builder', '')
+        os_major_version_mismatch = os_version and os_version_builder and (os_version.split('.')[:2] != os_version_builder.split('.')[:2])
+        xcode_version_mismatch = xcode_version and xcode_version_builder and (xcode_version != xcode_version_builder)
 
-        if ((os_version and os_version_builder and os_version != os_version_builder) or
-                (xcode_version and xcode_version_builder and xcode_version != xcode_version_builder)):
+        if os_major_version_mismatch or xcode_version_mismatch:
             message = f'Error: OS/SDK version mismatch, please inform an admin.'
             detailed_message = message + f' Builder: OS={os_version_builder}, Xcode={xcode_version_builder}; Tester: OS={os_version}, Xcode={xcode_version}'
             print(f'\n{detailed_message}')
