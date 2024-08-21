@@ -361,7 +361,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 if (!value.inherits<JSWebAssemblyGlobal>())
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a WebAssembly.Global object since it is mutable"_s)));
                 JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
-                if (!isSubtype(globalValue->global()->type(), global.type))
+                if (!isSubtype(globalValue->global()->type(), global.type) || !isSubtype(global.type, globalValue->global()->type()))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same type"_s)));
                 if (globalValue->global()->mutability() != global.mutability)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same mutability"_s)));
@@ -393,7 +393,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             auto expectedType = moduleInformation.tables[import.kindIndex].wasmType();
             auto actualType = table->table()->wasmType();
-            if (!Wasm::isSubtype(actualType, expectedType))
+            if (!Wasm::isSubtype(actualType, expectedType) || !Wasm::isSubtype(expectedType, actualType))
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "provided a 'type' that is wrong"_s)));
 
             // ii. Append v to tables.
