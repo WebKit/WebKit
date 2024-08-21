@@ -88,11 +88,12 @@ void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& param
 void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 #endif
 
-template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
+template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool canAllowSignalHandlers = false>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
+    bool optionsChanged = false;
     if (initializerMessage) {
-        bool optionsChanged = false;
+        bool allowSignalHandlers = true;
         if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
         if (xpc_dictionary_get_bool(initializerMessage, "enable-captive-portal-mode")) {
@@ -106,14 +107,23 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Options::useZombieMode() = true;
             JSC::Options::allowDoubleShape() = false;
             JSC::Options::alwaysHaveABadTime() = true;
+            allowSignalHandlers = false;
             optionsChanged = true;
         } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit")) {
             JSC::Options::initialize();
             JSC::Options::AllowUnfinalizedAccessScope scope;
             JSC::ExecutableAllocator::disableJIT();
+            allowSignalHandlers = false;
+            optionsChanged = true;
+        } else if constexpr (canAllowSignalHandlers) {
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::Options::usePollingTraps() = false;
+            JSC::Options::useWasmFastMemory() = true;
+            JSC::Options::useWasmFaultSignalHandler() = true;
             optionsChanged = true;
         }
-        if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
+        if (allowSignalHandlers && xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
             JSC::Options::initialize();
             JSC::Options::AllowUnfinalizedAccessScope scope;
             JSC::Options::useSharedArrayBuffer() = true;
@@ -126,9 +136,16 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
             JSC::Options::useJITCage() = false;
             optionsChanged = true;
         }
-        if (optionsChanged)
-            JSC::Options::notifyOptionsChanged();
+    } else if constexpr (canAllowSignalHandlers) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::usePollingTraps() = false;
+        JSC::Options::useWasmFastMemory() = true;
+        JSC::Options::useWasmFaultSignalHandler() = true;
+        optionsChanged = true;
     }
+    if (optionsChanged)
+        JSC::Options::notifyOptionsChanged();
 
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 

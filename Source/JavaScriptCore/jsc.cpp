@@ -3969,7 +3969,10 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
-    
+    Options::usePollingTraps() = false;
+    Options::useWasmFastMemory() = true;
+    Options::useWasmFaultSignalHandler() = true;
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV) && !PLATFORM(WATCHOS)
     Options::crashIfCantAllocateJITMemory() = true;
 #endif

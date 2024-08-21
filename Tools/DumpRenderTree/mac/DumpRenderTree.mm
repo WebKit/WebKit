@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1187,6 +1187,15 @@ void dumpRenderTree(int argc, const char *argv[])
     initializeGlobalsFromCommandLineOptions(argc, argv);
     prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
+
+    {
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::initialize();
+        JSC::Options::usePollingTraps() = false;
+        JSC::Options::useWasmFastMemory() = true;
+        JSC::Options::useWasmFaultSignalHandler() = true;
+        JSC::Options::notifyOptionsChanged();
+    }
 
     JSC::initialize();
     WTF::initializeMainThread();

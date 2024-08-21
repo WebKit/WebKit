@@ -126,12 +126,10 @@ void initialize()
         if (VM::isInMiniMode())
             WTF::fastEnableMiniMode();
 
-        if (Wasm::isSupported() || !Options::usePollingTraps()) {
-            if (!Options::usePollingTraps())
-                VMTraps::initializeSignals();
-            if (Wasm::isSupported())
-                Wasm::prepareSignalingMemory();
-        }
+        if (!Options::usePollingTraps())
+            VMTraps::initializeSignals();
+        if (Options::useWasmFaultSignalHandler())
+            Wasm::prepareSignalingMemory();
 
         assertInvariants();
 

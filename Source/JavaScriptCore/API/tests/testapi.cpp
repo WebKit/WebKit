@@ -1183,6 +1183,15 @@ void TestAPI::testBigInt()
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
+    {
+        // These need to be enabled explicitly because they are disabled by default.
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::initialize();
+        JSC::Options::usePollingTraps() = false;
+        JSC::Options::useWasmFastMemory() = true;
+        JSC::Options::useWasmFaultSignalHandler() = true;
+        JSC::Options::notifyOptionsChanged();
+    }
 }
 
 #define RUN(test) do {                                 \

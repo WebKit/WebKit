@@ -39,8 +39,12 @@ using WTF::PrintStream;
 namespace JSC {
 
 #if PLATFORM(IOS_FAMILY)
+#define DEFAULT_USE_POLLING_TRAPS true
+#define DEFAULT_USE_WASM_FAULT_SIGNAL_HANDLER false
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 2
 #else
+#define DEFAULT_USE_POLLING_TRAPS false
+#define DEFAULT_USE_WASM_FAULT_SIGNAL_HANDLER true
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
 #endif
 
@@ -474,7 +478,7 @@ bool hasCapacityToUseLargeGigacage();
     v(OptionString, functionOverrides, nullptr, Restricted, "file with debugging overrides for function bodies"_s) \
     \
     v(Unsigned, watchdog, 0, Normal, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)"_s) \
-    v(Bool, usePollingTraps, false, Normal, "use polling (instead of signalling) VM traps"_s) \
+    v(Bool, usePollingTraps, DEFAULT_USE_POLLING_TRAPS, Normal, "use polling (instead of signalling) VM traps"_s) \
     \
     v(Bool, useMachForExceptions, true, Normal, "Use mach exceptions rather than signals to handle faults and pass thread messages. (This does nothing on platforms without mach)"_s) \
     v(Bool, allowNonSPTagging, true, Normal, "allow use of the pacib instruction instead of just pacibsp (This can break lldb/posix signals as it puts live data below SP)"_s) \
@@ -566,7 +570,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useLLIntICs, true, Normal, "Use property and call ICs in LLInt code."_s) \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
-    v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
+    v(Bool, useWasmFaultSignalHandler, DEFAULT_USE_WASM_FAULT_SIGNAL_HANDLER, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
