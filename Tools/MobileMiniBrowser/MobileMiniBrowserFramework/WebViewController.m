@@ -59,6 +59,7 @@ static const NSString * const kURLArgumentString = @"--url";
 
 @interface WebViewController () <WKNavigationDelegate> {
     WKWebView *_currentWebView;
+    NSURL *_initialURL;
 }
 - (WKWebView *)createWebView;
 - (void)removeWebView:(WKWebView *)webView;
@@ -248,6 +249,9 @@ void* URLContext = &URLContext;
 
 - (NSURL *)targetURLorDefaultURL
 {
+    if (_initialURL)
+        return _initialURL;
+
     NSArray *args = [[NSProcessInfo processInfo] arguments];
     const NSUInteger targetURLIndex = [args indexOfObject:kURLArgumentString];
 

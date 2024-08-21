@@ -38,6 +38,7 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 @property (strong, nonatomic) IBOutlet TabViewController *tabViewController;
 @property (strong, nonatomic) IBOutlet SettingsViewController *settingsViewController;
+@property (strong, nonatomic) NSURL *initialURL;
 @property (strong, nonatomic) WKWebView *currentWebView;
 @property (strong, nonatomic) NSMutableArray<WKWebView *> *webViews;
 
