@@ -1,3 +1,5 @@
 
-PASS if navigate() is called inside onnavigate, the previous navigation and navigate event are cancelled
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT if navigate() is called inside onnavigate, the previous navigation and navigate event are cancelled Test timed out
 

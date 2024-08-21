@@ -1,4 +1,5 @@
 
+Harness Error (TIMEOUT), message = null
 
-FAIL Detach a window between when a traverseTo() fires navigate and navigatesuccess assert_unreached: navigatesuccess must not fire Reached unreachable code
+TIMEOUT Detach a window between when a traverseTo() fires navigate and navigatesuccess Test timed out
 
