@@ -1788,17 +1788,19 @@ webkit.org/b/275913 [ Debug ] imported/w3c/web-platform-tests/media-source/dedic
 
 webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
 
-# rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
-# Some of these tests have expectations set elsewhere (marked with inline comment). Please uncomment those when this issue is resolved.
-[ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
-[ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
-[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-[ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure Timeout ]
-[ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
+webkit.org/b/278353 [ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+
+# rdar://125587489
 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
-[ Sequoia+ ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-[ Sequoia+ ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+[ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 
 webkit.org/b/276389 media/video-transformed.html [ Pass Failure ] 
 

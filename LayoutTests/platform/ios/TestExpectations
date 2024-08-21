@@ -7487,15 +7487,7 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 
-# webkit.org/b/277460 (REGRESSION (iOS 18): 9 layout tests need to be re-written to expect new behavior.)
-http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ] # uncomment expectation set for this test (above) when this is resolved
-http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
-http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
 
 # webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]

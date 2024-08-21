@@ -84,22 +84,19 @@ webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sen
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass ]
 
-# webkit.org/b/277460 (REGRESSION (iOS 18): 9 layout tests need to be re-written to expect new behavior.)
-http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Pass ]
-http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Pass ]
-http/tests/cookies/same-site/popup-cross-site-post.html [ Pass ]
-http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Pass ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Pass ]
-
 # webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-026.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ Pass ]
+
+# Fails when cookies are not SameSite=Lax by default
+http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 
