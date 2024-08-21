@@ -306,7 +306,9 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
     Vector<uint8_t> auditToken(sizeof(token));
     memcpy(auditToken.data(), &token, sizeof(token));
 
+    IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
     return { .hostAppAuditTokenData = WTFMove(auditToken) };
+    IGNORE_CLANG_WARNINGS_END
 }
 
 RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)

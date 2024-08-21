@@ -208,6 +208,7 @@ class PushDatabaseTest : public testing::Test {
 public:
     std::unique_ptr<PushDatabase> db;
 
+    IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
     PushRecord record1 {
         .subscriptionSetIdentifier = { "com.apple.webapp"_s, emptyString(), std::nullopt },
         .securityOrigin = "https://www.apple.com"_s,
@@ -298,6 +299,7 @@ public:
         .clientPrivateKey = { 23 },
         .sharedAuthSecret = { 24 }
     };
+    IGNORE_CLANG_WARNINGS_END
 
     std::optional<PushRecord> insertResult1;
     std::optional<PushRecord> insertResult2;
@@ -844,6 +846,7 @@ TEST(PushDatabase, ManyInFlightOps)
         ASSERT_TRUE(createResult);
 
         auto& database = *createResult;
+        IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
         PushRecord record {
             .subscriptionSetIdentifier = PushSubscriptionSetIdentifier { "com.apple.Safari"_s, emptyString(), std::nullopt },
             .securityOrigin = "https://www.webkit.org"_s,
@@ -854,6 +857,7 @@ TEST(PushDatabase, ManyInFlightOps)
             .sharedAuthSecret = { 4, 5 },
             .expirationTime = convertSecondsToEpochTimeStamp(1643350000),
         };
+        IGNORE_CLANG_WARNINGS_END
 
         for (unsigned i = 0; i < recordCount; i++) {
             record.scope = makeString("http://www.webkit.org/test/"_s, i);

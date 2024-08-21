@@ -392,6 +392,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
             }
 
             auto clientKeys = m_service.connection().generateClientKeys();
+            IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
             PushRecord record {
                 .subscriptionSetIdentifier = m_identifier,
                 .securityOrigin = SecurityOrigin::createFromString(m_scope)->data().toString(),
@@ -403,6 +404,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
                 .clientPrivateKey = WTFMove(clientKeys.clientP256DHKeyPair.privateKey),
                 .sharedAuthSecret = WTFMove(clientKeys.sharedAuthSecret)
             };
+            IGNORE_CLANG_WARNINGS_END
 
             m_database.insertRecord(record, [this, weakThis = WeakPtr { *this }](auto&& result) mutable {
                 if (!weakThis)
