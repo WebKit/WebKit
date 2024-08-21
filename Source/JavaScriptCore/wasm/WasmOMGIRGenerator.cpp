@@ -2695,7 +2695,7 @@ Value* OMGIRGenerator::fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType op, Va
         CheckValue* check = append<CheckValue>(m_proc, Check, origin(),
             append<Value>(m_proc, BitAnd, origin(), pointer, constant(pointerType(), sizeOfAtomicOpMemoryAccess(op) - 1)));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
+            this->emitExceptionCheck(jit, ExceptionType::UnalignedMemoryAccess);
         });
     }
     return pointer;

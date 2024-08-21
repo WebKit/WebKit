@@ -3656,11 +3656,14 @@ unimplementedInstruction(_simd_f64x2_convert_low_i32x4_u)
 
 macro ipintCheckMemoryBoundWithAlignmentCheck(mem, scratch, size)
     leap size - 1[mem], scratch
-    bpb scratch, boundsCheckingSize, .continuation
-.throw:
+    bpb scratch, boundsCheckingSize, .continuationInBounds
+.throwOOB:
     ipintException(OutOfBoundsMemoryAccess)
-.continuation:
-    btpnz mem, (size - 1), .throw
+.continuationInBounds:
+    btpz mem, (size - 1), .continuationAligned
+.throwUnaligned:
+    throwException(UnalignedMemoryAccess)
+.continuationAligned:
 end
 
 macro ipintCheckMemoryBoundWithAlignmentCheck1(mem, scratch)

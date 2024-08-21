@@ -35,6 +35,7 @@ namespace Wasm {
 
 #define FOR_EACH_EXCEPTION(macro) \
     macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access"_s) \
+    macro(UnalignedMemoryAccess, "Unaligned memory access"_s) \
     macro(OutOfBoundsTableAccess, "Out of bounds table access"_s) \
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
     macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
@@ -101,6 +102,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
 {
     switch (type) {
     case ExceptionType::OutOfBoundsMemoryAccess:
+    case ExceptionType::UnalignedMemoryAccess:
     case ExceptionType::OutOfBoundsTableAccess:
     case ExceptionType::OutOfBoundsDataSegmentAccess:
     case ExceptionType::OutOfBoundsElementSegmentAccess:

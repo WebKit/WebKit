@@ -767,7 +767,7 @@ Value WARN_UNUSED_RETURN BBQJIT::emitAtomicLoadOp(ExtAtomicOpType loadOp, Type v
     Address address = Address(pointer.asGPR());
 
     if (accessWidth(loadOp) != Width8)
-        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(loadOp) - 1)));
+        throwExceptionIf(ExceptionType::UnalignedMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(loadOp) - 1)));
 
     Value result = topValue(valueType.kind);
     Location resultLocation;
@@ -842,7 +842,7 @@ void BBQJIT::emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, 
     Address address = Address(pointer.asGPR());
 
     if (accessWidth(storeOp) != Width8)
-        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(storeOp) - 1)));
+        throwExceptionIf(ExceptionType::UnalignedMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(storeOp) - 1)));
 
     Location source, old, cur;
     switch (canonicalWidth(accessWidth(storeOp))) {
@@ -890,7 +890,7 @@ Value BBQJIT::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location
     Address address = Address(pointer.asGPR());
 
     if (accessWidth(op) != Width8)
-        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(op) - 1)));
+        throwExceptionIf(ExceptionType::UnalignedMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(op) - 1)));
 
     Value result = topValue(valueType.kind);
     Location resultLocation;
@@ -1056,7 +1056,7 @@ Value WARN_UNUSED_RETURN BBQJIT::emitAtomicCompareExchange(ExtAtomicOpType op, T
     Address address = Address(pointer.asGPR());
 
     if (accessWidth(op) != Width8)
-        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(op) - 1)));
+        throwExceptionIf(ExceptionType::UnalignedMemoryAccess, m_jit.branchTest32(ResultCondition::NonZero, pointer.asGPR(), TrustedImm32(sizeOfAtomicOpMemoryAccess(op) - 1)));
 
     Value result = topValue(valueType.kind);
     Location resultLocation;
