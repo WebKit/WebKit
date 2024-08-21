@@ -866,11 +866,16 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
 #if PLATFORM(GTK)
+#if PLATFORM(WAYLAND)
         if (Display::singleton().isWayland()) {
             bindWayland(sandboxArgs);
             sandboxArgs.append("--unshare-ipc");
-        } else if (Display::singleton().isX11())
+        }
+#endif
+#if PLATFORM(X11)
+        if (Display::singleton().isX11())
             bindX11(sandboxArgs);
+#endif
 #endif
 
         Vector<String> extraPaths = { "mediaKeysDirectory"_s, "waylandSocket"_s };

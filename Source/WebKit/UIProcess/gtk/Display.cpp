@@ -110,5 +110,18 @@ String Display::accessibilityBusAddress() const
     return { };
 }
 
+#if !PLATFORM(X11)
+bool Display::isX11() const
+{
+    return false;
+}
+#endif
+
+#if !PLATFORM(WAYLAND)
+bool Display::isWayland() const
+{
+    return false;
+}
+#endif
 
 } // namespace WebKit

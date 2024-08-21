@@ -45,9 +45,12 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if USE(LIBDRM)
+#include <drm_fourcc.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
-#include <drm_fourcc.h>
 #include <gbm.h>
 
 static constexpr uint64_t s_dmabufInvalidModifier = DRM_FORMAT_MOD_INVALID;
