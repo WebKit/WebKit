@@ -247,7 +247,9 @@ public:
 private:
     InlineCacheHandler()
         : Base(0)
-    { }
+    {
+        disableThreadingChecks();
+    }
 
     InlineCacheHandler(Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<StructureStubInfoClearingWatchpoint>&&, unsigned callLinkInfoCount, CacheType);
 
