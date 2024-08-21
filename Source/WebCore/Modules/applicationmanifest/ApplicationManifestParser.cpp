@@ -193,7 +193,7 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     };
     static constexpr SortedArrayMap displayValues { displayValueMappings };
 
-    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *displayValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
@@ -225,7 +225,7 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
 
     static SortedArrayMap orientationValues { orientationValueMappings };
 
-    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *orientationValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
@@ -327,7 +327,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
                 purposes.add(ApplicationManifest::Icon::Purpose::Any);
                 currentIcon.purposes = purposes;
             } else {
-                for (auto keyword : StringView(purposeStringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
+                for (auto keyword : StringView(purposeStringValue).trim(isASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
                     if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
                     else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))

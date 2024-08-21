@@ -459,6 +459,7 @@ TEST_F(ApplicationManifestParserTest, Display)
     testDisplay("\"minimal-ui\""_s, ApplicationManifest::Display::MinimalUI);
     testDisplay("\"fullscreen\""_s, ApplicationManifest::Display::Fullscreen);
     testDisplay("\"\t\nMINIMAL-UI \""_s, ApplicationManifest::Display::MinimalUI);
+    testDisplay("\"\vbminimal-ui\""_s, ApplicationManifest::Display::Browser);
 }
 
 TEST_F(ApplicationManifestParserTest, Orientation)
@@ -471,6 +472,7 @@ TEST_F(ApplicationManifestParserTest, Orientation)
     testOrientation("[ ]"_s, std::nullopt);
     testOrientation("\"\""_s, std::nullopt);
     testOrientation("\"garbage string\""_s, std::nullopt);
+    testOrientation("\"\vbportrait-secondary\""_s, std::nullopt);
 
     testOrientation("\"any\""_s, WebCore::ScreenOrientationLockType::Any);
     testOrientation("\"natural\""_s, WebCore::ScreenOrientationLockType::Natural);
