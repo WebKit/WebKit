@@ -39,6 +39,7 @@
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
 #include <charconv>
+#include <wtf/dragonbox/dragonbox_to_chars.h>
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -1103,12 +1104,12 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
         }
         if constexpr (sizeof(CharType) == 1) {
             WTF::double_conversion::StringBuilder builder { reinterpret_cast<char*>(buffer() + m_length), sizeof(NumberToStringBuffer) };
-            WTF::double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortest(number, &builder);
+            WTF::dragonbox::ToShortest(number, &builder);
             m_length += builder.position();
         } else {
             NumberToStringBuffer temporary;
             WTF::double_conversion::StringBuilder builder { temporary.data(), sizeof(NumberToStringBuffer) };
-            WTF::double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortest(number, &builder);
+            WTF::dragonbox::ToShortest(number, &builder);
             WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), builder.position());
             m_length += builder.position();
         }
