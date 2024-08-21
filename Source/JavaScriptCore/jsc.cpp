@@ -3970,7 +3970,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
     
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV) && !PLATFORM(WATCHOS)
     Options::crashIfCantAllocateJITMemory() = true;
 #endif
 
