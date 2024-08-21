@@ -138,6 +138,8 @@ inline JSC::VM* toJS(JSContextGroupRef g)
     return JSC::Integrity::audit(reinterpret_cast<JSC::VM*>(const_cast<OpaqueJSContextGroup*>(g)));
 }
 
+static const bool doCrash = true;
+
 inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
@@ -149,6 +151,7 @@ inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
     return reinterpret_cast<JSValueRef>(v.asCell());
 #else
     UNUSED_PARAM(vm);
+    RELEASE_ASSERT(doCrash);
     return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
 #endif
 }
@@ -161,36 +164,43 @@ inline JSValueRef toRef(JSC::JSGlobalObject* globalObject, JSC::JSValue v)
 #if CPU(ADDRESS64)
 inline JSValueRef toRef(JSC::JSValue v)
 {
+    RELEASE_ASSERT(doCrash);
     return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
 }
 #endif
 
 inline JSObjectRef toRef(JSC::JSObject* o)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSObjectRef>(JSC::Integrity::audit(o));
 }
 
 inline JSObjectRef toRef(const JSC::JSObject* o)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSObjectRef>(JSC::Integrity::audit(const_cast<JSC::JSObject*>(o)));
 }
 
 inline JSContextRef toRef(JSC::JSGlobalObject* globalObject)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSContextRef>(JSC::Integrity::audit(globalObject));
 }
 
 inline JSGlobalContextRef toGlobalRef(JSC::JSGlobalObject* globalObject)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSGlobalContextRef>(JSC::Integrity::audit(globalObject));
 }
 
 inline JSPropertyNameAccumulatorRef toRef(JSC::PropertyNameArray* l)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSPropertyNameAccumulatorRef>(l);
 }
 
 inline JSContextGroupRef toRef(JSC::VM* g)
 {
+    RELEASE_ASSERT(doCrash);
     return reinterpret_cast<JSContextGroupRef>(JSC::Integrity::audit(g));
 }

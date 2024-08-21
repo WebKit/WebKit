@@ -77,6 +77,7 @@ MarkedBlock::Handle::~Handle()
     }
     m_directory->removeBlock(this, BlockDirectory::WillDeleteBlock::Yes);
     m_block->~MarkedBlock();
+    memset(m_block, 0, sizeof(MarkedBlock::Handle));
     m_alignedMemoryAllocator->freeAlignedMemory(m_block);
     heap.didFreeBlock(blockSize);
 }
