@@ -816,9 +816,8 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
             if (callbackResult.type() == CallbackResultType::Success)
                 promiseList.append(callbackResult.releaseReturnValue());
             else if (callbackResult.type() == CallbackResultType::ExceptionThrown) {
-                // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
                 auto promiseAndWrapper = createPromiseAndWrapper(*document);
-                promiseAndWrapper.second->reject(ExceptionCode::TypeError);
+                promiseAndWrapper.second->reject<IDLAny>(callbackResult.exceptionObject().value());
                 promiseList.append(WTFMove(promiseAndWrapper.first));
             }
         }

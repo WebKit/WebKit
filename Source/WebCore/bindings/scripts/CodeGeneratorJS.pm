@@ -6969,7 +6969,7 @@ sub GenerateCallbackImplementationContent
                 push(@$contentRef, "        UNUSED_PARAM(lexicalGlobalObject);\n");
                 push(@$contentRef, "        reportException(m_data->callback()->globalObject(), returnedException);\n");
             }
-            push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+            push(@$contentRef, "        return returnedException.get();\n");
             push(@$contentRef, "     }\n\n");
 
             if ($operation->type->name eq "undefined") {

@@ -90,7 +90,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestVoidCallbackFunc
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };

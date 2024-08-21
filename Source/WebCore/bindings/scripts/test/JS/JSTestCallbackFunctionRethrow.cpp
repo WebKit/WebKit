@@ -76,7 +76,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     if (returnedException) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwException(&lexicalGlobalObject, throwScope, returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);

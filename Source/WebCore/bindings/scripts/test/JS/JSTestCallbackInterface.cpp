@@ -210,7 +210,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -238,7 +238,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -267,7 +267,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -295,7 +295,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -323,7 +323,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -352,7 +352,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     return { };
@@ -379,7 +379,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -411,7 +411,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwException(&lexicalGlobalObject, throwScope, returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -443,7 +443,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);

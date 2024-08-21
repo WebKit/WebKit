@@ -74,7 +74,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     if (returnedException) {
         UNUSED_PARAM(lexicalGlobalObject);
         reportException(m_data->callback()->globalObject(), returnedException);
-        return CallbackResultType::ExceptionThrown;
+        return returnedException.get();
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/Exception.h>
 #include <wtf/Expected.h>
 
 namespace WebCore {
@@ -39,23 +40,29 @@ template<typename ReturnType> class CallbackResult {
 public:
     CallbackResult(CallbackResultType);
     CallbackResult(ReturnType&&);
+    CallbackResult(JSC::Exception*);
 
     CallbackResultType type() const;
     ReturnType&& releaseReturnValue();
+    JSC::Exception& exceptionObject() const;
 
 private:
     Expected<ReturnType, CallbackResultType> m_value;
+    NakedPtr<JSC::Exception> m_exception;
 };
 
 template<> class CallbackResult<void> {
 public:
     CallbackResult() = default;
     CallbackResult(CallbackResultType);
+    CallbackResult(JSC::Exception*);
 
     CallbackResultType type() const;
+    JSC::Exception& exceptionObject() const;
 
 private:
     CallbackResultType m_type = CallbackResultType::Success;
+    NakedPtr<JSC::Exception> m_exception;
 };
 
 
@@ -66,6 +73,12 @@ template<typename ReturnType> inline CallbackResult<ReturnType>::CallbackResult(
 
 template<typename ReturnType> inline CallbackResult<ReturnType>::CallbackResult(ReturnType&& returnValue)
     : m_value(WTFMove(returnValue))
+{
+}
+
+template<typename ReturnType> inline CallbackResult<ReturnType>::CallbackResult(JSC::Exception* exception)
+    : m_value(makeUnexpected(CallbackResultType::ExceptionThrown))
+    , m_exception(exception)
 {
 }
 
@@ -80,6 +93,11 @@ template<typename ReturnType> inline auto CallbackResult<ReturnType>::releaseRet
     return WTFMove(m_value.value());
 }
 
+template<typename ReturnType> inline auto CallbackResult<ReturnType>::exceptionObject() const -> JSC::Exception&
+{
+    ASSERT(m_exception);
+    return *m_exception;
+}
 
 // Void specialization
 
@@ -91,6 +109,12 @@ inline CallbackResult<void>::CallbackResult(CallbackResultType type)
 inline CallbackResultType CallbackResult<void>::type() const
 {
     return m_type;
+}
+
+inline CallbackResult<void>::CallbackResult(JSC::Exception* exception)
+    : m_type(CallbackResultType::ExceptionThrown)
+    , m_exception(exception)
+{
 }
 
 }
