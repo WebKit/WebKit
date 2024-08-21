@@ -122,7 +122,7 @@ RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode);
 #if ENABLE(VARIATION_FONTS)
 RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&);
 #else
-RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontStretch(CSSParserTokenRange&);
 #endif
 
 // MARK: 'font-weight'

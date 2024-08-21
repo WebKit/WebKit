@@ -757,7 +757,7 @@ RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range)
 
 #else
 
-RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeFontStretch(CSSParserTokenRange& range)
 {
     if (RefPtr result = CSSPropertyParsing::consumeFontStretchAbsolute(range))
         return result;
