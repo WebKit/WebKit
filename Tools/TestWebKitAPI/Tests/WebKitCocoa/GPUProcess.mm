@@ -881,7 +881,7 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
 
-#if ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 TEST(GPUProcess, ReuseBetweenProcessPools)
 {
     auto loadBlankViewAndWaitForGPUProcess = []() -> pid_t {
@@ -909,6 +909,6 @@ TEST(GPUProcess, ReuseBetweenProcessPools)
 
     EXPECT_EQ(firstGPUProcessPID, secondGPUProcessPID);
 }
-#endif // ENABLE(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#endif // ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 
 } // namespace TestWebKitAPI
