@@ -2677,7 +2677,7 @@ fast/forms/select/select-show-picker.html [ Skip ]
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
 
-# rdar://134449564 (REGRESSION (GlowE24E57 GlowC24C5c Cheer25A44 ): [ Glow Cheer wk1 ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html is a consistent timeout)
+# rdar://134449564 REGRESSION (internal build): [ macOS wk1 ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html is a consistent timeout
 [ Sequoia+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Skip ]
 
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
