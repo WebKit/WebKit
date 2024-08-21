@@ -303,7 +303,6 @@ public:
 
     static void notifyPageStatisticsAndDataRecordsProcessed();
 
-    static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     static void notifyWebsiteDataScanForRegistrableDomainsFinished();
 
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);

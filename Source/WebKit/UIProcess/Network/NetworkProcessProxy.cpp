@@ -1211,11 +1211,6 @@ void NetworkProcessProxy::notifyResourceLoadStatisticsProcessed()
     WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
 }
 
-void NetworkProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished()
-{
-    WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished();
-}
-
 void NetworkProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
 {
     WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished();

@@ -767,12 +767,6 @@ void WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
         page->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
 }
 
-void WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataDeletionForRegistrableDomainsFinished"_s, nullptr);
-}
-
 void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebProcess::SetThirdPartyCookieBlockingMode(thirdPartyCookieBlockingMode), WTFMove(completionHandler));

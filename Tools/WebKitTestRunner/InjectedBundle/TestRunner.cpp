@@ -613,7 +613,6 @@ enum {
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
     DidRemoveSwipeSnapshotCallbackID,
-    StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
     TextDidChangeInTextFieldCallbackID,
     TextFieldDidBeginEditingCallbackID,
@@ -1412,20 +1411,6 @@ void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHo
 void TestRunner::setStatisticsTimeToLiveUserInteraction(double seconds)
 {
     postSynchronousMessage("SetStatisticsTimeToLiveUserInteraction", seconds);
-}
-
-void TestRunner::installStatisticsDidModifyDataRecordsCallback(JSContextRef context, JSValueRef callback)
-{
-    if (!!callback) {
-        cacheTestRunnerCallback(context, StatisticsDidModifyDataRecordsCallbackID, callback);
-        // Setting a callback implies we expect to receive callbacks. So register for them.
-        setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-    }
-}
-
-void TestRunner::statisticsDidModifyDataRecordsCallback()
-{
-    callTestRunnerCallback(StatisticsDidModifyDataRecordsCallbackID);
 }
 
 void TestRunner::installStatisticsDidScanDataRecordsCallback(JSContextRef context, JSValueRef callback)

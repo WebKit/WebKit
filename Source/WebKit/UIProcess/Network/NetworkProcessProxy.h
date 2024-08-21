@@ -377,7 +377,6 @@ private:
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logTestingEvent(PAL::SessionID, const String& event);
     void notifyResourceLoadStatisticsProcessed();
-    void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     void notifyWebsiteDataScanForRegistrableDomainsFinished();
 
 #if ENABLE(CONTENT_EXTENSIONS)

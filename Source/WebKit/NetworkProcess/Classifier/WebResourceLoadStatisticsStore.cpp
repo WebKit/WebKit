@@ -1530,12 +1530,12 @@ void WebResourceLoadStatisticsStore::registrableDomainsExemptFromWebsiteDataDele
     });
 }
 
-void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     if (m_networkSession) {
-        m_networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToDeleteAndRestrictWebsiteDataFor), shouldNotifyPage, WTFMove(completionHandler));
+        m_networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToDeleteAndRestrictWebsiteDataFor), WTFMove(completionHandler));
         return;
     }
 

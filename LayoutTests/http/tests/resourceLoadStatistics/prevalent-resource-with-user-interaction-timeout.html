@@ -13,6 +13,14 @@
     
     async function processStatistics() {
         await testRunner.statisticsProcessStatisticsAndDataRecords()
+
+        if (document.cookie !== "")
+            testFailed("Cookie not deleted: " + document.cookie);
+        else
+            testPassed("Cookie deleted.");
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
     }
     
     function runTestRunnerTest() {
@@ -31,15 +39,6 @@
                 if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                     testFailed("Host did not get logged for user interaction.");
 
-                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                    if (document.cookie !== "")
-                        testFailed("Cookie not deleted: " + document.cookie);
-                    else
-                        testPassed("Cookie deleted.");
-                    setEnableFeature(false, function() {
-                        testRunner.notifyDone();
-                    });
-                });
                 testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                 testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
                 testRunner.setStatisticsTimeToLiveUserInteraction(0);
@@ -54,7 +53,7 @@
         testRunner.waitUntilDone();
         setEnableFeature(true, function() {
             runTestRunnerTest();
-         });
+        });
     }
 </script>
 </body>
