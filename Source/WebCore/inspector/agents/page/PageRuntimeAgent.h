@@ -34,6 +34,7 @@
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorRuntimeAgent.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class CallFrame;
@@ -48,7 +49,7 @@ class SecurityOrigin;
 
 class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(PageRuntimeAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageRuntimeAgent);
 public:
     PageRuntimeAgent(PageAgentContext&);
     ~PageRuntimeAgent();

@@ -36,10 +36,13 @@
 #include "PageConsoleClient.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocket.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageNetworkAgent);
 
 PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorClient* client)
     : InspectorNetworkAgent(context)

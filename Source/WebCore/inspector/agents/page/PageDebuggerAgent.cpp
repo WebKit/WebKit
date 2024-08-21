@@ -50,10 +50,13 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageDebuggerAgent);
 
 PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context)
     : WebDebuggerAgent(context)

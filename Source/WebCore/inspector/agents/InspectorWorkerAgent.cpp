@@ -28,10 +28,13 @@
 
 #include "Document.h"
 #include "InstrumentingAgents.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorWorkerAgent);
 
 InspectorWorkerAgent::InspectorWorkerAgent(WebAgentContext& context)
     : InspectorAgentBase("Worker"_s, context)

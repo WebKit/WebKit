@@ -32,12 +32,13 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InspectorMemoryAgent final : public InspectorAgentBase, public Inspector::MemoryBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorMemoryAgent);
 public:
     InspectorMemoryAgent(PageAgentContext&);
     ~InspectorMemoryAgent();

@@ -57,6 +57,7 @@
 #include <JavaScriptCore/ScriptArguments.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -71,6 +72,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTimelineAgent);
 
 #if PLATFORM(COCOA)
 static CFRunLoopRef currentRunLoop()

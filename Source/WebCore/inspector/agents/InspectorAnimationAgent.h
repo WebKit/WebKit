@@ -33,6 +33,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ struct Styleable;
 
 class InspectorAnimationAgent final : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAnimationAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorAnimationAgent);
 public:
     InspectorAnimationAgent(PageAgentContext&);
     ~InspectorAnimationAgent();

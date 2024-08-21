@@ -31,10 +31,13 @@
 #include "InstrumentingAgents.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDebuggerAgent);
 
 WebDebuggerAgent::WebDebuggerAgent(WebAgentContext& context)
     : InspectorDebuggerAgent(context)

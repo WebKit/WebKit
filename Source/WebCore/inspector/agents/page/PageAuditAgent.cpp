@@ -41,12 +41,15 @@
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageAuditAgent);
 
 PageAuditAgent::PageAuditAgent(PageAgentContext& context)
     : InspectorAuditAgent(context)

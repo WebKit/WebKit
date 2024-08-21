@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 class FrontendChannel;
@@ -46,7 +47,7 @@ struct WorkerAgentContext;
 
 class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorController);
 public:
     explicit WorkerInspectorController(WorkerOrWorkletGlobalScope&);
     ~WorkerInspectorController() override;

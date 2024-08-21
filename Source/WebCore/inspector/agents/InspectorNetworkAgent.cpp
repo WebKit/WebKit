@@ -87,6 +87,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
@@ -99,6 +100,10 @@ typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadRes
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptRequest, InspectorNetworkAgent::AgentPendingInterceptRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptResponse, InspectorNetworkAgent::PendingInterceptResponse);
 
 namespace {
 

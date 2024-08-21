@@ -48,11 +48,14 @@
 #include "VoidCallback.h"
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMStorageAgent);
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)

@@ -33,6 +33,7 @@
 
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorRuntimeAgent.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class WorkerOrWorkletGlobalScope;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(WorkerRuntimeAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerRuntimeAgent);
 public:
     WorkerRuntimeAgent(WorkerAgentContext&);
     ~WorkerRuntimeAgent();

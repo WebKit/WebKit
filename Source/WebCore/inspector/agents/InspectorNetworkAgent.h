@@ -41,6 +41,7 @@
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 class ConsoleMessage;
@@ -66,7 +67,7 @@ struct WebSocketFrame;
 
 class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorNetworkAgent);
 public:
     ~InspectorNetworkAgent() override;
 
@@ -169,7 +170,7 @@ private:
 
     class PendingInterceptRequest {
         WTF_MAKE_NONCOPYABLE(PendingInterceptRequest);
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(PendingInterceptRequest);
     public:
         PendingInterceptRequest(RefPtr<ResourceLoader> loader, Function<void(const ResourceRequest&)>&& callback)
             : m_loader(loader)
@@ -194,7 +195,7 @@ private:
 
     class PendingInterceptResponse {
         WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(PendingInterceptResponse);
     public:
         PendingInterceptResponse(const ResourceResponse& originalResponse, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& completionHandler)
             : m_originalResponse(originalResponse)

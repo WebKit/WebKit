@@ -31,11 +31,14 @@
 
 #include "config.h"
 #include "InstrumentingAgents.h"
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InstrumentingAgents);
 
 InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
     : m_environment(environment)

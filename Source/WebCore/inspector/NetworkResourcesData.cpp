@@ -34,9 +34,13 @@
 #include "InspectorNetworkAgent.h"
 #include "ResourceResponse.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkResourcesData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NetworkResourcesDataResourceData, NetworkResourcesData::ResourceData);
 
 using namespace Inspector;
 

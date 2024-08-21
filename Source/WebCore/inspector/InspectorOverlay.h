@@ -39,6 +39,7 @@
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
@@ -138,7 +139,7 @@ struct InspectorOverlayHighlight {
 };
 
 class InspectorOverlay {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorOverlay);
 public:
     InspectorOverlay(Page&, InspectorClient*);
     ~InspectorOverlay();

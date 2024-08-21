@@ -44,6 +44,7 @@
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "OffscreenCanvas.h"
@@ -52,6 +53,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageCanvasAgent);
 
 PageCanvasAgent::PageCanvasAgent(PageAgentContext& context)
     : InspectorCanvasAgent(context)

@@ -30,10 +30,13 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNetworkAgent);
 
 WorkerNetworkAgent::WorkerNetworkAgent(WorkerAgentContext& context)
     : InspectorNetworkAgent(context)

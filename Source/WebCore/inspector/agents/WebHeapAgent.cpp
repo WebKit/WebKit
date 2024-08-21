@@ -31,10 +31,13 @@
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebHeapAgent);
 
 struct GarbageCollectionData {
     Inspector::Protocol::Heap::GarbageCollection::Type type;
@@ -43,7 +46,7 @@ struct GarbageCollectionData {
 };
 
 class SendGarbageCollectionEventsTask final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SendGarbageCollectionEventsTask);
 public:
     SendGarbageCollectionEventsTask(WebHeapAgent&);
     void addGarbageCollection(GarbageCollectionData&&);

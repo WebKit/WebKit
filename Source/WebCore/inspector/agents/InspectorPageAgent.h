@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -55,7 +56,7 @@ class FragmentedSharedBuffer;
 
 class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorPageAgent);
 public:
     InspectorPageAgent(PageAgentContext&, InspectorClient*, InspectorOverlay*);
     ~InspectorPageAgent();

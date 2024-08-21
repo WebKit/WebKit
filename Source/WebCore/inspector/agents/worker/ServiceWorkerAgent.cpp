@@ -29,10 +29,13 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerAgent);
 
 ServiceWorkerAgent::ServiceWorkerAgent(WorkerAgentContext& context)
     : InspectorAgentBase("ServiceWorker"_s, context)
