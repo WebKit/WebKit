@@ -1394,7 +1394,7 @@ void DisplayMtl::initializeFeatures()
     // execution. http://crbug.com/1513738
     // Disabled on Mac11 due to test failures. http://crbug.com/1522730
     ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies,
-                            GetMacOSVersion() >= OSVersion(12, 0, 0));
+                            !isOSX || GetMacOSVersion() >= OSVersion(12, 0, 0));
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()
