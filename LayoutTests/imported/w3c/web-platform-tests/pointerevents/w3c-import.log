@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-scrollbar.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent-boundary-event-target-when-hover-generates-content-under-pointer.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_appended_interleaved.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html
