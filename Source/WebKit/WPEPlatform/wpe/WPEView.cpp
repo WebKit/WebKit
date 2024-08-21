@@ -756,6 +756,46 @@ void wpe_view_unmap(WPEView* view)
 }
 
 /**
+ * wpe_view_lock_pointer:
+ * @view: a #WPEView
+ *
+ * Disable the movements of the pointer in @view, locking it to a particular
+ * area; while the pointer is locked, mouse events are relative instead of
+ * absolute motions.
+ *
+ * Returns: %TRUE if the pointer is locked, or %FALSE otherwise
+ */
+gboolean wpe_view_lock_pointer(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->lock_pointer)
+        return viewClass->lock_pointer(view);
+
+    return FALSE;
+}
+
+/**
+ * wpe_view_unlock_pointer:
+ * @view: a #WPEView
+ *
+ * Unlock the pointer in @view if it has been locked.
+ *
+ * Returns: %TRUE if the pointer is unlocked, or %FALSE otherwise
+ */
+gboolean wpe_view_unlock_pointer(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->unlock_pointer)
+        return viewClass->unlock_pointer(view);
+
+    return FALSE;
+}
+
+/**
  * wpe_view_set_cursor_from_name:
  * @view: a #WPEView
  * @name: a cursor name

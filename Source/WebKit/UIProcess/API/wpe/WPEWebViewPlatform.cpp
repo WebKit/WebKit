@@ -576,6 +576,20 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
 #endif
 }
 
+#if ENABLE(POINTER_LOCK)
+void ViewPlatform::requestPointerLock()
+{
+    if (wpe_view_lock_pointer(m_wpeView.get()))
+        setCursor(WebCore::noneCursor());
+}
+
+void ViewPlatform::didLosePointerLock()
+{
+    if (wpe_view_unlock_pointer(m_wpeView.get()))
+        setCursor(WebCore::pointerCursor());
+}
+#endif
+
 void ViewPlatform::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {
     RELEASE_ASSERT(!m_nextPresentationUpdateCallback);

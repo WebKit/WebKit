@@ -38,6 +38,8 @@
 #include "WPEWaylandSeat.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 #include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
+#include "pointer-constraints-unstable-v1-client-protocol.h"
+#include "relative-pointer-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v1-client-protocol.h"
 #include "text-input-unstable-v3-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
@@ -79,6 +81,8 @@ struct _WPEDisplayWaylandPrivate {
     struct zwp_text_input_v1* textInputV1;
     struct zwp_text_input_manager_v3* textInputManagerV3;
     struct zwp_text_input_v3* textInputV3;
+    struct zwp_pointer_constraints_v1* pointerConstraints;
+    struct zwp_relative_pointer_manager_v1* relativePointerManager;
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
@@ -193,6 +197,8 @@ static void wpeDisplayWaylandDispose(GObject* object)
         g_clear_pointer(&priv->textInputV3, zwp_text_input_v3_destroy);
         g_clear_pointer(&priv->textInputManagerV3, zwp_text_input_manager_v3_destroy);
     }
+    g_clear_pointer(&priv->pointerConstraints, zwp_pointer_constraints_v1_destroy);
+    g_clear_pointer(&priv->relativePointerManager, zwp_relative_pointer_manager_v1_destroy);
 #if USE(LIBDRM)
     g_clear_pointer(&priv->dmabufFeedback, zwp_linux_dmabuf_feedback_v1_destroy);
 #endif
@@ -236,6 +242,10 @@ const struct wl_registry_listener registryListener = {
             priv->textInputV1 = zwp_text_input_manager_v1_create_text_input(priv->textInputManagerV1);
         } else if (!std::strcmp(interface, "zwp_text_input_manager_v3")) {
             priv->textInputManagerV3 = static_cast<struct zwp_text_input_manager_v3*>(wl_registry_bind(registry, name, &zwp_text_input_manager_v3_interface, 1));
+        } else if (!std::strcmp(interface, "zwp_pointer_constraints_v1")) {
+            priv->pointerConstraints = static_cast<struct zwp_pointer_constraints_v1*>(wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, 1));
+        } else if (!std::strcmp(interface, "zwp_relative_pointer_manager_v1")) {
+            priv->relativePointerManager = static_cast<struct zwp_relative_pointer_manager_v1*>(wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, 1));
         }
     },
     // global_remove
@@ -545,6 +555,16 @@ struct zwp_text_input_v1* wpeDisplayWaylandGetTextInputV1(WPEDisplayWayland* dis
 struct zwp_text_input_v3* wpeDisplayWaylandGetTextInputV3(WPEDisplayWayland* display)
 {
     return display->priv->textInputV3;
+}
+
+struct zwp_pointer_constraints_v1* wpeDisplayWaylandGetPointerConstraints(WPEDisplayWayland* display)
+{
+    return display->priv->pointerConstraints;
+}
+
+struct zwp_relative_pointer_manager_v1* wpeDisplayWaylandGetRelativePointerManager(WPEDisplayWayland* display)
+{
+    return display->priv->relativePointerManager;
 }
 
 struct zwp_linux_explicit_synchronization_v1* wpeDisplayWaylandGetLinuxExplicitSync(WPEDisplayWayland* display)

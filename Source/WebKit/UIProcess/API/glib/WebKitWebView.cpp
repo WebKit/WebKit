@@ -3039,6 +3039,10 @@ void webkitWebViewRequestPointerLock(WebKitWebView* webView)
 #if PLATFORM(GTK)
     webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView));
 #endif
+
+#if PLATFORM(WPE)
+    webView->priv->view->requestPointerLock();
+#endif
 }
 
 void webkitWebViewDenyPointerLockRequest(WebKitWebView* webView)
@@ -3051,8 +3055,12 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 #if PLATFORM(GTK)
     webkitWebViewBaseDidLosePointerLock(WEBKIT_WEB_VIEW_BASE(webView));
 #endif
-}
+
+#if PLATFORM(WPE)
+    webView->priv->view->didLosePointerLock();
 #endif
+}
+#endif // ENABLE(POINTER_LOCK)
 
 static void webkitWebViewSynthesizeCompositionKeyPress(WebKitWebView* webView, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {

@@ -31,6 +31,8 @@
 #include "WPEToplevelWaylandPrivate.h"
 #include "WPEWaylandSHMPool.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
+#include "pointer-constraints-unstable-v1-client-protocol.h"
+#include "relative-pointer-unstable-v1-client-protocol.h"
 #include <gio/gio.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
@@ -58,6 +60,11 @@ struct _WPEViewWaylandPrivate {
 
     Vector<WPERectangle, 1> opaqueRegion;
     unsigned long resizedID;
+
+    struct zwp_relative_pointer_v1* relativePointer;
+    struct zwp_locked_pointer_v1* lockedPointer;
+    uint32_t savedPointerModifiers { 0 };
+    std::pair<double, double> savedPointerCoords { 0, 0 };
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewWayland, wpe_view_wayland, WPE_TYPE_VIEW, WPEView)
 
@@ -117,6 +124,8 @@ static void wpeViewWaylandDispose(GObject* object)
 {
     auto* priv = WPE_VIEW_WAYLAND(object)->priv;
     g_clear_pointer(&priv->frameCallback, wl_callback_destroy);
+    g_clear_pointer(&priv->lockedPointer, zwp_locked_pointer_v1_destroy);
+    g_clear_pointer(&priv->relativePointer, zwp_relative_pointer_v1_destroy);
 
     G_OBJECT_CLASS(wpe_view_wayland_parent_class)->dispose(object);
 }
@@ -399,6 +408,57 @@ static const struct wl_buffer_listener cursorBufferListener = {
     }
 };
 
+static const struct zwp_relative_pointer_v1_listener relativePointerListener = {
+    // relative_motion
+    [](void* data, struct zwp_relative_pointer_v1*, uint32_t, uint32_t, wl_fixed_t, wl_fixed_t, wl_fixed_t deltaX, wl_fixed_t deltaY) {
+        auto* view = reinterpret_cast<WPEView*>(data);
+        auto pointerModifiers = WPE_VIEW_WAYLAND(view)->priv->savedPointerModifiers;
+        auto pointerCoords = WPE_VIEW_WAYLAND(view)->priv->savedPointerCoords;
+        double x = pointerCoords.first;
+        double y = pointerCoords.second;
+        double dX = wl_fixed_to_double(deltaX);
+        double dY = wl_fixed_to_double(deltaY);
+
+        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_MOVE, view, WPE_INPUT_SOURCE_MOUSE, 0, static_cast<WPEModifiers>(pointerModifiers), x, y, dX, dY);
+        wpe_view_event(view, event);
+        wpe_event_unref(event);
+    }
+};
+
+static gboolean wpeViewWaylandLockPointer(WPEView* view)
+{
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    if (priv->relativePointer || priv->lockedPointer)
+        return FALSE;
+
+    auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
+    auto* pointerConstraints = wpeDisplayWaylandGetPointerConstraints(display);
+    auto* relativePointerManager = wpeDisplayWaylandGetRelativePointerManager(display);
+    if (!pointerConstraints || !relativePointerManager)
+        return FALSE;
+
+    WPE::WaylandSeat* seat = wpeDisplayWaylandGetSeat(display);
+    priv->savedPointerModifiers = seat->pointerModifiers();
+    priv->savedPointerCoords = seat->pointerCoords();
+    struct wl_pointer* wlPointer = wl_seat_get_pointer(seat->seat());
+
+    priv->relativePointer = zwp_relative_pointer_manager_v1_get_relative_pointer(relativePointerManager, wlPointer);
+    zwp_relative_pointer_v1_add_listener(priv->relativePointer, &relativePointerListener, view);
+    auto* wlSurface = wpe_view_wayland_get_wl_surface(WPE_VIEW_WAYLAND(view));
+    priv->lockedPointer = zwp_pointer_constraints_v1_lock_pointer(pointerConstraints, wlSurface, wlPointer, nullptr, ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
+
+    return TRUE;
+}
+
+static gboolean wpeViewWaylandUnlockPointer(WPEView* view)
+{
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    g_clear_pointer(&priv->lockedPointer, zwp_locked_pointer_v1_destroy);
+    g_clear_pointer(&priv->relativePointer, zwp_relative_pointer_v1_destroy);
+
+    return TRUE;
+}
+
 static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
 {
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
@@ -447,6 +507,8 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewWaylandClass);
     viewClass->render_buffer = wpeViewWaylandRenderBuffer;
+    viewClass->lock_pointer = wpeViewWaylandLockPointer;
+    viewClass->unlock_pointer = wpeViewWaylandUnlockPointer;
     viewClass->set_cursor_from_name = wpeViewWaylandSetCursorFromName;
     viewClass->set_cursor_from_bytes = wpeViewWaylandSetCursorFromBytes;
     viewClass->set_opaque_rectangles = wpeViewWaylandSetOpaqueRectangles;
