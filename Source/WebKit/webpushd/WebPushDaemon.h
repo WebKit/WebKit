@@ -120,6 +120,10 @@ private:
     void silentPushTimerFired();
     void didShowNotification(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
 
+#if PLATFORM(IOS)
+    void updateSubscriptionSetState();
+#endif
+
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashSet<xpc_connection_t> m_pendingConnectionSet;
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;

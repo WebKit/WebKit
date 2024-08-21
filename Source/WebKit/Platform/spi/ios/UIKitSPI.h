@@ -144,11 +144,18 @@
 #import <UIKit/UIView+SpatialComputing.h>
 #endif
 
+#if PLATFORM(IOS)
+@interface UIWebClip(Staging_134304426)
++ (NSString *)pathForWebClipWithIdentifier:(NSString *)identifier;
+@end
+#endif
+
 #else // USE(APPLE_INTERNAL_SDK)
 
 @interface UIWebClip : NSObject
 + (UIWebClip *)webClipWithIdentifier:(NSString *)identifier;
 + (NSArray *)webClips;
++ (NSString *)pathForWebClipWithIdentifier:(NSString *)identifier;
 @property (copy) NSString *identifier;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, retain) NSURL *pageURL;
