@@ -140,7 +140,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     auto frame = create(page, frameID);
     ASSERT(page.corePage());
     auto coreFrame = LocalFrame::createSubframe(*page.corePage(), [frame] (auto& localFrame) {
-        return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, frame.get(), frame->makeInvalidator());
+        return adoptRef(*new WebLocalFrameLoaderClient(localFrame, frame.get(), frame->makeInvalidator()));
     }, frameID, effectiveSandboxFlags, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
@@ -403,7 +403,7 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
 
     RefPtr parent = remoteFrame->tree().parent();
     auto clientCreator = [this, protectedThis = Ref { *this }] (auto& localFrame) mutable {
-        return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(protectedThis), makeInvalidator());
+        return adoptRef(*new WebLocalFrameLoaderClient(localFrame, WTFMove(protectedThis), makeInvalidator()));
     };
     auto localFrame = parent ? LocalFrame::createProvisionalSubframe(*corePage, WTFMove(clientCreator), m_frameID, parameters.effectiveSandboxFlags, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, parameters.effectiveSandboxFlags, remoteFrame->opener());
     m_provisionalFrame = localFrame.ptr();

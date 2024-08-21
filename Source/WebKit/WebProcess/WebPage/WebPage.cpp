@@ -519,7 +519,7 @@ static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameter
     case Frame::FrameType::Local:
         return PageConfiguration::LocalMainFrameCreationParameters {
             { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto& localFrame) mutable {
-                return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(mainFrame), WTFMove(invalidator));
+                return adoptRef(*new WebLocalFrameLoaderClient(localFrame, WTFMove(mainFrame), WTFMove(invalidator)));
             } },
             initialSandboxFlags
         };

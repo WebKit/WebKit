@@ -112,7 +112,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 #endif
     pageConfiguration.storageProvider = makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt());
 
-    pageConfiguration.mainFrameCreationParameters = WebCore::PageConfiguration::LocalMainFrameCreationParameters { CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [client = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent)] (auto&) mutable {
+    pageConfiguration.mainFrameCreationParameters = WebCore::PageConfiguration::LocalMainFrameCreationParameters { CompletionHandler<Ref<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [client = adoptRef(*new RemoteWorkerFrameLoaderClient(m_webPageProxyID, m_pageID, m_userAgent))] (auto&) mutable {
         return WTFMove(client);
     } }, WebCore::SandboxFlags { } };
 

@@ -315,7 +315,7 @@ WebView *getWebView(WebFrame *webFrame)
         effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
 
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&) {
-        return makeUniqueRef<WebFrameLoaderClient>(frame.get());
+        return adoptRef(*new WebFrameLoaderClient(frame.get()));
     }, WebCore::FrameIdentifier::generate(), effectiveSandboxFlags, ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 

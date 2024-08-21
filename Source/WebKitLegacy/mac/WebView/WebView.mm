@@ -1513,8 +1513,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         WebCore::PageConfiguration::LocalMainFrameCreationParameters {
-            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-                return makeUniqueRef<WebFrameLoaderClient>();
+            CompletionHandler<Ref<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
+                return adoptRef(*new WebFrameLoaderClient());
             } },
             WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
         },
@@ -1779,8 +1779,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         WebCore::PageConfiguration::LocalMainFrameCreationParameters {
-            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-                return makeUniqueRef<WebFrameLoaderClient>();
+            CompletionHandler<Ref<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
+                return adoptRef(*new WebFrameLoaderClient());
             } },
             WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
         },

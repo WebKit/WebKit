@@ -103,7 +103,7 @@ enum class WasPrivateRelayed : bool;
 
 struct StringWithDirection;
 
-class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
+class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient, public RefCounted<LocalFrameLoaderClient> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     // An inline function cannot be the first non-abstract virtual function declared

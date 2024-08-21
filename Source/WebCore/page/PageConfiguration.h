@@ -104,7 +104,7 @@ class PageConfiguration {
 public:
 
     struct LocalMainFrameCreationParameters {
-        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> clientCreator;
+        CompletionHandler<Ref<LocalFrameLoaderClient>(LocalFrame&)> clientCreator;
         SandboxFlags effectiveSandboxFlags;
     };
     using MainFrameCreationParameters = std::variant<LocalMainFrameCreationParameters, CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>>;

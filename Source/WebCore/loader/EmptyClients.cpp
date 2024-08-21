@@ -1218,8 +1218,8 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
         PageConfiguration::LocalMainFrameCreationParameters {
-            CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [] (auto&) {
-                return makeUniqueRef<EmptyFrameLoaderClient>();
+            CompletionHandler<Ref<LocalFrameLoaderClient>(LocalFrame&)> { [] (auto&) {
+                return adoptRef(*new EmptyFrameLoaderClient());
             } },
             SandboxFlags::all(),
         },

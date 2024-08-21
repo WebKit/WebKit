@@ -108,7 +108,7 @@ class FrameLoader final : public CanMakeCheckedPtr<FrameLoader> {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameLoader);
     friend class PolicyChecker;
 public:
-    FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
+    FrameLoader(LocalFrame&, Ref<LocalFrameLoaderClient>&&);
     ~FrameLoader();
 
     WEBCORE_EXPORT void init();
@@ -457,7 +457,7 @@ private:
     bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const AtomString&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
 
     WeakRef<LocalFrame> m_frame;
-    UniqueRef<LocalFrameLoaderClient> m_client;
+    Ref<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
     mutable ResourceLoadNotifier m_notifier;
