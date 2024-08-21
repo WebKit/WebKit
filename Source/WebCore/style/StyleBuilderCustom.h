@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSCounterValue.h"
@@ -1625,7 +1626,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
             size = (primitiveValue.floatValue() * parentSize) / 100.0f;
         else if (primitiveValue.isCalculatedPercentageWithLength()) {
             auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
-            size = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(parentSize);
+            size = primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(parentSize);
         } else
             return;
     }

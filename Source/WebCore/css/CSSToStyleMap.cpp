@@ -296,7 +296,7 @@ void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& valu
     if (!primitiveValue)
         return;
 
-    animation.setDelay(primitiveValue->computeTime<double, CSSPrimitiveValue::Seconds>());
+    animation.setDelay(primitiveValue->computeTime<double, CSSPrimitiveValue::TimeUnit::Seconds>());
 }
 
 void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& value)
@@ -338,7 +338,7 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& v
     if (!primitiveValue)
         return;
 
-    auto duration = std::max<double>(primitiveValue->computeTime<double, CSSPrimitiveValue::Seconds>(), 0);
+    auto duration = std::max<double>(primitiveValue->computeTime<double, CSSPrimitiveValue::TimeUnit::Seconds>(), 0);
     animation.setDuration(duration);
 }
 
@@ -590,7 +590,7 @@ Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& side)
         return { value.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent };
     auto& conversionData = m_builderState.cssToLengthConversionData();
     if (value.isCalculatedPercentageWithLength())
-        return Length { value.cssCalcValue()->createCalculationValue(conversionData) };
+        return Length { value.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
     return { value.computeLength<Length>(conversionData) };
 }
 

@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSPrimitiveValue.h"
@@ -2056,7 +2057,7 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
     if ((supported & AutoConversion) && valueID() == CSSValueAuto)
         return Length(LengthType::Auto);
     if ((supported & CalculatedConversion) && isCalculated())
-        return Length(cssCalcValue()->createCalculationValue(conversionData));
+        return Length(cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
     return Length(LengthType::Undefined);
 }
 

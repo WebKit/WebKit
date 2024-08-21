@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,43 +29,42 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+namespace Calculation {
 
-enum class CalcExpressionNodeType : uint8_t {
-    Undefined,
-    Number,
-    Length,
-    Operation,
-    Negation,
-    Inversion,
-    BlendLength,
+// Don't change these values; parsing uses them.
+enum class Operator : uint8_t {
+    Sum = '+',
+    Negate = '-',
+    Product = '*',
+    Invert = '/',
+    Min = 0,
+    Max,
+    Clamp,
+    Pow,
+    Sqrt,
+    Hypot,
+    Sin,
+    Cos,
+    Tan,
+    Exp,
+    Log,
+    Asin,
+    Acos,
+    Atan,
+    Atan2,
+    Abs,
+    Sign,
+    Mod,
+    Rem,
+    Round,
+    Nearest,
+    Up,
+    Down,
+    ToZero,
+    Blend,
 };
 
-class CalcExpressionNode {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit CalcExpressionNode(CalcExpressionNodeType = CalcExpressionNodeType::Undefined);
-    virtual ~CalcExpressionNode() = default;
+TextStream& operator<<(TextStream&, Operator);
 
-    CalcExpressionNodeType type() const { return m_type; }
-
-    virtual float evaluate(float maxValue) const = 0;
-    virtual bool operator==(const CalcExpressionNode&) const = 0;
-    virtual void dump(TextStream&) const = 0;
-
-private:
-    CalcExpressionNodeType m_type;
-};
-
-inline CalcExpressionNode::CalcExpressionNode(CalcExpressionNodeType type)
-    : m_type(type)
-{
-}
-
-TextStream& operator<<(TextStream&, const CalcExpressionNode&);
-
-}
-
-#define SPECIALIZE_TYPE_TRAITS_CALCEXPRESSION_NODE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::CalcExpressionNode& node) { return node.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace Calculation
+} // namespace WebCore

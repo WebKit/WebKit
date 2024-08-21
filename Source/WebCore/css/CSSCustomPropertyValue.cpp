@@ -74,11 +74,8 @@ String CSSCustomPropertyValue::customCSSText() const
     auto serializeSyntaxValue = [](const SyntaxValue& syntaxValue) -> String {
         return WTF::switchOn(syntaxValue, [&](const Length& value) {
             if (value.type() == LengthType::Calculated) {
+                // FIXME: Implement serialization for CalculationValue directly.
                 auto calcValue = CSSCalcValue::create(value.calculationValue(), RenderStyle::defaultStyle());
-                if (!calcValue) {
-                    ASSERT_NOT_REACHED();
-                    return emptyString();
-                }
                 return calcValue->cssText();
             }
             return CSSPrimitiveValue::create(value, RenderStyle::defaultStyle())->cssText();

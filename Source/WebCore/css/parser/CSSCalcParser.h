@@ -24,39 +24,23 @@
 
 #pragma once
 
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
-#include "CSSParserTokenRange.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CalculationCategory.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
-class CSSPrimitiveValue;
+namespace Calculation {
+enum class Category : uint8_t;
+}
 
-enum class CalculationCategory : uint8_t;
+class CSSCalcSymbolsAllowed;
+class CSSCalcValue;
+class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
 
-class CalcParser {
-public:
-    explicit CalcParser(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+struct CSSPropertyParserOptions;
 
-    const CSSCalcValue* value() const { return m_value.get(); }
-
-    RefPtr<CSSPrimitiveValue> consumeValue();
-    RefPtr<CSSPrimitiveValue> consumeValueIfCategory(CalculationCategory);
-
-private:
-    CSSParserTokenRange& m_sourceRange;
-    CSSParserTokenRange m_range;
-    RefPtr<CSSCalcValue> m_value;
-};
-
-bool canConsumeCalcValue(CalculationCategory, CSSPropertyParserOptions);
-RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, CalculationCategory, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange&, Calculation::Category, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
 }
 }

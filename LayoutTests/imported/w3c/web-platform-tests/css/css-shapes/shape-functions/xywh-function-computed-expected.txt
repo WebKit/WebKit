@@ -1,6 +1,6 @@
 
 PASS Property shape-outside value 'xywh(0px 1px 2% 3em)'
-FAIL Property shape-outside value 'xywh(0px calc(100% - 20px) 2% 3em)' assert_equals: expected "inset(calc(100% - 20px) 98% calc(0% - 28px) 0px)" but got "inset(calc(100% - 20px) 98% calc(100% - (100% + 28px)) 0px)"
+PASS Property shape-outside value 'xywh(0px calc(100% - 20px) 2% 3em)'
 PASS Property shape-outside value 'xywh(10px 20px 30px 25px round 100%)'
 PASS Property shape-outside value 'xywh(10px 20px 30px 25px round 0 1px)'
 PASS Property shape-outside value 'xywh(10px 20px 30px 25px round 0px 1px 2%)'

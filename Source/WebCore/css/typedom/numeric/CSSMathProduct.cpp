@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
-#include "CSSCalcOperationNode.h"
 #include "CSSMathInvert.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
@@ -115,17 +114,20 @@ auto CSSMathProduct::toSumValue() const -> std::optional<SumValue>
     return { WTFMove(values) };
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathProduct::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathProduct::toCalcTreeNode() const
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(m_values->length());
-    for (auto& item : m_values->array()) {
-        auto value = item->toCalcExpressionNode();
-        if (!value)
-            return nullptr;
-        values.append(value.releaseNonNull());
-    }
-    return CSSCalcOperationNode::createProduct(WTFMove(values));
+    CSSCalc::Children children = WTF::compactMap(m_values->array(), [](auto& child) {
+        return child->toCalcTreeNode();
+    });
+    if (children.size() != m_values->array().size())
+        return std::nullopt;
+
+    auto product = CSSCalc::Product { .children = WTFMove(children) };
+    auto type = CSSCalc::toType(product);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(product), *type);
 }
 
 } // namespace WebCore

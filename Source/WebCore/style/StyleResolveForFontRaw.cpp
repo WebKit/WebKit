@@ -32,7 +32,6 @@
 #include "StyleResolveForFontRaw.h"
 
 #include "CSSFontSelector.h"
-#include "CSSHelper.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
 #include "Document.h"

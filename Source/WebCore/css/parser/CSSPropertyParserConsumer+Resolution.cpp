@@ -32,6 +32,7 @@
 #include "CSSParserMode.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CalculationCategory.h"
 #include "Length.h"
 
 namespace WebCore {
@@ -49,7 +50,7 @@ std::optional<UnevaluatedCalc<ResolutionRaw>> ResolutionKnownTokenTypeFunctionCo
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Resolution, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::Resolution, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }

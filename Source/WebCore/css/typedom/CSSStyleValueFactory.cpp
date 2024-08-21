@@ -180,7 +180,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(cssValue)) {
         if (primitiveValue->isCalculated()) {
             auto* calcValue = primitiveValue->cssCalcValue();
-            auto result = CSSNumericValue::reifyMathExpression(calcValue->expressionNode());
+            auto result = CSSNumericValue::reifyMathExpression(calcValue->tree());
             if (result.hasException())
                 return result.releaseException();
             return static_reference_cast<CSSStyleValue>(result.releaseReturnValue());

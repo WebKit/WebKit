@@ -71,6 +71,14 @@ constexpr double sqrtOfTwoDouble = M_SQRT2;
 constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
 #endif
 
+#ifndef M_E
+constexpr double eDouble = 2.71828182845904523536028747135266250;
+constexpr float eFloat = 2.71828182845904523536028747135266250f;
+#else
+constexpr double eDouble = M_E;
+constexpr float eFloat = static_cast<float>(M_E);
+#endif
+
 #if OS(WINDOWS)
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.

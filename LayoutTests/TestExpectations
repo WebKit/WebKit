@@ -5693,9 +5693,6 @@ webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity
 # 1 difference in color (rounding error)
 webkit.org/b/256888 imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001.html [ ImageOnlyFailure ]
 
-# ASSERT_NOT_REACHED in CSSCalcPrimitiveValueNode::doubleValue() after import webkit.org/b/277239
-webkit.org/b/277244 [ Debug ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-mix-function.html [ Skip ]
-
 # display-p3 canvas and ImageData are Cocoa only for now.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]

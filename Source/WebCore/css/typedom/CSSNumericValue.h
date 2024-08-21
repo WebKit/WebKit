@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSCalcTree.h"
 #include "CSSNumericType.h"
 #include "CSSStyleValue.h"
 #include <variant>
@@ -32,7 +33,6 @@
 
 namespace WebCore {
 
-class CSSCalcExpressionNode;
 class CSSNumericValue;
 class CSSUnitValue;
 class CSSMathSum;
@@ -73,9 +73,11 @@ public:
     virtual std::optional<SumValue> toSumValue() const = 0;
     virtual bool equals(const CSSNumericValue&) const = 0;
 
-    virtual RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const = 0;
+    virtual std::optional<CSSCalc::Child> toCalcTreeNode() const = 0;
 
-    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcExpressionNode&);
+    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Tree&);
+    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Child&);
+    static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::ChildOrNone&);
 
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);

@@ -27,6 +27,32 @@ class TextStream;
 
 namespace WebCore {
 
+namespace CSS {
+
+// We always assume 96 CSS pixels in a CSS inch. This is the cold hard truth of the Web.
+// At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called
+// "absolute" CSS length units like inch and pt is always fixed and never changes.
+constexpr double pixelsPerInch = 96;
+
+constexpr double pointsPerInch = 72;
+constexpr double picasPerInch = 6;
+constexpr double mmPerInch = 25.4;
+constexpr double cmPerInch = 2.54;
+constexpr double QPerInch = 25.4 * 4.0;
+
+constexpr double pixelsPerCm = pixelsPerInch / cmPerInch;
+constexpr double pixelsPerMm = pixelsPerInch / mmPerInch;
+constexpr double pixelsPerQ = pixelsPerInch / QPerInch;
+constexpr double pixelsPerPt = pixelsPerInch / pointsPerInch;
+constexpr double pixelsPerPc = pixelsPerInch / picasPerInch;
+constexpr double dppxPerX = 1.0;
+constexpr double dppxPerDpi = 1.0 / pixelsPerInch;
+constexpr double dppxPerDpcm = cmPerInch / pixelsPerInch;
+constexpr double secondsPerMillisecond = 1.0 / 1000.0;
+constexpr double hertzPerKilohertz = 1000.0;
+
+}
+
 // FIXME: No need to use all capitals and a CSS prefix on all these names. Should fix that.
 enum class CSSUnitType : uint8_t {
     CSS_UNKNOWN,
@@ -149,6 +175,8 @@ enum class CSSUnitCategory : uint8_t {
 CSSUnitCategory unitCategory(CSSUnitType);
 CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory);
 CSSUnitType canonicalUnitTypeForUnitType(CSSUnitType);
+double conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+bool conversionToCanonicalUnitRequiresConversionData(CSSUnitType);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitType);

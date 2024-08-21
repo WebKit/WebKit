@@ -29,7 +29,7 @@
 
 #if ENABLE(MATHML)
 
-#include "CSSHelper.h"
+#include "CSSUnits.h"
 #include "GraphicsContext.h"
 #include "LayoutRepainter.h"
 #include "MathMLElement.h"
@@ -145,15 +145,15 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     switch (length.type) {
     // Zoom for physical units needs to be accounted for.
     case MathMLElement::LengthType::Cm:
-        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 2.54f);
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerCm));
     case MathMLElement::LengthType::In:
-        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch);
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerInch));
     case MathMLElement::LengthType::Mm:
-        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 25.4f);
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerMm));
     case MathMLElement::LengthType::Pc:
-        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 6);
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerPc));
     case MathMLElement::LengthType::Pt:
-        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 72);
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerPt));
     case MathMLElement::LengthType::Px:
         return LayoutUnit(style.usedZoom() * length.value);
 

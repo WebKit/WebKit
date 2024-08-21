@@ -26,9 +26,8 @@
 #include "Length.h"
 
 #include "AnimationUtilities.h"
-#include "CalcExpressionBlendLength.h"
-#include "CalcExpressionLength.h"
-#include "CalcExpressionOperation.h"
+#include "CalculationCategory.h"
+#include "CalculationTree.h"
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
@@ -341,46 +340,72 @@ bool Length::isCalculatedEqual(const Length& other) const
     return calculationValue() == other.calculationValue();
 }
 
-static Length makeCalculated(CalcOperator calcOperator, const Length& a, const Length& b)
+static Calculation::Child lengthCalculation(const Length& length)
 {
-    auto lengths = Vector<std::unique_ptr<CalcExpressionNode>>::from(makeUnique<CalcExpressionLength>(a), makeUnique<CalcExpressionLength>(b));
-    auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), calcOperator);
-    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
+    if (length.isPercent())
+        return Calculation::percent(length.value());
+
+    if (length.isCalculated()) {
+        auto tree = length.calculationValue().copyTree();
+        return { WTFMove(tree.root) };
+    }
+
+    ASSERT(length.isFixed());
+    return Calculation::dimension(length.value());
+}
+
+static Length makeLength(Calculation::Child&& root)
+{
+    // FIXME: Value range should be passed in.
+
+    // NOTE: category is always `PercentLength` as late resolved `Length` values defined by percentages is the only reason calculation value is needed by `Length`.
+    return Length(CalculationValue::create(Calculation::Tree { .root = WTFMove(root), .category = Calculation::Category::PercentLength, .range = ValueRange::All }));
 }
 
 Length convertTo100PercentMinusLength(const Length& length)
 {
-    if (length.isPercent())
+    // If `length` is 0 or a percentage, we can avoid the `calc` altogether.
+    if (length.isZero() || length.isPercent())
         return Length(100 - length.value(), LengthType::Percent);
-    
-    // Turn this into a calc expression: calc(100% - length)
-    return makeCalculated(CalcOperator::Subtract, Length(100, LengthType::Percent), length);
+
+    // Otherwise, turn this into a calc expression: calc(100% - length)
+    return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(length)));
 }
 
 Length convertTo100PercentMinusLengthSum(const Length& a, const Length& b)
 {
-    // FIXME: The main simplification code does not deal with substract expressions so this does some basic steps.
-    // A seperate calc node type for pixel-and-percent values would make simplifications easier.
+    // If both `a` and `b` are 0, turn this into a calc expression: calc(100% - (0 + 0)) aka `100%`.
+    if (a.isZero() && b.isZero())
+        return Length(100, LengthType::Percent);
 
+    // If just `a` is 0, we can just consider the case of `calc(100% - b)`.
+    if (a.isZero()) {
+        // And if `b` is a percent, we can avoid the `calc` altogether.
+        if (b.isPercent())
+            return Length(100 - b.value(), LengthType::Percent);
+        return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(b)));
+    }
+
+    // If just `b` is 0, we can just consider the case of `calc(100% - a)`.
+    if (b.isZero()) {
+        // And if `a` is a percent, we can avoid the `calc` altogether.
+        if (a.isPercent())
+            return Length(100 - a.value(), LengthType::Percent);
+        return makeLength(Calculation::subtract(Calculation::percent(100), lengthCalculation(a)));
+    }
+
+    // If both and `a` and `b` are percentages, we can avoid the `calc` altogether.
     if (a.isPercent() && b.isPercent())
-        return Length(100 - a.value() - b.value(), LengthType::Percent);
+        return Length(100 - (a.value() + b.value()), LengthType::Percent);
 
-    if (a.isPercent()) {
-        auto percent = Length(100 - a.value(), LengthType::Percent);
-        return makeCalculated(CalcOperator::Subtract, percent, b);
-    }
-    if (b.isPercent()) {
-        auto percent = Length(100 - b.value(), LengthType::Percent);
-        return makeCalculated(CalcOperator::Subtract, percent, a);
-    }
-    auto sum = makeCalculated(CalcOperator::Add, a, b);
-    return convertTo100PercentMinusLength(sum);
+    // Otherwise, turn this into a calc expression: calc(100% - (a + b))
+    return makeLength(Calculation::subtract(Calculation::percent(100), Calculation::add(lengthCalculation(a), lengthCalculation(b))));
 }
 
 static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
 {
     if (context.compositeOperation != CompositeOperation::Replace)
-        return makeCalculated(CalcOperator::Add, from, to);
+        return makeLength(Calculation::add(lengthCalculation(from), lengthCalculation(to)));
 
     if (from.isIntrinsicOrAuto() || to.isIntrinsicOrAuto()) {
         ASSERT(context.isDiscrete);
@@ -397,8 +422,7 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
     if (!from.isCalculated() && !to.isPercent() && (!context.progress || to.isZero()))
         return blend(from, Length(0, from.type()), context);
 
-    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
-    return Length(CalculationValue::create(WTFMove(blend), ValueRange::All));
+    return makeLength(Calculation::blend(lengthCalculation(from), lengthCalculation(to), context.progress));
 }
 
 Length blend(const Length& from, const Length& to, const BlendingContext& context)

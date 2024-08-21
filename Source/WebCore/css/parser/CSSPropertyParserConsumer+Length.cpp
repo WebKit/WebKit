@@ -36,6 +36,7 @@
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -54,7 +55,7 @@ std::optional<UnevaluatedCalc<LengthRaw>> LengthKnownTokenTypeFunctionConsumer::
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::Length, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -173,7 +174,6 @@ std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&
     return RawResolver<LengthRaw, PercentRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
-// FIXME: This doesn't work with the current scheme due to the NegativePercentagePolicy parameter
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy)
 {
     auto& token = range.peek();
@@ -195,10 +195,11 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
             return nullptr;
         }
 
-        // FIXME: Should this be using trying to generate the calc with both Length and Percent destination category types?
-        CalcParser parser(range, CalculationCategory::Length, { }, options);
-        if (auto calculation = parser.value(); calculation && canConsumeCalcValue(calculation->category(), options))
-            return parser.consumeValue();
+        auto rangeCopy = range;
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::PercentLength, { }, options)) {
+            range = rangeCopy;
+            return CSSPrimitiveValue::create(value.releaseNonNull());
+        }
         break;
     }
 

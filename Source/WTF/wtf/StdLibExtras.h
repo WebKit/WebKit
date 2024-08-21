@@ -773,6 +773,25 @@ concept Invocable = requires(std::decay_t<Functor>&& f, std::function<Signature>
     { expected = std::move(f) };
 };
 
+// This is like std::apply, but works with user-defined "Tuple-like" types as well as the
+// standard ones. The only real difference between its implementation and the standard one
+// is the use of un-prefixed `get`.
+//
+// This should be something we can remove if P2165 (https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2165r3.pdf)
+// is adopted and implemented.
+template<class F, class T, size_t ...I>
+constexpr decltype(auto) apply_impl(F&& functor, T&& tupleLike, std::index_sequence<I...>)
+{
+    using std::get;
+    return std::invoke(std::forward<F>(functor), get<I>(std::forward<T>(tupleLike))...);
+}
+
+template<class F, class T>
+constexpr decltype(auto) apply(F&& functor, T&& tupleLike)
+{
+    return apply_impl(std::forward<F>(functor), std::forward<T>(tupleLike), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<T>>> { });
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)

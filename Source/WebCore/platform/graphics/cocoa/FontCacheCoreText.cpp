@@ -266,11 +266,11 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }
 
-class Allowlist {
+class FontCacheAllowlist {
 public:
-    static Allowlist& singleton() WTF_REQUIRES_LOCK(lock)
+    static FontCacheAllowlist& singleton() WTF_REQUIRES_LOCK(lock)
     {
-        static NeverDestroyed<Allowlist> allowlist;
+        static NeverDestroyed<FontCacheAllowlist> allowlist;
         return allowlist;
     }
 
@@ -292,12 +292,12 @@ private:
     HashSet<String, ASCIICaseInsensitiveHash> m_families;
 };
 
-Lock Allowlist::lock;
+Lock FontCacheAllowlist::lock;
 
 void FontCache::setFontAllowlist(const Vector<String>& inputAllowlist)
 {
-    Locker locker { Allowlist::lock };
-    Allowlist::singleton().set(inputAllowlist);
+    Locker locker { FontCacheAllowlist::lock };
+    FontCacheAllowlist::singleton().set(inputAllowlist);
 }
 
 // Because this struct holds intermediate values which may be in the compressed -1 - 1 GX range, we don't want to use the relatively large
@@ -485,8 +485,8 @@ static bool isAllowlistedFamily(const AtomString& family)
     if (isSystemFont(family.string()))
         return true;
 
-    Locker locker { Allowlist::lock };
-    return Allowlist::singleton().allows(family);
+    Locker locker { FontCacheAllowlist::lock };
+    return FontCacheAllowlist::singleton().allows(family);
 }
 
 static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request, OptionSet<FontLookupOptions> options)

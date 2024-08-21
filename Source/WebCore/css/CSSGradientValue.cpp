@@ -230,8 +230,8 @@ RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState&
         return m_cachedStyleImage;
 
     auto gradientLine = WTF::switchOn(m_data.gradientLine,
-        [](const auto& value) -> StyleGradientImage::LinearData::GradientLine {
-            return evaluateCalc(value, { });
+        [&](const auto& value) -> StyleGradientImage::LinearData::GradientLine {
+            return evaluateCalc(value, state.cssToLengthConversionData(), { });
         }
     );
 
@@ -255,8 +255,8 @@ RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::Build
         return m_cachedStyleImage;
 
     auto gradientLine = WTF::switchOn(m_data.gradientLine,
-        [](const auto& value) -> StyleGradientImage::PrefixedLinearData::GradientLine {
-            return evaluateCalc(value, { });
+        [&](const auto& value) -> StyleGradientImage::PrefixedLinearData::GradientLine {
+            return evaluateCalc(value, state.cssToLengthConversionData(), { });
         }
     );
 
@@ -424,7 +424,7 @@ RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::Bui
         return m_cachedStyleImage;
 
     auto resolveRadius = [](const std::variant<NumberRaw, UnevaluatedCalc<NumberRaw>>& radius, Style::BuilderState& state) -> float {
-        return evaluateCalc(radius, { }).value * state.cssToLengthConversionData().zoom();
+        return evaluateCalc(radius, state.cssToLengthConversionData(), { }).value * state.cssToLengthConversionData().zoom();
     };
 
     auto styleImage = StyleGradientImage::create(
@@ -453,8 +453,8 @@ RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& 
             [](std::monostate) -> std::optional<AngleRaw> {
                 return std::nullopt;
             },
-            [](auto& value) -> std::optional<AngleRaw> {
-                return evaluateCalc(value, { });
+            [&](auto& value) -> std::optional<AngleRaw> {
+                return evaluateCalc(value, state.cssToLengthConversionData(), { });
             }
         );
     };

@@ -29,23 +29,24 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+namespace Calculation {
 
-TextStream& operator<<(TextStream& ts, CalculationCategory category)
+TextStream& operator<<(TextStream& ts, Category category)
 {
     switch (category) {
-    case CalculationCategory::Number: ts << "number"; break;
-    case CalculationCategory::Length: ts << "length"; break;
-    case CalculationCategory::Percent: ts << "percent"; break;
-    case CalculationCategory::PercentNumber: ts << "percent-number"; break;
-    case CalculationCategory::PercentLength: ts << "percent-length"; break;
-    case CalculationCategory::Angle: ts << "angle"; break;
-    case CalculationCategory::Time: ts << "time"; break;
-    case CalculationCategory::Frequency: ts << "frequency"; break;
-    case CalculationCategory::Resolution: ts << "resolution"; break;
-    case CalculationCategory::Other: ts << "other"; break;
+    case Category::Number: ts << "number"; break;
+    case Category::Percent: ts << "percent"; break;
+    case Category::Length: ts << "length"; break;
+    case Category::Angle: ts << "angle"; break;
+    case Category::Time: ts << "time"; break;
+    case Category::Frequency: ts << "frequency"; break;
+    case Category::Resolution: ts << "resolution"; break;
+    case Category::Flex: ts << "flex"; break;
+    case Category::PercentLength: ts << "percent-length"; break;
     }
 
     return ts;
 }
 
-}
+} // namespace Calculation
+} // namespace WebCore

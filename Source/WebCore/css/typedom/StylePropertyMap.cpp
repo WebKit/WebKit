@@ -40,16 +40,15 @@
 
 namespace WebCore {
 
-static RefPtr<CSSValue> cssValueFromStyleValues(std::optional<CSSPropertyID> propertyID, Vector<Ref<CSSStyleValue>>&& values)
+static RefPtr<CSSValue> cssValueFromStyleValues(CSSPropertyID propertyID, Vector<Ref<CSSStyleValue>>&& values)
 {
     if (values.isEmpty())
         return nullptr;
 
     auto toCSSValue = [propertyID](CSSStyleValue& styleValue) {
-        if (propertyID)
-            return styleValue.toCSSValueWithProperty(*propertyID);
-        return styleValue.toCSSValue();
+        return styleValue.toCSSValueWithProperty(propertyID);
     };
+
     if (values.size() == 1)
         return toCSSValue(values[0]);
     CSSValueListBuilder list;
@@ -57,9 +56,7 @@ static RefPtr<CSSValue> cssValueFromStyleValues(std::optional<CSSPropertyID> pro
         if (auto cssValue = toCSSValue(value))
             list.append(cssValue.releaseNonNull());
     }
-    auto separator = ',';
-    if (propertyID)
-        separator = CSSProperty::listValuedPropertySeparator(*propertyID);
+    auto separator = CSSProperty::listValuedPropertySeparator(propertyID);
     return CSSValueList::create(separator, WTFMove(list));
 }
 
@@ -168,7 +165,7 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
     for (auto& styleValue : styleValues) {
         if (is<CSSUnparsedValue>(styleValue.get()))
             return Exception { ExceptionCode::TypeError, "Values cannot contain a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
-        if (auto cssValue = styleValue->toCSSValue())
+        if (auto cssValue = styleValue->toCSSValueWithProperty(propertyID))
             list.append(cssValue.releaseNonNull());
     }
 

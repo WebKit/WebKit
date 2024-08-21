@@ -32,43 +32,46 @@
 #include "config.h"
 #include "CalculationValue.h"
 
-#include "CalcExpressionNode.h"
-#include <limits>
+#include "CalculationTree+Copy.h"
+#include "CalculationTree+Evaluation.h"
+#include <cmath>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-Ref<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNode> value, ValueRange range)
+Ref<CalculationValue> CalculationValue::create(Calculation::Tree&& tree)
 {
-    return adoptRef(*new CalculationValue(WTFMove(value), range));
+    return adoptRef(*new CalculationValue(WTFMove(tree)));
 }
 
-CalculationValue::CalculationValue(std::unique_ptr<CalcExpressionNode> expression, ValueRange range)
-    : m_expression(WTFMove(expression))
-    , m_shouldClampToNonNegative(range == ValueRange::NonNegative)
+CalculationValue::CalculationValue(Calculation::Tree&& tree)
+    : m_tree(WTFMove(tree))
 {
 }
 
 CalculationValue::~CalculationValue() = default;
 
-float CalculationValue::evaluate(float maxValue) const
+Calculation::NumericValue CalculationValue::evaluate(Calculation::NumericValue percentResolutionLength) const
 {
-    float result = m_expression->evaluate(maxValue);
-    // FIXME: This test was originally needed when we did not detect division by zero at parse time.
-    // It's possible that this is now unneeded code and can be removed.
+    auto result = Calculation::evaluate(m_tree, percentResolutionLength);
     if (std::isnan(result))
         return 0;
-    return m_shouldClampToNonNegative && result < 0 ? 0 : result;
+    return m_tree.range == ValueRange::NonNegative && result < 0 ? 0 : result;
 }
 
-bool operator==(const CalculationValue& a, const CalculationValue& b)
+Calculation::Tree CalculationValue::copyTree() const
 {
-    return a.expression() == b.expression();
+    return Calculation::copy(m_tree);
+}
+
+bool CalculationValue::operator==(const CalculationValue& other) const
+{
+    return m_tree == other.m_tree;
 }
 
 TextStream& operator<<(TextStream& ts, const CalculationValue& value)
 {
-    return ts << "calc(" << value.expression() << ")";
+    return ts << "calc(" << value.tree() << ")";
 }
 
 } // namespace WebCore

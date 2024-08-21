@@ -36,6 +36,7 @@ namespace WebCore {
 
 class CSSCalcSymbolTable;
 class CSSCalcValue;
+class CSSToLengthConversionData;
 
 // Type-erased helpers to allow for shared code.
 bool unevaluatedCalcEqual(const Ref<CSSCalcValue>&, const Ref<CSSCalcValue>&);
@@ -113,15 +114,27 @@ void serializationForCSS(StringBuilder& builder, const UnevaluatedCalc<T>& uneva
 
 // MARK: - Evaluation
 
+AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>&, const CSSCalcSymbolTable&);
+NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>&, const CSSCalcSymbolTable&);
+PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>&, const CSSCalcSymbolTable&);
+LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>&, const CSSCalcSymbolTable&);
+ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>&, const CSSCalcSymbolTable&);
+TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>&, const CSSCalcSymbolTable&);
 
 template<typename T>
 auto evaluateCalc(const T& component, const CSSCalcSymbolTable&) -> T
+{
+    return component;
+}
+
+template<typename T>
+auto evaluateCalc(const T& component, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) -> T
 {
     return component;
 }
@@ -135,10 +148,26 @@ auto evaluateCalc(const std::variant<Ts...>& component, const CSSCalcSymbolTable
 }
 
 template<typename... Ts>
+auto evaluateCalc(const std::variant<Ts...>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> TypesMinusUnevaluatedCalcType<Ts...>
+{
+    return WTF::switchOn(component, [&](auto part) -> TypesMinusUnevaluatedCalcType<Ts...> {
+        return evaluateCalc(part, conversionData, symbolTable);
+    });
+}
+
+template<typename... Ts>
 auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusUnevaluatedCalcType<Ts...>>
 {
     if (component)
         return evaluateCalc(*component, symbolTable);
+    return std::nullopt;
+}
+
+template<typename... Ts>
+auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusUnevaluatedCalcType<Ts...>>
+{
+    if (component)
+        return evaluateCalc(*component, conversionData, symbolTable);
     return std::nullopt;
 }
 

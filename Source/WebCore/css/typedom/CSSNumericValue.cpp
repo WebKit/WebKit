@@ -30,14 +30,9 @@
 #include "config.h"
 #include "CSSNumericValue.h"
 
-#include "CSSCalcExpressionNode.h"
-#include "CSSCalcExpressionNodeParser.h"
-#include "CSSCalcInvertNode.h"
-#include "CSSCalcNegateNode.h"
-#include "CSSCalcOperationNode.h"
-#include "CSSCalcPrimitiveValueNode.h"
-#include "CSSCalcSymbolNode.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcTree+Parser.h"
+#include "CSSCalcTree+Simplification.h"
 #include "CSSMathClamp.h"
 #include "CSSMathInvert.h"
 #include "CSSMathMax.h"
@@ -52,6 +47,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
 #include "CSSUnitValue.h"
+#include "CalculationCategory.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/FixedVector.h>
@@ -63,19 +59,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
 // Explicitly prefixed name used to avoid conflicts with existing macros that can be indirectly #included.
 #define CSS_NUMERIC_RETURN_IF_EXCEPTION(resultVariable, expression) \
-    auto resultOrException = expression; \
-    if (resultOrException.hasException()) \
-        return resultOrException.releaseException(); \
-    auto resultVariable = resultOrException.releaseReturnValue()
-
-static Ref<CSSNumericValue> negateOrInvertIfRequired(CalcOperator parentOperator, Ref<CSSNumericValue>&& value)
-{
-    if (parentOperator == CalcOperator::Subtract)
-        return CSSMathNegate::create(WTFMove(value));
-    if (parentOperator == CalcOperator::Divide)
-        return CSSMathInvert::create(WTFMove(value));
-    return WTFMove(value);
-}
+    auto resultOrException_##resultVariable = expression; \
+    if (resultOrException_##resultVariable.hasException()) \
+        return resultOrException_##resultVariable.releaseException(); \
+    auto resultVariable = resultOrException_##resultVariable.releaseReturnValue()
 
 template<typename T> static ExceptionOr<Ref<CSSNumericValue>> convertToExceptionOrNumericValue(ExceptionOr<Ref<T>>&& input)
 {
@@ -88,31 +75,7 @@ template<typename T> static ExceptionOr<Ref<CSSNumericValue>> convertToException
     return static_reference_cast<CSSNumericValue>(WTFMove(input));
 }
 
-static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcPrimitiveValueNode& root)
-{
-    auto unit = root.primitiveType();
-    return convertToExceptionOrNumericValue(CSSUnitValue::create(root.doubleValue(unit, { }), unit));
-}
-
-static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcNegateNode& root)
-{
-    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, CSSNumericValue::reifyMathExpression(root.child()));
-    return convertToExceptionOrNumericValue(CSSMathNegate::create(WTFMove(child)));
-}
-
-static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcInvertNode& root)
-{
-    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, CSSNumericValue::reifyMathExpression(root.child()));
-    return convertToExceptionOrNumericValue(CSSMathInvert::create(WTFMove(child)));
-}
-
-static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcSymbolNode&)
-{
-    // CSS Typed OM doesn't currently support unresolved symbols.
-    return Exception { ExceptionCode::UnknownError };
-}
-
-static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vector<Ref<CSSCalcExpressionNode>>& nodes)
+static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const CSSCalc::Children& nodes)
 {
     Vector<Ref<CSSNumericValue>> values;
     values.reserveInitialCapacity(nodes.size());
@@ -123,49 +86,83 @@ static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const Vect
     return values;
 }
 
-static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalcOperationNode& root)
+template<CSSCalc::Numeric T> static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const T& root)
 {
-    if (root.calcOperator() == CalcOperator::Min) {
-        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
-        return convertToExceptionOrNumericValue(CSSMathMin::create(WTFMove(values)));
-    }
-    if (root.calcOperator() == CalcOperator::Max) {
-        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
-        return convertToExceptionOrNumericValue(CSSMathMax::create(WTFMove(values)));
-    }
-    if (root.calcOperator() == CalcOperator::Clamp) {
-        CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root.children()));
-        return convertToExceptionOrNumericValue(CSSMathClamp::create(WTFMove(values[0]), WTFMove(values[1]), WTFMove(values[2])));
-    }
+    return convertToExceptionOrNumericValue(CSSUnitValue::create(root.value, CSSCalc::toCSSUnit(root)));
+}
 
-    Vector<Ref<CSSNumericValue>> values;
-    values.reserveInitialCapacity(root.children().size());
-    for (auto& child : root.children()) {
-        CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(child.get()));
-        values.append(negateOrInvertIfRequired(root.calcOperator(), WTFMove(value)));
-    }
-    if (root.calcOperator() == CalcOperator::Add || root.calcOperator() == CalcOperator::Subtract)
-        return convertToExceptionOrNumericValue(CSSMathSum::create(WTFMove(values)));
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::Symbol&)
+{
+    // CSS Typed OM doesn't currently support unresolved symbols.
+    return Exception { ExceptionCode::UnknownError };
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Sum>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root->children));
+    return convertToExceptionOrNumericValue(CSSMathSum::create(WTFMove(values)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Product>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root->children));
     return convertToExceptionOrNumericValue(CSSMathProduct::create(WTFMove(values)));
 }
 
-// https://drafts.css-houdini.org/css-typed-om/#reify-a-math-expression
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSSCalcExpressionNode& root)
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Negate>& root)
 {
-    switch (root.type()) {
-    case CSSCalcExpressionNode::CssCalcPrimitiveValue:
-        return WebCore::reifyMathExpression(downcast<CSSCalcPrimitiveValueNode>(root));
-    case CSSCalcExpressionNode::CssCalcOperation:
-        return WebCore::reifyMathExpression(downcast<CSSCalcOperationNode>(root));
-    case CSSCalcExpressionNode::CssCalcNegate:
-        return WebCore::reifyMathExpression(downcast<CSSCalcNegateNode>(root));
-    case CSSCalcExpressionNode::CssCalcInvert:
-        return WebCore::reifyMathExpression(downcast<CSSCalcInvertNode>(root));
-    case CSSCalcExpressionNode::CssCalcSymbol:
-        return WebCore::reifyMathExpression(downcast<CSSCalcSymbolNode>(root));
-    }
-    ASSERT_NOT_REACHED();
-    return Exception { ExceptionCode::SyntaxError };
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, CSSNumericValue::reifyMathExpression(root->a));
+    return convertToExceptionOrNumericValue(CSSMathNegate::create(WTFMove(child)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Invert>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(child, CSSNumericValue::reifyMathExpression(root->a));
+    return convertToExceptionOrNumericValue(CSSMathInvert::create(WTFMove(child)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Min>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root->children));
+    return convertToExceptionOrNumericValue(CSSMathMin::create(WTFMove(values)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Max>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(values, reifyMathExpressions(root->children));
+    return convertToExceptionOrNumericValue(CSSMathMax::create(WTFMove(values)));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<CSSCalc::Clamp>& root)
+{
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(min, CSSNumericValue::reifyMathExpression(root->min));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(val, CSSNumericValue::reifyMathExpression(root->val));
+    CSS_NUMERIC_RETURN_IF_EXCEPTION(max, CSSNumericValue::reifyMathExpression(root->max));
+    return convertToExceptionOrNumericValue(CSSMathClamp::create(WTFMove(min), WTFMove(val), WTFMove(max)));
+}
+
+template<typename Op> static ExceptionOr<Ref<CSSNumericValue>> reifyMathExpression(const CSSCalc::IndirectNode<Op>&)
+{
+    return Exception { ExceptionCode::UnknownError };
+}
+
+// https://drafts.css-houdini.org/css-typed-om/#reify-a-math-expression
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSSCalc::Tree& tree)
+{
+    return CSSNumericValue::reifyMathExpression(tree.root);
+}
+
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSSCalc::Child& root)
+{
+    return WTF::switchOn(root, [](const auto& child) { return WebCore::reifyMathExpression(child); });
+}
+
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSSCalc::ChildOrNone& root)
+{
+    return WTF::switchOn(root,
+        [](const CSSCalc::Child& child) -> ExceptionOr<Ref<CSSNumericValue>> { return CSSNumericValue::reifyMathExpression(child); },
+        [](const NoneRaw&) -> ExceptionOr<Ref<CSSNumericValue>> { return Exception { ExceptionCode::UnknownError }; }
+    );
 }
 
 static Ref<CSSNumericValue> negate(Ref<CSSNumericValue>&& value)
@@ -459,9 +456,27 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     case CSSParserTokenType::FunctionToken: {
         auto functionID = componentValueRange.peek().functionId();
         if (functionID == CSSValueCalc || functionID == CSSValueMin || functionID == CSSValueMax || functionID == CSSValueClamp) {
-            CSSCalcExpressionNodeParser parser(CalculationCategory::Length, { });
-            if (auto expression = parser.parseCalc(CSSPropertyParserHelpers::consumeFunction(componentValueRange), functionID, false))
-                return reifyMathExpression(*expression);
+            // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::PercentLength`, as it is the most permissive.
+            // See https://github.com/w3c/csswg-drafts/issues/10753
+
+            auto parserOptions = CSSCalc::ParserOptions {
+                .category = Calculation::Category::PercentLength,
+                .allowedSymbols = { },
+                .range = ValueRange::All
+            };
+            auto simplificationOptions = CSSCalc::SimplificationOptions {
+                .category = Calculation::Category::PercentLength,
+                .conversionData = std::nullopt,
+                .symbolTable = { },
+                .allowZeroValueLengthRemovalFromSum = false,
+                .allowUnresolvedUnits = false,
+                .allowNonMatchingUnits = false
+            };
+            auto tree = CSSCalc::parseAndSimplify(CSSPropertyParserHelpers::consumeFunction(componentValueRange), functionID, parserOptions, simplificationOptions);
+            if (!tree)
+                return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
+
+            return reifyMathExpression(*tree);
         }
         break;
     }
