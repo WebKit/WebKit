@@ -29,6 +29,7 @@
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
@@ -42,7 +43,7 @@ class Performance;
 using PerformanceEntryMap = HashMap<String, Vector<Ref<PerformanceEntry>>>;
 
 class PerformanceUserTiming {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceUserTiming);
 public:
     explicit PerformanceUserTiming(Performance&);
 

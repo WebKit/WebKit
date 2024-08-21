@@ -32,6 +32,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 class ConsoleMessage;
@@ -49,7 +50,7 @@ class Document;
 class Page;
 
 class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr<PageConsoleClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PageConsoleClient, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageConsoleClient);
 public:
     explicit PageConsoleClient(Page&);

@@ -29,6 +29,7 @@
 
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ namespace WebCore {
 class DOMTimer;
 
 class DOMTimerHoldingTank {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DOMTimerHoldingTank);
 public:
     DOMTimerHoldingTank();
     ~DOMTimerHoldingTank();

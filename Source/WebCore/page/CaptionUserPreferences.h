@@ -32,6 +32,7 @@
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ enum class CaptionUserPreferencesDisplayMode : uint8_t {
 };
 
 class CaptionUserPreferences : public RefCounted<CaptionUserPreferences>, public CanMakeWeakPtr<CaptionUserPreferences> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferences);
 public:
     static Ref<CaptionUserPreferences> create(PageGroup&);
     virtual ~CaptionUserPreferences();
@@ -141,7 +142,7 @@ private:
 };
 
 class CaptionUserPreferencesTestingModeToken {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferencesTestingModeToken);
 public:
     CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
         : m_parent(parent)

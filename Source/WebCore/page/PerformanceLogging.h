@@ -27,6 +27,7 @@
 
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class Page;
 enum class ShouldIncludeExpensiveComputations : bool { No, Yes };
 
 class PerformanceLogging {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceLogging);
     WTF_MAKE_NONCOPYABLE(PerformanceLogging);
 public:
     explicit PerformanceLogging(Page&);

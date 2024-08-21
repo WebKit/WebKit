@@ -33,10 +33,13 @@
 #include "LocalFrame.h"
 #include "ParsingUtilities.h"
 #include "SecurityContext.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicyDirectiveList);
 
 template<typename CharacterType> static bool isDirectiveNameCharacter(CharacterType c)
 {

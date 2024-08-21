@@ -34,10 +34,13 @@
 #include "Page.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageDebuggable);
 
 PageDebuggable::PageDebuggable(Page& page)
     : m_page(page)

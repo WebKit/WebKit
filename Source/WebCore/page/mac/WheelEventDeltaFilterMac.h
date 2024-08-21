@@ -30,13 +30,14 @@
 #include "WheelEventDeltaFilter.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS _NSScrollingPredominantAxisFilter;
 
 namespace WebCore {
 
 class WheelEventDeltaFilterMac final : public WheelEventDeltaFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(xWheelEventDeltaFilterMac);
 public:
     WheelEventDeltaFilterMac();
 

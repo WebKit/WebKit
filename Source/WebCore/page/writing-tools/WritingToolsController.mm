@@ -46,8 +46,12 @@
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
 #import <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WritingToolsController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WritingToolsControllerEditingScope, WritingToolsController::EditingScope);
 
 #pragma mark - EditingScope
 

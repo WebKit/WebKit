@@ -49,6 +49,7 @@
 #include "StorageMap.h"
 #include <limits>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MockRealtimeMediaSourceCenter.h"
@@ -58,6 +59,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SettingsBase);
 
 static void invalidateAfterGenericFamilyChange(Page* page)
 {

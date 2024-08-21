@@ -98,6 +98,7 @@
 #include "WebContentReader.h"
 #include "markup.h"
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #endif
 
@@ -110,6 +111,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DragController);
 
 bool isDraggableLink(const Element& element)
 {

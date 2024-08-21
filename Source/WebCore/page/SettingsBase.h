@@ -47,6 +47,7 @@
 #include <unicode/uscript.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
@@ -59,7 +60,8 @@ namespace WebCore {
 class Page;
 
 class SettingsBase {
-    WTF_MAKE_NONCOPYABLE(SettingsBase); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SettingsBase);
+    WTF_MAKE_NONCOPYABLE(SettingsBase);
 public:
 
 #if ENABLE(MEDIA_SOURCE)

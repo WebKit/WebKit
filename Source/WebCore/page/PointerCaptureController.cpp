@@ -34,12 +34,15 @@
 #include "Page.h"
 #include "PointerEvent.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(POINTER_LOCK)
 #include "PointerLockController.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerCaptureController);
 
 PointerCaptureController::PointerCaptureController(Page& page)
     : m_page(page)

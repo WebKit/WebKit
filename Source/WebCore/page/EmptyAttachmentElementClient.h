@@ -28,11 +28,12 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "AttachmentElementClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class EmptyAttachmentElementClient final : public AttachmentElementClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyAttachmentElementClient);
 public:
     EmptyAttachmentElementClient() = default;
 

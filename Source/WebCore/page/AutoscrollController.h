@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include "Timer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -54,7 +55,7 @@ constexpr Seconds autoscrollInterval { 50_ms };
 
 // AutscrollController handles autoscroll and pan scroll for EventHandler.
 class AutoscrollController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AutoscrollController);
 public:
     AutoscrollController();
     RenderBox* autoscrollRenderer() const;

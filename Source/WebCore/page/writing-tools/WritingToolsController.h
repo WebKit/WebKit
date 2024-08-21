@@ -31,7 +31,7 @@
 #import "WritingToolsCompositionCommand.h"
 #import "WritingToolsTypes.h"
 #import <wtf/CheckedPtr.h>
-#import <wtf/FastMalloc.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -49,7 +49,7 @@ struct SimpleRange;
 enum class TextAnimationRunMode : uint8_t;
 
 class WritingToolsController final : public CanMakeWeakPtr<WritingToolsController>, public CanMakeCheckedPtr<WritingToolsController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WritingToolsController);
     WTF_MAKE_NONCOPYABLE(WritingToolsController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WritingToolsController);
 
@@ -129,7 +129,8 @@ private:
     };
 
     class EditingScope {
-        WTF_MAKE_NONCOPYABLE(EditingScope); WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(EditingScope);
+        WTF_MAKE_NONCOPYABLE(EditingScope);
     public:
         EditingScope(Document&);
         ~EditingScope();

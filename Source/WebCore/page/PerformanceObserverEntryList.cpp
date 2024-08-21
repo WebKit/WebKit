@@ -27,8 +27,11 @@
 #include "PerformanceObserverEntryList.h"
 
 #include "PerformanceEntry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceObserverEntryList);
 
 Ref<PerformanceObserverEntryList> PerformanceObserverEntryList::create(Vector<Ref<PerformanceEntry>>&& entries)
 {

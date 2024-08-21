@@ -68,6 +68,7 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -86,6 +87,8 @@
 
 namespace WebCore {
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageConsoleClient);
 
 PageConsoleClient::PageConsoleClient(Page& page)
     : m_page(page)

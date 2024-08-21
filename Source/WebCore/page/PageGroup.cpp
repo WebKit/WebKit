@@ -35,6 +35,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 #if PLATFORM(MAC) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -45,6 +46,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageGroup);
 
 static unsigned getUniqueIdentifier()
 {

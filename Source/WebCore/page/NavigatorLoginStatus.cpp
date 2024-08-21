@@ -34,8 +34,11 @@
 #include "Page.h"
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorLoginStatus);
 
 NavigatorLoginStatus* NavigatorLoginStatus::from(Navigator& navigator)
 {

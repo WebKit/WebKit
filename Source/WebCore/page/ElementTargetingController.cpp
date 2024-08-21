@@ -67,9 +67,12 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ElementTargetingController);
 
 static constexpr auto maximumNumberOfClasses = 5;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
@@ -119,7 +122,7 @@ static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
 
 class ClearVisibilityAdjustmentForScope {
     WTF_MAKE_NONCOPYABLE(ClearVisibilityAdjustmentForScope);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ClearVisibilityAdjustmentForScope);
 public:
     ClearVisibilityAdjustmentForScope(Element& element)
         : m_element(element)

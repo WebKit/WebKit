@@ -29,6 +29,7 @@
 #include "ScrollTypes.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -46,7 +47,7 @@ class ScrollableArea;
 class WeakPtrImplWithEventTargetData;
 
 class ScrollLatchingController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollLatchingController);
 public:
     ScrollLatchingController();
     ~ScrollLatchingController();

@@ -36,6 +36,7 @@
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -49,7 +50,7 @@ class Node;
 class Page;
 
 class ElementTargetingController final : public CanMakeCheckedPtr<ElementTargetingController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ElementTargetingController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementTargetingController);
 public:
     ElementTargetingController(Page&);

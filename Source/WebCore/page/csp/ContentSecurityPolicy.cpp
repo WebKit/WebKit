@@ -64,6 +64,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
@@ -71,6 +72,8 @@
 
 namespace WebCore {
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicy);
 
 static String consoleMessageForViolation(const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, ASCIILiteral prefix, ASCIILiteral subject = "it"_s)
 {

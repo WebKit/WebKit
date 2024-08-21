@@ -30,6 +30,7 @@
 #include "IntRect.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -61,8 +62,8 @@ public:
 };
 
 class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeWeakPtr<PageOverlay> {
+    WTF_MAKE_TZONE_ALLOCATED(PageOverlay);
     WTF_MAKE_NONCOPYABLE(PageOverlay);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class OverlayType : bool {
         View, // Fixed to the view size; does not scale or scroll with the document, repaints on scroll.

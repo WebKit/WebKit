@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "FloatPoint.h"
 #include "ScrollTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ enum class CandidateExaminationResult {
 };
 
 class ScrollAnchoringController final : public CanMakeWeakPtr<ScrollAnchoringController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnchoringController);
 public:
     explicit ScrollAnchoringController(ScrollableArea&);
     ~ScrollAnchoringController();

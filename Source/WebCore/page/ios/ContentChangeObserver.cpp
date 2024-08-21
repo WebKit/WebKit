@@ -43,11 +43,14 @@
 #include "RenderDescendantIterator.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentChangeObserver);
 
 #if ENABLE(FULLSCREEN_API)
 static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)

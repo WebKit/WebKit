@@ -39,6 +39,7 @@
 #import <WebCore/ScrollableArea.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 @interface WebScrollerImpPairDelegateMac : NSObject <NSScrollerImpPairDelegate> {
     ThreadSafeWeakPtr<WebCore::ScrollerPairMac> _scrollerPair;
@@ -132,6 +133,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollerPairMac);
 
 ScrollerPairMac::ScrollerPairMac(ScrollingTreeScrollingNode& node)
     : m_scrollingNode(node)

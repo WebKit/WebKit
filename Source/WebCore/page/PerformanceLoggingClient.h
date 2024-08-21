@@ -26,15 +26,15 @@
 #pragma once
 
 #include "ScrollingCoordinatorTypes.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class PerformanceLoggingClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceLoggingClient);
 public:
     enum class ScrollingEvent {
         LoggingEnabled,

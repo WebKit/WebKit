@@ -33,8 +33,8 @@
 #include "TextChecking.h"
 #include "UndoStep.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,7 +64,7 @@ struct GrammarDetail;
 struct SimpleRange;
 
 class EditorClient : public CanMakeWeakPtr<EditorClient>, public CanMakeCheckedPtr<EditorClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EditorClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EditorClient);
 public:
     virtual ~EditorClient() = default;

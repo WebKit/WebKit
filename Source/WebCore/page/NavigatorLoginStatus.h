@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class Navigator;
 enum class IsLoggedIn : uint8_t;
 
 class NavigatorLoginStatus final : public Supplement<Navigator>, public CanMakeWeakPtr<NavigatorLoginStatus> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorLoginStatus);
 public:
     explicit NavigatorLoginStatus(Navigator& navigator)
         : m_navigator(navigator)

@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "SimpleRange.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakRef.h>
 
@@ -56,7 +57,8 @@ struct PromisedAttachmentInfo;
 struct RemoteUserInputEventData;
 
 class DragController {
-    WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DragController);
+    WTF_MAKE_NONCOPYABLE(DragController);
 public:
     DragController(Page&, std::unique_ptr<DragClient>&&);
     ~DragController();

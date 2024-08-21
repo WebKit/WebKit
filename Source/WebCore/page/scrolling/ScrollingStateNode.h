@@ -31,6 +31,7 @@
 #include "ScrollingCoordinator.h"
 #include <stdint.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -273,7 +274,7 @@ enum class ScrollingStateNodeProperty : uint64_t {
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingStateNode);
 public:
     virtual ~ScrollingStateNode();
 

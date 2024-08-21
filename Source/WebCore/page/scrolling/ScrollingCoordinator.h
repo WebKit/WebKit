@@ -37,6 +37,7 @@
 #include "WheelEventTestMonitor.h"
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/TypeCasts.h>
@@ -66,7 +67,7 @@ using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
 class ScrollingCoordinator : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingCoordinator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingCoordinator);
 public:
     static Ref<ScrollingCoordinator> create(Page*);
     virtual ~ScrollingCoordinator();
