@@ -1876,6 +1876,9 @@ RefPtr<Image> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(E
     if (!renderer)
         return { };
 
+    if (!renderer->isRenderReplaced() && !renderer->firstChild() && !renderer->style().hasBackgroundImage())
+        return { };
+
     auto backgroundColor = frameView->baseBackgroundColor();
     frameView->setBaseBackgroundColor(Color::transparentBlack);
     frameView->setNodeToDraw(element.get());

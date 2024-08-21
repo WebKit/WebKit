@@ -1264,6 +1264,7 @@
 		F4BC0B142146C849002A0478 /* FocusPreservationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */; };
 		F4BDA43027F8D19C00F9647D /* element-fullscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4BDA42F27F8CF5600F9647D /* element-fullscreen.html */; };
 		F4BFA68E1E4AD08000154298 /* LegacyDragAndDropTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4BFA68C1E4AD08000154298 /* LegacyDragAndDropTests.mm */; };
+		F4C1275A2C756B56000BC609 /* element-targeting-10.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4C127522C756B3A000BC609 /* element-targeting-10.html */; };
 		F4C2AB221DD6D95E00E06D5B /* enormous-video-with-sound.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */; };
 		F4C3F2AB2C4488730029A47D /* click-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4C3F2A32C44832B0029A47D /* click-targets.html */; };
 		F4C8797F2059D8D3009CD00B /* ScrollViewInsetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */; };
@@ -1649,6 +1650,7 @@
 				F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */,
 				F4BDA43027F8D19C00F9647D /* element-fullscreen.html in Copy Resources */,
 				F4DADD072BABAD0F008B398F /* element-targeting-1.html in Copy Resources */,
+				F4C1275A2C756B56000BC609 /* element-targeting-10.html in Copy Resources */,
 				F4365E2B2BB11829005E8C1A /* element-targeting-2.html in Copy Resources */,
 				F41E446D2BBCDD81002A856F /* element-targeting-3.html in Copy Resources */,
 				F44A2A772BC205060044694E /* element-targeting-4.html in Copy Resources */,
@@ -3687,6 +3689,7 @@
 		F4BDA42E27F8BF2F00F9647D /* FullscreenVideoTextRecognition.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenVideoTextRecognition.mm; sourceTree = "<group>"; };
 		F4BDA42F27F8CF5600F9647D /* element-fullscreen.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-fullscreen.html"; sourceTree = "<group>"; };
 		F4BFA68C1E4AD08000154298 /* LegacyDragAndDropTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyDragAndDropTests.mm; sourceTree = "<group>"; };
+		F4C127522C756B3A000BC609 /* element-targeting-10.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-10.html"; sourceTree = "<group>"; };
 		F4C192CD2B027C93001F75CE /* TestResourceLoadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestResourceLoadDelegate.h; path = cocoa/TestResourceLoadDelegate.h; sourceTree = "<group>"; };
 		F4C192CE2B027C93001F75CE /* TestResourceLoadDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestResourceLoadDelegate.mm; path = cocoa/TestResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "enormous-video-with-sound.html"; sourceTree = "<group>"; };
@@ -4908,6 +4911,7 @@
 				F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */,
 				F4BDA42F27F8CF5600F9647D /* element-fullscreen.html */,
 				F4DADCFF2BABA80C008B398F /* element-targeting-1.html */,
+				F4C127522C756B3A000BC609 /* element-targeting-10.html */,
 				F4365E232BB1181A005E8C1A /* element-targeting-2.html */,
 				F41E44652BBCDC74002A856F /* element-targeting-3.html */,
 				F44A2A6E2BC202840044694E /* element-targeting-4.html */,

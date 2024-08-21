@@ -437,6 +437,22 @@ TEST(ElementTargeting, SnapshotElementWithVisibilityAdjustment)
     checkPixelColor(10, reader.height() - 10);
 }
 
+TEST(ElementTargeting, SkipSnapshotForNonReplacedElementWithoutChildren)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+    auto viewAndWindow = setUpWebViewForSnapshotting(webViewFrame);
+    auto [webView, window] = viewAndWindow;
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-10"];
+
+    RetainPtr targets = [webView targetedElementInfoWithSelectors:@[ [NSSet setWithObject:@"DIV.fixed"] ]];
+
+    EXPECT_EQ([targets count], 1U);
+    [webView adjustVisibilityForTargets:targets.get()];
+
+    EXPECT_NULL([[targets firstObject] takeSnapshot]);
+}
+
 TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
 {
     auto webViewFrame = CGRectMake(0, 0, 800, 600);
