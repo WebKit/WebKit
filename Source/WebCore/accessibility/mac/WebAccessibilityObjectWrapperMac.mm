@@ -3260,11 +3260,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!object)
                 return nil;
 
-            NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+            RetainPtr result = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
                 object->wrapper(), @"AXSearchResultElement",
                 textMarkerRange->platformData().bridgingAutorelease(), @"AXSearchResultRange",
-                nil];
-            return [[NSArray alloc] initWithObjects:result, nil];
+                nil]);
+            return [[[NSArray alloc] initWithObjects:result.get(), nil] autorelease];
         }
     }
 
