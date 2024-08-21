@@ -1289,17 +1289,26 @@ void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::U
     legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTFMove(completionHandler), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::showSelectionForActiveWritingToolsSession()
+void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimationImpl()
 {
-    if (!hasRunningProcess())
-        return;
-
-    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
+    protectedPageClient()->didEndPartialIntelligenceTextPonderingAnimation();
 }
 
 void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&)
 {
-    protectedPageClient()->didEndPartialIntelligenceTextPonderingAnimation();
+    didEndPartialIntelligenceTextPonderingAnimationImpl();
+}
+
+void WebPageProxy::showSelectionForActiveWritingToolsSessionIfNeeded()
+{
+    if (!hasRunningProcess())
+        return;
+
+    if (protectedPageClient()->intelligenceTextPonderingAnimationIsComplete()) {
+        // If the entire replacement has already been completed, and this is the end of the last animation,
+        // then reveal the selection.
+        legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
+    }
 }
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)

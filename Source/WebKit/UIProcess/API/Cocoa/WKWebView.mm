@@ -1835,43 +1835,6 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     }
 }
 
-#if ENABLE(WRITING_TOOLS_UI)
-
-- (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
-{
-#if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
-#else
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
-    if (!uuid)
-        return;
-
-    _impl->addTextAnimationForAnimationID(*uuid, data);
-#endif
-}
-
-- (void)_removeTextAnimationForAnimationID:(NSUUID *)nsUUID
-{
-#if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextAnimationForAnimationID:nsUUID];
-#else
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
-    if (!uuid)
-        return;
-
-    _impl->removeTextAnimationForAnimationID(*uuid);
-#endif
-}
-
-- (void)_didEndPartialIntelligenceTextPonderingAnimation
-{
-#if PLATFORM(MAC)
-    _impl->didEndPartialIntelligenceTextPonderingAnimation();
-#endif
-}
-
-#endif
-
 - (WKPageRef)_pageForTesting
 {
     return toAPI(_page.get());
@@ -2273,9 +2236,8 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
     }
 
-#if PLATFORM(MAC)
-    _impl->writingToolsCompositionSessionDidReceiveReplacements(webSession->identifier, finished);
-#endif
+    _writingToolsTextReplacementsFinished = finished;
+    _partialIntelligenceTextPonderingAnimationCount += 1;
 
     _page->compositionSessionDidReceiveTextWithReplacementRange(*webSession, WebCore::AttributedString::fromNSAttributedString(attributedText), { range }, *webContext, finished);
 }
@@ -2290,13 +2252,10 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
     auto webAction = WebKit::convertToWebAction(action);
 
-#if PLATFORM(MAC)
-    if (webAction == WebCore::WritingTools::Action::Restart && webSession->compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply) {
-        // This must be done in the UI process to avoid any race conditions that may result from IPC
-        // to/from the web process with the UI process animations.
-        _impl->writingToolsCompositionSessionDidReceiveRestartAction();
+    if (webAction == WebCore::WritingTools::Action::Restart) {
+        _writingToolsTextReplacementsFinished = false;
+        _partialIntelligenceTextPonderingAnimationCount = 0;
     }
-#endif
 
     _page->writingToolsSessionDidReceiveAction(*webSession, webAction);
 }
@@ -2333,6 +2292,101 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         return;
 
     [textViewDelegate proofreadingSessionWithUUID:[_activeWritingToolsSession uuid] updateState:WebKit::convertToPlatformTextSuggestionState(state) forSuggestionWithUUID:replacementUUID];
+}
+
+- (void)_didEndPartialIntelligenceTextPonderingAnimation
+{
+    if (!_partialIntelligenceTextPonderingAnimationCount) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    _partialIntelligenceTextPonderingAnimationCount -= 1;
+}
+
+- (BOOL)_intelligenceTextPonderingAnimationIsComplete
+{
+    return !_partialIntelligenceTextPonderingAnimationCount && _writingToolsTextReplacementsFinished;
+}
+
+#endif
+
+#if ENABLE(WRITING_TOOLS_UI)
+
+- (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextAnimationForAnimationID:nsUUID withStyleType:toWKTextAnimationType(data.style)];
+#else
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
+    if (!uuid)
+        return;
+
+    _impl->addTextAnimationForAnimationID(*uuid, data);
+#endif
+}
+
+- (void)_removeTextAnimationForAnimationID:(NSUUID *)nsUUID
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView removeTextAnimationForAnimationID:nsUUID];
+#else
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
+    if (!uuid)
+        return;
+
+    _impl->removeTextAnimationForAnimationID(*uuid);
+#endif
+}
+
+- (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID
+{
+    RetainPtr nsUUID = [NSUUID UUID];
+
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid)
+        return nil;
+
+    _page->enableSourceTextAnimationAfterElementWithID(elementID);
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
+#else
+    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
+#endif
+
+    return nsUUID.get();
+}
+
+- (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID
+{
+    RetainPtr nsUUID = [NSUUID UUID];
+
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid)
+        return nil;
+
+    _page->enableTextAnimationTypeForElementWithID(elementID);
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
+#else
+    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
+#endif
+
+    return nsUUID.get();
+}
+
+- (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView removeTextAnimationForAnimationID:nsUUID];
+#else
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
+    if (!uuid)
+        return;
+    _impl->removeTextAnimationForAnimationID(*uuid);
+#endif
 }
 
 #endif
@@ -3150,75 +3204,27 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSUUID *)_enableTextIndicatorStylingAfterElementWithID:(NSString *)elementID
 {
+#if ENABLE(WRITING_TOOLS_UI)
     return [self _enableSourceTextAnimationAfterElementWithID:elementID];
+#else
+    return nil;
+#endif
 }
 
 - (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
 {
+#if ENABLE(WRITING_TOOLS_UI)
     return [self _enableFinalTextAnimationForElementWithID:elementID];
+#else
+    return nil;
+#endif
 }
 
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
-    return [self _disableTextAnimationWithUUID:nsUUID];
-}
-
-- (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID
-{
-    RetainPtr nsUUID = [NSUUID UUID];
-
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
-    if (!uuid)
-        return nil;
-
 #if ENABLE(WRITING_TOOLS_UI)
-    _page->enableSourceTextAnimationAfterElementWithID(elementID);
-
-#if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeInitial];
-#elif PLATFORM(MAC)
-    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
+    [self _disableTextAnimationWithUUID:nsUUID];
 #endif
-    return nsUUID.get();
-#else // ENABLE(WRITING_TOOLS_UI)
-    return nil;
-#endif
-}
-
-- (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID
-{
-    RetainPtr nsUUID = [NSUUID UUID];
-
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
-    if (!uuid)
-        return nil;
-
-#if ENABLE(WRITING_TOOLS_UI)
-    _page->enableTextAnimationTypeForElementWithID(elementID);
-
-#if PLATFORM(IOS_FAMILY)
-    [_contentView addTextAnimationForAnimationID:nsUUID.get() withStyleType:WKTextAnimationTypeFinal];
-#elif PLATFORM(MAC)
-    _impl->addTextAnimationForAnimationID(*uuid, { WebCore::TextAnimationType::Final, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) });
-#endif
-    return nsUUID.get();
-#else // ENABLE(WRITING_TOOLS_UI)
-    return nil;
-#endif
-}
-
-- (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID
-{
-#if ENABLE(WRITING_TOOLS_UI)
-#if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextAnimationForAnimationID:nsUUID];
-#elif PLATFORM(MAC)
-    auto uuid = WTF::UUID::fromNSUUID(nsUUID);
-    if (!uuid)
-        return;
-    _impl->removeTextAnimationForAnimationID(*uuid);
-#endif
-#endif // ENABLE(WRITING_TOOLS_UI)
 }
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion

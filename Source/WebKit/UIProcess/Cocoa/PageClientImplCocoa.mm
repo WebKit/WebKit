@@ -157,23 +157,6 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(WRITING_TOOLS_UI)
-void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
-{
-    [m_webView _addTextAnimationForAnimationID:uuid withData:data];
-}
-
-void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
-{
-    [m_webView _removeTextAnimationForAnimationID:uuid];
-}
-
-void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
-{
-    [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
-}
-#endif
-
 void PageClientImplCocoa::pageClosed()
 {
     m_alternativeTextUIController->clear();
@@ -313,6 +296,29 @@ void PageClientImplCocoa::writingToolsActiveWillChange()
 void PageClientImplCocoa::writingToolsActiveDidChange()
 {
     [m_webView didChangeValueForKey:writingToolsActiveKey];
+}
+
+void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
+{
+    [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
+}
+
+bool PageClientImplCocoa::intelligenceTextPonderingAnimationIsComplete()
+{
+    return [m_webView _intelligenceTextPonderingAnimationIsComplete];
+}
+
+#endif
+
+#if ENABLE(WRITING_TOOLS_UI)
+void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
+{
+    [m_webView _addTextAnimationForAnimationID:uuid withData:data];
+}
+
+void PageClientImplCocoa::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
+{
+    [m_webView _removeTextAnimationForAnimationID:uuid];
 }
 #endif
 
