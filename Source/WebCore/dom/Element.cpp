@@ -5259,9 +5259,6 @@ bool Element::isWritingSuggestionsEnabled() const
     if (equalLettersIgnoringASCIICase(autocompleteValue, "off"_s))
         return false;
 
-    if (protectedDocument()->quirks().shouldDisableWritingSuggestionsByDefault())
-        return false;
-
     // Otherwise, return `true`.
     return true;
 }
