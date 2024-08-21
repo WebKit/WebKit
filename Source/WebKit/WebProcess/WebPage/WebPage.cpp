@@ -3125,18 +3125,15 @@ static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage
     return DestinationColorSpace::SRGB();
 }
 
-static ImageOptions snapshotImageOptions(LocalFrame& frame)
-{
-#if ENABLE(PDF_PLUGIN)
-    return WebPage::pluginViewForFrame(&frame) ? ImageOption::Local : ImageOption::Shareable;
-#else
-    return ImageOption::Shareable;
-#endif
-}
-
 RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, LocalFrame& frame, LocalFrameView& frameView)
 {
-    auto snapshot = WebImage::create(bitmapSize, snapshotImageOptions(frame), snapshotColorSpace(options, *this), &m_page->chrome().client());
+#if ENABLE(PDF_PLUGIN)
+    auto imageOptions = m_pluginViews.computeSize() ? ImageOption::Local : ImageOption::Shareable;
+#else
+    auto imageOptions = ImageOption::Shareable;
+#endif
+
+    auto snapshot = WebImage::create(bitmapSize, imageOptions, snapshotColorSpace(options, *this), &m_page->chrome().client());
     if (!snapshot->context())
         return nullptr;
 
