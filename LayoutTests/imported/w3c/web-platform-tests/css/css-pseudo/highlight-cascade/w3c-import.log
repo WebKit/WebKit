@@ -1,0 +1,95 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/cascade-highlight-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-006-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-006-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed-visited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-properties-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-painting-text-shadow-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-explicit-default-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-currentcolor-root-implicit-default-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-004-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-004-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-computed-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-inheritance-computed-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-pseudos-visited-computed-001.html

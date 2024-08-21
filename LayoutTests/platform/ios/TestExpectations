@@ -3648,11 +3648,10 @@ webkit.org/b/203450 imported/w3c/web-platform-tests/css/css-position/sticky/stic
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-043.html [ Pass ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-045.html [ Pass ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-057.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-006.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-006.html [ Pass ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-002.html [ Pass ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-003.html [ Pass ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-004.html [ Pass ]
@@ -3799,7 +3798,10 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html [ Pass Failure ]
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 
-webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade/highlight-cascade-008.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ Pass ]
 
 webkit.org/b/248100 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ DumpJSConsoleLogInStdErr ]
 
