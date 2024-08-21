@@ -617,6 +617,12 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
             if (!m_delegateMethods.shouldChangeSelectedRange)
                 return true;
 
+            if (!fromRange && !toRange)
+                return false;
+
+            if (!fromRange || !toRange)
+                return true;
+
             auto apiFromRange = adoptNS([[WKDOMRange alloc] _initWithImpl:createLiveRange(fromRange).get()]);
             auto apiToRange = adoptNS([[WKDOMRange alloc] _initWithImpl:createLiveRange(toRange).get()]);
 #if PLATFORM(IOS_FAMILY)
