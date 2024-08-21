@@ -1421,7 +1421,7 @@ class FindModifiedLayoutTests(shell.ShellCommandNewStyle, AnalyzeChange):
 
     def __init__(self, skipBuildIfNoResult=True):
         self.skipBuildIfNoResult = skipBuildIfNoResult
-        super().__init__()
+        super().__init__(logEnviron=False)
 
     @defer.inlineCallbacks
     def run(self):
