@@ -158,6 +158,19 @@ function shouldThrow(func, errorType, message) {
     shouldThrow(() => Temporal.Instant.fromEpochNanoseconds(ns), RangeError, messageMatch);
 });
 
+[
+    // too large
+    [86400_0000_0000_001, /\b8640000000000001000000\b/],
+    // too small
+    [-86400_0000_0000_001, /-8640000000000001000000\b/],
+    // test 2^53 - 1
+    [Number.MAX_SAFE_INTEGER, /\b9007199254740991000000\b/],
+    // test -(2^53 - 1)
+    [-Number.MAX_SAFE_INTEGER, /-9007199254740991000000\b/],
+].forEach(([ms, messageMatch = undefined]) => {
+    shouldThrow(() => Temporal.Instant.fromEpochMilliseconds(ms), RangeError, messageMatch);
+});
+
 // constructs from string
 shouldBe(new Temporal.Instant('0').epochNanoseconds, 0n);
 // throws on number
