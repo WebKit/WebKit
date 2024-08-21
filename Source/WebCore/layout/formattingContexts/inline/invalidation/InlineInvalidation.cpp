@@ -48,8 +48,6 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
-    m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
-
     if (m_inlineDamage.isInlineItemListDirty())
         return true;
 
@@ -82,9 +80,12 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
     return true;
 }
 
-bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle)
+bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle& newStyle, StyleDifference diff)
 {
-    m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
+    if (diff == StyleDifference::Layout) {
+        m_inlineDamage.resetLayoutPosition();
+        m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
+    }
 
     if (m_inlineDamage.isInlineItemListDirty())
         return true;
@@ -466,6 +467,11 @@ bool InlineInvalidation::setFullLayoutIfNeeded(const Box& layoutBox)
 
     if (m_inlineItemList.isEmpty()) {
         // We must be under memory pressure.
+        m_inlineDamage.resetLayoutPosition();
+        return true;
+    }
+
+    if (m_inlineDamage.reasons().contains(InlineDamage::Reason::StyleChange)) {
         m_inlineDamage.resetLayoutPosition();
         return true;
     }
