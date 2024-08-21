@@ -93,5 +93,3 @@ platform/unix/SharedMemoryUnix.cpp
 platform/wpe/PlatformScreenWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
-
-Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp

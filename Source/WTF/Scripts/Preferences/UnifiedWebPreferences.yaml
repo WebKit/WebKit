@@ -8109,7 +8109,7 @@ WebRTCEncodedTransformEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(LIBWEBRTC) && (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE))": WebKit::defaultPeerConnectionEnabledAvailable()
+      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
       default: false
     WebCore:
       "USE(LIBWEBRTC)": true
