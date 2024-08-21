@@ -26,22 +26,22 @@
 #include "config.h"
 #include "ControlFactory.h"
 
-#include "EmptyControlFactory.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
-RefPtr<ControlFactory> ControlFactory::create()
+std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
 {
-    return adoptRef(new EmptyControlFactory());
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 #endif
 
-ControlFactory& ControlFactory::shared()
+ControlFactory& ControlFactory::sharedControlFactory()
 {
-    static MainThreadNeverDestroyed<RefPtr<ControlFactory>> shared { create() };
-    return *shared.get();
+    static NeverDestroyed<std::unique_ptr<ControlFactory>> sharedControlFactory = createControlFactory();
+    return *sharedControlFactory.get();
 }
 
 } // namespace WebCore

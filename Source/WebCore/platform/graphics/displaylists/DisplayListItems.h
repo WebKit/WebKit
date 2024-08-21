@@ -49,7 +49,6 @@ class TextStream;
 
 namespace WebCore {
 
-class ControlFactory;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -549,7 +548,7 @@ public:
     const Vector<Item>& items() const { return m_items; }
     FloatPoint destination() const { return m_destination; }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, const ResourceHeap&, ControlFactory&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, const ResourceHeap&) const;
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
@@ -1468,7 +1467,7 @@ public:
     const ControlStyle& style() const { return m_style; }
     StyleAppearance type() const { return m_part->type(); }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, ControlFactory&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:

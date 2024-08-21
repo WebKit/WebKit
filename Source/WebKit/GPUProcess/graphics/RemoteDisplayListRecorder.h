@@ -149,7 +149,6 @@ private:
     void drawFilteredImageBufferInternal(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&, WebCore::FilterResults&);
 
     RemoteResourceCache& resourceCache() const;
-    WebCore::ControlFactory& controlFactory();
     WebCore::GraphicsContext& drawingContext() { return m_imageBuffer->context(); }
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
     std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
@@ -179,7 +178,7 @@ private:
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
     Ref<RemoteSharedResourceCache> m_sharedResourceCache;
-    RefPtr<WebCore::ControlFactory> m_controlFactory;
+    std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;
 #endif

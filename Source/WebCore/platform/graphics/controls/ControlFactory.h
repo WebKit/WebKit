@@ -25,9 +25,6 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
 class ApplePayButtonPart;
@@ -51,13 +48,13 @@ class TextAreaPart;
 class TextFieldPart;
 class ToggleButtonPart;
 
-class ControlFactory : public RefCounted<ControlFactory> {
+class ControlFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ControlFactory() = default;
 
-    WEBCORE_EXPORT static RefPtr<ControlFactory> create();
-    WEBCORE_EXPORT static ControlFactory& shared();
+    WEBCORE_EXPORT static std::unique_ptr<ControlFactory> createControlFactory();
+    static ControlFactory& sharedControlFactory();
 
 #if ENABLE(APPLE_PAY)
     virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) = 0;

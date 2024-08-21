@@ -41,7 +41,7 @@ class ControlFactoryMac final : public ControlFactoryCocoa {
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;
 
-    static ControlFactoryMac& shared();
+    static ControlFactoryMac& sharedControlFactory();
 
     NSView *drawingView(const FloatRect&, const ControlStyle&) const;
 

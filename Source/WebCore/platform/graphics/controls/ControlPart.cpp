@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ControlPart.h"
 
+#include "ControlFactory.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 
@@ -38,7 +39,7 @@ ControlPart::ControlPart(StyleAppearance type)
 
 ControlFactory& ControlPart::controlFactory() const
 {
-    return m_controlFactory ? *m_controlFactory : ControlFactory::shared();
+    return m_controlFactory ? *m_controlFactory : ControlFactory::sharedControlFactory();
 }
 
 PlatformControl* ControlPart::platformControl() const

@@ -147,7 +147,7 @@ inline static std::optional<RenderingResourceIdentifier> applyDrawDecomposedGlyp
     return std::nullopt;
 }
 
-ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ControlFactory& controlFactory, const Item& item)
+ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const Item& item)
 {
     if (!isValid(item))
         return { StopReplayReason::InvalidItemOrExtent, std::nullopt };
@@ -156,9 +156,6 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
         [&](const ClipToImageBuffer& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyImageBufferItem(context, resourceHeap, item))
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-            return { };
-        }, [&](const DrawControlPart& item) -> ApplyItemResult {
-            item.apply(context, controlFactory);
             return { };
         }, [&](const DrawGlyphs& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyDrawGlyphs(context, resourceHeap, item))
@@ -169,7 +166,7 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
             return { };
         }, [&](const DrawDisplayListItems& item) -> ApplyItemResult {
-            item.apply(context, resourceHeap, controlFactory);
+            item.apply(context, resourceHeap);
             return { };
         }, [&](const DrawFilteredImageBuffer& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyFilteredImageBufferItem(context, resourceHeap, item))

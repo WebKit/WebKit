@@ -57,14 +57,14 @@
 
 namespace WebCore {
 
-RefPtr<ControlFactory> ControlFactory::create()
+std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
 {
-    return adoptRef(new ControlFactoryMac());
+    return makeUnique<ControlFactoryMac>();
 }
 
-ControlFactoryMac& ControlFactoryMac::shared()
+ControlFactoryMac& ControlFactoryMac::sharedControlFactory()
 {
-    return static_cast<ControlFactoryMac&>(ControlFactory::shared());
+    return static_cast<ControlFactoryMac&>(ControlFactory::sharedControlFactory());
 }
 
 NSView *ControlFactoryMac::drawingView(const FloatRect& rect, const ControlStyle& style) const
