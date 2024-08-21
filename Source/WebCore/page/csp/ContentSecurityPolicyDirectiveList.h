@@ -51,7 +51,7 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForInlineJavascriptURL(const Vector<ContentSecurityPolicyHash>&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForInlineEventHandlers(const Vector<ContentSecurityPolicyHash>&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScriptElement(const String&, const Vector<ContentSecurityPolicyHash>&) const;
-    const ContentSecurityPolicyDirective* violatedDirectiveForNonParserInsertedScripts(const String&, const Vector<ContentSecurityPolicyHash>&, const URL&, ParserInserted) const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForNonParserInsertedScripts(const String&, const Vector<ContentSecurityPolicyHash>&, const Vector<ResourceCryptographicDigest>&, const URL&, ParserInserted) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleElement(const String&, const Vector<ContentSecurityPolicyHash>&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyleAttribute(const String&, const Vector<ContentSecurityPolicyHash>&) const;
 

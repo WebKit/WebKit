@@ -323,7 +323,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
         auto scriptURL = document->completeURL(sourceURL);
         document->willLoadScriptElement(scriptURL);
 
-        if (!document->checkedContentSecurityPolicy()->allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, element->nonce(), String(), m_parserInserted))
+        if (!document->checkedContentSecurityPolicy()->allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, element->nonce(), script->integrity(), String(), m_parserInserted))
             return false;
 
         if (script->load(document, scriptURL)) {
@@ -387,7 +387,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     ASSERT(document->contentSecurityPolicy());
     {
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), script->parameters().integrity(), sourceCode.source(), m_parserInserted))
             return false;
 
         if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, nonce, element->isInUserAgentShadowTree()))
@@ -414,7 +414,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
         auto scriptURL = document->completeURL(sourceURL);
         document->willLoadScriptElement(scriptURL);
 
-        if (!document->checkedContentSecurityPolicy()->allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, element->nonce(), String(), m_parserInserted))
+        if (!document->checkedContentSecurityPolicy()->allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, element->nonce(), script->integrity(), String(), m_parserInserted))
             return false;
 
         frame.checkedScript()->setPendingImportMaps();
@@ -446,7 +446,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(document->contentSecurityPolicy());
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
             return;
 
         if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))
@@ -489,7 +489,7 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(document->contentSecurityPolicy());
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
-        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), sourceCode.source(), m_parserInserted))
+        if (!contentSecurityPolicy->allowNonParserInsertedScripts(URL(), document->url(), m_startLineNumber, element->nonce(), emptyString(), sourceCode.source(), m_parserInserted))
             return;
 
         if (!contentSecurityPolicy->allowInlineScript(document->url().string(), m_startLineNumber, sourceCode.source(), element, element->nonce(), element->isInUserAgentShadowTree()))

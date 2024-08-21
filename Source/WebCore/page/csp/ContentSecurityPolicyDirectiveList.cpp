@@ -248,12 +248,13 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const URL& url, ParserInserted parserInserted) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts(const String& nonce, const Vector<ContentSecurityPolicyHash>& hashes, const Vector<ResourceCryptographicDigest>& subResourceIntegrityDigests, const URL& url, ParserInserted parserInserted) const
 {
     auto* operativeDirective = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrcElem);
     if (checkHashes(operativeDirective, hashes)
         || checkNonParserInsertedScripts(operativeDirective, parserInserted)
         || checkNonce(operativeDirective, nonce)
+        || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
         || (checkSource(operativeDirective, url) && !strictDynamicIncluded())
         || (url.isEmpty() && checkInline(operativeDirective)))
         return nullptr;
