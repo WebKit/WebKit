@@ -2129,12 +2129,15 @@ static RefPtr<CSSValue> renderTextDecorationSkipToCSSValue(TextDecorationSkipInk
     return CSSPrimitiveValue::create(CSSValueInitial);
 }
 
-static Ref<CSSValue> textUnderlineOffsetToCSSValue(const TextUnderlineOffset& textUnderlineOffset)
+static Ref<CSSValue> textUnderlineOffsetToCSSValue(const RenderStyle& style, const TextUnderlineOffset& textUnderlineOffset)
 {
     if (textUnderlineOffset.isAuto())
         return CSSPrimitiveValue::create(CSSValueAuto);
     ASSERT(textUnderlineOffset.isLength());
-    return CSSPrimitiveValue::create(textUnderlineOffset.lengthValue(), CSSUnitType::CSS_PX);
+    auto& length = textUnderlineOffset.length();
+    if (length.isPercent())
+        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
+    return CSSPrimitiveValue::create(length, style);
 }
 
 static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style, const TextDecorationThickness& textDecorationThickness)
@@ -2145,10 +2148,10 @@ static Ref<CSSValue> textDecorationThicknessToCSSValue(const RenderStyle& style,
         return CSSPrimitiveValue::create(CSSValueFromFont);
 
     ASSERT(textDecorationThickness.isLength());
-    const auto& length = textDecorationThickness.length();
+    auto& length = textDecorationThickness.length();
     if (length.isPercent())
         return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
+    return CSSPrimitiveValue::create(length, style);
 }
 
 static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasisPosition> textEmphasisPosition)
@@ -4069,7 +4072,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextUnderlinePosition:
         return textUnderlinePositionToCSSValue(style.textUnderlinePosition());
     case CSSPropertyTextUnderlineOffset:
-        return textUnderlineOffsetToCSSValue(style.textUnderlineOffset());
+        return textUnderlineOffsetToCSSValue(style, style.textUnderlineOffset());
     case CSSPropertyTextDecorationThickness:
         return textDecorationThicknessToCSSValue(style, style.textDecorationThickness());
     case CSSPropertyWebkitTextDecorationsInEffect:

@@ -9,10 +9,10 @@ PASS Can set 'text-underline-offset' to a length: 0px
 PASS Can set 'text-underline-offset' to a length: -3.14em
 PASS Can set 'text-underline-offset' to a length: 3.14cm
 PASS Can set 'text-underline-offset' to a length: calc(0px + 0em)
-FAIL Can set 'text-underline-offset' to a percent: 0% Invalid values
-FAIL Can set 'text-underline-offset' to a percent: -3.14% Invalid values
-FAIL Can set 'text-underline-offset' to a percent: 3.14% Invalid values
-FAIL Can set 'text-underline-offset' to a percent: calc(0% + 0%) Invalid values
+PASS Can set 'text-underline-offset' to a percent: 0%
+PASS Can set 'text-underline-offset' to a percent: -3.14%
+PASS Can set 'text-underline-offset' to a percent: 3.14%
+PASS Can set 'text-underline-offset' to a percent: calc(0% + 0%)
 PASS Setting 'text-underline-offset' to a time: 0s throws TypeError
 PASS Setting 'text-underline-offset' to a time: -3.14ms throws TypeError
 PASS Setting 'text-underline-offset' to a time: 3.14s throws TypeError

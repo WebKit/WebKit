@@ -3,22 +3,28 @@
 <head>
     <meta charset="utf-8">
     <title>Reference case for text-underline-offset</title>
-    <link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+    <link rel="author" title="Zak Ridouh" href="mailto:zakr@apple.com">
+    <link rel="author" title="Apple" href="https://www.apple.com">
+    <link rel="help" href="https://drafts.csswg.org/css-text-decor-4/#underline-offset">
     <style>
-        #main{
-            border-bottom: 1px solid cyan;
+        #main {
+            border-bottom: 2px solid purple;
             display: flex;
         }
-        #text, #norm{
+        #text, #norm {
             text-decoration-color: green;
             text-decoration-line: underline;
-            text-decoration-skip-ink: none;
-            text-underline-offset: 0px;
-            font: 20px/1 Ahem;
+            text-decoration-thickness: 15px;
+            font: 20px/2 Arial;
             color: transparent;
             position: relative;
-            top: 21px;
             margin-right: 10px;
+        }
+        #text {
+            text-underline-offset: 5px;
+        }
+        #norm {
+            text-underline-offset: 5px;
         }
     </style>
 </head>

@@ -8393,23 +8393,21 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextUnderlineOffset",
-                "parser-grammar": "auto | <length>",
-                "parser-grammar-comment": "The current specification has a <length-percentage>, not just <length>"
+                "parser-grammar": "auto | <length-percentage>"
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-4/#underline-offset"
+                "url": "https://drafts.csswg.org/css-text-decor-4/#underline-offset"
             }
         },
         "text-decoration-thickness": {
             "codegen-properties": {
                 "converter": "TextDecorationThickness",
-                "parser-grammar": "auto | from-font | <length-percentage>",
-                "parser-grammar-comment": "The current specification has a <length-percentage>, not just <length>"
+                "parser-grammar": "auto | from-font | <length-percentage>"
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-4/#text-decoration-thickness"
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-thickness-property"
             }
         },
         "-webkit-text-decorations-in-effect": {

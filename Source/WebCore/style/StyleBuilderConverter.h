@@ -903,15 +903,7 @@ inline OptionSet<TextUnderlinePosition> BuilderConverter::convertTextUnderlinePo
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.valueID()) {
-    case CSSValueAuto:
-        return TextUnderlineOffset::createWithAuto();
-    default:
-        ASSERT(primitiveValue.isLength());
-        auto computedLength = convertComputedLength<float>(builderState, primitiveValue);
-        return TextUnderlineOffset::createWithLength(computedLength);
-    }
+    return TextUnderlineOffset::createWithLength(BuilderConverter::convertLengthOrAuto(builderState, value));
 }
 
 inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(BuilderState& builderState, const CSSValue& value)
