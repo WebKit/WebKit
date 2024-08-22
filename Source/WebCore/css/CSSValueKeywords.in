@@ -1118,9 +1118,9 @@ ideographic-ink
 
 // text-rendering
 //auto
-optimizeSpeed
-optimizeLegibility
-geometricPrecision
+optimizespeed
+optimizelegibility
+geometricprecision
 
 // -webkit-color-adjust
 economy
@@ -1210,9 +1210,9 @@ off
 
 // image-rendering
 // auto
-// optimizeSpeed (deprecated)
-optimizeQuality // ( deprecated)
-crisp-edges
+// optimizespeed (deprecated)
+optimizequality // ( deprecated)
+crispedges
 pixelated
 -webkit-crisp-edges
 -webkit-optimize-contrast

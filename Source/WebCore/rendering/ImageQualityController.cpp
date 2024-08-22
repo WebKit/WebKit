@@ -107,7 +107,7 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
     case ImageRendering::Pixelated:
         return InterpolationQuality::DoNotInterpolate;
     case ImageRendering::OptimizeQuality:
-        return InterpolationQuality::Default; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
+        return InterpolationQuality::Default; // FIXME: CSS 3 Images says that optimizequality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
     case ImageRendering::Auto:
         break;
     }

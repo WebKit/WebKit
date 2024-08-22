@@ -355,8 +355,8 @@ TextStream& operator<<(TextStream& ts, ColorRendering value)
 {
     switch (value) {
     case ColorRendering::Auto: ts << "auto"; break;
-    case ColorRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
-    case ColorRendering::OptimizeQuality: ts << "optimizeQuality"; break;
+    case ColorRendering::OptimizeSpeed: ts << "optimizespeed"; break;
+    case ColorRendering::OptimizeQuality: ts << "optimizequality"; break;
     }
     return ts;
 }
@@ -419,9 +419,9 @@ TextStream& operator<<(TextStream& ts, ShapeRendering value)
 {
     switch (value) {
     case ShapeRendering::Auto: ts << "auto"; break;
-    case ShapeRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
-    case ShapeRendering::CrispEdges: ts << "crispEdges"; break;
-    case ShapeRendering::GeometricPrecision: ts << "geometricPrecision"; break;
+    case ShapeRendering::OptimizeSpeed: ts << "optimizespeed"; break;
+    case ShapeRendering::CrispEdges: ts << "crispedges"; break;
+    case ShapeRendering::GeometricPrecision: ts << "geometricprecision"; break;
     }
     return ts;
 }

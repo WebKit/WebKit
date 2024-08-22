@@ -1812,11 +1812,11 @@ constexpr CSSValueID toCSSValueID(TextRenderingMode e)
     case TextRenderingMode::AutoTextRendering:
         return CSSValueAuto;
     case TextRenderingMode::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
+        return CSSValueOptimizespeed;
     case TextRenderingMode::OptimizeLegibility:
-        return CSSValueOptimizeLegibility;
+        return CSSValueOptimizelegibility;
     case TextRenderingMode::GeometricPrecision:
-        return CSSValueGeometricPrecision;
+        return CSSValueGeometricprecision;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -1827,11 +1827,11 @@ template<> constexpr TextRenderingMode fromCSSValueID(CSSValueID valueID)
     switch (valueID) {
     case CSSValueAuto:
         return TextRenderingMode::AutoTextRendering;
-    case CSSValueOptimizeSpeed:
+    case CSSValueOptimizespeed:
         return TextRenderingMode::OptimizeSpeed;
-    case CSSValueOptimizeLegibility:
+    case CSSValueOptimizelegibility:
         return TextRenderingMode::OptimizeLegibility;
-    case CSSValueGeometricPrecision:
+    case CSSValueGeometricprecision:
         return TextRenderingMode::GeometricPrecision;
     default:
         break;
@@ -1943,13 +1943,13 @@ constexpr CSSValueID toCSSValueID(ImageRendering imageRendering)
     case ImageRendering::Auto:
         return CSSValueAuto;
     case ImageRendering::CrispEdges:
-        return CSSValueCrispEdges;
+        return CSSValueCrispedges;
     case ImageRendering::Pixelated:
         return CSSValuePixelated;
     case ImageRendering::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
+        return CSSValueOptimizespeed;
     case ImageRendering::OptimizeQuality:
-        return CSSValueOptimizeQuality;
+        return CSSValueOptimizequality;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -1961,14 +1961,14 @@ template<> constexpr ImageRendering fromCSSValueID(CSSValueID valueID)
     case CSSValueAuto:
         return ImageRendering::Auto;
     case CSSValueWebkitOptimizeContrast:
-    case CSSValueCrispEdges:
+    case CSSValueCrispedges:
     case CSSValueWebkitCrispEdges:
         return ImageRendering::CrispEdges;
     case CSSValuePixelated:
         return ImageRendering::Pixelated;
-    case CSSValueOptimizeSpeed:
+    case CSSValueOptimizespeed:
         return ImageRendering::OptimizeSpeed;
-    case CSSValueOptimizeQuality:
+    case CSSValueOptimizequality:
         return ImageRendering::OptimizeQuality;
     default:
         break;
@@ -2074,7 +2074,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE ColorRendering
-#define FOR_EACH(CASE) CASE(Auto) CASE(OptimizeSpeed) CASE(OptimizeQuality)
+#define FOR_EACH(CASE) CASE(Auto) CASE(Optimizespeed) CASE(Optimizequality)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
@@ -2093,11 +2093,11 @@ constexpr CSSValueID toCSSValueID(ShapeRendering e)
     case ShapeRendering::Auto:
         return CSSValueAuto;
     case ShapeRendering::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
+        return CSSValueOptimizespeed;
     case ShapeRendering::CrispEdges:
         return CSSValueCrispedges; // "crispedges", not "crisp-edges"
     case ShapeRendering::GeometricPrecision:
-        return CSSValueGeometricPrecision;
+        return CSSValueGeometricprecision;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -2108,11 +2108,11 @@ template<> constexpr ShapeRendering fromCSSValueID(CSSValueID valueID)
     switch (valueID) {
     case CSSValueAuto:
         return ShapeRendering::Auto;
-    case CSSValueOptimizeSpeed:
+    case CSSValueOptimizespeed:
         return ShapeRendering::OptimizeSpeed;
     case CSSValueCrispedges: // "crispedges", not "crisp-edges"
         return ShapeRendering::CrispEdges;
-    case CSSValueGeometricPrecision:
+    case CSSValueGeometricprecision:
         return ShapeRendering::GeometricPrecision;
     default:
         break;

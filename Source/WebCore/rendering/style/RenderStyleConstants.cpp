@@ -601,9 +601,9 @@ TextStream& operator<<(TextStream& ts, ImageRendering imageRendering)
 {
     switch (imageRendering) {
     case ImageRendering::Auto: ts << "auto"; break;
-    case ImageRendering::OptimizeSpeed: ts << "optimizeSpeed"; break;
-    case ImageRendering::OptimizeQuality: ts << "optimizeQuality"; break;
-    case ImageRendering::CrispEdges: ts << "crispEdges"; break;
+    case ImageRendering::OptimizeSpeed: ts << "optimizespeed"; break;
+    case ImageRendering::OptimizeQuality: ts << "optimizequality"; break;
+    case ImageRendering::CrispEdges: ts << "crispedges"; break;
     case ImageRendering::Pixelated: ts << "pixelated"; break;
     }
     return ts;

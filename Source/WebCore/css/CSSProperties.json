@@ -712,9 +712,9 @@
             "inherited": true,
             "values": [
                 "auto",
-                "optimizeSpeed",
-                "optimizeLegibility",
-                "geometricPrecision"
+                "optimizespeed",
+                "optimizelegibility",
+                "geometricprecision"
             ],
             "codegen-properties": {
                 "name-for-methods": "TextRenderingMode",
@@ -3655,13 +3655,13 @@
                     "status": "unimplemented"
                 },
                 "pixelated",
-                "crisp-edges",
+                "crispedges",
                 {
-                    "value": "optimizeSpeed",
+                    "value": "optimizespeed",
                     "url": "https://www.w3.org/TR/SVG11/painting.html#ImageRenderingProperty"
                 },
                 {
-                    "value": "optimizeQuality",
+                    "value": "optimizequality",
                     "url": "https://www.w3.org/TR/SVG11/painting.html#ImageRenderingProperty"
                 },
                 {
@@ -5585,9 +5585,9 @@
             "inherited": true,
             "values": [
                 "auto",
-                "optimizeSpeed",
+                "optimizespeed",
                 "crispedges",
-                "geometricPrecision"
+                "geometricprecision"
             ],
             "codegen-properties": {
                 "svg": true,

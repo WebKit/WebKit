@@ -1216,7 +1216,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "auto", "sRGB", "linearRGB",
     ],
     "color-rendering": [
-        "auto", "optimizeSpeed", "optimizeQuality",
+        "auto", "optimizespeed", "optimizequality",
     ],
     "column-fill": [
         "auto", "balance",
@@ -1261,7 +1261,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "sub", "super",
     ],
     "image-rendering": [
-        "auto", "optimizeSpeed", "optimizeQuality", "crisp-edges", "pixelated", "-webkit-crisp-edges", "-webkit-optimize-contrast",
+        "auto", "optimizespeed", "optimizequality", "crispedges", "pixelated", "-webkit-crisp-edges", "-webkit-optimize-contrast",
     ],
     "image-resolution": [
         "from-image", "snap",
@@ -1318,7 +1318,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "auto", "both", "horizontal", "vertical",
     ],
     "shape-rendering": [
-        "auto", "optimizeSpeed", "geometricPrecision", "crispedges",
+        "auto", "optimizespeed", "geometricprecision", "crispedges",
     ],
     "stroke-linecap": [
         "square", "round", "butt",
@@ -1366,7 +1366,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "medium", "auto", "thick", "thin", "calc()",
     ],
     "text-rendering": [
-        "auto", "optimizeSpeed", "optimizeLegibility", "geometricPrecision",
+        "auto", "optimizespeed", "optimizelegibility", "geometricprecision",
     ],
     "text-transform": [
         "none", "capitalize", "uppercase", "lowercase",

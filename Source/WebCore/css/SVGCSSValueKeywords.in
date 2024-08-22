@@ -191,8 +191,8 @@ linearRGB
 
 // CSS_PROP_IMAGE_RENDERING
 //auto
-//optimizeSpeed
-//optimizeQuality
+//optimizespeed
+//optimizequality
 
 // CSS_PROP_MARKER
 // CSS_PROP_MARKER_END
@@ -200,9 +200,9 @@ linearRGB
 // CSS_PROP_MARKER_START
 // CSS_PROP_SHAPE_RENDERING
 //auto
-//optimizeSpeed
+//optimizespeed
 crispedges
-//geometricPrecision
+//geometricprecision
 
 // CSS_PROP_STROKE
 // CSS_PROP_STROKE_DASHARRAY

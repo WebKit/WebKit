@@ -1439,7 +1439,7 @@ CSSDocumentation = {
     },
     "image-rendering": {
         "description": "Provides a hint to the user-agent about what aspects of an image are most important to preserve when the image is scaled, to aid the user-agent in the choice of an appropriate scaling algorithm.",
-        "syntax": "auto | crisp-edges | pixelated",
+        "syntax": "auto | crispedges | pixelated",
         "url": "https://developer.mozilla.org/docs/Web/CSS/image-rendering"
     },
     "image-resolution": {
@@ -2644,7 +2644,7 @@ CSSDocumentation = {
     },
     "text-rendering": {
         "description": "The creator of SVG content might want to provide a hint to the implementation about what tradeoffs to make as it renders text. The 'text-rendering' property provides these hints.",
-        "syntax": "auto | optimizeSpeed | optimizeLegibility | geometricPrecision",
+        "syntax": "auto | optimizespeed | optimizelegibility | geometricprecision",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-rendering"
     },
     "text-shadow": {
