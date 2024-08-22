@@ -359,6 +359,8 @@ WebProcess::~WebProcess()
 
 void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
+    m_isLockdownModeEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
+
     WTF::setProcessPrivileges({ });
 
     {
@@ -602,8 +604,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);
-    m_isLockdownModeEnabled = parameters.isLockdownModeEnabled;
-    DeprecatedGlobalSettings::setArePDFImagesEnabled(!m_isLockdownModeEnabled);
+    DeprecatedGlobalSettings::setArePDFImagesEnabled(!isLockdownModeEnabled());
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);

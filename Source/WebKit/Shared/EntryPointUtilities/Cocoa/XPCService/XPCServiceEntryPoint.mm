@@ -28,6 +28,7 @@
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
+#import <JavaScriptCore/JSCConfig.h>
 #import <WebCore/ProcessIdentifier.h>
 #import <signal.h>
 #import <wtf/WTFProcess.h>
@@ -130,6 +131,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
+    auto isLockdownModeEnabled = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "enable-lockdown-mode"));
+    if (!isLockdownModeEnabled.isEmpty())
+        extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
+
     if (!isClientSandboxed()) {
         auto userDirectorySuffix = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix"));
         if (!userDirectorySuffix.isEmpty())
@@ -177,6 +182,47 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     globalTransaction.get() = WTFMove(transaction);
 }
 #endif
+
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode)
+{
+    RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
+
+    bool optionsChanged = false;
+    if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
+        JSC::Config::configureForTesting();
+    if (enableLockdownMode == EnableLockdownMode::Yes) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::ExecutableAllocator::disableJIT();
+        JSC::Options::useGenerationalGC() = false;
+        JSC::Options::useConcurrentGC() = false;
+        JSC::Options::useLLIntICs() = false;
+        JSC::Options::useZombieMode() = true;
+        JSC::Options::allowDoubleShape() = false;
+        JSC::Options::alwaysHaveABadTime() = true;
+        optionsChanged = true;
+    } else if (xpc_dictionary_get_bool(initializerMessage, "disable-jit")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::ExecutableAllocator::disableJIT();
+        optionsChanged = true;
+    }
+    if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::useSharedArrayBuffer() = true;
+        optionsChanged = true;
+    }
+    // FIXME (276012): Remove this XPC bootstrap message when it's no longer necessary. See rdar://130669638 for more context.
+    if (xpc_dictionary_get_bool(initializerMessage, "disable-jit-cage")) {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::useJITCage() = false;
+        optionsChanged = true;
+    }
+    if (optionsChanged)
+        JSC::Options::notifyOptionsChanged();
+}
 
 void XPCServiceExit()
 {

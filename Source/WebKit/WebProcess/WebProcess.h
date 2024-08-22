@@ -408,7 +408,7 @@ public:
     SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
 #endif
 
-    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool prefersNonBlinkingCursor() const { return m_prefersNonBlinkingCursor; }
@@ -783,7 +783,7 @@ private:
 
     bool m_hasSuspendedPageProxy { false };
     bool m_allowExitOnMemoryPressure { true };
-    bool m_isLockdownModeEnabled { false };
+    std::optional<bool> m_isLockdownModeEnabled;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;

@@ -967,7 +967,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.attrStyleEnabled = m_configuration->attrStyleEnabled();
     parameters.shouldThrowExceptionForGlobalConstantRedeclaration = m_configuration->shouldThrowExceptionForGlobalConstantRedeclaration();
     parameters.crossOriginMode = process.crossOriginMode();
-    parameters.isLockdownModeEnabled = process.lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
 
 #if ENABLE(SERVICE_CONTROLS)
     auto& serviceController = ServicesController::singleton();
