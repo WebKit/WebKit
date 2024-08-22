@@ -188,183 +188,6 @@ class RTC_EXPORT NetworkManager : public DefaultLocalAddressProvider,
   virtual void set_vpn_list(const std::vector<NetworkMask>& vpn) {}
 };
 
-// Base class for NetworkManager implementations.
-class RTC_EXPORT NetworkManagerBase : public NetworkManager {
- public:
-  NetworkManagerBase();
-
-  std::vector<const Network*> GetNetworks() const override;
-  std::vector<const Network*> GetAnyAddressNetworks() override;
-
-  EnumerationPermission enumeration_permission() const override;
-
-  bool GetDefaultLocalAddress(int family, IPAddress* ipaddr) const override;
-
-  // Check if MAC address in |bytes| is one of the pre-defined
-  // MAC addresses for know VPNs.
-  static bool IsVpnMacAddress(rtc::ArrayView<const uint8_t> address);
-
- protected:
-  // Updates `networks_` with the networks listed in `list`. If
-  // `networks_map_` already has a Network object for a network listed
-  // in the `list` then it is reused. Accept ownership of the Network
-  // objects in the `list`. `changed` will be set to true if there is
-  // any change in the network list.
-  void MergeNetworkList(std::vector<std::unique_ptr<Network>> list,
-                        bool* changed);
-
-  // `stats` will be populated even if |*changed| is false.
-  void MergeNetworkList(std::vector<std::unique_ptr<Network>> list,
-                        bool* changed,
-                        NetworkManager::Stats* stats);
-
-  void set_enumeration_permission(EnumerationPermission state) {
-    enumeration_permission_ = state;
-  }
-
-  void set_default_local_addresses(const IPAddress& ipv4,
-                                   const IPAddress& ipv6);
-
-  Network* GetNetworkFromAddress(const rtc::IPAddress& ip) const;
-
-  // To enable subclasses to get the networks list, without interfering with
-  // refactoring of the interface GetNetworks method.
-  const std::vector<Network*>& GetNetworksInternal() const { return networks_; }
-
-  std::unique_ptr<Network> CreateNetwork(absl::string_view name,
-                                         absl::string_view description,
-                                         const IPAddress& prefix,
-                                         int prefix_length,
-                                         AdapterType type) const;
-
- private:
-  friend class NetworkTest;
-  EnumerationPermission enumeration_permission_;
-
-  std::vector<Network*> networks_;
-
-  std::map<std::string, std::unique_ptr<Network>> networks_map_;
-
-  std::unique_ptr<rtc::Network> ipv4_any_address_network_;
-  std::unique_ptr<rtc::Network> ipv6_any_address_network_;
-
-  IPAddress default_local_ipv4_address_;
-  IPAddress default_local_ipv6_address_;
-  // We use 16 bits to save the bandwidth consumption when sending the network
-  // id over the Internet. It is OK that the 16-bit integer overflows to get a
-  // network id 0 because we only compare the network ids in the old and the new
-  // best connections in the transport channel.
-  uint16_t next_available_network_id_ = 1;
-};
-
-// Basic implementation of the NetworkManager interface that gets list
-// of networks using OS APIs.
-class RTC_EXPORT BasicNetworkManager : public NetworkManagerBase,
-                                       public NetworkBinderInterface,
-                                       public sigslot::has_slots<> {
- public:
-  // This is used by lots of downstream code.
-  BasicNetworkManager(SocketFactory* socket_factory,
-                      const webrtc::FieldTrialsView* field_trials = nullptr)
-      : BasicNetworkManager(/* network_monitor_factory= */ nullptr,
-                            socket_factory,
-                            field_trials) {}
-
-  BasicNetworkManager(NetworkMonitorFactory* network_monitor_factory,
-                      SocketFactory* socket_factory,
-                      const webrtc::FieldTrialsView* field_trials = nullptr);
-  ~BasicNetworkManager() override;
-
-  void StartUpdating() override;
-  void StopUpdating() override;
-
-  void DumpNetworks() override;
-
-  bool started() { return start_count_ > 0; }
-
-  // Sets the network ignore list, which is empty by default. Any network on the
-  // ignore list will be filtered from network enumeration results.
-  // Should be called only before initialization.
-  void set_network_ignore_list(const std::vector<std::string>& list) {
-    RTC_DCHECK(thread_ == nullptr);
-    network_ignore_list_ = list;
-  }
-
-  // Set a list of manually configured VPN's.
-  void set_vpn_list(const std::vector<NetworkMask>& vpn) override;
-
-  // Check if |prefix| is configured as VPN.
-  bool IsConfiguredVpn(IPAddress prefix, int prefix_length) const;
-
-  // Bind a socket to interface that ip address belong to.
-  // Implementation look up interface name and calls
-  // BindSocketToNetwork on NetworkMonitor.
-  // The interface name is needed as e.g ipv4 over ipv6 addresses
-  // are not exposed using Android functions, but it is possible
-  // bind an ipv4 address to the interface.
-  NetworkBindingResult BindSocketToNetwork(int socket_fd,
-                                           const IPAddress& address) override;
-
- protected:
-#if defined(WEBRTC_POSIX)
-  // Separated from CreateNetworks for tests.
-  void ConvertIfAddrs(ifaddrs* interfaces,
-                      IfAddrsConverter* converter,
-                      bool include_ignored,
-                      std::vector<std::unique_ptr<Network>>* networks) const
-      RTC_RUN_ON(thread_);
-  NetworkMonitorInterface::InterfaceInfo GetInterfaceInfo(
-      struct ifaddrs* cursor) const RTC_RUN_ON(thread_);
-#endif  // defined(WEBRTC_POSIX)
-
-  // Creates a network object for each network available on the machine.
-  bool CreateNetworks(bool include_ignored,
-                      std::vector<std::unique_ptr<Network>>* networks) const
-      RTC_RUN_ON(thread_);
-
-  // Determines if a network should be ignored. This should only be determined
-  // based on the network's property instead of any individual IP.
-  bool IsIgnoredNetwork(const Network& network) const RTC_RUN_ON(thread_);
-
-  // This function connects a UDP socket to a public address and returns the
-  // local address associated it. Since it binds to the "any" address
-  // internally, it returns the default local address on a multi-homed endpoint.
-  IPAddress QueryDefaultLocalAddress(int family) const RTC_RUN_ON(thread_);
-
- private:
-  friend class NetworkTest;
-
-  // Creates a network monitor and listens for network updates.
-  void StartNetworkMonitor() RTC_RUN_ON(thread_);
-  // Stops and removes the network monitor.
-  void StopNetworkMonitor() RTC_RUN_ON(thread_);
-  // Called when it receives updates from the network monitor.
-  void OnNetworksChanged();
-
-  // Updates the networks and reschedules the next update.
-  void UpdateNetworksContinually() RTC_RUN_ON(thread_);
-  // Only updates the networks; does not reschedule the next update.
-  void UpdateNetworksOnce() RTC_RUN_ON(thread_);
-
-  Thread* thread_ = nullptr;
-  bool sent_first_update_ = true;
-  int start_count_ = 0;
-
-  webrtc::AlwaysValidPointer<const webrtc::FieldTrialsView,
-                             webrtc::FieldTrialBasedConfig>
-      field_trials_;
-  std::vector<std::string> network_ignore_list_;
-  NetworkMonitorFactory* const network_monitor_factory_;
-  SocketFactory* const socket_factory_;
-  std::unique_ptr<NetworkMonitorInterface> network_monitor_
-      RTC_GUARDED_BY(thread_);
-  bool allow_mac_based_ipv6_ RTC_GUARDED_BY(thread_) = false;
-  bool bind_using_ifname_ RTC_GUARDED_BY(thread_) = false;
-
-  std::vector<NetworkMask> vpn_;
-  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
-};
-
 // Represents a Unix-type network interface, with a name and single address.
 class RTC_EXPORT Network {
  public:
@@ -581,6 +404,185 @@ class RTC_EXPORT Network {
 
   friend class NetworkManager;
 };
+
+#if WEBRTC_WEBKIT_BUILD // Move NetworkManagerBase and BasicNetworkManager definitions after Network.
+// Base class for NetworkManager implementations.
+class RTC_EXPORT NetworkManagerBase : public NetworkManager {
+ public:
+  NetworkManagerBase();
+
+  std::vector<const Network*> GetNetworks() const override;
+  std::vector<const Network*> GetAnyAddressNetworks() override;
+
+  EnumerationPermission enumeration_permission() const override;
+
+  bool GetDefaultLocalAddress(int family, IPAddress* ipaddr) const override;
+
+  // Check if MAC address in |bytes| is one of the pre-defined
+  // MAC addresses for know VPNs.
+  static bool IsVpnMacAddress(rtc::ArrayView<const uint8_t> address);
+
+ protected:
+  // Updates `networks_` with the networks listed in `list`. If
+  // `networks_map_` already has a Network object for a network listed
+  // in the `list` then it is reused. Accept ownership of the Network
+  // objects in the `list`. `changed` will be set to true if there is
+  // any change in the network list.
+  void MergeNetworkList(std::vector<std::unique_ptr<Network>> list,
+                        bool* changed);
+
+  // `stats` will be populated even if |*changed| is false.
+  void MergeNetworkList(std::vector<std::unique_ptr<Network>> list,
+                        bool* changed,
+                        NetworkManager::Stats* stats);
+
+  void set_enumeration_permission(EnumerationPermission state) {
+    enumeration_permission_ = state;
+  }
+
+  void set_default_local_addresses(const IPAddress& ipv4,
+                                   const IPAddress& ipv6);
+
+  Network* GetNetworkFromAddress(const rtc::IPAddress& ip) const;
+
+  // To enable subclasses to get the networks list, without interfering with
+  // refactoring of the interface GetNetworks method.
+  const std::vector<Network*>& GetNetworksInternal() const { return networks_; }
+
+  std::unique_ptr<Network> CreateNetwork(absl::string_view name,
+                                         absl::string_view description,
+                                         const IPAddress& prefix,
+                                         int prefix_length,
+                                         AdapterType type) const;
+
+ private:
+  friend class NetworkTest;
+  EnumerationPermission enumeration_permission_;
+
+  std::vector<Network*> networks_;
+
+  std::map<std::string, std::unique_ptr<Network>> networks_map_;
+
+  std::unique_ptr<rtc::Network> ipv4_any_address_network_;
+  std::unique_ptr<rtc::Network> ipv6_any_address_network_;
+
+  IPAddress default_local_ipv4_address_;
+  IPAddress default_local_ipv6_address_;
+  // We use 16 bits to save the bandwidth consumption when sending the network
+  // id over the Internet. It is OK that the 16-bit integer overflows to get a
+  // network id 0 because we only compare the network ids in the old and the new
+  // best connections in the transport channel.
+  uint16_t next_available_network_id_ = 1;
+};
+
+// Basic implementation of the NetworkManager interface that gets list
+// of networks using OS APIs.
+class RTC_EXPORT BasicNetworkManager : public NetworkManagerBase,
+                                       public NetworkBinderInterface,
+                                       public sigslot::has_slots<> {
+ public:
+  // This is used by lots of downstream code.
+  BasicNetworkManager(SocketFactory* socket_factory,
+                      const webrtc::FieldTrialsView* field_trials = nullptr)
+      : BasicNetworkManager(/* network_monitor_factory= */ nullptr,
+                            socket_factory,
+                            field_trials) {}
+
+  BasicNetworkManager(NetworkMonitorFactory* network_monitor_factory,
+                      SocketFactory* socket_factory,
+                      const webrtc::FieldTrialsView* field_trials = nullptr);
+  ~BasicNetworkManager() override;
+
+  void StartUpdating() override;
+  void StopUpdating() override;
+
+  void DumpNetworks() override;
+
+  bool started() { return start_count_ > 0; }
+
+  // Sets the network ignore list, which is empty by default. Any network on the
+  // ignore list will be filtered from network enumeration results.
+  // Should be called only before initialization.
+  void set_network_ignore_list(const std::vector<std::string>& list) {
+    RTC_DCHECK(thread_ == nullptr);
+    network_ignore_list_ = list;
+  }
+
+  // Set a list of manually configured VPN's.
+  void set_vpn_list(const std::vector<NetworkMask>& vpn) override;
+
+  // Check if |prefix| is configured as VPN.
+  bool IsConfiguredVpn(IPAddress prefix, int prefix_length) const;
+
+  // Bind a socket to interface that ip address belong to.
+  // Implementation look up interface name and calls
+  // BindSocketToNetwork on NetworkMonitor.
+  // The interface name is needed as e.g ipv4 over ipv6 addresses
+  // are not exposed using Android functions, but it is possible
+  // bind an ipv4 address to the interface.
+  NetworkBindingResult BindSocketToNetwork(int socket_fd,
+                                           const IPAddress& address) override;
+
+ protected:
+#if defined(WEBRTC_POSIX)
+  // Separated from CreateNetworks for tests.
+  void ConvertIfAddrs(ifaddrs* interfaces,
+                      IfAddrsConverter* converter,
+                      bool include_ignored,
+                      std::vector<std::unique_ptr<Network>>* networks) const
+      RTC_RUN_ON(thread_);
+  NetworkMonitorInterface::InterfaceInfo GetInterfaceInfo(
+      struct ifaddrs* cursor) const RTC_RUN_ON(thread_);
+#endif  // defined(WEBRTC_POSIX)
+
+  // Creates a network object for each network available on the machine.
+  bool CreateNetworks(bool include_ignored,
+                      std::vector<std::unique_ptr<Network>>* networks) const
+      RTC_RUN_ON(thread_);
+
+  // Determines if a network should be ignored. This should only be determined
+  // based on the network's property instead of any individual IP.
+  bool IsIgnoredNetwork(const Network& network) const RTC_RUN_ON(thread_);
+
+  // This function connects a UDP socket to a public address and returns the
+  // local address associated it. Since it binds to the "any" address
+  // internally, it returns the default local address on a multi-homed endpoint.
+  IPAddress QueryDefaultLocalAddress(int family) const RTC_RUN_ON(thread_);
+
+ private:
+  friend class NetworkTest;
+
+  // Creates a network monitor and listens for network updates.
+  void StartNetworkMonitor() RTC_RUN_ON(thread_);
+  // Stops and removes the network monitor.
+  void StopNetworkMonitor() RTC_RUN_ON(thread_);
+  // Called when it receives updates from the network monitor.
+  void OnNetworksChanged();
+
+  // Updates the networks and reschedules the next update.
+  void UpdateNetworksContinually() RTC_RUN_ON(thread_);
+  // Only updates the networks; does not reschedule the next update.
+  void UpdateNetworksOnce() RTC_RUN_ON(thread_);
+
+  Thread* thread_ = nullptr;
+  bool sent_first_update_ = true;
+  int start_count_ = 0;
+
+  webrtc::AlwaysValidPointer<const webrtc::FieldTrialsView,
+                             webrtc::FieldTrialBasedConfig>
+      field_trials_;
+  std::vector<std::string> network_ignore_list_;
+  NetworkMonitorFactory* const network_monitor_factory_;
+  SocketFactory* const socket_factory_;
+  std::unique_ptr<NetworkMonitorInterface> network_monitor_
+      RTC_GUARDED_BY(thread_);
+  bool allow_mac_based_ipv6_ RTC_GUARDED_BY(thread_) = false;
+  bool bind_using_ifname_ RTC_GUARDED_BY(thread_) = false;
+
+  std::vector<NetworkMask> vpn_;
+  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
+};
+#endif // WEBRTC_WEBKIT_BUILD
 
 }  // namespace rtc
 
