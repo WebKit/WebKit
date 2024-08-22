@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-50">
+    <script src="/js-test-resources/ui-helper.js"></script>
     <style>
         iframe {
             width: 700px;
@@ -13,19 +14,15 @@
         if (window.testRunner)
             testRunner.waitUntilDone();
         
-        function testComplete()
+        async function runTest()
         {
-            const pdfFadeInDelay = 250;
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                }, pdfFadeInDelay);
-            });
+            await UIHelper.waitForPDFFadeIn();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>
 <body>
-    <iframe onload="testComplete()" src="/resources/network-simulator.py?test=pdf-load&path=/pdf/resources/linearized.pdf&chunksize=1024&chunkdelay=16"></iframe>
+    <iframe onload="runTest()" src="/resources/network-simulator.py?test=pdf-load&path=/pdf/resources/linearized.pdf&chunksize=1024&chunkdelay=16"></iframe>
 </body>
 </html>

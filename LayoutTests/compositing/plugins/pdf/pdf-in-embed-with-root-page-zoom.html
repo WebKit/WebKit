@@ -16,7 +16,7 @@
         }
         window.addEventListener('load', async () => {
             await UIHelper.zoomToScale(1.3);
-            await UIHelper.ensureStablePresentationUpdate();
+            await UIHelper.waitForPDFFadeIn();
             const layers = document.getElementById('layers');
             layers.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
             testRunner.notifyDone();

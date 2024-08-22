@@ -1840,7 +1840,3 @@ imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failur
 
 # webkit.org/b/278365 REGRESSION (279617@main): [ macOS wk2 ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html is a flaky faliure
 imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
-
-# webkit.org/b/278429 [Sonoma wk2] fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html is a flaky failure
-[ Sonoma+ ] fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ Pass Failure ]
-

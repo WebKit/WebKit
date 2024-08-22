@@ -18,7 +18,7 @@
             testRunner.dumpAsText();
         }
         window.addEventListener('load', async () => {
-            await UIHelper.renderingUpdate();
+            await UIHelper.waitForPDFFadeIn();
             
             const layers = document.getElementById('layers');
             layers.textContent = internals.layerTreeAsText(document);
