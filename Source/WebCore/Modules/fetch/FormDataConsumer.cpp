@@ -117,9 +117,11 @@ void FormDataConsumer::consume(std::span<const uint8_t> content)
     if (!m_callback)
         return;
 
-    m_callback(WTFMove(content));
-    if (!m_callback)
-        return;
+    if (!content.empty()) {
+        m_callback(WTFMove(content));
+        if (!m_callback)
+            return;
+    }
 
     read();
 }
