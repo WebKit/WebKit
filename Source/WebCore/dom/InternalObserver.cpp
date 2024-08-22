@@ -35,7 +35,7 @@ namespace WebCore {
 
 void InternalObserver::error(JSC::JSValue value)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
