@@ -65,7 +65,7 @@ void DigitalCredentialsCoordinatorProxy::requestDigitalCredential(FrameIdentifie
 {
     // FIXME: Handle the request for a digital credential.
     // For now, we will simply call the handler with a dummy exception data.
-    handler({ ExceptionCode::NotSupportedError, { } });
+    handler({ ExceptionCode::NotSupportedError, "Not implemented"_s });
 }
 
 void DigitalCredentialsCoordinatorProxy::cancel(CompletionHandler<void()>&& completionHandler)
