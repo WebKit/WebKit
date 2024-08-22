@@ -1364,17 +1364,11 @@ class Instruction
             # the labels required for the .loh directive.
             $asm.putStr("#if OS(DARWIN)")
             $asm.puts "Ljsc_llint_loh_adrp_#{uid}:"
-
-            $asm.putStr("#if CPU(ADDRESS32)")
-            $asm.puts "adrp #{operands[1].arm64Operand(:word)}, #{operands[0].asmLabel}@GOTPAGE"
-            $asm.putStr("#else")
             $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGE"
-            $asm.putStr("#endif")
-
             $asm.puts "Ljsc_llint_loh_ldr_#{uid}:"
 
             $asm.putStr("#if CPU(ADDRESS32)")
-            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:word)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
+            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
             $asm.putStr("#else")
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
             $asm.putStr("#endif")
@@ -1382,11 +1376,10 @@ class Instruction
             # On Linux, use ELF GOT relocation specifiers.
             $asm.putStr("#elif OS(LINUX)")
 
-            $asm.putStr("#if CPU(ADDRESS32)")
-            $asm.puts "adrp #{operands[1].arm64Operand(:word)}, :got:#{operands[0].asmLabel}"
-            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:word)}, :got_lo12:#{operands[0].asmLabel}]"
-            $asm.putStr("#else")
             $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, :got:#{operands[0].asmLabel}"
+            $asm.putStr("#if CPU(ADDRESS32)")
+            $asm.puts "ldr #{operands[1].arm64Operand(:word)}, [#{operands[1].arm64Operand(:quad)}, :got_lo12:#{operands[0].asmLabel}]"
+            $asm.putStr("#else")
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [#{operands[1].arm64Operand(:quad)}, :got_lo12:#{operands[0].asmLabel}]"
             $asm.putStr("#endif")
 
