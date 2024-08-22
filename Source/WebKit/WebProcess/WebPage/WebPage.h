@@ -1777,7 +1777,7 @@ public:
     void enableSourceTextAnimationAfterElementWithID(const String&);
     void enableTextAnimationTypeForElementWithID(const String&);
 
-    void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&, const WebCore::TextIndicatorData&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& = nil);
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&, const WebCore::TextIndicatorData&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& = { });
 
     void removeTextAnimationForAnimationID(const WTF::UUID&);
     void removeTransparentMarkersForActiveWritingToolsSession();
