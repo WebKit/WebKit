@@ -39,7 +39,6 @@
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "RenderDescendantIterator.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
@@ -153,9 +152,6 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
 
 bool ContentChangeObserver::isConsideredActionableContent(const Element& candidateElement, ElementHadRenderer hadRenderer) const
 {
-    if (m_document.quirks().shouldTooltipPreventFromProceedingWithClick(candidateElement))
-        return true;
-
     auto isConsideredClickable = [&] {
         auto& element = const_cast<Element&>(candidateElement);
         if (element.isInUserAgentShadowTree())

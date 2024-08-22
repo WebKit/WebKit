@@ -235,19 +235,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// covid.cdc.gov https://bugs.webkit.org/show_bug.cgi?id=223620
-bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element) const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!isDomain("covid.cdc.gov"_s))
-        return false;
-
-    static MainThreadNeverDestroyed<const AtomString> tooltipClass("tooltip"_s);
-    return element.hasClassName(tooltipClass.get());
-}
-
 // google.com https://bugs.webkit.org/show_bug.cgi?id=223700
 // FIXME: Remove after the site is fixed, <rdar://problem/75792913>
 bool Quirks::shouldHideSearchFieldResultsButton() const
