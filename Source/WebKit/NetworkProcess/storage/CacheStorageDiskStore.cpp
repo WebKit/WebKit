@@ -29,6 +29,7 @@
 #include "CacheStorageRecord.h"
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RefCounted.h>
@@ -470,9 +471,9 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     return { encoder.span() };
 }
 
-static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
+static Vector<uint8_t> encodeRecordBody(const WebCore::DOMCacheEngine::ResponseBody& body)
 {
-    return WTF::switchOn(record.responseBody, [](const Ref<WebCore::FormData>& formData) {
+    return WTF::switchOn(body, [](const Ref<WebCore::FormData>& formData) {
         // FIXME: Store form data body.
         return Vector<uint8_t> { };
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
@@ -480,6 +481,11 @@ static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
     }, [](const std::nullptr_t&) {
         return Vector<uint8_t> { };
     });
+}
+
+size_t CacheStorageDiskStore::computeRealBodySizeForStorage(const WebCore::DOMCacheEngine::ResponseBody& body)
+{
+    return encodeRecordBody(body).size();
 }
 
 static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<uint8_t>& headerData, bool isBodyInline, const Vector<uint8_t>& bodyData, const SHA1::Digest& bodyHash, FileSystem::Salt salt)
@@ -513,7 +519,7 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
     Vector<Vector<uint8_t>> recordBlobDatas;
     for (auto&& record : records) {
         recordFiles.append(recordFilePath(record.info.key));
-        auto bodyData = encodeRecordBody(record);
+        auto bodyData = encodeRecordBody(record.responseBody);
         auto bodyHash = computeSHA1(bodyData.span(), m_salt);
         bool shouldCreateBlob = shouldStoreBodyAsBlob(bodyData);
         auto recordInfoKey = record.info.key;
