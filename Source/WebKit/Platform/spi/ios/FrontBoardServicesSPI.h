@@ -29,6 +29,7 @@
 
 #import <FrontBoardServices/FBSDisplay.h>
 #import <FrontBoardServices/FBSOpenApplicationService.h>
+#import <SpringBoardServices/SBSOpenApplicationService.h>
 
 #else
 
