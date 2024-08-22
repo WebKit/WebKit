@@ -81,7 +81,9 @@ ScreenProperties ScreenManager::collectScreenProperties() const
 
         ScreenData data;
         data.screenRect = FloatRect(wpe_monitor_get_x(monitor), wpe_monitor_get_y(monitor), width, height);
-        data.screenAvailableRect = data.screenRect;
+        // TODO: add some API to get the available position to support screen.availTop/Left if it become a standard in the future
+        // For now we're settling to 0,0 as Wayland doesn't provide this information to clients
+        data.screenAvailableRect = FloatRect(0, 0, wpe_monitor_get_available_width(monitor), wpe_monitor_get_available_height(monitor));
         data.screenDepth = 24;
         data.screenDepthPerComponent = 8;
         data.screenSize = { wpe_monitor_get_physical_width(monitor), wpe_monitor_get_physical_height(monitor) };

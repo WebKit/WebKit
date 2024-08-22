@@ -216,7 +216,7 @@ const struct wl_registry_listener registryListener = {
         if (!std::strcmp(interface, "wl_compositor"))
             priv->wlCompositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, std::min<uint32_t>(version, 5)));
         else if (!std::strcmp(interface, "xdg_wm_base"))
-            priv->xdgWMBase = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
+            priv->xdgWMBase = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, std::min<uint32_t>(version, 4)));
         // FIXME: support zxdg_shell_v6?
         else if (!std::strcmp(interface, "wl_seat"))
             priv->wlSeat = makeUnique<WPE::WaylandSeat>(static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, std::min<uint32_t>(version, 8))));

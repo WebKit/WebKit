@@ -38,6 +38,8 @@ struct _WPEMonitorPrivate {
     int y { -1 };
     int width { -1 };
     int height { -1 };
+    int availableWidth { -1 };
+    int availableHeight { -1 };
     int physicalWidth { -1 };
     int physicalHeight { -1 };
     gdouble scale { 1 };
@@ -54,6 +56,8 @@ enum {
     PROP_Y,
     PROP_WIDTH,
     PROP_HEIGHT,
+    PROP_AVAILABLE_WIDTH,
+    PROP_AVAILABLE_HEIGHT,
     PROP_PHYSICAL_WIDTH,
     PROP_PHYSICAL_HEIGHT,
     PROP_SCALE,
@@ -83,6 +87,12 @@ static void wpeMonitorSetProperty(GObject* object, guint propId, const GValue* v
         break;
     case PROP_HEIGHT:
         wpe_monitor_set_size(monitor, -1, g_value_get_int(value));
+        break;
+    case PROP_AVAILABLE_WIDTH:
+        wpe_monitor_set_available_size(monitor, g_value_get_int(value), -1);
+        break;
+    case PROP_AVAILABLE_HEIGHT:
+        wpe_monitor_set_available_size(monitor, -1, g_value_get_int(value));
         break;
     case PROP_PHYSICAL_WIDTH:
         wpe_monitor_set_physical_size(monitor, g_value_get_int(value), -1);
@@ -120,6 +130,12 @@ static void wpeMonitorGetProperty(GObject* object, guint propId, GValue* value, 
         break;
     case PROP_HEIGHT:
         g_value_set_int(value, wpe_monitor_get_height(monitor));
+        break;
+    case PROP_AVAILABLE_WIDTH:
+        g_value_set_int(value, wpe_monitor_get_available_width(monitor));
+        break;
+    case PROP_AVAILABLE_HEIGHT:
+        g_value_set_int(value, wpe_monitor_get_available_height(monitor));
         break;
     case PROP_PHYSICAL_WIDTH:
         g_value_set_int(value, wpe_monitor_get_physical_width(monitor));
@@ -200,6 +216,32 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
     sObjProperties[PROP_HEIGHT] =
         g_param_spec_int(
             "height",
+            nullptr, nullptr,
+            -1, G_MAXINT, -1,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WPEMonitor:available-width:
+     *
+     * The available width of the monitor in logical coordinates. This is the
+     * width of the monitor excluding any reserved areas like docks or panels.
+     */
+    sObjProperties[PROP_AVAILABLE_WIDTH] =
+        g_param_spec_int(
+            "available-width",
+            nullptr, nullptr,
+            -1, G_MAXINT, -1,
+            WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WPEMonitor:available-height:
+     *
+     * The available height of the monitor in logical coordinates. This is the
+     * height of the monitor excluding any reserved areas like docks or panels.
+     */
+    sObjProperties[PROP_AVAILABLE_HEIGHT] =
+        g_param_spec_int(
+            "available-height",
             nullptr, nullptr,
             -1, G_MAXINT, -1,
             WEBKIT_PARAM_READWRITE);
@@ -395,6 +437,64 @@ void wpe_monitor_set_size(WPEMonitor* monitor, int width, int height)
     if (height != -1 && height != monitor->priv->height) {
         monitor->priv->height = height;
         g_object_notify_by_pspec(G_OBJECT(monitor), sObjProperties[PROP_HEIGHT]);
+    }
+}
+
+/**
+ * wpe_monitor_get_available_width:
+ * @monitor: a #WPEMonitor
+ *
+ * Get the available width of @monitor in logical coordinates. This is the
+ * width of the monitor excluding any reserved areas like docks or panels.
+ *
+ * Returns: the available width of @monitor, or the full monitor width if available width could not be determined.
+ */
+int wpe_monitor_get_available_width(WPEMonitor* monitor)
+{
+    g_return_val_if_fail(WPE_IS_MONITOR(monitor), -1);
+
+    return monitor->priv->availableWidth != -1 ? monitor->priv->availableWidth : monitor->priv->width;
+}
+
+/**
+ * wpe_monitor_get_available_height:
+ * @monitor: a #WPEMonitor
+ *
+ * Get the available height of @monitor in logical coordinates. This is the
+ * height of the monitor excluding any reserved areas like docks or panels.
+ *
+ * Returns: the available height of @monitor, or the full monitor height if available height could not be determined.
+ */
+int wpe_monitor_get_available_height(WPEMonitor* monitor)
+{
+    g_return_val_if_fail(WPE_IS_MONITOR(monitor), -1);
+
+    return monitor->priv->availableHeight != -1 ? monitor->priv->availableHeight : monitor->priv->height;
+}
+
+/**
+ * wpe_monitor_set_available_size:
+ * @monitor: a #WPEMonitor
+ * @width: the available width, or -1
+ * @height: the available height, o -1
+ *
+ * Set the available size of @monitor in logical coordinates. This is the
+ * size of the monitor excluding any reserved areas like docks or panels.
+ */
+void wpe_monitor_set_available_size(WPEMonitor* monitor, int width, int height)
+{
+    g_return_if_fail(WPE_IS_MONITOR(monitor));
+    g_return_if_fail(width == -1 || width >= 0);
+    g_return_if_fail(height == -1 || height >= 0);
+
+    if (width != -1 && width != monitor->priv->availableWidth) {
+        monitor->priv->availableWidth = width;
+        g_object_notify_by_pspec(G_OBJECT(monitor), sObjProperties[PROP_AVAILABLE_WIDTH]);
+    }
+
+    if (height != -1 && height != monitor->priv->availableHeight) {
+        monitor->priv->availableHeight = height;
+        g_object_notify_by_pspec(G_OBJECT(monitor), sObjProperties[PROP_AVAILABLE_HEIGHT]);
     }
 }
 

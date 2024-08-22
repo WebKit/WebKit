@@ -349,8 +349,11 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
     },
 #ifdef XDG_TOPLEVEL_CONFIGURE_BOUNDS_SINCE_VERSION
     // configure_bounds
-    [](void*, struct xdg_toplevel*, int32_t, int32_t)
+    [](void* data, struct xdg_toplevel*, int32_t width, int32_t height)
     {
+        auto* priv = WPE_TOPLEVEL_WAYLAND(data)->priv;
+        if (priv->currentMonitor)
+            wpe_monitor_set_available_size(priv->currentMonitor.get(), width, height);
     },
 #endif
 #ifdef XDG_TOPLEVEL_WM_CAPABILITIES_SINCE_VERSION
@@ -567,8 +570,6 @@ static void wpeToplevelWaylandConstructed(GObject *object)
         zwp_linux_dmabuf_feedback_v1_add_listener(priv->dmabufFeedback, &linuxDMABufFeedbackListener, object);
     }
 
-    wl_display_roundtrip(wpe_display_wayland_get_wl_display(display));
-
     // Set the first monitor as the default one until enter monitor is emitted.
     if (wpe_display_get_n_monitors(WPE_DISPLAY(display))) {
         priv->currentMonitor = wpe_display_get_monitor(WPE_DISPLAY(display), 0);
@@ -577,6 +578,8 @@ static void wpeToplevelWaylandConstructed(GObject *object)
             wl_surface_set_buffer_scale(priv->wlSurface, scale);
         wpe_toplevel_scale_changed(toplevel, scale);
     }
+
+    wl_display_roundtrip(wpe_display_wayland_get_wl_display(display));
 
     if (auto* explicitSync = wpeDisplayWaylandGetLinuxExplicitSync(display))
         priv->surfaceSync = zwp_linux_explicit_synchronization_v1_get_synchronization(explicitSync, priv->wlSurface);

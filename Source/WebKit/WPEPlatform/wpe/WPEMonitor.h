@@ -59,6 +59,11 @@ WPE_API int     wpe_monitor_get_height          (WPEMonitor *monitor);
 WPE_API void    wpe_monitor_set_size            (WPEMonitor *monitor,
                                                  int         width,
                                                  int         height);
+WPE_API int     wpe_monitor_get_available_width (WPEMonitor *monitor);
+WPE_API int     wpe_monitor_get_available_height(WPEMonitor *monitor);
+WPE_API void    wpe_monitor_set_available_size  (WPEMonitor *monitor,
+                                                 int         width,
+                                                 int         height);
 WPE_API int     wpe_monitor_get_physical_width  (WPEMonitor *monitor);
 WPE_API int     wpe_monitor_get_physical_height (WPEMonitor *monitor);
 WPE_API void    wpe_monitor_set_physical_size   (WPEMonitor *monitor,
