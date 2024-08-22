@@ -830,7 +830,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
-        if (!widthForMetal || !heightForMetal)
+        if (!widthForMetal || !heightForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()))
             return;
 
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
@@ -856,7 +856,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
-        if (!widthForMetal || !heightForMetal || !depthForMetal)
+        if (!widthForMetal || !heightForMetal || !depthForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()))
             return;
 
         [m_blitCommandEncoder
