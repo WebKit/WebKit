@@ -4378,7 +4378,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             '')
 
         self.assert_lint(
-            '''enum class CommonAbbreviations { AM, CF, PM, URL, XHR };''',
+            '''enum class CommonAbbreviations { AM, CF, LTR, PM, RTL, URL, XHR };''',
             '')
 
         self.assert_multi_line_lint(
@@ -4386,7 +4386,9 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum class CommonAbbreviationsMultiline {
                     AM,
                     CF,
+                    LTR,
                     PM,
+                    RTL,
                     URL,
                     XHR
                 };''',
