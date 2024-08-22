@@ -40,3 +40,4 @@
 #import <WebKit/_WKTargetedElementRequest.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <WebKit/_WKVisitedLinkStore.h>
+#import <WebKit/_WKWebPushAction.h>

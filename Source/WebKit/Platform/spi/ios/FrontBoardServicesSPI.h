@@ -36,11 +36,28 @@
 @property (nonatomic, copy, readonly) NSString *name;
 @end
 
-extern NSString *const FBSOpenApplicationOptionKeyActivateForEvent;
 extern NSString *const FBSActivateForEventOptionTypeBackgroundContentFetching;
-extern NSString *const FBSOpenApplicationOptionKeyPayloadURL;
+extern NSString *const FBSOpenApplicationOptionKeyActions;
+extern NSString *const FBSOpenApplicationOptionKeyActivateForEvent;
+extern NSString *const FBSOpenApplicationOptionKeyActivateSuspended;
 extern NSString *const FBSOpenApplicationOptionKeyPayloadOptions;
+extern NSString *const FBSOpenApplicationOptionKeyPayloadURL;
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface FBSOpenApplicationOptions : NSObject <NSCopying>
++ (instancetype)optionsWithDictionary:(NSDictionary *)dictionary;
+@end
+
+@class BSProcessHandle;
+typedef void(^FBSOpenApplicationCompletion)(BSProcessHandle *process, NSError *error);
+
+@interface FBSOpenApplicationService : NSObject
+- (void)openApplication:(NSString *)bundleID withOptions:(FBSOpenApplicationOptions *)options completion:(FBSOpenApplicationCompletion)completion;
+@end
+
+WTF_EXTERN_C_BEGIN
+extern FBSOpenApplicationService *SBSCreateOpenApplicationService(void);
+WTF_EXTERN_C_END
 
 #endif // PLATFORM(IOS_FAMILY)

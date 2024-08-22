@@ -32,6 +32,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 static const NSString * const kURLArgumentString = @"--url";
 
@@ -204,7 +206,16 @@ void* URLContext = &URLContext;
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
     configuration.preferences._mockCaptureDevicesEnabled = YES;
+    configuration.preferences._notificationsEnabled = YES;
+    configuration.preferences._pushAPIEnabled = YES;
+    configuration.preferences._notificationEventEnabled = YES;
+    configuration.preferences._appBadgeEnabled = YES;
     configuration.preferences.elementFullscreenEnabled = YES;
+
+    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
+    dataStoreConfiguration.webPushMachServiceName = @"com.apple.webkit.webpushd.service";
+    // FIXME: Set an appropriate webPushPartitionString
+    configuration.websiteDataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
     webView.inspectable = YES;

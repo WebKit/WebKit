@@ -8,10 +8,10 @@ reexported-libraries:
         libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
 exports:
 -       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
-        symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActivateForEvent, _FBSOpenApplicationOptionKeyLaunchIntent,
-                _FBSOpenApplicationOptionKeyPayloadOptions, _FBSOpenApplicationOptionKeyPayloadURL, _FBSOpenApplicationOptionKeyUnlockDevice,
-                _FBSSceneVisibilityEndowmentNamespace]
-        objc-classes: [FBSOpenApplicationOptions, FBSOpenApplicationService]
+        symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActivateForEvent, _FBSOpenApplicationOptionKeyPayloadOptions,
+                _FBSOpenApplicationOptionKeyPayloadURL, _FBSOpenApplicationOptionKeyActions, _FBSOpenApplicationOptionKeyActivateSuspended]
+        objc-classes: [FBSOpenApplicationOptions]
+
 ...
 --- !tapi-tbd
 tbd-version: 4
