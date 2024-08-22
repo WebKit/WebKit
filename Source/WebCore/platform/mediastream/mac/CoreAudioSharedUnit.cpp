@@ -241,8 +241,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
 {
-    static NeverDestroyed<CoreAudioSharedUnit> singleton;
-    return singleton;
+    static NeverDestroyed<Ref<CoreAudioSharedUnit>> singleton(adoptRef(*new CoreAudioSharedUnit));
+    return singleton.get();
 }
 
 CoreAudioSharedUnit::CoreAudioSharedUnit()

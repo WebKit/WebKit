@@ -95,8 +95,8 @@ void BaseAudioSharedUnit::startProducingData()
 
 #if PLATFORM(MAC)
     prewarmAudioUnitCreation([weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->continueStartProducingData();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->continueStartProducingData();
     });
 #else
     continueStartProducingData();
@@ -172,6 +172,8 @@ void BaseAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captu
 
 void BaseAudioSharedUnit::devicesChanged()
 {
+    Ref protectedThis { *this };
+
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
     auto persistentID = this->persistentID();
     if (persistentID.isEmpty())
@@ -278,10 +280,11 @@ OSStatus BaseAudioSharedUnit::resume()
     ASSERT(!m_producingCount);
 
     callOnMainThread([weakThis = WeakPtr { this }] {
-        if (!weakThis || weakThis->m_suspended)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->m_suspended)
             return;
 
-        weakThis->forEachClient([](auto& client) {
+        protectedThis->forEachClient([](auto& client) {
             if (client.canResumeAfterInterruption())
                 client.setMuted(false);
         });
