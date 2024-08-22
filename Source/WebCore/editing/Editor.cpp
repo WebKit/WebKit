@@ -3670,6 +3670,8 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
     if (!placeholder->parentNode())
         return nullptr;
 
+    document->selection().addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::TextPlaceholderIsShowing);
+
     document->selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()) }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 
     return placeholder;
@@ -3691,6 +3693,8 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
     // To match the Legacy WebKit implementation, set the text insertion point to be before where the placeholder used to be.
     if (document->selection().isFocusedAndActive() && document->focusedElement() == savedRootEditableElement)
         document->selection().setSelection(VisibleSelection { savedPositionBeforePlaceholder }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
+
+    document->selection().removeCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::TextPlaceholderIsShowing);
 }
 
 static inline void collapseCaretWidth(IntRect& rect)

@@ -551,6 +551,7 @@ enum RenderingMode {
     DOMRect absoluteLineRectFromPoint(long x, long y);
 
     DOMRect absoluteCaretBounds();
+    boolean isCaretVisible();
 
     // isCaretBlinkingSuspended() returns whether the frame selection of the context document
     // is suspended, while the parameterized method returns the state for a particular document

@@ -204,14 +204,19 @@ FrameSelection::FrameSelection(Document* document)
         m_selection.setIsDirectional(true);
 
     bool activeAndFocused = isFocusedAndActive();
-    if (activeAndFocused)
-        setSelectionFromNone();
+
 #if USE(UIKIT_EDITING)
-    // Caret blinking (blinks | does not blink)
-    setCaretVisible(activeAndFocused);
+    constexpr auto shouldUpdateAppearance = ShouldUpdateAppearance::Yes;
 #else
-    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::No);
+    constexpr auto shouldUpdateAppearance = ShouldUpdateAppearance::No;
 #endif
+
+    // Caret blinking (blinks | does not blink)
+    if (activeAndFocused) {
+        setSelectionFromNone();
+        removeCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive, shouldUpdateAppearance);
+    } else
+        addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive, shouldUpdateAppearance);
 }
 
 FrameSelection::~FrameSelection() = default;
@@ -2274,9 +2279,11 @@ void FrameSelection::focusedOrActiveStateChanged()
 
 #if USE(UIKIT_EDITING)
     // Caret blinking (blinks | does not blink)
-    if (activeAndFocused)
+    if (activeAndFocused) {
         setSelectionFromNone();
-    setCaretVisible(activeAndFocused);
+        removeCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive);
+    } else
+        addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive);
 #else
     // Because RenderObject::selectionBackgroundColor() and
     // RenderObject::selectionForegroundColor() check if the frame is active,
@@ -2285,9 +2292,11 @@ void FrameSelection::focusedOrActiveStateChanged()
         view->selection().repaint();
 
     // Caret appears in the active frame.
-    if (activeAndFocused)
+    if (activeAndFocused) {
         setSelectionFromNone();
-    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::Yes);
+        removeCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive);
+    } else
+        addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::IsNotFocusedOrActive);
 #endif
 }
 
@@ -2421,8 +2430,22 @@ void FrameSelection::updateAppearance()
     }
 }
 
-void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdateAppearance doAppearanceUpdate)
+void FrameSelection::addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason reason, ShouldUpdateAppearance doAppearanceUpdate)
 {
+    m_caretVisibilitySuppressionReasons.add(reason);
+    updateCaretVisibility(doAppearanceUpdate);
+}
+
+void FrameSelection::removeCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason reason, ShouldUpdateAppearance doAppearanceUpdate)
+{
+    m_caretVisibilitySuppressionReasons.remove(reason);
+    updateCaretVisibility(doAppearanceUpdate);
+}
+
+void FrameSelection::updateCaretVisibility(ShouldUpdateAppearance doAppearanceUpdate)
+{
+    auto visibility = m_caretVisibilitySuppressionReasons.isEmpty() ? CaretVisibility::Visible : CaretVisibility::Hidden;
+
     if (caretVisibility() == visibility)
         return;
 
