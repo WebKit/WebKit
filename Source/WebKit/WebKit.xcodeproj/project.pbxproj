@@ -1350,7 +1350,6 @@
 		51D7E0AD2356555E00A67D3A /* WKPDFConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
-		51E0BD9D2C74711A0048411B /* _WKWebPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BD9B2C7471110048411B /* _WKWebPushAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
 		51E481052AAA8F0A0069B158 /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
 		51E8284E2B21395A009119F9 /* WKKeyedCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E8284C2B213954009119F9 /* WKKeyedCoder.h */; };
@@ -5872,8 +5871,6 @@
 		51DAAEBF2AA198DE00DB2AA4 /* com.apple.WebKit.webpushd.relocatable.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.relocatable.mac.sb; sourceTree = "<group>"; };
 		51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionToWebProcessMessages.h; sourceTree = "<group>"; };
-		51E0BD9B2C7471110048411B /* _WKWebPushAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebPushAction.h; sourceTree = "<group>"; };
-		51E0BD9C2C7471110048411B /* _WKWebPushAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebPushAction.mm; sourceTree = "<group>"; };
 		51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBUtilities.cpp; sourceTree = "<group>"; };
 		51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBUtilities.h; sourceTree = "<group>"; };
 		51E399051D6F54C5009C8831 /* UIGamepadProviderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderCocoa.mm; sourceTree = "<group>"; };
@@ -11646,8 +11643,6 @@
 				574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */,
 				5790A6512565DE6A0077C5A7 /* _WKWebAuthenticationPanelForTesting.h */,
 				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
-				51E0BD9B2C7471110048411B /* _WKWebPushAction.h */,
-				51E0BD9C2C7471110048411B /* _WKWebPushAction.mm */,
 				1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */,
 				1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */,
 				1AE2867F1C7F92BF0069AC4F /* _WKWebsiteDataSizeInternal.h */,
@@ -16233,7 +16228,6 @@
 				337042092B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.h in Headers */,
 				1CC5CA712C5ACB8500DF3B94 /* _WKWebExtensionWindow.h in Headers */,
 				1CC5CA7D2C5ACB8500DF3B94 /* _WKWebExtensionWindowCreationOptions.h in Headers */,
-				51E0BD9D2C74711A0048411B /* _WKWebPushAction.h in Headers */,
 				1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */,
 				1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */,
 				5120C8351E5B74B90025B250 /* _WKWebsiteDataStoreConfiguration.h in Headers */,

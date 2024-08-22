@@ -28,7 +28,6 @@
 
 #import "WebPushDaemon.h"
 
-#import "BaseBoardSPI.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
@@ -528,58 +527,21 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
         RELEASE_LOG_ERROR_IF(cfError, Push, "Failed to launch process in response to push: %{public}@", (__bridge NSError *)cfError);
     });
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    if (subscriptionSetIdentifier.pushPartition.isEmpty()) {
-        RELEASE_LOG_ERROR(Push, "Cannot notify client app about web push action with empty pushPartition string");
-        return;
-    }
+    const NSString *URLPrefix = @"webapp://web-push/";
+    NSURL *launchURL = [NSURL URLWithString:[URLPrefix stringByAppendingFormat:@"%@", (NSString *)subscriptionSetIdentifier.pushPartition]];
 
-    if (bundleIdentifier == "com.apple.SafariViewService"_s) {
-        const NSString *URLPrefix = @"webapp://web-push/";
-        NSURL *launchURL = [NSURL URLWithString:[URLPrefix stringByAppendingFormat:@"%@", (NSString *)subscriptionSetIdentifier.pushPartition]];
-
-        NSDictionary *options = @{
-            FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
-            FBSOpenApplicationOptionKeyPayloadURL : launchURL,
-            FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
-        };
-
-        RetainPtr configuration = adoptNS([[_LSOpenConfiguration alloc] init]);
-        configuration.get().sensitive = YES;
-        configuration.get().frontBoardOptions = options;
-        configuration.get().allowURLOverrides = NO;
-
-        [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration.get() completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
-            if (error)
-                RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
-        }];
-
-        return;
-    }
-
-    NSDictionary *settingsInfo = @{
-        pushActionVersionKey(): currentPushActionVersion(),
-        pushActionPartitionKey(): (NSString *)subscriptionSetIdentifier.pushPartition,
-        pushActionTypeKey(): @"PushEvent"
-    };
-    RetainPtr<BSMutableSettings> bsSettings = adoptNS([[BSMutableSettings alloc] init]);
-    [bsSettings setObject:settingsInfo forSetting:WebKit::WebPushD::pushActionSetting];
-
-    RetainPtr bsResponder = [BSActionResponder responderWithHandler:^void (BSActionResponse *response) {
-        if (response.error)
-            RELEASE_LOG_ERROR(Push, "Client app failed to response to web push action: %{public}@", response.error);
-    }];
-
-    RetainPtr action = adoptNS([[BSAction alloc] initWithInfo:bsSettings.get() responder:bsResponder.get()]);
-
-    FBSOpenApplicationOptions *options = [FBSOpenApplicationOptions optionsWithDictionary:@{
+    NSDictionary *options = @{
         FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
-        FBSOpenApplicationOptionKeyActivateSuspended : @YES,
-        FBSOpenApplicationOptionKeyActions : @[ action.get() ],
+        FBSOpenApplicationOptionKeyPayloadURL : launchURL,
         FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
-    }];
+    };
 
-    RetainPtr<FBSOpenApplicationService> openService = adoptNS(SBSCreateOpenApplicationService());
-    [openService openApplication:(NSString *)bundleIdentifier withOptions:options completion:^(BSProcessHandle *process, NSError *error) {
+    _LSOpenConfiguration *configuration = [[_LSOpenConfiguration alloc] init];
+    configuration.sensitive = YES;
+    configuration.frontBoardOptions = options;
+    configuration.allowURLOverrides = NO;
+
+    [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
     }];

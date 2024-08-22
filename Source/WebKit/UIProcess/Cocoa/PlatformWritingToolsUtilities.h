@@ -27,7 +27,6 @@
 
 #if ENABLE(WRITING_TOOLS)
 
-#import <WebCore/WritingToolsTypes.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/RetainPtr.h>
 

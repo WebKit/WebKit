@@ -90,7 +90,6 @@
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
-#import <UIKit/_UIApplicationBSActionHandler.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
@@ -222,19 +221,12 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
-@class BSAction;
-@class FBSSceneTransitionContext;
-@protocol _UIApplicationBSActionHandler <NSObject>
-- (NSSet<BSAction *> *)_respondToApplicationActions:(NSSet<BSAction *> *)applicationActions fromTransitionContext:(FBSSceneTransitionContext *)transitionContext;
-@end
-
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
-- (void)_registerBSActionHandler:(id<_UIApplicationBSActionHandler>)handler;
 @end
 
 @interface UIColor ()

@@ -29,7 +29,6 @@
 
 #import <FrontBoardServices/FBSDisplay.h>
 #import <FrontBoardServices/FBSOpenApplicationService.h>
-#import <SpringBoardServices/SBSOpenApplicationService.h>
 
 #else
 
@@ -37,27 +36,10 @@
 @property (nonatomic, copy, readonly) NSString *name;
 @end
 
-extern NSString *const FBSActivateForEventOptionTypeBackgroundContentFetching;
-extern NSString *const FBSOpenApplicationOptionKeyActions;
 extern NSString *const FBSOpenApplicationOptionKeyActivateForEvent;
-extern NSString *const FBSOpenApplicationOptionKeyActivateSuspended;
-extern NSString *const FBSOpenApplicationOptionKeyPayloadOptions;
+extern NSString *const FBSActivateForEventOptionTypeBackgroundContentFetching;
 extern NSString *const FBSOpenApplicationOptionKeyPayloadURL;
-
-@interface FBSOpenApplicationOptions : NSObject <NSCopying>
-+ (instancetype)optionsWithDictionary:(NSDictionary *)dictionary;
-@end
-
-@class BSProcessHandle;
-typedef void(^FBSOpenApplicationCompletion)(BSProcessHandle *process, NSError *error);
-
-@interface FBSOpenApplicationService : NSObject
-- (void)openApplication:(NSString *)bundleID withOptions:(FBSOpenApplicationOptions *)options completion:(FBSOpenApplicationCompletion)completion;
-@end
-
-WTF_EXTERN_C_BEGIN
-extern FBSOpenApplicationService *SBSCreateOpenApplicationService(void);
-WTF_EXTERN_C_END
+extern NSString *const FBSOpenApplicationOptionKeyPayloadOptions;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

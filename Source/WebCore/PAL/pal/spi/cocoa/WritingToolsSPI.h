@@ -52,8 +52,6 @@ constexpr auto PlatformWritingToolsResultTable = (PlatformWritingToolsResultOpti
 
 #else
 
-#import <UIKit/UIKit.h>
-
 using PlatformWritingToolsBehavior = UIWritingToolsBehavior;
 
 constexpr auto PlatformWritingToolsBehaviorNone = UIWritingToolsBehaviorNone;

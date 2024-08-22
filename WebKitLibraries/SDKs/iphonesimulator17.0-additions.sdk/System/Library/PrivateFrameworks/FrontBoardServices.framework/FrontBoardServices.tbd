@@ -9,9 +9,7 @@ reexported-libraries:
 exports:
 -       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
         symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActivateForEvent, _FBSOpenApplicationOptionKeyPayloadOptions,
-                _FBSOpenApplicationOptionKeyPayloadURL, _FBSOpenApplicationOptionKeyActions, _FBSOpenApplicationOptionKeyActivateSuspended]
-        objc-classes: [FBSOpenApplicationOptions]
-
+                _FBSOpenApplicationOptionKeyPayloadURL]
 ...
 --- !tapi-tbd
 tbd-version: 4

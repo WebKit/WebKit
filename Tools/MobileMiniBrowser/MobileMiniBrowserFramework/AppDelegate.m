@@ -26,7 +26,6 @@
 #import "AppDelegate.h"
 
 #import "WebViewController.h"
-#import <WebKit/WKWebsiteDataStorePrivate.h>
 
 #import <WebKit/WebKit.h>
 
@@ -37,14 +36,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Opt-in to supporting push for testing purposes.
-    id handler = ^(_WKWebPushAction *action) {
-        // FIXME: Make this callback do something useful by returning an appropriate WKWebsiteDataStore
-        return (WKWebsiteDataStore *)nil;
-    };
-
-    [WKWebsiteDataStore _setWebPushActionHandler:handler];
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UIStoryboard *frameworkMainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle bundleForClass:[AppDelegate class]]];

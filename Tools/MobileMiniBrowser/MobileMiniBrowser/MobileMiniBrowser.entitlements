@@ -6,10 +6,6 @@
 	<true/>
 	<key>com.apple.runningboard.assertions.webkit</key>
 	<true/>
-	<key>com.apple.private.webkit.webpush</key>
-	<true/>
-	<key>com.apple.developer.WebKit.ServiceWorkers</key>
-	<true/>
 	<key>com.apple.private.security.enable-state-flags</key>
 	<array>
 		<string>EnableQuickLookSandboxResources</string>
