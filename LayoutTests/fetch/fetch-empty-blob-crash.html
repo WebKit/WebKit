@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>Consuming form data with empty blob</title>
+</head>
+<body>
+<script src="../resources/gc.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+function sleep(ms)
+{
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function createClonedBlobWithIndexedDB()
+{
+    return new Promise(resolve => {
+        const request = indexedDB.open('db' + Math.random(), 1);
+
+        request.onupgradeneeded = e => {
+            const db = e.target.result;
+
+            db.createObjectStore('storage', {keyPath: 'id'});
+        };
+
+        request.onsuccess = e => {
+            const db = e.target.result;
+            const transaction = db.transaction(['storage'], 'readwrite');
+            const objectStore = transaction.objectStore('storage');
+
+            const storeRequest = objectStore.put({
+                id: 1,
+                data: new Blob(['aa'])
+            });
+
+            storeRequest.onsuccess = () => {
+                objectStore.get(1).onsuccess = e => {
+                    gc();
+
+                    resolve(e.target.result.data);
+                };
+            };
+        };
+    });
+}
+
+promise_test(async () => {
+    const blob = await createClonedBlobWithIndexedDB();
+    await sleep(100);
+
+    const formData = new FormData();
+    formData.append('a', blob);
+
+    let response = new Response(formData);
+    Object.prototype.__defineGetter__('then', () => {
+        response = null;
+
+        gc();
+    });
+
+    response.arrayBuffer();
+});
+</script>
+</body>
+</html>
