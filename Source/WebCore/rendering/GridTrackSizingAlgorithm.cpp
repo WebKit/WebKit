@@ -1067,11 +1067,24 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentForGridItem(RenderBox& gr
             GridLayoutFunctions::setOverridingContentSizeForGridItem(*renderGrid(), gridItem, stretchedSize, GridTrackSizingDirection::ForRows);
         }
 
-        auto minContentSize = gridItem.minPreferredLogicalWidth() + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemInlineDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
+        auto minContentLogicalWidth = gridItem.minPreferredLogicalWidth();
+
         if (needsGridItemMinContentContributionForSecondColumnPass)
             GridLayoutFunctions::clearOverridingContentSizeForGridItem(*renderGrid(), gridItem, GridTrackSizingDirection::ForRows);
 
-        return minContentSize;
+        auto minLogicalWidth = [&] {
+            auto gridItemLogicalMinWidth = gridItem.style().logicalMinWidth();
+
+            if (gridItemLogicalMinWidth.isFixed())
+                return LayoutUnit { gridItemLogicalMinWidth.value() };
+            if (gridItemLogicalMinWidth.isMaxContent())
+                return gridItem.maxPreferredLogicalWidth();
+
+            // FIXME: We should be able to handle other values for the logical min width.
+            return 0_lu;
+        }();
+
+        return std::max(minContentLogicalWidth, minLogicalWidth) + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemInlineDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
     }
 
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection)) {
