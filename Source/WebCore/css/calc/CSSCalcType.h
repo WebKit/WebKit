@@ -67,12 +67,12 @@ struct Type {
     private:
         enum class InternalValue : uint8_t {
             None = 0,
-            Length = std::to_underlying(PercentHint::Length),
-            Angle = std::to_underlying(PercentHint::Angle),
-            Time = std::to_underlying(PercentHint::Time),
-            Frequency = std::to_underlying(PercentHint::Frequency),
-            Resolution = std::to_underlying(PercentHint::Resolution),
-            Flex = std::to_underlying(PercentHint::Flex)
+            Length = static_cast<uint8_t>(PercentHint::Length),
+            Angle = static_cast<uint8_t>(PercentHint::Angle),
+            Time = static_cast<uint8_t>(PercentHint::Time),
+            Frequency = static_cast<uint8_t>(PercentHint::Frequency),
+            Resolution = static_cast<uint8_t>(PercentHint::Resolution),
+            Flex = static_cast<uint8_t>(PercentHint::Flex)
         };
 
     public:

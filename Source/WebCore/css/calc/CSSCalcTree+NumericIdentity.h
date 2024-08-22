@@ -103,7 +103,7 @@ enum class NumericIdentity : uint8_t {
     DPCM
 };
 
-constexpr uint8_t numberOfNumericIdentityTypes = std::to_underlying(NumericIdentity::DPCM) + 1;
+constexpr uint8_t numberOfNumericIdentityTypes = static_cast<uint8_t>(NumericIdentity::DPCM) + 1;
 
 constexpr NumericIdentity toNumericIdentity(const Number&)
 {

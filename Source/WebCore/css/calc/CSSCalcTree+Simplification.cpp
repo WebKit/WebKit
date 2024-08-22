@@ -397,7 +397,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
 
     // Map of unit types (via NumericIdentity) to the first index in `root.children` where a value with that unit can be found.
     // More specifically, it maps the unit to the index + 1, as 0 is used to indicate no units of that type have been found.
-    // FIXME: This should be turned into a type with an interface that doesn't require explicit use of std::to_underlying by the caller.
+    // FIXME: This should be turned into a type with an interface that doesn't require explicit use of static_cast<uint8_t> by the caller.
     std::array<size_t, numberOfNumericIdentityTypes> offsetOfFirstInstance { };
 
     bool canMergePercentages = !percentageResolveToDimension(options);
@@ -410,7 +410,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
                 if (id == NumericIdentity::Percent && !canMergePercentages)
                     return 0;
 
-                if (auto offset = offsetOfFirstInstance[std::to_underlying(id)]) {
+                if (auto offset = offsetOfFirstInstance[static_cast<uint8_t>(id)]) {
                     // There has already been an instance of this type. This is a merge opportunity.
 
                     // Merge the value into first instance.
@@ -421,7 +421,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
                 }
 
                 // First instance of this. Store the index (well, index + 1, since 0 is the unset value).
-                offsetOfFirstInstance[std::to_underlying(id)] = i + 1;
+                offsetOfFirstInstance[static_cast<uint8_t>(id)] = i + 1;
 
                 // Give this was the first instance, it is not yet a merge opportunity.
                 return 0;
@@ -448,7 +448,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
     for (size_t i = 0; i < root.children.size(); ++i) {
         WTF::switchOn(root.children[i],
             [&]<Numeric T>(const T& child) {
-                auto offset = offsetOfFirstInstance[std::to_underlying(toNumericIdentity(child))];
+                auto offset = offsetOfFirstInstance[static_cast<uint8_t>(toNumericIdentity(child))];
 
                 // If the stored offset for this type is unset (as it would be for percentages if merging them is disallowed) or is set to this index (as it would be for the first instance of a merged type), append the child as normal.
                 if (!offset || (offset - 1) == i) {
@@ -563,7 +563,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
 
     // Map of unit types (via NumericIdentity) to the first index in `root.children` where a value with that unit can be found.
     // More specifically, it maps the unit to the index + 1, as 0 is used to indicate no units of that type have been found.
-    // FIXME: This should be turned into a type with an interface that doesn't require explicit use of std::to_underlying by the caller.
+    // FIXME: This should be turned into a type with an interface that doesn't require explicit use of static_cast<uint8_t> by the caller.
     struct FirstInstance {
         size_t offset = 0;
         unsigned merges = 0;
@@ -577,7 +577,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
                 auto id = toNumericIdentity(child);
                 bool canRemoveIfZero = isLength(id) && options.allowZeroValueLengthRemovalFromSum;
 
-                if (auto& firstInstance = firstInstances[std::to_underlying(id)]; firstInstance.offset) {
+                if (auto& firstInstance = firstInstances[static_cast<uint8_t>(id)]; firstInstance.offset) {
                     // There has already been an instance of this type. This is a merge opportunity.
 
                     // Calculate the merged value.
@@ -593,7 +593,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
                 }
 
                 // First instance of this. Store the index (well, index + 1, since 0 is the unset value) and the canRemove bit.
-                firstInstances[std::to_underlying(id)] = {
+                firstInstances[static_cast<uint8_t>(id)] = {
                     .offset = i + 1,
                     .merges = 0,
                     .canRemove = canRemoveIfZero && !child.value
@@ -634,7 +634,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
         for (size_t i = 0; i < root.children.size(); ++i) {
             auto replacement = WTF::switchOn(root.children[i],
                 [&]<Numeric T>(const T& child) -> std::optional<Child> {
-                    auto& firstInstance = firstInstances[std::to_underlying(toNumericIdentity(child))];
+                    auto& firstInstance = firstInstances[static_cast<uint8_t>(toNumericIdentity(child))];
                     ASSERT(firstInstance.offset);
 
                     // If the stored offset for this type is set to this index and it's not one that can be removed, this is the 1 child to return.
@@ -659,7 +659,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
     for (size_t i = 0; i < root.children.size(); ++i) {
         WTF::switchOn(root.children[i],
             [&]<Numeric T>(const T& child) {
-                auto& firstInstance = firstInstances[std::to_underlying(toNumericIdentity(child))];
+                auto& firstInstance = firstInstances[static_cast<uint8_t>(toNumericIdentity(child))];
                 ASSERT(firstInstance.offset);
 
                 // If the stored offset for this type is set to this index and it's not one that can be removed, append the child as normal
