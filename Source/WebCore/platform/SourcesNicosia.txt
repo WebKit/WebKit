@@ -35,8 +35,6 @@ page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 platform/graphics/nicosia/NicosiaAnimation.cpp
 platform/graphics/nicosia/NicosiaBackingStore.cpp
 platform/graphics/nicosia/NicosiaBuffer.cpp
-platform/graphics/nicosia/NicosiaContentLayer.cpp
-platform/graphics/nicosia/NicosiaGCGLANGLELayer.cpp
 platform/graphics/nicosia/NicosiaImageBacking.cpp
 platform/graphics/nicosia/NicosiaImageBackingStore.cpp
 platform/graphics/nicosia/NicosiaPlaceholderRenderingContextSource.cpp

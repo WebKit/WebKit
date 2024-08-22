@@ -27,8 +27,8 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "PlatformLayer.h"
 #include "ScrollingConstraints.h"
+#include "ScrollingPlatformLayer.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeNode.h"
 
@@ -43,7 +43,7 @@ public:
 protected:
     ScrollingTreeFixedNode(ScrollingTree&, ScrollingNodeID);
 
-    virtual PlatformLayer* layer() const = 0;
+    virtual ScrollingPlatformLayer* layer() const = 0;
 
     FloatPoint computeLayerPosition() const;
 

@@ -66,13 +66,12 @@ bool ScrollingTreeOverflowScrollingNodeNicosia::commitStateBeforeChildren(const 
 
 void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()
 {
-    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrollContainerLayer());
+    auto* scrollLayer = static_cast<Nicosia::CompositionLayer*>(scrollContainerLayer());
     ASSERT(scrollLayer);
-    auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
     auto scrollOffset = currentScrollOffset();
 
-    compositionLayer.accessPending(
+    scrollLayer->accessPending(
         [&scrollOffset](Nicosia::CompositionLayer::LayerState& state)
         {
             state.boundsOrigin = scrollOffset;

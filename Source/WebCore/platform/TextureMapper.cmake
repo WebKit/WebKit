@@ -12,6 +12,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp
     platform/graphics/texmap/TextureMapperLayer.cpp
+    platform/graphics/texmap/TextureMapperPlatformLayer.cpp
     platform/graphics/texmap/TextureMapperShaderProgram.cpp
     platform/graphics/texmap/TextureMapperTile.cpp
 )
@@ -31,7 +32,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h
-    platform/graphics/texmap/TextureMapperPlatformLayerProxyProvider.h
     platform/graphics/texmap/TextureMapperSolidColorLayer.h
     platform/graphics/texmap/TextureMapperTile.h
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
@@ -114,7 +114,6 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaBackingStore.h
         platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
-        platform/graphics/nicosia/NicosiaContentLayer.h
         platform/graphics/nicosia/NicosiaImageBacking.h
         platform/graphics/nicosia/NicosiaImageBackingStore.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h

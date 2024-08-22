@@ -29,8 +29,10 @@
 
 #if USE(ANGLE_GBM)
 
+#include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "NicosiaGCGLANGLELayer.h"
-#include "PlatformLayerDisplayDelegate.h"
+#include "TextureMapperFlags.h"
+#include "TextureMapperPlatformLayerProxyDMABuf.h"
 
 namespace WebCore {
 
@@ -46,7 +48,11 @@ GraphicsContextGLGBMTextureMapper::GraphicsContextGLGBMTextureMapper(GraphicsCon
     : GraphicsContextGLGBM(WTFMove(attributes))
 { }
 
-GraphicsContextGLGBMTextureMapper::~GraphicsContextGLGBMTextureMapper() = default;
+GraphicsContextGLGBMTextureMapper::~GraphicsContextGLGBMTextureMapper()
+{
+    if (m_layerContentsDisplayDelegate)
+        static_cast<GraphicsLayerContentsDisplayDelegateTextureMapper*>(m_layerContentsDisplayDelegate.get())->proxy().setSwapBuffersFunction(nullptr);
+}
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBMTextureMapper::layerContentsDisplayDelegate()
 {
@@ -55,8 +61,24 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBMTextureMapper::
 
 bool GraphicsContextGLGBMTextureMapper::platformInitialize()
 {
-    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
-    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
+    auto proxy = TextureMapperPlatformLayerProxyDMABuf::create(TextureMapperPlatformLayerProxy::ContentType::WebGL);
+    proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
+        auto bo = WTFMove(m_swapchain.displayBO);
+        if (!bo)
+            return;
+
+        Locker locker { proxy.lock() };
+        OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
+        if (contextAttributes().alpha)
+            flags.add(TextureMapperFlags::ShouldBlend);
+
+        downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
+            DMABufObject(reinterpret_cast<uintptr_t>(m_swapchain.swapchain.get()) + bo->handle()),
+            [&](auto&& object) {
+                return bo->createDMABufObject(object.handle);
+            }, flags, WTFMove(m_frameFence));
+    });
+    m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
 
     return GraphicsContextGLGBM::platformInitialize();
 }

@@ -29,7 +29,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "TextureMapperGLHeaders.h"
 #include <wtf/Condition.h>
 #include <wtf/Function.h>
 #include <wtf/RunLoop.h>
@@ -42,9 +41,11 @@
 namespace WebCore {
 
 class TextureMapperPlatformLayerProxyGL final : public TextureMapperPlatformLayerProxy {
-    WTF_MAKE_FAST_ALLOCATED();
 public:
-    explicit TextureMapperPlatformLayerProxyGL(ContentType);
+    static Ref<TextureMapperPlatformLayerProxy> create(ContentType contentType)
+    {
+        return adoptRef(*new TextureMapperPlatformLayerProxyGL(contentType));
+    }
     virtual ~TextureMapperPlatformLayerProxyGL();
 
     bool isGLBased() const override { return true; }
@@ -53,7 +54,7 @@ public:
     WEBCORE_EXPORT void invalidate() override;
     WEBCORE_EXPORT void swapBuffer() override;
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, GLint internalFormat);
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, int internalFormat);
     void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>&&);
 
     void dropCurrentBufferWhilePreservingTexture(bool shouldWait = false);
@@ -61,6 +62,8 @@ public:
     bool scheduleUpdateOnCompositorThread(Function<void()>&&);
 
 private:
+    explicit TextureMapperPlatformLayerProxyGL(ContentType);
+
     void appendToUnusedBuffers(std::unique_ptr<TextureMapperPlatformLayerBuffer>);
     void scheduleReleaseUnusedBuffers();
     void releaseUnusedBuffersTimerFired();

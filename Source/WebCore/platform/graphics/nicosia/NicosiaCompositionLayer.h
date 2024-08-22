@@ -38,11 +38,11 @@
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
 #include "NicosiaBackingStore.h"
-#include "NicosiaContentLayer.h"
 #include "NicosiaImageBacking.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
 #include "TextureMapperLayer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #include "TransformationMatrix.h"
 #include <wtf/Lock.h>
 
@@ -142,7 +142,7 @@ public:
         RefPtr<CompositionLayer> backdropLayer;
         WebCore::FloatRoundedRect backdropFiltersRect;
 
-        RefPtr<ContentLayer> contentLayer;
+        RefPtr<WebCore::TextureMapperPlatformLayerProxy> contentLayer;
         RefPtr<BackingStore> backingStore;
         RefPtr<ImageBacking> imageBacking;
         RefPtr<AnimatedBackingStoreClient> animatedBackingStoreClient;

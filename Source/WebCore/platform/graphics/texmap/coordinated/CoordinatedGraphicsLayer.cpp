@@ -32,7 +32,6 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "NicosiaBackingStore.h"
-#include "NicosiaContentLayer.h"
 #include "NicosiaImageBacking.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -145,7 +144,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
-    , m_shouldUpdatePlatformLayer(false)
     , m_coordinator(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
     , m_requestPendingTileCreationTimer(RunLoop::main(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
@@ -504,10 +502,8 @@ bool GraphicsLayer::supportsContentsTiling()
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    if (m_nicosia.contentLayer)
-        m_shouldUpdatePlatformLayer = true;
-#endif
+    if (m_contentsLayer)
+        m_contentsLayerNeedsUpdate = true;
 
     notifyFlushRequired();
     addRepaintRect(contentsRect());
@@ -524,18 +520,14 @@ void CoordinatedGraphicsLayer::markDamageRectsUnreliable()
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    auto* contentLayer = downcast<Nicosia::ContentLayer>(platformLayer);
-    if (m_nicosia.contentLayer != contentLayer) {
-        m_nicosia.contentLayer = contentLayer;
-        m_nicosia.delta.contentLayerChanged = true;
-        if (m_nicosia.contentLayer)
-            m_shouldUpdatePlatformLayer = true;
-    }
+    if (m_contentsLayer.get() == platformLayer)
+        return;
+
+    m_contentsLayer = platformLayer;
+    m_nicosia.delta.contentLayerChanged = true;
+    if (m_contentsLayer)
+        m_contentsLayerNeedsUpdate = true;
     notifyFlushRequired();
-#else
-    UNUSED_PARAM(platformLayer);
-#endif
 }
 
 void CoordinatedGraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
@@ -757,23 +749,9 @@ void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
     }
 }
 
-void CoordinatedGraphicsLayer::updatePlatformLayer()
-{
-    if (!m_shouldUpdatePlatformLayer)
-        return;
-
-    m_shouldUpdatePlatformLayer = false;
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    if (m_nicosia.contentLayer) {
-        m_nicosia.contentLayer->swapBuffersIfNeeded();
-        m_nicosia.contentLayerUpdated = true;
-    }
-#endif
-}
-
 bool CoordinatedGraphicsLayer::checkContentLayerUpdated()
 {
-    return std::exchange(m_nicosia.contentLayerUpdated, false);
+    return std::exchange(m_contentsLayerUpdated, false);
 }
 
 static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
@@ -871,7 +849,12 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     computePixelAlignment(m_adjustedPosition, m_adjustedSize, m_adjustedAnchorPoint, m_pixelAlignmentOffset);
 
     computeTransformedVisibleRect();
-    updatePlatformLayer();
+
+    if (m_contentsLayer && m_contentsLayerNeedsUpdate) {
+        m_contentsLayerNeedsUpdate = false;
+        m_contentsLayer->swapBuffersIfNeeded();
+        m_contentsLayerUpdated = true;
+    }
 
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
@@ -1060,7 +1043,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 if (localDelta.backingStoreChanged)
                     state.backingStore = m_nicosia.backingStore;
                 if (localDelta.contentLayerChanged)
-                    state.contentLayer = m_nicosia.contentLayer;
+                    state.contentLayer = m_contentsLayer;
                 if (localDelta.imageBackingChanged)
                     state.imageBacking = m_nicosia.imageBacking;
                 if (localDelta.animatedBackingStoreClientChanged)
@@ -1523,15 +1506,8 @@ void CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired()
 
 bool CoordinatedGraphicsLayer::usesContentsLayer() const
 {
-    return m_nicosia.contentLayer || m_compositedImage;
+    return m_contentsLayer || m_compositedImage;
 }
-
-#if USE(NICOSIA)
-PlatformLayer* CoordinatedGraphicsLayer::platformLayer() const
-{
-    return m_nicosia.layer.get();
-}
-#endif
 
 static void dumpInnerLayer(TextStream& textStream, const String& label, CoordinatedGraphicsLayer* layer, OptionSet<LayerTreeAsTextOptions> options)
 {

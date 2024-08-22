@@ -37,10 +37,16 @@ TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy(ContentType con
 
 TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy() = default;
 
-bool TextureMapperPlatformLayerProxy::isActive()
+bool TextureMapperPlatformLayerProxy::isActive() const
 {
     ASSERT(m_lock.isHeld());
     return !!m_targetLayer && !!m_compositor;
+}
+
+void TextureMapperPlatformLayerProxy::swapBuffersIfNeeded()
+{
+    if (m_swapBuffersFunction)
+        m_swapBuffersFunction(*this);
 }
 
 } // namespace WebCore

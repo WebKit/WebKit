@@ -68,30 +68,18 @@ bool ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.rootContentsLayer());
-        m_rootContentsLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.counterScrollingLayer());
-        m_counterScrollingLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.insetClipLayer());
-        m_insetClipLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.contentShadowLayer());
-        m_contentShadowLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.headerLayer());
-        m_headerLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.footerLayer());
-        m_footerLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
+        m_rootContentsLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.rootContentsLayer());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
+        m_counterScrollingLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.counterScrollingLayer());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
+        m_insetClipLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.insetClipLayer());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
+        m_contentShadowLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.contentShadowLayer());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
+        m_headerLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.headerLayer());
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
+        m_footerLayer = static_cast<Nicosia::CompositionLayer*>(scrollingStateNode.footerLayer());
 
     m_delegate->updateFromStateNode(scrollingStateNode);
     return true;
@@ -116,15 +104,13 @@ void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged(Scroll
 
 void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 {
-    auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
+    auto* scrollLayer = static_cast<Nicosia::CompositionLayer*>(scrolledContentsLayer());
     if (!scrollLayer)
         return;
 
-    auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
-
     auto scrollPosition = currentScrollPosition();
 
-    compositionLayer.accessPending(
+    scrollLayer->accessPending(
         [&scrollPosition](Nicosia::CompositionLayer::LayerState& state)
         {
             state.position = -scrollPosition;

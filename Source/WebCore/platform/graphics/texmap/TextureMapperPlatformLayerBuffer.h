@@ -27,9 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "BitmapTexture.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
 #include <variant>
 #include <wtf/MonotonicTime.h>
@@ -41,30 +39,32 @@
 
 namespace WebCore {
 
+class BitmapTexture;
+
 class TextureMapperPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperPlatformLayerBuffer);
     WTF_MAKE_FAST_ALLOCATED();
 public:
     TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&, OptionSet<TextureMapperFlags> = { });
 
-    TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, OptionSet<TextureMapperFlags>, GLint internalFormat);
+    TextureMapperPlatformLayerBuffer(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, int internalFormat);
 
     struct RGBTexture {
-        GLuint id;
+        unsigned id;
     };
     struct YUVTexture {
         unsigned numberOfPlanes;
-        std::array<GLuint, 4> planes;
+        std::array<unsigned, 4> planes;
         std::array<unsigned, 4> yuvPlane;
         std::array<unsigned, 4> yuvPlaneOffset;
-        std::array<GLfloat, 16> yuvToRgbMatrix;
+        std::array<float, 16> yuvToRgbMatrix;
     };
     struct ExternalOESTexture {
-        GLuint id;
+        unsigned id;
     };
     using TextureVariant = std::variant<RGBTexture, YUVTexture, ExternalOESTexture>;
 
-    TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, OptionSet<TextureMapperFlags>, GLint internalFormat);
+    TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, OptionSet<TextureMapperFlags>, int internalFormat);
 
     virtual ~TextureMapperPlatformLayerBuffer();
 
@@ -72,7 +72,7 @@ public:
 
     bool isHolePunchBuffer() const override;
 
-    bool canReuseWithoutReset(const IntSize&, GLint internalFormat);
+    bool canReuseWithoutReset(const IntSize&, int internalFormat);
     BitmapTexture& texture() { return *m_texture; }
 
     inline void markUsed() { m_timeLastUsed = MonotonicTime::now(); }
@@ -120,7 +120,7 @@ private:
     MonotonicTime m_timeLastUsed;
 
     IntSize m_size;
-    GLint m_internalFormat;
+    int m_internalFormat;
     OptionSet<TextureMapperFlags> m_extraFlags;
     bool m_hasManagedTexture;
     std::unique_ptr<UnmanagedBufferDataHolder> m_unmanagedBufferDataHolder;

@@ -53,6 +53,7 @@ class PaintingEngine;
 
 namespace WebCore {
 class CoordinatedGraphicsLayer;
+class TextureMapperPlatformLayerProxy;
 
 class CoordinatedGraphicsLayerClient {
 public:
@@ -139,10 +140,6 @@ public:
     bool usesContentsLayer() const override;
     void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const override;
 
-#if USE(NICOSIA)
-    PlatformLayer* platformLayer() const override;
-#endif
-
     std::pair<bool, bool> finalizeCompositingStateFlush();
 
     FloatPoint computePositionRelativeToBase();
@@ -193,8 +190,6 @@ private:
     };
 
     bool isCoordinatedGraphicsLayer() const override;
-
-    void updatePlatformLayer();
 
     void setDebugBorder(const Color&, float width) override;
 
@@ -251,7 +246,6 @@ private:
     bool m_movingVisibleRect : 1;
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;
-    bool m_shouldUpdatePlatformLayer : 1;
 
     CoordinatedGraphicsLayerClient* m_coordinator;
 
@@ -275,13 +269,15 @@ private:
         Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
         bool performLayerSync { false };
-        bool contentLayerUpdated { false };
 
         RefPtr<Nicosia::BackingStore> backingStore;
-        RefPtr<Nicosia::ContentLayer> contentLayer;
         RefPtr<Nicosia::ImageBacking> imageBacking;
         RefPtr<Nicosia::AnimatedBackingStoreClient> animatedBackingStoreClient;
     } m_nicosia;
+
+    RefPtr<TextureMapperPlatformLayerProxy> m_contentsLayer;
+    bool m_contentsLayerNeedsUpdate { false };
+    bool m_contentsLayerUpdated { false };
 
     RefPtr<AnimatedBackingStoreHost> m_animatedBackingStoreHost;
     RefPtr<CoordinatedGraphicsLayer> m_backdropLayer;

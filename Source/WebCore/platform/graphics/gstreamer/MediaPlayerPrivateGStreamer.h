@@ -63,14 +63,6 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 #undef GST_USE_UNSTABLE_API
 #endif
 
-#if USE(TEXTURE_MAPPER)
-#if USE(NICOSIA)
-#include "NicosiaContentLayer.h"
-#else
-#include "TextureMapperPlatformLayerProxyProvider.h"
-#endif
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "CDMProxy.h"
 #endif
@@ -115,13 +107,6 @@ class MediaPlayerPrivateGStreamer
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateGStreamer, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
-#endif
-#if USE(TEXTURE_MAPPER)
-#if USE(NICOSIA)
-    , public Nicosia::ContentLayer::Client
-#else
-    , public PlatformLayer
-#endif
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED;
@@ -293,12 +278,6 @@ protected:
 
 #if USE(TEXTURE_MAPPER)
     void pushTextureToCompositor();
-#if USE(NICOSIA)
-    void swapBuffersIfNeeded() final;
-#else
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const final;
-    void swapBuffersIfNeeded() final;
-#endif
 #endif
 
 #if USE(TEXTURE_MAPPER_DMABUF)
@@ -559,11 +538,7 @@ private:
     RunLoop::Timer m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
     RunLoop::Timer m_pausedTimerHandler;
 #if USE(TEXTURE_MAPPER)
-#if USE(NICOSIA)
-    RefPtr<Nicosia::ContentLayer> m_nicosiaLayer;
-#else
-    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
-#endif
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayer;
 #endif
     bool m_isBuffering { false };
     int m_bufferingPercentage { 0 };

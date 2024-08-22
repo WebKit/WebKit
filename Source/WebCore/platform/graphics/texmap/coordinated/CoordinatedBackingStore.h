@@ -21,6 +21,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "IntRect.h"
 #include "NicosiaBuffer.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperTile.h"

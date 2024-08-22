@@ -29,6 +29,8 @@
 #include "TextureMapperSparseBackingStore.h"
 
 #if USE(GRAPHICS_LAYER_WC)
+#include "IntRect.h"
+#include "TextureMapper.h"
 
 namespace WebCore {
 

@@ -35,7 +35,6 @@
 #include "Logging.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
-#include "PlatformLayerDisplayDelegate.h"
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
@@ -44,9 +43,13 @@
 #endif
 #endif
 
-#if USE(NICOSIA)
-#include "NicosiaGCGLANGLELayer.h"
+#if USE(COORDINATED_GRAPHICS)
+#include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
+#include "TextureMapperFlags.h"
+#include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 #else
+#include "PlatformLayerDisplayDelegate.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #endif
 
@@ -151,6 +154,11 @@ GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE(Graphic
 
 GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
 {
+#if USE(COORDINATED_GRAPHICS)
+    if (m_layerContentsDisplayDelegate)
+        static_cast<GraphicsLayerContentsDisplayDelegateTextureMapper*>(m_layerContentsDisplayDelegate.get())->proxy().setSwapBuffersFunction(nullptr);
+#endif
+
     if (!makeContextCurrent())
         return;
 
@@ -198,7 +206,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS)
         EGL_SURFACE_TYPE, !isSurfacelessContextSupported || sharedDisplay.type() == PlatformDisplay::Type::Surfaceless ? EGL_PBUFFER_BIT : EGL_WINDOW_BIT,
 #endif
         EGL_RED_SIZE, 8,
@@ -254,7 +262,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     // WebGL doesn't allow implicit creation of objects on bind.
     eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
     eglContextAttributes.append(EGL_FALSE);
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS)
     eglContextAttributes.append(EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE);
     eglContextAttributes.append(0);
 #endif
@@ -282,9 +290,29 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 {
-#if USE(NICOSIA)
-    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
-    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
+#if USE(COORDINATED_GRAPHICS)
+    auto proxy = TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::WebGL);
+    proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
+        if (!m_isCompositorTextureInitialized)
+            return;
+
+        OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
+        GLint colorFormat;
+        if (contextAttributes().alpha) {
+            flags.add(TextureMapperFlags::ShouldBlend);
+            colorFormat = GL_RGBA;
+        } else
+            colorFormat = GL_RGB;
+
+        auto fboSize = getInternalFramebufferSize();
+        Locker locker { proxy.lock() };
+        auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(m_compositorTextureID, fboSize, flags, colorFormat);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        layerBuffer->setFence(WTFMove(m_frameFence));
+#endif
+        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+    });
+    m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
 #else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());

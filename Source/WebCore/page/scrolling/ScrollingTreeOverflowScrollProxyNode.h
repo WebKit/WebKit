@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "PlatformLayer.h"
+#include "ScrollingPlatformLayer.h"
 #include "ScrollingTreeNode.h"
 
 namespace WebCore {
@@ -38,7 +38,7 @@ public:
 
     ScrollingNodeID overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
 
-    virtual PlatformLayer* layer() const = 0;
+    virtual ScrollingPlatformLayer* layer() const = 0;
 
     FloatSize scrollDeltaSinceLastCommit() const;
 

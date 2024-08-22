@@ -54,6 +54,11 @@ void* LayerRepresentation::makePlatformLayerTypeless(CALayer *layer)
     return (__bridge void*)layer;
 }
 
+CALayer* LayerRepresentation::platformLayerFromGraphicsLayer(GraphicsLayer& graphicsLayer)
+{
+    return graphicsLayer.platformLayer();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
