@@ -55,62 +55,86 @@
             // Non-prevalent without user interaction to be pruned first.
             case 1:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[0].url, olderTimestamp);
-                initializeStatisticsAndRunTests(2);
+                await initializeStatisticsAndRunTests(2);
                 break;
             case 2:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[1].url, newerTimestamp);
-                initializeStatisticsAndRunTests(3);
+                await initializeStatisticsAndRunTests(3);
                 break;
             // Prevalent without user interaction to be pruned second.
             case 3:
-                testRunner.setStatisticsPrevalentResource(urlsToBePruned[2].url, true, function() { initializeStatisticsAndRunTests(4); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsPrevalentResource(urlsToBePruned[2].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(4);
                 break;
             case 4:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[2].url, olderTimestamp);
-                initializeStatisticsAndRunTests(5);
+                await initializeStatisticsAndRunTests(5);
                 break;
             case 5:
-                testRunner.setStatisticsPrevalentResource(urlsToBePruned[3].url, true, function() { initializeStatisticsAndRunTests(6); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsPrevalentResource(urlsToBePruned[3].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(6);
                 break;
             case 6:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[3].url, newerTimestamp);
-                initializeStatisticsAndRunTests(7);
+                await initializeStatisticsAndRunTests(7);
                 break;
             // Non-prevalent with user interaction to be pruned third.
             case 7:
-                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[4].url, true, function() { initializeStatisticsAndRunTests(8); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[4].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(8);
                 break;
             case 8:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[4].url, olderTimestamp);
-                initializeStatisticsAndRunTests(9);
+                await initializeStatisticsAndRunTests(9);
                 break;
             case 9:
-                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[5].url, true, function() { initializeStatisticsAndRunTests(10); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[5].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(10);
                 break;
             case 10:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[5].url, newerTimestamp);
-                initializeStatisticsAndRunTests(11);
+                await initializeStatisticsAndRunTests(11);
                 break;
             // Prevalent with user interaction to be pruned last.
             case 11:
-                testRunner.setStatisticsPrevalentResource(urlsToBePruned[6].url, true, function() { initializeStatisticsAndRunTests(12); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsPrevalentResource(urlsToBePruned[6].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(12);
                 break;
             case 12:
-                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[6].url, true, function() { initializeStatisticsAndRunTests(13); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[6].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(13);
                 break;
             case 13:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[6].url, olderTimestamp);
-                initializeStatisticsAndRunTests(14);
+                await initializeStatisticsAndRunTests(14);
                 break;
             case 14:
-                testRunner.setStatisticsPrevalentResource(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(15); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsPrevalentResource(urlsToBePruned[7].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(15);
                 break;
             case 15:
-                testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[7].url, true, function() { initializeStatisticsAndRunTests(16); });
+                await new Promise((resolve)=>{
+                    testRunner.setStatisticsHasHadUserInteraction(urlsToBePruned[7].url, true, resolve);
+                });
+                await initializeStatisticsAndRunTests(16);
                 break;
             case 16:
                 await testRunner.setStatisticsLastSeen(urlsToBePruned[7].url, newerTimestamp);
-                initializeStatisticsAndRunTests(17);
+                await initializeStatisticsAndRunTests(17);
                 break;
             case 17:
                 checkIfPrevalentAccordingToInitialExpectation(0, urlsToBePruned.length);
@@ -128,7 +152,6 @@
         testPassed("Test iteration " + currentTest + " passed.");
         if (currentTest < urlsToBePruned.length) {
             ++currentTest;
-            testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
             initializeStatisticsAndRunTests(1);
         } else
             setEnableFeature(false, finishJSTest);
@@ -142,6 +165,7 @@
             testRunner.setStatisticsHasHadUserInteraction(fillerUrl, true, async function () {
                 await testRunner.setStatisticsLastSeen(fillerUrl, newestTimestamp);
                 await testRunner.statisticsProcessStatisticsAndDataRecords();
+                checkStatisticsAfterPruning();
             });
         });
     }
@@ -154,7 +178,6 @@
             testRunner.setStatisticsPruneEntriesDownTo(urlsToBePruned.length);
 
             currentTest = 1;
-            testRunner.installStatisticsDidScanDataRecordsCallback(checkStatisticsAfterPruning);
             initializeStatisticsAndRunTests(1);
         });
     }

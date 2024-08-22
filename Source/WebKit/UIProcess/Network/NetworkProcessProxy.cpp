@@ -903,16 +903,6 @@ void NetworkProcessProxy::setTimeToLiveUserInteraction(PAL::SessionID sessionID,
     sendWithAsyncReply(Messages::NetworkProcess::SetTimeToLiveUserInteraction(sessionID, seconds), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::SetNotifyPagesWhenDataRecordsWereScanned(sessionID, value), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
@@ -1204,16 +1194,6 @@ void NetworkProcessProxy::logTestingEvent(PAL::SessionID sessionID, const String
 {
     if (auto* websiteDataStore = websiteDataStoreFromSessionID(sessionID))
         websiteDataStore->logTestingEvent(event);
-}
-
-void NetworkProcessProxy::notifyResourceLoadStatisticsProcessed()
-{
-    WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
-}
-
-void NetworkProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
-{
-    WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished();
 }
 
 void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID, DidFilterKnownLinkDecoration didFilterKnownLinkDecoration)

@@ -252,7 +252,6 @@ public:
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsProcessStatisticsAndDataRecords(CompletionHandler<void(WKTypeRef)>&&);
     void statisticsUpdateCookieBlocking(CompletionHandler<void(WKTypeRef)>&&);
-    void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);

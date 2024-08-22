@@ -10,7 +10,7 @@ CONSOLE MESSAGE: step5. About to open an iFrame to try to set a cookie as a thir
 CONSOLE MESSAGE: step6. About to open an iFrame and fireDataModificationHandlerAndContinue
 CONSOLE MESSAGE: In fireDataModificationHandlerAndContinue
 CONSOLE MESSAGE: Calling await statisticsProcessStatisticsAndDataRecords
-CONSOLE MESSAGE: In callback function for installStatisticsDidScanDataRecordsCallback
+CONSOLE MESSAGE: awaited fireDataModificationHandlerAndContinue
 CONSOLE MESSAGE: step7. About to open an iFrame and setAsNonPrevalentAndContinue
 CONSOLE MESSAGE: In setAsNonPrevalentAndContinue
 CONSOLE MESSAGE: In callback function for setStatisticsPrevalentResource

@@ -122,7 +122,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sessionID, Seconds seconds) -> ()
     SetPruneEntriesDownTo(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> ()
     SetShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID sessionID, bool value) -> ()
-    SetNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value) -> ()
     SetResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time) -> ()
     SetIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value) -> ()
     SetResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode) -> ()

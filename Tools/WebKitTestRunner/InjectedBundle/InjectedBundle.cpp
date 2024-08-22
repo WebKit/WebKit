@@ -297,12 +297,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForRegistrableDomainsFinished")) {
-        if (m_testRunner)
-            m_testRunner->statisticsDidScanDataRecordsCallback();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
         if (m_testRunner)
             m_testRunner->forceImmediateCompletion();

@@ -755,18 +755,6 @@ RefPtr<WebPageProxy> WebProcessProxy::webPageWithActiveXRSession()
 }
 #endif
 
-void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
-}
-
-void WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
-}
-
 void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebProcess::SetThirdPartyCookieBlockingMode(thirdPartyCookieBlockingMode), WTFMove(completionHandler));

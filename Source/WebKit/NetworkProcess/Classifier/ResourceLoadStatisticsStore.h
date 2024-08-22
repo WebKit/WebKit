@@ -160,7 +160,6 @@ public:
     void setPruneEntriesDownTo(size_t pruneTargetCount);
     void resetParametersToDefaultValues();
 
-    void setNotifyPagesWhenDataRecordsWereScanned(bool);
     bool shouldSkip(const RegistrableDomain&) const;
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setTimeToLiveUserInteraction(Seconds);
@@ -229,7 +228,6 @@ private:
         Seconds clientSideCookiesForLinkDecorationTargetPageAgeCapTime { 24_h };
         Seconds minDelayAfterMainFrameDocumentLoadToNotBeARedirect { 5_s };
         size_t minimumTopFrameRedirectsForSameSiteStrictEnforcement { 10 };
-        bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool isRunningTest { false };
     };

@@ -3987,11 +3987,6 @@ void TestController::statisticsUpdateCookieBlocking(CompletionHandler<void(WKTyp
     WKWebsiteDataStoreStatisticsUpdateCookieBlocking(websiteDataStore(), completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
-void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(websiteDataStore(), value);
-}
-
 void TestController::setStatisticsTimeAdvanceForTesting(double value)
 {
     ResourceStatisticsCallbackContext context(*this);
