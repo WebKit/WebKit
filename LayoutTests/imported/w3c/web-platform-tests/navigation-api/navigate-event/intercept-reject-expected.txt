@@ -1,3 +1,3 @@
 
-PASS event.intercept() should abort if the given promise rejects
+FAIL event.intercept() should abort if the given promise rejects assert_unreached: [object Event] Reached unreachable code
 

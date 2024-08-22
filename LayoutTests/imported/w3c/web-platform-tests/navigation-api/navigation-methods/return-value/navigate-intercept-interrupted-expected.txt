@@ -1,3 +1,3 @@
 
-PASS interrupted navigate() promises with intercept()
+FAIL interrupted navigate() promises with intercept() assert_unreached: Should have rejected: undefined Reached unreachable code
 
