@@ -45,9 +45,9 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
         m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
 }
 
-inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+inline InlineLevelBox InlineLevelBox::createAtomicInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineLevelBox };
+    return { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineBox };
 }
 
 inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
@@ -75,7 +75,7 @@ inline bool InlineLevelBox::mayStretchLineBox() const
     if (isRootInlineBox())
         return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
 
-    if (isAtomicInlineLevelBox())
+    if (isAtomicInlineBox())
         return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
 
     if (isInlineBox()) {

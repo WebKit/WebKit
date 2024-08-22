@@ -61,7 +61,7 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
     // 3. there's at least one inline box with content e.g. <div><span>content</span><br></div>
     if (lineBox.rootInlineBox().hasContent())
         return false;
-    if (lineBox.hasAtomicInlineLevelBox())
+    if (lineBox.hasAtomicInlineBox())
         return false;
     // At this point we either have only the <br> on the line or inline boxes with or without content.
     auto& inlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();

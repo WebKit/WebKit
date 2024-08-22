@@ -468,7 +468,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& layoutBox = box.layoutBox();
-        if (!layoutBox.isAtomicInlineLevelBox())
+        if (!layoutBox.isAtomicInlineBox())
             continue;
 
         auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
@@ -1015,7 +1015,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!layerPaintScope.includes(box))
             continue;
 
-        if (box.isAtomicInlineLevelBox()) {
+        if (box.isAtomicInlineBox()) {
             if (renderer.hitTest(request, result, locationInContainer, flippedContentOffsetIfNeeded(flow(), downcast<RenderBox>(renderer), accumulatedOffset)))
                 return true;
             continue;
@@ -1060,7 +1060,7 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
         else
             box.moveHorizontally(blockShift);
 
-        if (box.isAtomicInlineLevelBox()) {
+        if (box.isAtomicInlineBox()) {
             CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
             renderer->move(deltaX, deltaY);
         }

@@ -85,14 +85,14 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         return rect;
     }();
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox() && !inlineLevelBox.isLineBreakBox())
+        if (!inlineLevelBox.isAtomicInlineBox() && !inlineLevelBox.isInlineBox() && !inlineLevelBox.isLineBreakBox())
             continue;
 
         auto& layoutBox = inlineLevelBox.layoutBox();
         auto borderBox = InlineRect { };
 
-        if (inlineLevelBox.isAtomicInlineLevelBox()) {
-            borderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingContext().geometryForBox(layoutBox));
+        if (inlineLevelBox.isAtomicInlineBox()) {
+            borderBox = lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox));
             borderBox.moveBy(lineBoxRect.topLeft());
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);

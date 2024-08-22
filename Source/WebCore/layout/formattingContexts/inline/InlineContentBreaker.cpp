@@ -227,7 +227,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // FIXME: Add support for various content.
         auto& runs = continuousContent.runs();
         for (size_t i = 0; i < runs.size(); ++i) {
-            if (runs[i].inlineItem.isBox()) {
+            if (runs[i].inlineItem.isAtomicInlineBox()) {
                 overflowingRunIndex = i;
                 break;
             }
@@ -855,11 +855,11 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
 
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+    ASSERT(inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
     m_isTextOnlyContent = false;
-    m_hasTrailingWordSeparator = m_hasTrailingWordSeparator && !inlineItem.isBox();
+    m_hasTrailingWordSeparator = m_hasTrailingWordSeparator && !inlineItem.isAtomicInlineBox();
     appendToRunList(inlineItem, style, { }, logicalWidth);
-    if (inlineItem.isBox()) {
+    if (inlineItem.isAtomicInlineBox()) {
         // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting trimmed/hung
         // but atomic inline level boxes do.
         resetTrailingTrimmableContent();
