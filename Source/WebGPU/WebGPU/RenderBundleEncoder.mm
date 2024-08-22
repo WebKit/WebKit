@@ -569,14 +569,14 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
         Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
         case WGPUVertexStepMode_Vertex:
-            strideCount = checkedSum<uint64_t>(firstVertex, vertexCount);
+            strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
             }
             break;
         case WGPUVertexStepMode_Instance:
-            strideCount = checkedSum<uint64_t>(firstInstance, instanceCount);
+            strideCount = checkedSum<uint32_t>(firstInstance, instanceCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
