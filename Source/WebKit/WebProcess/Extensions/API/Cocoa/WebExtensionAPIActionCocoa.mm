@@ -333,7 +333,7 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
     }
 
 #if USE(APPKIT)
-    auto *imageRep = [[NSBitmapImageRep alloc] initWithCGImage:cgImage];
+    auto *imageRep = [NSBitmapImageRep imageWithCGImage:cgImage];
     CGImageRelease(cgImage);
 
     auto *pngData = [imageRep representationUsingType:NSBitmapImageFileTypePNG properties:@{ }];
