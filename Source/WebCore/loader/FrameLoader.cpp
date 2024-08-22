@@ -2852,7 +2852,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
             auto types = OptionSet<DataDetectorType>::fromRaw(enumToUnderlyingType(m_frame->settings().dataDetectorTypes()));
 
             if (document && types) {
-                DataDetection::detectContentInFrame(protectedFrame().ptr(), types, m_client->dataDetectionReferenceDate(), [this, weakFrame = WeakPtr { m_frame.get() }, document](NSArray *results) {
+                DataDetection::detectContentInFrame(protectedFrame().ptr(), types, m_client->dataDetectionReferenceDate(), [this, weakFrame = WeakPtr { m_frame.get() }](NSArray *results) {
                     RefPtr strongFrame { weakFrame.get() };
                     if (!strongFrame || &strongFrame->loader() != this)
                         return;
