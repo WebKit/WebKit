@@ -190,10 +190,10 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
 
         populateGridPositionsForDirection(GridTrackSizingDirection::ForRows);
         computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForColumns, availableSpaceForColumns, gridLayoutState);
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
 
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
         computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableSpaceForRows, gridLayoutState);
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
     }
 }
 
@@ -355,7 +355,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
         computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForColumns, availableSpaceForColumns, gridLayoutState);
 
         // 1.5. Compute Content Distribution offsets for column tracks
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
 
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
@@ -392,7 +392,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
             m_trackSizingAlgorithm.setFreeSpace(GridTrackSizingDirection::ForRows, logicalHeight() - trackBasedLogicalHeight);
 
         // 2.5. Compute Content Distribution offsets for rows tracks
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
             updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems, gridLayoutState);
@@ -485,7 +485,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
         computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForColumns, availableSpaceForColumns, gridLayoutState);
 
         // 1.5. Compute Content Distribution offsets for column tracks
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForColumns, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForColumns).value(), nonCollapsedTracks(GridTrackSizingDirection::ForColumns));
 
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
@@ -531,7 +531,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             m_trackSizingAlgorithm.setFreeSpace(GridTrackSizingDirection::ForRows, logicalHeight() - trackBasedLogicalHeight);
 
         // 2.5. Compute Content Distribution offsets for rows tracks
-        computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(GridTrackSizingDirection::ForRows, m_trackSizingAlgorithm.freeSpace(GridTrackSizingDirection::ForRows).value(), nonCollapsedTracks(GridTrackSizingDirection::ForRows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
             updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems, gridLayoutState);
@@ -2323,18 +2323,11 @@ StyleContentAlignmentData RenderGrid::contentAlignment(GridTrackSizingDirection 
     return direction == GridTrackSizingDirection::ForColumns ? style().resolvedJustifyContent(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContent(contentAlignmentNormalBehaviorGrid());
 }
 
-void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks)
+ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
-    auto& offset =
-        isRowAxis ? m_offsetBetweenColumns : m_offsetBetweenRows;
-
-    // Initialize to start alignment.
-    offset.positionOffset = 0_lu;
-    offset.distributionOffset = 0_lu;
-
     if (isRowAxis ? isSubgridColumns() : isSubgridRows())
-        return;
+        return { };
 
     auto contentAlignmentData = contentAlignment(direction);
     auto contentAlignmentDistribution = contentAlignmentData.distribution();
@@ -2346,18 +2339,17 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
             case ContentDistribution::SpaceBetween:
                 if (numberOfGridTracks < 2)
                     break;
-                offset.distributionOffset = availableFreeSpace / (numberOfGridTracks - 1);
-                return;
-            case ContentDistribution::SpaceAround:
+                return { 0_lu, availableFreeSpace / (numberOfGridTracks - 1) };
+            case ContentDistribution::SpaceAround: {
                 if (numberOfGridTracks < 1)
                     break;
-                offset.distributionOffset = availableFreeSpace / numberOfGridTracks;
-                offset.positionOffset = offset.distributionOffset / 2;
-                return;
-            case ContentDistribution::SpaceEvenly:
-                offset.distributionOffset = availableFreeSpace / (numberOfGridTracks + 1);
-                offset.positionOffset = offset.distributionOffset;
-                return;
+                auto spaceBetweenTracks = availableFreeSpace / numberOfGridTracks;
+                return { spaceBetweenTracks / 2, spaceBetweenTracks };
+            }
+            case ContentDistribution::SpaceEvenly: {
+                auto spaceEvenlyDistribution = availableFreeSpace / (numberOfGridTracks + 1);
+                return { spaceEvenlyDistribution, spaceEvenlyDistribution };
+            }
             case ContentDistribution::Stretch:
                 break;
             default:
@@ -2371,7 +2363,7 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
 
     // Apply alignment safety.
     if (availableFreeSpace <= 0 && (contentAlignmentOverflow == OverflowAlignment::Safe || fallbackOverflow == OverflowAlignment::Safe))
-        return;
+        return { };
 
     auto usedContentPosition = contentAlignmentDistribution == ContentDistribution::Default ? contentAlignmentData.position() : fallbackContentPosition;
     // Apply <content-position> / fallback positioning.
@@ -2379,31 +2371,29 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     case ContentPosition::Left:
         ASSERT(isRowAxis);
         if (!style().isLeftToRightDirection())
-            offset.positionOffset = availableFreeSpace;
-        return;
+            return { availableFreeSpace, 0_lu };
+        return { };
     case ContentPosition::Right:
         ASSERT(isRowAxis);
         if (style().isLeftToRightDirection())
-            offset.positionOffset = availableFreeSpace;
-        return;
+            return { availableFreeSpace, 0_lu };
+        return { };
     case ContentPosition::Center:
-        offset.positionOffset = availableFreeSpace / 2;
-        return;
+        return { availableFreeSpace / 2, 0_lu };
     case ContentPosition::FlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
     case ContentPosition::End:
-        offset.positionOffset = availableFreeSpace;
-        return;
+        return { availableFreeSpace, 0_lu };
     case ContentPosition::FlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
     case ContentPosition::Start:
     case ContentPosition::Baseline:
     case ContentPosition::LastBaseline:
         // FIXME: Implement the baseline values. For now, we always 'start' align.
         // http://webkit.org/b/145566
-        return;
+        return { };
     case ContentPosition::Normal:
     default:
         ASSERT_NOT_REACHED();
-        return;
+        return { };
     }
 }
 
