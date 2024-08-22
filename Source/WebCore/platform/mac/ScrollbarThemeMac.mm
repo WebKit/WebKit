@@ -546,7 +546,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     context.clip(damageRect);
 
     auto scrollbarRect = scrollbar.frameRect();
-    if (context.platformContext()) {
+    if (context.hasPlatformContext()) {
         context.translate(scrollbarRect.location());
         paintScrollbar(scrollbar, context);
     } else {

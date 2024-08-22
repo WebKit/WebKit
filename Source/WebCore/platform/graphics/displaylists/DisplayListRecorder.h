@@ -193,7 +193,7 @@ protected:
 
 private:
     bool hasPlatformContext() const final { return false; }
-    PlatformGraphicsContext* platformContext() const final { return nullptr; }
+    PlatformGraphicsContext* platformContext() const final { ASSERT_NOT_REACHED(); return nullptr; }
 
     const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
 
