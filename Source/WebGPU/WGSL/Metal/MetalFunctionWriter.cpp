@@ -518,6 +518,19 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n"_s);
     }
 
+    if (m_shaderModule.usesMin()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
+            m_indent, "static T __attribute((always_inline)) __wgslMin(T a, T b)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "volatile T va = a;\n"_s,
+                m_indent, "volatile T vb = b;\n"_s,
+                m_indent, "return min(va, vb);\n"_s);
+        }
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
+    }
+
     m_shaderModule.clearUsesPackedVec3();
 }
 

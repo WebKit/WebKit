@@ -143,6 +143,9 @@ public:
     void setUsesPackedVec3() { m_usesPackedVec3 = true; }
     void clearUsesPackedVec3() { m_usesPackedVec3 = false; }
 
+    bool usesMin() const { return m_usesMin; }
+    void setUsesMin() { m_usesMin = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -292,6 +295,7 @@ private:
     bool m_usesDot4U8Packed { false };
     bool m_usesExtractBits { false };
     bool m_usesPackedVec3 { false };
+    bool m_usesMin { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
