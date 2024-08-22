@@ -43,8 +43,6 @@ extern NSString *const FBSOpenApplicationOptionKeyActivateSuspended;
 extern NSString *const FBSOpenApplicationOptionKeyPayloadOptions;
 extern NSString *const FBSOpenApplicationOptionKeyPayloadURL;
 
-#endif // USE(APPLE_INTERNAL_SDK)
-
 @interface FBSOpenApplicationOptions : NSObject <NSCopying>
 + (instancetype)optionsWithDictionary:(NSDictionary *)dictionary;
 @end
@@ -59,5 +57,7 @@ typedef void(^FBSOpenApplicationCompletion)(BSProcessHandle *process, NSError *e
 WTF_EXTERN_C_BEGIN
 extern FBSOpenApplicationService *SBSCreateOpenApplicationService(void);
 WTF_EXTERN_C_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // PLATFORM(IOS_FAMILY)
