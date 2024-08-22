@@ -653,45 +653,45 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
         m_webPage.legacyMainFrameProcess().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
 }
 
-bool AcceleratedBackingStoreDMABuf::prepareForRendering()
+bool AcceleratedBackingStoreDMABuf::swapBuffersIfNeeded()
 {
-    if (m_pendingBuffer && !m_fenceMonitor.hasFileDescriptor()) {
-        if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
-            ensureGLContext();
-            gdk_gl_context_make_current(m_gdkGLContext.get());
-        }
-        m_pendingBuffer->didUpdateContents(m_committedBuffer.get(), m_pendingDamageRegion);
-        m_pendingDamageRegion = { };
+    if (!m_pendingBuffer || m_fenceMonitor.hasFileDescriptor())
+        return false;
 
-        if (m_committedBuffer)
-            m_committedBuffer->release();
-
-        m_committedBuffer = WTFMove(m_pendingBuffer);
+    if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
+        ensureGLContext();
+        gdk_gl_context_make_current(m_gdkGLContext.get());
     }
+    m_pendingBuffer->didUpdateContents(m_committedBuffer.get(), m_pendingDamageRegion);
+    m_pendingDamageRegion = { };
 
-    return !!m_committedBuffer;
+    if (m_committedBuffer)
+        m_committedBuffer->release();
+
+    m_committedBuffer = WTFMove(m_pendingBuffer);
+    return true;
 }
 
 #if USE(GTK4)
 void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 {
-    bool framePending = !!m_pendingBuffer;
-    if (!prepareForRendering())
+    bool didSwapBuffers = swapBuffersIfNeeded();
+    if (!m_committedBuffer)
         return;
 
     m_committedBuffer->snapshot(gtkSnapshot);
-    if (framePending)
+    if (didSwapBuffers)
         frameDone();
 }
 #else
 bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& clipRect)
 {
-    bool framePending = !!m_pendingBuffer;
-    if (!prepareForRendering())
+    bool didSwapBuffers = swapBuffersIfNeeded();
+    if (!m_committedBuffer)
         return false;
 
     m_committedBuffer->paint(cr, clipRect);
-    if (framePending)
+    if (didSwapBuffers)
         frameDone();
 
     return true;
