@@ -183,14 +183,17 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 }
 #endif
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode)
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, bool isWebContentProcess)
 {
     RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
 
     bool optionsChanged = false;
+    if (isWebContentProcess)
+        JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
     if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
         JSC::Config::configureForTesting();
     if (enableLockdownMode == EnableLockdownMode::Yes) {
+        JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Block;
         JSC::Options::initialize();
         JSC::Options::AllowUnfinalizedAccessScope scope;
         JSC::ExecutableAllocator::disableJIT();

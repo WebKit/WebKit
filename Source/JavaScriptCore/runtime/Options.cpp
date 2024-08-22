@@ -71,6 +71,7 @@ extern "C" char **environ;
 namespace JSC {
 
 bool useOSLogOptionHasChanged = false;
+Options::SandboxPolicy Options::machExceptionHandlerSandboxPolicy = Options::SandboxPolicy::Unknown;
 
 namespace OptionsHelper {
 
@@ -542,8 +543,17 @@ static void scaleJITPolicy()
     scaleOption(Options::thresholdForOMGOptimizeSoon(), 1);
 }
 
+#if OS(DARWIN)
+static void disableAllSignalHandlerBasedOptions();
+#endif
+
 static void overrideDefaults()
 {
+#if OS(DARWIN)
+    if (Options::machExceptionHandlerSandboxPolicy == Options::SandboxPolicy::Block)
+        disableAllSignalHandlerBasedOptions();
+#endif
+
 #if !PLATFORM(IOS_FAMILY)
     if (WTF::numberOfProcessorCores() < 4)
 #endif
@@ -676,6 +686,16 @@ static inline void disableAllJITOptions()
     Options::needDisassemblySupport() = false;
 }
 
+#if OS(DARWIN)
+static void disableAllSignalHandlerBasedOptions()
+{
+    Options::usePollingTraps() = true;
+    Options::useSharedArrayBuffer() = false;
+    Options::useWasmFastMemory() = false;
+    Options::useWasmFaultSignalHandler() = false;
+}
+#endif
+
 void Options::executeDumpOptions()
 {
     if (LIKELY(!Options::dumpOptions()))
@@ -766,9 +786,16 @@ void Options::notifyOptionsChanged()
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.
-    if (!Options::useJIT())
+    if (!Options::useJIT()) {
         disableAllJITOptions();
-    else {
+#if OS(DARWIN)
+        // If we don't know what the sandbox policy is on mach exception handler use is, we'll
+        // take the default behavior of blocking its use if the JIT is disabled. JIT disablement
+        // is a good proxy indicator for when mach exception handler use would also be blocked.
+        if (machExceptionHandlerSandboxPolicy == SandboxPolicy::Unknown)
+            disableAllSignalHandlerBasedOptions();
+#endif
+    } else {
         if (WTF::isX86BinaryRunningOnARM()) {
             Options::useBaselineJIT() = false;
             Options::useDFGJIT() = false;

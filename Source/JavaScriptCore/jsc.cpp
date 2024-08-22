@@ -4367,6 +4367,7 @@ int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
     JSC::Config::enableRestrictedOptions();
+    JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
 
     WTF::initializeMainThread();
 

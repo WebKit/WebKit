@@ -90,9 +90,9 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 
 enum class EnableLockdownMode: bool { No, Yes };
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode);
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, bool isWebContentProcess);
 
-template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
+template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
@@ -111,7 +111,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     if (initializerMessage) {
         bool enableLockdownMode = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
-        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No);
+        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, isWebContentProcess);
     }
 
     InitializeWebKit2();
