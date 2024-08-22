@@ -58,9 +58,8 @@
         // Set the cookie again to reset its SameSite status.
         document.cookie = "clientSideCookie=1";
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        completeTest();
     }
 
     async function runTest() {
@@ -82,9 +81,8 @@
 
         setMultipleTopFrameUniqueRedirectTo(statisticsUrl);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(secondStep);
-
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        secondStep();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

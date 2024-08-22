@@ -216,8 +216,8 @@
     }
 
     async function processWebsiteDataAndContinue() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(checkWebsiteDataAndContinue);
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        checkWebsiteDataAndContinue();
     }
 
     function checkWebsiteDataAndContinue() {

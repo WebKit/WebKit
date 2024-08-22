@@ -26,10 +26,8 @@
     }
 
     async function fireDataModificationHandlerAndContinue() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-            runTest();
-        });
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        runTest();
     }
 
     function clearInMemoryAndPersistentStoreAndContinue() {

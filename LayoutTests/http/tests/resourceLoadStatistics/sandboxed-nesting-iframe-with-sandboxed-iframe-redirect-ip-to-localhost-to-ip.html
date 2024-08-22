@@ -13,9 +13,7 @@
         }
 
         if (testRunner) {
-            setEnableFeature(true, function() {
-                testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
-            });
+            setEnableFeature(true, function() { });
         }
 
         var lastPageInRedirectChainLoaded = false;
@@ -31,8 +29,10 @@
             lastPageInRedirectChainLoaded = true;
             if (statsChecked)
                 finishTest();
-            else
+            else {
                 await testRunner.statisticsNotifyObserver();
+                checkStats();
+            }
         }
 
         function checkStats() {

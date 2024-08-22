@@ -43,9 +43,8 @@
             testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
             testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin1);
 
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
             await testRunner.statisticsProcessStatisticsAndDataRecords();
+            completeTest();
         });
     }
 

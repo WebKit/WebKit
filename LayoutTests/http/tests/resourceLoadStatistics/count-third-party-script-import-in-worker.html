@@ -20,6 +20,7 @@
             testFailed(event.data.replace("FAIL ", ""));
 
         await testRunner.statisticsNotifyObserver();
+        finishTest();
     }
 
     function runTest() {
@@ -28,7 +29,6 @@
                 if (window.testRunner && window.internals) {
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
-                        testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "LoadWorker";
                         runTest();
                     });

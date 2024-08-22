@@ -34,19 +34,18 @@
                     if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                         testFailed("Host did not get cleared of user interaction.");
 
-                    testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-                        if (document.cookie === cookie)
-                            testPassed("Cookie not deleted.");
-                        else
-                            testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
-
-                        setEnableFeature(false, function() {
-                            testRunner.notifyDone();
-                        });
-                    });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
                     await testRunner.statisticsProcessStatisticsAndDataRecords();
+
+                    if (document.cookie === cookie)
+                        testPassed("Cookie not deleted.");
+                    else
+                        testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
+
+                    setEnableFeature(false, function() {
+                        testRunner.notifyDone();
+                    });
                 });
             });
         });

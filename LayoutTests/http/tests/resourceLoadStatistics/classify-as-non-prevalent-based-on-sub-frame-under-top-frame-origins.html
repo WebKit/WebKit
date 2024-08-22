@@ -34,9 +34,8 @@
             testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin2);
             testRunner.setStatisticsSubframeUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
 
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
             await testRunner.statisticsProcessStatisticsAndDataRecords();
+            completeTest();
         });
     }
 

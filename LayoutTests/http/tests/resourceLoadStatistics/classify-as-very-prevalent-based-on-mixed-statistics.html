@@ -50,8 +50,8 @@
                 i += 3;
             }
 
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
             await testRunner.statisticsProcessStatisticsAndDataRecords();
+            completeTest();
         });
     }
 

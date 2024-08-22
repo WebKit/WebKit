@@ -48,9 +48,8 @@
         testRunner.setStatisticsSubresourceUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
         testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(testStep2);
-
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        testStep2();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
