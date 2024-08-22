@@ -47,6 +47,13 @@
 #include <wtf/text/CString.h>
 #endif
 
+#if USE(SKIA)
+#include <skia/core/SkCanvas.h>
+#include <skia/core/SkFontMgr.h>
+#include <skia/core/SkSurface.h>
+#include <skia/ports/SkFontMgr_fontconfig.h>
+#endif
+
 namespace WebCore {
 
 class TextureMapperGLData {
@@ -293,6 +300,32 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
 
     cairo_surface_destroy(surface);
     cairo_destroy(cr);
+
+#elif USE(SKIA)
+    const CString counterString = String::number(number).utf8();
+    auto fontMgr = SkFontMgr_New_FontConfig(FcConfigReference(nullptr));
+    const SkFont font(fontMgr->matchFamilyStyle("Monospace", SkFontStyle::Bold()), 8);
+    SkRect textBounds;
+    font.measureText(counterString.data(), counterString.length(), SkTextEncoding::kUTF8, &textBounds);
+
+    const int margin = 2;
+    const IntSize counterBoxSize(textBounds.width() + margin * 2, textBounds.height() + margin * 2);
+    const auto imageInfo = SkImageInfo::MakeN32Premul(counterBoxSize.width(), counterBoxSize.height(), SkColorSpace::MakeSRGB());
+    auto surface = SkSurfaces::Raster(imageInfo, { });
+    auto* canvas = surface->getCanvas();
+    if (!canvas)
+        return;
+    canvas->clear(SkColor(color));
+    canvas->drawString(SkString(counterString.data(), counterString.length()), margin, counterBoxSize.height() - margin, font, SkPaint(SkColors::kWhite));
+
+    SkPixmap pixmap;
+    if (!canvas->peekPixels(&pixmap))
+        return;
+    const IntRect targetRect(roundedIntPoint(targetPoint), counterBoxSize);
+    RefPtr<BitmapTexture> texture = m_texturePool.acquireTexture(counterBoxSize, { BitmapTexture::Flags::SupportsAlpha });
+    const IntRect sourceRect(IntPoint::zero(), counterBoxSize);
+    texture->updateContents(pixmap.addr8(), sourceRect, IntPoint::zero(), pixmap.rowBytes());
+    drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, AllEdgesExposed::Yes);
 
 #else
     UNUSED_PARAM(number);
