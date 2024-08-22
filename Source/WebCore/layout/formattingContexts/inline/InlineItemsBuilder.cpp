@@ -125,7 +125,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         else if (inlineItem.isInlineBoxEnd())
             ++inlineBoxEnd;
         else {
-            auto hasToBeUniqueLayoutBox = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak();
+            auto hasToBeUniqueLayoutBox = inlineItem.isAtomicInlineBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak();
             if (hasToBeUniqueLayoutBox)
                 ASSERT(inlineLevelItems.add(&inlineItem.layoutBox()).isNewEntry);
         }
@@ -273,7 +273,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
                 inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
             } else if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox.get()))
                 handleTextContent(*inlineTextBox, inlineItemList, partialContentOffset(*inlineTextBox));
-            else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
+            else if (layoutBox->isAtomicInlineBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItemList);
             else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItemList);
@@ -490,7 +490,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
                 handleBidiParagraphStart(paragraphContentBuilder, inlineItemOffsetList, bidiContextStack);
             else
                 ASSERT_NOT_REACHED();
-        } else if (inlineItem.isBox()) {
+        } else if (inlineItem.isAtomicInlineBox()) {
             inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
         } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
@@ -871,9 +871,9 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
     if (layoutBox.isRubyAnnotationBox())
         return inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
 
-    if (layoutBox.isAtomicInlineLevelBox()) {
+    if (layoutBox.isAtomicInlineBox()) {
         m_isTextAndForcedLineBreakOnlyContent = false;
-        return inlineItemList.append({ layoutBox, InlineItem::Type::Box });
+        return inlineItemList.append({ layoutBox, InlineItem::Type::AtomicInlineBox });
     }
 
     if (layoutBox.isLineBreakBox()) {

@@ -211,14 +211,14 @@ static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> run
                 }
                 std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, length), run.inlineDirection(), expansionBehavior);
             }
-        } else if (run.isBox())
+        } else if (run.isAtomicInlineBox())
             runIsAfterExpansion = false;
 
         expansionInfo.behaviorList[index] = expansionBehavior;
         expansionInfo.opportunityList[index] = expansionOpportunitiesInRun;
         expansionInfo.opportunityCount += expansionOpportunitiesInRun;
 
-        if (run.isText() || run.isBox())
+        if (run.isText() || run.isAtomicInlineBox())
             lastExpansionIndexWithContent = index;
     }
     // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.

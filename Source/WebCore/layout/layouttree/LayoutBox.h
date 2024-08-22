@@ -114,7 +114,7 @@ public:
     bool isBlockContainer() const;
     bool isInlineLevelBox() const;
     bool isInlineBox() const;
-    bool isAtomicInlineLevelBox() const;
+    bool isAtomicInlineBox() const;
     bool isInlineBlockBox() const;
     bool isInlineTableBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }

@@ -45,7 +45,7 @@ public:
     enum class LineSpanningInlineBox : bool { No, Yes };
     static inline InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
     static inline InlineLevelBox createRootInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    static inline InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+    static inline InlineLevelBox createAtomicInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     static inline InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static inline InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
@@ -85,22 +85,22 @@ public:
     TextEdge lineFitEdge() const { return m_style.lineFitEdge; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
-    bool hasTextEmphasis() const { return (hasContent() || isAtomicInlineLevelBox()) && m_textEmphasis.has_value(); };
+    bool hasTextEmphasis() const { return (hasContent() || isAtomicInlineBox()) && m_textEmphasis.has_value(); };
     std::optional<InlineLayoutUnit> textEmphasisAbove() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->above } : std::nullopt; }
     std::optional<InlineLayoutUnit> textEmphasisBelow() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->below } : std::nullopt; }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
     bool isLineSpanningInlineBox() const { return m_type == Type::LineSpanningInlineBox; }
-    bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
-    bool isListMarker() const { return isAtomicInlineLevelBox() && layoutBox().isListMarkerBox(); }
+    bool isAtomicInlineBox() const { return m_type == Type::AtomicInlineBox; }
+    bool isListMarker() const { return isAtomicInlineBox() && layoutBox().isListMarkerBox(); }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
 
     enum class Type : uint8_t {
         InlineBox             = 1 << 0,
         LineSpanningInlineBox = 1 << 1,
         RootInlineBox         = 1 << 2,
-        AtomicInlineLevelBox  = 1 << 3,
+        AtomicInlineBox       = 1 << 3,
         LineBreakBox          = 1 << 4,
         GenericInlineLevelBox = 1 << 5
     };

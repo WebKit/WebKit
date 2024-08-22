@@ -283,7 +283,7 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
                 continue;
             }
 
-            if (box.isAtomicInlineLevelBox()) {
+            if (box.isAtomicInlineBox()) {
                 auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
                 if (!renderer.hasSelfPaintingLayer()) {
                     auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(&renderer.parent()->style());

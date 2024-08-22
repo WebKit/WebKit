@@ -65,7 +65,7 @@ static bool isContentfulOrHasDecoration(const InlineItem& inlineItem, const Inli
         return !!formattingContext.geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart();
     if (inlineItem.isInlineBoxEnd())
         return !!formattingContext.geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingEnd();
-    return inlineItem.isBox() || inlineItem.isLineBreak();
+    return inlineItem.isAtomicInlineBox() || inlineItem.isLineBreak();
 }
 
 static inline StringBuilder toString(const Line::RunList& runs)
@@ -129,7 +129,7 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         // While we stop at floats, they are not considered real soft wrap opportunities.
         return false;
     }
-    if (trailingInlineItem.isBox() || trailingInlineItem.isLineBreak() || trailingInlineItem.isWordBreakOpportunity() || trailingInlineItem.isInlineBoxEnd()) {
+    if (trailingInlineItem.isAtomicInlineBox() || trailingInlineItem.isLineBreak() || trailingInlineItem.isWordBreakOpportunity() || trailingInlineItem.isInlineBoxEnd()) {
         // For Web-compatibility there is a soft wrap opportunity before and after each replaced element or other atomic inline.
         return true;
     }
@@ -219,9 +219,9 @@ struct LineCandidate {
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+    ASSERT(inlineItem.isText() || inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
 
-    if (inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+    if (inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
         return m_continuousContent.append(inlineItem, style, logicalWidth);
 
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
@@ -658,7 +658,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
 
-        if (inlineItem.isFloat() || inlineItem.isBox() || (inlineItem.isOpaque() && inlineItem.layoutBox().isRubyAnnotationBox()))
+        if (inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOpaque() && inlineItem.layoutBox().isRubyAnnotationBox()))
             formattingContext().layoutWithFormattingContextForBox(downcast<ElementBox>(inlineItem.layoutBox()));
 
         if (inlineItem.isFloat()) {
@@ -698,7 +698,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             currentLogicalRight += logicalWidth;
             continue;
         }
-        if (inlineItem.isBox()) {
+        if (inlineItem.isAtomicInlineBox()) {
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
             // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
             lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItem.layoutBox().parent().style(), logicalWidth);
@@ -810,7 +810,7 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
         if (inlineItem.isText()) {
             auto& styleToUse = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
             candidateContentHeight = std::max<InlineLayoutUnit>(candidateContentHeight, styleToUse.computedLineHeight());
-        } else if (inlineItem.isBox() && lineBoxContain.contains(LineBoxContain::Replaced))
+        } else if (inlineItem.isAtomicInlineBox() && lineBoxContain.contains(LineBoxContain::Replaced))
             candidateContentHeight = std::max(candidateContentHeight, InlineLayoutUnit { formattingContext().geometryForBox(inlineItem.layoutBox()).marginBoxHeight() });
     }
     if (candidateContentHeight <= m_lineLogicalRect.height())

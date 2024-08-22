@@ -405,8 +405,8 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
             stream << "    ";
             auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
             auto& layoutBox = inlineLevelBox.layoutBox();
-            if (layoutBox.isAtomicInlineLevelBox())
-                stream << "Atomic inline level box";
+            if (layoutBox.isAtomicInlineBox())
+                stream << "Atomic inline box";
             else if (layoutBox.isLineBreakBox())
                 stream << "Line break box";
             else if (layoutBox.isInlineBox())
@@ -493,8 +493,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
             stream << "inline-block box";
         else if (layoutBox.isLineBreakBox())
             stream << (layoutBox.isWordBreakOpportunity() ? "word break opportunity" : "line break");
-        else if (layoutBox.isAtomicInlineLevelBox())
-            stream << "atomic inline level box";
+        else if (layoutBox.isAtomicInlineBox())
+            stream << "atomic inline box";
         else if (layoutBox.isReplacedBox())
             stream << "replaced inline box";
         else if (layoutBox.isInlineBox())

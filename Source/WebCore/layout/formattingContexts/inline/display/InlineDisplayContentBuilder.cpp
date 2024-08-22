@@ -288,7 +288,7 @@ void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run&
 
 void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::Run& lineRun, const InlineRect& borderBoxRect, InlineDisplay::Boxes& boxes)
 {
-    ASSERT(lineRun.layoutBox().isAtomicInlineLevelBox());
+    ASSERT(lineRun.layoutBox().isAtomicInlineBox());
     auto& layoutBox = lineRun.layoutBox();
 
     auto isContentful = true;
@@ -302,7 +302,7 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
     };
 
     boxes.append({ lineIndex()
-        , InlineDisplay::Box::Type::AtomicInlineLevelBox
+        , InlineDisplay::Box::Type::AtomicInlineBox
         , layoutBox
         , lineRun.bidiLevel()
         , borderBoxRect
@@ -380,7 +380,7 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
 void InlineDisplayContentBuilder::insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, const InlineRect& borderBoxRect, InlineDisplay::Boxes& boxes)
 {
     boxes.insert(insertionPosition, { lineIndex()
-        , InlineDisplay::Box::Type::AtomicInlineLevelBox
+        , InlineDisplay::Box::Type::AtomicInlineBox
         , annotationBox
         , UBIDI_DEFAULT_LTR
         , borderBoxRect
@@ -429,8 +429,8 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 return lineBox.logicalRectForLineBreakBox(layoutBox);
 
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            if (lineRun.isBox() || lineRun.isListMarker())
-                return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
+            if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
+                return lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, boxGeometry);
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
                 return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             ASSERT_NOT_REACHED();
@@ -449,7 +449,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
             else if (lineRun.isHardLineBreak())
                 appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
-            else if (lineRun.isBox() || lineRun.isListMarker())
+            else if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
             else if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 // Do not generate display boxes for inline boxes on non-contentful lines (e.g. <span></span>)
@@ -577,7 +577,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto& layoutBox = displayBox.layoutBox();
 
     if (!displayBox.isNonRootInlineBox()) {
-        if (displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox()) {
+        if (displayBox.isAtomicInlineBox() || displayBox.isGenericInlineLevelBox()) {
             auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
@@ -707,8 +707,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     return { { }, { } };
                 }
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                if (lineRun.isBox() || lineRun.isListMarker())
-                    return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
+                if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
+                    return lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, boxGeometry);
                 ASSERT_NOT_REACHED();
                 return { };
             }();
@@ -750,7 +750,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
-            if (lineRun.isBox() || lineRun.isListMarker()) {
+            if (lineRun.isAtomicInlineBox() || lineRun.isListMarker()) {
                 auto isLeftToRightDirection = layoutBox.parent().style().isLeftToRightDirection();
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
@@ -876,7 +876,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(InlineDisplay
     for (size_t index = boxes.size(); index--;) {
         auto& displayBox = boxes[index];
 
-        auto mayHaveInkOverflow = displayBox.isText() || displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox() || displayBox.isNonRootInlineBox();
+        auto mayHaveInkOverflow = displayBox.isText() || displayBox.isAtomicInlineBox() || displayBox.isGenericInlineLevelBox() || displayBox.isNonRootInlineBox();
         if (!mayHaveInkOverflow)
             continue;
         if (displayBox.isNonRootInlineBox() && !accumulatedInkOverflowRect.isEmpty())
