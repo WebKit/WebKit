@@ -86,6 +86,7 @@ struct FunctionParserTypes {
         }
 
         Type type() const { return m_type; }
+        void setType(Type type) { m_type = type; }
 
         ExpressionType& value() { return m_value; }
         ExpressionType value() const { return m_value; }
@@ -181,9 +182,15 @@ private:
     PartialResult WARN_UNUSED_RETURN parseExpression();
     PartialResult WARN_UNUSED_RETURN parseUnreachableExpression();
     PartialResult WARN_UNUSED_RETURN unifyControl(ArgumentList&, unsigned level);
-    PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&);
     PartialResult WARN_UNUSED_RETURN checkLocalInitialized(uint32_t);
     PartialResult WARN_UNUSED_RETURN unify(const ControlType&);
+
+    enum BranchConditionalityTag {
+        Unconditional,
+        Conditional
+    };
+
+    PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&, BranchConditionalityTag);
 
     PartialResult WARN_UNUSED_RETURN parseNestedBlocksEagerly(bool&);
     void switchToBlock(ControlType&&, Stack&&);
@@ -1593,17 +1600,25 @@ auto FunctionParser<Context>::parseStructFieldManipulation(StructFieldManipulati
 }
 
 template<typename Context>
-auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
+auto FunctionParser<Context>::checkBranchTarget(const ControlType& target, BranchConditionalityTag conditionality) -> PartialResult
 {
     if (!target.branchTargetArity())
         return { };
 
     WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, m_expressionStack.size(), ", but block, "_s, target.signature()->toString() , " expects "_s, target.branchTargetArity(), " values"_s);
 
-
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
-    for (unsigned i = 0; i < target.branchTargetArity(); ++i)
+    for (unsigned i = 0; i < target.branchTargetArity(); ++i) {
         WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type "_s, m_expressionStack[offset + i].type(), " but branch target expects a value of "_s, target.branchTargetType(i), " at index "_s, i);
+
+        if (conditionality == Conditional) {
+            // Types must widen to the branch target type via subtyping. See https://github.com/WebAssembly/gc/issues/516.
+            // We only do this for conditional branches, because in unconditional branches we cannot observe the
+            // broadening of our local values after the branch - we instead jump to a different block with exactly its
+            // parameter types.
+            m_expressionStack[offset + i].setType(target.branchTargetType(i));
+        }
+    }
 
     return { };
 }
@@ -2617,7 +2632,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // Put the ref back on the stack to check the branch type.
             m_expressionStack.constructAndAppend(branchTargetType, ref.value());
             ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
             m_expressionStack.takeLast();
             m_expressionStack.constructAndAppend(nonTakenType, ref.value());
@@ -2759,7 +2774,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
 
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, false, result));
@@ -2780,7 +2795,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type "_s, ref.type(), " expected a reference type"_s);
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType unused;
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
@@ -3295,7 +3310,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, m_currentOpcode == BrIf ? Conditional : Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addBranch(data, condition, m_expressionStack));
         return { };
     }
@@ -3338,10 +3353,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ControlType* target = targets[i];
             WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetArity() != target->branchTargetArity(), "br_table target type size mismatch. Default has size: ", defaultTarget.branchTargetArity(), "but target: ", i, " has size: ", target->branchTargetArity());
             // In the presence of subtyping, we need to check each branch target.
-            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target));
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target, Unconditional));
         }
 
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, defaultTarget, m_expressionStack));
 
         m_unreachableBlocks = 1;
@@ -3349,7 +3364,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Return: {
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, m_expressionStack));
         m_unreachableBlocks = 1;
         return { };
