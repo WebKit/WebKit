@@ -92,7 +92,7 @@ static ExceptionOr<bool> platformVerifyCC(const CryptoKeyHMAC& key, const Vector
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data, UseCryptoKit useCryptoKit)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
+    if (useCryptoKit == UseCryptoKit::Yes && key.hashAlgorithmIdentifier() != CryptoAlgorithmIdentifier::SHA_224)
         return platformSignCryptoKit(key, data);
 #else
     UNUSED_PARAM(useCryptoKit);
@@ -103,7 +103,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHM
 ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, UseCryptoKit useCryptoKit)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
+    if (useCryptoKit == UseCryptoKit::Yes && key.hashAlgorithmIdentifier() != CryptoAlgorithmIdentifier::SHA_224)
         return platformVerifyCryptoKit(key, signature, data);
 #else
     UNUSED_PARAM(useCryptoKit);

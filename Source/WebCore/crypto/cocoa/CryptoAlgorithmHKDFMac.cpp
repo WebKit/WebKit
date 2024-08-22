@@ -59,7 +59,7 @@ static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgo
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length, UseCryptoKit useCryptoKit)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
+    if (useCryptoKit == UseCryptoKit::Yes && parameters.hashIdentifier != CryptoAlgorithmIdentifier::SHA_224)
         return platformDeriveBitsCryptoKit(parameters, key, length);
 #else
 UNUSED_PARAM(useCryptoKit);
