@@ -603,6 +603,73 @@ bool RubyFormattingContext::hasInterCharacterAnnotation(const Box& rubyBaseLayou
     return false;
 }
 
+void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFormattingContext, InlineLayoutUnit lineLogicalHeight, InlineDisplay::Boxes& displayBoxes, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList)
+{
+    // FIXME: We are only supposed to apply overhang when annotation box is wider than base, but at this point we can't tell (this needs to be addressed together with annotation box sizing).
+    if (interlinearRubyColumnRangeList.isEmpty())
+        return;
+
+    auto isHorizontalWritingMode = parentFormattingContext.root().style().isHorizontalWritingMode();
+    for (auto startEndPair : interlinearRubyColumnRangeList) {
+        ASSERT(startEndPair);
+        if (startEndPair.distance() == 1)
+            continue;
+
+        auto rubyBaseStart = startEndPair.begin();
+        auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
+        ASSERT(rubyBaseLayoutBox.isRubyBase());
+        ASSERT(hasInterlinearAnnotation(rubyBaseLayoutBox));
+
+        auto beforeOverhang = overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes, lineLogicalHeight, parentFormattingContext);
+        auto afterOverhang = overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes, lineLogicalHeight, parentFormattingContext);
+
+        // FIXME: If this turns out to be a pref bottleneck, make sure we pass in the accumulated shift to overhangForAnnotationBefore/after and
+        // offset all box geometry as we check for overlap.
+        auto moveBoxRangeToVisualLeft = [&](auto start, auto end, auto shiftValue) {
+            for (auto index = start; index <= end; ++index) {
+                auto& displayBox = displayBoxes[index];
+                isHorizontalWritingMode ? displayBox.moveHorizontally(-shiftValue) : displayBox.moveVertically(-shiftValue);
+
+                auto& layoutBox = displayBox.layoutBox();
+                if (displayBox.isInlineLevelBox() && !displayBox.isRootInlineBox())
+                    parentFormattingContext.geometryForBox(layoutBox).moveHorizontally(LayoutUnit { -shiftValue });
+
+                if (layoutBox.isRubyBase() && layoutBox.associatedRubyAnnotationBox())
+                    parentFormattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox()).moveHorizontally(LayoutUnit { -shiftValue });
+            }
+        };
+        auto hasJustifiedAdjacentAfterContent = [&] {
+            if (startEndPair.end() == displayBoxes.size())
+                return false;
+            auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
+            if (afterRubyBaseDisplayBox.layoutBox().isRubyBase()) {
+                // Adjacent content is also a ruby base.
+                return false;
+            }
+            return !!afterRubyBaseDisplayBox.expansion().horizontalExpansion;
+        }();
+
+        if (beforeOverhang) {
+            // When "before" adjacent content slightly pulls the rest of the content on the line leftward, justify content should stay intact.
+            moveBoxRangeToVisualLeft(rubyBaseStart, hasJustifiedAdjacentAfterContent ? startEndPair.end() : displayBoxes.size() - 1, beforeOverhang);
+        }
+        if (afterOverhang) {
+            // Normally we shift all the "after" boxes to the left here as one monolithic content
+            // but in case of justified alignment we can only move the adjacent run under the annotation
+            // and expand the justified space to keep the rest of the runs stationary.
+            if (hasJustifiedAdjacentAfterContent) {
+                auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
+                auto expansion = afterRubyBaseDisplayBox.expansion();
+                auto inflateValue = afterOverhang + beforeOverhang;
+                afterRubyBaseDisplayBox.setExpansion({ expansion.behavior, expansion.horizontalExpansion + inflateValue });
+                isHorizontalWritingMode ? afterRubyBaseDisplayBox.expandHorizontally(inflateValue) : afterRubyBaseDisplayBox.expandVertically(inflateValue);
+                moveBoxRangeToVisualLeft(startEndPair.end(), startEndPair.end(), afterOverhang);
+            } else
+                moveBoxRangeToVisualLeft(startEndPair.end(), displayBoxes.size() - 1, afterOverhang);
+        }
+    }
+}
+
 }
 }
 
