@@ -142,6 +142,13 @@ static NSString *platformDefaultActionBundleIdentifier()
 #endif
 }
 
+#if PLATFORM(IOS)
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(String webClipIdentifier)
+{
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)webClipIdentifier];
+}
+#endif
+
 static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
 {
 #if PLATFORM(IOS)
@@ -494,8 +501,30 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
         updateSubscriptionSetState();
         return;
     }
-#endif
 
+    // FIXME(rdar://134509619): Move APNS topics to appropriate enabled/ignored list so that we
+    // don't get push events for web clips without the appropriate permissions.
+    RetainPtr notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+    auto blockPtr = makeBlockPtr([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)](UNNotificationSettings *settings) mutable {
+        auto status = settings.authorizationStatus;
+        if (status != UNAuthorizationStatusAuthorized) {
+            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), identifier.debugDescription().utf8().data());
+            return;
+        }
+
+        WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)] mutable {
+            handleIncomingPushImpl(identifier, WTFMove(message));
+        });
+    });
+    [center getNotificationSettingsWithCompletionHandler:blockPtr.get()];
+#else
+    handleIncomingPushImpl(identifier, WTFMove(message));
+#endif
+}
+
+void WebPushDaemon::handleIncomingPushImpl(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
+{
     ensureIncomingPushTransaction();
 
     auto addResult = m_pushMessages.ensure(identifier, [] {
