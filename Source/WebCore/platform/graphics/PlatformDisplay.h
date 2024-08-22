@@ -60,7 +60,10 @@ class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static PlatformDisplay& sharedDisplay();
+#if !PLATFORM(WIN)
     WEBCORE_EXPORT static void setSharedDisplay(std::unique_ptr<PlatformDisplay>&&);
+    WEBCORE_EXPORT static PlatformDisplay* sharedDisplayIfExists();
+#endif
     virtual ~PlatformDisplay();
 
     enum class Type {

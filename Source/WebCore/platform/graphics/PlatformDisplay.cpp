@@ -68,6 +68,11 @@ PlatformDisplay& PlatformDisplay::sharedDisplay()
     RELEASE_ASSERT(s_sharedDisplay);
     return *s_sharedDisplay;
 }
+
+PlatformDisplay* PlatformDisplay::sharedDisplayIfExists()
+{
+    return s_sharedDisplay.get();
+}
 #endif
 
 static HashSet<PlatformDisplay*>& eglDisplays()
