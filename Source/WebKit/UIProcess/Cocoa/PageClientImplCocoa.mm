@@ -348,6 +348,7 @@ void PageClientImplCocoa::hasActiveNowPlayingSessionChanged(bool hasActiveNowPla
 
 void PageClientImplCocoa::videoControlsManagerDidChange()
 {
+    RELEASE_LOG(ViewState, "%p PageClientImplCocoa::videoControlsManagerDidChange %d", m_webView.get().get(), [m_webView _canEnterFullscreen]);
     [m_webView willChangeValueForKey:@"_canEnterFullscreen"];
     [m_webView didChangeValueForKey:@"_canEnterFullscreen"];
 }

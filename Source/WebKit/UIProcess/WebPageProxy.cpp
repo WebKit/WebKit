@@ -7854,7 +7854,7 @@ void WebPageProxy::fullscreenMayReturnToInline()
 bool WebPageProxy::canEnterFullscreen()
 {
     if (RefPtr playbackSessionManager = m_playbackSessionManager)
-        return playbackSessionManager->hasControlsManagerInterface();
+        return playbackSessionManager->canEnterVideoFullscreen();
     return false;
 }
 

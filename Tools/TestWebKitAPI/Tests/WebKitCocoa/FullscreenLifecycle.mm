@@ -55,7 +55,28 @@ static bool fullscreenStateChanged;
 
 @end
 
-TEST(Fullscreen, Lifecycle)
+TEST(Fullscreen, AudioLifecycle)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration preferences].elementFullscreenEnabled = YES;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    ASSERT_FALSE([webView _canEnterFullscreen]);
+    ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
+
+    auto observer = adoptNS([[FullscreenLifecycleObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:canEnterFullscreenKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [webView addObserver:observer.get() forKeyPath:fullscreenStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"fullscreen-lifecycle-audio"];
+    [webView evaluateJavaScript:@"go()" completionHandler:nil];
+    [webView waitForMessage:@"playing"];
+
+    ASSERT_FALSE([webView _canEnterFullscreen]);
+}
+
+TEST(Fullscreen, VideoLifecycle)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];

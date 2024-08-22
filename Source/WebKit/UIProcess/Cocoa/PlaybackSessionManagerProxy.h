@@ -232,7 +232,7 @@ public:
 
     void invalidate();
 
-    bool hasControlsManagerInterface() const { return !!m_controlsManagerContextId; }
+    bool canEnterVideoFullscreen() const { return !!m_controlsManagerContextId && m_controlsManagerContextIsVideo; }
     RefPtr<WebCore::PlatformPlaybackSessionInterface> controlsManagerInterface();
     void requestControlledElementID();
 
@@ -259,7 +259,7 @@ private:
     PlaybackSessionContextIdentifier controlsManagerContextId() const { return m_controlsManagerContextId; }
 
     // Messages from PlaybackSessionManager
-    void setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier);
+    void setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier, bool isVideo);
     void clearPlaybackControlsManager();
     void currentTimeChanged(PlaybackSessionContextIdentifier, double currentTime, double hostTime);
     void bufferedTimeChanged(PlaybackSessionContextIdentifier, double bufferedTime);
@@ -331,6 +331,7 @@ private:
     WeakPtr<WebPageProxy> m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    bool m_controlsManagerContextIsVideo { false };
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 
 #if !RELEASE_LOG_DISABLED
