@@ -118,15 +118,17 @@ void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptE
 
 void CryptoAlgorithm::dispatchDigest(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&&exceptionCallback, Vector<uint8_t>&& message, PAL::CryptoDigest::Algorithm algo)
 {
-    PAL::UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? PAL::UseCryptoKit::Yes : PAL::UseCryptoKit::No;
-    workQueue.dispatch([message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.identifier(), exceptionCallback = WTFMove(exceptionCallback), useCryptoKit, algo]() mutable {
-        auto result = PAL::CryptoDigest::computeHash(algo, message, useCryptoKit);
+    workQueue.dispatch([message = WTFMove(message), callback = WTFMove(callback), contextIdentifier = context.identifier(), exceptionCallback = WTFMove(exceptionCallback), algo]() mutable {
+        auto digest = PAL::CryptoDigest::create(algo);
+        if (!digest) {
+            exceptionCallback(ExceptionCode::OperationError);
+            return;
+        }
+        digest->addBytes(message.span());
+        auto result = digest->computeHash();
+
         ScriptExecutionContext::postTaskTo(contextIdentifier, [callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
-            if (!result.has_value()) {
-                exceptionCallback(ExceptionCode::OperationError);
-                return;
-            }
-            callback(WTFMove(result.value()));
+            callback(WTFMove(result));
         });
     });
 }

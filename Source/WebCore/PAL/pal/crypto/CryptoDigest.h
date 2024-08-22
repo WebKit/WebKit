@@ -51,7 +51,6 @@ public:
     PAL_EXPORT void addBytes(std::span<const uint8_t>);
     PAL_EXPORT Vector<uint8_t> computeHash();
     PAL_EXPORT String toHexString();
-    PAL_EXPORT static std::optional<Vector<uint8_t>> computeHash(Algorithm, const Vector<uint8_t>&, UseCryptoKit);
     PAL_EXPORT CryptoDigest();
 
 private:
