@@ -2309,10 +2309,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return !_partialIntelligenceTextPonderingAnimationCount && _writingToolsTextReplacementsFinished;
 }
 
-#endif
-
-#if ENABLE(WRITING_TOOLS_UI)
-
 - (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3204,7 +3200,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSUUID *)_enableTextIndicatorStylingAfterElementWithID:(NSString *)elementID
 {
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     return [self _enableSourceTextAnimationAfterElementWithID:elementID];
 #else
     return nil;
@@ -3213,7 +3209,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSUUID *)_enableTextIndicatorStylingForElementWithID:(NSString *)elementID
 {
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     return [self _enableFinalTextAnimationForElementWithID:elementID];
 #else
     return nil;
@@ -3222,7 +3218,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsUUID
 {
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     [self _disableTextAnimationWithUUID:nsUUID];
 #endif
 }

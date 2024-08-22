@@ -24,7 +24,7 @@
  */
 
 
-#if ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
+#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
 #import "config.h"
 #import "WKTextAnimationManager.h"
@@ -251,5 +251,5 @@
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
+#endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 

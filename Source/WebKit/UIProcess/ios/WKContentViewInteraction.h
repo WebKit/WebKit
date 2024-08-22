@@ -639,8 +639,6 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 #if ENABLE(WRITING_TOOLS)
     , WTWritingToolsDelegate
-#endif
-#if ENABLE(WRITING_TOOLS_UI)
     , WKSTextAnimationSourceDelegate
 #endif
 >
@@ -839,7 +837,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
 - (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 #endif

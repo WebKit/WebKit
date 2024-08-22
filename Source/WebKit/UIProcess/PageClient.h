@@ -727,11 +727,6 @@ public:
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
 
-#if ENABLE(WRITING_TOOLS_UI)
-    virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
-    virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
-#endif
-
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
 
 #if PLATFORM(COCOA)
@@ -765,6 +760,9 @@ public:
 
     virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
     virtual bool intelligenceTextPonderingAnimationIsComplete() = 0;
+
+    virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
+    virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
 #endif
 
 #if ENABLE(DATA_DETECTION)

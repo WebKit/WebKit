@@ -99,11 +99,6 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
-#if ENABLE(WRITING_TOOLS_UI)
-    void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) final;
-    void removeTextAnimationForAnimationID(const WTF::UUID&) final;
-#endif
-
     void microphoneCaptureWillChange() final;
     void cameraCaptureWillChange() final;
     void displayCaptureWillChange() final;
@@ -128,6 +123,9 @@ public:
 
     void didEndPartialIntelligenceTextPonderingAnimation() final;
     bool intelligenceTextPonderingAnimationIsComplete() final;
+
+    void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) final;
+    void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 #endif
 
 #if ENABLE(GAMEPAD)
