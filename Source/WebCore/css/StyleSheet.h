@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2012-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,13 +42,13 @@ public:
     virtual bool disabled() const = 0;
     virtual void setDisabled(bool) = 0;
     virtual Node* ownerNode() const = 0;
-    virtual StyleSheet* parentStyleSheet() const { return 0; }
+    virtual StyleSheet* parentStyleSheet() const { return nullptr; }
     virtual String href() const = 0;
     virtual String title() const = 0;
-    virtual MediaList* media() const { return 0; }
+    virtual MediaList* media() const { return nullptr; }
     virtual String type() const = 0;
 
-    virtual CSSImportRule* ownerRule() const { return 0; }
+    virtual CSSImportRule* ownerRule() const { return nullptr; }
     virtual void clearOwnerNode() = 0;
     virtual URL baseURL() const = 0;
     virtual bool isLoading() const = 0;

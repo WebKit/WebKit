@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -134,7 +134,7 @@ public:
         ~RuleMutationScope();
 
     private:
-        CSSStyleSheet* m_styleSheet;
+        RefPtr<CSSStyleSheet> m_styleSheet;
         RuleMutationType m_mutationType;
         ContentsClonedForMutation m_contentsClonedForMutation;
         RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;

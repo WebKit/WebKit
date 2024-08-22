@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,9 +71,9 @@ private:
     unsigned length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return m_styleSheet->item(index); }
 
-    CSSStyleSheet* styleSheet() const final { return m_styleSheet; }
+    CSSStyleSheet* styleSheet() const final { return m_styleSheet.get(); }
 
-    CSSStyleSheet* m_styleSheet;
+    SingleThreadWeakPtr<CSSStyleSheet> m_styleSheet;
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 
@@ -169,7 +169,7 @@ CSSStyleSheet::~CSSStyleSheet()
     // it's not ideal because it makes the CSSOM's behavior depend on the timing of garbage collection.
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->setParentStyleSheet(0);
+            m_childRuleCSSOMWrappers[i]->setParentStyleSheet(nullptr);
     }
     if (m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper->detachFromParent();
@@ -191,7 +191,7 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
             rules[i] = styleRuleWithNesting;
             return styleRuleWithNesting;
-        }        
+        }
     }
     return { };
 }
