@@ -683,7 +683,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
             return finalizeRenderCommand();
         }
 
-        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCount * indexSizeInBytes);
+        auto indexCountTimesSizeInBytes = checkedProduct<NSUInteger>(indexCount, indexSizeInBytes);
+        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCountTimesSizeInBytes);
         if (lastIndexOffset.hasOverflowed() || lastIndexOffset.value() > m_indexBufferSize) {
             makeInvalid(@"firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize");
             return finalizeRenderCommand();
@@ -700,8 +701,11 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
         if (m_renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {
             id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
             [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
-        } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip)
-            [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+        } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip) {
+            auto checkedAddition = checkedSum<NSUInteger>(indexBufferOffsetInBytes, indexCountTimesSizeInBytes);
+            if (!checkedAddition.hasOverflowed() && checkedAddition.value() <= indexBuffer.length)
+                [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+        }
     } else {
         recordCommand([indexCount, instanceCount, firstIndex, baseVertex, firstInstance, protectedThis = Ref { *this }] {
             protectedThis->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
