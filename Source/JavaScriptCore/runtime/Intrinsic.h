@@ -60,6 +60,7 @@ namespace JSC {
     macro(ArrayValuesIntrinsic) \
     macro(ArrayKeysIntrinsic) \
     macro(ArrayEntriesIntrinsic) \
+    macro(AsyncIteratorIntrinsic) \
     macro(BooleanConstructorIntrinsic) \
     macro(CharCodeAtIntrinsic) \
     macro(CharAtIntrinsic) \
@@ -137,6 +138,7 @@ namespace JSC {
     macro(IsTypedArrayViewIntrinsic) \
     macro(BoundFunctionCallIntrinsic) \
     macro(RemoteFunctionCallIntrinsic) \
+    macro(IteratorIntrinsic) \
     macro(JSMapGetIntrinsic) \
     macro(JSMapHasIntrinsic) \
     macro(JSMapSetIntrinsic) \

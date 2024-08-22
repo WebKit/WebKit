@@ -106,7 +106,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ArrayConstructor.js \
     $(JavaScriptCore)/builtins/ArrayIteratorPrototype.js \
     $(JavaScriptCore)/builtins/ArrayPrototype.js \
-    $(JavaScriptCore)/builtins/AsyncIteratorPrototype.js \
     $(JavaScriptCore)/builtins/AsyncFunctionPrototype.js \
     $(JavaScriptCore)/builtins/AsyncGeneratorPrototype.js \
     $(JavaScriptCore)/builtins/FunctionPrototype.js \
@@ -115,7 +114,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/GlobalOperations.js \
     $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
     $(JavaScriptCore)/builtins/IteratorHelpers.js \
-    $(JavaScriptCore)/builtins/IteratorPrototype.js \
     $(JavaScriptCore)/builtins/MapConstructor.js \
     $(JavaScriptCore)/builtins/MapIteratorPrototype.js \
     $(JavaScriptCore)/builtins/MapPrototype.js \

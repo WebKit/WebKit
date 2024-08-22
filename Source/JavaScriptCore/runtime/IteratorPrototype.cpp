@@ -33,12 +33,19 @@ namespace JSC {
 
 const ClassInfo IteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IteratorPrototype) };
 
+static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncIterator);
+
 void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+    JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, iteratorProtoFuncIterator, ImplementationVisibility::Public, IteratorIntrinsic);
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+}
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, iteratorPrototypeSymbolIteratorGetterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
 }
 
 } // namespace JSC

@@ -337,7 +337,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncFunctionPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/AsyncIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncGeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/FunctionPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
@@ -345,7 +344,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
     ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
-    ${JAVASCRIPTCORE_DIR}/builtins/IteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapPrototype.js
