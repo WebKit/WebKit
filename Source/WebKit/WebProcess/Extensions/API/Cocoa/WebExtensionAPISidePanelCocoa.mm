@@ -75,15 +75,13 @@ static ParseResult parseWindowIdentifier(NSDictionary *options)
 
 static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSidebarParameters const& parameters)
 {
-    NSDictionary *serializedParameters = @{
-        @"enabled": @(parameters.enabled),
-        @"path": parameters.panelPath,
-    };
+    NSMutableDictionary *serializedParameters = [NSMutableDictionary new];
 
-    if (parameters.tabIdentifier) {
-        NSNumber *tabIdNum = [NSNumber numberWithUnsignedLongLong:parameters.tabIdentifier->toUInt64()];
-        [serializedParameters setValue:tabIdNum forKey:@"tabId"];
-    }
+    serializedParameters[@"enabled"] = @(parameters.enabled);
+    serializedParameters[@"path"] = parameters.panelPath;
+
+    if (parameters.tabIdentifier)
+        serializedParameters[@"tabId"] = @(toWebAPI(parameters.tabIdentifier.value()));
 
     return serializedParameters;
 }

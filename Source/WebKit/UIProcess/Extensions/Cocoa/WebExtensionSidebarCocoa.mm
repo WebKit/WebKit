@@ -129,7 +129,11 @@ RetainPtr<CocoaImage> WebExtensionSidebar::icon(CGSize size)
         .or_else([&] -> std::optional<RetainPtr<CocoaImage>> {
             return parent().transform([&](auto const& parent) { return parent.get().icon(size); });
         })
-        .value_or(context.extension().actionIcon(size));
+        // using .or_else(..).value() is more efficient than value_or, since value_or will evaluate its argument
+        // regardless of whether or not it's used. by switching to or_else(..).value() we instead lazily evaluate
+        // the fallback value
+        .or_else([&] { return std::optional { RetainPtr(context.extension().actionIcon(size)) }; })
+        .value();
 }
 
 void WebExtensionSidebar::setIconsDictionary(NSDictionary *icons)
@@ -148,9 +152,9 @@ void WebExtensionSidebar::setIconsDictionary(NSDictionary *icons)
 
 String WebExtensionSidebar::title() const
 {
-    return m_titleOverride.value_or(
-        parent().transform([](auto const& parent) { return parent.get().title(); }).value_or(fallbackTitle)
-    );
+    return m_titleOverride
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->title(); }); })
+        .value_or(fallbackTitle);
 }
 
 void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
@@ -165,7 +169,9 @@ void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
 
 bool WebExtensionSidebar::isEnabled() const
 {
-    return m_isEnabled;
+    return m_isEnabled
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->isEnabled(); }); })
+        .value_or(false);
 }
 
 void WebExtensionSidebar::setEnabled(bool enabled)
@@ -202,9 +208,9 @@ void WebExtensionSidebar::closeSidebarWhenReady()
 
 String WebExtensionSidebar::sidebarPath() const
 {
-    return m_sidebarPathOverride.value_or(
-        parent().transform([](auto const& parent) { return parent.get().sidebarPath(); }).value_or(fallbackPath)
-    );
+    return m_sidebarPathOverride
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->sidebarPath(); }); })
+        .value_or(fallbackPath);
 }
 
 void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)

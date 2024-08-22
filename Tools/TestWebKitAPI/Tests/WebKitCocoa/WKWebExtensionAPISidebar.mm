@@ -747,6 +747,207 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIDisallowsMissingArguments)
     Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
 }
 
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPIGlobalPathPersists)
+{
+    auto *script = @[
+        @"await browser.sidePanel.setOptions({ path: '/sidebar-1.html' })",
+        @"let options = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertEq(options.path, '/sidebar-1.html')",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar-1.html": @"<h1>Sidebar 1</h1>",
+    };
+
+    Util::loadAndRunExtension(sidePanelManifest, resources, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPITabPathPersists)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab1, tab2] = tabs",
+
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, path: '/sidebar-1.html' })",
+        @"await browser.sidePanel.setOptions({ path: '/sidebar-global.html' })",
+
+        @"let tabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"let otherTabOptions = await browser.sidePanel.getOptions({ tabId: tab2.id })",
+        @"let globalOptions = await browser.sidePanel.getOptions({})",
+
+        @"browser.test.assertEq(tabOptions.path, '/sidebar-1.html')",
+        @"browser.test.assertEq(otherTabOptions.path, '/sidebar-global.html')",
+        @"browser.test.assertEq(globalOptions.path, '/sidebar-global.html')",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar-global.html": @"<h1>Global Sidebar</h1>",
+        @"sidebar-1.html": @"<h1>Sidebar 1</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    [manager.get().defaultWindow openNewTab];
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPIGlobalEnablePersists)
+{
+    auto *script = @[
+        @"let startingOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertFalse(startingOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ enabled: true })",
+        @"let options = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertTrue(options.enabled)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPITabEnablePersists)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab1, tab2] = tabs",
+        @"let startingOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertFalse(startingOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, enabled: true })",
+
+        @"let tabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"let otherTabOptions = await browser.sidePanel.getOptions({ tabId: tab2.id })",
+        @"let globalOptions = await browser.sidePanel.getOptions({})",
+
+        @"browser.test.assertTrue(tabOptions.enabled)",
+        @"browser.test.assertFalse(otherTabOptions.enabled)",
+        @"browser.test.assertFalse(globalOptions.enabled)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, sidePanelManifest);
+    [manager.get().defaultWindow openNewTab];
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPIModifyGlobalPath)
+{
+    auto *script = @[
+        @"await browser.sidePanel.setOptions({ path: '/sidebar-1.html' })",
+        @"let preModOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertEq(preModOptions.path, '/sidebar-1.html')",
+
+        @"await browser.sidePanel.setOptions({ path: '/sidebar-2.html' })",
+        @"let postModOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertEq(postModOptions.path, '/sidebar-2.html')",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js"  : Util::constructScript(script),
+        @"sidebar-1.html" : @"<h1>Sidebar 1</h1>",
+        @"sidebar-2.html" : @"<h1>Sidebar 2</h1>",
+    };
+
+    Util::loadAndRunExtension(sidePanelManifest, resources, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelAPIModifyTabPath)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab1, tab2] = tabs",
+
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, path: '/sidebar-1.html' })",
+        @"await browser.sidePanel.setOptions({ path: '/sidebar-global.html' })",
+        @"let preModTabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"browser.test.assertEq(preModTabOptions.path, '/sidebar-1.html')",
+
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, path: '/sidebar-2.html' })",
+        @"let postModTabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"browser.test.assertEq(postModTabOptions.path, '/sidebar-2.html')",
+
+        @"let otherTabOptions = await browser.sidePanel.getOptions({ tabId: tab2.id })",
+        @"let globalOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertEq(otherTabOptions.path, '/sidebar-global.html')",
+        @"browser.test.assertEq(globalOptions.path, '/sidebar-global.html')",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js"  : Util::constructScript(script),
+        @"sidebar-global.html" : @"<h1>Global Sidebar</h1>",
+        @"sidebar-1.html" : @"<h1>Sidebar 1</h1>",
+        @"sidebar-2.html" : @"<h1>Sidebar 2</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    [manager.get().defaultWindow openNewTab];
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelModifyGlobalEnable)
+{
+    auto *script = @[
+        @"let startingOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertFalse(startingOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ enabled: true })",
+        @"let preModOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertTrue(preModOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ enabled: false })",
+        @"let postModOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertFalse(postModOptions.enabled)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelModifyTabEnable)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab1, tab2] = tabs",
+
+        @"await browser.sidePanel.setOptions({ enabled: true })",
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, enabled: true })",
+        @"let preModTabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"browser.test.assertTrue(preModTabOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, enabled: false })",
+        @"let postModTabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
+        @"browser.test.assertFalse(postModTabOptions.enabled)",
+
+        @"let otherTabOptions = await browser.sidePanel.getOptions({ tabId: tab2.id })",
+        @"let globalOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertTrue(otherTabOptions.enabled)",
+        @"browser.test.assertTrue(globalOptions.enabled)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, sidePanelManifest);
+    [manager.get().defaultWindow openNewTab];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
