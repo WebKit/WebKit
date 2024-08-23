@@ -414,6 +414,8 @@ public:
 
     virtual bool shouldPlaceVerticalScrollbarOnLeft() const = 0;
     
+    virtual bool isHorizontalWritingMode() const { return false; }
+
     virtual String debugDescription() const = 0;
 
     virtual float pageScaleFactor() const
@@ -439,6 +441,9 @@ public:
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
     WEBCORE_EXPORT virtual void scrollbarWidthChanged(ScrollbarWidth) { }
+
+    virtual IntSize totalScrollbarSpace() const { return { }; }
+    virtual int insetForLeftScrollbarSpace() const { return 0; }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

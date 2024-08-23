@@ -5989,6 +5989,11 @@ bool LocalFrameView::shouldPlaceVerticalScrollbarOnLeft() const
     return renderView() && renderView()->shouldPlaceVerticalScrollbarOnLeft();
 }
 
+bool LocalFrameView::isHorizontalWritingMode() const
+{
+    return renderView() && renderView()->style().isHorizontalWritingMode();
+}
+
 TextStream& operator<<(TextStream& ts, const LocalFrameView& view)
 {
     ts << view.debugDescription();
@@ -6186,6 +6191,42 @@ void LocalFrameView::scrollbarWidthChanged(ScrollbarWidth width)
 {
     scrollbarsController().scrollbarWidthChanged(width);
     m_needsDeferredScrollbarsUpdate = true;
+}
+
+int LocalFrameView::scrollbarGutterWidth(bool isHorizontalWritingMode) const
+{
+    if (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
+        return 0;
+
+    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+
+    if (!verticalScrollbar())
+        return 0;
+
+    return verticalScrollbar()->width();
+}
+
+IntSize LocalFrameView::totalScrollbarSpace() const
+{
+    IntSize scrollbarGutter = { horizontalScrollbarIntrusion(), verticalScrollbarIntrusion() };
+
+    if (isHorizontalWritingMode()) {
+        if (scrollbarGutterStyle().bothEdges)
+            scrollbarGutter.setWidth(scrollbarGutterWidth() * 2);
+        else
+            scrollbarGutter.setWidth(scrollbarGutterWidth());
+    }
+    return scrollbarGutter;
+}
+
+int LocalFrameView::insetForLeftScrollbarSpace() const
+{
+    if (scrollbarGutterStyle().bothEdges)
+        return scrollbarGutterWidth();
+    if (shouldPlaceVerticalScrollbarOnLeft())
+        return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;
+    return 0;
 }
 
 } // namespace WebCore
