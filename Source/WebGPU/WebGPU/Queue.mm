@@ -690,11 +690,12 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
             }
         }
 
+        auto newDataSpan = newData.mutableSpan();
         for (size_t z = 0; z < maxZ; ++z) {
             for (size_t y = 0; y < maxY; ++y) {
-                auto sourceBytes = data.data() + y * bytesPerRow + z * bytesPerImage + dataLayout.offset;
-                auto destBytes = &newData[0] + y * newBytesPerRow + z * newBytesPerImage;
-                memcpy(destBytes, sourceBytes, newBytesPerRow);
+                auto sourceBytesSpan = data.subspan(y * bytesPerRow + z * bytesPerImage + dataLayout.offset, newBytesPerRow);
+                auto destBytesSpan = newDataSpan.subspan(y * newBytesPerRow + z * newBytesPerImage, newBytesPerRow);
+                memcpySpan(destBytesSpan, sourceBytesSpan);
             }
         }
 
