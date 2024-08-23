@@ -34,7 +34,7 @@ const int kMaxFFTPow2Size = 24;
 
 size_t unpackedFFTDataSize(unsigned fftSize)
 {
-    return fftSize / 2 + 1;
+    return fftSize / 2;
 }
 
 } // anonymous namespace
@@ -46,9 +46,14 @@ FFTFrame::FFTFrame(unsigned fftSize)
     : m_FFTSize(fftSize)
     , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
     , m_complexData(makeUniqueArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize)))
-    , m_realData(unpackedFFTDataSize(m_FFTSize))
-    , m_imagData(unpackedFFTDataSize(m_FFTSize))
 {
+    // We only allow power of two.
+    ASSERT(1UL << m_log2FFTSize == m_FFTSize);
+
+    size_t dataSize = unpackedFFTDataSize(m_FFTSize);
+    m_realData.resize(dataSize);
+    m_imagData.resize(dataSize);
+
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
     m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
