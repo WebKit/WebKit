@@ -723,6 +723,8 @@ void WebProcessProxy::shutDown()
     m_backgroundResponsivenessTimer.invalidate();
     m_audibleMediaActivity = std::nullopt;
     m_mediaStreamingActivity = std::nullopt;
+    m_foregroundToken = nullptr;
+    m_backgroundToken = nullptr;
 
     for (Ref page : mainPages())
         page->disconnectFramesFromPage();
