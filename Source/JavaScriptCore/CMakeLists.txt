@@ -818,6 +818,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/augmentable/AugmentableInspectorControllerClient.h
 
     inspector/remote/RemoteAutomationTarget.h
+    inspector/remote/RemoteConnectionToTarget.h
     inspector/remote/RemoteControllableTarget.h
     inspector/remote/RemoteInspectionTarget.h
     inspector/remote/RemoteInspector.h

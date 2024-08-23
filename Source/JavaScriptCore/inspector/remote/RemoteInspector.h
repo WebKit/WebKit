@@ -27,6 +27,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "RemoteConnectionToTarget.h"
 #include "RemoteControllableTarget.h"
 
 #include <utility>
@@ -54,7 +55,6 @@ typedef struct _GCancellable GCancellable;
 #endif
 
 #if USE(INSPECTOR_SOCKET_SERVER)
-#include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
@@ -67,7 +67,6 @@ using TargetListing = RefPtr<JSON::Object>;
 namespace Inspector {
 
 class RemoteAutomationTarget;
-class RemoteConnectionToTarget;
 class RemoteControllableTarget;
 class RemoteInspectionTarget;
 class RemoteInspectorClient;
