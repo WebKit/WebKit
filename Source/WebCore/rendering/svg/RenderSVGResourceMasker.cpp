@@ -97,7 +97,9 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
 
-    auto repaintBoundingBox = targetRenderer.repaintRectInLocalCoordinates();
+    // FIXME: This needs to be bounding box and should not use repaint rect.
+    // https://bugs.webkit.org/show_bug.cgi?id=278551
+    auto repaintBoundingBox = targetRenderer.repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
     auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
 
     auto maskColorSpace = DestinationColorSpace::SRGB();
