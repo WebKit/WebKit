@@ -665,6 +665,9 @@ protected:
 
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
+    void clipToPaddingBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
+    void clipToContentBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
+
     BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext&) const;
     bool backgroundHasOpaqueTopLayer() const;
 
@@ -761,8 +764,6 @@ private:
     RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
     
     LayoutPoint topLeftLocationWithFlipping() const;
-
-    void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
 
     void addLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientRect);
 

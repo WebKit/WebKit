@@ -2124,10 +2124,16 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     return false;
 }
 
-void RenderBox::clipContentForBorderRadius(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor)
+void RenderBox::clipToPaddingBoxShape(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor) const
 {
-    auto innerBorder = style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()));
-    context.clipRoundedRect(innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+    auto borderShape = BorderShape::shapeForBorderRect(style(), LayoutRect(accumulatedOffset, size()));
+    borderShape.clipToInnerShape(context, deviceScaleFactor);
+}
+
+void RenderBox::clipToContentBoxShape(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor) const
+{
+    auto borderShape = borderShapeForContentClipping(LayoutRect { accumulatedOffset, size() });
+    borderShape.clipToInnerShape(context, deviceScaleFactor);
 }
 
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
@@ -2152,7 +2158,8 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
-        clipContentForBorderRadius(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
+        clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
+
     paintInfo.context().clip(clipRect);
 
     if (paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility)

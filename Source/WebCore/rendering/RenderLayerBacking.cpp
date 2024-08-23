@@ -1871,7 +1871,8 @@ void RenderLayerBacking::updateContentsRects()
     m_graphicsLayer->setContentsRect(snapRectToDevicePixelsIfNeeded(contentsBox(), renderer()));
     
     if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(renderer())) {
-        FloatRoundedRect contentsClippingRect = renderReplaced->roundedContentBoxRect(renderReplaced->borderBoxRect()).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        auto borderShape = renderReplaced->borderShapeForContentClipping(renderReplaced->borderBoxRect());
+        auto contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
         contentsClippingRect.move(contentOffsetInCompositingLayer());
         m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
     }

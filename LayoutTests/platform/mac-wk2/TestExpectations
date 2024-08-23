@@ -1584,9 +1584,6 @@ editing/text-iterator/backwards-text-iterator-basic.html [ Crash ]
 # rdar://107460005 ([UI Side Compositing] fast/text/web-font-load-invisible-during-loading.html fails)
 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
 
-# rdar://107460054 ([UI-side compositing] imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html fails)
-imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
-
 # rdar://107460135 ([UI-side compositing] svg/compositing/outermost-svg-with-border-padding.html fails)
 svg/compositing/outermost-svg-with-border-padding.html
 

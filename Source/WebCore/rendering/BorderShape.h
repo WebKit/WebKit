@@ -77,6 +77,7 @@ public:
     void clipOutInnerShape(GraphicsContext&, float deviceScaleFactor);
 
     void fillOuterShape(GraphicsContext&, const Color&, float deviceScaleFactor);
+    void fillInnerShape(GraphicsContext&, const Color&, float deviceScaleFactor);
 
 private:
     RoundedRect innerEdgeRoundedRect() const;

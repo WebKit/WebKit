@@ -229,6 +229,20 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
     float deviceScaleFactor = document().deviceScaleFactor();
     FloatRect pixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
+    auto borderShapeRespectingBleedAvoidance = [&](bool includeLeftEdge, bool includeRightEdge, bool shrinkForBleedAvoidance = true) {
+        auto borderRect = rect;
+
+        if (shrinkForBleedAvoidance && bleedAvoidance == BackgroundBleedShrinkBackground) {
+            // Ideally we'd use the border rect, but add a device pixel of additional inset to preserve corner shape.
+            borderRect = shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, deviceScaleFactor);
+        }
+
+        if (inlineBoxIterator && (inlineBoxIterator->nextInlineBox() || inlineBoxIterator->previousInlineBox()))
+            borderRect.setLocation({ });
+
+        return BorderShape::shapeForBorderRect(style, borderRect, includeLeftEdge, includeRightEdge);
+    };
+
     // Fast path for drawing simple color backgrounds.
     if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill && !bgLayer.next()) {
         if (!colorVisible)
@@ -240,24 +254,19 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
             applyBoxShadowForBackground(context, style);
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
-            FloatRoundedRect pixelSnappedBorder = backgroundRoundedRectAdjustedForBleedAvoidance(rect, bleedAvoidance, inlineBoxIterator,
-                includeLeftEdge, includeRightEdge).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            if (pixelSnappedBorder.isRenderable()) {
-                CompositeOperator previousOperator = context.compositeOperation();
-                bool saveRestoreCompositeOp = op != previousOperator;
-                if (saveRestoreCompositeOp)
-                    context.setCompositeOperation(op);
+            auto borderShape = borderShapeRespectingBleedAvoidance(includeLeftEdge, includeRightEdge);
+            auto previousOperator = context.compositeOperation();
+            bool saveRestoreCompositeOp = op != previousOperator;
+            if (saveRestoreCompositeOp)
+                context.setCompositeOperation(op);
 
-                context.fillRoundedRect(pixelSnappedBorder, bgColor);
+            if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
+                borderShape.fillInnerShape(context, bgColor, deviceScaleFactor);
+            else
+                borderShape.fillOuterShape(context, bgColor, deviceScaleFactor);
 
-                if (saveRestoreCompositeOp)
-                    context.setCompositeOperation(previousOperator);
-            } else {
-                context.save();
-                clipRoundedInnerRect(context, pixelSnappedBorder);
-                context.fillRect(pixelSnappedBorder.rect(), bgColor, op);
-                context.restore();
-            }
+            if (saveRestoreCompositeOp)
+                context.setCompositeOperation(previousOperator);
         } else
             context.fillRect(pixelSnappedRect, bgColor, op);
 
@@ -268,15 +277,27 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
     bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(context, clipToBorderRadius);
     if (clipToBorderRadius) {
-        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(rect, bleedAvoidance, inlineBoxIterator, includeLeftEdge, includeRightEdge) : backgroundRoundedRect(rect, inlineBoxIterator, includeLeftEdge, includeRightEdge);
 
-        // Clip to the padding or content boxes as necessary.
-        if (bgLayer.clip() == FillBox::ContentBox)
-            border = m_renderer.roundedContentBoxRect(border.rect(), includeLeftEdge, includeRightEdge);
-        else if (bgLayer.clip() == FillBox::PaddingBox)
-            border = style.getRoundedInnerBorderFor(border.rect(), includeLeftEdge, includeRightEdge);
-
-        clipRoundedInnerRect(context, border.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+        switch (bgLayer.clip()) {
+        case FillBox::BorderBox:
+        case FillBox::BorderArea:
+        case FillBox::Text:
+        case FillBox::NoClip: {
+            auto borderShape = borderShapeRespectingBleedAvoidance(includeLeftEdge, includeRightEdge, isBorderFill);
+            borderShape.clipToOuterShape(context, deviceScaleFactor);
+            break;
+        }
+        case FillBox::PaddingBox: {
+            auto borderShape = borderShapeRespectingBleedAvoidance(includeLeftEdge, includeRightEdge, isBorderFill);
+            borderShape.clipToInnerShape(context, deviceScaleFactor);
+            break;
+        }
+        case FillBox::ContentBox: {
+            auto borderShape = m_renderer.borderShapeForContentClipping(rect);
+            borderShape.clipToInnerShape(context, deviceScaleFactor);
+            break;
+        }
+        }
     }
 
     LayoutUnit bLeft = includeLeftEdge ? m_renderer.borderLeft() : 0_lu;
@@ -480,33 +501,6 @@ void BackgroundPainter::clipRoundedInnerRect(GraphicsContext& context, const Flo
     }
 
     context.clipRoundedRect(clipRect);
-}
-
-RoundedRect BackgroundPainter::backgroundRoundedRectAdjustedForBleedAvoidance(const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
-{
-    if (bleedAvoidance == BackgroundBleedShrinkBackground) {
-        // We shrink the rectangle by one device pixel on each side because the bleed is one pixel maximum.
-        return backgroundRoundedRect(shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, document().deviceScaleFactor()), inlineBoxIterator,
-            includeLogicalLeftEdge, includeLogicalRightEdge);
-    }
-    if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
-        return m_renderer.style().getRoundedInnerBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-    return backgroundRoundedRect(borderRect, inlineBoxIterator, includeLogicalLeftEdge, includeLogicalRightEdge);
-}
-
-RoundedRect BackgroundPainter::backgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator& inlineBoxIterator, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
-{
-    auto borderShape = BorderShape::shapeForBorderRect(m_renderer.style(), borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    // BorderShape needs to be plumbed through all of border painting to handle non-round corner shapes.
-    RoundedRect border = borderShape.deprecatedRoundedRect();
-
-    if (inlineBoxIterator && (inlineBoxIterator->nextInlineBox() || inlineBoxIterator->previousInlineBox())) {
-        auto segmentBorderRect = LayoutRect { { }, borderRect.size() };
-        auto segmentBorderShape = BorderShape::shapeForBorderRect(m_renderer.style(), segmentBorderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
-        border.setRadii(segmentBorderShape.radii());
-    }
-    return border;
 }
 
 static inline std::optional<LayoutUnit> getSpace(LayoutUnit areaSize, LayoutUnit tileSize)

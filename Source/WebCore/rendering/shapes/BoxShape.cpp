@@ -82,18 +82,8 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
     case CSSBoxType::ContentBox: {
-        auto borderBoxRect = renderer.borderBoxRect();
-        auto contentBoxRect = renderer.contentBoxRect();
-
-        // top, right, bottom, left.
-        auto contentBoxInsets = RectEdges<LayoutUnit> {
-            contentBoxRect.y() - borderBoxRect.y(),
-            borderBoxRect.maxX() - contentBoxRect.maxX(),
-            borderBoxRect.maxY() - contentBoxRect.maxY(),
-            contentBoxRect.x() - borderBoxRect.x()
-        };
-
-        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect(), contentBoxInsets).deprecatedInnerRoundedRect();
+        auto borderShape = renderer.borderShapeForContentClipping(renderer.borderBoxRect());
+        return borderShape.deprecatedInnerRoundedRect();
     }
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:

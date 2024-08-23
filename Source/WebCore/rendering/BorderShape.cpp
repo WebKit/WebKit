@@ -168,6 +168,8 @@ Path BorderShape::pathForOuterShape(float deviceScaleFactor) const
 Path BorderShape::pathForInnerShape(float deviceScaleFactor) const
 {
     auto pixelSnappedRect = innerEdgeRoundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    ASSERT(pixelSnappedRect.isRenderable());
+
     Path path;
     addRoundedRectToPath(pixelSnappedRect, path);
     return path;
@@ -177,6 +179,8 @@ Path BorderShape::pathForBorderArea(float deviceScaleFactor) const
 {
     auto pixelSnappedOuterRect = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
     auto pixelSnappedInnerRect = innerEdgeRoundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+
+    ASSERT(pixelSnappedInnerRect.isRenderable());
 
     Path path;
     addRoundedRectToPath(pixelSnappedOuterRect, path);
@@ -196,6 +200,7 @@ void BorderShape::clipToOuterShape(GraphicsContext& context, float deviceScaleFa
 void BorderShape::clipToInnerShape(GraphicsContext& context, float deviceScaleFactor)
 {
     auto pixelSnappedRect = innerEdgeRoundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    ASSERT(pixelSnappedRect.isRenderable());
     if (pixelSnappedRect.isRounded())
         context.clipRoundedRect(pixelSnappedRect);
     else
@@ -214,6 +219,16 @@ void BorderShape::clipOutInnerShape(GraphicsContext& context, float deviceScaleF
 void BorderShape::fillOuterShape(GraphicsContext& context, const Color& color, float deviceScaleFactor)
 {
     auto pixelSnappedRect = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (pixelSnappedRect.isRounded())
+        context.fillRoundedRect(pixelSnappedRect, color);
+    else
+        context.fillRect(pixelSnappedRect.rect(), color);
+}
+
+void BorderShape::fillInnerShape(GraphicsContext& context, const Color& color, float deviceScaleFactor)
+{
+    auto pixelSnappedRect = innerEdgeRoundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    ASSERT(pixelSnappedRect.isRenderable());
     if (pixelSnappedRect.isRounded())
         context.fillRoundedRect(pixelSnappedRect, color);
     else

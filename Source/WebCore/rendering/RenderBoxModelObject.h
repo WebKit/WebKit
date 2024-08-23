@@ -59,6 +59,7 @@ enum ContentChangeType {
 };
 
 class BorderEdge;
+class BorderShape;
 class ImageBuffer;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
@@ -182,7 +183,7 @@ public:
     LayoutUnit marginLogicalHeight() const { return marginBefore() + marginAfter(); }
     LayoutUnit marginLogicalWidth() const { return marginStart() + marginEnd(); }
 
-    RoundedRect roundedContentBoxRect(const LayoutRect& borderBoxRect, bool includeLeftEdge = true, bool includeRightEdge = true) const;
+    BorderShape borderShapeForContentClipping(const LayoutRect& borderBoxRect, bool includeLeftEdge = true, bool includeRightEdge = true) const;
 
     inline bool hasInlineDirectionBordersPaddingOrMargin() const;
     inline bool hasInlineDirectionBordersOrPadding() const;

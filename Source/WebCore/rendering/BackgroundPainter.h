@@ -74,9 +74,6 @@ public:
 private:
     void paintRootBoxFillLayers() const;
 
-    RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const LayoutRect& borderRect, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
-    RoundedRect backgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
-
     static LayoutSize calculateFillTileSize(const RenderBoxModelObject&, const FillLayer&, const LayoutSize& positioningAreaSize);
 
     const Document& document() const;
