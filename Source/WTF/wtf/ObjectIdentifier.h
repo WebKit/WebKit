@@ -136,7 +136,7 @@ public:
     static ObjectIdentifierGeneric generate()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal() };
+        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal(), AssumeValidIdValue };
     }
 
     static void enableGenerationProtection()
@@ -147,7 +147,7 @@ public:
     explicit constexpr ObjectIdentifierGeneric(RawValue identifier)
         : ObjectIdentifierGenericBase<RawValue>(identifier)
     {
-        ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
+        RELEASE_ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
     }
 
     bool isValid() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::isValidIdentifier(ObjectIdentifierGenericBase<RawValue>::toRawValue()); }
@@ -165,6 +165,13 @@ public:
 private:
     friend struct HashTraits<ObjectIdentifierGeneric>;
     template<typename U, typename V> friend struct ObjectIdentifierGenericHash;
+
+    enum AssumeValidId { AssumeValidIdValue };
+    explicit constexpr ObjectIdentifierGeneric(RawValue identifier, AssumeValidId)
+        : ObjectIdentifierGenericBase<RawValue>(identifier)
+    {
+        ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
+    }
 
     enum InvalidId { InvalidIdValue };
     ObjectIdentifierGeneric(InvalidId)
