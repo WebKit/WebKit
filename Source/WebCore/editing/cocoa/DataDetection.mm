@@ -726,17 +726,20 @@ void DataDetection::detectContentInFrame(LocalFrame* frame, OptionSet<DataDetect
     if (types.contains(DataDetectorType::LookupSuggestion))
         PAL::softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
 
-    workQueue().dispatch([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), document = Ref { *document }, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
+    workQueue().dispatch([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), weakDocument = WeakPtr { *document }, fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get())) {
-            callOnMainRunLoop([scanner = WTFMove(scanner), scanQuery = WTFMove(scanQuery), document = WTFMove(document), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
+            callOnMainRunLoop([scanner = WTFMove(scanner), scanQuery = WTFMove(scanQuery), weakDocument = WTFMove(weakDocument), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(nil);
             });
             return;
         }
 
-        callOnMainRunLoop([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), document = WTFMove(document), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
-            auto contextRange = makeRangeSelectingNodeContents(document);
+        callOnMainRunLoop([scanner = WTFMove(scanner), types, referenceDateFromContext, scanQuery = WTFMove(scanQuery), weakDocument = WTFMove(weakDocument), fragments = WTFMove(fragments), completionHandler = WTFMove(completionHandler)]() mutable {
+            RefPtr document = weakDocument.get();
+            if (!document)
+                return;
 
+            auto contextRange = makeRangeSelectingNodeContents(*document);
             completionHandler(processDataDetectorScannerResults(scanner.get(), types, referenceDateFromContext, scanQuery.get(), contextRange, fragments));
         });
     });
