@@ -355,9 +355,9 @@ private:
 class GridTrackSizingAlgorithmStrategy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual LayoutUnit minContentForGridItem(RenderBox&, GridLayoutState&) const;
-    LayoutUnit maxContentForGridItem(RenderBox&, GridLayoutState&) const;
-    LayoutUnit minSizeForGridItem(RenderBox&, GridLayoutState&) const;
+    virtual LayoutUnit minContentContributionForGridItem(RenderBox&, GridLayoutState&) const;
+    LayoutUnit maxContentContributionForGridItem(RenderBox&, GridLayoutState&) const;
+    LayoutUnit minContributionForGridItem(RenderBox&, GridLayoutState&) const;
 
     virtual ~GridTrackSizingAlgorithmStrategy() = default;
 
