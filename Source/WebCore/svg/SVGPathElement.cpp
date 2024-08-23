@@ -189,6 +189,10 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
+    // Spec: If it is not able to compute the total length of path, then throw.
+    if (pathByteStream().isEmpty())
+        return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_s };
+
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
 
