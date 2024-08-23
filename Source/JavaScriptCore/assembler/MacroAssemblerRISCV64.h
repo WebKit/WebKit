@@ -655,6 +655,14 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void lshift32(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        move(imm, temp);
+        m_assembler.sllwInsn(dest, temp, shiftAmount);
+        m_assembler.maskRegister<32>(dest);
+    }
+
     void lshift32(Address src, RegisterID shiftAmount, RegisterID dest)
     {
         auto temp = temps<Data>();

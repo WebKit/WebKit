@@ -496,6 +496,18 @@ public:
         }
     }
 
+    void lshift32(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(imm, scratchRegister());
+            lshift32(shiftAmount, scratchRegister());
+            move(scratchRegister(), dest);
+        } else {
+            move(imm, dest);
+            lshift32(shiftAmount, dest);
+        }
+    }
+
     void mul32(RegisterID src, RegisterID dest)
     {
         m_assembler.imull_rr(src, dest);
@@ -5143,6 +5155,18 @@ public:
         else {
             move(src, dest);
             lshift64(imm, dest);
+        }
+    }
+
+    void lshift64(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(imm, scratchRegister());
+            lshift64(shiftAmount, scratchRegister());
+            move(scratchRegister(), dest);
+        } else {
+            move(imm, dest);
+            lshift64(shiftAmount, dest);
         }
     }
 
