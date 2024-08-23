@@ -104,7 +104,7 @@ void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, con
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     std::span data(byteCast<uint8_t>(value), length);
-    m_connection->send(Messages::LibWebRTCNetwork::SignalReadPacket(m_identifier, data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime), 0);
+    m_connection->send(Messages::LibWebRTCNetwork::SignalReadPacket(m_identifier, data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime, RTC::Network::EcnMarking::kNotEct), 0);
 }
 
 void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket* socket, const rtc::SentPacket& sentPacket)

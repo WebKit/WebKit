@@ -129,6 +129,31 @@ void NetworkRTCUDPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::
     m_connections->sendTo(data, address, options);
 }
 
+static RTC::Network::EcnMarking getECN(nw_content_context_t nwContext)
+{
+    auto protocol = adoptNS(nw_protocol_copy_ip_definition());
+    auto metadata = adoptNS(nw_content_context_copy_protocol_metadata(nwContext, protocol.get()));
+
+    if (metadata && nw_protocol_metadata_is_ip(metadata.get())) {
+        auto ecnFlag = nw_ip_metadata_get_ecn_flag(metadata.get());
+        switch (ecnFlag) {
+        case nw_ip_ecn_flag_non_ect:
+            return RTC::Network::EcnMarking::kNotEct;
+        case nw_ip_ecn_flag_ect_0:
+            return RTC::Network::EcnMarking::kEct0;
+        case nw_ip_ecn_flag_ect_1:
+            return RTC::Network::EcnMarking::kEct1;
+        case nw_ip_ecn_flag_ce:
+            return RTC::Network::EcnMarking::kCe;
+        default:
+            return RTC::Network::EcnMarking::kNotEct;
+        }
+    }
+
+    RELEASE_LOG_IF(!metadata, WebRTC, "Could not retreive the metadata from UDPSocket Context, so use default ECN value");
+    return RTC::Network::EcnMarking::kNotEct;
+}
+
 static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t connection)
 {
     auto endpoint = adoptNS(nw_connection_copy_endpoint(connection));
@@ -300,13 +325,13 @@ void NetworkRTCUDPSocketCocoaConnections::setOption(int option, int value)
         nw_connection_reset_traffic_class(nwConnection.first.get(), *m_trafficClass);
 }
 
-static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(std::span<const uint8_t>)>&& processData)
+static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(std::span<const uint8_t>, RTC::Network::EcnMarking)>&& processData)
 {
     auto nwConnectionReference = nwConnection.get();
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), errorCode, connectionStateTracker = WTFMove(connectionStateTracker)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) mutable {
         if (content) {
             dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                processData({ static_cast<const uint8_t*>(data), size });
+                processData({ static_cast<const uint8_t*>(data), size }, getECN(context));
                 return true;
             }).get());
         }
@@ -360,8 +385,8 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
             connectionStateTracker->markAsStopped();
     }).get());
 
-    processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](std::span<const uint8_t> message) mutable {
-        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMicros() }, 0);
+    processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](std::span<const uint8_t> message, RTC::Network::EcnMarking ecn) mutable {
+        connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, message, RTCNetwork::IPAddress(ip), port, rtc::TimeMicros(), ecn }, 0);
     });
 
     nw_connection_start(nwConnection);

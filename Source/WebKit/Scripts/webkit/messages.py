@@ -1113,6 +1113,7 @@ def headers_for_type(type):
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
         'WebKit::ImageBufferSetPrepareBufferForDisplayInputData': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::RTC::Network::EcnMarking': ['"RTCNetwork.h"'],
         'WebKit::RTC::Network::IPAddress': ['"RTCNetwork.h"'],
         'WebKit::RTC::Network::SocketAddress': ['"RTCNetwork.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
