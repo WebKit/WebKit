@@ -4928,23 +4928,6 @@ void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 
 String WebPage::platformUserAgent(const URL&) const
 {
-    if (!m_page->settings().needsSiteSpecificQuirks())
-        return String();
-
-    auto* mainFrame = m_mainFrame->coreLocalFrame();
-    if (!mainFrame) {
-        // FIXME: Add a user agent for loads from iframe processes. <rdar://116201535>
-        return { };
-    }
-
-    auto document = mainFrame->document();
-    if (!document)
-        return String();
-
-    if (osNameForUserAgent() == "iPhone OS"_s) {
-        if (document->quirks().shouldAvoidUsingIOS13ForGmail())
-            return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
-    }
     return String();
 }
 

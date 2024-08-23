@@ -342,20 +342,6 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
 #endif
 }
 
-// mail.google.com https://bugs.webkit.org/show_bug.cgi?id=200605
-bool Quirks::shouldAvoidUsingIOS13ForGmail() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    auto& url = m_document->topDocument().url();
-    return url.host() == "mail.google.com"_s;
-#else
-    return false;
-#endif
-}
-
 // mail.google.com rdar://128360054
 // FIXME (rdar://130624461): Remove this quirk once Gmail adopts the `writingsuggestions` attribute.
 bool Quirks::shouldDisableWritingSuggestionsByDefault() const
