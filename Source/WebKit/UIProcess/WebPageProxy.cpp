@@ -2091,7 +2091,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     prepareToLoadWebPage(process, loadParameters);
 
     process->markProcessAsRecentlyUsed();
-    process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, webPageID, loadParameters = WTFMove(loadParameters), data = WTFMove(data)] () mutable {
+    process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, webPageID, loadParameters = WTFMove(loadParameters)] () mutable {
         if (!weakProcess)
             return;
         weakProcess->send(Messages::WebPage::LoadData(WTFMove(loadParameters)), webPageID);
