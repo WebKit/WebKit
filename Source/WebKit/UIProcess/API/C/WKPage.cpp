@@ -101,6 +101,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -246,13 +247,15 @@ void WKPageLoadFileWithUserData(WKPageRef pageRef, WKURLRef fileURL, WKURLRef re
 void WKPageLoadData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->span(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
+    // FIXME: Use WebCore::DataSegment::Provider to remove this unnecessary copy.
+    toImpl(pageRef)->loadData(WebCore::SharedBuffer::create(toImpl(dataRef)->span()), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
 }
 
 void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef, WKTypeRef userDataRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->span(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
+    // FIXME: Use WebCore::DataSegment::Provider to remove this unnecessary copy.
+    toImpl(pageRef)->loadData(WebCore::SharedBuffer::create(toImpl(dataRef)->span()), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
 }
 
 static String encodingOf(const String& string)
@@ -277,7 +280,8 @@ static Ref<WebCore::DataSegment> dataReferenceFrom(const String& string)
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)
 {
     String string = toWTFString(stringRef);
-    toImpl(pageRef)->loadData(dataFrom(string), mimeType, encodingOf(string), baseURL, toImpl(userDataRef));
+    // FIXME: Use WebCore::DataSegment::Provider to remove this unnecessary copy.
+    toImpl(pageRef)->loadData(WebCore::SharedBuffer::create(dataFrom(string)), mimeType, encodingOf(string), baseURL, toImpl(userDataRef));
 }
 
 void WKPageLoadHTMLString(WKPageRef pageRef, WKStringRef htmlStringRef, WKURLRef baseURLRef)
