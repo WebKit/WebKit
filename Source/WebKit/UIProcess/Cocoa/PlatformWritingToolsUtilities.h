@@ -41,6 +41,7 @@ enum class ReplacementState : uint8_t;
 enum class RequestedTool : uint16_t;
 enum class SessionCompositionType : uint8_t;
 enum class SessionType : uint8_t;
+enum class TextSuggestionState : uint8_t;
 
 struct Context;
 struct Replacement;
