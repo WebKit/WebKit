@@ -250,6 +250,9 @@ struct PerWebProcessState {
 #if ENABLE(WRITING_TOOLS)
     RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _writingToolsTextSuggestions;
     RetainPtr<WTSession> _activeWritingToolsSession;
+
+    NSUInteger _partialIntelligenceTextPonderingAnimationCount;
+    BOOL _writingToolsTextReplacementsFinished;
 #endif
 
 #if PLATFORM(MAC)
@@ -416,12 +419,18 @@ struct PerWebProcessState {
 - (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #endif
 
+- (void)_didEndPartialIntelligenceTextPonderingAnimation;
+- (BOOL)_intelligenceTextPonderingAnimationIsComplete;
+
 #endif // ENABLE(WRITING_TOOLS)
 
 #if ENABLE(WRITING_TOOLS_UI)
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)uuid;
-- (void)_didEndPartialIntelligenceTextPonderingAnimation;
+
+- (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID;
+- (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID;
+- (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

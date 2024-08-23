@@ -722,7 +722,6 @@ public:
 #if ENABLE(WRITING_TOOLS_UI)
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) = 0;
-    virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
 #endif
 
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
@@ -754,8 +753,10 @@ public:
     virtual void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) = 0;
 
     virtual void writingToolsActiveWillChange() = 0;
-
     virtual void writingToolsActiveDidChange() = 0;
+
+    virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
+    virtual bool intelligenceTextPonderingAnimationIsComplete() = 0;
 #endif
 
 #if ENABLE(DATA_DETECTION)

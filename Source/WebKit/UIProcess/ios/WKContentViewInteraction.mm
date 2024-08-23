@@ -13285,6 +13285,12 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
 }
 
+- (void)replacementEffectDidComplete
+{
+    _page->didEndPartialIntelligenceTextPonderingAnimationImpl();
+    _page->showSelectionForActiveWritingToolsSessionIfNeeded();
+}
+
 #endif
 
 #pragma mark - BETextInteractionDelegate

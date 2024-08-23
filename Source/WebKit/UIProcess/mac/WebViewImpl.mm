@@ -4644,43 +4644,6 @@ void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
     [m_textAnimationTypeManager removeTextAnimationForAnimationID:uuid];
 }
 
-void WebViewImpl::writingToolsCompositionSessionDidReceiveRestartAction()
-{
-    m_writingToolsTextReplacementsFinished = false;
-    m_partialIntelligenceTextPonderingAnimationCount = 0;
-}
-
-void WebViewImpl::writingToolsCompositionSessionDidReceiveReplacements(const WTF::UUID& sessionID, bool finished)
-{
-    m_writingToolsTextReplacementsFinished = finished;
-
-    willBeginPartialIntelligenceTextPonderingAnimation();
-}
-
-bool WebViewImpl::isWritingToolsTextReplacementsFinished() const
-{
-    return m_writingToolsTextReplacementsFinished;
-}
-
-bool WebViewImpl::isIntelligenceTextPonderingAnimationFinished() const
-{
-    return !m_partialIntelligenceTextPonderingAnimationCount;
-}
-
-void WebViewImpl::willBeginPartialIntelligenceTextPonderingAnimation()
-{
-    m_partialIntelligenceTextPonderingAnimationCount += 1;
-}
-
-void WebViewImpl::didEndPartialIntelligenceTextPonderingAnimation()
-{
-    if (!m_partialIntelligenceTextPonderingAnimationCount) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_partialIntelligenceTextPonderingAnimationCount -= 1;
-}
 #endif
 
 ViewGestureController& WebViewImpl::ensureGestureController()
