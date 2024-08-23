@@ -352,7 +352,7 @@ String AccessibilityObject::computedLabel()
 {
     // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.
     // Also hold onto this object in case updateBackingStore deletes this node.
-    RefPtr<AccessibilityObject> protectedThis(this);
+    Ref protectedThis { *this };
     updateBackingStore();
     Vector<AccessibilityText> text;
     accessibilityText(text);

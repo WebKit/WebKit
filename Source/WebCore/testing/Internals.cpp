@@ -4100,7 +4100,7 @@ ExceptionOr<std::optional<Internals::CompositingPolicy>> Internals::compositingP
     return { Internals::CompositingPolicy::Normal };
 }
 
-void Internals::updateLayoutAndStyleForAllFrames()
+void Internals::updateLayoutAndStyleForAllFrames() const
 {
     auto* document = contextDocument();
     if (!document || !document->view())
@@ -7462,27 +7462,20 @@ AccessibilityObject* Internals::axObjectForElement(Element& element) const
 
 String Internals::getComputedLabel(Element& element) const
 {
-    if (auto* axObject = axObjectForElement(element))
-        return axObject->computedLabel();
-    return ""_s;
+    // Force a layout. If we don't, and this request has come in before the render tree was built,
+    // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
+    updateLayoutAndStyleForAllFrames();
+
+    RefPtr axObject = axObjectForElement(element);
+    return axObject ? axObject->computedLabel() : ""_s;
 }
 
 String Internals::getComputedRole(Element& element) const
 {
-    if (auto* axObject = axObjectForElement(element))
-        return axObject->computedRoleString();
-    return ""_s;
-}
+    updateLayoutAndStyleForAllFrames();
 
-bool Internals::readyToRetrieveComputedRoleOrLabel(Element& element) const
-{
-    // If the element has a renderer, it should be ready to go.
-    if (element.renderer())
-        return true;
-
-    // If the RenderTree is not laid out, we aren't ready to query the computed accessibility role or label. Doing so will yield incorrect results.
-    auto& document = element.document();
-    return !document.inRenderTreeUpdate() && !(document.view() && document.view()->layoutContext().isInRenderTreeLayout());
+    RefPtr axObject = axObjectForElement(element);
+    return axObject ? axObject->computedRoleString() : ""_s;
 }
 
 bool Internals::hasScopeBreakingHasSelectors() const

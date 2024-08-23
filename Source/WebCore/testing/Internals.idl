@@ -1383,7 +1383,6 @@ enum RenderingMode {
     
     boolean isUsingUISideCompositing();
 
-    boolean readyToRetrieveComputedRoleOrLabel(Element element);
     DOMString getComputedLabel(Element element);
     DOMString getComputedRole(Element element);
 

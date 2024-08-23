@@ -319,7 +319,7 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
         return nullptr;
     }
 
-    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    WeakPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
     if (!frame || !frame->coreLocalFrame() || !frame->coreLocalFrame()->view()) {
         errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
         return nullptr;
@@ -330,7 +330,7 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
         return nullptr;
     }
 
-    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
     if (!coreElement) {
         errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         return nullptr;
@@ -339,9 +339,13 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
-    if (WebCore::AXObjectCache* axObjectCache = coreElement->document().axObjectCache()) {
-        if (WebCore::AccessibilityObject* axObject = axObjectCache->getOrCreate(coreElement))
-            return axObject;
+    if (CheckedPtr axObjectCache = coreElement->document().axObjectCache()) {
+        // Force a layout and cache update. If we don't, and this request has come in before the render tree was built,
+        // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
+        axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
+
+        if (RefPtr<WebCore::AccessibilityObject> axObject = axObjectCache->getOrCreate(coreElement.get()))
+            return axObject.get();
     }
 
     errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
@@ -783,7 +787,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
 void WebAutomationSessionProxy::getComputedRole(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
 {
     String errorType;
-    auto* axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+    RefPtr axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
 
     if (!errorType.isNull()) {
         completionHandler(errorType, std::nullopt);
@@ -796,7 +800,7 @@ void WebAutomationSessionProxy::getComputedRole(WebCore::PageIdentifier pageID, 
 void WebAutomationSessionProxy::getComputedLabel(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
 {
     String errorType;
-    auto* axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
+    RefPtr axObject = getAccessibilityObjectForNode(pageID, frameID, nodeHandle, errorType);
 
     if (!errorType.isNull()) {
         completionHandler(errorType, std::nullopt);
