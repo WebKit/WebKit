@@ -35,6 +35,7 @@
 #include "WebCodecsAudioDecoderConfig.h"
 #include "WebCodecsAudioDecoderSupport.h"
 #include "WebCodecsCodecState.h"
+#include "WebCodecsControlMessage.h"
 #include "WebCodecsEncodedAudioChunkType.h"
 #include <wtf/Deque.h>
 #include <wtf/Vector.h>
@@ -97,12 +98,11 @@ private:
     void setInternalDecoder(UniqueRef<AudioDecoder>&&);
     void scheduleDequeueEvent();
 
-    void queueControlMessageAndProcess(Function<void()>&&);
+    void queueControlMessageAndProcess(WebCodecsControlMessage<WebCodecsAudioDecoder>&&);
     void processControlMessageQueue();
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_decodeQueueSize { 0 };
-    size_t m_beingDecodedQueueSize { 0 };
     Ref<WebCodecsAudioDataOutputCallback> m_output;
     Ref<WebCodecsErrorCallback> m_error;
     std::unique_ptr<AudioDecoder> m_internalDecoder;
@@ -110,9 +110,8 @@ private:
     Deque<Ref<DeferredPromise>> m_pendingFlushPromises;
     size_t m_clearFlushPromiseCount { 0 };
     bool m_isKeyChunkRequired { false };
-    Deque<Function<void()>> m_controlMessageQueue;
+    Deque<WebCodecsControlMessage<WebCodecsAudioDecoder>> m_controlMessageQueue;
     bool m_isMessageQueueBlocked { false };
-    bool m_isFlushing { false };
 };
 
 }
