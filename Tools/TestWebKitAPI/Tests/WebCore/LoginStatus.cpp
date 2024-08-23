@@ -194,4 +194,11 @@ TEST(LoginStatus, ClampedExpiryShort)
     ASSERT_FALSE(loggedIn.hasExpired());
 }
 
+TEST(LoginStatus, EmptyUsername)
+{
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
+    auto loggedInResult = LoginStatus::create(loginDomain, emptyString(), LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged);
+    ASSERT_FALSE(loggedInResult.hasException());
+}
+
 } // namespace TestWebKitAPI
