@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -84,7 +85,10 @@ RenderSVGInlineText::~RenderSVGInlineText() = default;
 
 String RenderSVGInlineText::originalText() const
 {
-    return textNode().data();
+    auto result = textNode().data();
+    if (!result)
+        return { };
+    return applySVGWhitespaceRules(result, style().whiteSpace() == WhiteSpace::Pre);
 }
 
 void RenderSVGInlineText::setRenderedText(const String& text)
@@ -101,13 +105,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve : false;
-    if (oldPreserves && !newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), false), true);
-        return;
-    }
-
-    if (!oldPreserves && newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), true), true);
+    if (oldPreserves != newPreserves) {
+        setText(originalText(), true);
         return;
     }
 
