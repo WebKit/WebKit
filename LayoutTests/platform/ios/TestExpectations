@@ -4532,6 +4532,8 @@ storage/indexeddb/modern/deleteindex-4-private.html [ Pass Crash ]
 # rdar://104694723 ([ iOS16+ debug ] media/vp9.html is a consistent timeout)
 [ Debug ] media/vp9.html [ Timeout ]
 
+# Requires specific encoder behavior.
+http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
 
 # rdar://105103818 ([OOP] WebKit tests can timeout due to UIHelper.activateAndWaitForInputSession)
 editing/caret/ios/emoji.html [ Skip ] # TODO: marked failure below. Uncomment that line when this is resolved.
