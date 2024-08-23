@@ -434,8 +434,8 @@ void AuxiliaryProcessProxy::shutDownProcess()
         send(Messages::AuxiliaryProcess::ShutDown(), 0);
 
     connection->invalidate();
-    ASSERT(connectionToProcessMap().get(m_connection->uniqueID()) == this);
-    connectionToProcessMap().remove(m_connection->uniqueID());
+    ASSERT(connectionToProcessMap().get(connection->uniqueID()) == this);
+    connectionToProcessMap().remove(connection->uniqueID());
     m_connection = nullptr;
     m_responsivenessTimer.invalidate();
 }
