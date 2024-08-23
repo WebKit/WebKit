@@ -561,8 +561,8 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     m_inputType->createShadowSubtreeIfNeeded();
 
     // https://html.spec.whatwg.org/multipage/dom.html#auto-directionality
-    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone || (hasDirectionAuto() && didDirAutoUseValue != m_inputType->dirAutoUsesValue()))
-        updateTextDirectionalityAfterInputTypeChange();
+    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone || (hasAutoTextDirectionState() && didDirAutoUseValue != m_inputType->dirAutoUsesValue()))
+        updateEffectiveTextDirection();
 
     if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
         emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClass::ReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClass::ReadOnly, willSupportReadOnly } });
@@ -662,7 +662,7 @@ void HTMLInputElement::subtreeHasChanged()
     m_inputType->subtreeHasChanged();
     // When typing in an input field, childrenChanged is not called, so we need to force the directionality check.
     if (selfOrPrecedingNodesAffectDirAuto())
-        updateEffectiveDirectionalityOfDirAuto();
+        updateEffectiveTextDirection();
 }
 
 const AtomString& HTMLInputElement::formControlType() const
@@ -812,7 +812,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         updateValidity();
         if (selfOrPrecedingNodesAffectDirAuto())
-            updateEffectiveDirectionalityOfDirAuto();
+            updateEffectiveTextDirection();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
         break;
     case AttributeNames::nameAttr:
@@ -1178,7 +1178,7 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     setFormControlValueMatchesRenderer(false);
     m_inputType->setValue(WTFMove(sanitizedValue), valueChanged, eventBehavior, selection);
     if (selfOrPrecedingNodesAffectDirAuto())
-        updateEffectiveDirectionalityOfDirAuto();
+        updateEffectiveTextDirection();
 
     if (valueChanged && eventBehavior == DispatchNoEvent)
         setTextAsOfLastFormControlChangeEvent(sanitizedValue);

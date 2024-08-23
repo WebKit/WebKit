@@ -314,6 +314,9 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
 
     if (shadowRoot.shouldFireSlotchangeEvent())
         slotElement->enqueueSlotChangeEvent();
+
+    if (slotElement->selfOrPrecedingNodesAffectDirAuto())
+        slotElement->updateEffectiveTextDirection();
 }
 
 void NamedSlotAssignment::didRemoveAllChildrenOfShadowHost(ShadowRoot& shadowRoot)

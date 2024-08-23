@@ -64,7 +64,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 
     for (RefPtr currentNode = &node; currentNode; currentNode = NodeTraversal::next(*currentNode, &node)) {
         auto result = currentNode->insertedIntoAncestor(Node::InsertionType { /* connectedToDocument */ false, treeScopeChange == TreeScopeChange::Changed }, parentOfInsertedTree);
-        ASSERT_UNUSED(result, result == Node::InsertedIntoAncestorResult::Done);
+        UNUSED_PARAM(result);
         if (RefPtr root = currentNode->shadowRoot())
             notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange);
     }
