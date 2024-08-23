@@ -33,4 +33,30 @@
 - (void)invalidate;
 @end
 
+@interface BSSettings : NSObject
+- (id)objectForSetting:(NSUInteger)setting;
+@end
+
+@interface BSMutableSettings : BSSettings
+- (void)setObject:(id)object forSetting:(NSUInteger)setting;
+@end
+
+@interface BSActionResponse : NSObject
++ (instancetype)response;
+@property (nonatomic, retain, readonly) NSError *error;
+@end
+
+typedef void(^BSActionResponseHandler)(BSActionResponse *response);
+
+@interface BSActionResponder : NSObject
++ (BSActionResponder *)responderWithHandler:(BSActionResponseHandler)handler;
+@end
+
+@interface BSAction : NSObject
+- (instancetype)initWithInfo:(BSSettings *)info responder:(BSActionResponder *)responder;
+- (void)sendResponse:(BSActionResponse *)response;
+@property (nonatomic, copy, readonly) BSSettings *info;
+@end
+
+
 #endif // USE(APPLE_INTERNAL_SDK)

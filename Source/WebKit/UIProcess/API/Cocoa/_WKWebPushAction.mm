@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKWebPushAction.h"
 
-#if HAVE(CORE_TELEPHONY)
+#import "WebPushDaemonConstants.h"
 
-namespace WTF {
-class URL;
+@interface _WKWebPushAction ()
+@property (nonatomic, readwrite) NSNumber *version;
+@property (nonatomic, readwrite) NSString *pushPartition;
+@property (nonatomic, readwrite) NSString *type;
+@end
+
+@implementation _WKWebPushAction
+
++ (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary
+{
+    NSNumber *version = dictionary[WebKit::WebPushD::pushActionVersionKey()];
+    if (!version || ![version isKindOfClass:[NSNumber class]])
+        return nil;
+
+    NSString *pushPartition = dictionary[WebKit::WebPushD::pushActionPartitionKey()];
+    if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
+        return nil;
+
+    NSString *type = dictionary[WebKit::WebPushD::pushActionTypeKey()];
+    if (!type || ![type isKindOfClass:[NSString class]])
+        return nil;
+
+    _WKWebPushAction *result = [[_WKWebPushAction alloc] init];
+    result.version = version;
+    result.pushPartition = pushPartition;
+    result.type = type;
+
+    return [result autorelease];
 }
 
-namespace WebKit {
-
-#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
-bool shouldAllowAutoFillForCellularIdentifiers(const WTF::URL&);
-#endif
-
-} // namespace WebKit
-
-#endif // HAVE(CORE_TELEPHONY)
+@end
