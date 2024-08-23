@@ -759,7 +759,6 @@ public:
     virtual void writingToolsActiveDidChange() = 0;
 
     virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
-    virtual bool intelligenceTextPonderingAnimationIsComplete() = 0;
     virtual bool writingToolsTextReplacementsFinished() = 0;
 
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;

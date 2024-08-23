@@ -1308,16 +1308,12 @@ bool WebPageProxy::writingToolsTextReplacementsFinished()
     return protectedPageClient()->writingToolsTextReplacementsFinished();
 }
 
-void WebPageProxy::showSelectionForActiveWritingToolsSessionIfNeeded()
+void WebPageProxy::showSelectionForActiveWritingToolsSession()
 {
     if (!hasRunningProcess())
         return;
 
-    if (protectedPageClient()->intelligenceTextPonderingAnimationIsComplete() && writingToolsTextReplacementsFinished()) {
-        // If the entire replacement has already been completed, and this is the end of the last animation,
-        // then reveal the selection.
-        legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
-    }
+    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)

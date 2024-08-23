@@ -13333,7 +13333,6 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)replacementEffectDidComplete
 {
     _page->didEndPartialIntelligenceTextPonderingAnimationImpl();
-    _page->showSelectionForActiveWritingToolsSessionIfNeeded();
 }
 
 #endif

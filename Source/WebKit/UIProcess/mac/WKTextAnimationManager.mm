@@ -132,7 +132,6 @@
                 return;
 
             strongWebView->page().didEndPartialIntelligenceTextPonderingAnimationImpl();
-            strongWebView->page().showSelectionForActiveWritingToolsSessionIfNeeded();
 
             strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);

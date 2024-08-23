@@ -122,7 +122,6 @@ public:
     void writingToolsActiveDidChange() final;
 
     void didEndPartialIntelligenceTextPonderingAnimation() final;
-    bool intelligenceTextPonderingAnimationIsComplete() final;
     bool writingToolsTextReplacementsFinished() final;
 
     void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) final;

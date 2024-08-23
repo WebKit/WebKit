@@ -303,11 +303,6 @@ void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
     [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
 }
 
-bool PageClientImplCocoa::intelligenceTextPonderingAnimationIsComplete()
-{
-    return [m_webView _intelligenceTextPonderingAnimationIsComplete];
-}
-
 bool PageClientImplCocoa::writingToolsTextReplacementsFinished()
 {
     return [m_webView _writingToolsTextReplacementsFinished];
