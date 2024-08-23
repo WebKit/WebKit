@@ -44,6 +44,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyColor:
     case CSSPropertyContent:
     case CSSPropertyCustom:
+    case CSSPropertyCursor:
     case CSSPropertyDirection:
     case CSSPropertyFont:
     case CSSPropertyFontFamily:
