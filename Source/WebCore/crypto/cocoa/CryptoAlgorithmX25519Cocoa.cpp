@@ -38,7 +38,7 @@ static std::optional<Vector<uint8_t>> deriveBitsCryptoKit(const Vector<uint8_t>&
         return std::nullopt;
     return WTFMove(rv.result);
 }
-#endif
+#else
 static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
 {
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
@@ -54,16 +54,13 @@ static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>
 #endif
     return Vector<uint8_t>(std::span { derivedKey, ed25519KeySize });
 }
-
-std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey, UseCryptoKit useCryptoKit)
+#endif
+std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
+    return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return deriveBitsCoreCrypto(baseKey.platformKey(), publicKey.platformKey());
-
+#endif
 }
 } // namespace WebCore

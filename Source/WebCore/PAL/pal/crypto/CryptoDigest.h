@@ -32,7 +32,6 @@
 namespace PAL {
 
 struct CryptoDigestContext;
-enum class UseCryptoKit : bool { No, Yes };
 
 class CryptoDigest {
     WTF_MAKE_NONCOPYABLE(CryptoDigest);

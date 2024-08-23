@@ -54,8 +54,6 @@ enum class CryptoKeyClass {
     Raw,
 };
 
-enum class UseCryptoKit : bool { No, Yes };
-
 class CryptoKey : public ThreadSafeRefCounted<CryptoKey> {
 public:
     using Type = CryptoKeyType;

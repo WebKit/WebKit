@@ -51,14 +51,13 @@ void CryptoAlgorithmHKDF::deriveBits(const CryptoAlgorithmParameters& parameters
         return;
     }
 
-    UseCryptoKit useCryptoKit = context.settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = crossThreadCopy(downcast<CryptoAlgorithmHkdfParams>(parameters)), baseKey = WTFMove(baseKey), length, useCryptoKit] {
-            return platformDeriveBits(parameters, downcast<CryptoKeyRaw>(baseKey.get()), *length, useCryptoKit);
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmHkdfParams>(parameters)), baseKey = WTFMove(baseKey), length] {
+            return platformDeriveBits(parameters, downcast<CryptoKeyRaw>(baseKey.get()), *length);
         });
 }
 
-void CryptoAlgorithmHKDF::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithmHKDF::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     if (format != CryptoKeyFormat::Raw) {
         exceptionCallback(ExceptionCode::NotSupportedError);

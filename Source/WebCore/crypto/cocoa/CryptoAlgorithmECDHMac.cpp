@@ -34,46 +34,34 @@
 
 namespace WebCore {
 
+#if !HAVE(SWIFT_CPP_INTEROP)
 static std::optional<Vector<uint8_t>> platformDeriveBitsCC(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
     std::optional<Vector<uint8_t>> result = std::nullopt;
     Vector<uint8_t> derivedKey(baseKey.keySizeInBytes()); // Per https://tools.ietf.org/html/rfc6090#section-4.
     size_t size = derivedKey.size();
-#if HAVE(SWIFT_CPP_INTEROP)
-    const auto* priv = std::get_if<CCPlatformECKeyContainer>(&baseKey.platformKey());
-    const auto* pub = std::get_if<CCPlatformECKeyContainer>(&publicKey.platformKey());
 
-    if (!priv || !pub)
-        return std::nullopt;
-    if (!CCECCryptorComputeSharedSecret((*priv).get(), (*pub).get(), derivedKey.data(), &size))
-#else
     if (!CCECCryptorComputeSharedSecret(baseKey.platformKey().get(), publicKey.platformKey().get(), derivedKey.data(), &size))
-#endif
         result = std::make_optional(WTFMove(derivedKey));
     return result;
 }
-
-#if HAVE(SWIFT_CPP_INTEROP)
+#else
 static std::optional<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
-    const auto* priv  = std::get_if<CKPlatformECKeyContainer>(&baseKey.platformKey());
-    const auto* pub = std::get_if<CKPlatformECKeyContainer>(&publicKey.platformKey());
-    if (!priv || !pub)
-        return std::nullopt;
-    auto rv = (*priv)->deriveBits(*pub);
+    auto rv = baseKey.platformKey()->deriveBits(publicKey.platformKey());
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
     return std::make_optional(WTFMove(rv.result));
 }
 #endif
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey, [[maybe_unused]] UseCryptoKit useCryptoKit) {
-
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
+{
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes)
-        return platformDeriveBitsCryptoKit(baseKey, publicKey);
-#endif
+    return platformDeriveBitsCryptoKit(baseKey, publicKey);
+#else
     return platformDeriveBitsCC(baseKey, publicKey);
+#endif
 }
 
 } // namespace WebCore

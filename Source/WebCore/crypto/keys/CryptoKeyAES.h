@@ -52,9 +52,9 @@ public:
     static bool isValidAESAlgorithm(CryptoAlgorithmIdentifier);
 
     static RefPtr<CryptoKeyAES> generate(CryptoAlgorithmIdentifier, size_t lengthBits, bool extractable, CryptoKeyUsageBitmap);
-    WEBCORE_EXPORT static RefPtr<CryptoKeyAES> importRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap, UseCryptoKit = UseCryptoKit::No);
+    WEBCORE_EXPORT static RefPtr<CryptoKeyAES> importRaw(CryptoAlgorithmIdentifier, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     using CheckAlgCallback = Function<bool(size_t, const String&)>;
-    static RefPtr<CryptoKeyAES> importJwk(CryptoAlgorithmIdentifier, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap, CheckAlgCallback&&, UseCryptoKit = UseCryptoKit::No);
+    static RefPtr<CryptoKeyAES> importJwk(CryptoAlgorithmIdentifier, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap, CheckAlgCallback&&);
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::AES; }
 

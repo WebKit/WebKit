@@ -65,22 +65,22 @@ void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
 
-void CryptoAlgorithm::importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithm::importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
 
-void CryptoAlgorithm::exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithm::exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
 
-void CryptoAlgorithm::wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithm::wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
 
-void CryptoAlgorithm::unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, UseCryptoKit)
+void CryptoAlgorithm::unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(ExceptionCode::NotSupportedError);
 }
