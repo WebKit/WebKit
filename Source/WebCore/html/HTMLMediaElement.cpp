@@ -121,6 +121,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SleepDisabler.h"
+#include "SpatialVideoMetadata.h"
 #include "SpeechSynthesis.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -9856,6 +9857,19 @@ void HTMLMediaElement::watchtimeTimerFired()
         audioCodecDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey(), "Media Watchtime Interval By Audio Codec"_s, audioCodecDictionary, ShouldSample::Yes);
     }();
+}
+
+std::optional<SpatialVideoMetadata> HTMLMediaElement::spatialVideoMetadata() const
+{
+    RefPtr videoTracks = this->videoTracks();
+    if (!videoTracks)
+        return { };
+
+    RefPtr selectedVideoTrack = videoTracks->selectedItem();
+    if (!selectedVideoTrack)
+        return { };
+
+    return selectedVideoTrack->configuration().spatialVideoMetadata();
 }
 
 } // namespace WebCore

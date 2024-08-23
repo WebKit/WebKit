@@ -5516,6 +5516,14 @@ enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
 
 #if ENABLE(VIDEO)
 
+header: <WebCore/SpatialVideoMetadata.h>
+struct WebCore::SpatialVideoMetadata {
+    WebCore::IntSize size;
+    float horizontalFOVDegrees;
+    float baseline;
+    float disparityAdjustment;
+};
+
 struct WebCore::PlatformTrackConfiguration {
     String codec;
 };
@@ -5532,6 +5540,7 @@ struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfigur
     WebCore::PlatformVideoColorSpace colorSpace;
     double framerate;
     uint64_t bitrate;
+    std::optional<WebCore::SpatialVideoMetadata> spatialVideoMetadata;
 };
 
 #endif

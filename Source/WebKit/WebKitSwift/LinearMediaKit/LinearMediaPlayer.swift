@@ -111,6 +111,7 @@ enum LinearMediaPlayerErrors: Error {
     var fullscreenSceneBehaviors: WKSLinearMediaFullscreenBehaviors = []
     var startTime: Double = .nan
     var endTime: Double = .nan
+    var spatialVideoMetadata: WKSLinearMediaSpatialVideoMetadata?
 
     // FIXME: These should be stored properties on WKSLinearMediaPlayer, but a bug prevents that from compiling (rdar://121877511).
     var startDate: Date? {

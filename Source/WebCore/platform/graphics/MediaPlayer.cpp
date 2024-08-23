@@ -49,6 +49,7 @@
 #include "PlatformTimeRanges.h"
 #include "ResourceError.h"
 #include "SecurityOrigin.h"
+#include "SpatialVideoMetadata.h"
 #include "VideoFrame.h"
 #include "VideoFrameMetadata.h"
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -2126,6 +2127,14 @@ String SeekTarget::toString() const
     return makeString('[', WTF::LogArgument<MediaTime>::toString(time),
         WTF::LogArgument<MediaTime>::toString(negativeThreshold),
         WTF::LogArgument<MediaTime>::toString(positiveThreshold), ']');
+}
+
+String convertSpatialVideoMetadataToString(const SpatialVideoMetadata& metadata)
+{
+    return makeString("SpatialMetadata {"_s, WTF::LogArgument<WebCore::IntSize>::toString(metadata.size),
+        WTF::LogArgument<float>::toString(metadata.horizontalFOVDegrees),
+        WTF::LogArgument<float>::toString(metadata.baseline),
+        WTF::LogArgument<float>::toString(metadata.disparityAdjustment), '}');
 }
 
 } // namespace WebCore

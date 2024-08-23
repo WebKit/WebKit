@@ -1829,6 +1829,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h
+    platform/SpatialVideoMetadata.h
     platform/StyleAppearance.h
     platform/SuddenTermination.h
     platform/Supplementable.h

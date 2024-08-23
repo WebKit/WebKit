@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,33 @@
 
 #pragma once
 
-#include "SpatialVideoMetadata.h"
-#include <optional>
-#include <wtf/Forward.h>
-
-typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
+#include "IntSize.h"
 
 namespace WebCore {
 
-class FloatSize;
-struct PlatformVideoColorSpace;
+struct SpatialVideoMetadata {
+    IntSize size;
+    float horizontalFOVDegrees;
+    float baseline;
+    float disparityAdjustment;
 
-FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
-std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
-String codecFromFormatDescription(CMFormatDescriptionRef);
-std::optional<SpatialVideoMetadata> videoMetadataFromFormatDescription(CMFormatDescriptionRef);
+    friend bool operator==(const SpatialVideoMetadata&, const SpatialVideoMetadata&) = default;
+};
+
+WEBCORE_EXPORT String convertSpatialVideoMetadataToString(const SpatialVideoMetadata&);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename> struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::SpatialVideoMetadata> {
+    static String toString(const WebCore::SpatialVideoMetadata& metadata)
+    {
+        return convertSpatialVideoMetadataToString(metadata);
+    }
+};
+
+} // namespace WTF

@@ -65,6 +65,9 @@ public:
     uint64_t bitrate() const { return m_state.bitrate; }
     void setBitrate(uint64_t bitrate) { m_state.bitrate = bitrate; }
 
+    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const { return m_state.spatialVideoMetadata; }
+    void setSpatialVideoMetadata(const SpatialVideoMetadata& metadata) { m_state.spatialVideoMetadata = metadata; }
+
     Ref<JSON::Object> toJSON() const;
 
 private:

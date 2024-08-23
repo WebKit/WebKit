@@ -85,6 +85,18 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic, readonly, copy) NSString *localizedDisplayName;
 @end
 
+API_AVAILABLE(visionos(1.0))
+@interface WKSLinearMediaSpatialVideoMetadata : NSObject
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithWidth:(SInt32)width height:(SInt32)height horizontalFOVDegrees:(float)horizontalFOVDegrees baseline:(float)baseline disparityAdjustment:(float)disparityAdjustment NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, readonly) SInt32 width;
+@property (nonatomic, readonly) SInt32 height;
+@property (nonatomic, readonly) float horizontalFOVDegrees;
+@property (nonatomic, readonly) float baseline;
+@property (nonatomic, readonly) float disparityAdjustment;
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif /* defined(TARGET_OS_VISION) && TARGET_OS_VISION */

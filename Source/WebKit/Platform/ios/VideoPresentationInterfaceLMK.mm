@@ -43,6 +43,8 @@
 #import <wtf/UUID.h>
 #import <wtf/text/MakeString.h>
 
+#import "WebKitSwiftSoftLink.h"
+
 @interface WKLinearMediaKitCaptionsLayer : CALayer {
     ThreadSafeWeakPtr<WebKit::VideoPresentationInterfaceLMK> _parent;
 }
@@ -87,6 +89,12 @@ VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(WebCore::PlaybackSe
 WKSLinearMediaPlayer *VideoPresentationInterfaceLMK::linearMediaPlayer() const
 {
     return playbackSessionInterface().linearMediaPlayer();
+}
+
+void VideoPresentationInterfaceLMK::setSpatialVideoMetadata(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    RetainPtr<WKSLinearMediaSpatialVideoMetadata> spatialVideoMetadata = metadata ? [allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment] : nil;
+    linearMediaPlayer().spatialVideoMetadata = spatialVideoMetadata.get();
 }
 
 void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView* parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)

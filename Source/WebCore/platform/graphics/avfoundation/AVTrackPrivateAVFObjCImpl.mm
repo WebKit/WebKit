@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#import "AVAssetTrackUtilities.h"
 #import "FormatDescriptionUtilities.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "PlatformAudioTrackConfiguration.h"
@@ -55,6 +56,17 @@ static NSArray* assetTrackConfigurationKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:@"formatDescriptions", @"estimatedDataRate", @"nominalFrameRate", nil];
     return keys;
+}
+
+static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
+{
+    if (impl.playerItemTrack() && impl.playerItemTrack().assetTrack)
+        return impl.playerItemTrack().assetTrack;
+    if (impl.assetTrack())
+        return impl.assetTrack();
+    if (impl.mediaSelectionOption() && impl.mediaSelectionOption()->assetTrack())
+        return impl.mediaSelectionOption()->assetTrack();
+    return nil;
 }
 
 AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack* track)
@@ -95,7 +107,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
         });
     }];
 }
-    
+
 bool AVTrackPrivateAVFObjCImpl::enabled() const
 {
     if (m_playerItemTrack)
@@ -269,6 +281,7 @@ PlatformVideoTrackConfiguration AVTrackPrivateAVFObjCImpl::videoTrackConfigurati
         colorSpace(),
         framerate(),
         bitrate(),
+        spatialVideoMetadata(),
     };
 }
 
@@ -280,17 +293,6 @@ PlatformAudioTrackConfiguration AVTrackPrivateAVFObjCImpl::audioTrackConfigurati
         numberOfChannels(),
         bitrate(),
     };
-}
-
-static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)
-{
-    if (impl.playerItemTrack() && impl.playerItemTrack().assetTrack)
-        return impl.playerItemTrack().assetTrack;
-    if (impl.assetTrack())
-        return impl.assetTrack();
-    if (impl.mediaSelectionOption() && impl.mediaSelectionOption()->assetTrack())
-        return impl.mediaSelectionOption()->assetTrack();
-    return nil;
 }
 
 static RetainPtr<CMFormatDescriptionRef> formatDescriptionFor(const AVTrackPrivateAVFObjCImpl& impl)
@@ -376,6 +378,11 @@ uint64_t AVTrackPrivateAVFObjCImpl::bitrate() const
     if (!std::isfinite(assetTrack.estimatedDataRate))
         return 0;
     return assetTrack.estimatedDataRate;
+}
+
+std::optional<SpatialVideoMetadata> AVTrackPrivateAVFObjCImpl::spatialVideoMetadata() const
+{
+    return videoMetadataFromFormatDescription(formatDescriptionFor(*this).get());
 }
 
 }
