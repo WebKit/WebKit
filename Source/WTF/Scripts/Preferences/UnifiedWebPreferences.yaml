@@ -1317,7 +1317,7 @@ CSSScrollbarColorEnabled:
 
 CSSScrollbarGutterEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS scrollbar-gutter property"
   humanReadableDescription: "Enable scrollbar-gutter CSS property"
@@ -1325,9 +1325,9 @@ CSSScrollbarGutterEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScrollbarWidthEnabled:
   type: bool
