@@ -54,8 +54,8 @@ private:
     void invalidateCacheForDocument(Document&) override;
     void updateNamedElementCache() const override;
 
-    mutable Element* m_cachedElement;
-    mutable unsigned m_cachedElementOffsetInArray;
+    mutable CheckedPtr<Element> m_cachedElement;
+    mutable unsigned m_cachedElementOffsetInArray { 0 };
 };
 
 } // namespace WebCore
