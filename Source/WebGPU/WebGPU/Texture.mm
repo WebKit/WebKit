@@ -2992,10 +2992,13 @@ void Texture::makeCanvasBacking()
     m_canvasBacking = true;
 }
 
-void Texture::waitForCommandBufferCompletion()
+bool Texture::waitForCommandBufferCompletion()
 {
+    bool result = true;
     for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.waitForCommandBufferCompletion();
+        result = commandEncoder.waitForCommandBufferCompletion() && result;
+
+    return result;
 }
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const

@@ -68,7 +68,7 @@ private:
     RemotePresentationContextProxy& operator=(RemotePresentationContextProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
-    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t) final;
+    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
 
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)

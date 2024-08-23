@@ -133,10 +133,10 @@ void PresentationContextImpl::present(bool)
     m_currentTexture = nullptr;
 }
 
-RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex)
+RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
     if (auto* surface = m_swapChain.get())
-        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex));
+        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex, isIOSurfaceSupportedFormat));
 
     return nullptr;
 }

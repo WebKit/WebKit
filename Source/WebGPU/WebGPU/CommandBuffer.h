@@ -66,7 +66,7 @@ public:
     void setBufferMapCount(int);
     int bufferMapCount() const;
     NSString* lastError() const;
-    void waitForCompletion();
+    bool waitForCompletion();
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);

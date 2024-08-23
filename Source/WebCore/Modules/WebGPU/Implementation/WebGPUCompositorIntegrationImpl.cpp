@@ -106,10 +106,14 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
         return completion(nullptr);
 
     RefPtr<NativeImage> displayImage;
+    bool isIOSurfaceSupportedFormat = false;
     if (auto* presentationContextPtr = m_presentationContext.get())
-        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex);
+        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex, isIOSurfaceSupportedFormat);
 
     if (!displayImage) {
+        if (!isIOSurfaceSupportedFormat)
+            return completion(nullptr);
+
         auto& renderBuffer = m_renderBuffers[bufferIndex];
         RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
         if (cgContext)

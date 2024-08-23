@@ -89,12 +89,14 @@ int CommandBuffer::bufferMapCount() const
     return m_bufferMapCount;
 }
 
-void CommandBuffer::waitForCompletion()
+bool CommandBuffer::waitForCompletion()
 {
     auto status = [m_cachedCommandBuffer status];
-    constexpr auto commandBufferSubmissionTimeout = 5000_ms;
+    constexpr auto commandBufferSubmissionTimeout = 500_ms;
     if (status == MTLCommandBufferStatusCommitted || status == MTLCommandBufferStatusScheduled)
-        m_commandBufferComplete.waitFor(commandBufferSubmissionTimeout);
+        return m_commandBufferComplete.waitFor(commandBufferSubmissionTimeout);
+
+    return true;
 }
 
 } // namespace WebGPU

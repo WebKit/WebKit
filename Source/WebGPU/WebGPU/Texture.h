@@ -45,7 +45,7 @@ class Device;
 class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gputexture
-class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
+class Texture : public WGPUTextureImpl, public RefCounted<Texture>, public CanMakeWeakPtr<Texture> {
     WTF_MAKE_TZONE_ALLOCATED(Texture);
 public:
     static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
@@ -124,7 +124,7 @@ public:
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const;
-    void waitForCommandBufferCompletion();
+    bool waitForCommandBufferCompletion();
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
