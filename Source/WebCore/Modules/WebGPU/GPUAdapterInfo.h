@@ -40,9 +40,9 @@ public:
     }
 
     String vendor() const { auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
-    String architecture() const { return normalizedIdentifier(m_name); }
-    String device() const { return normalizedIdentifier(m_name); }
-    String description() const { return normalizedIdentifier(m_name); }
+    String architecture() const { return vendor(); }
+    String device() const { return vendor(); }
+    String description() const { return vendor(); }
 
 private:
     GPUAdapterInfo(String&& name)
