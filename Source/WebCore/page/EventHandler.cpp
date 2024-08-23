@@ -3470,19 +3470,26 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     int rightAligned = 0;
 #endif
-    IntPoint location;
+    IntPoint location { rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin, kContextMenuMargin };
 
     RefPtr focusedElement = doc->focusedElement();
     const VisibleSelection& selection = frame->selection().selection();
-    Position start = selection.start();
 
-    if (start.deprecatedNode() && (selection.rootEditableElement() || selection.isRange())) {
-        IntRect firstRect = frame->editor().firstRectForRange(*selection.toNormalizedRange());
-
-        int x = rightAligned ? firstRect.maxX() : firstRect.x();
-        // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.
-        int y = firstRect.maxY() ? firstRect.maxY() - 1 : 0;
-        location = IntPoint(x, y);
+    if (selection.start().deprecatedNode() && (selection.rootEditableElement() || selection.isRange())) {
+        std::optional<SimpleRange> targetRange;
+        if (selection.isCaret())
+            targetRange = selection.toNormalizedRange();
+        else {
+            auto endPosition = selection.visibleEnd();
+            targetRange = VisibleSelection { endPosition.previous(CannotCrossEditingBoundary), endPosition }.toNormalizedRange();
+        }
+        if (targetRange) {
+            IntRect targetRect = frame->editor().firstRectForRange(*targetRange);
+            int x = rightAligned ? targetRect.maxX() : targetRect.x();
+            // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.
+            int y = targetRect.maxY() ? targetRect.maxY() - 1 : 0;
+            location = IntPoint(x, y);
+        }
     } else if (focusedElement) {
         RenderBoxModelObject* box = focusedElement->renderBoxModelObject();
         if (!box)
