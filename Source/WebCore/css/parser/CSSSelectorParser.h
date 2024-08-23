@@ -105,13 +105,13 @@ private:
     CSSParserEnum::IsNestedContext m_isNestedContext { CSSParserEnum::IsNestedContext::No };
 
     // FIXME: This m_failedParsing is ugly and confusing, we should look into removing it (the return value of each function already convey this information).
-    bool m_failedParsing { false };
+    bool m_failedParsing : 1 { false };
 
-    bool m_disallowPseudoElements { false };
-    bool m_disallowHasPseudoClass { false };
-    bool m_resistDefaultNamespace { false };
-    bool m_ignoreDefaultNamespace { false };
-    bool m_disableForgivingParsing { false };
+    bool m_disallowPseudoElements : 1 { false };
+    bool m_disallowHasPseudoClass : 1 { false };
+    bool m_resistDefaultNamespace : 1 { false };
+    bool m_ignoreDefaultNamespace : 1 { false };
+    bool m_disableForgivingParsing : 1 { false };
     std::optional<CSSSelector::PseudoElement> m_precedingPseudoElement;
 };
 
