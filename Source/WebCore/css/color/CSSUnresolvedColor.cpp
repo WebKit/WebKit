@@ -58,19 +58,19 @@ bool CSSUnresolvedColor::equals(const CSSUnresolvedColor& other) const
     return m_value == other.m_value;
 }
 
-StyleColor CSSUnresolvedColor::createStyleColor(const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink) const
+StyleColor CSSUnresolvedColor::createStyleColor(CSSUnresolvedStyleColorResolutionState& state) const
 {
-    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createStyleColor(unresolved, document, style, forVisitedLink); });
+    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createStyleColor(unresolved, state); });
 }
 
-Color CSSUnresolvedColor::createColor(const CSSUnresolvedColorResolutionContext& context) const
+Color CSSUnresolvedColor::createColor(CSSUnresolvedColorResolutionState& state) const
 {
-    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createColor(unresolved, context); });
+    return WTF::switchOn(m_value, [&](auto& unresolved) { return WebCore::createColor(unresolved, state); });
 }
 
-std::optional<CSSUnresolvedAbsoluteColor> CSSUnresolvedColor::absolute() const
+std::optional<CSSUnresolvedAbsoluteResolvedColor> CSSUnresolvedColor::absolute() const
 {
-    if (auto* absolute = std::get_if<CSSUnresolvedAbsoluteColor>(&m_value))
+    if (auto* absolute = std::get_if<CSSUnresolvedAbsoluteResolvedColor>(&m_value))
         return *absolute;
     return std::nullopt;
 }
@@ -94,9 +94,19 @@ void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColor& unres
     return unresolved.serializationForCSS(builder);
 }
 
+void serializationForCSS(StringBuilder& builder, const UniqueRef<CSSUnresolvedColor>& unresolved)
+{
+    return serializationForCSS(builder, *unresolved);
+}
+
 String serializationForCSS(const CSSUnresolvedColor& unresolved)
 {
     return unresolved.serializationForCSS();
+}
+
+String serializationForCSS(const UniqueRef<CSSUnresolvedColor>& unresolved)
+{
+    return serializationForCSS(*unresolved);
 }
 
 bool operator==(const UniqueRef<CSSUnresolvedColor>& a, const UniqueRef<CSSUnresolvedColor>& b)

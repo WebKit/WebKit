@@ -37,7 +37,7 @@ static auto copy(const None&) -> None;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
 static auto copy(const Children&) -> Children;
 static auto copy(const Child&) -> Child;
-template<Numeric Op>
+template<Leaf Op>
 Child copy(const Op&);
 template<typename Op>
 static auto copy(const IndirectNode<Op>&) -> Child;
@@ -81,7 +81,7 @@ Child copy(const Child& root)
     return WTF::switchOn(root, [&](const auto& root) { return copy(root); });
 }
 
-template<Numeric Op> Child copy(const Op& root)
+template<Leaf Op> Child copy(const Op& root)
 {
     return { root };
 }

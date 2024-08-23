@@ -65,8 +65,14 @@ public:
 
     ~CSSCalcValue();
 
+    // Creates a copy of the CSSCalc::Tree with non-canonical dimensions and any symbols present in the provided symbol table resolved.
+    Ref<CSSCalcValue> copySimplified(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+
     Calculation::Category category() const;
     CSSUnitType primitiveType() const;
+
+    // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
+    bool requiresConversionData() const;
 
     // FIXME: Remove `doubleValueDeprecated` once all callers have moved to call `doubleValue` with `CSSToLengthConversionData`.
     double doubleValueDeprecated(const CSSCalcSymbolTable&) const;

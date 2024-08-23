@@ -25,48 +25,80 @@
 
 #pragma once
 
-#include "Color.h"
+#include "CSSAbsoluteColorResolver.h"
+#include "CSSAbsoluteColorSerialization.h"
+#include "CSSColorDescriptors.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "StyleAbsoluteColor.h"
 #include "StyleColor.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
-class Document;
-class RenderStyle;
-class StyleColor;
-
-struct CSSUnresolvedColorResolutionContext;
-
+template<typename D>
 struct CSSUnresolvedAbsoluteColor {
-    Color value;
+    using Descriptor = D;
 
-    bool operator==(const CSSUnresolvedAbsoluteColor&) const = default;
+    CSSColorParseTypeWithCalc<Descriptor> components;
+
+    bool operator==(const CSSUnresolvedAbsoluteColor<Descriptor>&) const = default;
 };
 
-void serializationForCSS(StringBuilder&, const CSSUnresolvedAbsoluteColor&);
-String serializationForCSS(const CSSUnresolvedAbsoluteColor&);
-
-inline StyleColor createStyleColor(const CSSUnresolvedAbsoluteColor& unresolved, const Document&, RenderStyle&, Style::ForVisitedLink)
+template<typename Descriptor>
+void serializationForCSS(StringBuilder& builder, const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved)
 {
-    return { StyleAbsoluteColor { unresolved.value } };
+    serializationForCSSAbsoluteColor(builder, unresolved);
 }
 
-inline Color createColor(const CSSUnresolvedAbsoluteColor& unresolved, const CSSUnresolvedColorResolutionContext&)
+template<typename Descriptor>
+String serializationForCSS(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved)
 {
-    return unresolved.value;
+    StringBuilder builder;
+    serializationForCSS(builder, unresolved);
+    return builder.toString();
 }
 
-constexpr bool containsColorSchemeDependentColor(const CSSUnresolvedAbsoluteColor&)
+template<typename Descriptor>
+StyleColor createStyleColor(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved, CSSUnresolvedStyleColorResolutionState& state)
+{
+    CSSUnresolvedStyleColorResolutionNester nester { state };
+
+    auto resolver = CSSAbsoluteColorResolver<Descriptor> {
+        .components = unresolved.components,
+        .nestingLevel = state.nestingLevel
+    };
+
+    return StyleColor { StyleAbsoluteColor { resolve(WTFMove(resolver), state.conversionData) } };
+}
+
+template<typename Descriptor>
+Color createColor(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved, CSSUnresolvedColorResolutionState& state)
+{
+    CSSUnresolvedColorResolutionNester nester { state };
+
+    auto resolver = CSSAbsoluteColorResolver<Descriptor> {
+        .components = unresolved.components,
+        .nestingLevel = state.nestingLevel
+    };
+
+    if (state.conversionData)
+        return resolve(WTFMove(resolver), *state.conversionData);
+
+    if (!requiresConversionData(resolver))
+        return resolveNoConversionDataRequired(WTFMove(resolver));
+
+    return { };
+}
+
+template<typename Descriptor>
+constexpr bool containsColorSchemeDependentColor(const CSSUnresolvedAbsoluteColor<Descriptor>&)
 {
     return false;
 }
 
-constexpr bool containsCurrentColor(const CSSUnresolvedAbsoluteColor&)
+template<typename Descriptor>
+constexpr bool containsCurrentColor(const CSSUnresolvedAbsoluteColor<Descriptor>&)
 {
     return false;
 }

@@ -31,11 +31,11 @@ namespace WebCore {
 namespace CSSCalc {
 
 // https://drafts.csswg.org/css-values-4/#serialize-a-math-function
-void serializeForCSS(StringBuilder&, const Tree&);
-String serializeForCSS(const Tree&);
+void serializationForCSS(StringBuilder&, const Tree&);
+String serializationForCSS(const Tree&);
 
-void serializeForCSS(StringBuilder&, const Child&);
-String serializeForCSS(const Child&);
+void serializationForCSS(StringBuilder&, const Child&);
+String serializationForCSS(const Child&);
 
 } // namespace CSSCalc
 } // namespace WebCore

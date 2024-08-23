@@ -556,7 +556,7 @@ template<typename Op> void serializeCalculationTree(StringBuilder& builder, cons
 
 // MARK: Exposed interface
 
-void serializeForCSS(StringBuilder& builder, const Tree& tree)
+void serializationForCSS(StringBuilder& builder, const Tree& tree)
 {
     SerializationState state {
         .stage = tree.stage,
@@ -565,23 +565,23 @@ void serializeForCSS(StringBuilder& builder, const Tree& tree)
     serializeMathFunction(builder, tree.root, state);
 }
 
-String serializeForCSS(const Tree& tree)
+String serializationForCSS(const Tree& tree)
 {
     StringBuilder builder;
-    serializeForCSS(builder, tree);
+    serializationForCSS(builder, tree);
     return builder.toString();
 }
 
-void serializeForCSS(StringBuilder& builder, const Child& child)
+void serializationForCSS(StringBuilder& builder, const Child& child)
 {
     SerializationState state { };
     serializeCalculationTree(builder, child, state);
 }
 
-String serializeForCSS(const Child& child)
+String serializationForCSS(const Child& child)
 {
     StringBuilder builder;
-    serializeForCSS(builder, child);
+    serializationForCSS(builder, child);
     return builder.toString();
 }
 

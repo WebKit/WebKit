@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSColorConversion+ToColor.h"
 #include "CSSColorConversion+ToTypedColor.h"
 #include "CSSColorDescriptors.h"
@@ -47,14 +48,44 @@ struct CSSAbsoluteColorResolver {
 };
 
 template<typename Descriptor>
-Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute)
+bool requiresConversionData(const CSSAbsoluteColorResolver<Descriptor>& absolute)
+{
+    return requiresConversionData(std::get<0>(absolute.components))
+        || requiresConversionData(std::get<1>(absolute.components))
+        || requiresConversionData(std::get<2>(absolute.components))
+        || requiresConversionData(std::get<3>(absolute.components));
+}
+
+template<typename Descriptor>
+Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToLengthConversionData& conversionData)
 {
     // Evaluated any calc values to their corresponding channel value.
     auto components = CSSColorParseType<Descriptor> {
-        evaluateCalc(std::get<0>(absolute.components), { }),
-        evaluateCalc(std::get<1>(absolute.components), { }),
-        evaluateCalc(std::get<2>(absolute.components), { }),
-        evaluateCalc(std::get<3>(absolute.components), { })
+        evaluateCalc(std::get<0>(absolute.components), conversionData, CSSCalcSymbolTable { }),
+        evaluateCalc(std::get<1>(absolute.components), conversionData, CSSCalcSymbolTable { }),
+        evaluateCalc(std::get<2>(absolute.components), conversionData, CSSCalcSymbolTable { }),
+        evaluateCalc(std::get<3>(absolute.components), conversionData, CSSCalcSymbolTable { })
+    };
+
+    // Normalize values into their numeric form, forming a validated typed color.
+    auto typedColor = convertToTypedColor<Descriptor>(components, 1.0);
+
+    // Convert the validated typed color into a `Color`,
+    return convertToColor<Descriptor, CSSColorFunctionForm::Absolute>(typedColor, absolute.nestingLevel);
+}
+
+// This resolve function should only be called if the components have been checked and don't require conversion data to be resolved.
+template<typename Descriptor>
+Color resolveNoConversionDataRequired(const CSSAbsoluteColorResolver<Descriptor>& absolute)
+{
+    ASSERT(!requiresConversionData(absolute));
+
+    // Evaluated any calc values to their corresponding channel value.
+    auto components = CSSColorParseType<Descriptor> {
+        evaluateCalcNoConversionDataRequired(std::get<0>(absolute.components), CSSCalcSymbolTable { }),
+        evaluateCalcNoConversionDataRequired(std::get<1>(absolute.components), CSSCalcSymbolTable { }),
+        evaluateCalcNoConversionDataRequired(std::get<2>(absolute.components), CSSCalcSymbolTable { }),
+        evaluateCalcNoConversionDataRequired(std::get<3>(absolute.components), CSSCalcSymbolTable { })
     };
 
     // Normalize values into their numeric form, forming a validated typed color.

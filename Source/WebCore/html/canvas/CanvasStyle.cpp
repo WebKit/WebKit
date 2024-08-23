@@ -60,7 +60,7 @@ public:
 
 using LazySlowPathColorParsingParameters = std::tuple<
     CSSPropertyParserHelpers::CSSColorParsingOptions,
-    CSSUnresolvedColorResolutionContext,
+    CSSUnresolvedColorResolutionState,
     std::optional<CanvasStyleColorResolutionDelegate>
 >;
 
@@ -95,7 +95,7 @@ static LazySlowPathColorParsingParameters elementlessColorParsingParameters(Scri
         CSSPropertyParserHelpers::CSSColorParsingOptions {
             .allowedColorTypes = allowedColorTypes(scriptExecutionContext)
         },
-        CSSUnresolvedColorResolutionContext {
+        CSSUnresolvedColorResolutionState {
             .resolvedCurrentColor = Color::black
         },
         std::nullopt
@@ -110,7 +110,7 @@ static LazySlowPathColorParsingParameters colorParsingParameters(CanvasBase& can
 
     return {
         CSSPropertyParserHelpers::CSSColorParsingOptions { },
-        CSSUnresolvedColorResolutionContext { },
+        CSSUnresolvedColorResolutionState { },
         CanvasStyleColorResolutionDelegate(canvasElement.releaseNonNull())
     };
 }

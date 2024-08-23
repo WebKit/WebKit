@@ -163,7 +163,7 @@ private:
     static decltype(auto) visit(const ColorKind&, F&&...);
 
     template<typename StyleColorType>
-    static ColorKind resolveAbsoluteComponents(StyleColorType&&);
+    static ColorKind makeIndirectColor(StyleColorType&&);
 
     static ColorKind copy(const ColorKind&);
 

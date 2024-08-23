@@ -28,15 +28,14 @@
 #include "CSSColorDescriptors.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserConsumer+RawTypes.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "ColorNormalization.h"
 #include "ColorTypes.h"
 
 namespace WebCore {
 
 // This file implements support for converting "raw" parsed values
-// (e.g. tuple of `std::variant<NumberRaw, UnevaluatedCalc<NumberRaw>`)
-// into typed colors (e.g. `SRGBA<float>`).
+// (e.g. tuple of `std::variant<NumberRaw, PercentRaw>`) into typed
+// colors (e.g. `SRGBA<float>`).
 
 template<typename Descriptor>
 GetColorType<Descriptor> normalizeRawComponents(CSSColorParseType<Descriptor>);
@@ -80,12 +79,6 @@ float normalizeComponent(AngleRaw angle)
     static_assert(info.type == ColorComponentType::Angle);
 
     return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value));
-}
-
-template<typename Descriptor, unsigned Index, typename RawType>
-float normalizeComponent(const UnevaluatedCalc<RawType>& calc)
-{
-    return normalizeComponent(CSSPropertyParserHelpers::RawResolverBase::resolve(calc, { }, { }));
 }
 
 template<typename Descriptor, unsigned Index>

@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSUnresolvedColor.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "Document.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
@@ -56,16 +57,23 @@ StyleColor colorFromValueID(const Document& document, RenderStyle& style, CSSVal
     }
 }
 
-StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
+StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
 {
     if (value.isColor())
         return value.color();
-    if (value.isUnresolvedColor())
-        return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);
+    if (value.isUnresolvedColor()) {
+        auto context = CSSUnresolvedStyleColorResolutionState {
+            .document = document,
+            .style = style,
+            .conversionData = conversionData,
+            .forVisitedLink = forVisitedLink
+        };
+        return value.unresolvedColor().createStyleColor(context);
+    }
     return colorFromValueID(document, style, value.valueID(), forVisitedLink);
 }
 
-Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value)
+Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue& value)
 {
     // FIXME: 'currentcolor' should be resolved at use time to make it inherit correctly. https://bugs.webkit.org/show_bug.cgi?id=210005
     if (StyleColor::containsCurrentColor(value)) {
@@ -74,7 +82,7 @@ Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, 
         style.setDisallowsFastPathInheritance();
     }
 
-    auto color = colorFromPrimitiveValue(document, style, value, ForVisitedLink::No);
+    auto color = colorFromPrimitiveValue(document, style, conversionData, value, ForVisitedLink::No);
     return style.colorResolvingCurrentColor(color);
 }
 

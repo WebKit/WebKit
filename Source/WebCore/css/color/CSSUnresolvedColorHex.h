@@ -32,15 +32,8 @@
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
-class Document;
-class RenderStyle;
-class StyleColor;
-
-struct CSSUnresolvedColorResolutionContext;
+struct CSSUnresolvedColorResolutionState;
+struct CSSUnresolvedStyleColorResolutionState;
 
 struct CSSUnresolvedColorHex {
     SRGBA<uint8_t> value;
@@ -51,12 +44,12 @@ struct CSSUnresolvedColorHex {
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorHex&);
 String serializationForCSS(const CSSUnresolvedColorHex&);
 
-inline StyleColor createStyleColor(const CSSUnresolvedColorHex& unresolved, const Document&, RenderStyle&, Style::ForVisitedLink)
+inline StyleColor createStyleColor(const CSSUnresolvedColorHex& unresolved, CSSUnresolvedStyleColorResolutionState&)
 {
     return { StyleAbsoluteColor { Color { unresolved.value } } };
 }
 
-inline Color createColor(const CSSUnresolvedColorHex& unresolved, const CSSUnresolvedColorResolutionContext&)
+inline Color createColor(const CSSUnresolvedColorHex& unresolved, CSSUnresolvedColorResolutionState&)
 {
     return Color { unresolved.value };
 }

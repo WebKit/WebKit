@@ -147,7 +147,7 @@ StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value,
 {
     if (!element() || !element()->isLink())
         forVisitedLink = ForVisitedLink::No;
-    return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
+    return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, m_cssToLengthConversionData, value, forVisitedLink) };
 }
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)

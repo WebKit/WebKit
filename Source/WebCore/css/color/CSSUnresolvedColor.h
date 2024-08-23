@@ -27,6 +27,7 @@
 
 #include "CSSColorDescriptors.h"
 #include "CSSUnresolvedAbsoluteColor.h"
+#include "CSSUnresolvedAbsoluteResolvedColor.h"
 #include "CSSUnresolvedColorHex.h"
 #include "CSSUnresolvedColorKeyword.h"
 #include "CSSUnresolvedColorLayers.h"
@@ -38,14 +39,8 @@
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
-class Document;
-class RenderStyle;
-
-struct CSSUnresolvedColorResolutionContext;
+struct CSSUnresolvedColorResolutionState;
+struct CSSUnresolvedStyleColorResolutionState;
 
 class CSSUnresolvedColor {
     WTF_MAKE_FAST_ALLOCATED;
@@ -67,21 +62,39 @@ public:
 
     bool equals(const CSSUnresolvedColor&) const;
 
-    StyleColor createStyleColor(const Document&, RenderStyle&, Style::ForVisitedLink) const;
-    Color createColor(const CSSUnresolvedColorResolutionContext&) const;
+    StyleColor createStyleColor(CSSUnresolvedStyleColorResolutionState&) const;
+    Color createColor(CSSUnresolvedColorResolutionState&) const;
 
-    std::optional<CSSUnresolvedAbsoluteColor> absolute() const;
+    std::optional<CSSUnresolvedAbsoluteResolvedColor> absolute() const;
     std::optional<CSSUnresolvedColorKeyword> keyword() const;
     std::optional<CSSUnresolvedColorHex> hex() const;
 
 private:
     std::variant<
-        CSSUnresolvedAbsoluteColor,
+        CSSUnresolvedAbsoluteResolvedColor,
         CSSUnresolvedColorKeyword,
         CSSUnresolvedColorHex,
         CSSUnresolvedColorLayers,
         CSSUnresolvedColorMix,
         CSSUnresolvedLightDark,
+        CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<NumberRaw>>,
+        CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<PercentRaw>>,
+        CSSUnresolvedAbsoluteColor<RGBFunctionModernAbsolute>,
+        CSSUnresolvedAbsoluteColor<HSLFunctionLegacy>,
+        CSSUnresolvedAbsoluteColor<HSLFunctionModern>,
+        CSSUnresolvedAbsoluteColor<HWBFunction>,
+        CSSUnresolvedAbsoluteColor<LabFunction>,
+        CSSUnresolvedAbsoluteColor<LCHFunction>,
+        CSSUnresolvedAbsoluteColor<OKLabFunction>,
+        CSSUnresolvedAbsoluteColor<OKLCHFunction>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedA98RGB<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedDisplayP3<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedRec2020<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedSRGBA<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>,
+        CSSUnresolvedAbsoluteColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>,
+        CSSUnresolvedAbsoluteColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>,
         CSSUnresolvedRelativeColor<RGBFunctionModernRelative>,
         CSSUnresolvedRelativeColor<HSLFunctionModern>,
         CSSUnresolvedRelativeColor<HWBFunction>,
@@ -101,7 +114,9 @@ private:
 };
 
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColor&);
+void serializationForCSS(StringBuilder&, const UniqueRef<CSSUnresolvedColor>&);
 String serializationForCSS(const CSSUnresolvedColor&);
+String serializationForCSS(const UniqueRef<CSSUnresolvedColor>&);
 
 bool operator==(const UniqueRef<CSSUnresolvedColor>&, const UniqueRef<CSSUnresolvedColor>&);
 

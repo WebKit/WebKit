@@ -25,22 +25,15 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "StyleColor.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
 class CSSUnresolvedColor;
-class Document;
-class RenderStyle;
 
-struct CSSUnresolvedColorResolutionContext;
+struct CSSUnresolvedColorResolutionState;
+struct CSSUnresolvedStyleColorResolutionState;
 
 enum class CSSUnresolvedLightDarkAppearance : bool { Light, Dark };
 
@@ -54,8 +47,8 @@ struct CSSUnresolvedLightDark {
 void serializationForCSS(StringBuilder&, const CSSUnresolvedLightDark&);
 String serializationForCSS(const CSSUnresolvedLightDark&);
 
-StyleColor createStyleColor(const CSSUnresolvedLightDark&, const Document&, RenderStyle&, Style::ForVisitedLink);
-Color createColor(const CSSUnresolvedLightDark&, const CSSUnresolvedColorResolutionContext&);
+StyleColor createStyleColor(const CSSUnresolvedLightDark&, CSSUnresolvedStyleColorResolutionState&);
+Color createColor(const CSSUnresolvedLightDark&, CSSUnresolvedColorResolutionState&);
 
 bool containsCurrentColor(const CSSUnresolvedLightDark&);
 

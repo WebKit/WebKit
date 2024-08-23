@@ -73,87 +73,87 @@ StyleColor::StyleColor(StyleCurrentColor&& color)
 }
 
 StyleColor::StyleColor(StyleColorMix&& colorMix)
-    : m_color { resolveAbsoluteComponents(WTFMove(colorMix)) }
+    : m_color { makeIndirectColor(WTFMove(colorMix)) }
 {
 }
 
 StyleColor::StyleColor(StyleColorLayers&& colorLayers)
-    : m_color { resolveAbsoluteComponents(WTFMove(colorLayers)) }
+    : m_color { makeIndirectColor(WTFMove(colorLayers)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<RGBFunctionModernRelative>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<HSLFunctionModern>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<HWBFunction>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<LabFunction>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<LCHFunction>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<OKLabFunction>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<OKLCHFunction>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
 StyleColor::StyleColor(StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>&& relative)
-    : m_color { resolveAbsoluteComponents(WTFMove(relative)) }
+    : m_color { makeIndirectColor(WTFMove(relative)) }
 {
 }
 
@@ -375,10 +375,8 @@ const Color& StyleColor::absoluteColor() const
 }
 
 template<typename StyleColorType>
-StyleColor::ColorKind StyleColor::resolveAbsoluteComponents(StyleColorType&& colorType)
+StyleColor::ColorKind StyleColor::makeIndirectColor(StyleColorType&& colorType)
 {
-    if (auto absoluteColor = WebCore::resolveAbsoluteComponents(colorType))
-        return { StyleAbsoluteColor { WTFMove(*absoluteColor) } };
     return { makeUniqueRef<StyleColorType>(WTFMove(colorType)) };
 }
 

@@ -386,7 +386,7 @@ std::optional<Type> toType(const Sign& root)
 
 TextStream& operator<<(TextStream& ts, Tree tree)
 {
-    return ts << "CSSCalc::Tree [ " << serializeForCSS(tree) << " ]";
+    return ts << "CSSCalc::Tree [ " << serializationForCSS(tree) << " ]";
 }
 
 } // namespace CSSCalc

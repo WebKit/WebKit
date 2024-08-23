@@ -137,7 +137,7 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange tokens, CSSValueID func
         .requiresConversionData = state.requiresConversionData
     };
 
-    LOG_WITH_STREAM(Calc, stream << "Completed top level parse/simplification for function '" << nameLiteralForSerialization(function) << "': " << serializeForCSS(result) << ", type: " << getType(result.root) << ", category=" << result.category << ", requires-conversion-data: " << result.requiresConversionData);
+    LOG_WITH_STREAM(Calc, stream << "Completed top level parse/simplification for function '" << nameLiteralForSerialization(function) << "': " << serializationForCSS(result) << ", type: " << getType(result.root) << ", category=" << result.category << ", requires-conversion-data: " << result.requiresConversionData);
 
     return result;
 }

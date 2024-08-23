@@ -57,23 +57,9 @@ bool operator==(const UniqueRef<StyleRelativeColor<Descriptor>>& a, const Unique
 }
 
 template<typename Descriptor>
-std::optional<Color> resolveAbsoluteComponents(const StyleRelativeColor<Descriptor>& relative)
-{
-    if (containsNonAbsoluteColor(relative))
-        return std::nullopt;
-
-    return resolve(
-        CSSRelativeColorResolver<Descriptor> {
-            .origin = relative.origin.absoluteColor(),
-            .components = relative.components
-        }
-    );
-}
-
-template<typename Descriptor>
 Color resolveColor(const StyleRelativeColor<Descriptor>& relative, const Color& currentColor)
 {
-    return resolve(
+    return resolveNoConversionDataRequired(
         CSSRelativeColorResolver<Descriptor> {
             .origin = relative.origin.resolveColor(currentColor),
             .components = relative.components

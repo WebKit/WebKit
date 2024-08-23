@@ -29,7 +29,8 @@
 #include "CSSColorLayersResolver.h"
 #include "CSSColorLayersSerialization.h"
 #include "CSSUnresolvedColor.h"
-#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
 
@@ -47,28 +48,47 @@ String serializationForCSS(const CSSUnresolvedColorLayers& unresolved)
     return builder.toString();
 }
 
-StyleColor createStyleColor(const CSSUnresolvedColorLayers& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
+StyleColor createStyleColor(const CSSUnresolvedColorLayers& unresolved, CSSUnresolvedStyleColorResolutionState& state)
 {
-    return StyleColor {
-        StyleColorLayers {
-            .blendMode = unresolved.blendMode,
-            .colors = unresolved.colors.map([&](auto& color) -> StyleColor {
-                return color->createStyleColor(document, style, forVisitedLink);
-            })
-        }
+    CSSUnresolvedStyleColorResolutionNester nester { state };
+
+    auto colors = unresolved.colors.map([&](auto& color) -> StyleColor {
+        return color->createStyleColor(state);
+    });
+
+    if (std::ranges::any_of(colors, [](auto& color) { return color.isAbsoluteColor(); })) {
+        // If the any of the layer's colors is not absolute, we cannot fully resolve the color yet. Instead we return a StyleColorLayers to be resolved at use time.
+        return StyleColor {
+            StyleColorLayers {
+                .blendMode = unresolved.blendMode,
+                .colors = WTFMove(colors)
+            }
+        };
+    }
+
+    auto resolver = CSSColorLayersResolver {
+        .blendMode = unresolved.blendMode,
+        // FIXME: This should be made into a lazy transformed range to avoid the unnecessary temporary allocation.
+        .colors = colors.map([&](const auto& color) {
+            return color.absoluteColor();
+        })
     };
+
+
+    return blendSourceOver(WTFMove(resolver));
 }
 
-Color createColor(const CSSUnresolvedColorLayers& unresolved, const CSSUnresolvedColorResolutionContext& context)
+Color createColor(const CSSUnresolvedColorLayers& unresolved, CSSUnresolvedColorResolutionState& state)
 {
-    return blendSourceOver(
-        CSSColorLayersResolver {
-            .blendMode = unresolved.blendMode,
-            .colors = unresolved.colors.map([&](const auto& color) {
-                return color->createColor(context);
-            })
-        }
-    );
+    auto resolver = CSSColorLayersResolver {
+        .blendMode = unresolved.blendMode,
+        // FIXME: This should be made into a lazy transformed range to avoid the unnecessary temporary allocation.
+        .colors = unresolved.colors.map([&](const auto& color) {
+            return color->createColor(state);
+        })
+    };
+
+    return blendSourceOver(WTFMove(resolver));
 }
 
 bool containsCurrentColor(const CSSUnresolvedColorLayers& unresolved)

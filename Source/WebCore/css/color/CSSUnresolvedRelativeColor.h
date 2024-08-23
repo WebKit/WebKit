@@ -28,6 +28,8 @@
 #include "CSSColorDescriptors.h"
 #include "CSSRelativeColorResolver.h"
 #include "CSSRelativeColorSerialization.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "StyleColor.h"
 #include "StyleRelativeColor.h"
 #include <variant>
@@ -35,15 +37,7 @@
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
 class CSSUnresolvedColor;
-class Document;
-class RenderStyle;
-
-struct CSSUnresolvedColorResolutionContext;
 
 template<typename Descriptor, unsigned Index>
 using CSSUnresolvedRelativeColorComponent = GetComponentResultWithCalcAndSymbolsResult<Descriptor, Index>;
@@ -79,29 +73,63 @@ String serializationForCSS(const CSSUnresolvedRelativeColor<Descriptor>& unresol
 }
 
 template<typename Descriptor>
-StyleColor createStyleColor(const CSSUnresolvedRelativeColor<Descriptor>& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
+auto simplify(const CSSColorParseTypeWithCalcAndSymbols<Descriptor>& components, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> CSSColorParseTypeWithCalcAndSymbols<Descriptor>
 {
-    return StyleColor {
-        StyleRelativeColor<Descriptor> {
-            .origin = unresolved.origin->createStyleColor(document, style, forVisitedLink),
-            .components = unresolved.components
-        }
+    return CSSColorParseTypeWithCalcAndSymbols<Descriptor> {
+        simplify(std::get<0>(components), conversionData, symbolTable),
+        simplify(std::get<1>(components), conversionData, symbolTable),
+        simplify(std::get<2>(components), conversionData, symbolTable),
+        simplify(std::get<3>(components), conversionData, symbolTable)
     };
 }
 
 template<typename Descriptor>
-Color createColor(const CSSUnresolvedRelativeColor<Descriptor>& unresolved, const CSSUnresolvedColorResolutionContext& context)
+StyleColor createStyleColor(const CSSUnresolvedRelativeColor<Descriptor>& unresolved, CSSUnresolvedStyleColorResolutionState& state)
 {
-    auto origin = unresolved.origin->createColor(context);
+    CSSUnresolvedStyleColorResolutionNester nester { state };
+
+    auto origin = unresolved.origin->createStyleColor(state);
+    if (!origin.isAbsoluteColor()) {
+        // If the origin is not absolute, we cannot fully resolve the color yet. Instead, we simplify the calc values using the conversion data, and return a StyleRelativeColor to be resolved at use time.
+        return StyleColor {
+            StyleRelativeColor<Descriptor> {
+                .origin = WTFMove(origin),
+                .components = simplify(unresolved.components, state.conversionData, CSSCalcSymbolTable { })
+            }
+        };
+    }
+
+    // If the origin is absolute, we can fully resolve the entire color.
+    auto color = resolve(
+        CSSRelativeColorResolver<Descriptor> {
+            .origin = origin.absoluteColor(),
+            .components = unresolved.components
+        },
+        state.conversionData
+    );
+
+    return { StyleAbsoluteColor { WTFMove(color) } };
+}
+
+template<typename Descriptor>
+Color createColor(const CSSUnresolvedRelativeColor<Descriptor>& unresolved, CSSUnresolvedColorResolutionState& state)
+{
+    auto origin = unresolved.origin->createColor(state);
     if (!origin.isValid())
         return { };
 
-    return resolve(
-        CSSRelativeColorResolver<Descriptor> {
-            .origin = WTFMove(origin),
-            .components = unresolved.components
-        }
-    );
+    auto resolver = CSSRelativeColorResolver<Descriptor> {
+        .origin = WTFMove(origin),
+        .components = unresolved.components
+    };
+
+    if (state.conversionData)
+        return resolve(WTFMove(resolver), *state.conversionData);
+
+    if (!requiresConversionData(resolver))
+        return resolveNoConversionDataRequired(WTFMove(resolver));
+
+    return { };
 }
 
 template<typename Descriptor>

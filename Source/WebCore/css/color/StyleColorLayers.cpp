@@ -35,21 +35,6 @@ namespace WebCore {
 
 // MARK: Resolve
 
-std::optional<Color> resolveAbsoluteComponents(const StyleColorLayers& colorLayers)
-{
-    if (containsNonAbsoluteColor(colorLayers))
-        return std::nullopt;
-
-    return blendSourceOver(
-        CSSColorLayersResolver {
-            .blendMode = colorLayers.blendMode,
-            .colors = colorLayers.colors.map([&](auto& color) {
-                return color.absoluteColor();
-            })
-        }
-    );
-}
-
 Color resolveColor(const StyleColorLayers& colorLayers, const Color& currentColor)
 {
     return blendSourceOver(
