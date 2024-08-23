@@ -42,13 +42,9 @@
 
 OBJC_CLASS NSDictionary;
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebCore {
 using SandboxFlags = int;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -62,7 +58,7 @@ struct LoadParameters {
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;
 
-    std::span<const uint8_t> data;
+    RefPtr<WebCore::SharedBuffer> data;
     String MIMEType;
     String encodingName;
 

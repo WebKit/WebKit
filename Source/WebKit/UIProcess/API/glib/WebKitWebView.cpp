@@ -3364,7 +3364,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }, "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
+    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
 }
 
 /**
@@ -3405,7 +3405,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(span8(plainText), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(span8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**
@@ -3434,7 +3434,7 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     gconstpointer bytesData = g_bytes_get_data(bytes, &bytesDataSize);
     g_return_if_fail(bytesDataSize);
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(bytesData), bytesDataSize }, mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(bytesData), bytesDataSize }), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
 }
 
