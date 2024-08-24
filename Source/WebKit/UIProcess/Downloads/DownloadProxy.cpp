@@ -162,6 +162,12 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
 
         setDestinationFilename(destination);
         completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+        bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
+        if (!destination.isEmpty() && shouldEnableModernDownloadProgress)
+            publishProgress(URL::fileURLWithFileSystemPath(destination));
+#endif
     });
 }
 
