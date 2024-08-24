@@ -2175,7 +2175,7 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
     if (!page)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto scrollingCoordinator = page->scrollingCoordinator();
+    RefPtr scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
         return Exception { ExceptionCode::InvalidAccessError };
 
@@ -3441,7 +3441,7 @@ ExceptionOr<String> Internals::scrollingTreeAsText() const
     if (!page)
         return String();
 
-    auto scrollingCoordinator = page->scrollingCoordinator();
+    RefPtr scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
         return String();
 
@@ -3461,7 +3461,7 @@ ExceptionOr<bool> Internals::haveScrollingTree() const
     if (!page)
         return false;
 
-    auto scrollingCoordinator = page->scrollingCoordinator();
+    RefPtr scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
         return false;
 
