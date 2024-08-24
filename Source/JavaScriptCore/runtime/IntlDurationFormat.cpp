@@ -377,12 +377,12 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             }
             if (nextStyle == IntlDurationFormat::UnitStyle::Numeric) {
                 if (unit == TemporalUnit::Second)
-                    value = value + duration[TemporalUnit::Millisecond] / 1000.0 + duration[TemporalUnit::Microsecond] / 1000000.0 + duration[TemporalUnit::Nanosecond] / 1000000000.0;
+                    value = duration[TemporalUnit::Nanosecond] / 1e9 + duration[TemporalUnit::Microsecond] / 1e6 + duration[TemporalUnit::Millisecond] / 1e3 + duration[TemporalUnit::Second];
                 else if (unit == TemporalUnit::Millisecond)
-                    value = value + duration[TemporalUnit::Microsecond] / 1000.0 + duration[TemporalUnit::Nanosecond] / 1000000.0;
+                    value = duration[TemporalUnit::Nanosecond] / 1e6 + duration[TemporalUnit::Microsecond] / 1e3 + duration[TemporalUnit::Millisecond];
                 else {
                     ASSERT(unit == TemporalUnit::Microsecond);
-                    value = value + duration[TemporalUnit::Nanosecond] / 1000.0;
+                    value = duration[TemporalUnit::Nanosecond] / 1e3 + duration[TemporalUnit::Microsecond];
                 }
                 // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#fraction-precision
                 skeletonBuilder.append(" ."_s);
