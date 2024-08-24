@@ -1,3 +1,3 @@
 
-FAIL If forward pruning clobbers the target of a traverse, abort assert_unreached: navigateerror should not fire Reached unreachable code
+PASS If forward pruning clobbers the target of a traverse, abort
 

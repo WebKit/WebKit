@@ -148,6 +148,8 @@ public:
 
     void abortOngoingNavigationIfNeeded();
 
+    std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
+
 private:
     explicit Navigation(LocalDOMWindow&);
 
@@ -158,8 +160,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     bool hasEntriesAndEventsDisabled() const;
-    Result performTraversal(const String& key, Navigation::Options, FrameLoadType, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
-    std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
+    Result performTraversal(const String& key, Navigation::Options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
     ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
     bool innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
 

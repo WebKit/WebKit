@@ -50,6 +50,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "Navigation.h"
 #include "NavigationDisabler.h"
 #include "Page.h"
 #include "PolicyChecker.h"
@@ -313,6 +314,58 @@ public:
 
 private:
     Ref<HistoryItem> m_historyItem;
+};
+
+// This matches ScheduledHistoryNavigation, but instead of having a HistoryItem provided, it finds
+// the HistoryItem corresponding to the provided Navigation API key:
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-navigation-api-key
+class ScheduledHistoryNavigationByKey : public ScheduledNavigation {
+public:
+    explicit ScheduledHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
+        : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
+        , m_key(key)
+        , m_completionHandler(WTFMove(completionHandler))
+    {
+    }
+
+    ~ScheduledHistoryNavigationByKey()
+    {
+        if (m_completionHandler)
+            m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
+    }
+
+    void fire(Frame& frame) override
+    {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        RefPtr page { frame.page() };
+        if (!page || !localFrame) {
+            m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
+            return;
+        }
+
+        auto entry = localFrame->window()->navigation().findEntryByKey(m_key);
+        if (!entry) {
+            m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
+            return;
+        }
+        Ref historyItem = entry.value()->associatedHistoryItem();
+
+        UserGestureIndicator gestureIndicator(userGestureToForward());
+
+        if (page->backForward().currentItem() == historyItem.ptr()) {
+            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
+                localFrame->checkedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+            return;
+        }
+
+        auto completionHandler = std::exchange(m_completionHandler, nullptr);
+        page->goToItem(page->mainFrame(), historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        completionHandler(ScheduleHistoryNavigationResult::Completed);
+    }
+
+private:
+    String m_key;
+    CompletionHandler<void(ScheduleHistoryNavigationResult)> m_completionHandler;
 };
 
 class ScheduledFormSubmission final : public ScheduledNavigation {
@@ -633,6 +686,16 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
 
     // In all other cases, schedule the history traversal to occur asynchronously.
     schedule(makeUnique<ScheduledHistoryNavigation>(historyItem.releaseNonNull()));
+}
+
+void NavigationScheduler::scheduleHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
+{
+    if (!shouldScheduleNavigation()) {
+        completionHandler(ScheduleHistoryNavigationResult::Aborted);
+        return;
+    }
+
+    schedule(makeUnique<ScheduledHistoryNavigationByKey>(key, WTFMove(completionHandler)));
 }
 
 void NavigationScheduler::schedulePageBlock(Document& originDocument)
