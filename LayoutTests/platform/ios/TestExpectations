@@ -7523,9 +7523,6 @@ imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ 
 # webkit.org/b/278330 [ iOS ] imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html is a flaky text failure
 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]
 
-# webkit.org/b/277903 [ iOS Release ] imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html is a flaky failure
-imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html [ Pass Failure ] 
-
 # webkit.org/b/278332 [ iOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
 imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
 
