@@ -68,13 +68,13 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
-    // Spec: Clamp distance to [0, length].
-    distance = clampTo<float>(distance, 0, getTotalLength());
-
     auto* renderer = this->renderer();
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
         return Exception { ExceptionCode::InvalidStateError };
+
+    // Spec: Clamp distance to [0, length].
+    distance = clampTo<float>(distance, 0, getTotalLength());
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
