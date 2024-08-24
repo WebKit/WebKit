@@ -34,7 +34,6 @@ namespace NetworkCache {
 
 Data::Data(std::span<const uint8_t> data)
     : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(data.size())))
-    , m_size(data.size())
 {
     memcpy(std::get<Vector<uint8_t>>(*m_buffer).data(), data.data(), data.size());
 }
@@ -43,10 +42,6 @@ Data::Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
     : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
     , m_isMap(std::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
 {
-    m_size = WTF::switchOn(*m_buffer,
-        [](const Vector<uint8_t>& buffer) -> size_t { return buffer.size(); },
-        [](const FileSystem::MappedFileData& mappedFile) -> size_t { return mappedFile.size(); }
-    );
 }
 
 Data Data::empty()
@@ -63,6 +58,16 @@ std::span<const uint8_t> Data::span() const
     return WTF::switchOn(*m_buffer,
         [](const Vector<uint8_t>& buffer) { return buffer.span(); },
         [](const FileSystem::MappedFileData& mappedFile) { return mappedFile.span(); }
+    );
+}
+
+size_t Data::size() const
+{
+    if (!m_buffer)
+        return 0;
+    return WTF::switchOn(*m_buffer,
+        [](const Vector<uint8_t>& buffer) -> size_t { return buffer.size(); },
+        [](const FileSystem::MappedFileData& mappedFile) -> size_t { return mappedFile.size(); }
     );
 }
 
@@ -118,7 +123,7 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
     if (!newHandle)
         return nullptr;
 
-    return WebCore::SharedMemory::map({ WTFMove(newHandle), m_size }, WebCore::SharedMemory::Protection::ReadOnly);
+    return WebCore::SharedMemory::map({ WTFMove(newHandle), size() }, WebCore::SharedMemory::Protection::ReadOnly);
 }
 #endif
 
