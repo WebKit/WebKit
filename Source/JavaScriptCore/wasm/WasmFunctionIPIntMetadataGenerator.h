@@ -82,7 +82,7 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode.data(); }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
-    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+    UnsafeHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
     unsigned addSignature(const TypeDefinition&);
 
@@ -115,7 +115,7 @@ private:
     Vector<uint8_t, 16> m_argumINTBytecode { };
 
     Vector<const TypeDefinition*> m_signatures;
-    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    UnsafeHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
     // Optimization to skip large numbers of blocks

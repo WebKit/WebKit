@@ -132,12 +132,12 @@ private:
     void closeSQLiteDB();
     void close() final;
 
-    bool migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
-    bool migrateIndexRecordsTableForIDUpdate(const HashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
+    bool migrateIndexInfoTableForIDUpdate(const UnsafeHashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
+    bool migrateIndexRecordsTableForIDUpdate(const UnsafeHashMap<std::pair<uint64_t, uint64_t>, uint64_t>& indexIDMap);
 
     bool removeExistingIndex(uint64_t indexID);
     bool addExistingIndex(IDBObjectStoreInfo&, const IDBIndexInfo&);
-    bool handleDuplicateIndexIDs(const HashMap<uint64_t, Vector<IDBIndexInfo>>&, IDBDatabaseInfo&);
+    bool handleDuplicateIndexIDs(const UnsafeHashMap<uint64_t, Vector<IDBIndexInfo>>&, IDBDatabaseInfo&);
 
     enum class SQL : size_t {
         CreateObjectStoreInfo,
@@ -210,8 +210,8 @@ private:
 
     std::unique_ptr<SQLiteDatabase> m_sqliteDB;
 
-    HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
-    HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
+    UnsafeHashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
+    UnsafeHashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
 
     String m_databaseDirectory;
 };

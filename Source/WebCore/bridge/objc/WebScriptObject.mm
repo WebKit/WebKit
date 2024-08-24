@@ -74,9 +74,9 @@ static Lock wrapperCacheLock;
 static CreateWrapperFunction createDOMWrapperFunction;
 static DisconnectWindowWrapperFunction disconnectWindowWrapperFunction;
 
-static HashMap<JSObject*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
+static UnsafeHashMap<JSObject*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 {
-    static NeverDestroyed<HashMap<JSObject*, NSObject *>> map;
+    static NeverDestroyed<UnsafeHashMap<JSObject*, NSObject *>> map;
     return map;
 }
 

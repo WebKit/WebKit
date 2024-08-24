@@ -50,7 +50,7 @@ private:
 };
 
 using StackMap = FixedVector<OSREntryValue>;
-using StackMaps = HashMap<CallSiteIndex, StackMap>;
+using StackMaps = UnsafeHashMap<CallSiteIndex, StackMap>;
 
 class OSREntryData {
     WTF_MAKE_NONCOPYABLE(OSREntryData);

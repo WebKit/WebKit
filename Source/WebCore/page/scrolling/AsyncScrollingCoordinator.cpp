@@ -113,6 +113,12 @@ RefPtr<ScrollingStateNode> AsyncScrollingCoordinator::stateNodeForNodeID(Scrolli
         return nullptr;
     }, [&] (const KeyValuePair<FrameIdentifier, UniqueRef<ScrollingStateTree>>& pair) {
         return pair.value->stateNodeForID(nodeID);
+    }, [&] (const UnsafeHashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> RefPtr<ScrollingStateNode> {
+        for (auto& tree : map.values()) {
+            if (RefPtr scrollingNode = tree->stateNodeForID(nodeID))
+                return scrollingNode;
+        }
+        return nullptr;
     }, [&] (const HashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> RefPtr<ScrollingStateNode> {
         for (auto& tree : map.values()) {
             if (RefPtr scrollingNode = tree->stateNodeForID(nodeID))
@@ -160,6 +166,12 @@ ScrollingStateTree* AsyncScrollingCoordinator::stateTreeForNodeID(ScrollingNodeI
     }, [&] (const KeyValuePair<FrameIdentifier, UniqueRef<ScrollingStateTree>>& pair) -> ScrollingStateTree* {
         if (RefPtr scrollingNode = pair.value->stateNodeForID(nodeID))
             return pair.value.ptr();
+        return nullptr;
+    }, [&] (const UnsafeHashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> ScrollingStateTree* {
+        for (auto& tree : map.values()) {
+            if (RefPtr scrollingNode = tree->stateNodeForID(nodeID))
+                return tree.ptr();
+        }
         return nullptr;
     }, [&] (const HashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> ScrollingStateTree* {
         for (auto& tree : map.values()) {

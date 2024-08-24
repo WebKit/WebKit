@@ -426,7 +426,7 @@ private:
     HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
-    HashMap<int, RefPtr<DOMTimer>> m_timeouts;
+    UnsafeHashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
@@ -446,12 +446,12 @@ private:
 #endif
 
     RefPtr<ServiceWorker> m_activeServiceWorker;
-    HashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
+    UnsafeHashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
 
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;
 
-    HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
+    UnsafeHashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
     HashSet<Ref<DeferredPromise>> m_deferredPromises;
 
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };

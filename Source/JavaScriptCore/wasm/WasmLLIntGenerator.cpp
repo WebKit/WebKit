@@ -570,11 +570,11 @@ private:
     ModuleInformation& m_info;
     const unsigned m_functionIndex { UINT_MAX };
     Vector<VirtualRegister> m_normalizedArguments;
-    HashMap<Label*, Vector<SwitchEntry>> m_switches;
+    UnsafeHashMap<Label*, Vector<SwitchEntry>> m_switches;
     ExpressionType m_jsNullConstant;
     ExpressionType m_zeroConstant;
     ResultList m_uninitializedLocals;
-    HashMap<EncodedJSValue, VirtualRegister, WTF::IntHash<EncodedJSValue>, ConstantMapHashTraits> m_constantMap;
+    UnsafeHashMap<EncodedJSValue, VirtualRegister, WTF::IntHash<EncodedJSValue>, ConstantMapHashTraits> m_constantMap;
     Vector<VirtualRegister, 2> m_results;
     Checked<unsigned> m_stackSize { 0 };
     Checked<unsigned> m_maxStackSize { 0 };

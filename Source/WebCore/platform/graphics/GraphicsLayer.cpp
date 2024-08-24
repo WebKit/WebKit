@@ -111,7 +111,7 @@ String animatedPropertyIDAsString(AnimatedProperty property)
     return ""_s;
 }
 
-typedef HashMap<const GraphicsLayer*, Vector<FloatRect>> RepaintMap;
+typedef UnsafeHashMap<const GraphicsLayer*, Vector<FloatRect>> RepaintMap;
 static RepaintMap& repaintRectMap()
 {
     static NeverDestroyed<RepaintMap> map;

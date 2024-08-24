@@ -42,8 +42,8 @@ struct SelectorMatchingState {
 
     ContainerQueryEvaluationState containerQueryEvaluationState;
 
-    HashMap<HasPseudoClassCacheKey, HasPseudoClassMatch> hasPseudoClassMatchCache;
-    HashMap<HasPseudoClassFilterKey, std::unique_ptr<HasSelectorFilter>> hasPseudoClassSelectorFilters;
+    UnsafeHashMap<HasPseudoClassCacheKey, HasPseudoClassMatch> hasPseudoClassMatchCache;
+    UnsafeHashMap<HasPseudoClassFilterKey, std::unique_ptr<HasSelectorFilter>> hasPseudoClassSelectorFilters;
 };
 
 inline HasPseudoClassCacheKey makeHasPseudoClassCacheKey(const Element& element, const CSSSelector& selector)

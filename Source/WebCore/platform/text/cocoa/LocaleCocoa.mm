@@ -246,7 +246,7 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
 
 #endif
 
-using CanonicalLocaleMap = HashMap<AtomString, RetainPtr<CFStringRef>>;
+using CanonicalLocaleMap = UnsafeHashMap<AtomString, RetainPtr<CFStringRef>>;
 
 struct LocaleCache {
     AtomString m_key;

@@ -46,11 +46,11 @@ public:
     unsigned totalCharacters() const;
     float totalLength() const;
     float totalAnchorShift() const;
-    void layout(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+    void layout(UnsafeHashMap<SVGInlineTextBox*, AffineTransform>&) const;
 
 private:
     void processTextAnchorCorrection() const;
-    void buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>&) const;
+    void buildBoxTransformations(UnsafeHashMap<SVGInlineTextBox*, AffineTransform>&) const;
     void processTextLengthSpacingCorrection() const;
 
     bool isVerticalText() const { return m_chunkStyle & VerticalText; }

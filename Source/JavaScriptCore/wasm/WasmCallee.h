@@ -505,7 +505,7 @@ public:
     }
 #endif
 
-    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UnsafeHashMap<WasmInstructionStream::Offset, int>;
 
 private:
     IPIntCallee(FunctionIPIntMetadataGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
@@ -610,7 +610,7 @@ public:
     }
 #endif
 
-    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UnsafeHashMap<WasmInstructionStream::Offset, int>;
 
 private:
     LLIntCallee(FunctionCodeBlockGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);

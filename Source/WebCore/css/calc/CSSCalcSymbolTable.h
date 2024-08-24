@@ -47,7 +47,7 @@ public:
     bool contains(CSSValueID) const;
 
 private:
-    HashMap<CSSValueID, std::pair<CSSUnitType, double>> m_table;
+    UnsafeHashMap<CSSValueID, std::pair<CSSUnitType, double>> m_table;
 };
 
 }

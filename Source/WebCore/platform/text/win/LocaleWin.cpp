@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-typedef HashMap<String, LCID, ASCIICaseInsensitiveHash> NameToLCIDMap;
+typedef UnsafeHashMap<String, LCID, ASCIICaseInsensitiveHash> NameToLCIDMap;
 
 static String extractLanguageCode(const String& locale)
 {

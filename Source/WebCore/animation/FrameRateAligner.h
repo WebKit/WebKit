@@ -55,7 +55,7 @@ private:
         bool isNew { true };
     };
 
-    HashMap<FramesPerSecond, FrameRateData> m_frameRates;
+    UnsafeHashMap<FramesPerSecond, FrameRateData> m_frameRates;
     ReducedResolutionSeconds m_timestamp;
 };
 

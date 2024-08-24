@@ -224,7 +224,7 @@ void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCo
 {
     unsigned size = 0;
     WTF::switchOn(collection,
-        [&size] (const HashMap<Element*, String>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const UnsafeHashMap<Element*, String>& typedCollection) { size = typedCollection.size(); },
         [&size] (const HashSet<AXID>& typedCollection) { size = typedCollection.size(); },
         [&size] (const ListHashSet<Node*>& typedCollection) { size = typedCollection.size(); },
         [&size] (const ListHashSet<Ref<AccessibilityObject>>& typedCollection) { size = typedCollection.size(); },

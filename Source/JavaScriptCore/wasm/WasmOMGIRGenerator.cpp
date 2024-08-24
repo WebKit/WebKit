@@ -1102,8 +1102,8 @@ private:
     Vector<Variable*> m_stack;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     unsigned* m_osrEntryScratchBufferSize;
-    HashMap<ValueKey, Value*> m_constantPool;
-    HashMap<const TypeDefinition*, B3::Type> m_tupleMap;
+    UnsafeHashMap<ValueKey, Value*> m_constantPool;
+    UnsafeHashMap<const TypeDefinition*, B3::Type> m_tupleMap;
     InsertionSet m_constantInsertionValues;
     Vector<HeapAndValue<MemoryValue>> m_heapMemoryValues;
     Value* m_framePointer { nullptr };

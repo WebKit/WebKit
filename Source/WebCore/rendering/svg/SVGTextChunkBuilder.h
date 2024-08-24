@@ -50,7 +50,7 @@ public:
 
 private:
     Vector<SVGTextChunk> m_textChunks;
-    HashMap<SVGInlineTextBox*, AffineTransform> m_textBoxTransformations;
+    UnsafeHashMap<SVGInlineTextBox*, AffineTransform> m_textBoxTransformations;
 };
 
 } // namespace WebCore

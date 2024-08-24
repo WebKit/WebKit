@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-typedef HashMap<HWND, WindowMessageBroadcaster*> InstanceMap;
+typedef UnsafeHashMap<HWND, WindowMessageBroadcaster*> InstanceMap;
 
 static InstanceMap& instancesMap()
 {

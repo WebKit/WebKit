@@ -80,9 +80,9 @@ private:
 
     // Fonts are not ref'd to avoid cycles.
     // FIXME: Consider changing these maps to use WeakPtr instead of raw pointers.
-    using CharacterFallbackMap = HashMap<CharacterFallbackMapKey, Font*, CharacterFallbackMapKeyHash, CharacterFallbackMapKeyHashTraits>;
+    using CharacterFallbackMap = UnsafeHashMap<CharacterFallbackMapKey, Font*, CharacterFallbackMapKeyHash, CharacterFallbackMapKeyHashTraits>;
 
-    HashMap<const Font*, CharacterFallbackMap> m_characterFallbackMaps;
+    UnsafeHashMap<const Font*, CharacterFallbackMap> m_characterFallbackMaps;
 };
 
 } // namespace WebCore

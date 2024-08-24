@@ -105,9 +105,9 @@ private:
 
     VM& m_vm;
     Ref<CachedBytecode> m_cachedBytecode;
-    HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
+    UnsafeHashMap<ptrdiff_t, void*> m_offsetToPtrMap;
     Vector<std::function<void()>> m_finalizers;
-    HashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
+    UnsafeHashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
     RefPtr<SourceProvider> m_provider;
 };
 

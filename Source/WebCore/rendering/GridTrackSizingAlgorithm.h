@@ -332,7 +332,7 @@ private:
     SizingState m_sizingState;
 
     GridBaselineAlignment m_baselineAlignment;
-    using BaselineItemsCache = HashMap<SingleThreadWeakRef<const RenderBox>, bool>;
+    using BaselineItemsCache = UnsafeHashMap<SingleThreadWeakRef<const RenderBox>, bool>;
     BaselineItemsCache m_columnBaselineItemsMap;
     BaselineItemsCache m_rowBaselineItemsMap;
 

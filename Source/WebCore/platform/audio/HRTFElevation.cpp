@@ -57,9 +57,9 @@ constexpr size_t ResponseFrameSize = 256;
 constexpr float ResponseSampleRate = 44100;
 
 static Lock audioBusMapLock;
-static HashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
+static UnsafeHashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
 {
-    static NeverDestroyed<HashMap<String, RefPtr<AudioBus>>> audioBusMap;
+    static NeverDestroyed<UnsafeHashMap<String, RefPtr<AudioBus>>> audioBusMap;
     return audioBusMap;
 }
 

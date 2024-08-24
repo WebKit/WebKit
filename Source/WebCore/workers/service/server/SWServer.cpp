@@ -976,7 +976,7 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
 
     if (!contextConnection) {
         auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker.topRegistrableDomain(), [] {
-            return HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
+            return UnsafeHashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
         }).iterator->value;
         serviceWorkerRunRequestsForOrigin.ensure(worker.identifier(), [&] {
             return Vector<RunServiceWorkerCallback> { };

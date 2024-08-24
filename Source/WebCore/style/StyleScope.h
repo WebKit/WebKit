@@ -175,7 +175,7 @@ private:
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
-    using ResolverScopes = HashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
+    using ResolverScopes = UnsafeHashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
     ResolverScopes collectResolverScopes();
     template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
 
@@ -258,7 +258,7 @@ private:
     UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
 
     // FIXME: These (and some things above) are only relevant for the root scope.
-    HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
+    UnsafeHashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_anchorElements;
     AnchorsForAnchorName m_anchorsForAnchorName;

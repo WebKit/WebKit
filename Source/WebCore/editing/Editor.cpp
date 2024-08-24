@@ -2345,7 +2345,7 @@ void Editor::setWritingSuggestion(const String& fullTextWithPrediction, const Ch
 }
 #endif
 
-void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const UnsafeHashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
 {
     Ref document = protectedDocument();
     SetCompositionScope setCompositionScope(document.copyRef());

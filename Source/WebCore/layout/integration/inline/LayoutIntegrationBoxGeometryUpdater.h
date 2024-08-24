@@ -52,7 +52,7 @@ public:
     void updateGeometryAfterLayout(const Layout::ElementBox&);
 
     Layout::ConstraintsForInlineContent updateInlineContentConstraints();
-    HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
+    UnsafeHashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
 
 private:
     void updateLayoutBoxDimensions(const RenderBox&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
@@ -71,7 +71,7 @@ private:
 private:
     WeakPtr<BoxTree> m_boxTree;
     WeakPtr<Layout::LayoutState> m_layoutState;
-    HashMap<const Layout::ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    UnsafeHashMap<const Layout::ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
 };
 
 }

@@ -71,7 +71,7 @@ PageGroup::PageGroup(Page& page)
 
 PageGroup::~PageGroup() = default;
 
-typedef HashMap<String, PageGroup*> PageGroupMap;
+typedef UnsafeHashMap<String, PageGroup*> PageGroupMap;
 static PageGroupMap* pageGroups = nullptr;
 
 PageGroup* PageGroup::pageGroup(const String& groupName)

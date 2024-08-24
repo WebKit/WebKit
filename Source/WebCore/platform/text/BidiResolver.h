@@ -261,7 +261,7 @@ protected:
     WhitespaceCollapsingState<Iterator> m_whitespaceCollapsingState;
 
     unsigned m_nestedIsolateCount { 0 };
-    HashMap<Run*, unsigned> m_whitespaceCollapsingTransitionForIsolatedRun;
+    UnsafeHashMap<Run*, unsigned> m_whitespaceCollapsingTransitionForIsolatedRun;
 
 private:
     void raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to);

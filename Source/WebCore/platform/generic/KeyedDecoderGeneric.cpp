@@ -45,7 +45,7 @@ public:
     Node* get(const String& key) { return m_map.get(key); }
 
 private:
-    HashMap<String, std::unique_ptr<Node>> m_map;
+    UnsafeHashMap<String, std::unique_ptr<Node>> m_map;
 };
 
 static std::optional<String> readString(WTF::Persistence::Decoder& decoder)

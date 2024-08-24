@@ -97,10 +97,10 @@ private:
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
-    HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
+    UnsafeHashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
 
-    HashMap<uint64_t, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
-    HashMap<String, RefPtr<MemoryObjectStore>> m_objectStoresByName;
+    UnsafeHashMap<uint64_t, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
+    UnsafeHashMap<String, RefPtr<MemoryObjectStore>> m_objectStoresByName;
 };
 
 } // namespace IDBServer

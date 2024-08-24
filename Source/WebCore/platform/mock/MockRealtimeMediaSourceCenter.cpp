@@ -296,10 +296,10 @@ static Vector<MockMediaDevice>& devices()
     return devices;
 }
 
-static HashMap<String, MockMediaDevice>& deviceMap()
+static UnsafeHashMap<String, MockMediaDevice>& deviceMap()
 {
     static NeverDestroyed map = [] {
-        HashMap<String, MockMediaDevice> map;
+        UnsafeHashMap<String, MockMediaDevice> map;
         for (auto& device : devices())
             map.add(device.persistentId, device);
         return map;

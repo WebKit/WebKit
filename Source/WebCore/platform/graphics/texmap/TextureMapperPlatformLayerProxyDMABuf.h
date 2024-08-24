@@ -108,7 +108,7 @@ private:
     RefPtr<Thread> m_compositorThread;
 #endif
 
-    using LayerMap = HashMap<uintptr_t, Ref<DMABufLayer>, WTF::DefaultHash<uintptr_t>, WTF::UnsignedWithZeroKeyHashTraits<uintptr_t>>;
+    using LayerMap = UnsafeHashMap<uintptr_t, Ref<DMABufLayer>, WTF::DefaultHash<uintptr_t>, WTF::UnsignedWithZeroKeyHashTraits<uintptr_t>>;
     LayerMap m_layers;
 
     RefPtr<DMABufLayer> m_pendingLayer;

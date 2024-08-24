@@ -144,14 +144,14 @@ void CSSGroupingRule::cssTextForRules(StringBuilder& rules) const
     }
 }
 
-void CSSGroupingRule::appendCSSTextWithReplacementURLsForItems(StringBuilder& builder, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSGroupingRule::appendCSSTextWithReplacementURLsForItems(StringBuilder& builder, const UnsafeHashMap<String, String>& replacementURLStrings, const UnsafeHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder rules;
     cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
     appendCSSTextForItemsInternal(builder, rules);
 }
 
-void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSGroupingRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const UnsafeHashMap<String, String>& replacementURLStrings, const UnsafeHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0; index < childRules.size(); index++) {

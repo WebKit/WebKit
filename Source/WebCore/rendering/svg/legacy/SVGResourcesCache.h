@@ -76,7 +76,7 @@ private:
     void addResourcesFromRenderer(RenderElement&, const RenderStyle&);
     void removeResourcesFromRenderer(RenderElement&);
 
-    using CacheMap = HashMap<SingleThreadWeakRef<const RenderElement>, std::unique_ptr<SVGResources>>;
+    using CacheMap = UnsafeHashMap<SingleThreadWeakRef<const RenderElement>, std::unique_ptr<SVGResources>>;
     CacheMap m_cache;
 };
 

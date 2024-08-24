@@ -232,7 +232,7 @@ public:
 };
 
 struct NamedGridAreaMap {
-    HashMap<String, GridArea> map;
+    UnsafeHashMap<String, GridArea> map;
 
     friend bool operator==(const NamedGridAreaMap&, const NamedGridAreaMap&) = default;
 };

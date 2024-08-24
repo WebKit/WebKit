@@ -53,7 +53,7 @@ public:
     bool process(Value*, Dominators&);
     
 private:
-    HashMap<ValueKey, Matches> m_map;
+    UnsafeHashMap<ValueKey, Matches> m_map;
 };
 
 bool pureCSE(Procedure&);

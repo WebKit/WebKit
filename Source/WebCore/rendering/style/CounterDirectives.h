@@ -34,7 +34,7 @@ struct CounterDirectives {
 };
 
 struct CounterDirectiveMap {
-    HashMap<AtomString, CounterDirectives> map;
+    UnsafeHashMap<AtomString, CounterDirectives> map;
 };
 
 } // namespace WebCore

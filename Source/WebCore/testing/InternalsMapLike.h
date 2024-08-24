@@ -48,7 +48,7 @@ public:
 
 private:
     InternalsMapLike();
-    HashMap<String, unsigned> m_values;
+    UnsafeHashMap<String, unsigned> m_values;
 };
 
 } // namespace WebCore

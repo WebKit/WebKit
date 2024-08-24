@@ -134,11 +134,11 @@ struct WEBCORE_EXPORT AttributedString {
     };
 
     String string;
-    Vector<std::pair<Range, HashMap<String, AttributeValue>>> attributes;
-    std::optional<HashMap<String, AttributeValue>> documentAttributes;
+    Vector<std::pair<Range, UnsafeHashMap<String, AttributeValue>>> attributes;
+    std::optional<UnsafeHashMap<String, AttributeValue>> documentAttributes;
 
     AttributedString();
-    AttributedString(String&&, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&&, std::optional<HashMap<String, AttributeValue>>&&);
+    AttributedString(String&&, Vector<std::pair<Range, UnsafeHashMap<String, AttributeValue>>>&&, std::optional<UnsafeHashMap<String, AttributeValue>>&&);
     AttributedString(AttributedString&&);
     AttributedString(const AttributedString&);
     AttributedString& operator=(AttributedString&&);
@@ -147,7 +147,7 @@ struct WEBCORE_EXPORT AttributedString {
 
     static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
     static AttributedString fromNSAttributedString(RetainPtr<NSAttributedString>&&);
-    static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
+    static bool rangesAreSafe(const String&, const Vector<std::pair<Range, UnsafeHashMap<String, AttributeValue>>>&);
     RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
     RetainPtr<NSAttributedString> nsAttributedString() const;
     bool isNull() const;

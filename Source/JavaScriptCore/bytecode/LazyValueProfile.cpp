@@ -88,9 +88,9 @@ JSValue* CompressedLazyValueProfileHolder::addSpeculationFailureValueProfile(Byt
     return &m_data->speculationFailureValueProfileBuckets.last().second;
 }
 
-HashMap<BytecodeIndex, JSValue*> CompressedLazyValueProfileHolder::speculationFailureValueProfileBucketsMap()
+UnsafeHashMap<BytecodeIndex, JSValue*> CompressedLazyValueProfileHolder::speculationFailureValueProfileBucketsMap()
 {
-    HashMap<BytecodeIndex, JSValue*> result;
+    UnsafeHashMap<BytecodeIndex, JSValue*> result;
     if (m_data) {
         result.reserveInitialCapacity(m_data->speculationFailureValueProfileBuckets.size());
         for (auto& pair : m_data->speculationFailureValueProfileBuckets)

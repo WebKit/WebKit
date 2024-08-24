@@ -50,14 +50,14 @@ public:
         
         m_graph.clearReplacements();
         
-        HashMap<FrozenValue*, Node*> jsValues;
-        HashMap<FrozenValue*, Node*> doubleValues;
-        HashMap<FrozenValue*, Node*> int52Values;
+        UnsafeHashMap<FrozenValue*, Node*> jsValues;
+        UnsafeHashMap<FrozenValue*, Node*> doubleValues;
+        UnsafeHashMap<FrozenValue*, Node*> int52Values;
         
-        auto valuesFor = [&] (NodeType op) -> HashMap<FrozenValue*, Node*>& {
+        auto valuesFor = [&] (NodeType op) -> UnsafeHashMap<FrozenValue*, Node*>& {
             // Use a roundabout approach because clang thinks that this closure returning a
             // reference to a stack-allocated value in outer scope is a bug. It's not.
-            HashMap<FrozenValue*, Node*>* result;
+            UnsafeHashMap<FrozenValue*, Node*>* result;
             
             switch (op) {
             case JSConstant:
@@ -89,7 +89,7 @@ public:
                 case JSConstant:
                 case DoubleConstant:
                 case Int52Constant: {
-                    HashMap<FrozenValue*, Node*>& values = valuesFor(node->op());
+                    UnsafeHashMap<FrozenValue*, Node*>& values = valuesFor(node->op());
                     auto result = values.add(node->constant(), node);
                     if (result.isNewEntry)
                         node->origin = m_graph.block(0)->at(0)->origin;
@@ -109,7 +109,7 @@ public:
         
         // Insert the constants into the root block.
         InsertionSet insertionSet(m_graph);
-        auto insertConstants = [&] (const HashMap<FrozenValue*, Node*>& values) {
+        auto insertConstants = [&] (const UnsafeHashMap<FrozenValue*, Node*>& values) {
             for (auto& entry : values)
                 insertionSet.insert(0, entry.value);
         };

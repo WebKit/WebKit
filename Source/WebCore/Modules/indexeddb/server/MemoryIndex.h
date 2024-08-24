@@ -100,7 +100,7 @@ private:
 
     std::unique_ptr<IndexValueStore> m_records;
 
-    HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryIndexCursor>> m_cursors;
+    UnsafeHashMap<IDBResourceIdentifier, std::unique_ptr<MemoryIndexCursor>> m_cursors;
     HashSet<MemoryIndexCursor*> m_cleanCursors;
 };
 

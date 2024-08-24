@@ -97,14 +97,14 @@ private:
     RefPtr<WebCore::GraphicsContextGL> m_gl;
     XrFrameState m_frameState;
     Vector<XrView> m_frameViews;
-    HashMap<LayerHandle, std::unique_ptr<OpenXRLayer>> m_layers;
+    UnsafeHashMap<LayerHandle, std::unique_ptr<OpenXRLayer>> m_layers;
     LayerHandle m_handleIndex { 0 };
     std::unique_ptr<OpenXRInput> m_input;
     bool didNotifyInputInitialization { false };
 
-    using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
+    using ViewConfigurationPropertiesMap = UnsafeHashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationPropertiesMap m_viewConfigurationProperties;
-    using ViewConfigurationViewsMap = HashMap<XrViewConfigurationType, Vector<XrViewConfigurationView>, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
+    using ViewConfigurationViewsMap = UnsafeHashMap<XrViewConfigurationType, Vector<XrViewConfigurationView>, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationViewsMap m_configurationViews;
     XrViewConfigurationType m_currentViewConfigurationType;
     XrSpace m_localSpace { XR_NULL_HANDLE };

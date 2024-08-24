@@ -70,7 +70,7 @@ Bytecodes* Database::ensureBytecodesFor(const AbstractLocker&, CodeBlock* codeBl
 {
     codeBlock = codeBlock->baselineAlternative();
     
-    HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
+    UnsafeHashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
     if (iter != m_bytecodesMap.end())
         return iter->value;
     

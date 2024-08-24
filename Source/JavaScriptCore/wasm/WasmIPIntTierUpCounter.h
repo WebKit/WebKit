@@ -53,7 +53,7 @@ public:
         uint32_t tryDepth;
     };
 
-    IPIntTierUpCounter(HashMap<IPIntPC, OSREntryData>&& osrEntryData)
+    IPIntTierUpCounter(UnsafeHashMap<IPIntPC, OSREntryData>&& osrEntryData)
         : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
@@ -98,7 +98,7 @@ public:
     Lock m_lock;
     std::array<CompilationStatus, numberOfMemoryModes> m_compilationStatus;
     std::array<CompilationStatus, numberOfMemoryModes> m_loopCompilationStatus;
-    HashMap<IPIntPC, OSREntryData> m_osrEntryData;
+    UnsafeHashMap<IPIntPC, OSREntryData> m_osrEntryData;
 };
 
 } } // namespace JSC::Wasm

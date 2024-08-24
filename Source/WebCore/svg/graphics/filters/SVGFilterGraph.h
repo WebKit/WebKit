@@ -167,9 +167,9 @@ private:
         return true;
     }
 
-    HashMap<AtomString, Ref<NodeType>> m_sourceNodes;
-    HashMap<AtomString, Ref<NodeType>> m_namedNodes;
-    HashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
+    UnsafeHashMap<AtomString, Ref<NodeType>> m_sourceNodes;
+    UnsafeHashMap<AtomString, Ref<NodeType>> m_namedNodes;
+    UnsafeHashMap<Ref<NodeType>, NodeVector> m_nodeInputs;
     RefPtr<NodeType> m_lastNode;
 };
 

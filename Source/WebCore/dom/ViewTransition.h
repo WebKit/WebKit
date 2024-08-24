@@ -137,7 +137,7 @@ public:
 
 private:
     ListHashSet<AtomString> m_keys;
-    HashMap<AtomString, UniqueRef<CapturedElement>> m_map;
+    UnsafeHashMap<AtomString, UniqueRef<CapturedElement>> m_map;
 };
 
 struct ViewTransitionParams {

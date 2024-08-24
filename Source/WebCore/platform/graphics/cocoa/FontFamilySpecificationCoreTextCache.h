@@ -78,7 +78,7 @@ public:
     void clear();
 
 private:
-    HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
+    UnsafeHashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>> m_fonts;
 };
 
 template<typename Functor> FontPlatformData& FontFamilySpecificationCoreTextCache::ensure(FontFamilySpecificationKey&& key, Functor&& functor)

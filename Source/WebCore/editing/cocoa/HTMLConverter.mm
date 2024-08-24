@@ -147,7 +147,7 @@ public:
     bool isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
-    HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
+    UnsafeHashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
     HashSet<Ref<Node>> m_ancestorsUnderCommonAncestor;
 };
 
@@ -176,9 +176,9 @@ private:
     Position m_end;
     DocumentLoader* m_dataSource { nullptr };
     
-    HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
-    HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
-    HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
+    UnsafeHashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
+    UnsafeHashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
+    UnsafeHashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
     UserSelectNoneStateCache m_userSelectNoneStateCache;
     bool m_ignoreUserSelectNoneContent { false };

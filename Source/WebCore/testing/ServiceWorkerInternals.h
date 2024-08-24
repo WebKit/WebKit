@@ -81,7 +81,7 @@ private:
 
     ServiceWorkerIdentifier m_identifier;
     RefPtr<DeferredPromise> m_lastNavigationWasAppInitiatedPromise;
-    HashMap<uint64_t, RefPtr<DeferredPromise>> m_pushEventPromises;
+    UnsafeHashMap<uint64_t, RefPtr<DeferredPromise>> m_pushEventPromises;
     uint64_t m_pushEventCounter { 0 };
 };
 

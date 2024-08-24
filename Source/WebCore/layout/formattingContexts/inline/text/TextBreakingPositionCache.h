@@ -56,7 +56,7 @@ private:
     void evict();
 
 private:
-    using TextBreakingPositionMap = HashMap<Key, List>;
+    using TextBreakingPositionMap = UnsafeHashMap<Key, List>;
     TextBreakingPositionMap m_breakingPositionMap;
     size_t m_cachedContentSize { 0 };
     Timer m_delayedEvictionTimer;

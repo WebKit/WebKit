@@ -224,7 +224,7 @@ private:
     
     OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
-    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
+    typedef UnsafeHashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
 
     static RareDataMap& rareDataMap();
 

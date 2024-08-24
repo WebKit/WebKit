@@ -3052,7 +3052,7 @@ private:
         for (unsigned i = 0; i < numCases; ++i)
             cases[i] = m_blockInsertionSet.insertBefore(m_block);
 
-        HashMap<Value*, Value*> mappings[2];
+        UnsafeHashMap<Value*, Value*> mappings[2];
 
         // Save things we want to know about the source.
         Value* predicate = source->child(0);
@@ -3637,7 +3637,7 @@ private:
     Procedure& m_proc;
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
-    HashMap<ValueKey, Value*> m_valueForConstant;
+    UnsafeHashMap<ValueKey, Value*> m_valueForConstant;
     BasicBlock* m_root { nullptr };
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };

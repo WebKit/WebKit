@@ -41,7 +41,7 @@ class MemoryIDBBackingStore;
 class MemoryIndex;
 class MemoryObjectStore;
 
-typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
+typedef UnsafeHashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryBackingStoreTransaction {
     WTF_MAKE_TZONE_ALLOCATED(MemoryBackingStoreTransaction);
@@ -90,15 +90,15 @@ private:
     HashSet<RefPtr<MemoryIndex>> m_indexes;
     HashSet<RefPtr<MemoryIndex>> m_versionChangeAddedIndexes;
 
-    HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
-    HashMap<String, RefPtr<MemoryObjectStore>> m_deletedObjectStores;
-    HashMap<String, RefPtr<MemoryIndex>> m_deletedIndexes;
-    HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
-    HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
-    HashMap<MemoryObjectStore*, std::unique_ptr<IDBKeyDataSet>> m_clearedOrderedKeys;
-    HashMap<MemoryObjectStore*, String> m_originalObjectStoreNames;
-    HashMap<MemoryIndex*, String> m_originalIndexNames;
-    HashMap<MemoryIndex*, std::unique_ptr<IndexValueStore>> m_clearedIndexValueStores;
+    UnsafeHashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
+    UnsafeHashMap<String, RefPtr<MemoryObjectStore>> m_deletedObjectStores;
+    UnsafeHashMap<String, RefPtr<MemoryIndex>> m_deletedIndexes;
+    UnsafeHashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
+    UnsafeHashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
+    UnsafeHashMap<MemoryObjectStore*, std::unique_ptr<IDBKeyDataSet>> m_clearedOrderedKeys;
+    UnsafeHashMap<MemoryObjectStore*, String> m_originalObjectStoreNames;
+    UnsafeHashMap<MemoryIndex*, String> m_originalIndexNames;
+    UnsafeHashMap<MemoryIndex*, std::unique_ptr<IndexValueStore>> m_clearedIndexValueStores;
 };
 
 } // namespace IDBServer

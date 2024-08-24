@@ -50,7 +50,7 @@ struct ICStatus {
     DeleteByStatus* deleteStatus { nullptr };
 };
 
-typedef HashMap<CodeOrigin, ICStatus, CodeOriginApproximateHash> ICStatusMap;
+typedef UnsafeHashMap<CodeOrigin, ICStatus, CodeOriginApproximateHash> ICStatusMap;
 
 struct ICStatusContext {
     ICStatus get(CodeOrigin) const;

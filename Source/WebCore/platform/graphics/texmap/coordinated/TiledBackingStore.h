@@ -78,7 +78,7 @@ private:
 private:
     TiledBackingStoreClient& m_client;
 
-    typedef HashMap<Tile::Coordinate, std::unique_ptr<Tile>> TileMap;
+    typedef UnsafeHashMap<Tile::Coordinate, std::unique_ptr<Tile>> TileMap;
     TileMap m_tiles;
 
     IntSize m_tileSize;

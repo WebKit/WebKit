@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-inline MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&& observers, MutationRecordDeliveryOptions oldValueFlag)
+inline MutationObserverInterestGroup::MutationObserverInterestGroup(UnsafeHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&& observers, MutationRecordDeliveryOptions oldValueFlag)
     : m_observers(WTFMove(observers))
     , m_oldValueFlag(oldValueFlag)
 {

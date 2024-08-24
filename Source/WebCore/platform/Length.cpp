@@ -138,7 +138,7 @@ private:
     };
 
     unsigned m_nextAvailableHandle;
-    HashMap<unsigned, Entry> m_map;
+    UnsafeHashMap<unsigned, Entry> m_map;
 };
 
 inline CalculationValueMap::Entry::Entry(Ref<CalculationValue>&& value)

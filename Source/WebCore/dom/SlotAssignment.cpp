@@ -39,7 +39,7 @@ using namespace HTMLNames;
 struct SameSizeAsNamedSlotAssignment {
     virtual ~SameSizeAsNamedSlotAssignment() = default;
     uint32_t values[4];
-    HashMap<void*, void*> pointer;
+    UnsafeHashMap<void*, void*> pointer;
 #if ASSERT_ENABLED
     WeakHashSet<Element> hashSet;
 #endif

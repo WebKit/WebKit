@@ -103,7 +103,7 @@ String CSSImportRule::cssText() const
     return cssTextInternal(m_importRule->href());
 }
 
-String CSSImportRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSImportRule::cssTextWithReplacementURLs(const UnsafeHashMap<String, String>& replacementURLStrings, const UnsafeHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     if (RefPtr sheet = styleSheet()) {
         auto urlString = replacementURLStringsForCSSStyleSheet.get(sheet);

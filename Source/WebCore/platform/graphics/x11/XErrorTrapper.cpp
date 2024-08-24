@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-static HashMap<Display*, Vector<XErrorTrapper*>>& xErrorTrappersMap()
+static UnsafeHashMap<Display*, Vector<XErrorTrapper*>>& xErrorTrappersMap()
 {
-    static NeverDestroyed<HashMap<Display*, Vector<XErrorTrapper*>>> trappersMap;
+    static NeverDestroyed<UnsafeHashMap<Display*, Vector<XErrorTrapper*>>> trappersMap;
     return trappersMap;
 }
 

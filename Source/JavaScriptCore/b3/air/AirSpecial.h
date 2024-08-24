@@ -68,7 +68,7 @@ public:
     //    Air didn't duplicate code or that such duplication didn't cause any interesting changes to
     //    register assignment.
     //
-    // 2) Have the Special maintain a HashMap<Inst*, RegisterSetBuilder>. This works because the analysis
+    // 2) Have the Special maintain a UnsafeHashMap<Inst*, RegisterSetBuilder>. This works because the analysis
     //    that feeds into this call is performed just before code generation and there is no way
     //    for the Vector<>'s that contain the Insts to be reallocated. This allows generate() to
     //    consult the HashMap.

@@ -648,7 +648,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     };
 
     using GetterSetterPair = std::pair<PropertyNode*, PropertyNode*>;
-    using GetterSetterMap = HashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash>;
+    using GetterSetterMap = UnsafeHashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash>;
 
     if (hasPrivateAccessors()) {
         GetterSetterMap privateAccessorMap;

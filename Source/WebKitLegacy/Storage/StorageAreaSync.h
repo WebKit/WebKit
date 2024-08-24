@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ private:
     StorageAreaSync(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, const String& databaseIdentifier);
 
     WebCore::Timer m_syncTimer;
-    HashMap<String, String> m_changedItems;
+    UnsafeHashMap<String, String> m_changedItems;
     bool m_itemsCleared;
 
     bool m_finalSyncScheduled;
@@ -84,12 +84,12 @@ private:
 
     void syncTimerFired();
     void openDatabase(OpenDatabaseParamType openingStrategy);
-    void sync(bool clearItems, const HashMap<String, String>& items);
+    void sync(bool clearItems, const UnsafeHashMap<String, String>& items);
 
     const String m_databaseIdentifier;
 
     Lock m_syncLock;
-    HashMap<String, String> m_itemsPendingSync;
+    UnsafeHashMap<String, String> m_itemsPendingSync;
     bool m_clearItemsWhileSyncing;
     bool m_syncScheduled;
     bool m_syncInProgress;

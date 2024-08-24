@@ -98,7 +98,7 @@ public:
         return it->value.first && it->value.first->isRootFrame();
     }
 private:
-    HashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
+    UnsafeHashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
 };
 #endif
 

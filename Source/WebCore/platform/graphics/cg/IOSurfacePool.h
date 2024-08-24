@@ -76,8 +76,8 @@ private:
     };
 
     typedef Deque<std::unique_ptr<IOSurface>> CachedSurfaceQueue;
-    typedef HashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
-    typedef HashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
+    typedef UnsafeHashMap<IntSize, CachedSurfaceQueue> CachedSurfaceMap;
+    typedef UnsafeHashMap<IOSurface*, CachedSurfaceDetails> CachedSurfaceDetailsMap;
 
 #if PLATFORM(MAC)
     static constexpr size_t defaultMaximumBytesCached { 256 * MB };

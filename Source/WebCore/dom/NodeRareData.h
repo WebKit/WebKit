@@ -102,9 +102,9 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = DefaultHash<AtomString>::safeToCompareToEmptyOrDeleted;
     };
 
-    using NodeListCacheMap = HashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
-    using CollectionCacheMap = HashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
-    using TagCollectionNSCache = HashMap<QualifiedName, TagCollectionNS*>;
+    using NodeListCacheMap = UnsafeHashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
+    using CollectionCacheMap = UnsafeHashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
+    using TagCollectionNSCache = UnsafeHashMap<QualifiedName, TagCollectionNS*>;
 
     template<typename T, typename ContainerType>
     ALWAYS_INLINE Ref<T> addCacheWithAtomName(ContainerType& container, const AtomString& name)

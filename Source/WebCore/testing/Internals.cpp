@@ -7321,7 +7321,7 @@ String Internals::dumpStyleResolvers()
     document->updateStyleIfNeeded();
 
     unsigned currentIdentifier = 0;
-    HashMap<Style::Resolver*, unsigned> resolverIdentifiers;
+    UnsafeHashMap<Style::Resolver*, unsigned> resolverIdentifiers;
 
     StringBuilder result;
 

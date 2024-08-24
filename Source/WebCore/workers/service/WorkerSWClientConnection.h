@@ -88,24 +88,24 @@ private:
     struct SWClientRequestIdentifierType;
     using SWClientRequestIdentifier = AtomicObjectIdentifier<SWClientRequestIdentifierType>;
 
-    HashMap<SWClientRequestIdentifier, RegistrationCallback> m_matchRegistrationRequests;
-    HashMap<SWClientRequestIdentifier, GetRegistrationsCallback> m_getRegistrationsRequests;
-    HashMap<SWClientRequestIdentifier, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
-    HashMap<SWClientRequestIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
-    HashMap<SWClientRequestIdentifier, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
-    HashMap<SWClientRequestIdentifier, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
-    HashMap<SWClientRequestIdentifier, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
-    HashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
-    HashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
-    HashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
-    HashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
-    HashMap<SWClientRequestIdentifier, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
-    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
-    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrCookieChangeSubscriptionsCallback> m_cookieChangeSubscriptionsCallback;
+    UnsafeHashMap<SWClientRequestIdentifier, RegistrationCallback> m_matchRegistrationRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, GetRegistrationsCallback> m_getRegistrationsRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
+    UnsafeHashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
+    UnsafeHashMap<SWClientRequestIdentifier, ExceptionOrCookieChangeSubscriptionsCallback> m_cookieChangeSubscriptionsCallback;
 };
 
 } // namespace WebCore

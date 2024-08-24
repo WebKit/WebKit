@@ -142,7 +142,7 @@ private:
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 
-    HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
+    UnsafeHashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
     ProcessIdentity m_resourceOwner;
 };
 

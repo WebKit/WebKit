@@ -559,7 +559,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         PlaybackSpeed,
         ShowMediaStatsTag
     >;
-    HashMap<MenuItemIdentifier, MenuData> idMap;
+    UnsafeHashMap<MenuItemIdentifier, MenuData> idMap;
 
     auto createSubmenu = [] (const String& title, const String& icon, Vector<MenuItem>&& children) -> MenuItem {
 #if USE(UICONTEXTMENU)

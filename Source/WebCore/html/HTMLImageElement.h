@@ -218,7 +218,7 @@ private:
     bool isURLAttribute(const Attribute&) const override;
     bool attributeContainsURL(const Attribute&) const override;
     String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const override;
-    Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const UnsafeHashMap<String, String>&) const override;
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 

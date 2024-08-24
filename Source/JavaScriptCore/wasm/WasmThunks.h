@@ -66,7 +66,7 @@ public:
 private:
     Thunks() = default;
 
-    HashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> m_stubs;
+    UnsafeHashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> m_stubs;
     Lock m_lock;
 };
 

@@ -49,12 +49,12 @@ enum class AnchorPositionResolutionStage : uint8_t {
 struct AnchorPositionedState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    HashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
+    UnsafeHashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
     HashSet<String> anchorNames;
     AnchorPositionResolutionStage stage;
 };
 
-using AnchorsForAnchorName = HashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
+using AnchorsForAnchorName = UnsafeHashMap<String, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>>;
 using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 
 class AnchorPositionEvaluator {

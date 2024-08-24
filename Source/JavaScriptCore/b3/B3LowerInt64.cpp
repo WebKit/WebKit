@@ -1092,7 +1092,7 @@ private:
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
     bool m_changed;
-    HashMap<Value*, std::pair<Value*, Value*>> m_mapping;
+    UnsafeHashMap<Value*, std::pair<Value*, Value*>> m_mapping;
     HashSet<Value*> m_syntheticValues;
 };
 

@@ -155,7 +155,7 @@ private:
     OptionSet<VisibilityAdjustment> m_adjustmentToRestore;
 };
 
-using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
+using ElementSelectorCache = UnsafeHashMap<Ref<Element>, std::optional<String>>;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
@@ -971,7 +971,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
 
 static Vector<Ref<Element>> filterRedundantNearbyTargets(HashSet<Ref<Element>>&& unfilteredNearbyTargets)
 {
-    HashMap<Ref<Element>, bool> shouldKeepCache;
+    UnsafeHashMap<Ref<Element>, bool> shouldKeepCache;
     Vector<Ref<Element>> filteredResults;
 
     for (auto& originalTarget : unfilteredNearbyTargets) {

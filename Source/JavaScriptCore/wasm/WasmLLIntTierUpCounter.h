@@ -51,7 +51,7 @@ public:
         Vector<VirtualRegister> values;
     };
 
-    LLIntTierUpCounter(HashMap<WasmInstructionStream::Offset, OSREntryData>&& osrEntryData)
+    LLIntTierUpCounter(UnsafeHashMap<WasmInstructionStream::Offset, OSREntryData>&& osrEntryData)
         : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
@@ -93,7 +93,7 @@ public:
     Lock m_lock;
     std::array<CompilationStatus, numberOfMemoryModes> m_compilationStatus;
     std::array<CompilationStatus, numberOfMemoryModes> m_loopCompilationStatus;
-    HashMap<WasmInstructionStream::Offset, OSREntryData> m_osrEntryData;
+    UnsafeHashMap<WasmInstructionStream::Offset, OSREntryData> m_osrEntryData;
 };
 
 } } // namespace JSC::Wasm

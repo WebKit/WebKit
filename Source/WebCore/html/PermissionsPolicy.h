@@ -84,7 +84,7 @@ public:
     InheritedPolicy inheritedPolicy() const { return m_inheritedPolicy; }
 
     // https://w3c.github.io/webappsec-permissions-policy/#policy-directives
-    using PolicyDirective = HashMap<Feature, Allowlist, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
+    using PolicyDirective = UnsafeHashMap<Feature, Allowlist, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
     static PolicyDirective processPermissionsPolicyAttribute(const HTMLIFrameElement&);
 
 private:

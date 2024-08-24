@@ -81,7 +81,7 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
-using KeyframesRuleMap = HashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
+using KeyframesRuleMap = UnsafeHashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
 
 class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Resolver);

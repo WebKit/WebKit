@@ -55,7 +55,7 @@ private:
     // use the size only at construction and store store a std::span instead (or a variant
     // version could be made).
 
-    HashMap<CSSValueID, CSSUnitType> m_table;
+    UnsafeHashMap<CSSValueID, CSSUnitType> m_table;
 };
 
 }

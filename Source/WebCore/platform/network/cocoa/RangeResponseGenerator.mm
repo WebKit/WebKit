@@ -81,7 +81,7 @@ struct RangeResponseGenerator::Data {
             resource = nullptr;
         }
     }
-    HashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<RangeResponseGeneratorDataTaskData>> taskData;
+    UnsafeHashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<RangeResponseGeneratorDataTaskData>> taskData;
     SharedBufferBuilder buffer;
     ResourceResponse originalResponse;
     enum class SuccessfullyFinishedLoading : bool { No, Yes } successfullyFinishedLoading { SuccessfullyFinishedLoading::No };
@@ -95,7 +95,7 @@ RangeResponseGenerator::RangeResponseGenerator(RefCountedSerialFunctionDispatche
 
 RangeResponseGenerator::~RangeResponseGenerator() = default;
 
-HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
+UnsafeHashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
     assertIsCurrent(m_targetDispatcher.get());
     return m_map;

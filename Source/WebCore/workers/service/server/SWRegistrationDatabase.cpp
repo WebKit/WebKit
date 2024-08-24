@@ -148,15 +148,15 @@ static ASCIILiteral currentRecordsTableSchemaAlternate()
     return RECORDS_TABLE_SCHEMA_PREFIX "\"Records\"" RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static HashMap<URL, ImportedScriptAttributes> stripScriptSources(const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& map)
+static UnsafeHashMap<URL, ImportedScriptAttributes> stripScriptSources(const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& map)
 {
-    HashMap<URL, ImportedScriptAttributes> mapWithoutScripts;
+    UnsafeHashMap<URL, ImportedScriptAttributes> mapWithoutScripts;
     for (auto& pair : map)
         mapWithoutScripts.add(pair.key, ImportedScriptAttributes { pair.value.responseURL, pair.value.mimeType });
     return mapWithoutScripts;
 }
 
-static MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> populateScriptSourcesFromDisk(SWScriptStorage& scriptStorage, const ServiceWorkerRegistrationKey& registrationKey, HashMap<URL, ImportedScriptAttributes>&& map)
+static MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> populateScriptSourcesFromDisk(SWScriptStorage& scriptStorage, const ServiceWorkerRegistrationKey& registrationKey, UnsafeHashMap<URL, ImportedScriptAttributes>&& map)
 {
     MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> importedScripts;
     for (auto& pair : map) {
@@ -365,7 +365,7 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
         auto scriptResourceMapDataSpan = statement->columnBlobAsSpan(11);
         if (scriptResourceMapDataSpan.size()) {
             WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan);
-            std::optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
+            std::optional<UnsafeHashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
                 RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations failed to decode scriptResourceMapWithoutScripts");

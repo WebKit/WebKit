@@ -37,6 +37,6 @@ class DOMWrapperWorld;
 class UserStyleSheet;
 
 typedef Vector<std::unique_ptr<UserStyleSheet>> UserStyleSheetVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserStyleSheetVector>> UserStyleSheetMap;
+typedef UnsafeHashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserStyleSheetVector>> UserStyleSheetMap;
 
 } // namespace WebCore

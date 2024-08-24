@@ -81,7 +81,7 @@ public:
         // Cache for EGLImage objects corresponding to the buffers originating from the swapchain.
         // The swapchain is regenerated (and these EGLImage objects destroyed) upon each buffer reshaping,
         // so we should be fine without managing stale buffers and corresponding EGLImages (which shouldn't occur anyway).
-        HashMap<uint32_t, EGLImageKHR, WTF::DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> images;
+        UnsafeHashMap<uint32_t, EGLImageKHR, WTF::DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> images;
     };
 
     Swapchain& swapchain() { return m_swapchain; }

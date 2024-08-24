@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    using CommentMap = HashMap<uintptr_t, String>;
+    using CommentMap = UnsafeHashMap<uintptr_t, String>;
 
     void registerCodeRange(void* start, void* end, CommentMap&& map)
     {

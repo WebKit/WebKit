@@ -162,7 +162,7 @@ bool StorageMap::contains(const String& key) const
     return m_impl->map.contains(key);
 }
 
-void StorageMap::importItems(HashMap<String, String>&& items)
+void StorageMap::importItems(UnsafeHashMap<String, String>&& items)
 {
     RELEASE_ASSERT(m_impl->map.isEmpty());
     RELEASE_ASSERT(!m_impl->currentSize);

@@ -127,7 +127,7 @@ float SVGTextChunk::totalAnchorShift() const
     return m_chunkStyle & RightToLeftText ? -length : 0;
 }
 
-void SVGTextChunk::layout(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+void SVGTextChunk::layout(UnsafeHashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
 {
     if (hasDesiredTextLength()) {
         if (hasLengthAdjustSpacing())
@@ -163,7 +163,7 @@ void SVGTextChunk::processTextLengthSpacingCorrection() const
     }
 }
 
-void SVGTextChunk::buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+void SVGTextChunk::buildBoxTransformations(UnsafeHashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
 {
     AffineTransform spacingAndGlyphsTransform;
     bool foundFirstFragment = false;

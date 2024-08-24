@@ -52,7 +52,7 @@ private:
     TransformationMatrix adjustedTransformForRect(const FloatRect&);
 
     IntSize m_size;
-    HashMap<TileIndex, std::unique_ptr<TextureMapperTile>> m_tiles;
+    UnsafeHashMap<TileIndex, std::unique_ptr<TextureMapperTile>> m_tiles;
 };
 
 } // namespace WebCore

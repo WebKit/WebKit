@@ -164,7 +164,7 @@ public:
             break;
         }
 #if !defined(NDEBUG)
-        m_debugImpureData.removeIf([heap, clobberConservatively, this](const HashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
+        m_debugImpureData.removeIf([heap, clobberConservatively, this](const UnsafeHashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
             switch (heap.kind()) {
             case World:
             case SideState:
@@ -299,13 +299,13 @@ private:
     // a duplicate in the past and now only live in m_fallbackStackMap.
     //
     // Obviously, TOP always goes into m_fallbackStackMap since it does not have a unique value.
-    HashMap<int64_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_abstractHeapStackMap;
+    UnsafeHashMap<int64_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_abstractHeapStackMap;
     Map m_fallbackStackMap;
 
     Map m_heapMap;
 
 #if !defined(NDEBUG)
-    HashMap<HeapLocation, LazyNode> m_debugImpureData;
+    UnsafeHashMap<HeapLocation, LazyNode> m_debugImpureData;
 #endif
 };
 
@@ -463,7 +463,7 @@ private:
         }
 
     private:
-        HashMap<PureValue, Node*> m_pureMap;
+        UnsafeHashMap<PureValue, Node*> m_pureMap;
         ImpureMap m_impureMap;
     };
 
@@ -509,7 +509,7 @@ private:
         }
 
     private:
-        HashMap<PureValue, Node*> m_pureMap;
+        UnsafeHashMap<PureValue, Node*> m_pureMap;
         ImpureMap m_impureMap;
     };
 

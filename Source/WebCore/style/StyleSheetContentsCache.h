@@ -52,7 +52,7 @@ private:
 
     StyleSheetContentsCache();
 
-    HashMap<Key, Ref<StyleSheetContents>> m_cache;
+    UnsafeHashMap<Key, Ref<StyleSheetContents>> m_cache;
 };
 
 }

@@ -82,9 +82,9 @@ protected:
     const AXID m_id;
     static Lock s_storeLock;
 private:
-    static HashMap<AXID, WeakPtr<AXObjectCache>>& liveTreeMap();
+    static UnsafeHashMap<AXID, WeakPtr<AXObjectCache>>& liveTreeMap();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    static HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
+    static UnsafeHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& isolatedTreeMap() WTF_REQUIRES_LOCK(s_storeLock);
 #endif
 };
 
@@ -167,19 +167,19 @@ inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(AXID axID)
 #endif
 
 template<typename T>
-inline HashMap<AXID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
+inline UnsafeHashMap<AXID, WeakPtr<AXObjectCache>>& AXTreeStore<T>::liveTreeMap()
 {
     ASSERT(isMainThread());
 
-    static NeverDestroyed<HashMap<AXID, WeakPtr<AXObjectCache>>> map;
+    static NeverDestroyed<UnsafeHashMap<AXID, WeakPtr<AXObjectCache>>> map;
     return map;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
+inline UnsafeHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>& AXTreeStore<T>::isolatedTreeMap()
 {
-    static NeverDestroyed<HashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
+    static NeverDestroyed<UnsafeHashMap<AXID, ThreadSafeWeakPtr<AXIsolatedTree>>> map;
     return map;
 }
 #endif

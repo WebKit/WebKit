@@ -229,7 +229,7 @@ void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, Li
     }
 }
 
-String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const HashMap<String, String>& replacementURLStrings)
+String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const UnsafeHashMap<String, String>& replacementURLStrings)
 {
     if (replacementURLStrings.isEmpty())
         return attribute.toString();

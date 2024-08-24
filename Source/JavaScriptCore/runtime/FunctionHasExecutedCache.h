@@ -59,8 +59,8 @@ public:
     Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(SourceID);
 
 private:
-    using RangeMap = HashMap<GenericHashKey<FunctionRange, FunctionRange::Hash>, bool>;
-    using SourceIDToRangeMap = HashMap<GenericHashKey<intptr_t>, RangeMap>;
+    using RangeMap = UnsafeHashMap<GenericHashKey<FunctionRange, FunctionRange::Hash>, bool>;
+    using SourceIDToRangeMap = UnsafeHashMap<GenericHashKey<intptr_t>, RangeMap>;
     SourceIDToRangeMap m_rangeMap;
 };
 

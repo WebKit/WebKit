@@ -62,7 +62,7 @@ protected:
 
 private:
     LayoutState& m_layoutState;
-    HashMap<const Box*, IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
+    UnsafeHashMap<const Box*, IntrinsicWidthConstraints> m_intrinsicWidthConstraintsForBoxes;
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     Type m_type;
 };

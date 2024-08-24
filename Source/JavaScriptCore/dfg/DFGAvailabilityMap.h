@@ -79,7 +79,7 @@ struct AvailabilityMap {
     }
     
     Operands<Availability> m_locals;
-    HashMap<PromotedHeapLocation, Availability> m_heap;
+    UnsafeHashMap<PromotedHeapLocation, Availability> m_heap;
 };
 
 } } // namespace JSC::DFG

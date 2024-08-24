@@ -61,7 +61,7 @@ private:
         HashSet<CheckedRef<IdTargetObserver>> observers;
     };
 
-    using IdToObserverSetMap = HashMap<AtomString, std::unique_ptr<ObserverSet>>;
+    using IdToObserverSetMap = UnsafeHashMap<AtomString, std::unique_ptr<ObserverSet>>;
     IdToObserverSetMap m_registry;
     CheckedPtr<ObserverSet> m_notifyingObserversInSet;
 };

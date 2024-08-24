@@ -258,7 +258,7 @@ void XMLDocumentParser::pauseParsing()
 
 struct XMLParsingNamespaces {
     AtomString defaultNamespace;
-    HashMap<AtomString, AtomString> prefixNamespaces;
+    UnsafeHashMap<AtomString, AtomString> prefixNamespaces;
 };
 
 static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)

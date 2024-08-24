@@ -113,13 +113,13 @@ private:
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
     void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
 
-    HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
-    HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
+    UnsafeHashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
+    UnsafeHashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
 
-    HashMap<IDBDatabaseConnectionIdentifier, UniqueIDBDatabaseConnection*> m_databaseConnections;
-    HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
+    UnsafeHashMap<IDBDatabaseConnectionIdentifier, UniqueIDBDatabaseConnection*> m_databaseConnections;
+    UnsafeHashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
 
-    HashMap<uint64_t, Function<void ()>> m_deleteDatabaseCompletionHandlers;
+    UnsafeHashMap<uint64_t, Function<void ()>> m_deleteDatabaseCompletionHandlers;
 
     String m_databaseDirectoryPath;
 

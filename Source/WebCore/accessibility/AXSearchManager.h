@@ -102,7 +102,7 @@ private:
     bool matchForSearchKeyAtIndex(RefPtr<AXCoreObject>, const AccessibilitySearchCriteria&, size_t);
 
     // Keeps the ranges of misspellings for each object.
-    HashMap<AXID, Vector<CharacterRange>> m_spellCheckerResultRanges;
+    UnsafeHashMap<AXID, Vector<CharacterRange>> m_spellCheckerResultRanges;
 };
 
 inline AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjects(AccessibilitySearchCriteria&& criteria)

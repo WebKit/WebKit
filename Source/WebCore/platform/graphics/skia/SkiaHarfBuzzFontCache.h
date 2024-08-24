@@ -43,7 +43,7 @@ public:
     void clear();
 
 private:
-    HashMap<SkTypefaceID, RefPtr<SkiaHarfBuzzFont>> m_cache;
+    UnsafeHashMap<SkTypefaceID, RefPtr<SkiaHarfBuzzFont>> m_cache;
 };
 
 } // namespace WebCore

@@ -72,7 +72,7 @@ private:
     // This HashMap maps an attribute name to a pair of static methods. The first one creates a shared
     // Ref<SVGProperty> for the value type of this attribute. The second creates the animator given the
     // attribute name and the shared Ref<SVGProperty>.
-    using AttributeAnimatorCreator = HashMap<
+    using AttributeAnimatorCreator = UnsafeHashMap<
         QualifiedName::QualifiedNameImpl*,
         std::pair<
             Function<Ref<SVGProperty>()>,
@@ -170,7 +170,7 @@ private:
         return map;
     }
 
-    using AttributeProperty = HashMap<QualifiedName, Ref<SVGProperty>>;
+    using AttributeProperty = UnsafeHashMap<QualifiedName, Ref<SVGProperty>>;
     AttributeProperty m_attributeProperty;
 };
     

@@ -44,7 +44,7 @@ public:
     LazyOperandValueProfile* addOperandValueProfile(const LazyOperandValueProfileKey&);
     JSValue* addSpeculationFailureValueProfile(BytecodeIndex);
 
-    HashMap<BytecodeIndex, JSValue*> speculationFailureValueProfileBucketsMap();
+    UnsafeHashMap<BytecodeIndex, JSValue*> speculationFailureValueProfileBucketsMap();
 
 private:
     friend class LazyOperandValueProfileParser;
@@ -71,7 +71,7 @@ public:
 
     SpeculatedType prediction(const ConcurrentJSLocker&, const LazyOperandValueProfileKey&) const;
 private:
-    HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
+    UnsafeHashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };
 
 } // namespace JSC

@@ -113,7 +113,7 @@ private:
         AccessibilityObjectInclusion ignored;
     };
 
-    HashMap<AXID, CachedAXObjectAttributes> m_idMapping;
+    UnsafeHashMap<AXID, CachedAXObjectAttributes> m_idMapping;
 };
 
 struct VisiblePositionIndex {
@@ -374,7 +374,7 @@ public:
         AtomString oldValue;
         AtomString newValue;
     };
-    using DeferredCollection = std::variant<HashMap<Element*, String>
+    using DeferredCollection = std::variant<UnsafeHashMap<Element*, String>
         , HashSet<AXID>
         , ListHashSet<Node*>
         , ListHashSet<Ref<AccessibilityObject>>
@@ -736,7 +736,7 @@ private:
     void updateRelationsForTree(ContainerNode&);
     void relationsNeedUpdate(bool);
     void dirtyIsolatedTreeRelations();
-    HashMap<AXID, AXRelations> relations();
+    UnsafeHashMap<AXID, AXRelations> relations();
     const HashSet<AXID>& relationTargetIDs();
     bool isDescendantOfRelatedNode(Node&);
 
@@ -750,12 +750,12 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
-    HashMap<AXID, Ref<AccessibilityObject>> m_objects;
+    UnsafeHashMap<AXID, Ref<AccessibilityObject>> m_objects;
 
     // The pointers in these mapping HashMaps should never be dereferenced.
-    HashMap<SingleThreadWeakRef<RenderObject>, AXID> m_renderObjectMapping;
-    HashMap<SingleThreadWeakRef<Widget>, AXID> m_widgetObjectMapping;
-    HashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, AXID> m_nodeObjectMapping;
+    UnsafeHashMap<SingleThreadWeakRef<RenderObject>, AXID> m_renderObjectMapping;
+    UnsafeHashMap<SingleThreadWeakRef<Widget>, AXID> m_widgetObjectMapping;
+    UnsafeHashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, AXID> m_nodeObjectMapping;
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
@@ -827,10 +827,10 @@ private:
     unsigned m_cacheUpdateDeferredCount { 0 };
 
     // Relationships between objects.
-    HashMap<AXID, AXRelations> m_relations;
+    UnsafeHashMap<AXID, AXRelations> m_relations;
     bool m_relationsNeedUpdate { true };
     HashSet<AXID> m_relationTargets;
-    HashMap<AXID, AXRelations> m_recentlyRemovedRelations;
+    UnsafeHashMap<AXID, AXRelations> m_recentlyRemovedRelations;
 
 #if USE(ATSPI)
     ListHashSet<RefPtr<AXCoreObject>> m_deferredParentChangedList;

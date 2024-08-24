@@ -59,10 +59,10 @@ public:
     WEBCORE_EXPORT HashSet<SecurityOriginData> originsWithCredentials() const;
 
 private:
-    HashMap<std::pair<String /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
+    UnsafeHashMap<std::pair<String /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
     MemoryCompactRobinHoodHashSet<String> m_originsWithCredentials;
 
-    typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
+    typedef UnsafeHashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
     PathToDefaultProtectionSpaceMap m_pathToDefaultProtectionSpaceMap;
 
     PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const URL&);

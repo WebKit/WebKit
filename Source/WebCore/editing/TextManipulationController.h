@@ -106,7 +106,7 @@ private:
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;
 
-    HashMap<String, bool> m_cachedFontFamilyExclusionResults;
+    UnsafeHashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
     bool m_didScheduleObservationUpdate { false };
 
@@ -114,7 +114,7 @@ private:
     Vector<TextManipulationItem> m_pendingItemsForCallback;
 
     Vector<ExclusionRule> m_exclusionRules;
-    HashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
+    UnsafeHashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
     TextManipulationItemIdentifier m_itemIdentifier;
     TextManipulationTokenIdentifier m_tokenIdentifier;
 };

@@ -71,7 +71,7 @@ private:
     // Maps heap to:
     // true --> it's a direct clobber
     // false --> it's just a supertype of a direct clobber
-    HashMap<AbstractHeap, bool> m_clobbers;
+    UnsafeHashMap<AbstractHeap, bool> m_clobbers;
 };
 
 class ClobberSetAdd {

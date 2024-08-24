@@ -43,7 +43,7 @@ private:
 
     void performDNSLookup(const String&, Ref<CompletionHandlerWrapper>&&);
 
-    HashMap<uint64_t, Ref<CompletionHandlerWrapper>> m_pendingRequests;
+    UnsafeHashMap<uint64_t, Ref<CompletionHandlerWrapper>> m_pendingRequests;
 };
 
 using DNSResolveQueuePlatform = DNSResolveQueueCFNet;

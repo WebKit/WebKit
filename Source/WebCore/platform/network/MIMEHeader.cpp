@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-typedef HashMap<String, String> KeyValueMap;
+typedef UnsafeHashMap<String, String> KeyValueMap;
 
 static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffer)
 {

@@ -132,7 +132,7 @@ private:
     template<typename LayoutRun> DisplayList::DisplayList* getIfExistsImpl(const LayoutRun&);
     void remove(const void* run);
 
-    HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
+    UnsafeHashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
     HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };

@@ -302,7 +302,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector {
 public:
     using KeyType = RetainPtr<AVContentKeyRequest>;
     using ValueType = RetainPtr<NSData>;
-    using ResponseMap = HashMap<KeyType, ValueType>;
+    using ResponseMap = UnsafeHashMap<KeyType, ValueType>;
     using UpdateCallback = WTF::Function<void(std::optional<ResponseMap>&&)>;
     UpdateResponseCollector(size_t numberOfExpectedResponses, UpdateCallback&& callback)
         : m_numberOfExpectedResponses(numberOfExpectedResponses)

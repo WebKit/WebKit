@@ -59,7 +59,7 @@ public:
 
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_topDocument;
-    HashMap<SecurityOriginData, DeviceOrientationOrMotionPermissionState> m_accessStatePerOrigin;
+    UnsafeHashMap<SecurityOriginData, DeviceOrientationOrMotionPermissionState> m_accessStatePerOrigin;
 };
 
 } // namespace WebCore

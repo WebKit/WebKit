@@ -167,9 +167,9 @@ private:
         MarkerData m_marker;
     };
 
-    using MarkedBlockMap = HashMap<MarkedBlock*, std::unique_ptr<MarkedBlockData>>;
-    using PreciseAllocationMap = HashMap<PreciseAllocation*, std::unique_ptr<PreciseAllocationData>>;
-    using OpaqueRootMap = HashMap<void*, std::unique_ptr<OpaqueRootData>>;
+    using MarkedBlockMap = UnsafeHashMap<MarkedBlock*, std::unique_ptr<MarkedBlockData>>;
+    using PreciseAllocationMap = UnsafeHashMap<PreciseAllocation*, std::unique_ptr<PreciseAllocationData>>;
+    using OpaqueRootMap = UnsafeHashMap<void*, std::unique_ptr<OpaqueRootData>>;
 
     void appendToMarkStack(JSCell*);
     void appendSlow(JSCell* cell) { setMarkedAndAppendToMarkStack(cell); }

@@ -108,7 +108,7 @@ private:
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
 struct NestedTimersMap {
-    typedef HashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
+    typedef UnsafeHashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
 
     static NestedTimersMap* instanceForContext(ScriptExecutionContext& context)
     {
@@ -157,7 +157,7 @@ private:
     }
 
     static bool isTrackingNestedTimers;
-    HashMap<int /* timeoutId */, Ref<DOMTimer>> nestedTimers;
+    UnsafeHashMap<int /* timeoutId */, Ref<DOMTimer>> nestedTimers;
 };
 
 bool NestedTimersMap::isTrackingNestedTimers = false;

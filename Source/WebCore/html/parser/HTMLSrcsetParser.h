@@ -108,6 +108,6 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
 void getURLsFromSrcsetAttribute(const Element&, StringView attribute, ListHashSet<URL>&);
-String replaceURLsInSrcsetAttribute(const Element&, StringView attribute, const HashMap<String, String>& replacementURLStrings);
+String replaceURLsInSrcsetAttribute(const Element&, StringView attribute, const UnsafeHashMap<String, String>& replacementURLStrings);
 
 } // namespace WebCore

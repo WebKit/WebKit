@@ -39,7 +39,7 @@ public:
     void clearAllWrappers();
 
 private:
-    HashMap<JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>> m_wrappers;
+    UnsafeHashMap<JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>> m_wrappers;
 };
 
 } // namespace Inspector

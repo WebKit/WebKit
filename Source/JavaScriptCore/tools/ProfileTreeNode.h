@@ -28,7 +28,7 @@
 namespace JSC {
 
 class ProfileTreeNode {
-    typedef HashMap<String, ProfileTreeNode> Map;
+    typedef UnsafeHashMap<String, ProfileTreeNode> Map;
     typedef Map::KeyValuePairType MapEntry;
 
 public:

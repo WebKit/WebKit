@@ -227,7 +227,7 @@ void NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty(const Vect
         cookieEnabledStateMayHaveChanged();
 }
 
-void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, Vector<SubResourceDomain>>& domains)
+void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const UnsafeHashMap<TopFrameDomain, Vector<SubResourceDomain>>& domains)
 {
     m_pairsGrantedCrossPageStorageAccess.clear();
     for (auto& [topDomain, subResourceDomains] : domains) {
@@ -297,7 +297,7 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
             return;
         auto pagesGrantedIterator = m_pagesGrantedStorageAccess.find(pageID);
         if (pagesGrantedIterator == m_pagesGrantedStorageAccess.end()) {
-            HashMap<RegistrableDomain, RegistrableDomain> entry;
+            UnsafeHashMap<RegistrableDomain, RegistrableDomain> entry;
             entry.add(firstPartyDomain, resourceDomain);
             m_pagesGrantedStorageAccess.add(pageID, entry);
         } else {
@@ -312,7 +312,7 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
 
     auto pagesGrantedIterator = m_framesGrantedStorageAccess.find(pageID);
     if (pagesGrantedIterator == m_framesGrantedStorageAccess.end()) {
-        HashMap<FrameIdentifier, RegistrableDomain> entry;
+        UnsafeHashMap<FrameIdentifier, RegistrableDomain> entry;
         entry.add(frameID.value(), resourceDomain);
         m_framesGrantedStorageAccess.add(pageID, entry);
     } else {
@@ -432,10 +432,10 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
 #endif
 }
 
-const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
+const UnsafeHashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
 {
-    static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
-        HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
+    static NeverDestroyed<UnsafeHashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
+        UnsafeHashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s),
             HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"_s),

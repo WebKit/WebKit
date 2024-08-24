@@ -67,7 +67,7 @@ enum {
 struct Stream;
 
 struct WebKitMediaSrcPrivate {
-    HashMap<AtomString, RefPtr<Stream>> streams;
+    UnsafeHashMap<AtomString, RefPtr<Stream>> streams;
     Stream* streamByName(const AtomString& name)
     {
         ASSERT(isMainThread());

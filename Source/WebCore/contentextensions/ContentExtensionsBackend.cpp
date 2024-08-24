@@ -386,7 +386,7 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         return a.priority > b.priority;
     });
 
-    HashMap<String, ModifyHeadersAction::ModifyHeadersOperationType> headerNameToFirstOperationApplied;
+    UnsafeHashMap<String, ModifyHeadersAction::ModifyHeadersOperationType> headerNameToFirstOperationApplied;
     for (auto& action : results.summary.modifyHeadersActions)
         action.applyToRequest(request, headerNameToFirstOperationApplied);
 

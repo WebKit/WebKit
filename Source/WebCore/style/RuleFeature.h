@@ -114,11 +114,11 @@ struct RuleFeatureSet {
     Vector<RuleAndSelector> siblingRules;
     Vector<RuleAndSelector> uncommonAttributeRules;
 
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
-    HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
-    HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
-    HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
+    UnsafeHashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
+    UnsafeHashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
+    UnsafeHashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
+    UnsafeHashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
+    UnsafeHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
     Vector<RuleAndSelector> scopeBreakingHasPseudoClassRules;
 
     HashSet<AtomString> classesAffectingHost;

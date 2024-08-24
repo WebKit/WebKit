@@ -70,7 +70,7 @@ private:
     void sweep();
 
     SingleThreadWeakRef<const Resolver> m_owner;
-    HashMap<unsigned, Entry, AlreadyHashed> m_entries;
+    UnsafeHashMap<unsigned, Entry, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
 };

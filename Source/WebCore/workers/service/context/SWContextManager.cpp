@@ -256,7 +256,7 @@ SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationReque
 
 void SWContextManager::stopAllServiceWorkers()
 {
-    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> workerMap;
+    UnsafeHashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> workerMap;
     {
         Locker locker { m_workerMapLock };
         workerMap = WTFMove(m_workerMap);

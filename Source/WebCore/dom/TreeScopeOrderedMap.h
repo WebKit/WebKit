@@ -89,7 +89,7 @@ private:
 #endif
     };
 
-    using Map = HashMap<AtomString, MapEntry>;
+    using Map = UnsafeHashMap<AtomString, MapEntry>;
 
     mutable Map m_map;
 };

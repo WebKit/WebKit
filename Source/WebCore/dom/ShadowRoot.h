@@ -137,7 +137,7 @@ public:
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
     void moveShadowRootToNewDocument(Document& oldDocument, Document& newDocument);
 
-    using PartMappings = HashMap<AtomString, Vector<AtomString, 1>>;
+    using PartMappings = UnsafeHashMap<AtomString, Vector<AtomString, 1>>;
     const PartMappings& partMappings() const;
     void invalidatePartMappings();
 

@@ -155,7 +155,7 @@ private:
     Vector<Parent, 32> m_parentStack;
     bool m_didSeePendingStylesheet { false };
 
-    HashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
+    UnsafeHashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
     bool m_hasUnresolvedQueryContainers { false };
 
     bool m_hasUnresolvedAnchorPositionedElements { false };

@@ -273,11 +273,11 @@ FixedVector<ASCIILiteral> MIMETypeRegistry::unsupportedTextMIMETypes()
     return makeFixedVector(unsupportedTextMIMETypeArray);
 }
 
-static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap()
+static const UnsafeHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMimeTypesMap()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
-        HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
+    static NeverDestroyed<UnsafeHashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        UnsafeHashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
         // A table of common media MIME types and file extensions used when a platform's
         // specific MIME type lookup doesn't have a match for a media file extension.
         static constexpr TypeExtensionPair commonMediaTypes[] = {

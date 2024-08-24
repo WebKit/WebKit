@@ -81,7 +81,7 @@ private:
 
     void inputNotificationTimerFired();
 
-    HashMap<CFTypeRef, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
+    UnsafeHashMap<CFTypeRef, std::unique_ptr<GameControllerGamepad>> m_gamepadMap;
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     WeakHashSet<PlatformGamepad> m_invisibleGamepads;
 

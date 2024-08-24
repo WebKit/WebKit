@@ -38,7 +38,7 @@ template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyA
 class WeakGCMap final : public WeakGCHashTable {
     WTF_MAKE_FAST_ALLOCATED;
     typedef Weak<ValueArg> ValueType;
-    typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
+    typedef UnsafeHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
 public:
     typedef typename HashMapType::KeyType KeyType;

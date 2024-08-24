@@ -67,6 +67,7 @@ public:
 
     // Only called from a background thread.
     void importItems(HashMap<String, String>&& items);
+    void importItems(UnsafeHashMap<String, String>&& items);
 
     // Used to clear a StorageArea and close db before backing db file is deleted.
     void clearForOriginDeletion();

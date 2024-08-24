@@ -78,10 +78,10 @@ private:
     WeakPtr<SWServer> m_server;
     Ref<BackgroundFetchStore> m_store;
 
-    using FetchesMap = HashMap<String, std::unique_ptr<BackgroundFetch>>;
-    HashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
+    using FetchesMap = UnsafeHashMap<String, std::unique_ptr<BackgroundFetch>>;
+    UnsafeHashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
 
-    HashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;
+    UnsafeHashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;
 };
 
 } // namespace WebCore

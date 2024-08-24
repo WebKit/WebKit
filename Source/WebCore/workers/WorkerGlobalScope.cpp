@@ -708,7 +708,7 @@ bool WorkerGlobalScope::crossOriginIsolated() const
     return ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
 }
 
-void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
+void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const UnsafeHashMap<URL, ScriptBuffer>& importedScripts)
 {
     ASSERT(isContextThread());
 

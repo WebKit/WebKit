@@ -329,7 +329,7 @@ void InlineContentBuilder::computeIsFirstIsLastBoxAndBidiReorderingForInlineCont
         return;
     }
 
-    HashMap<const Layout::Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
+    UnsafeHashMap<const Layout::Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
     lastDisplayBoxForLayoutBoxIndexes.reserveInitialCapacity(boxes.size() - 1);
 
     ASSERT(boxes[0].isRootInlineBox());

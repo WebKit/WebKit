@@ -67,9 +67,9 @@ private:
 
     Ref<JSON::Object> buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType, Node& breakpointOwner);
 
-    HashMap<Node*, Ref<JSC::Breakpoint>> m_domSubtreeModifiedBreakpoints;
-    HashMap<Node*, Ref<JSC::Breakpoint>> m_domAttributeModifiedBreakpoints;
-    HashMap<Node*, Ref<JSC::Breakpoint>> m_domNodeRemovedBreakpoints;
+    UnsafeHashMap<Node*, Ref<JSC::Breakpoint>> m_domSubtreeModifiedBreakpoints;
+    UnsafeHashMap<Node*, Ref<JSC::Breakpoint>> m_domAttributeModifiedBreakpoints;
+    UnsafeHashMap<Node*, Ref<JSC::Breakpoint>> m_domNodeRemovedBreakpoints;
 
     RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 };

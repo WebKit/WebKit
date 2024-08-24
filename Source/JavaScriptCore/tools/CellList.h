@@ -61,7 +61,7 @@ private:
     CellProfileVector m_cells;
 
     bool m_mapIsUpToDate { false };
-    HashMap<HeapCell*, CellProfile*> m_map;
+    UnsafeHashMap<HeapCell*, CellProfile*> m_map;
 };
     
 } // namespace JSC

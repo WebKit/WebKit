@@ -55,15 +55,15 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     Dominators& dominators = proc.dominators();
     BackwardsDominators& backwardsDominators = proc.backwardsDominators();
 
-    HashMap<Value*, Vector<MemoryValue*>> baseToMemories;
-    HashMap<MemoryValue*, Vector<Value*>> postIndexCandidates;
+    UnsafeHashMap<Value*, Vector<MemoryValue*>> baseToMemories;
+    UnsafeHashMap<MemoryValue*, Vector<Value*>> postIndexCandidates;
 
-    HashMap<Value*, Vector<Value*>> addressUses;
-    HashMap<std::tuple<Value*, MemoryValue::OffsetType>, Vector<Value*>> baseOffsetToAddresses;
-    HashMap<MemoryValue*, Vector<Value*>> preIndexCandidates;
+    UnsafeHashMap<Value*, Vector<Value*>> addressUses;
+    UnsafeHashMap<std::tuple<Value*, MemoryValue::OffsetType>, Vector<Value*>> baseOffsetToAddresses;
+    UnsafeHashMap<MemoryValue*, Vector<Value*>> preIndexCandidates;
 
-    HashMap<Value*, unsigned> memoryToIndex;
-    HashMap<BasicBlock*, HashSet<MemoryValue*>> blockToPrePostIndexCandidates;
+    UnsafeHashMap<Value*, unsigned> memoryToIndex;
+    UnsafeHashMap<BasicBlock*, HashSet<MemoryValue*>> blockToPrePostIndexCandidates;
 
     auto tryFindCandidates = [&](Value* value, unsigned index) ALWAYS_INLINE_LAMBDA {
         switch (value->opcode()) {

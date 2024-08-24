@@ -458,7 +458,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     // to copy the HashMap into a Vector.
     // Merge keyframes with a similar offset and timing function.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
-    HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
+    UnsafeHashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);

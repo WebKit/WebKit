@@ -710,7 +710,7 @@ enum class AXRelationType : uint8_t {
     OwnedBy,
     OwnerFor,
 };
-using AXRelations = HashMap<AXRelationType, ListHashSet<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
+using AXRelations = UnsafeHashMap<AXRelationType, ListHashSet<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
 
 enum class SpinButtonType : bool {
     // The spin button is standalone. It has no separate controls, and should receive and perform actions itself.
@@ -874,7 +874,7 @@ public:
     bool isButton() const;
     virtual bool isMeter() const = 0;
 
-    virtual HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const = 0;
+    virtual UnsafeHashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const = 0;
 
     bool isListItem() const { return roleValue() == AccessibilityRole::ListItem; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }

@@ -451,8 +451,8 @@ protected:
     GCGLboolean m_packReverseRowOrder { false };
     uint32_t m_nextExternalImageName { 0 };
     uint32_t m_nextExternalSyncName { 0 };
-    HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglImages;
-    HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglSyncs;
+    UnsafeHashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglImages;
+    UnsafeHashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglSyncs;
 };
 
 

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<HashMapStylePropertyMapReadOnly> create(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    static Ref<HashMapStylePropertyMapReadOnly> create(UnsafeHashMap<AtomString, RefPtr<CSSValue>>&&);
     ~HashMapStylePropertyMapReadOnly();
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
@@ -43,9 +43,9 @@ public:
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
 private:
-    HashMapStylePropertyMapReadOnly(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    HashMapStylePropertyMapReadOnly(UnsafeHashMap<AtomString, RefPtr<CSSValue>>&&);
 
-    HashMap<AtomString, RefPtr<CSSValue>> m_map;
+    UnsafeHashMap<AtomString, RefPtr<CSSValue>> m_map;
 };
 
 } // namespace WebCore

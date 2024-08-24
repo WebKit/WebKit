@@ -50,10 +50,10 @@
 namespace WebCore {
 
 static Lock workerScriptLoaderControlledCallbackMapLock;
-static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
+static void accessWorkerScriptLoaderMap(CompletionHandler<void(UnsafeHashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
 {
     Locker locker { workerScriptLoaderControlledCallbackMapLock };
-    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>> map;
+    static NeverDestroyed<UnsafeHashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>> map;
     callback(map.get());
 }
 

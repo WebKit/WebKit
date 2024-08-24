@@ -43,9 +43,9 @@ namespace WebCore {
 
 Lock WebGLProgram::s_instancesLock;
 
-HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
+UnsafeHashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
 {
-    static NeverDestroyed<HashMap<WebGLProgram*, WebGLRenderingContextBase*>> instances;
+    static NeverDestroyed<UnsafeHashMap<WebGLProgram*, WebGLRenderingContextBase*>> instances;
     return instances;
 }
 

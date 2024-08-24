@@ -35,7 +35,7 @@ namespace WebCore {
 class IDBDatabaseInfo {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBDatabaseInfo, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID = 0, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap = { });
+    WEBCORE_EXPORT explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID = 0, UnsafeHashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap = { });
     IDBDatabaseInfo() = default;
 
     enum IsolatedCopyTag { IsolatedCopy };
@@ -59,7 +59,7 @@ public:
     void renameObjectStore(uint64_t objectStoreIdentifier, const String& newName);
 
     Vector<String> objectStoreNames() const;
-    const HashMap<uint64_t, IDBObjectStoreInfo>& objectStoreMap() const { return m_objectStoreMap; }
+    const UnsafeHashMap<uint64_t, IDBObjectStoreInfo>& objectStoreMap() const { return m_objectStoreMap; }
 
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(uint64_t objectStoreIdentifier);
@@ -81,7 +81,7 @@ private:
     uint64_t m_maxIndexID { 0 };
     uint64_t m_maxObjectStoreID { 0 };
 
-    HashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
+    UnsafeHashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
 
 };
 

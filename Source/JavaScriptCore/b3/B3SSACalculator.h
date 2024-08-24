@@ -152,7 +152,7 @@ private:
     Bag<Def> m_phis;
     
     struct BlockData {
-        HashMap<Variable*, Def*> m_defs;
+        UnsafeHashMap<Variable*, Def*> m_defs;
         Vector<Def*> m_phis;
     };
     

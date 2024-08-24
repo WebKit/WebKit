@@ -96,8 +96,8 @@ protected:
 
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount { 0 };
-    HashMap<String, unsigned> m_counts;
-    HashMap<String, MonotonicTime> m_times;
+    UnsafeHashMap<String, unsigned> m_counts;
+    UnsafeHashMap<String, MonotonicTime> m_times;
     bool m_enabled { false };
     bool m_isAddingMessageToFrontend { false };
     bool m_consoleClearAPIEnabled { true };

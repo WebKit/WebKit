@@ -82,7 +82,7 @@ private:
     PAL::SessionID m_sessionID;
     bool m_ignoreTLSErrors { false };
     SoupNetworkProxySettings m_proxySettings;
-    HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> m_allowedCertificates;
+    UnsafeHashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> m_allowedCertificates;
 };
 
 } // namespace WebCore

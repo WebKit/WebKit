@@ -77,7 +77,7 @@ private:
     Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
 
     Vector<LayoutUnit> m_runningPositions;
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
+    UnsafeHashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
     RenderGrid& m_renderGrid;
     LayoutUnit m_masonryAxisGridGap;
     LayoutUnit m_gridContentSize;

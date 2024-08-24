@@ -125,7 +125,7 @@ public:
 
 private:
     using Key = std::tuple<String, CSSSelectorParserContext, SecurityOriginData>;
-    HashMap<Key, std::unique_ptr<SelectorQuery>> m_entries;
+    UnsafeHashMap<Key, std::unique_ptr<SelectorQuery>> m_entries;
 };
 
 inline bool SelectorQuery::matches(Element& element) const

@@ -124,7 +124,7 @@ bool CSSFontFaceSrcResourceValue::customTraverseSubresources(const Function<bool
     return m_cachedFont && handler(*m_cachedFont);
 }
 
-void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const UnsafeHashMap<String, String>& replacementURLStrings)
 {
     auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
     if (!replacementURLString.isNull())

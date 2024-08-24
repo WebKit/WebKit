@@ -66,7 +66,7 @@ private:
         if (!candidates.size())
             return false;
 
-        HashMap<Node*, Vector<Node*>> usersOf;
+        UnsafeHashMap<Node*, Vector<Node*>> usersOf;
         auto getUsersOf = [&] (Node* candidate) {
             auto iter = usersOf.find(candidate);
             RELEASE_ASSERT(iter != usersOf.end());

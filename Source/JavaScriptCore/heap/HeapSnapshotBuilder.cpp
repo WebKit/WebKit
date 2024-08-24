@@ -339,20 +339,20 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     DeferGCForAWhile deferGC(vm);
 
     // Build a node to identifier map of allowed nodes to use when serializing edges.
-    HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
+    UnsafeHashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
 
     // Build a list of used class names.
-    HashMap<String, unsigned> classNameIndexes;
+    UnsafeHashMap<String, unsigned> classNameIndexes;
     classNameIndexes.set("<root>"_s, 0);
     unsigned nextClassNameIndex = 1;
 
     // Build a list of labels (this is just a string table).
-    HashMap<String, unsigned> labelIndexes;
+    UnsafeHashMap<String, unsigned> labelIndexes;
     labelIndexes.set(emptyString(), 0);
     unsigned nextLabelIndex = 1;
 
     // Build a list of used edge names.
-    HashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
+    UnsafeHashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
     unsigned nextEdgeNameIndex = 0;
 
     StringBuilder json;

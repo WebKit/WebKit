@@ -75,7 +75,7 @@ private:
     void clearFlags(Element&, OptionSet<Flag>);
     bool hasFlag(const Element&, Flag) const;
 
-    HashMap<RefPtr<Element>, OptionSet<Flag>> m_elements;
+    UnsafeHashMap<RefPtr<Element>, OptionSet<Flag>> m_elements;
 };
 
 } // namespace WebCore

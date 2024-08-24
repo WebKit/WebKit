@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-static HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
+static UnsafeHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
 {
-    static NeverDestroyed<HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
+    static NeverDestroyed<UnsafeHashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>> map;
     return map;
 }
 

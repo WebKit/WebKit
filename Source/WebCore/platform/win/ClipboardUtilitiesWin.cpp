@@ -681,7 +681,7 @@ struct ClipboardDataItem {
     ClipboardDataItem(FORMATETC* format, GetStringFunction getString, SetStringFunction setString): format(format), getString(getString), setString(setString) { }
 };
 
-typedef HashMap<UINT, ClipboardDataItem*> ClipboardFormatMap;
+typedef UnsafeHashMap<UINT, ClipboardDataItem*> ClipboardFormatMap;
 
 // Getter functions.
 

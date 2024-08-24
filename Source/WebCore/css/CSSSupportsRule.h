@@ -41,7 +41,7 @@ public:
     static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
 
     String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    String cssTextWithReplacementURLs(const UnsafeHashMap<String, String>&, const UnsafeHashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     String conditionText() const final;
 
 private:
