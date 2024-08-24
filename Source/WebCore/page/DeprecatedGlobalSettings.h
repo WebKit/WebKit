@@ -111,11 +111,6 @@ public:
     static void setArePDFImagesEnabled(bool isEnabled) { shared().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return shared().m_arePDFImagesEnabled; }
 
-#if ENABLE(WEBM_FORMAT_READER)
-    static void setWebMFormatReaderEnabled(bool isEnabled) { shared().m_webMFormatReaderEnabled = isEnabled; }
-    static bool webMFormatReaderEnabled() { return shared().m_webMFormatReaderEnabled; }
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
     static void setWebMParserEnabled(bool isEnabled) { shared().m_webMParserEnabled = isEnabled; }
     static bool webMParserEnabled() { return shared().m_webMParserEnabled; }
@@ -192,10 +187,6 @@ private:
 #endif
 
     bool m_arePDFImagesEnabled { true };
-
-#if ENABLE(WEBM_FORMAT_READER)
-    bool m_webMFormatReaderEnabled { false };
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };

@@ -141,7 +141,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
-    "${WEBKIT_DIR}/Shared/mac/MediaFormatReader"
     "${WEBKIT_DIR}/Shared/Scrolling"
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
@@ -296,7 +295,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 
     Shared/API/c/mac/WKBaseMac.h
     Shared/API/c/mac/WKCertificateInfoMac.h
-    Shared/API/c/mac/WKMediaFormatReader.h
     Shared/API/c/mac/WKObjCTypeWrapperRef.h
     Shared/API/c/mac/WKURLRequestNS.h
     Shared/API/c/mac/WKURLResponseNS.h

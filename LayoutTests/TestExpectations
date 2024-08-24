@@ -81,7 +81,6 @@ fast/scrolling/pan-scroll [ Skip ]
 fast/speechsynthesis/mac [ Skip ]
 fast/text/mac [ Skip ]
 scrollingcoordinator [ Skip ]
-media/media-vp8-hiddenframes.html [ Skip ] # Requires MediaFormatReader and VP8 decoder
 media/ios [ Skip ]
 media/audioSession/ios [ Skip ]
 media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Skip ]

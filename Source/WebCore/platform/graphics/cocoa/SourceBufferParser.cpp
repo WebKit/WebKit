@@ -85,89 +85,27 @@ SourceBufferParser::Segment::Segment(Ref<SharedBuffer>&& buffer)
 {
 }
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-SourceBufferParser::Segment::Segment(RetainPtr<MTPluginByteSourceRef>&& segment)
-    : m_segment(WTFMove(segment))
-{
-}
-#endif
-
 size_t SourceBufferParser::Segment::size() const
 {
-    return WTF::switchOn(m_segment,
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-        [](const RetainPtr<MTPluginByteSourceRef>& byteSource)
-        {
-            return clampTo<size_t>(MTPluginByteSourceGetLength(byteSource.get()));
-        },
-#endif
-        [](const Ref<SharedBuffer>& buffer)
-        {
-            return buffer->size();
-        }
-    );
+    return m_segment->size();
 }
 
 auto SourceBufferParser::Segment::read(std::span<uint8_t> destination, size_t position) const -> ReadResult
 {
     size_t segmentSize = size();
     destination = destination.first(std::min(destination.size(), segmentSize - std::min(position, segmentSize)));
-    return WTF::switchOn(m_segment,
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-        [&](const RetainPtr<MTPluginByteSourceRef>& byteSource) -> ReadResult
-        {
-            size_t sizeRead = 0;
-            auto status = MTPluginByteSourceRead(byteSource.get(), destination.size(), CheckedInt64(position), destination.data(), &sizeRead);
-            if (status == noErr)
-                return sizeRead;
-            if (status == kMTPluginByteSourceError_EndOfStream)
-                return Unexpected<ReadError> { ReadError::EndOfFile };
-            return Unexpected<ReadError> { ReadError::FatalError };
-        },
-#endif
-        [&](const Ref<SharedBuffer>& buffer) -> ReadResult
-        {
-            buffer->copyTo(destination, position);
-            return destination.size();
-        }
-    );
+    m_segment->copyTo(destination, position);
+    return destination.size();
 }
 
 Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
 {
-    return WTF::switchOn(m_segment,
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-        [&](RetainPtr<MTPluginByteSourceRef>&)
-        {
-            Vector<uint8_t> vector(size());
-            auto readResult = read(vector.mutableSpan());
-            if (!readResult.has_value())
-                return SharedBuffer::create();
-            vector.shrink(readResult.value());
-            return SharedBuffer::create(WTFMove(vector));
-        },
-#endif
-        [&](Ref<SharedBuffer>& buffer)
-        {
-            return std::exchange(buffer, SharedBuffer::create());
-        }
-    );
+    return std::exchange(m_segment, SharedBuffer::create());
 }
 
-RefPtr<SharedBuffer> SourceBufferParser::Segment::getSharedBuffer() const
+Ref<SharedBuffer> SourceBufferParser::Segment::getData(size_t offet, size_t length) const
 {
-    return WTF::switchOn(m_segment,
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-        [&](const RetainPtr<MTPluginByteSourceRef>&) -> RefPtr<SharedBuffer>
-        {
-            return nullptr;
-        },
-#endif
-        [&](const Ref<SharedBuffer>& buffer) -> RefPtr<SharedBuffer>
-        {
-            return buffer.ptr();
-        }
-    );
+    return m_segment->getContiguousData(offet, length);
 }
 
 } // namespace WebCore

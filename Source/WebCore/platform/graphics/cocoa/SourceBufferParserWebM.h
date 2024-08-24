@@ -323,7 +323,6 @@ class SourceBufferParserWebM
     , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static std::span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create();

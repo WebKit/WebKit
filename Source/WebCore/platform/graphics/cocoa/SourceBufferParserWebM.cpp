@@ -352,23 +352,9 @@ public:
                 advanceToNextSegment();
                 continue;
             }
-            RefPtr<SharedBuffer> sharedBuffer = currentSegment.getSharedBuffer();
-            RefPtr<SharedBuffer> rawBlockBuffer;
-            if (!sharedBuffer) {
-                // We could potentially allocate more memory than needed if the read is partial.
-                Vector<uint8_t> buffer;
-                if (!buffer.tryReserveInitialCapacity(numToRead))
-                    return Status(Status::kNotEnoughMemory);
-                buffer.grow(numToRead);
-                auto readResult = currentSegment.read(buffer.mutableSpan(), m_positionWithinSegment);
-                if (!readResult.has_value())
-                    return segmentReadErrorToWebmStatus(readResult.error());
-                buffer.shrink(readResult.value());
-                rawBlockBuffer = SharedBuffer::create(WTFMove(buffer));
-            } else
-                rawBlockBuffer = sharedBuffer->getContiguousData(m_positionWithinSegment, numToRead);
+            auto rawBlockBuffer = currentSegment.getData(m_positionWithinSegment, numToRead);
             auto lastRead = rawBlockBuffer->size();
-            outputBuffer.append(*rawBlockBuffer);
+            outputBuffer.append(rawBlockBuffer);
             m_position += lastRead;
             *numActuallyRead += lastRead;
             m_positionWithinSegment += lastRead;
@@ -500,22 +486,6 @@ std::span<const ASCIILiteral> SourceBufferParserWebM::supportedMIMETypes()
     };
     return types;
 #endif
-}
-
-static bool canLoadFormatReader()
-{
-#if !ENABLE(WEBM_FORMAT_READER)
-    return false;
-#elif USE(APPLE_INTERNAL_SDK)
-    return true;
-#else
-    // FIXME (rdar://72320419): If WebKit was built with ad-hoc code-signing,
-    // CoreMedia will only load the format reader plug-in when a user default
-    // is set on Apple internal OSs. That means we cannot currently support WebM
-    // in public SDK builds on customer OSs.
-    static bool allowsInternalSecurityPolicies = os_variant_allows_internal_security_policies("com.apple.WebKit");
-    return allowsInternalSecurityPolicies;
-#endif // !USE(APPLE_INTERNAL_SDK)
 }
 
 WebMParser::WebMParser(Callback& callback)
@@ -1357,11 +1327,6 @@ SourceBufferParserWebM::SourceBufferParserWebM()
 SourceBufferParserWebM::~SourceBufferParserWebM()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-}
-
-bool SourceBufferParserWebM::isWebMFormatReaderAvailable()
-{
-    return PlatformMediaSessionManager::webMFormatReaderEnabled() && canLoadFormatReader() && isWebmParserAvailable();
 }
 
 MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(const ContentType& type)

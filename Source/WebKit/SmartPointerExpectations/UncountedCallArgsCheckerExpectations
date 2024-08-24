@@ -250,12 +250,6 @@ Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebSQLiteDatabaseTracker.cpp
-Shared/mac/MediaFormatReader/CoreMediaWrapped.h
-Shared/mac/MediaFormatReader/MediaFormatReader.cpp
-Shared/mac/MediaFormatReader/MediaFormatReader.h
-Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
-Shared/mac/MediaFormatReader/MediaTrackReader.cpp
-Shared/mac/MediaFormatReader/MediaTrackReader.h
 UIProcess/API/APIAttachment.cpp
 UIProcess/API/APIContentRuleListStore.cpp
 UIProcess/API/APIDataTask.cpp

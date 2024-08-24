@@ -59,8 +59,6 @@ public:
     WEBCORE_EXPORT static void setShouldDeactivateAudioSession(bool);
     WEBCORE_EXPORT static bool shouldDeactivateAudioSession();
 
-    WEBCORE_EXPORT static void setWebMFormatReaderEnabled(bool);
-    WEBCORE_EXPORT static bool webMFormatReaderEnabled();
     WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool);
     WEBCORE_EXPORT static bool vorbisDecoderEnabled();
     WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
@@ -264,9 +262,6 @@ private:
     WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
     TaskCancellationGroup m_taskGroup;
 
-#if ENABLE(WEBM_FORMAT_READER)
-    static bool m_webMFormatReaderEnabled;
-#endif
 #if ENABLE(VORBIS)
     static bool m_vorbisDecoderEnabled;
 #endif

@@ -312,11 +312,6 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         DeprecatedGlobalSettings::setWebMParserEnabled(*m_preferences.webMParserEnabled);
 #endif
 
-#if ENABLE(WEBM_FORMAT_READER)
-    if (updatePreference(m_preferences.webMFormatReaderEnabled, preferences.webMFormatReaderEnabled))
-        PlatformMediaSessionManager::setWebMFormatReaderEnabled(*m_preferences.webMFormatReaderEnabled);
-#endif
-
 #if ENABLE(OPUS)
     if (updatePreference(m_preferences.opusDecoderEnabled, preferences.opusDecoderEnabled))
         PlatformMediaSessionManager::setOpusDecoderEnabled(*m_preferences.opusDecoderEnabled);

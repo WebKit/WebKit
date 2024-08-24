@@ -44,10 +44,6 @@ struct GPUProcessPreferences {
     std::optional<bool> vorbisDecoderEnabled;
 #endif
     
-#if ENABLE(WEBM_FORMAT_READER)
-    std::optional<bool> webMFormatReaderEnabled;
-#endif
-    
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     std::optional<bool> webMParserEnabled;
 #endif
