@@ -59,6 +59,9 @@ public:
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
+    // Returns true if the given rect is entirely inside the shape, without impinging on any of the corners.
+    bool innerShapeContains(const LayoutRect&) const;
+
     const RoundedRectRadii& radii() const { return m_borderRect.radii(); }
     void setRadii(const RoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
 

@@ -149,6 +149,11 @@ FloatRect BorderShape::snappedInnerRect(float deviceScaleFactor) const
     return snapRectToDevicePixels(innerEdgeRect(), deviceScaleFactor);
 }
 
+bool BorderShape::innerShapeContains(const LayoutRect& rect) const
+{
+    return innerEdgeRoundedRect().contains(rect);
+}
+
 static void addRoundedRectToPath(const FloatRoundedRect& roundedRect, Path& path)
 {
     if (roundedRect.isRounded())

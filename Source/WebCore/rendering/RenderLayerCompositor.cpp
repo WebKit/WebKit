@@ -28,6 +28,7 @@
 
 #include "AsyncScrollingCoordinator.h"
 #include "BorderData.h"
+#include "BorderShape.h"
 #include "CSSPropertyNames.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
@@ -3480,8 +3481,9 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                     pushNonScrollableClip(*currentClippedLayer, ancestorLayer);
                     haveNonScrollableClippingIntermediateLayer = false;
                 }
-                
-                auto clipRoundedRect = box->style().getRoundedInnerBorderFor(box->borderBoxRect());
+
+                auto borderShape = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect());
+                auto clipRoundedRect = borderShape.deprecatedInnerRoundedRect();
 
                 auto offset = layer.convertToLayerCoords(&ancestorLayer, { }, RenderLayer::AdjustForColumns);
                 auto rect = clipRoundedRect.rect();
@@ -5375,8 +5377,10 @@ RoundedRect RenderLayerCompositor::parentRelativeScrollableRect(const RenderLaye
             return RoundedRect { LayoutRect { } };
 
         scrollableRect = RoundedRect { box->paddingBoxRect() };
-        if (box->style().hasBorderRadius())
-            scrollableRect = box->style().getRoundedInnerBorderFor(box->borderBoxRect());
+        if (box->style().hasBorderRadius()) {
+            auto borderShape = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect());
+            scrollableRect = borderShape.deprecatedInnerRoundedRect();
+        }
     }
 
     auto offset = layer.convertToLayerCoords(ancestorLayer, scrollableRect.rect().location()); // FIXME: broken for columns.
