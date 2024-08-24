@@ -580,6 +580,11 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     if (RefPtr document = m_frame->document()) {
         // FIXME: Should the DatabaseManager watch for something like ActiveDOMObject::stop() rather than being special-cased here?
         DatabaseManager::singleton().stopDatabases(*document, nullptr);
+
+        if (document->settings().navigationAPIEnabled() && unloadEventPolicy != UnloadEventPolicy::UnloadAndPageHide) {
+            RefPtr window = m_frame->document()->domWindow();
+            window->protectedNavigation()->abortOngoingNavigationIfNeeded();
+        }
     }
 
     policyChecker().stopCheck();
@@ -2028,11 +2033,6 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
     for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (RefPtr localChild = dynamicDowncast<LocalFrame>(child.get()))
             localChild->checkedLoader()->stopAllLoaders(clearProvisionalItem);
-    }
-
-    if (m_frame->document()->settings().navigationAPIEnabled()) {
-        RefPtr window = m_frame->document()->domWindow();
-        window->protectedNavigation()->abortOngoingNavigationIfNeeded();
     }
 
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "stopAllLoaders: m_provisionalDocumentLoader=%p, m_documentLoader=%p", m_provisionalDocumentLoader.get(), m_documentLoader.get());

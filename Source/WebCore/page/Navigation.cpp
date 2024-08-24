@@ -602,7 +602,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     m_ongoingNavigateEvent = nullptr;
 
     // FIXME: Fill in exception information.
-    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject->vm(), domException }));
+    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), { }, 0, 0, { globalObject->vm(), domException }));
 
     if (m_ongoingAPIMethodTracker)
         rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), exception, domException);
