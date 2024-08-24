@@ -1,5 +1,7 @@
 /*
- *  Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ *  Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ *  Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -118,6 +120,7 @@ namespace JSC {
     macro(JSGeneratorType, SpecObjectOther) \
     macro(JSAsyncGeneratorType, SpecObjectOther) \
     macro(JSArrayIteratorType, SpecObjectOther) \
+    macro(JSIteratorType, SpecObjectOther) \
     macro(JSMapIteratorType, SpecObjectOther) \
     macro(JSSetIteratorType, SpecObjectOther) \
     macro(JSStringIteratorType, SpecObjectOther) \

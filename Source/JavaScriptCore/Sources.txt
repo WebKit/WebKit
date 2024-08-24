@@ -928,6 +928,8 @@ runtime/JSImmutableButterfly.cpp
 runtime/JSInternalPromise.cpp
 runtime/JSInternalPromiseConstructor.cpp
 runtime/JSInternalPromisePrototype.cpp
+runtime/JSIterator.cpp
+runtime/JSIteratorConstructor.cpp
 runtime/JSLexicalEnvironment.cpp
 runtime/JSLock.cpp
 runtime/JSMap.cpp

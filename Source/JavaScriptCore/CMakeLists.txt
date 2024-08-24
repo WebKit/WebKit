@@ -85,6 +85,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/IntlSegmenterConstructor.cpp
     runtime/IntlSegmenterPrototype.cpp
     runtime/IntlSegmentsPrototype.cpp
+    runtime/JSIterator.cpp
+    runtime/JSIteratorConstructor.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSInternalPromiseConstructor.cpp
@@ -1081,6 +1083,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
+    runtime/JSIterator.h
+    runtime/JSIteratorConstructor.h
     runtime/JSLexicalEnvironment.h
     runtime/JSLock.h
     runtime/JSMap.h

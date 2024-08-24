@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
+ * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,6 +108,7 @@
 #include "IntlSegmenterPrototype.h"
 #include "IntlSegments.h"
 #include "IntlSegmentsPrototype.h"
+#include "IteratorPrototype.h"
 #include "IteratorPrototypeInlines.h"
 #include "JSAPIWrapperObject.h"
 #include "JSArrayBuffer.h"
@@ -140,6 +143,8 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSInternalPromisePrototype.h"
+#include "JSIterator.h"
+#include "JSIteratorConstructor.h"
 #include "JSLexicalEnvironmentInlines.h"
 #include "JSMapInlines.h"
 #include "JSMapIteratorInlines.h"
@@ -1105,6 +1110,9 @@ void JSGlobalObject::init(VM& vm)
         });
 
     m_iteratorPrototype.set(vm, this, IteratorPrototype::create(vm, this, IteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    if (Options::useIteratorHelpers())
+        m_iteratorStructure.set(vm, this, JSIterator::createStructure(vm, this, m_iteratorPrototype.get()));
+
     m_asyncIteratorPrototype.set(vm, this, AsyncIteratorPrototype::create(vm, this, AsyncIteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
 
     m_generatorPrototype.set(vm, this, GeneratorPrototype::create(vm, this, GeneratorPrototype::createStructure(vm, this, m_iteratorPrototype.get())));
@@ -1252,6 +1260,12 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Array, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->RegExp, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useIteratorHelpers()) {
+        JSIteratorConstructor* iteratorConstructor = JSIteratorConstructor::create(vm, JSIteratorConstructor::createStructure(vm, this, m_functionPrototype.get()), m_iteratorPrototype.get());
+        m_iteratorConstructor.set(vm, this, iteratorConstructor);
+        putDirectWithoutTransition(vm, vm.propertyNames->Iterator, iteratorConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 
     if (Options::useSharedArrayBuffer())
         putDirectWithoutTransition(vm, vm.propertyNames->SharedArrayBuffer, m_sharedArrayBufferStructure.constructor(this), static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -2491,6 +2505,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_regExpConstructor);
     visitor.append(thisObject->m_objectConstructor);
     visitor.append(thisObject->m_functionConstructor);
+    visitor.append(thisObject->m_iteratorConstructor);
     visitor.append(thisObject->m_promiseConstructor);
     visitor.append(thisObject->m_internalPromiseConstructor);
     visitor.append(thisObject->m_stringConstructor);
@@ -2605,6 +2620,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_asyncGeneratorFunctionStructure);
     visitor.append(thisObject->m_generatorStructure);
     visitor.append(thisObject->m_asyncGeneratorStructure);
+    visitor.append(thisObject->m_iteratorStructure);
     visitor.append(thisObject->m_arrayIteratorStructure);
     visitor.append(thisObject->m_mapIteratorStructure);
     visitor.append(thisObject->m_setIteratorStructure);

@@ -3,6 +3,7 @@
 flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
+  iterator-helpers: useIteratorHelpers
   Temporal: useTemporal
   ShadowRealm: useShadowRealm
   promise-try: usePromiseTryMethod
@@ -13,7 +14,6 @@ skip:
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
-    - iterator-helpers
     - explicit-resource-management
     - regexp-modifiers
     - source-phase-imports

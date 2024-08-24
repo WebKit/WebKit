@@ -2531,6 +2531,10 @@
 
 /* Begin PBXFileReference section */
 		000BEAF0DF604481AF6AB68C /* ModuleScopeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleScopeData.h; sourceTree = "<group>"; };
+		05517C9F2C74004600ED0CD5 /* JSIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIterator.cpp; sourceTree = "<group>"; };
+		05517CA02C74004700ED0CD5 /* JSIteratorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIteratorConstructor.h; sourceTree = "<group>"; };
+		05517CA12C74004700ED0CD5 /* JSIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIterator.h; sourceTree = "<group>"; };
+		05517CA22C74004700ED0CD5 /* JSIteratorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIteratorConstructor.cpp; sourceTree = "<group>"; };
 		0F0123301944EA1B00843A0C /* DFGValueStrength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValueStrength.cpp; path = dfg/DFGValueStrength.cpp; sourceTree = "<group>"; };
 		0F0123311944EA1B00843A0C /* DFGValueStrength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGValueStrength.h; path = dfg/DFGValueStrength.h; sourceTree = "<group>"; };
 		0F0332BF18ADFAE1005F979A /* ExitingJITType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExitingJITType.cpp; sourceTree = "<group>"; };
@@ -8383,6 +8387,10 @@
 				E33F50771B84225700413856 /* JSInternalPromiseConstructor.h */,
 				E33F50721B8421C000413856 /* JSInternalPromisePrototype.cpp */,
 				E33F50731B8421C000413856 /* JSInternalPromisePrototype.h */,
+				05517C9F2C74004600ED0CD5 /* JSIterator.cpp */,
+				05517CA12C74004700ED0CD5 /* JSIterator.h */,
+				05517CA22C74004700ED0CD5 /* JSIteratorConstructor.cpp */,
+				05517CA02C74004700ED0CD5 /* JSIteratorConstructor.h */,
 				14DA818F0D99FD2000B0A4FB /* JSLexicalEnvironment.cpp */,
 				14DA818E0D99FD2000B0A4FB /* JSLexicalEnvironment.h */,
 				276B39032A71D2B300252F4E /* JSLexicalEnvironmentInlines.h */,

@@ -44,6 +44,7 @@
     macro(Function) \
     macro(Infinity) \
     macro(Intl) \
+    macro(Iterator) \
     macro(ListFormat) \
     macro(Loader) \
     macro(Locale) \
