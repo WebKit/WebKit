@@ -482,7 +482,6 @@ public:
     // Bounds
     CharacterOffset characterOffsetForPoint(const IntPoint&, AXCoreObject*);
     IntRect absoluteCaretBoundsForCharacterOffset(const CharacterOffset&);
-    CharacterOffset characterOffsetForBounds(const IntRect&, bool);
     
     // Lines
     CharacterOffset endCharacterOffsetOfLine(const CharacterOffset&);

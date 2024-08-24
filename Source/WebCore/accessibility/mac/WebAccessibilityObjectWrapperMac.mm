@@ -614,22 +614,6 @@ static inline BOOL AXObjectIsTextMarkerRange(id object)
     return object && CFGetTypeID((__bridge CFTypeRef)object) == AXTextMarkerRangeGetTypeID();
 }
 
-#pragma mark Other helpers
-
-static IntRect screenToContents(AXCoreObject& axObject, IntRect&& rect)
-{
-    ASSERT(isMainThread());
-
-    auto* document = axObject.document();
-    auto* frameView = document ? document->view() : nullptr;
-    if (!frameView)
-        return { };
-
-    IntPoint startPoint = frameView->screenToContents(rect.minXMaxYCorner());
-    IntPoint endPoint = frameView->screenToContents(rect.maxXMinYCorner());
-    return IntRect(startPoint.x(), startPoint.y(), endPoint.x() - startPoint.x(), endPoint.y() - startPoint.y());
-}
-
 #pragma mark Select text helpers
 
 // To be deprecated.
@@ -2345,6 +2329,7 @@ id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>& backingObje
     AXTextMarkerRef markerRef = nil;
     AXTextMarkerRangeRef markerRangeRef = nil;
     NSRange nsRange = { 0, 0 };
+    NSDictionary *dictionary = nil;
 
     if (AXObjectIsTextMarker(parameter))
         markerRef = (AXTextMarkerRef)parameter;
@@ -2352,6 +2337,8 @@ id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>& backingObje
         markerRangeRef = (AXTextMarkerRangeRef)parameter;
     else if ([parameter isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)parameter objCType], @encode(NSRange)))
         nsRange = [(NSValue*)parameter rangeValue];
+    else if ([parameter isKindOfClass:[NSDictionary class]])
+        dictionary = parameter;
     else
         return nil;
 
@@ -2375,6 +2362,25 @@ id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>& backingObje
 
     if ([attribute isEqualToString:_AXTextMarkerRangeForNSRangeAttribute])
         return backingObject->textMarkerRangeForNSRange(nsRange).platformData().bridgingAutorelease();
+
+    if ([attribute isEqualToString:_AXMisspellingTextMarkerRangeAttribute]) {
+        return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&] () -> RetainPtr<AXTextMarkerRangeRef> {
+            if (!backingObject)
+                return nil;
+
+            auto criteria = misspellingSearchCriteriaForParameterizedAttribute(dictionary);
+            if (!criteria.first)
+                return nil;
+
+            auto range = criteria.first.simpleRange();
+            if (!range)
+                return nil;
+
+            if (auto misspellRange = backingObject->misspellingRange(*range, criteria.second))
+                return AXTextMarkerRange(*misspellRange).platformData();
+            return nil;
+        });
+    }
 
     return nil;
 }
@@ -3303,40 +3309,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // TextMarker attributes.
 
-    if ([attribute isEqualToString:AXEndTextMarkerForBoundsAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-            RefPtr<AXCoreObject> backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return nil;
-
-            WeakPtr cache = backingObject->axObjectCache();
-            if (!cache)
-                return nil;
-
-            IntRect webCoreRect = screenToContents(*backingObject, enclosingIntRect(rect));
-            CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, false);
-
-            return (id)textMarkerForCharacterOffset(cache.get(), characterOffset);
-        });
-    }
-
-    if ([attribute isEqualToString:AXStartTextMarkerForBoundsAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&rect, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-            RefPtr<AXCoreObject> backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return nil;
-
-            WeakPtr cache = backingObject->axObjectCache();
-            if (!cache)
-                return nil;
-
-            IntRect webCoreRect = screenToContents(*backingObject, enclosingIntRect(rect));
-            CharacterOffset characterOffset = cache->characterOffsetForBounds(webCoreRect, true);
-
-            return (id)textMarkerForCharacterOffset(cache.get(), characterOffset);
-        });
-    }
-
     // TextMarkerRange attributes.
     if ([attribute isEqualToString:AXLineTextMarkerRangeForTextMarkerAttribute]) {
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -3346,26 +3318,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
 #endif
         return (id)[self lineTextMarkerRangeForTextMarker:textMarker forUnit:TextUnit::Line];
-    }
-
-    if ([attribute isEqualToString:AXMisspellingTextMarkerRangeAttribute]) {
-        return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&dictionary, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
-            auto* backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return nil;
-
-            auto criteria = misspellingSearchCriteriaForParameterizedAttribute(dictionary);
-            if (!criteria.first)
-                return nil;
-
-            auto range = criteria.first.simpleRange();
-            if (!range)
-                return nil;
-
-            if (auto misspellRange = backingObject->misspellingRange(*range, criteria.second))
-                return AXTextMarkerRange(*misspellRange).platformData();
-            return nil;
-        });
     }
 
     if ([attribute isEqualToString:AXTextMarkerIsValidAttribute])

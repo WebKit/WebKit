@@ -3868,33 +3868,6 @@ CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint& point)
     return startOrEndCharacterOffsetForRange(*range, true);
 }
 
-CharacterOffset AXObjectCache::characterOffsetForBounds(const IntRect& rect, bool first)
-{
-    if (rect.isEmpty())
-        return CharacterOffset();
-    
-    IntPoint corner = first ? rect.minXMinYCorner() : rect.maxXMaxYCorner();
-    CharacterOffset characterOffset = characterOffsetForPoint(corner);
-    
-    if (rect.contains(absoluteCaretBoundsForCharacterOffset(characterOffset).center()))
-        return characterOffset;
-    
-    // If the initial position is located outside the bounds adjust it incrementally as needed.
-    CharacterOffset nextCharOffset = nextCharacterOffset(characterOffset, false);
-    CharacterOffset previousCharOffset = previousCharacterOffset(characterOffset, false);
-    while (!nextCharOffset.isNull() || !previousCharOffset.isNull()) {
-        if (rect.contains(absoluteCaretBoundsForCharacterOffset(nextCharOffset).center()))
-            return nextCharOffset;
-        if (rect.contains(absoluteCaretBoundsForCharacterOffset(previousCharOffset).center()))
-            return previousCharOffset;
-        
-        nextCharOffset = nextCharacterOffset(nextCharOffset, false);
-        previousCharOffset = previousCharacterOffset(previousCharOffset, false);
-    }
-    
-    return CharacterOffset();
-}
-
 // FIXME: Remove VisiblePosition code after implementing this using CharacterOffset.
 CharacterOffset AXObjectCache::endCharacterOffsetOfLine(const CharacterOffset& characterOffset)
 {
