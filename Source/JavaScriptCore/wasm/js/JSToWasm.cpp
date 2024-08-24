@@ -236,12 +236,8 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreterCrashForSIMDParame
         JIT_COMMENT(jit, "Throw an exception because this function uses v128");
         emitThrowWasmToJSException(jit, GPRInfo::wasmContextInstancePointer, ExceptionType::TypeErrorInvalidV128Use);
 
-        LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate()))
-            RELEASE_ASSERT(false);
-        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(
-            FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted error entrypoint"),
-            nullptr);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted error entrypoint"), nullptr);
     });
     return thunk;
 }
@@ -522,12 +518,8 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.callOperation<OperationPtrTag>(operationWasmUnwind);
         jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
 
-        LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate()))
-            RELEASE_ASSERT(false);
-        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(
-            FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted entrypoint"),
-            nullptr);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted entrypoint"), nullptr);
     });
     return thunk;
 }
