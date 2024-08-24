@@ -57,10 +57,8 @@ RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style
     ASSERT(isRenderListMarker());
 }
 
-RenderListMarker::~RenderListMarker()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderListMarker::~RenderListMarker() = default;
 
 void RenderListMarker::willBeDestroyed()
 {

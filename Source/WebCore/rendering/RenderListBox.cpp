@@ -95,10 +95,8 @@ RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
     view().frameView().addScrollableArea(this);
 }
 
-RenderListBox::~RenderListBox()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderListBox::~RenderListBox() = default;
 
 void RenderListBox::willBeDestroyed()
 {

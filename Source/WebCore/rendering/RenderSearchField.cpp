@@ -65,10 +65,8 @@ RenderSearchField::RenderSearchField(HTMLInputElement& element, RenderStyle&& st
     ASSERT(isRenderSearchField());
 }
 
-RenderSearchField::~RenderSearchField()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderSearchField::~RenderSearchField() = default;
 
 void RenderSearchField::willBeDestroyed()
 {

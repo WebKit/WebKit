@@ -147,10 +147,8 @@ RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionS
     ASSERT(isRenderBox());
 }
 
-RenderBox::~RenderBox()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderBox::~RenderBox() = default;
 
 void RenderBox::willBeDestroyed()
 {

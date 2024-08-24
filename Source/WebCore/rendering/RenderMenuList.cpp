@@ -95,10 +95,8 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     ASSERT(isRenderMenuList());
 }
 
-RenderMenuList::~RenderMenuList()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderMenuList::~RenderMenuList() = default;
 
 void RenderMenuList::willBeDestroyed()
 {
