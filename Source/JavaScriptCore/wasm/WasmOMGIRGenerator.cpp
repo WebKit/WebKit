@@ -326,6 +326,7 @@ public:
     enum class CastKind { Cast, Test };
 
     struct AbstractHeap {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AbstractHeap);
         Vector<AbstractHeap*> m_children;
         bool hasAnyUnindexed = false;
         unsigned minBeginIndex = 0xffffffffu;
@@ -382,14 +383,14 @@ public:
 
 private:
 #define DEFINE_VARIABLE(parent, name) \
-    AbstractHeap* m_heap ## name;
+    std::unique_ptr<AbstractHeap> m_heap ## name;
     FOR_EACH_OMG_ABSTRACT_HEAP(DEFINE_VARIABLE)
 #undef DEFINE_VARIABLE
 
 #define INITIALIZE_HEAP(parent, name) \
-    m_heap ## name = new AbstractHeap(); \
+    m_heap ## name = makeUnique<AbstractHeap>(); \
     if (m_heap ## name != m_heap ## parent) \
-        m_heap ## parent ->addChild(m_heap ## name);
+        m_heap ## parent ->addChild(m_heap ## name.get());
     void initializeHeaps()
     {
         FOR_EACH_OMG_ABSTRACT_HEAP(INITIALIZE_HEAP)
@@ -398,7 +399,7 @@ private:
 
 public:
 #define DEFINE_GETTER(parent, name) \
-    AbstractHeap* heap ## name () { return m_heap ## name ; }
+    AbstractHeap* heap ## name () { return m_heap ## name.get() ; }
     FOR_EACH_OMG_ABSTRACT_HEAP(DEFINE_GETTER)
 #undef DEFINE_GETTER
 
