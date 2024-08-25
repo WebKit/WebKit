@@ -57,7 +57,7 @@ std::optional<WebCore::WebGPU::PipelineDescriptorBase> ConvertFromBackingContext
     if (!base)
         return std::nullopt;
 
-    WebCore::WebGPU::PipelineLayout* layout = nullptr;
+    WeakPtr<WebCore::WebGPU::PipelineLayout> layout;
     if (pipelineDescriptorBase.layout) {
         layout = convertPipelineLayoutFromBacking(pipelineDescriptorBase.layout);
         if (!layout)

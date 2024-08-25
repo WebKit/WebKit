@@ -60,11 +60,11 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
 
 std::optional<WebCore::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
 {
-    auto* view = convertTextureViewFromBacking(renderPassColorAttachment.view);
+    WeakPtr view = convertTextureViewFromBacking(renderPassColorAttachment.view);
     if (!view)
         return std::nullopt;
 
-    WebCore::WebGPU::TextureView* resolveTarget = nullptr;
+    WeakPtr<WebCore::WebGPU::TextureView> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
         resolveTarget = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget.value());
         if (!resolveTarget)

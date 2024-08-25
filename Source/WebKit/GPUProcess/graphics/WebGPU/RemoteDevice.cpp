@@ -219,16 +219,19 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
 
 void RemoteDevice::updateExternalTexture(WebKit::WebGPUIdentifier externalTextureIdentifier, const WebCore::MediaPlayerIdentifier& mediaPlayerIdentifier)
 {
-    auto* externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier);
-    if (!externalTexture)
+    auto externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier);
+    if (!externalTexture.get())
         return;
 
-    externalTexture->destroy();
+    externalTexture.get()->destroy();
     if (auto connection = m_gpuConnectionToWebProcess.get()) {
-        connection->performWithMediaPlayerOnMainThread(mediaPlayerIdentifier, [&] (auto& player) mutable {
+        connection->performWithMediaPlayerOnMainThread(mediaPlayerIdentifier, [externalTexture] (auto& player) mutable {
+            auto externalTexturePtr = externalTexture.get();
+            if (!externalTexturePtr)
+                return;
             auto videoFrame = player.videoFrameForCurrentTime();
             RetainPtr<CVPixelBufferRef> pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
-            externalTexture->updateExternalTexture(pixelBuffer.get());
+            externalTexturePtr->updateExternalTexture(pixelBuffer.get());
         });
     }
 }

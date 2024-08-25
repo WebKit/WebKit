@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/SharedMemory.h>
+#include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/TZoneMallocInlines.h>
 

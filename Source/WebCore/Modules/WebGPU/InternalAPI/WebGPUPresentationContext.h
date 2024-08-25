@@ -28,6 +28,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -43,7 +44,7 @@ namespace WebCore::WebGPU {
 struct CanvasConfiguration;
 class Texture;
 
-class PresentationContext : public RefCounted<PresentationContext> {
+class PresentationContext : public RefCounted<PresentationContext>, public CanMakeWeakPtr<PresentationContext> {
 public:
     virtual ~PresentationContext() = default;
 

@@ -33,6 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
@@ -42,7 +43,7 @@ class Buffer;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
+class RenderBundleEncoder : public RefCounted<RenderBundleEncoder>, public CanMakeWeakPtr<RenderBundleEncoder> {
 public:
     virtual ~RenderBundleEncoder() = default;
 

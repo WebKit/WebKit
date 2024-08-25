@@ -34,8 +34,10 @@
 #include "RemoteRenderBundleEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/WebGPUBindGroup.h>
 #include <WebCore/WebGPURenderBundle.h>
 #include <WebCore/WebGPURenderBundleEncoder.h>
+#include <WebCore/WebGPURenderPipeline.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
@@ -102,7 +104,7 @@ void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, W
     if (!convertedBuffer)
         return;
 
-    m_backing->setVertexBuffer(slot, convertedBuffer, offset, size);
+    m_backing->setVertexBuffer(slot, convertedBuffer.get(), offset, size);
 }
 
 void RemoteRenderBundleEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)

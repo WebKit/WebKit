@@ -46,7 +46,7 @@ std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convert
 
 std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
-    auto* view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
+    WeakPtr view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
     if (!view)
         return std::nullopt;
 

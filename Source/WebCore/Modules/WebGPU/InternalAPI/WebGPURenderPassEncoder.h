@@ -34,6 +34,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
@@ -44,7 +45,7 @@ class QuerySet;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderPassEncoder : public RefCounted<RenderPassEncoder> {
+class RenderPassEncoder : public RefCounted<RenderPassEncoder>, public CanMakeWeakPtr<RenderPassEncoder> {
 public:
     virtual ~RenderPassEncoder() = default;
 
