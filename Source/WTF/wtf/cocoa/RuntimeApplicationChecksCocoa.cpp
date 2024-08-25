@@ -221,6 +221,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::LaxCookieSameSiteAttribute);
         disableBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader);
         disableBehavior(SDKAlignedBehavior::BrowsingContextControllerSPIAccessRemoved);
+        disableBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros);
     }
 
     disableAdditionalSDKAlignedBehaviors(behaviors);

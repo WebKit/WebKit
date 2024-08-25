@@ -451,6 +451,12 @@ bool IOSApplication::isDOFUSTouch()
     return isDOFUSTouch;
 }
 
+bool IOSApplication::isMyRideK12()
+{
+    static bool isMyRideK12 = applicationBundleIsEqualTo("com.tylertech.myridek12"_s);
+    return isMyRideK12;
+}
+
 bool IOSApplication::isHimalaya()
 {
     static bool isHimalayaApp = applicationBundleIsEqualTo("com.gemd.iting"_s);

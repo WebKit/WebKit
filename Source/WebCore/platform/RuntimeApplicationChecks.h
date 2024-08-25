@@ -146,6 +146,7 @@ bool isSpringBoard();
 bool isUNIQLOApp();
 bool isWechat();
 bool isDOFUSTouch();
+bool isMyRideK12();
 
 } // IOSApplication
 
