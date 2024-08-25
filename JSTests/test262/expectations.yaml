@@ -1186,18 +1186,9 @@ test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Instant/from/instant-string-sub-minute-offset.js:
-  default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/epochMilliseconds/basic.js:
   default: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
   strict mode: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
-test/built-ins/Temporal/Instant/prototype/equals/instant-string-sub-minute-offset.js:
-  default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/since/instant-string-sub-minute-offset.js:
-  default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
@@ -1240,9 +1231,6 @@ test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Instant/prototype/until/instant-string-sub-minute-offset.js:
-  default: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: ISO strings cannot have sub-minute offsets in time zone annotations: 2021-08-19T17:30-07:00:01[-07:00:01] Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/order-of-operations.js:
   default: 'Test262Error: Expected [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'

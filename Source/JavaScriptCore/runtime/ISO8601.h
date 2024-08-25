@@ -262,7 +262,7 @@ struct CalendarRecord {
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
+std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision = true);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
 enum class ValidateTimeZoneID : bool { No, Yes };
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
