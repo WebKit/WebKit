@@ -389,15 +389,15 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
-void RenderText::removeAndDestroyTextBoxes()
+void RenderText::removeAndDestroyLegacyTextBoxes()
 {
     if (!renderTreeBeingDestroyed())
-        m_lineBoxes.removeAllFromParent(*this);
+        m_legacyLineBoxes.removeAllFromParent(*this);
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     else
-        m_lineBoxes.invalidateParentChildLists();
+        m_legacyLineBoxes.invalidateParentChildLists();
 #endif
-    deleteLineBoxes();
+    deleteLegacyLineBoxes();
 }
 
 void RenderText::willBeDestroyed()
@@ -405,7 +405,7 @@ void RenderText::willBeDestroyed()
     if (m_hasSecureTextTimer)
         secureTextTimers().remove(*this);
 
-    removeAndDestroyTextBoxes();
+    removeAndDestroyLegacyTextBoxes();
 
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
@@ -1751,7 +1751,7 @@ void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsig
 
     int delta = newText.length() - text().length();
 
-    m_linesDirty = m_lineBoxes.dirtyForTextChange(*this);
+    m_linesDirty = m_legacyLineBoxes.dirtyForTextChange(*this);
 
     setTextInternal(newText, force || m_linesDirty);
     invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, delta);
@@ -1768,18 +1768,18 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
     return applyTextTransform(style(), originalText(), previousCharacter());
 }
 
-void RenderText::dirtyLineBoxes(bool fullLayout)
+void RenderText::dirtyLegacyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
-        deleteLineBoxes();
+        deleteLegacyLineBoxes();
     else if (!m_linesDirty)
-        m_lineBoxes.dirtyAll();
+        m_legacyLineBoxes.dirtyAll();
     m_linesDirty = false;
 }
 
-void RenderText::deleteLineBoxes()
+void RenderText::deleteLegacyLineBoxes()
 {
-    m_lineBoxes.deleteAll();
+    m_legacyLineBoxes.deleteAll();
 }
 
 std::unique_ptr<LegacyInlineTextBox> RenderText::createTextBox()

@@ -113,7 +113,7 @@ void RenderInline::willBeDestroyed()
             parent->dirtyLineFromChangedChild();
     }
 
-    m_lineBoxes.deleteLineBoxes();
+    m_legacyLineBoxes.deleteLineBoxes();
 
     RenderBoxModelObject::willBeDestroyed();
 }
@@ -230,7 +230,7 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         lineLayout->paint(paintInfo, paintOffset, this);
         return;
     }
-    m_lineBoxes.paint(this, paintInfo, paintOffset);
+    m_legacyLineBoxes.paint(this, paintInfo, paintOffset);
 }
 
 template<typename GeneratorContext>
@@ -416,7 +416,7 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     ASSERT(layer());
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction, this);
-    return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return m_legacyLineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
@@ -806,19 +806,19 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
     }
 }
 
-void RenderInline::dirtyLineBoxes(bool fullLayout)
+void RenderInline::dirtyLegacyLineBoxes(bool fullLayout)
 {
     if (fullLayout) {
-        m_lineBoxes.deleteLineBoxes();
+        m_legacyLineBoxes.deleteLineBoxes();
         return;
     }
 
-    m_lineBoxes.dirtyLineBoxes();
+    m_legacyLineBoxes.dirtyLineBoxes();
 }
 
-void RenderInline::deleteLines()
+void RenderInline::deleteLegacyLines()
 {
-    m_lineBoxes.deleteLineBoxTree();
+    m_legacyLineBoxes.deleteLineBoxTree();
 }
 
 std::unique_ptr<LegacyInlineFlowBox> RenderInline::createInlineFlowBox()
@@ -830,7 +830,7 @@ LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
     auto newFlowBox = createInlineFlowBox();
     auto flowBox = newFlowBox.get();
-    m_lineBoxes.appendLineBox(WTFMove(newFlowBox));
+    m_legacyLineBoxes.appendLineBox(WTFMove(newFlowBox));
     return flowBox;
 }
 

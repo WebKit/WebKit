@@ -191,7 +191,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         // Move the first letter into the new renderer.
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
-                downcast<RenderText>(*child).removeAndDestroyTextBoxes();
+                downcast<RenderText>(*child).removeAndDestroyLegacyTextBoxes();
             auto toMove = m_builder.detach(*firstLetter, *child, WillBeDestroyed::No);
             m_builder.attach(*newFirstLetter, WTFMove(toMove));
         }

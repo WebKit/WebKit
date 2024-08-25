@@ -298,7 +298,7 @@ void RenderMenuList::setText(const String& s)
 
     if (m_buttonText) {
         m_buttonText->setText(textToUse.impl(), true);
-        m_buttonText->dirtyLineBoxes(false);
+        m_buttonText->dirtyLegacyLineBoxes(false);
     } else {
         auto newButtonText = createRenderer<RenderText>(Type::Text, document(), textToUse);
         m_buttonText = *newButtonText;

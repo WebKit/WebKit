@@ -999,7 +999,7 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
 
     // If we have a line box wrapper, delete it.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
-        textRenderer->removeAndDestroyTextBoxes();
+        textRenderer->removeAndDestroyLegacyTextBoxes();
 
     if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && isInternalMove == RenderTreeBuilder::IsInternalMove::No)
         listItemRenderer->updateListMarkerNumbers();

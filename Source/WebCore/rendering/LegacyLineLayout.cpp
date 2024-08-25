@@ -173,9 +173,9 @@ LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* rend
 static inline void dirtyLineBoxesForRenderer(RenderObject& renderer)
 {
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(renderer))
-        renderText->dirtyLineBoxes(true);
+        renderText->dirtyLegacyLineBoxes(true);
     else if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer))
-        renderInline->dirtyLineBoxes(true);
+        renderInline->dirtyLegacyLineBoxes(true);
 }
 
 static bool parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
