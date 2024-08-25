@@ -247,7 +247,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
         if (fillResult.hasException())
             return fillResult;
-        m_navigationPreloadIdentifier = { };
+        m_navigationPreloadIdentifier = std::nullopt;
     } else {
         m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
         m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;

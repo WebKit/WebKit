@@ -115,7 +115,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
         }
         return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTFMove(responseHeaders) };
     });
-    SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](ExceptionOr<BackgroundFetchInformation>&& result) mutable {
+    SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](ExceptionOr<std::optional<BackgroundFetchInformation>>&& result) mutable {
         if (!weakContext)
             return;
         weakContext->postTask([weakThis = WTFMove(weakThis), promise = WTFMove(promise), result = WTFMove(result)](auto& context) mutable {
@@ -126,12 +126,12 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
                 promise.reject(result.releaseException());
                 return;
             }
-            if (result.returnValue().identifier.isNull()) {
+            if (!result.returnValue()) {
                 promise.reject(Exception { ExceptionCode::TypeError, "An internal error occured"_s });
                 return;
             }
 
-            promise.resolve(weakThis->backgroundFetchRegistrationInstance(context, result.releaseReturnValue()));
+            promise.resolve(weakThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue()));
         });
 
     });
@@ -158,8 +158,8 @@ void BackgroundFetchManager::get(ScriptExecutionContext& context, const String& 
             }
 
             RefPtr<BackgroundFetchRegistration> backgroundFetchRegistration;
-            if (!result.returnValue().identifier.isNull())
-                backgroundFetchRegistration = weakThis->backgroundFetchRegistrationInstance(context, result.releaseReturnValue());
+            if (result.returnValue())
+                backgroundFetchRegistration = weakThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue());
 
             promise.resolve(backgroundFetchRegistration.get());
         });

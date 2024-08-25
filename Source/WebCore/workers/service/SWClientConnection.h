@@ -129,7 +129,7 @@ public:
     WEBCORE_EXPORT void registerServiceWorkerClients();
     bool isClosed() const { return m_isClosed; }
 
-    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<BackgroundFetchInformation>&&)>;
+    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<std::optional<BackgroundFetchInformation>>&&)>;
     virtual void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
     virtual void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
     using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;

@@ -66,13 +66,13 @@ enum class ServiceWorkerIsInspectable : bool { No, Yes };
 enum class ShouldNotifyWhenResolved : bool { No, Yes };
 
 enum class ServiceWorkerRegistrationIdentifierType { };
-using ServiceWorkerRegistrationIdentifier = LegacyNullableAtomicObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
+using ServiceWorkerRegistrationIdentifier = AtomicObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
 enum class ServiceWorkerJobIdentifierType { };
-using ServiceWorkerJobIdentifier = LegacyNullableAtomicObjectIdentifier<ServiceWorkerJobIdentifierType>;
+using ServiceWorkerJobIdentifier = AtomicObjectIdentifier<ServiceWorkerJobIdentifierType>;
 
 enum class SWServerToContextConnectionIdentifierType { };
-using SWServerToContextConnectionIdentifier = LegacyNullableObjectIdentifier<SWServerToContextConnectionIdentifierType>;
+using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 
 using SWServerConnectionIdentifierType = ProcessIdentifierType;
 using SWServerConnectionIdentifier = LegacyNullableObjectIdentifier<SWServerConnectionIdentifierType>;

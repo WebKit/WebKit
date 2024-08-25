@@ -102,7 +102,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
     , m_serviceWorkerRegistrationIdentifier(registration.identifier())
     , m_shouldSoftUpdate(registration.shouldSoftUpdate(loader.parameters().options))
 {
-    SWFETCH_RELEASE_LOG("ServiceWorkerFetchTask: (serverConnectionIdentifier=%" PRIu64 ", serviceWorkerRegistrationIdentifier=%" PRIu64 ", serviceWorkerIdentifier=%" PRIu64 ", %d)", m_serverConnectionIdentifier.toUInt64(), m_serviceWorkerRegistrationIdentifier.toUInt64(), m_serviceWorkerIdentifier.toUInt64(), isWorkerReady);
+    SWFETCH_RELEASE_LOG("ServiceWorkerFetchTask: (serverConnectionIdentifier=%" PRIu64 ", serviceWorkerRegistrationIdentifier=%" PRIu64 ", serviceWorkerIdentifier=%" PRIu64 ", %d)", m_serverConnectionIdentifier.toUInt64(), m_serviceWorkerRegistrationIdentifier->toUInt64(), m_serviceWorkerIdentifier.toUInt64(), isWorkerReady);
 
     // We only do the timeout logic for main document navigations because it is not Web-compatible to do so for subresources.
     if (loader.parameters().request.requester() == WebCore::ResourceRequestRequester::Main) {
@@ -456,7 +456,7 @@ void ServiceWorkerFetchTask::softUpdateIfNeeded()
     CheckedPtr swConnection = loader->connectionToWebProcess().swConnection();
     if (!swConnection)
         return;
-    if (RefPtr registration = swConnection->server().getRegistration(m_serviceWorkerRegistrationIdentifier))
+    if (RefPtr registration = swConnection->server().getRegistration(*m_serviceWorkerRegistrationIdentifier))
         registration->scheduleSoftUpdate(loader->isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 }
 
