@@ -23,17 +23,20 @@ interface Serial : EventTarget {
 
 dictionary SerialPortRequestOptions {
   sequence<SerialPortFilter> filters;
+  sequence<BluetoothServiceUUID> allowedBluetoothServiceClassIds;
 };
 
 dictionary SerialPortFilter {
   unsigned short usbVendorId;
   unsigned short usbProductId;
+  BluetoothServiceUUID bluetoothServiceClassId;
 };
 
 [Exposed=(DedicatedWorker,Window), SecureContext]
 interface SerialPort : EventTarget {
   attribute EventHandler onconnect;
   attribute EventHandler ondisconnect;
+  readonly attribute boolean connected;
   readonly attribute ReadableStream readable;
   readonly attribute WritableStream writable;
 
@@ -43,15 +46,17 @@ interface SerialPort : EventTarget {
   Promise<undefined> setSignals(optional SerialOutputSignals signals = {});
   Promise<SerialInputSignals> getSignals();
   Promise<undefined> close();
+  Promise<undefined> forget();
 };
 
 dictionary SerialPortInfo {
   unsigned short usbVendorId;
   unsigned short usbProductId;
+  BluetoothServiceUUID bluetoothServiceClassId;
 };
 
 dictionary SerialOptions {
-  required [EnforceRange] unsigned long baudRate;
+  [EnforceRange] required unsigned long baudRate;
   [EnforceRange] octet dataBits = 8;
   [EnforceRange] octet stopBits = 1;
   ParityType parity = "none";
