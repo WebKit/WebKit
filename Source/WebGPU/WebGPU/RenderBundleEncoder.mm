@@ -386,37 +386,41 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
 
             if (m_dynamicOffsetsVertexBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
+                auto dynamicOffsetsVertexBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents), maxBufferLength };
+
                 auto bufferOffset = vertexDynamicOffset;
-                uint8_t* vertexBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents) + bufferOffset;
+                auto vertexBufferContentsSpan = dynamicOffsetsVertexBuffer.subspan(bufferOffset);
                 auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
                 if (pvertexOffsets && pvertexOffsets->size()) {
                     auto& vertexOffsets = *pvertexOffsets;
+                    auto vertexOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(vertexOffsets.data()), vertexOffsets.sizeInBytes() };
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(vertexOffsets[0]), vertexOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
-                        makeInvalid(@"Incorrect data for fragmentBuffer");
+                        makeInvalid(@"Incorrect data for vertexBuffer");
                         return false;
                     }
-                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
-                    memcpy(&vertexBufferContents[startIndex.value()], &vertexOffsets[0], bytesToCopy.value());
+                    memcpySpan(vertexBufferContentsSpan.subspan(startIndex.value(), bytesToCopy.value()), vertexOffsetsSpan.subspan(0, bytesToCopy.value()));
                 }
             }
 
             if (m_dynamicOffsetsFragmentBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsFragmentBuffer.length;
+                auto dynamicOffsetsFragmentBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents), maxBufferLength };
                 auto bufferOffset = fragmentDynamicOffset;
-                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float);
+                auto fragmentBufferContents = dynamicOffsetsFragmentBuffer.subspan(bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
+                    auto fragmentOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(fragmentOffsets.data()), fragmentOffsets.sizeInBytes() };
+
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(fragmentOffsets[0]), fragmentOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
                         makeInvalid(@"Incorrect data for fragmentBuffer");
                         return false;
                     }
-                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
-                    memcpy(&fragmentBufferContents[startIndex.value()], &fragmentOffsets[0], bytesToCopy.value());
+                    memcpySpan(fragmentBufferContents.subspan(startIndex.value(), bytesToCopy.value()), fragmentOffsetsSpan.subspan(0, bytesToCopy.value()));
                 }
             }
         }
