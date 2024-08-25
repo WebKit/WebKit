@@ -144,8 +144,7 @@ public:
     inline LayoutUnit marginLeft() const;
     inline LayoutUnit marginRight() const;
 
-    LegacyInlineTextBox* firstTextBox() const { return m_legacyLineBoxes.first(); }
-    LegacyInlineTextBox* lastTextBox() const { return m_legacyLineBoxes.last(); }
+    LegacyInlineTextBox* firstLegacyTextBox() const { return m_legacyLineBoxes.first(); }
 
     int caretMinOffset() const final;
     int caretMaxOffset() const final;

@@ -251,7 +251,7 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
 
 SVGInlineTextBox* RenderSVGInlineText::firstTextBox() const
 {
-    return downcast<SVGInlineTextBox>(RenderText::firstTextBox());
+    return downcast<SVGInlineTextBox>(RenderText::firstLegacyTextBox());
 }
 
 }

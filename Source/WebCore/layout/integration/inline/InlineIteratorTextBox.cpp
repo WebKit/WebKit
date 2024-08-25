@@ -73,7 +73,7 @@ TextBoxIterator firstTextBoxFor(const RenderText& text)
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
         return lineLayout->textBoxesFor(text);
 
-    return { BoxLegacyPath { text.firstTextBox() } };
+    return { BoxLegacyPath { text.firstLegacyTextBox() } };
 }
 
 TextBoxIterator textBoxFor(const LegacyInlineTextBox* legacyInlineTextBox)

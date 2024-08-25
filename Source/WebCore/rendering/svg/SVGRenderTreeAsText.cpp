@@ -388,12 +388,10 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
     }
 }
 
-static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& text)
+static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderSVGInlineText& text)
 {
-    for (auto* box = text.firstTextBox(); box; box = box->nextTextBox()) {
-        if (auto* inlineTextBox = dynamicDowncast<SVGInlineTextBox>(*box))
-            writeSVGInlineTextBox(ts, inlineTextBox);
-    }
+    for (auto* box = text.firstTextBox(); box; box = box->nextTextBox())
+        writeSVGInlineTextBox(ts, box);
 }
 
 enum class WriteIndentOrNot : bool { No, Yes };
