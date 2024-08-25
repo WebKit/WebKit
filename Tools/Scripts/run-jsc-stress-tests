@@ -2045,7 +2045,7 @@ def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     # Only let WebAssembly get executable memory.
-    run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=20000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")
+    run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=80000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)
