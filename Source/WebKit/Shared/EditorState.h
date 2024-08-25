@@ -106,17 +106,17 @@ struct EditorState {
 #if USE(DICTATION_ALTERNATIVES)
         Vector<WebCore::DictationContext> dictationContextsForSelection;
 #endif
-        bool isReplaceAllowed { false };
-        bool hasContent { false };
-        bool isStableStateUpdate { false };
-        bool insideFixedPosition { false };
-        bool hasPlainText { false };
+        bool isReplaceAllowed : 1 { false };
+        bool hasContent : 1 { false };
+        bool isStableStateUpdate : 1 { false };
+        bool insideFixedPosition : 1 { false };
+        bool hasPlainText : 1 { false };
+        bool hasCaretColorAuto : 1 { false };
+        bool atStartOfSentence : 1 { false };
+        bool selectionStartIsAtParagraphBoundary : 1 { false };
+        bool selectionEndIsAtParagraphBoundary : 1 { false };
+        bool hasGrammarDocumentMarkers : 1 { false };
         WebCore::Color caretColor; // FIXME: Maybe this should be on VisualData?
-        bool hasCaretColorAuto { false };
-        bool atStartOfSentence { false };
-        bool selectionStartIsAtParagraphBoundary { false };
-        bool selectionEndIsAtParagraphBoundary { false };
-        bool hasGrammarDocumentMarkers { false };
         std::optional<WebCore::ElementContext> selectedEditableImage;
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC)
