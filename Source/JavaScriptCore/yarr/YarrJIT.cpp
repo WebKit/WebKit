@@ -536,6 +536,7 @@ class YarrGenerator final : public YarrJITInfo {
         case 1:
         case 2:
         case 3:
+        case 4:
             // If the set is small enough, still defer to a series of branches.
             mask.forEachSetBit([&](size_t value) {
                 matchDest.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(min + value)));
