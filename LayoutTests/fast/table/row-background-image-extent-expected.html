@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Row background image extent</title>
+<style>* { box-sizing: border-box }</style>
+</head>
+<body>
+    <p>A background applied to a table row (or row-group or column or column-group) should cover the whole area of contained cells, including borders. The two dashed squares should look identical.</p>
+
+    <div style="background: linear-gradient(to bottom right, royalblue 0, black 100%); width: 100px; height: 100px; margin-bottom: 1em">
+        <div style="border: 5px dashed aqua; width: 100px; height: 100px">
+        </div>
+    </div>
+
+    <div style="background: linear-gradient(to bottom right, royalblue 0, black 100%); width: 100px; height: 100px">
+        <div style="border: 5px dashed aqua; width: 100px; height: 100px">
+        </div>
+    </div>
+</body>
+</html>

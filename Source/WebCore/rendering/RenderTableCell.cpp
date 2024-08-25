@@ -1423,7 +1423,9 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
     // on top of the borders otherwise. This only matters for cells and rows.
     bool shouldClip = paintBackgroundObject || (backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders());
     GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
-    if (shouldClip) {
+    if (paintBackgroundObject)
+        paintInfo.context().clip({ adjustedPaintOffset, size() });
+    else if (shouldClip) {
         LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
             width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
         paintInfo.context().clip(clipRect);
@@ -1438,7 +1440,10 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
     } else
         fillRect = LayoutRect { adjustedPaintOffset, size() };
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
-    BackgroundPainter { *this, paintInfo }.paintFillLayers(color, bgLayer, fillRect, BackgroundBleedNone, compositeOp, backgroundObject);
+    BackgroundPainter painter { *this, paintInfo };
+    if (backgroundObject != this)
+        painter.setOverrideClip(FillBox::BorderBox);
+    painter.paintFillLayers(color, bgLayer, fillRect, BackgroundBleedNone, compositeOp, backgroundObject);
 }
 
 void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
