@@ -515,9 +515,9 @@ const BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox,
     return m_globalLayoutState.geometryForBox(layoutBox);
 }
 
-BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason)
+BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox)
 {
-    ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
+    ASSERT(isOkToAccessBoxGeometry(layoutBox, root(), { }));
     return m_globalLayoutState.ensureGeometryForBox(layoutBox);
 }
 

@@ -76,7 +76,7 @@ public:
         InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
-    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
+    BoxGeometry& geometryForBox(const Box&);
 
     const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
