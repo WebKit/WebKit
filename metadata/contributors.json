@@ -2305,6 +2305,16 @@
    },
    {
       "emails" : [
+         "codesculptures@gmail.com"
+      ],
+      "github" : "codesculpture",
+      "name" : "Deepak Aravind",
+      "nicks" : [
+         "codesculpture"
+      ]
+   },
+   {
+      "emails" : [
          "d.nomiyama@samsung.com"
       ],
       "expertise" : "The WebKitGTK Port",
