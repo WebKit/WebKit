@@ -112,7 +112,7 @@ header: "RemoteLayerBackingStore.h"
 
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
-    WebCore::PlatformLayerIdentifier m_rootLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     WebKit::ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
@@ -187,7 +187,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 };
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties {
-    WebCore::PlatformLayerIdentifier layerID;
+    Markable<WebCore::PlatformLayerIdentifier> layerID;
     WebCore::PlatformCALayerLayerType type;
     std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
 #if ENABLE(MODEL_ELEMENT)

@@ -57,7 +57,8 @@ public:
     }
 
     ProcessQualified(WTF::HashTableDeletedValueType)
-        : m_processIdentifier(WTF::HashTableDeletedValue)
+        : m_object(WTF::HashTableDeletedValue)
+        , m_processIdentifier(WTF::HashTableDeletedValue)
     {
     }
 
@@ -88,14 +89,38 @@ public:
     String toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }
 
     struct MarkableTraits {
-        static bool isEmptyValue(const ProcessQualified& identifier) { return !identifier; }
-        static constexpr ProcessQualified emptyValue() { return { }; }
+        static bool isEmptyValue(const ProcessQualified& identifier) { return T::MarkableTraits::isEmptyValue(identifier.object()); }
+        static constexpr ProcessQualified emptyValue() { return { T::MarkableTraits::emptyValue(), { } }; }
     };
 
 private:
     T m_object;
     ProcessIdentifier m_processIdentifier;
 };
+
+template<typename T>
+bool operator>(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
+{
+    return a.object() > b.object();
+}
+
+template<typename T>
+bool operator>=(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
+{
+    return a.object() >= b.object();
+}
+
+template<typename T>
+bool operator<(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
+{
+    return a.object() < b.object();
+}
+
+template<typename T>
+bool operator<=(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
+{
+    return a.object() <= b.object();
+}
 
 template <typename T>
 inline TextStream& operator<<(TextStream& ts, const ProcessQualified<T>& processQualified)
@@ -132,6 +157,7 @@ template<typename T> struct DefaultHash<WebCore::ProcessQualified<T>> {
 
 template<typename T> struct HashTraits<WebCore::ProcessQualified<T>> : SimpleClassHashTraits<WebCore::ProcessQualified<T>> {
     static constexpr bool emptyValueIsZero = HashTraits<T>::emptyValueIsZero;
+    static WebCore::ProcessQualified<T> emptyValue() { return { HashTraits<T>::emptyValue(), { } }; }
 };
 
 class ProcessQualifiedStringTypeAdapter {

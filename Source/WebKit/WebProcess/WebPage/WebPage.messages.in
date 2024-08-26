@@ -349,7 +349,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidBeginTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
-    AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
+    AddLayerForFindOverlay() -> (std::optional<WebCore::PlatformLayerIdentifier> findLayerID)
     RemoveLayerForFindOverlay() -> ()
 
     # Drag and drop.

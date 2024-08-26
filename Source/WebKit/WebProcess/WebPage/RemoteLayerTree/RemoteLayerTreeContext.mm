@@ -141,8 +141,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
 
 void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 {
-    ASSERT(layer.layerID());
-    PlatformLayerIdentifier layerID = layer.layerID();
+    auto layerID = layer.layerID();
 
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);

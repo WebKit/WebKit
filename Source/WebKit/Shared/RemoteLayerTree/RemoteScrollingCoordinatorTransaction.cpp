@@ -101,10 +101,10 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     }
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
-        ts.dumpProperty("scroll-container-layer", static_cast<PlatformLayerIdentifier>(node.scrollContainerLayer()));
+        ts.dumpProperty("scroll-container-layer", node.scrollContainerLayer().layerID());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-        ts.dumpProperty("scrolled-contents-layer", static_cast<PlatformLayerIdentifier>(node.scrolledContentsLayer()));
+        ts.dumpProperty("scrolled-contents-layer", node.scrolledContentsLayer().layerID());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo)) {
         ts.dumpProperty("horizontal snap offsets", node.snapOffsetsInfo().horizontalSnapOffsets);
@@ -187,16 +187,16 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
         ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
-        ts.dumpProperty("clip-inset-layer", static_cast<PlatformLayerIdentifier>(node.insetClipLayer()));
+        ts.dumpProperty("clip-inset-layer", node.insetClipLayer().layerID());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        ts.dumpProperty("content-shadow-layer", static_cast<PlatformLayerIdentifier>(node.contentShadowLayer()));
+        ts.dumpProperty("content-shadow-layer", node.contentShadowLayer().layerID());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
-        ts.dumpProperty("header-layer", static_cast<PlatformLayerIdentifier>(node.headerLayer()));
+        ts.dumpProperty("header-layer", node.headerLayer().layerID());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
-        ts.dumpProperty("footer-layer", static_cast<PlatformLayerIdentifier>(node.footerLayer()));
+        ts.dumpProperty("footer-layer", node.footerLayer().layerID());
 }
     
 static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
@@ -245,7 +245,7 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
     ts.dumpProperty("type", node.nodeType());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::Layer))
-        ts.dumpProperty("layer", static_cast<PlatformLayerIdentifier>(node.layer()));
+        ts.dumpProperty("layer", node.layer().layerID());
     
     switch (node.nodeType()) {
     case ScrollingNodeType::MainFrame:

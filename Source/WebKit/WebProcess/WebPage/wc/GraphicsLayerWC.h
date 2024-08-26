@@ -53,7 +53,7 @@ public:
     void clearObserver() { m_observer = nullptr; }
 
     // GraphicsLayer
-    WebCore::PlatformLayerIdentifier primaryLayerID() const override;
+    std::optional<WebCore::PlatformLayerIdentifier> primaryLayerID() const override;
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::FloatRect&, ShouldClipToLayer) override;
     void setContentsNeedsDisplay() override;

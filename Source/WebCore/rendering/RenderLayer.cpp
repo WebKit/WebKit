@@ -6115,7 +6115,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
 
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
-        stream << " (layerID "_s << backing.graphicsLayer()->primaryLayerID().object() << ")"_s;
+        stream << " (layerID "_s << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->object().toUInt64() : 0) << ")"_s;
         
         if (layer.indirectCompositingReason() != WebCore::IndirectCompositingReason::None)
             stream << " "_s << layer.indirectCompositingReason();

@@ -78,54 +78,54 @@ enum class WCLayerChange : uint32_t {
 
 struct WCLayerUpdateInfo {
     WebCore::PlatformLayerIdentifier id;
-    OptionSet<WCLayerChange> changes;
-    Vector<WebCore::PlatformLayerIdentifier> children;
-    std::optional<WebCore::PlatformLayerIdentifier> maskLayer;
-    std::optional<WebCore::PlatformLayerIdentifier> replicaLayer;
-    WebCore::FloatPoint position;
-    WebCore::FloatPoint3D anchorPoint;
-    WebCore::FloatSize size;
-    WebCore::FloatPoint boundsOrigin;
-    bool masksToBounds;
-    bool contentsRectClipsDescendants;
-    bool showDebugBorder;
-    bool showRepaintCounter;
-    bool contentsVisible;
-    bool backfaceVisibility;
-    bool preserves3D;
-    WebCore::Color solidColor;
-    WebCore::Color debugBorderColor;
-    float opacity;
-    float debugBorderWidth;
-    int repaintCount;
-    WebCore::FloatRect contentsRect;
+    OptionSet<WCLayerChange> changes { };
+    Vector<WebCore::PlatformLayerIdentifier> children { };
+    std::optional<WebCore::PlatformLayerIdentifier> maskLayer { };
+    std::optional<WebCore::PlatformLayerIdentifier> replicaLayer { };
+    WebCore::FloatPoint position { };
+    WebCore::FloatPoint3D anchorPoint { };
+    WebCore::FloatSize size { };
+    WebCore::FloatPoint boundsOrigin { };
+    bool masksToBounds { false };
+    bool contentsRectClipsDescendants { false };
+    bool showDebugBorder { false };
+    bool showRepaintCounter { false };
+    bool contentsVisible { false };
+    bool backfaceVisibility { false };
+    bool preserves3D { false };
+    WebCore::Color solidColor { };
+    WebCore::Color debugBorderColor { };
+    float opacity { 0 };
+    float debugBorderWidth { 0 };
+    int repaintCount { 0 };
+    WebCore::FloatRect contentsRect { };
 
     struct BackgroundChanges {
         WebCore::Color color;
         bool hasBackingStore;
         WebCore::IntSize backingStoreSize;
         Vector<WCTileUpdate> tileUpdates;
-    } background;
+    } background { };
 
-    WebCore::TransformationMatrix transform;
-    WebCore::TransformationMatrix childrenTransform;
-    WebCore::FilterOperations filters;
-    WebCore::FilterOperations backdropFilters;
-    WebCore::FloatRoundedRect backdropFiltersRect;
-    WebCore::FloatRoundedRect contentsClippingRect;
+    WebCore::TransformationMatrix transform { };
+    WebCore::TransformationMatrix childrenTransform { };
+    WebCore::FilterOperations filters { };
+    WebCore::FilterOperations backdropFilters { };
+    WebCore::FloatRoundedRect backdropFiltersRect { };
+    WebCore::FloatRoundedRect contentsClippingRect { };
 
     struct PlatformLayerChanges {
         bool hasLayer;
         Vector<WCContentBufferIdentifier> identifiers;
-    } platformLayer;
+    } platformLayer { };
 
-    Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
+    Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier { };
 };
 
 struct WCUpdateInfo {
     WebCore::IntSize viewport;
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
-    WebCore::PlatformLayerIdentifier rootLayer;
+    Markable<WebCore::PlatformLayerIdentifier> rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;
     Vector<WebCore::PlatformLayerIdentifier> removedLayers;
     Vector<WCLayerUpdateInfo> changedLayers;

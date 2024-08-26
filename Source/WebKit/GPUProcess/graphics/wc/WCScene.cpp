@@ -250,7 +250,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     for (auto id : update.removedLayers)
         m_layers.remove(id);
 
-    auto rootLayer = &m_layers.get(update.rootLayer)->texmapLayer;
+    auto rootLayer = &m_layers.get(*update.rootLayer)->texmapLayer;
     rootLayer->applyAnimationsRecursively(MonotonicTime::now());
 
     WebCore::BitmapTexture* surface = nullptr;

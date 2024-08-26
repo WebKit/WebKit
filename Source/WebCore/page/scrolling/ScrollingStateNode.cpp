@@ -66,7 +66,7 @@ ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingNode
     , m_nodeID(nodeID)
     , m_changedProperties(changedProperties)
     , m_children(WTFMove(children))
-    , m_layer(layerID.value_or(PlatformLayerIdentifier { }))
+    , m_layer(layerID)
 {
     for (auto& child : m_children) {
         ASSERT(!child->parent());

@@ -65,7 +65,7 @@ public:
 
     LayerRepresentation(GraphicsLayer* graphicsLayer)
         : m_graphicsLayer(graphicsLayer)
-        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : PlatformLayerIdentifier { })
+        , m_layerID(graphicsLayer ? std::optional { graphicsLayer->primaryLayerID() } : std::nullopt)
         , m_representation(GraphicsLayerRepresentation)
     { }
 
@@ -76,7 +76,7 @@ public:
         retainPlatformLayer(m_typelessPlatformLayer);
     }
 
-    LayerRepresentation(PlatformLayerIdentifier layerID)
+    LayerRepresentation(std::optional<PlatformLayerIdentifier> layerID)
         : m_layerID(layerID)
         , m_representation(PlatformLayerIDRepresentation)
     {
@@ -109,21 +109,9 @@ public:
         return makePlatformLayerTyped(m_typelessPlatformLayer);
     }
     
-    PlatformLayerIdentifier layerID() const
+    std::optional<PlatformLayerIdentifier> layerID() const
     {
-        return m_layerID;
-    }
-
-    std::optional<PlatformLayerIdentifier> layerIDForEncoding() const
-    {
-        ASSERT(m_representation != PlatformLayerRepresentation);
-        return m_layerID ? std::optional<PlatformLayerIdentifier>(m_layerID) : std::nullopt;
-    }
-
-    explicit operator PlatformLayerIdentifier() const
-    {
-        ASSERT(m_representation != PlatformLayerRepresentation);
-        return m_layerID;
+        return m_layerID.asOptional();
     }
 
     LayerRepresentation& operator=(const LayerRepresentation& other)
@@ -203,7 +191,7 @@ private:
 
     RefPtr<GraphicsLayer> m_graphicsLayer;
     void* m_typelessPlatformLayer { nullptr };
-    PlatformLayerIdentifier m_layerID;
+    Markable<PlatformLayerIdentifier> m_layerID;
     Type m_representation { EmptyRepresentation };
 };
 

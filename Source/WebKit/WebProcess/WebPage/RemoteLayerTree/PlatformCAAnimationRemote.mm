@@ -598,11 +598,11 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         [caAnimation setValue:@YES forKey:WKExplicitBeginTimeFlag];
 
     if (layerTreeHost) {
-        PlatformLayerIdentifier layerID = RemoteLayerTreeNode::layerID(layer);
+        auto layerID = RemoteLayerTreeNode::layerID(layer);
 
-        RetainPtr<WKAnimationDelegate>& delegate = layerTreeHost->animationDelegates().add(layerID, nullptr).iterator->value;
+        RetainPtr<WKAnimationDelegate>& delegate = layerTreeHost->animationDelegates().add(*layerID, nullptr).iterator->value;
         if (!delegate)
-            delegate = adoptNS([[WKAnimationDelegate alloc] initWithLayerID:layerID layerTreeHost:layerTreeHost]);
+            delegate = adoptNS([[WKAnimationDelegate alloc] initWithLayerID:*layerID layerTreeHost:layerTreeHost]);
 
         [caAnimation setDelegate:delegate.get()];
     }

@@ -481,13 +481,13 @@ String GraphicsLayerCA::debugName() const
     String caLayerDescription;
     if (m_layer->type() == PlatformCALayer::Type::Cocoa)
         caLayerDescription = makeString("CALayer(0x"_s, hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") "_s);
-    return makeString(caLayerDescription, "GraphicsLayer(0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", "_s, primaryLayerID().object(), ") "_s, name());
+    return makeString(caLayerDescription, "GraphicsLayer(0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", "_s, primaryLayerID()->object(), ") "_s, name());
 #else
     return name();
 #endif
 }
 
-PlatformLayerIdentifier GraphicsLayerCA::primaryLayerID() const
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::primaryLayerID() const
 {
     return primaryLayer()->layerID();
 }
@@ -1283,9 +1283,9 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
     noteLayerPropertyChanged(ContentsRectsChanged | OpacityChanged);
 }
 
-PlatformLayerIdentifier GraphicsLayerCA::contentsLayerIDForModel() const
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForModel() const
 {
-    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? m_contentsLayer->layerID() : PlatformLayerIdentifier { };
+    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? std::optional { m_contentsLayer->layerID() } : std::nullopt;
 }
 
 #endif

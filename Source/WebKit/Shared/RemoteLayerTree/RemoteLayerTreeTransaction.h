@@ -99,13 +99,13 @@ public:
             WebCore::LayerHostingContextIdentifier // PlatformCALayerRemoteHost
         >;
 
-        WebCore::PlatformLayerIdentifier layerID;
+        Markable<WebCore::PlatformLayerIdentifier> layerID;
         WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerType::LayerTypeLayer };
         std::optional<VideoElementData> videoElementData;
         AdditionalData additionalData;
 
         LayerCreationProperties();
-        LayerCreationProperties(WebCore::PlatformLayerIdentifier, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
+        LayerCreationProperties(Markable<WebCore::PlatformLayerIdentifier>, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
         LayerCreationProperties(LayerCreationProperties&&);
         LayerCreationProperties& operator=(LayerCreationProperties&&);
 
@@ -120,7 +120,7 @@ public:
     RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&);
     RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
 
-    WebCore::PlatformLayerIdentifier rootLayerID() const { return m_rootLayerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> rootLayerID() const { return m_rootLayerID.asOptional(); }
     void setRootLayerID(WebCore::PlatformLayerIdentifier);
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
@@ -181,11 +181,11 @@ public:
     void setScaleWasSetByUIProcess(bool scaleWasSetByUIProcess) { m_scaleWasSetByUIProcess = scaleWasSetByUIProcess; }
 
 #if PLATFORM(MAC)
-    WebCore::PlatformLayerIdentifier pageScalingLayerID() const { return m_pageScalingLayerID.unsafeValue(); }
-    void setPageScalingLayerID(WebCore::PlatformLayerIdentifier layerID) { m_pageScalingLayerID = layerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() const { return m_pageScalingLayerID.asOptional(); }
+    void setPageScalingLayerID(std::optional<WebCore::PlatformLayerIdentifier> layerID) { m_pageScalingLayerID = layerID; }
 
-    WebCore::PlatformLayerIdentifier scrolledContentsLayerID() const { return m_scrolledContentsLayerID.unsafeValue(); }
-    void setScrolledContentsLayerID(WebCore::PlatformLayerIdentifier layerID) { m_scrolledContentsLayerID = layerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
+    void setScrolledContentsLayerID(std::optional<WebCore::PlatformLayerIdentifier> layerID) { m_scrolledContentsLayerID = layerID; }
 #endif
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -248,7 +248,7 @@ public:
 private:
     friend struct IPC::ArgumentCoder<RemoteLayerTreeTransaction, void>;
 
-    WebCore::PlatformLayerIdentifier m_rootLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;

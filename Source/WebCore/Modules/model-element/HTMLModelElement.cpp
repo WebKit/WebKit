@@ -368,22 +368,22 @@ void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceEr
         m_readyPromise->reject(Exception { ExceptionCode::AbortError });
 }
 
-PlatformLayerIdentifier HTMLModelElement::platformLayerID()
+std::optional<PlatformLayerIdentifier> HTMLModelElement::platformLayerID()
 {
     auto* page = document().page();
     if (!page)
-        return { };
+        return std::nullopt;
 
     auto* renderLayerModelObject = dynamicDowncast<RenderLayerModelObject>(this->renderer());
     if (!renderLayerModelObject)
-        return { };
+        return std::nullopt;
 
     if (!renderLayerModelObject->isComposited() || !renderLayerModelObject->layer() || !renderLayerModelObject->layer()->backing())
-        return { };
+        return std::nullopt;
 
     RefPtr graphicsLayer = renderLayerModelObject->layer()->backing()->graphicsLayer();
     if (!graphicsLayer)
-        return { };
+        return std::nullopt;
 
     return graphicsLayer->contentsLayerIDForModel();
 }

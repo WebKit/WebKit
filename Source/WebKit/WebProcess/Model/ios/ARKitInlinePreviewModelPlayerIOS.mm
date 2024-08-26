@@ -93,7 +93,7 @@ std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier
         return { };
 
     if (auto layerId = client()->platformLayerID())
-        return { { layerId } };
+        return { { *layerId } };
 
     return { };
 }

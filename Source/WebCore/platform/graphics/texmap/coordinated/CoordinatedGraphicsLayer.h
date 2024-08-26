@@ -78,7 +78,7 @@ public:
 
     // FIXME: Merge these two methods.
     Nicosia::PlatformLayer::LayerID id() const;
-    PlatformLayerIdentifier primaryLayerID() const override;
+    std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
 
     // Reimplementations from GraphicsLayer.h.
     bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;

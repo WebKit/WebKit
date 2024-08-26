@@ -260,7 +260,7 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
     HashSet<WebCore::PlatformLayerIdentifier> scrollersToSkip;
 
     for (UIView *view = [scrollView superview]; view; view = [view superview]) {
-        if ([view isKindOfClass:[WKChildScrollView class]] && !scrollersToSkip.contains(RemoteLayerTreeNode::layerID(view.layer))) {
+        if ([view isKindOfClass:[WKChildScrollView class]] && !scrollersToSkip.contains(*RemoteLayerTreeNode::layerID(view.layer))) {
             // FIXME: Ideally we would return the scroller we want in all cases but the current UIKit SPI only allows returning a non-ancestor.
             return nil;
         }

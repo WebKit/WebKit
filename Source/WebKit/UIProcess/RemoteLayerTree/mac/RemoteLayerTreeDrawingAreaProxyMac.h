@@ -52,8 +52,8 @@ public:
     DisplayLink* existingDisplayLink();
 
     void updateZoomTransactionID();
-    WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
-    WebCore::PlatformLayerIdentifier pageScrollingLayerID() { return m_pageScrollingLayerID; }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() { return m_pageScalingLayerID.asOptional(); }
+    std::optional<WebCore::PlatformLayerIdentifier> pageScrollingLayerID() { return m_pageScrollingLayerID.asOptional(); }
 
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
@@ -99,8 +99,8 @@ private:
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
 
-    WebCore::PlatformLayerIdentifier m_pageScalingLayerID;
-    WebCore::PlatformLayerIdentifier m_pageScrollingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScrollingLayerID;
 
     bool m_usesOverlayScrollbars { false };
     bool m_shouldLogNextObserverChange { false };

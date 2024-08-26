@@ -393,13 +393,13 @@ void DrawingAreaWC::sendUpdateNonAC()
 void DrawingAreaWC::graphicsLayerAdded(GraphicsLayerWC& layer)
 {
     m_liveGraphicsLayers.append(&layer);
-    m_updateInfo.addedLayers.append(layer.primaryLayerID());
+    m_updateInfo.addedLayers.append(*layer.primaryLayerID());
 }
 
 void DrawingAreaWC::graphicsLayerRemoved(GraphicsLayerWC& layer)
 {
     m_liveGraphicsLayers.remove(&layer);
-    m_updateInfo.removedLayers.append(layer.primaryLayerID());
+    m_updateInfo.removedLayers.append(*layer.primaryLayerID());
 }
 
 void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)

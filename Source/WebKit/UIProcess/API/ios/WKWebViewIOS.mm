@@ -1133,7 +1133,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         scrollPerfData->didCommitLayerTree([self visibleRectInViewCoordinates]);
 
     if (_perProcessState.pendingFindLayerID) {
-        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_perProcessState.pendingFindLayerID);
+        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(*_perProcessState.pendingFindLayerID);
         if (layer.superlayer)
             [self _didAddLayerForFindOverlay:layer];
     }
@@ -3735,7 +3735,7 @@ static bool isLockdownModeWarningNeeded()
 
 - (void)_didAddLayerForFindOverlay:(CALayer *)layer
 {
-    _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, { });
+    _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, std::nullopt);
     _page->findClient().didAddLayerForFindOverlay(_page.get(), layer);
 
 #if HAVE(UIFINDINTERACTION)
@@ -4745,7 +4745,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || _perProcessState.pendingFindLayerID || _perProcessState.committedFindLayerID)
         return;
 
-    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::PlatformLayerIdentifier layerID) {
+    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (std::optional<WebCore::PlatformLayerIdentifier> layerID) {
         auto strongSelf = weakSelf.get();
         if (strongSelf)
             strongSelf->_perProcessState.pendingFindLayerID = layerID;
@@ -4760,8 +4760,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_perProcessState.pendingFindLayerID && !_perProcessState.committedFindLayerID)
         return;
 
-    _perProcessState.pendingFindLayerID = { };
-    _perProcessState.committedFindLayerID = { };
+    _perProcessState.pendingFindLayerID = std::nullopt;
+    _perProcessState.committedFindLayerID = std::nullopt;
 
     _page->removeLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
@@ -4778,7 +4778,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
 
     if (auto* drawingArea = _page->drawingArea())
-        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(*_perProcessState.committedFindLayerID);
 
     return nil;
 }

@@ -51,7 +51,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     RetainPtr<WKModelInteractionGestureRecognizer> _modelInteractionGestureRecognizer;
     String _filePath;
     CGRect _lastBounds;
-    WebCore::PlatformLayerIdentifier _layerID;
+    Markable<WebCore::PlatformLayerIdentifier> _layerID;
     WeakPtr<WebKit::WebPageProxy> _page;
 }
 
@@ -133,19 +133,19 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     [_preview setupRemoteConnectionWithCompletionHandler:^(NSError *contextError) {
         if (contextError) {
             LOG(ModelElement, "Unable to create remote connection, error: %@", [contextError localizedDescription]);
-            _page->modelInlinePreviewDidFailToLoad(_layerID, WebCore::ResourceError { contextError });
+            _page->modelInlinePreviewDidFailToLoad(*_layerID, WebCore::ResourceError { contextError });
             return;
         }
 
         [_preview preparePreviewOfFileAtURL:url.get() completionHandler:^(NSError *loadError) {
             if (loadError) {
                 LOG(ModelElement, "Unable to load file, error: %@", [loadError localizedDescription]);
-                _page->modelInlinePreviewDidFailToLoad(_layerID, WebCore::ResourceError { loadError });
+                _page->modelInlinePreviewDidFailToLoad(*_layerID, WebCore::ResourceError { loadError });
                 return;
             }
 
             LOG(ModelElement, "File loaded successfully.");
-            _page->modelInlinePreviewDidLoad(_layerID);
+            _page->modelInlinePreviewDidLoad(*_layerID);
         }];
     }];
 
