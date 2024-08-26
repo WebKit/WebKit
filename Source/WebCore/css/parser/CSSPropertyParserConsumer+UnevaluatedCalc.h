@@ -189,13 +189,17 @@ auto evaluateCalcNoConversionDataRequired(const std::variant<Ts...>& component, 
 template<typename... Ts>
 auto evaluateCalc(const std::optional<std::variant<Ts...>>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusUnevaluatedCalcType<Ts...>>
 {
-    return component.transform([&](auto component) { return evaluateCalc(component, conversionData, symbolTable); });
+    if (!component)
+        return std::nullopt;
+    return evaluateCalc(component.value(), conversionData, symbolTable);
 }
 
 template<typename... Ts>
 auto evaluateCalcNoConversionDataRequired(const std::optional<std::variant<Ts...>>& component, const CSSCalcSymbolTable& symbolTable) -> std::optional<TypesMinusUnevaluatedCalcType<Ts...>>
 {
-    return component.transform([&](auto component) { return evaluateCalcNoConversionDataRequired(component, symbolTable); });
+    if (!component)
+        return std::nullopt;
+    return evaluateCalcNoConversionDataRequired(component.value(), symbolTable);
 }
 
 // MARK: Simplify
@@ -224,7 +228,9 @@ auto simplify(const std::variant<Ts...>& component, const CSSToLengthConversionD
 template<typename... Ts>
 auto simplify(const std::optional<std::variant<Ts...>>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> std::optional<std::variant<Ts...>>
 {
-    return component.transform([&](auto component) { return simplify(component, conversionData, symbolTable); });
+    if (!component)
+        return std::nullopt;
+    return simplify(component.value(), conversionData, symbolTable);
 }
 
 } // namespace WebCore
