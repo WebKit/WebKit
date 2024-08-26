@@ -579,24 +579,24 @@ TEST(WebKit, TransferTrackBetweenSameProcessPages)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    configuration.get()._relatedWebView = webView1.get();
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    __block RetainPtr<TestWKWebView> webView2;
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
 
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-    delegate.get().webViewForPopup = webView2.get();
+    delegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration addToWindow:YES]);
+        [webView2 addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+        [webView2 addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+        [webView2 _setMediaCaptureReportingDelayForTesting:0];
+        webView2.get().UIDelegate = delegate.get();
+        return webView2.get();
+    };
     webView1.get().UIDelegate = delegate.get();
 #if PLATFORM(IOS_FAMILY)
     webView1.get().navigationDelegate = delegate.get();
 #endif
-    webView2.get().UIDelegate = delegate.get();
 
-    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
-    [webView2 addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
-    [webView2 addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
     [webView1 _setMediaCaptureReportingDelayForTesting:0];
-    [webView2 _setMediaCaptureReportingDelayForTesting:0];
 
     done = false;
     [webView1 loadRequest:server.request()];

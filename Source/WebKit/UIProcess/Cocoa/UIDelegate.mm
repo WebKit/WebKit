@@ -351,10 +351,8 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
             ALLOW_DEPRECATED_DECLARATIONS_END
 
-            // FIXME: Remove this site isolation check when rdar://133991604 is resolved.
-            // Move it to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
-            if (webView->_configuration->_pageConfiguration->preferences().siteIsolationEnabled()
-                && openerInfo != webView->_configuration->_pageConfiguration->openerInfo())
+            // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
+            if (openerInfo != webView->_configuration->_pageConfiguration->openerInfo())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
             completionHandler(webView->_page.get());
@@ -373,10 +371,8 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    // FIXME: Remove this site isolation check when rdar://133991604 is resolved.
-    // Move it to WebPageProxy once rdar://134317255 is resolved.
-    if (webView->_configuration->_pageConfiguration->preferences().siteIsolationEnabled()
-        && openerInfo != webView.get()->_configuration->_pageConfiguration->openerInfo())
+    // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
+    if (openerInfo != webView.get()->_configuration->_pageConfiguration->openerInfo())
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
     completionHandler(webView->_page.get());
 }
