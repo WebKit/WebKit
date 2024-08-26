@@ -89,7 +89,7 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create(int hostFd)
         glDisplay = GLDisplay::create(eglGetDisplay(eglNativeDisplay));
 
     if (!glDisplay) {
-        WTFLogAlways("Could not create EGL display: %s. Aborting...", GLContext::lastErrorString());
+        WTFLogAlways("Could not create WPE EGL display: %s. Aborting...", GLContext::lastErrorString());
         CRASH();
     }
 

@@ -77,6 +77,9 @@ public:
 #if USE(GBM)
         GBM,
 #endif
+#if PLATFORM(GTK)
+        Default,
+#endif
     };
 
     virtual Type type() const = 0;

@@ -431,6 +431,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
+    void initializePlatformDisplayIfNeeded() const;
 #endif
 
     String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }

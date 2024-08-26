@@ -35,15 +35,18 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device* device)
 {
-    std::unique_ptr<GLDisplay> glDisplay;
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+    if (!GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_gbm"))
+        return nullptr;
+
+    std::unique_ptr<GLDisplay> glDisplay;
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
         glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
         glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr));
 
     if (!glDisplay) {
-        WTFLogAlways("Could not create EGL display: %s. Aborting...", GLContext::lastErrorString());
+        WTFLogAlways("Could not create GBM EGL display: %s. Aborting...", GLContext::lastErrorString());
         CRASH();
     }
 
