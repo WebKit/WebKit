@@ -1553,12 +1553,13 @@ void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 
 #endif
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
     case DOMPasteAccessCategory::Fonts:
-        return grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral, WTFMove(completionHandler), frameID);
+        grantAccessToCurrentPasteboardData(UIPasteboardNameGeneral, frameID);
+        return;
     }
 }
 

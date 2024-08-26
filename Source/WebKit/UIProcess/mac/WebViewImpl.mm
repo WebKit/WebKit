@@ -41,7 +41,6 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
-#import "NetworkProcessMessages.h"
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "PasteboardTypes.h"
@@ -4080,60 +4079,6 @@ bool WebViewImpl::prepareForDragOperation(id <NSDraggingInfo>)
     return true;
 }
 
-static void performDragWithLegacyFiles(RefPtr<WebPageProxy> page, Box<Vector<String>>&& fileNames, Box<WebCore::DragData>&& dragData, const String& pasteboardName)
-{
-    auto* networkProcess = page->websiteDataStore().networkProcessIfExists();
-    if (!networkProcess)
-        return;
-    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(page->protectedLegacyMainFrameProcess()->coreProcessIdentifier(), *fileNames), [page = WTFMove(page), fileNames, dragData, pasteboardName]() mutable {
-        if (!page)
-            return;
-        SandboxExtension::Handle sandboxExtensionHandle;
-        Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
-
-        page->createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
-        dragData->setFileNames(*fileNames);
-        page->performDragOperation(*dragData, pasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-    });
-}
-
-static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<WebCore::DragData>&& dragData, RefPtr<WebPageProxy> page, RetainPtr<NSView<WebViewImplDelegate>> view)
-{
-    // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
-    // guaranteed that the count of UTIs equals the count of files, since some clients only write
-    // unique UTIs.
-    NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()];
-    if (![files isKindOfClass:[NSArray class]])
-        return false;
-
-    NSString *dropDestinationPath = FileSystem::createTemporaryDirectory(@"WebKitDropDestination");
-    if (!dropDestinationPath)
-        return false;
-
-    size_t fileCount = files.count;
-    auto fileNames = Box<Vector<String>>::create();
-    NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath isDirectory:YES];
-    String pasteboardName = draggingInfo.draggingPasteboard.name;
-    [draggingInfo enumerateDraggingItemsWithOptions:0 forView:view.autorelease() classes:@[NSFilePromiseReceiver.class] searchOptions:@{ } usingBlock:[&](NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-        auto queue = adoptNS([NSOperationQueue new]);
-        [draggingItem.item receivePromisedFilesAtDestination:dropDestination options:@{ } operationQueue:queue.get() reader:[page = WTFMove(page), fileNames, fileCount, dragData, pasteboardName](NSURL *fileURL, NSError *errorOrNil) {
-            if (errorOrNil)
-                return;
-
-            RunLoop::main().dispatch([page = WTFMove(page), path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] () mutable {
-                if (!page)
-                    return;
-                fileNames->append(path.get());
-                if (fileNames->size() != fileCount)
-                    return;
-                performDragWithLegacyFiles(page, WTFMove(fileNames), WTFMove(dragData), pasteboardName);
-            });
-        }];
-    }];
-
-    return true;
-}
-
 bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
@@ -4144,8 +4089,45 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
     SandboxExtension::Handle sandboxExtensionHandle;
     Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
-    if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()])
-        return handleLegacyFilesPasteboard(draggingInfo, WTFMove(dragData), protectedPage(), m_view.get());
+    if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
+
+        // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
+        // guaranteed that the count of UTIs equals the count of files, since some clients only write
+        // unique UTIs.
+        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()];
+        if (![files isKindOfClass:[NSArray class]])
+            return false;
+
+        NSString *dropDestinationPath = FileSystem::createTemporaryDirectory(@"WebKitDropDestination");
+        if (!dropDestinationPath)
+            return false;
+
+        size_t fileCount = files.count;
+        auto fileNames = Box<Vector<String>>::create();
+        NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath isDirectory:YES];
+        String pasteboardName = draggingInfo.draggingPasteboard.name;
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[ NSFilePromiseReceiver.class ] searchOptions:@{ } usingBlock:[&](NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+            auto queue = adoptNS([NSOperationQueue new]);
+            [draggingItem.item receivePromisedFilesAtDestination:dropDestination options:@{ } operationQueue:queue.get() reader:[this, fileNames, fileCount, dragData, pasteboardName](NSURL *fileURL, NSError *errorOrNil) {
+                if (errorOrNil)
+                    return;
+
+                RunLoop::main().dispatch([this, path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] {
+                    fileNames->append(path.get());
+                    if (fileNames->size() == fileCount) {
+                        SandboxExtension::Handle sandboxExtensionHandle;
+                        Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
+
+                        m_page->createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
+                        dragData->setFileNames(*fileNames);
+                        m_page->performDragOperation(*dragData, pasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
+                    }
+                });
+            }];
+        }];
+
+        return true;
+    }
 
     if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()];
@@ -4483,9 +4465,8 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     NSData *data = [pasteboardForAccessCategory(pasteAccessCategory) dataForType:@(WebCore::PasteboardCustomData::cocoaType().characters())];
     auto buffer = WebCore::SharedBuffer::create(data);
     if (requiresInteraction == WebCore::DOMPasteRequiresInteraction::No && WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
-        m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory), [completion = WTFMove(completion)] () mutable {
-            completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);
-        });
+        m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory));
+        completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);
         return;
     }
 
@@ -4507,7 +4488,7 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
 void WebViewImpl::handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteAccessResponse response)
 {
     if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture)
-        m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory), [] () { });
+        m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory));
 
     hideDOMPasteMenuWithResult(response);
 }

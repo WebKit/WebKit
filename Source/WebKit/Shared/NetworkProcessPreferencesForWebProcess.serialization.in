@@ -23,5 +23,4 @@
 struct WebKit::NetworkProcessPreferencesForWebProcess {
     bool isWebTransportEnabled;
     bool usesSingleWebProcess;
-    bool blobFileAccessEnforcementEnabled;
 };

@@ -2084,7 +2084,7 @@ public:
     void willStartCapture(const UserMediaPermissionRequestProxy&, CompletionHandler<void()>&&);
 #endif
 
-    void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>)>&&);
+    void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, SandboxExtensionHandle&, bool checkAssumedReadAccessToResourceURL = true);
 
 #if ENABLE(WEB_AUTHN)
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
@@ -2142,7 +2142,7 @@ public:
     void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
         
 #if PLATFORM(COCOA)
-    std::optional<IPC::AsyncReplyID> grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&&, std::optional<WebCore::FrameIdentifier> = std::nullopt);
+    void grantAccessToCurrentPasteboardData(const String& pasteboardName, std::optional<WebCore::FrameIdentifier> = std::nullopt);
 #endif
 
 #if PLATFORM(MAC)
@@ -2151,7 +2151,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&, CompletionHandler<void()>&&);
+    void platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
 #if ENABLE(MEDIA_USAGE)
@@ -2710,7 +2710,7 @@ private:
 #endif
 
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
-    std::optional<IPC::AsyncReplyID> willPerformPasteCommand(WebCore::DOMPasteAccessCategory, CompletionHandler<void()>&&, std::optional<WebCore::FrameIdentifier> = std::nullopt);
+    void willPerformPasteCommand(WebCore::DOMPasteAccessCategory, std::optional<WebCore::FrameIdentifier> = std::nullopt);
 
     // Back/Forward list management
     void backForwardAddItem(WebCore::FrameIdentifier, BackForwardListItemState&&);

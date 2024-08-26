@@ -827,11 +827,6 @@ String parentPath(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
 }
 
-String lexicallyNormal(const String& path)
-{
-    return fromStdFileSystemPath(toStdFileSystemPath(path).lexically_normal());
-}
-
 String createTemporaryFile(StringView prefix, StringView suffix)
 {
     auto [path, handle] = openTemporaryFile(prefix, suffix);

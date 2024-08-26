@@ -27,7 +27,6 @@
 #import "WebPasteboardProxy.h"
 
 #import "Connection.h"
-#import "NetworkProcessMessages.h"
 #import "PageLoadState.h"
 #import "PasteboardAccessIntent.h"
 #import "RemotePageProxy.h"
@@ -58,33 +57,9 @@ void WebPasteboardProxy::grantAccessToCurrentTypes(WebProcessProxy& process, con
     grantAccess(process, pasteboardName, PasteboardAccessType::Types);
 }
 
-std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName, CompletionHandler<void()>&& completionHandler)
+void WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName)
 {
     grantAccess(process, pasteboardName, PasteboardAccessType::TypesAndData);
-    auto pasteboard = PlatformPasteboard(pasteboardName);
-    auto allInfo = pasteboard.allPasteboardItemInfo(pasteboard.changeCount());
-    if (!allInfo) {
-        completionHandler();
-        return std::nullopt;
-    }
-    Vector<String> paths;
-    bool containsFileURL = false;
-    for (auto& info : *allInfo) {
-        paths.appendVector(info.platformTypesForFileUpload);
-        if (info.containsFileURLAndFileUploadContent)
-            containsFileURL = true;
-    }
-    if (!containsFileURL) {
-        completionHandler();
-        return std::nullopt;
-    }
-
-    auto* networkProcess = process.websiteDataStore()->networkProcessIfExists();
-    if (!networkProcess || !paths.size()) {
-        completionHandler();
-        return std::nullopt;
-    }
-    return networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process.coreProcessIdentifier(), paths), WTFMove(completionHandler));
 }
 
 void WebPasteboardProxy::grantAccess(WebProcessProxy& process, const String& pasteboardName, PasteboardAccessType type)

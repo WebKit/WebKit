@@ -37,7 +37,6 @@
 #import "MenuUtilities.h"
 #import "MessageSenderInlines.h"
 #import "NativeWebKeyboardEvent.h"
-#import "NetworkProcessMessages.h"
 #import "PDFContextMenu.h"
 #import "PageClient.h"
 #import "PageClientImplMac.h"
@@ -238,8 +237,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     if (!hasRunningProcess())
         return false;
 
-    if (auto replyID = grantAccessToCurrentPasteboardData(pasteboardName, [] () { }))
-        websiteDataStore().protectedNetworkProcess()->connection()->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+    grantAccessToCurrentPasteboardData(pasteboardName);
 
     const Seconds messageTimeout(20);
     auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), webPageIDInMainFrameProcess(), messageTimeout);
@@ -632,23 +630,23 @@ RetainPtr<NSEvent> WebPageProxy::createSyntheticEventForContextMenu(FloatPoint l
     return [NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:location modifierFlags:0 timestamp:0 windowNumber:protectedPageClient()->platformWindow().windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
 }
 
-void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMenuItemData& item)
 {
     if (item.action() == ContextMenuItemTagPaste)
-        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, WTFMove(completionHandler));
-    else
-        completionHandler();
+        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
 }
 
 #endif
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:
-        return grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, WTFMove(completionHandler), frameID);
+        grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral, frameID);
+        return;
     case DOMPasteAccessCategory::Fonts:
-        return grantAccessToCurrentPasteboardData(NSPasteboardNameFont, WTFMove(completionHandler), frameID);
+        grantAccessToCurrentPasteboardData(NSPasteboardNameFont, frameID);
+        return;
     }
 }
 

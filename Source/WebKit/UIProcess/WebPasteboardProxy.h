@@ -33,8 +33,6 @@
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {
-struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 class SharedBufferReference;
 }
 
@@ -68,7 +66,7 @@ public:
 
 #if PLATFORM(COCOA)
     void revokeAccess(WebProcessProxy&);
-    std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);
+    void grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName);
     void grantAccessToCurrentTypes(WebProcessProxy&, const String& pasteboardName);
 #endif
 

@@ -872,7 +872,6 @@ public:
     void disableCORSForURL(const String&);
 
     RefPtr<File> createFile(const String&);
-    void asyncCreateFile(const String&, DOMPromiseDeferred<IDLInterface<File>>&&);
     String createTemporaryFile(const String& name, const String& contents);
 
     void queueMicroTask(int);

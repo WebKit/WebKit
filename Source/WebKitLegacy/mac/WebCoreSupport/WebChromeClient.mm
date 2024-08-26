@@ -1169,11 +1169,6 @@ RefPtr<WebCore::ShapeDetection::TextDetector> WebChromeClient::createTextDetecto
 #endif
 }
 
-void WebChromeClient::registerBlobPathForTesting(const String&, CompletionHandler<void()>&& completion)
-{
-    completion();
-}
-
 void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
 {
     completion(CookieConsentDecisionResult::NotSupported);

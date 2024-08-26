@@ -128,7 +128,6 @@
 #include "InternalsMapLike.h"
 #include "InternalsSetLike.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSFile.h"
 #include "JSImageData.h"
 #include "JSInternals.h"
 #include "LegacySchemeRegistry.h"
@@ -5393,38 +5392,8 @@ RefPtr<File> Internals::createFile(const String& path)
     if (!url.protocolIsFile())
         return nullptr;
 
-    if (auto* page = document->page())
-        page->chrome().client().registerBlobPathForTesting(url.fileSystemPath(), [] () { });
-
     return File::create(document, url.fileSystemPath());
 }
-void Internals::asyncCreateFile(const String& path, DOMPromiseDeferred<IDLInterface<File>>&& promise)
-{
-    Document* document = contextDocument();
-    if (!document) {
-        promise.reject(ExceptionCode::InvalidStateError);
-        return;
-    }
-
-    URL url = document->completeURL(path);
-    if (!url.protocolIsFile()) {
-        promise.reject(ExceptionCode::InvalidStateError);
-        return;
-    }
-
-    if (auto* page = document->page()) {
-        auto fileSystemPath = url.fileSystemPath();
-        page->chrome().client().registerBlobPathForTesting(fileSystemPath, [promise = WTFMove(promise), weakDocument = WeakPtr { *document }, url = WTFMove(url)] () mutable {
-            if (!weakDocument) {
-                promise.reject(ExceptionCode::InvalidStateError);
-                return;
-            }
-            promise.resolve(File::create(weakDocument.get(), url.fileSystemPath()));
-        });
-    } else
-        promise.reject(ExceptionCode::InvalidStateError);
-}
-
 
 String Internals::createTemporaryFile(const String& name, const String& contents)
 {
