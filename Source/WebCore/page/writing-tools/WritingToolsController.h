@@ -96,7 +96,6 @@ private:
         Vector<Ref<WritingToolsCompositionCommand>> unappliedCommands;
         Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
         WritingTools::Session session;
-        std::optional<SimpleRange> currentRange;
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
