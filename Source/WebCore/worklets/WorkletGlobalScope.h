@@ -49,7 +49,7 @@ class WorkerScriptLoader;
 struct WorkletParameters;
 
 enum class WorkletGlobalScopeIdentifierType { };
-using WorkletGlobalScopeIdentifier = LegacyNullableObjectIdentifier<WorkletGlobalScopeIdentifierType>;
+using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
 class WorkletGlobalScope : public WorkerOrWorkletGlobalScope {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkletGlobalScope);

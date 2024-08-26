@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class SharedWorkerIdentifierType { };
-using SharedWorkerIdentifier = LegacyNullableObjectIdentifier<SharedWorkerIdentifierType>;
+using SharedWorkerIdentifier = ObjectIdentifier<SharedWorkerIdentifierType>;
 
 } // namespace WebCore

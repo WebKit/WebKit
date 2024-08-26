@@ -66,13 +66,10 @@ template: enum class WebCore::MediaUniqueIdentifierType
 template: enum class WebCore::ProcessIdentifierType
 template: enum class WebCore::PushSubscriptionIdentifierType
 template: enum class WebCore::RealtimeMediaSourceIdentifierType
-template: enum class WebCore::SharedWorkerIdentifierType
 template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
 template: enum class WebCore::TextCheckingRequestIdentifierType
 template: enum class WebCore::TextManipulationItemIdentifierType
 template: enum class WebCore::TextManipulationTokenIdentifierType
-template: enum class WebCore::WindowIdentifierType
-template: enum class WebCore::WorkletGlobalScopeIdentifierType
 template: enum class WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifierType
 template: enum class WebKit::ContentWorldIdentifierType
 template: enum class WebKit::DownloadIdentifierType
@@ -160,6 +157,9 @@ template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
 template: enum class WebCore::InbandGenericCueIdentifierType
 template: enum class WebCore::LayerHostingContextIdentifierType
 template: enum class WebCore::SWServerToContextConnectionIdentifierType
+template: enum class WebCore::SharedWorkerIdentifierType
+template: enum class WebCore::WindowIdentifierType
+template: enum class WebCore::WorkletGlobalScopeIdentifierType
 template: struct WebCore::NavigationIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
