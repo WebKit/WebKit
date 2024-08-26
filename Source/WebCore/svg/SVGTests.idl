@@ -29,9 +29,4 @@
 interface mixin SVGTests {
     [SameObject] readonly attribute SVGStringList requiredExtensions;
     [SameObject] readonly attribute SVGStringList systemLanguage;
-
-
-    // As of SVG2, the following are no longer part of this interface.
-
-    [SameObject] readonly attribute SVGStringList requiredFeatures;
 };

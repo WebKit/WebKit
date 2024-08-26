@@ -12,9 +12,8 @@
         Test that elements with conditional processing attributes that evaluate to true do not render if their parent contains conditional processing attributes that evaluate to false.
       </p>
       <p>
-        The test has a 'g' element with its 'requiredFeatures' attribute set to an arbitrary feature string that would cause the attribute's requirement test to fail.
-        A red 'rect' element is a child node of the 'g' element. The 'rect' element has the 'requiredFeatures' attribute set to a supported feature string.
-        'http://www.w3.org/TR/SVG11/feature#ConditionalProcessing' was chosen as a valid feature string to reduce dependencies on other SVG features.
+        The test has a 'g' element with its 'systemLanguage' attribute set to an arbitrary language string that would cause the attribute's requirement test to fail.
+        A red 'rect' element is a child node of the 'g' element. The 'rect' element has the 'systemLanguage' attribute set to a supported language string.
       </p>
     </d:testDescription>
     <d:operatorScript xmlns="http://www.w3.org/1999/xhtml">
@@ -40,8 +39,8 @@
   </defs>
   <g id="test-body-content" font-family="SVGFreeSansASCII,sans-serif" font-size="18">
     <rect width="100" height="100" fill="green"/>
-    <g requiredFeatures="INVALID_FEATURE_STRING">
-        <rect width="100" height="100" fill="red" requiredFeatures="http://www.w3.org/TR/SVG11/feature#ConditionalProcessing" />
+    <g requiredFeatures="INVALID_LANGUAGE_STRING">
+        <rect width="100" height="100" fill="red" systemLanguage="en" />
     </g>
   </g>
   <g font-family="SVGFreeSansASCII,sans-serif" font-size="32">

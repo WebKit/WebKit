@@ -35,7 +35,6 @@
 #include <WebCore/ElementInlines.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/JSNode.h>
-#include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -406,9 +405,7 @@ gboolean webkit_dom_node_is_supported(WebKitDOMNode* self, const gchar* feature,
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), FALSE);
     g_return_val_if_fail(feature, FALSE);
     g_return_val_if_fail(version, FALSE);
-    WTF::String convertedFeature = WTF::String::fromUTF8(feature);
-    WTF::String convertedVersion = WTF::String::fromUTF8(version);
-    return WebCore::SVGTests::hasFeatureForLegacyBindings(convertedFeature, convertedVersion);
+    return TRUE;
 }
 
 gboolean webkit_dom_node_is_same_node(WebKitDOMNode* self, WebKitDOMNode* other)

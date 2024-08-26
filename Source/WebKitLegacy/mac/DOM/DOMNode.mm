@@ -273,7 +273,7 @@ DOMNode *kit(Node* value)
 
 - (BOOL)isSupported:(NSString *)feature version:(NSString *)version
 {
-    return SVGTests::hasFeatureForLegacyBindings(feature, version);
+    return YES;
 }
 
 - (BOOL)hasAttributes
