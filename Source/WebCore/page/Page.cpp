@@ -2767,7 +2767,7 @@ void Page::mediaEngineChanged(HTMLMediaElement& mediaElement)
 
 void Page::setMuted(MediaProducerMutedStateFlags mutedState)
 {
-#if ENABLE(MEDIA_SESSION)
+#if ENABLE(MEDIA_STREAM) && ENABLE(MEDIA_SESSION)
     bool cameraCaptureStateDidChange = mutedState.contains(MediaProducerMutedState::VideoCaptureIsMuted) != m_mutedState.contains(MediaProducerMutedState::VideoCaptureIsMuted);
     bool microphoneCaptureStateDidChange = mutedState.contains(MediaProducerMutedState::AudioCaptureIsMuted) != m_mutedState.contains(MediaProducerMutedState::AudioCaptureIsMuted);
     bool screenshareCaptureStateDidChange = (mutedState.contains(MediaProducerMutedState::ScreenCaptureIsMuted) || mutedState.contains(MediaProducerMutedState::WindowCaptureIsMuted)) != (m_mutedState.contains(MediaProducerMutedState::ScreenCaptureIsMuted) || m_mutedState.contains(MediaProducerMutedState::WindowCaptureIsMuted));
