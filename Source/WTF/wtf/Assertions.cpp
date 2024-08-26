@@ -77,7 +77,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF)
     if (strstr(format, "%@")) {
-        auto cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+        auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
         auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
         va_end(argsCopy);
         return result.get();
@@ -149,7 +149,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 {
 #if USE(CF)
     if (strstr(format, "%@")) {
-        auto cfFormat = adoptCF(CFStringCreateWithCString(nullptr, format, kCFStringEncodingUTF8));
+        auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(nullptr, format, kCFStringEncodingUTF8, kCFAllocatorNull));
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
         auto str = adoptCF(CFStringCreateWithFormatAndArguments(nullptr, nullptr, cfFormat.get(), args));

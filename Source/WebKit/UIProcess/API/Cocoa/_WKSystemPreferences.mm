@@ -39,7 +39,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 
 + (BOOL)isCaptivePortalModeEnabled
 {
-    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8));
+    auto key = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8, kCFAllocatorNull));
     auto preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
@@ -47,15 +47,14 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 #if HAVE(LOCKDOWN_MODE_FRAMEWORK)
     return PAL::isLockdownModeEnabled();
 #else
-    key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, LDMEnabledKey, kCFStringEncodingUTF8));
-    preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    preferenceValue = adoptCF(CFPreferencesCopyValue(LDMEnabledKey, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     return preferenceValue.get() == kCFBooleanTrue;
 #endif
 }
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
 {
-    auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8));
+    auto key = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8, kCFAllocatorNull));
     CFPreferencesSetValue(key.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);

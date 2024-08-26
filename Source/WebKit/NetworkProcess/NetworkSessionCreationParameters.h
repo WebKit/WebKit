@@ -44,11 +44,6 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
-#if PLATFORM(COCOA)
-extern "C" CFStringRef const WebKit2HTTPProxyDefaultsKey;
-extern "C" CFStringRef const WebKit2HTTPSProxyDefaultsKey;
-#endif
-    
 namespace WebKit {
 
 enum class AllowsCellularAccess : bool { No, Yes };

@@ -65,6 +65,9 @@
 
 namespace WebKit {
 
+static NSString* const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
+static NSString* const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
+
 static constexpr double defaultBrowserTotalQuotaRatio = 0.8;
 static constexpr double defaultBrowserOriginQuotaRatio = 0.6;
 static constexpr double defaultAppTotalQuotaRatio = 0.2;
@@ -177,9 +180,9 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 #endif
     // FIXME: Remove these once Safari adopts _WKWebsiteDataStoreConfiguration.httpProxy and .httpsProxy.
     if (!httpProxy.isValid() && (isSafari || isMiniBrowser))
-        httpProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey] };
+        httpProxy = URL { [defaults stringForKey:WebKit2HTTPProxyDefaultsKey] };
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
-        httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
+        httpsProxy = URL { [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey] };
 
     auto& directories = resolvedDirectories();
 #if HAVE(ALTERNATIVE_SERVICE)

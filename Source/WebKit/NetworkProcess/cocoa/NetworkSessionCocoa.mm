@@ -117,9 +117,6 @@ using namespace WebKit;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsolatedSession);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSessionCocoa);
 
-CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
-CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
-
 constexpr unsigned maxNumberOfIsolatedSessions { 10 };
 
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
