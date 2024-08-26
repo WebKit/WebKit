@@ -50,5 +50,11 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     updater.updateGeometryAfterLayout(box);
 }
 
+std::pair<LayoutUnit, LayoutUnit> preferredLogicalWidths(const Layout::ElementBox& box)
+{
+    auto& renderer = downcast<RenderBox>(*box.rendererForIntegration());
+    return { renderer.minPreferredLogicalWidth(), renderer.maxPreferredLogicalWidth() };
+}
+
 }
 }

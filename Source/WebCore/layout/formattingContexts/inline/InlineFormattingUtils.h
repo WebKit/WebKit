@@ -72,12 +72,10 @@ private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
     bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
 
-    const InlineLayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-
 };
 
 }

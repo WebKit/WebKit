@@ -235,7 +235,7 @@ InlineLayoutUnit RubyFormattingContext::annotationBoxLogicalWidth(const Box& rub
     if (!annotationBox)
         return { };
 
-    inlineFormattingContext.layoutWithFormattingContextForBox(*annotationBox);
+    inlineFormattingContext.integrationUtils().layoutWithFormattingContextForBox(*annotationBox);
 
     return inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth();
 }
@@ -278,7 +278,7 @@ size_t RubyFormattingContext::applyRubyAlignOnBaseContent(size_t rubyBaseStart, 
     if (!annotationBox)
         return rubyBaseStart + 1;
 
-    inlineFormattingContext.layoutWithFormattingContextForBox(*annotationBox);
+    inlineFormattingContext.integrationUtils().layoutWithFormattingContextForBox(*annotationBox);
 
     auto annotationBoxLogicalWidth = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth() };
     auto baseContentLogicalWidth = runs[rubyBaseEnd].logicalLeft() - runs[rubyBaseStart].logicalRight();
@@ -386,7 +386,7 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
         // Layout the annotation box again if we decided to change its size.
         auto newWidth = std::max(rubyBaseMarginBoxLogicalRect.width(), annotationBoxLogicalGeometry.marginBoxWidth());
         if (newWidth != annotationBoxLogicalGeometry.marginBoxWidth())
-            inlineFormattingContext.layoutWithFormattingContextForBox(*annotationBox, newWidth);
+            inlineFormattingContext.integrationUtils().layoutWithFormattingContextForBox(*annotationBox, newWidth);
 
         return { newWidth - annotationBoxLogicalGeometry.horizontalMarginBorderAndPadding(), annotationBoxLogicalGeometry.contentBoxHeight() };
     }

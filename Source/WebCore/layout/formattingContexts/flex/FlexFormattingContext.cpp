@@ -43,10 +43,11 @@ namespace Layout {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
-FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& layoutState)
+FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& globalLayoutState)
     : m_flexBox(flexBox)
-    , m_layoutState(layoutState)
+    , m_globalLayoutState(globalLayoutState)
     , m_flexFormattingUtils(*this)
+    , m_integrationUtils(globalLayoutState)
 {
 }
 
@@ -84,14 +85,13 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
     Vector<FlexItem> flexItemList;
     auto flexItemsNeedReordering = false;
-    auto& layoutState = this->layoutState();
 
     auto convertVisualToLogical = [&] {
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
 
         for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
-            auto& flexItemGeometry = layoutState.geometryForBox(*flexItem);
+            auto& flexItemGeometry = m_globalLayoutState.geometryForBox(*flexItem);
             auto& style = flexItem->style();
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
             auto crossAxis = LogicalFlexItem::CrossAxisGeometry { };
@@ -235,13 +235,13 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 const BoxGeometry& FlexFormattingContext::geometryForFlexItem(const Box& flexItem) const
 {
     ASSERT(flexItem.isFlexItem());
-    return m_layoutState.geometryForBox(flexItem);
+    return m_globalLayoutState.geometryForBox(flexItem);
 }
 
 BoxGeometry& FlexFormattingContext::geometryForFlexItem(const Box& flexItem)
 {
     ASSERT(flexItem.isFlexItem());
-    return m_layoutState.ensureGeometryForBox(flexItem);
+    return m_globalLayoutState.ensureGeometryForBox(flexItem);
 }
 
 
