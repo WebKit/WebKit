@@ -61,6 +61,8 @@ CSSTransition::CSSTransition(const Styleable& styleable, const AnimatableCSSProp
 {
 }
 
+CSSTransition::~CSSTransition() = default;
+
 OptionSet<AnimationImpact> CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
     auto impact = StyleOriginatedAnimation::resolve(targetStyle, resolutionContext, startTime);

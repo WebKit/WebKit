@@ -41,7 +41,10 @@ using URLSchemeHandlerPair = std::pair<Ref<WebKit::WebURLSchemeHandler>, WTF::St
 class InspectorConfiguration final : public API::ObjectImpl<Object::Type::InspectorConfiguration> {
 public:
     static Ref<InspectorConfiguration> create();
-    
+
+    InspectorConfiguration() = default;
+    virtual ~InspectorConfiguration();
+
     void addURLSchemeHandler(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String& urlScheme);
     const Vector<URLSchemeHandlerPair>& urlSchemeHandlers() { return m_customURLSchemes; }
     

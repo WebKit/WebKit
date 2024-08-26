@@ -166,6 +166,8 @@ PluginDocument::PluginDocument(LocalFrame& frame, const URL& url)
     lockCompatibilityMode();
 }
 
+PluginDocument::~PluginDocument() = default;
+
 Ref<DocumentParser> PluginDocument::createParser()
 {
     return PluginDocumentParser::create(*this);

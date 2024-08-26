@@ -44,6 +44,8 @@ WebPageInspectorTarget::WebPageInspectorTarget(WebPage& page)
 {
 }
 
+WebPageInspectorTarget::~WebPageInspectorTarget() = default;
+
 String WebPageInspectorTarget::identifier() const
 {
     return toTargetID(m_page.identifier());

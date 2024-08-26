@@ -58,6 +58,7 @@ class WebInspectorClient final : public WebCore::InspectorClient, public Inspect
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorClient);
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
+    virtual ~WebInspectorClient();
 
     void inspectedPageDestroyed() override;
 

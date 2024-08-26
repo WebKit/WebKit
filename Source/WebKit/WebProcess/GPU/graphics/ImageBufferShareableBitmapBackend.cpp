@@ -110,6 +110,8 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
     m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
+ImageBufferShareableBitmapBackend::~ImageBufferShareableBitmapBackend() = default;
+
 bool ImageBufferShareableBitmapBackend::canMapBackingStore() const
 {
     return true;

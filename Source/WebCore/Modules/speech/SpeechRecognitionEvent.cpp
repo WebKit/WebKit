@@ -57,4 +57,6 @@ SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomString& type, uint64_t 
 {
 }
 
+SpeechRecognitionEvent::~SpeechRecognitionEvent() = default;
+
 } // namespace WebCore

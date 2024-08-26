@@ -47,6 +47,8 @@ public:
         return adoptRef(*new VideoTrackPrivateMediaSourceAVFObjC(track));
     }
 
+    virtual ~VideoTrackPrivateMediaSourceAVFObjC();
+
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack() const;
 

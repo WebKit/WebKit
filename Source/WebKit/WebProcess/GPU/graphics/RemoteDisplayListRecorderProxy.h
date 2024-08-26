@@ -48,7 +48,7 @@ class RemoteDisplayListRecorderProxy : public WebCore::DisplayList::Recorder {
 public:
     RemoteDisplayListRecorderProxy(RemoteImageBufferProxy&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&);
     RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& , WebCore::RenderingResourceIdentifier, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect&, const WebCore::AffineTransform&);
-    ~RemoteDisplayListRecorderProxy() = default;
+    virtual ~RemoteDisplayListRecorderProxy();
 
     void disconnect();
 

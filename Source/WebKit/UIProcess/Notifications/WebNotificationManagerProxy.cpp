@@ -66,6 +66,8 @@ WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* process
 {
 }
 
+WebNotificationManagerProxy::~WebNotificationManagerProxy() = default;
+
 void WebNotificationManagerProxy::setProvider(std::unique_ptr<API::NotificationProvider>&& provider)
 {
     if (!provider) {

@@ -55,6 +55,7 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(std::unique_ptr<AVTrackPrivat
     resetPropertiesFromTrack();
 }
 
+AudioTrackPrivateAVFObjC::~AudioTrackPrivateAVFObjC() = default;
 
 void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {

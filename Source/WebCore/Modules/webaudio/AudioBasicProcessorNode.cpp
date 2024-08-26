@@ -48,6 +48,8 @@ AudioBasicProcessorNode::AudioBasicProcessorNode(BaseAudioContext& context, Node
     // The subclass must create m_processor.
 }
 
+AudioBasicProcessorNode::~AudioBasicProcessorNode() = default;
+
 void AudioBasicProcessorNode::initialize()
 {
     if (isInitialized())
