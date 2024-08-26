@@ -2309,7 +2309,8 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         return {'step': f"Failed to add '{GitHub.BLOCKED_LABEL}' label to pull request"}
 
     def doStepIf(self, step):
-        return self.getProperty('github.number')
+        # FIXME: Re-enable merged-blocked on mac-Intel-WK2 after we see results and can clean up this new queue
+        return self.getProperty('github.number') and 'Intel' not in self.getProperty('buildername', '')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -5989,8 +5990,7 @@ class SetBuildSummary(buildstep.BuildStep):
     flunkOnFailure = False
 
     def doStepIf(self, step):
-        # FIXME: Re-enable merged-blocked on mac-Intel-WK2 after we see results and can clean up this new queue
-        return self.getProperty('github.number') and 'Intel' not in self.getProperty('buildername', '')
+        return self.getProperty('build_summary', False)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
