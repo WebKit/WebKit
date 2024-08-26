@@ -280,7 +280,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMilliseconds, (JSGlo
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.epochMilliseconds called on value that's not a Instant"_s);
 
-    return JSValue::encode(jsNumber(instant->exactTime().epochMilliseconds()));
+    return JSValue::encode(jsNumber(instant->exactTime().floorEpochMilliseconds()));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochNanoseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

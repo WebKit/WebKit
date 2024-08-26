@@ -101,7 +101,7 @@ function shouldThrow(func, errorType, message) {
         Temporal.Instant.from('1677-09-21T00:12:43.145224192Z'),
     ];
     instants.forEach((instant) => {
-        shouldBe(instant.epochMilliseconds, -9223372036854);
+        shouldBe(instant.epochMilliseconds, -9223372036855);
         shouldBe(instant.epochNanoseconds, -9223372036854775808n);
         shouldBe(instant.toString(), '1677-09-21T00:12:43.145224192Z');
         shouldBe(instant.toJSON(), '1677-09-21T00:12:43.145224192Z');

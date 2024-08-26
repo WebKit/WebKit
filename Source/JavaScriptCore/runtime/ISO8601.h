@@ -110,6 +110,14 @@ public:
     {
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMillisecond);
     }
+    int64_t floorEpochMilliseconds() const
+    {
+        auto div = m_epochNanoseconds / ExactTime::nsPerMillisecond;
+        auto rem = m_epochNanoseconds % ExactTime::nsPerMillisecond;
+        if (rem && m_epochNanoseconds < 0)
+            div -= 1;
+        return static_cast<int64_t>(div);
+    }
     constexpr Int128 epochNanoseconds() const
     {
         return m_epochNanoseconds;
