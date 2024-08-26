@@ -104,7 +104,7 @@ void WebColorPickerMac::endPicker()
 
 void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
 {
-    if (!m_client || !m_colorPickerUI)
+    if (!client() || !m_colorPickerUI)
         return;
     
     [m_colorPickerUI setColor:cocoaColor(color).get()];
@@ -112,15 +112,13 @@ void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
 
 void WebColorPickerMac::didChooseColor(const WebCore::Color& color)
 {
-    if (!m_client)
-        return;
-    
-    m_client->didChooseColor(color);
+    if (CheckedPtr client = this->client())
+        client->didChooseColor(color);
 }
 
 void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 {
-    if (!m_client)
+    if (!client())
         return;
 
     [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() suggestions:WTFMove(m_suggestions)];
