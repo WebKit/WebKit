@@ -2975,8 +2975,14 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     Length marginStartLength = style().marginStartUsing(&containingBlockStyle);
     Length marginEndLength = style().marginEndUsing(&containingBlockStyle);
 
-    if (isFloating() || isInline()) {
-        // Inline blocks/tables and floats don't have their margins increased.
+    if (isFloating()) {
+        marginStart = minimumValueForLength(marginStartLength, containerWidth);
+        marginEnd = minimumValueForLength(marginEndLength, containerWidth);
+        return;
+    }
+
+    if (isInline()) {
+        // Inline blocks/tables don't have their margins increased.
         marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
             return minimumValueForLength(marginStartLength, containerWidth);
         });
