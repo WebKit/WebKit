@@ -49,7 +49,7 @@ public:
     static Ref<StorageNamespaceImpl> createLocalStorageNamespace(unsigned quotaInBytes);
     static Ref<StorageNamespaceImpl> createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes);
 
-    virtual ~StorageNamespaceImpl() = default;
+    virtual ~StorageNamespaceImpl();
 
     WebCore::StorageType storageType() const { return m_storageType; }
     std::optional<Identifier> storageNamespaceID() const { return m_storageNamespaceID; }

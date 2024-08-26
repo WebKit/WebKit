@@ -79,7 +79,7 @@ public:
     {
         return adoptRef(*new CryptoKeyEC(identifier, curve, type, WTFMove(platformKey), extractable, usages));
     }
-    virtual ~CryptoKeyEC() = default;
+    virtual ~CryptoKeyEC();
 
     WEBCORE_EXPORT static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, const String& curve, bool extractable, CryptoKeyUsageBitmap);
     WEBCORE_EXPORT static RefPtr<CryptoKeyEC> importRaw(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);

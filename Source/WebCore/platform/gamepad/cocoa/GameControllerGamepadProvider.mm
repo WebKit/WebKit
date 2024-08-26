@@ -95,6 +95,8 @@ GameControllerGamepadProvider::GameControllerGamepadProvider()
 {
 }
 
+GameControllerGamepadProvider::~GameControllerGamepadProvider() = default;
+
 void GameControllerGamepadProvider::controllerDidConnect(GCController *controller, ConnectionVisibility visibility)
 {
     LOG(Gamepad, "GameControllerGamepadProvider controller %p added", controller);

@@ -50,6 +50,8 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
+FetchResponse::~FetchResponse() = default;
+
 Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::optional<FetchBody>&& body, FetchHeaders::Guard guard, ResourceResponse&& response)
 {
     bool isSynthetic = response.type() == ResourceResponse::Type::Default || response.type() == ResourceResponse::Type::Error;

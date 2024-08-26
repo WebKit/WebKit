@@ -54,6 +54,8 @@ public:
         return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, WTFMove(connection), WTFMove(secKeyProxyStore)));
     }
 
+    virtual ~AuthenticationChallengeProxy();
+
     WebCredential* proposedCredential() const;
     WebProtectionSpace* protectionSpace() const;
 

@@ -50,6 +50,8 @@ BitmapImageSource::BitmapImageSource(BitmapImage& bitmapImage, AlphaOption alpha
 {
 }
 
+BitmapImageSource::~BitmapImageSource() = default;
+
 ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
 {
     if (m_decoder)

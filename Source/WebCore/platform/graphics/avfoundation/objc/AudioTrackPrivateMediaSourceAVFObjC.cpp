@@ -38,6 +38,8 @@ AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC(AVAsset
     resetPropertiesFromTrack();
 }
 
+AudioTrackPrivateMediaSourceAVFObjC::~AudioTrackPrivateMediaSourceAVFObjC() = default;
+
 void AudioTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 {
     setKind(m_impl->audioKind());

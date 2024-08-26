@@ -60,6 +60,8 @@ CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve,
     ASSERT(platformSupportedCurve(curve));
 }
 
+CryptoKeyEC::~CryptoKeyEC() = default;
+
 ExceptionOr<CryptoKeyPair> CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier identifier, const String& curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     auto namedCurve = toNamedCurve(curve);

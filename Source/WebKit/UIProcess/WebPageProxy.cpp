@@ -489,55 +489,11 @@ StorageRequests& StorageRequests::singleton()
 }
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+WebPageProxyFrameLoadStateObserver::WebPageProxyFrameLoadStateObserver() = default;
 
-class WebPageProxyFrameLoadStateObserver final : public FrameLoadStateObserver {
-    WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
-    WTF_MAKE_TZONE_ALLOCATED(WebPageProxyFrameLoadStateObserver);
-public:
-    static constexpr size_t maxVisitedDomainsSize = 6;
-
-    WebPageProxyFrameLoadStateObserver() = default;
-    virtual ~WebPageProxyFrameLoadStateObserver() = default;
-
-    void didReceiveProvisionalURL(const URL& url) override
-    {
-        m_provisionalURLs.append(url);
-    }
-
-    void didCancelProvisionalLoad() override
-    {
-        m_provisionalURLs.clear();
-    }
-
-    void didCommitProvisionalLoad() override
-    {
-        for (auto& url : m_provisionalURLs)
-            didVisitDomain(RegistrableDomain(url));
-    }
-
-    const ListHashSet<RegistrableDomain>& visitedDomains() const
-    {
-        return m_visitedDomains;
-    }
-
-private:
-    void didVisitDomain(RegistrableDomain&& domain)
-    {
-        if (domain.isEmpty())
-            return;
-
-        m_visitedDomains.prependOrMoveToFirst(WTFMove(domain));
-
-        if (m_visitedDomains.size() > maxVisitedDomainsSize)
-            m_visitedDomains.removeLast();
-    }
-
-    Vector<URL> m_provisionalURLs;
-    ListHashSet<RegistrableDomain> m_visitedDomains;
-};
+WebPageProxyFrameLoadStateObserver::~WebPageProxyFrameLoadStateObserver() = default;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageProxyFrameLoadStateObserver);
-
 #endif // #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
@@ -681,6 +637,10 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
     activityStateChangeTimer.setPriority(RunLoopSourcePriority::RunLoopTimer + 1);
 #endif
 }
+
+#if !PLATFORM(COCOA)
+WebPageProxy::Internals::~Internals() = default;
+#endif
 
 static RefPtr<WebFrameProxy> openerFrame(const API::PageConfiguration& configuration)
 {

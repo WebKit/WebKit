@@ -51,7 +51,7 @@ enum class VideoFrameRotation : uint16_t;
 class MockRealtimeVideoSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
-    ~MockRealtimeVideoSource();
+    virtual ~MockRealtimeVideoSource();
 
     static void setIsInterrupted(bool);
 

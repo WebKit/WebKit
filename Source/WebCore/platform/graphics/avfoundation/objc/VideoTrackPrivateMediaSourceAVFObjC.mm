@@ -40,6 +40,8 @@ VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAsset
     resetPropertiesFromTrack();
 }
 
+VideoTrackPrivateMediaSourceAVFObjC::~VideoTrackPrivateMediaSourceAVFObjC() = default;
+
 void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 {
     setTrackIndex(m_impl->index());

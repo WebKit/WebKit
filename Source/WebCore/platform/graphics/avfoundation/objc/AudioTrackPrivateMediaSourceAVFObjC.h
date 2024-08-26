@@ -44,6 +44,8 @@ public:
         return adoptRef(*new AudioTrackPrivateMediaSourceAVFObjC(track));
     }
 
+    virtual ~AudioTrackPrivateMediaSourceAVFObjC();
+
     void setEnabled(bool) final;
 
     void setAssetTrack(AVAssetTrack*);
