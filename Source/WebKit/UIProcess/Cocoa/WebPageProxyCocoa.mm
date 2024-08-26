@@ -37,7 +37,11 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
+#import "NativeWebGestureEvent.h"
+#import "NativeWebKeyboardEvent.h"
+#import "NativeWebMouseEvent.h"
 #import "PageClient.h"
+#import "PlatformXRSystem.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "QuickLookThumbnailLoader.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -70,6 +74,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
+#import <WebCore/SleepDisabler.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -430,6 +435,8 @@ ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const UR
 {
     return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain) };
 }
+
+WebPageProxy::Internals::~Internals() = default;
 
 #if ENABLE(APPLE_PAY)
 

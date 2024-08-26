@@ -72,6 +72,8 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     document.ensureTimelinesController().addTimeline(*this);
 }
 
+DocumentTimeline::~DocumentTimeline() = default;
+
 DocumentTimelinesController* DocumentTimeline::controller() const
 {
     if (m_document)

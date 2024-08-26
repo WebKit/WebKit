@@ -303,6 +303,8 @@ public:
 
     WEBCORE_EXPORT static Ref<BasicShapePath> create(std::unique_ptr<SVGPathByteStream>&&, float zoom, WindRule);
 
+    virtual ~BasicShapePath();
+
     Ref<BasicShape> clone() const final;
 
     void setWindRule(WindRule windRule) { m_windRule = windRule; }

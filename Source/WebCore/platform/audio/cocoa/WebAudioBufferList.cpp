@@ -59,6 +59,8 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, s
     setSampleCount(sampleCount);
 }
 
+WebAudioBufferList::~WebAudioBufferList() = default;
+
 static inline std::optional<std::pair<size_t, size_t>> computeBufferSizes(uint32_t numberOfInterleavedChannels, uint32_t bytesPerFrame, uint32_t numberOfChannelStreams, size_t sampleCount)
 {
     size_t totalSampleCount;

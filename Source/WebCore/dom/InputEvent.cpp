@@ -61,6 +61,8 @@ InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
 {
 }
 
+InputEvent::~InputEvent() = default;
+
 RefPtr<DataTransfer> InputEvent::dataTransfer() const
 {
     return m_dataTransfer;

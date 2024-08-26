@@ -57,6 +57,8 @@ CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, CachedSVGFont& res
 {
 }
 
+CachedSVGFont::~CachedSVGFont() = default;
+
 RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext)
 {
     ASSERT(firstFontFace());

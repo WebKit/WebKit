@@ -41,6 +41,8 @@ public:
         return document;
     }
 
+    virtual ~PluginDocument();
+
     WEBCORE_EXPORT PluginViewBase* pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 

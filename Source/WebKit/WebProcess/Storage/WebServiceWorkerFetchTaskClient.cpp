@@ -51,6 +51,8 @@ WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connec
 {
 }
 
+WebServiceWorkerFetchTaskClient::~WebServiceWorkerFetchTaskClient() = default;
+
 void WebServiceWorkerFetchTaskClient::didReceiveRedirection(const WebCore::ResourceResponse& response)
 {
     if (!m_connection)

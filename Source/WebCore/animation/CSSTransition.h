@@ -43,7 +43,8 @@ class CSSTransition final : public StyleOriginatedAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSTransition);
 public:
     static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
-    ~CSSTransition() = default;
+
+    virtual ~CSSTransition();
 
     const AtomString transitionProperty() const;
     AnimatableCSSProperty property() const { return m_property; }

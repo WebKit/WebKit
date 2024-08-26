@@ -450,7 +450,6 @@ StorageRequests& StorageRequests::singleton()
 }
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
-
 class WebPageProxyFrameLoadStateObserver final : public FrameLoadState::Observer {
     WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
     WTF_MAKE_FAST_ALLOCATED;
@@ -497,6 +496,8 @@ private:
     ListHashSet<RegistrableDomain> m_visitedDomains;
 };
 
+WebPageProxyFrameLoadStateObserver::WebPageProxyFrameLoadStateObserver() = default;
+WebPageProxyFrameLoadStateObserver::~WebPageProxyFrameLoadStateObserver() = default;
 #endif // #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
@@ -632,6 +633,10 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
 #endif
 {
 }
+
+#if !PLATFORM(COCOA)
+WebPageProxy::Internals::~Internals() = default;
+#endif
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
     : m_internals(makeUniqueRef<Internals>(*this))

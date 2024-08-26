@@ -47,6 +47,8 @@ public:
     // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
     static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
+    virtual ~NativeImage();
+
     WEBCORE_EXPORT const PlatformImagePtr& platformImage() const;
 
     WEBCORE_EXPORT IntSize size() const;

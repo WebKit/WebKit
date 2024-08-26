@@ -41,6 +41,8 @@ public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
     static ExceptionOr<Ref<CSSPerspective>> create(CSSFunctionValue&);
 
+    virtual ~CSSPerspective();
+
     const CSSPerspectiveValue& length() const { return m_length; }
     ExceptionOr<void> setLength(CSSPerspectiveValue);
 

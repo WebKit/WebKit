@@ -102,6 +102,8 @@ CSSPerspective::CSSPerspective(CSSPerspectiveValue length)
 {
 }
 
+CSSPerspective::~CSSPerspective() = default;
+
 ExceptionOr<void> CSSPerspective::setLength(CSSPerspectiveValue length)
 {
     auto checkedLength = checkLength(WTFMove(length));

@@ -68,6 +68,7 @@ public:
 
 private:
     GameControllerGamepadProvider();
+    virtual ~GameControllerGamepadProvider();
 
     enum class ConnectionVisibility {
         Visible,

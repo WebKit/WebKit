@@ -92,6 +92,8 @@ WebImage::WebImage(RefPtr<ImageBuffer>&& buffer)
 {
 }
 
+WebImage::~WebImage() = default;
+
 IntSize WebImage::size() const
 {
     if (!m_buffer)

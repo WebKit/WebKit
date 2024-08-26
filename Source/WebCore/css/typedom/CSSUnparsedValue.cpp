@@ -119,6 +119,8 @@ CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
 {
 }
 
+CSSUnparsedValue::~CSSUnparsedValue() = default;
+
 void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
     for (auto& segment : m_segments) {

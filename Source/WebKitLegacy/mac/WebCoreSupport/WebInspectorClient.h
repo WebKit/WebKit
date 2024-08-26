@@ -57,6 +57,7 @@ class WebInspectorClient final : public WebCore::InspectorClient, public Inspect
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
+    virtual ~WebInspectorClient();
 
     void inspectedPageDestroyed() override;
 

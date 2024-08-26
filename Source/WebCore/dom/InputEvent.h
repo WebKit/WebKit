@@ -44,6 +44,8 @@ public:
         String inputType;
     };
 
+    virtual ~InputEvent();
+
     static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
         const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 

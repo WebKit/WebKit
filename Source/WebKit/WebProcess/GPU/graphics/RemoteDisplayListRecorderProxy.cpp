@@ -67,6 +67,8 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBa
 {
 }
 
+RemoteDisplayListRecorderProxy::~RemoteDisplayListRecorderProxy() = default;
+
 template<typename T>
 ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
 {

@@ -36,6 +36,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WebCookieCache::~WebCookieCache() = default;
+
 bool WebCookieCache::isSupported()
 {
 #if HAVE(COOKIE_CHANGE_LISTENER_API)

@@ -100,6 +100,8 @@ WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
 {
 }
 
+WebInspectorClient::~WebInspectorClient() = default;
+
 void WebInspectorClient::inspectedPageDestroyed()
 {
 }

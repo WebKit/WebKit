@@ -42,6 +42,8 @@ public:
     static ExceptionOr<Ref<CSSTransformValue>> create(const CSSTransformListValue&);
     static ExceptionOr<Ref<CSSTransformValue>> create(Vector<RefPtr<CSSTransformComponent>>&&);
 
+    virtual ~CSSTransformValue();
+
     size_t length() const { return m_components.size(); }
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_components.size(); }
     RefPtr<CSSTransformComponent> item(size_t);

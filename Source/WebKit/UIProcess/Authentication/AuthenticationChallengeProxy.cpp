@@ -57,6 +57,8 @@ AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::Authenticati
     ASSERT(challengeID);
 }
 
+AuthenticationChallengeProxy::~AuthenticationChallengeProxy() = default;
+
 WebCredential* AuthenticationChallengeProxy::proposedCredential() const
 {
     if (!m_webCredential)

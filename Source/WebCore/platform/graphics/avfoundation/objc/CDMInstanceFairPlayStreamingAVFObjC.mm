@@ -732,6 +732,8 @@ CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingA
 {
 }
 
+CDMInstanceSessionFairPlayStreamingAVFObjC::~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
+
 using Keys = CDMInstanceSessionFairPlayStreamingAVFObjC::Keys;
 static Keys keyIDsForRequest(AVContentKeyRequest* request)
 {

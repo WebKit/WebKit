@@ -52,6 +52,8 @@ public:
         return adoptRef(*new ReplaceSelectionCommand(WTFMove(document), WTFMove(fragment), options, editingAction));
     }
 
+    virtual ~ReplaceSelectionCommand();
+
     VisibleSelection visibleSelectionForInsertedText() const { return m_visibleSelectionForInsertedText; }
     String documentFragmentPlainText() const { return m_documentFragmentPlainText; }
 

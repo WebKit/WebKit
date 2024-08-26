@@ -51,6 +51,7 @@ class PendingDownload : public NetworkLoadClient, public IPC::MessageSender, pub
 public:
     PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    virtual ~PendingDownload();
 
     void cancel(CompletionHandler<void(const IPC::DataReference&)>&&);
 

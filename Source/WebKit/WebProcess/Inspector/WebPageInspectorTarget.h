@@ -39,7 +39,7 @@ class WebPageInspectorTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTarget);
 public:
     explicit WebPageInspectorTarget(WebPage&);
-    ~WebPageInspectorTarget() = default;
+    virtual ~WebPageInspectorTarget();
 
     Inspector::InspectorTargetType type() const final { return Inspector::InspectorTargetType::Page; }
 
