@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -38,4 +38,4 @@
 
 #endif
 
-#endif // ENABLE(WRITING_TOOLS_UI)
+#endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)

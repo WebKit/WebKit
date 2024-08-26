@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
 
 namespace WebCore {
 struct TextAnimationData;
@@ -50,4 +50,4 @@ class WebViewImpl;
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS_UI)
+#endif // ENABLE(WRITING_TOOLS)

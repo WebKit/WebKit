@@ -6568,7 +6568,7 @@ TextAnimationsEnabled:
   status: internal
   humanReadableName: "Text Animations"
   humanReadableDescription: "Text Animations"
-  condition: ENABLE(WRITING_TOOLS_UI)
+  condition: ENABLE(WRITING_TOOLS)
   defaultValue:
     WebKitLegacy:
       default: true

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
 #import <pal/spi/cocoa/WritingToolsUISPI.h>
 #import <wtf/SoftLinking.h>
@@ -43,4 +43,4 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, WritingToolsUI, _WTReplaceDestinatio
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, WritingToolsUI, _WTTextChunk, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, WritingToolsUI, _WTTextPreview, PAL_EXPORT)
 
-#endif // ENABLE(WRITING_TOOLS_UI)
+#endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)

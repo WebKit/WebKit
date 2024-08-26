@@ -422,15 +422,13 @@ struct PerWebProcessState {
 - (void)_didEndPartialIntelligenceTextPonderingAnimation;
 - (BOOL)_intelligenceTextPonderingAnimationIsComplete;
 
-#endif // ENABLE(WRITING_TOOLS)
-
-#if ENABLE(WRITING_TOOLS_UI)
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)uuid;
 
 - (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID;
 - (NSUUID *)_enableFinalTextAnimationForElementWithID:(NSString *)elementID;
 - (void)_disableTextAnimationWithUUID:(NSUUID *)nsUUID;
+
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

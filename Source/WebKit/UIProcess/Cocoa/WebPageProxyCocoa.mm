@@ -1213,10 +1213,6 @@ void WebPageProxy::writingToolsSessionDidReceiveAction(const WebCore::WritingToo
     legacyMainFrameProcess().send(Messages::WebPage::WritingToolsSessionDidReceiveAction(session, action), webPageIDInMainFrameProcess());
 }
 
-#endif // ENABLE(WRITING_TOOLS)
-
-#if ENABLE(WRITING_TOOLS_UI)
-
 void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID)
 {
     if (!hasRunningProcess())
@@ -1310,10 +1306,6 @@ void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection
 
     protectedPageClient()->removeTextAnimationForAnimationID(uuid);
 }
-
-#endif // ENABLE(WRITING_TOOLS_UI)
-
-#if ENABLE(WRITING_TOOLS)
 
 void WebPageProxy::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(IPC::Connection& connection, const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect selectionBoundsInRootView)
 {

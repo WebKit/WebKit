@@ -1862,10 +1862,6 @@ void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(WritingT
     protectedPage()->proofreadingSessionUpdateStateForSuggestionWithID(state, replacementID);
 }
 
-#endif
-
-#if ENABLE(WRITING_TOOLS_UI)
-
 void WebChromeClient::removeTextAnimationForAnimationID(const WTF::UUID& animationID)
 {
     protectedPage()->removeTextAnimationForAnimationID(animationID);

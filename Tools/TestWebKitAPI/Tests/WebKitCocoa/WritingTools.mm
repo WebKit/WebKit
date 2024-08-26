@@ -2050,8 +2050,6 @@ TEST(WritingTools, EphemeralSession)
     TestWebKitAPI::Util::run(&finished);
 }
 
-#if ENABLE(WRITING_TOOLS_UI)
-
 TEST(WritingTools, TransparencyMarkersForInlineEditing)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
@@ -2156,8 +2154,6 @@ TEST(WritingTools, NoCrashWhenWebProcessTerminates)
     [webView _killWebContentProcess];
     TestWebKitAPI::Util::run(&webProcessTerminated);
 }
-
-#endif
 
 #if PLATFORM(MAC)
 

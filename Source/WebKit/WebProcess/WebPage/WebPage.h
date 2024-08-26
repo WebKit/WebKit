@@ -1768,9 +1768,7 @@ public:
     void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect);
 
     void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&);
-#endif
 
-#if ENABLE(WRITING_TOOLS_UI)
     void enableSourceTextAnimationAfterElementWithID(const String&);
     void enableTextAnimationTypeForElementWithID(const String&);
 
@@ -2866,7 +2864,7 @@ private:
     String m_mediaEnvironment;
 #endif
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     UniqueRef<TextAnimationController> m_textAnimationController;
 #endif
 
