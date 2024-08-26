@@ -135,9 +135,9 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
                 currNode->setLayer(remoteLayerTreeNode->layer());
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
             if (platformLayerID && (currNode->isFixedNode() || currNode->isStickyNode()))
-                m_fixedScrollingNodeLayerIDs.add(platformLayerID);
+                m_fixedScrollingNodeLayerIDs.add(*platformLayerID);
             if (platformLayerID && currNode->isScrollingNode())
-                m_scrollingNodesByLayerID.add(platformLayerID, currNode->scrollingNodeID());
+                m_scrollingNodesByLayerID.add(*platformLayerID, currNode->scrollingNodeID());
 #endif
         }
 
