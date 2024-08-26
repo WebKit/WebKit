@@ -36,6 +36,12 @@
 namespace WebCore {
 
 struct ApplicationManifest {
+    enum class Direction : uint8_t {
+        Auto,
+        LTR, // NOLINT
+        RTL, // NOLINT
+    };
+
     enum class Display : uint8_t {
         Browser,
         MinimalUI,
@@ -63,6 +69,7 @@ struct ApplicationManifest {
     };
 
     String rawJSON;
+    Direction dir;
     String name;
     String shortName;
     String description;

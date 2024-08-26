@@ -36,6 +36,20 @@
 using namespace WebCore;
 
 namespace WebCore {
+static inline std::ostream& operator<<(std::ostream& os, const ApplicationManifest::Direction& direction)
+{
+    using enum ApplicationManifest::Direction;
+
+    switch (direction) {
+    case Auto:
+        return os << "ApplicationManifest::Direction::Auto";
+    case LTR:
+        return os << "ApplicationManifest::Direction::LTR";
+    case RTL:
+        return os << "ApplicationManifest::Direction::RTL";
+    }
+}
+
 static inline std::ostream& operator<<(std::ostream& os, const ApplicationManifest::Display& display)
 {
     switch (display) {
@@ -168,6 +182,11 @@ public:
         auto manifest = parseTopLevelProperty("start_url"_s, rawJSON);
         auto value = manifest.startURL;
         EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
+    void testDir(const String& rawJSON, ApplicationManifest::Direction expectedValue)
+    {
+        EXPECT_EQ(expectedValue, parseTopLevelProperty("dir"_s, rawJSON).dir);
     }
 
     void testDisplay(const String& rawJSON, ApplicationManifest::Display expectedValue)
@@ -442,6 +461,25 @@ TEST_F(ApplicationManifestParserTest, StartURL)
     m_manifestURL = URL { "https://example.com/dir3/manifest.json"_s };
 
     testStartURL("\"../page2\""_s, "https://example.com/page2"_s);
+}
+
+TEST_F(ApplicationManifestParserTest, Dir)
+{
+    using enum ApplicationManifest::Direction;
+
+    testDir("123"_s, Auto);
+    testDir("null"_s, Auto);
+    testDir("true"_s, Auto);
+    testDir("{ }"_s, Auto);
+    testDir("[ ]"_s, Auto);
+    testDir("\"\""_s, Auto);
+    testDir("\"garbage string\""_s, Auto);
+    testDir("\"\vltr\""_s, Auto);
+
+    testDir("\"auto\""_s, Auto);
+    testDir("\"ltr\""_s, LTR);
+    testDir("\"rtl\""_s, RTL);
+    testDir("\"\t\nLTR \""_s, LTR);
 }
 
 TEST_F(ApplicationManifestParserTest, Display)

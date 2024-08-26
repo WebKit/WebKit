@@ -1336,6 +1336,12 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 };
 
 #if ENABLE(APPLICATION_MANIFEST)
+[Nested] enum class WebCore::ApplicationManifest::Direction : uint8_t {
+    Auto
+    LTR
+    RTL
+};
+
 [Nested] enum class WebCore::ApplicationManifest::Display : uint8_t {
     Browser
     MinimalUI
@@ -1364,6 +1370,7 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 
 struct WebCore::ApplicationManifest {
     String rawJSON
+    WebCore::ApplicationManifest::Direction dir
     String name
     String shortName
     String description

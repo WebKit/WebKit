@@ -102,6 +102,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.rawJSON = text;
     parsedManifest.manifestURL = manifestURL;
     parsedManifest.startURL = parseStartURL(manifest, documentURL);
+    parsedManifest.dir = parseDir(manifest);
     parsedManifest.display = parseDisplay(manifest);
     parsedManifest.name = parseName(manifest);
     parsedManifest.description = parseDescription(manifest);
@@ -171,6 +172,34 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
     }
 
     return startURL;
+}
+
+ApplicationManifest::Direction ApplicationManifestParser::parseDir(const JSON::Object& manifest)
+{
+    using enum ApplicationManifest::Direction;
+
+    auto value = manifest.getValue("dir"_s);
+    if (!value)
+        return Auto;
+
+    auto stringValue = value->asString();
+    if (!stringValue) {
+        logManifestPropertyNotAString("dir"_s);
+        return Auto;
+    }
+
+    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Direction> directionMappings[] = {
+        { "auto", Auto },
+        { "ltr", LTR },
+        { "rtl", RTL },
+    };
+    static constexpr SortedArrayMap directions { directionMappings };
+
+    if (auto* dirValue = directions.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
+        return *dirValue;
+
+    logDeveloperWarning(makeString('"', stringValue, "\" is not a valid dir."_s));
+    return Auto;
 }
 
 ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON::Object& manifest)
