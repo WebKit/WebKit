@@ -1,4 +1,18 @@
 =================
+WebKitGTK 2.45.91
+=================
+
+What's new in WebKitGTK 2.45.91?
+
+  - Add new API to WebKitAutomationSession to be notified when the session is about to be closed.
+  - Fix WebGL with accelerated compositing disabled.
+  - Fix image filtering not being applied in some cases.
+  - Fix the build on 32 bits systems.
+  - Fix the build with -DUSE_TEXTURE_MAPPER_DMABUF=OFF
+  - Fix several crashes and rendering issues.
+  - Translatation updates: Slovenian.
+
+=================
 WebKitGTK 2.45.90
 =================
 
