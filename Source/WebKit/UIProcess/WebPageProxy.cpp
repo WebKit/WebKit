@@ -175,7 +175,6 @@
 #include "WebPreferences.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
-#include "WebProcessActivityState.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -565,102 +564,93 @@ Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& 
     return adoptRef(*new WebPageProxy(pageClient, process, WTFMove(configuration)));
 }
 
-void WebPageProxy::takeVisibleActivity()
+WebPageProxy::ProcessActivityState::ProcessActivityState(WebPageProxy& page)
+    : m_page(page)
+#if PLATFORM(MAC)
+    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(8_min))
+#endif
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeVisibleActivity();
-    });
-}
-void WebPageProxy::takeAudibleActivity()
-{
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeAudibleActivity();
-    });
-}
-void WebPageProxy::takeCapturingActivity()
-{
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeCapturingActivity();
-    });
 }
 
-void WebPageProxy::resetActivityState()
+void WebPageProxy::ProcessActivityState::takeVisibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().reset();
-    });
+    m_isVisibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+#if PLATFORM(MAC)
+    *m_wasRecentlyVisibleActivity = nullptr;
+#endif
+}
+void WebPageProxy::ProcessActivityState::takeAudibleActivity()
+{
+    m_isAudibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+}
+void WebPageProxy::ProcessActivityState::takeCapturingActivity()
+{
+    m_isCapturingActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
 }
 
-void WebPageProxy::dropVisibleActivity()
+void WebPageProxy::ProcessActivityState::reset()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().dropVisibleActivity();
-    });
+    m_isVisibleActivity = nullptr;
+#if PLATFORM(MAC)
+    *m_wasRecentlyVisibleActivity = nullptr;
+#endif
+    m_isAudibleActivity = nullptr;
+    m_isCapturingActivity = nullptr;
+#if PLATFORM(IOS_FAMILY)
+    m_openingAppLinkActivity = nullptr;
+#endif
 }
 
-void WebPageProxy::dropAudibleActivity()
+void WebPageProxy::ProcessActivityState::dropVisibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeAudibleActivity();
-    });
+#if PLATFORM(MAC)
+    if (WTF::numberOfProcessorCores() > 4)
+        *m_wasRecentlyVisibleActivity = m_page.legacyMainFrameProcess().throttler().backgroundActivity("View was recently visible"_s);
+    else
+        *m_wasRecentlyVisibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View was recently visible"_s);
+#endif
+    m_isVisibleActivity = nullptr;
 }
 
-void WebPageProxy::dropCapturingActivity()
+void WebPageProxy::ProcessActivityState::dropAudibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeCapturingActivity();
-    });
+    m_isAudibleActivity = nullptr;
 }
 
-bool WebPageProxy::hasValidVisibleActivity() const
+void WebPageProxy::ProcessActivityState::dropCapturingActivity()
 {
-    bool hasValidVisibleActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidVisibleActivity &= webProcess.activityState().hasValidVisibleActivity();
-    });
-    return hasValidVisibleActivity;
+    m_isCapturingActivity = nullptr;
 }
 
-bool WebPageProxy::hasValidAudibleActivity() const
+bool WebPageProxy::ProcessActivityState::hasValidVisibleActivity() const
 {
-    bool hasValidAudibleActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidAudibleActivity &= webProcess.activityState().hasValidAudibleActivity();
-    });
-    return hasValidAudibleActivity;
+    return m_isVisibleActivity && m_isVisibleActivity->isValid();
 }
 
-bool WebPageProxy::hasValidCapturingActivity() const
+bool WebPageProxy::ProcessActivityState::hasValidAudibleActivity() const
 {
-    bool hasValidCapturingActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidCapturingActivity &= webProcess.activityState().hasValidCapturingActivity();
-    });
-    return hasValidCapturingActivity;
+    return m_isAudibleActivity && m_isAudibleActivity->isValid();
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidCapturingActivity() const
+{
+    return m_isCapturingActivity && m_isCapturingActivity->isValid();
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPageProxy::takeOpeningAppLinkActivity()
+void WebPageProxy::ProcessActivityState::takeOpeningAppLinkActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeOpeningAppLinkActivity();
-    });
+    m_openingAppLinkActivity = m_page.legacyMainFrameProcess().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
 }
 
-void WebPageProxy::dropOpeningAppLinkActivity()
+void WebPageProxy::ProcessActivityState::dropOpeningAppLinkActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().dropOpeningAppLinkActivity();
-    });
+    m_openingAppLinkActivity = nullptr;
 }
 
-bool WebPageProxy::hasValidOpeningAppLinkActivity() const
+bool WebPageProxy::ProcessActivityState::hasValidOpeningAppLinkActivity() const
 {
-    bool hasValidOpeningAppLinkActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidOpeningAppLinkActivity &= webProcess.activityState().hasValidOpeningAppLinkActivity();
-    });
-    return hasValidOpeningAppLinkActivity;
+    return m_openingAppLinkActivity && m_openingAppLinkActivity->isValid();
 }
 #endif
 
@@ -731,6 +721,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
+    , m_legacyMainFrameProcessActivityState(*this)
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
     , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
@@ -1691,7 +1682,7 @@ void WebPageProxy::close()
     protectedConfiguration()->setRelatedPage(nullptr);
 
     // Make sure we don't hold a process assertion after getting closed.
-    resetActivityState();
+    m_legacyMainFrameProcessActivityState.reset();
     internals().audibleActivityTimer.stop();
 
     stopAllURLSchemeTasks();
@@ -2988,26 +2979,26 @@ void WebPageProxy::updateThrottleState()
 
 #if USE(RUNNINGBOARD)
     if (isViewVisible()) {
-        if (!hasValidVisibleActivity()) {
+        if (!m_legacyMainFrameProcessActivityState.hasValidVisibleActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because the view is visible");
-            takeVisibleActivity();
+            m_legacyMainFrameProcessActivityState.takeVisibleActivity();
         }
-    } else if (hasValidVisibleActivity()) {
+    } else if (m_legacyMainFrameProcessActivityState.hasValidVisibleActivity()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because the view is no longer visible");
-        dropVisibleActivity();
+        m_legacyMainFrameProcessActivityState.dropVisibleActivity();
     }
 
     bool isAudible = internals().activityState.contains(ActivityState::IsAudible);
     if (isAudible) {
-        if (!hasValidAudibleActivity()) {
+        if (!m_legacyMainFrameProcessActivityState.hasValidAudibleActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because we are playing audio");
-            takeAudibleActivity();
+            m_legacyMainFrameProcessActivityState.takeAudibleActivity();
         }
         if (internals().audibleActivityTimer.isActive()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: Cancelling timer to release foreground assertion");
             internals().audibleActivityTimer.stop();
         }
-    } else if (hasValidAudibleActivity()) {
+    } else if (m_legacyMainFrameProcessActivityState.hasValidAudibleActivity()) {
         if (!internals().audibleActivityTimer.isActive()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess starting timer to release a foreground assertion in %g seconds if audio doesn't start to play", audibleActivityClearDelay.seconds());
             internals().audibleActivityTimer.startOneShot(audibleActivityClearDelay);
@@ -3016,13 +3007,13 @@ void WebPageProxy::updateThrottleState()
 
     bool isCapturingMedia = internals().activityState.contains(ActivityState::IsCapturingMedia);
     if (isCapturingMedia) {
-        if (!hasValidCapturingActivity()) {
+        if (!m_legacyMainFrameProcessActivityState.hasValidCapturingActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because media capture is active");
-            takeCapturingActivity();
+            m_legacyMainFrameProcessActivityState.takeCapturingActivity();
         }
-    } else if (hasValidCapturingActivity()) {
+    } else if (m_legacyMainFrameProcessActivityState.hasValidCapturingActivity()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because media capture is no longer active");
-        dropCapturingActivity();
+        m_legacyMainFrameProcessActivityState.dropCapturingActivity();
     }
 #endif
 }
@@ -3030,10 +3021,15 @@ void WebPageProxy::updateThrottleState()
 void WebPageProxy::clearAudibleActivity()
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "clearAudibleActivity: UIProcess is releasing a foreground assertion because we are no longer playing audio");
-    dropAudibleActivity();
+    m_legacyMainFrameProcessActivityState.dropAudibleActivity();
 #if ENABLE(EXTENSION_CAPABILITIES)
     updateMediaCapability();
 #endif
+}
+
+bool WebPageProxy::hasValidAudibleActivity() const
+{
+    return m_legacyMainFrameProcessActivityState.hasValidAudibleActivity();
 }
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
@@ -3069,7 +3065,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
 #if USE(RUNNINGBOARD)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
-    if (!hasValidVisibleActivity()) {
+    if (!m_legacyMainFrameProcessActivityState.hasValidVisibleActivity()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -6670,7 +6666,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, Fr
     }
 }
 
-void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, PageIdentifier)>&& function) const
+void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, PageIdentifier)>&& function)
 {
     m_browsingContextGroup->forEachRemotePage(*this, [&] (auto& remotePageProxy) {
         function(remotePageProxy.process(), remotePageProxy.pageID());
@@ -10330,7 +10326,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
 #endif
 
-    resetActivityState();
+    m_legacyMainFrameProcessActivityState.reset();
 
     internals().pageIsUserObservableCount = nullptr;
     internals().visiblePageToken = nullptr;

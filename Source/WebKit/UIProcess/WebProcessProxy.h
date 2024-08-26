@@ -124,7 +124,6 @@ class WebPageGroup;
 class WebPageProxy;
 class WebPermissionControllerProxy;
 class WebPreferences;
-class WebProcessActivityState;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
@@ -514,8 +513,6 @@ public:
     const WebCore::ProcessIdentity& processIdentity();
 #endif
 
-    WebProcessActivityState& activityState() { return m_activityState; }
-
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -796,8 +793,6 @@ private:
     Seconds m_totalBackgroundTime;
     Seconds m_totalSuspendedTime;
     WebCore::ProcessIdentity m_processIdentity;
-
-    UniqueRef<WebProcessActivityState> m_activityState;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

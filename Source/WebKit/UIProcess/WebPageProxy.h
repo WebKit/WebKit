@@ -412,6 +412,7 @@ class PageLoadState;
 class PageLoadStateObserverBase;
 class PlatformXRSystem;
 class PlaybackSessionManagerProxy;
+class ProcessThrottlerActivity;
 class ProcessThrottlerTimedActivity;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
@@ -2462,6 +2463,7 @@ public:
     void sendScrollPositionChangedForNode(std::optional<WebCore::FrameIdentifier>, WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate);
 #endif
 
+    bool hasValidAudibleActivity() const;
     bool hasAllowedToRunInTheBackgroundActivity() const;
 
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, OptionSet<IPC::SendOption> = { });
@@ -2469,7 +2471,7 @@ public:
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, const IPC::Timeout&);
 
-    void forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&) const;
+    void forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);
@@ -3106,24 +3108,41 @@ private:
     static WTF::MachSendRight createMachSendRightForRemoteLayerServer();
 #endif
 
-    void takeVisibleActivity();
-    void takeAudibleActivity();
-    void takeCapturingActivity();
+    class ProcessActivityState {
+    public:
+        explicit ProcessActivityState(WebPageProxy&);
+        void takeVisibleActivity();
+        void takeAudibleActivity();
+        void takeCapturingActivity();
 
-    void resetActivityState();
-    void dropVisibleActivity();
-    void dropAudibleActivity();
-    void dropCapturingActivity();
+        void reset();
+        void dropVisibleActivity();
+        void dropAudibleActivity();
+        void dropCapturingActivity();
 
-    bool hasValidVisibleActivity() const;
-    bool hasValidAudibleActivity() const;
-    bool hasValidCapturingActivity() const;
+        bool hasValidVisibleActivity() const;
+        bool hasValidAudibleActivity() const;
+        bool hasValidCapturingActivity() const;
 
 #if PLATFORM(IOS_FAMILY)
-    void takeOpeningAppLinkActivity();
-    void dropOpeningAppLinkActivity();
-    bool hasValidOpeningAppLinkActivity() const;
+        void takeOpeningAppLinkActivity();
+        void dropOpeningAppLinkActivity();
+        bool hasValidOpeningAppLinkActivity() const;
 #endif
+
+    private:
+        WebPageProxy& m_page;
+
+        std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
+#if PLATFORM(MAC)
+        UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
+#endif
+        std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
+        std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
+#if PLATFORM(IOS_FAMILY)
+        std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
+#endif
+    };
 
     UniqueRef<Internals> m_internals;
 
@@ -3271,6 +3290,8 @@ private:
     bool m_isListeningForUserFacingStateChangeNotification { false };
 #endif
     bool m_allowsMediaDocumentInlinePlayback { false };
+
+    ProcessActivityState m_legacyMainFrameProcessActivityState;
 
     bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;

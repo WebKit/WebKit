@@ -447,7 +447,6 @@ UIProcess/WebPageProxyTesting.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPermissionControllerProxy.cpp
 UIProcess/WebPreferences.cpp
-UIProcess/WebProcessActivityState.cpp
 UIProcess/WebProcessCache.cpp
 UIProcess/WebProcessPool.cpp
 UIProcess/WebProcessProxy.cpp
