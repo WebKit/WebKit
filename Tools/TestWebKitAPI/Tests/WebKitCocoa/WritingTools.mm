@@ -2158,11 +2158,11 @@ TEST(WritingTools, TransparencyMarkersUsingWKWebViewSPI)
 
     EXPECT_EQ(0U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 
-    RetainPtr identifier = [webView _enableTextIndicatorStylingAfterElementWithID:@"title"];
+    RetainPtr identifier = [webView _enableSourceTextAnimationAfterElementWithID:@"title"];
     waitForValue(1U);
     EXPECT_EQ(1U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 
-    [webView _disableTextIndicatorStylingWithUUID:identifier.get()];
+    [webView _disableTextAnimationWithUUID:identifier.get()];
     waitForValue(0U);
     EXPECT_EQ(0U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 }
