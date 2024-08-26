@@ -352,7 +352,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKARPresentationSessionDescriptor *descriptor)
+id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPresentationSessionDescriptor *descriptor)
 {
     return [[_WKARPresentationSession alloc] initWithSession:session descriptor:descriptor];
 }
