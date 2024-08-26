@@ -2231,15 +2231,18 @@ class YarrGenerator final : public YarrJITInfo {
 #endif
     }
 
-    void backtrackCharacterClassOnce(size_t opIndex)
+    void backtrackCharacterClassOnce(size_t opIndex, bool fallThroughToCharacterClassFixedCount)
     {
+        UNUSED_PARAM(fallThroughToCharacterClassFixedCount);
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             YarrOp& op = m_ops[opIndex];
             PatternTerm* term = op.m_term;
 
             m_backtrackingState.link(&m_jit);
-            loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), m_regs.index);
+            // If we fallthough to the same CharacterClassOnce, we will override this index register, so we do not need to load here.
+            if (!fallThroughToCharacterClassFixedCount)
+                loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), m_regs.index);
             m_backtrackingState.fallthrough();
         }
 #endif
@@ -2632,9 +2635,18 @@ class YarrGenerator final : public YarrJITInfo {
         case PatternTerm::Type::CharacterClass:
             switch (term->quantityType) {
             case QuantifierType::FixedCount:
-                if (term->quantityMaxCount == 1)
-                    backtrackCharacterClassOnce(opIndex);
-                else
+                if (term->quantityMaxCount == 1) {
+                    bool fallThroughToCharacterClassFixedCount = false;
+                    if (opIndex != 0) {
+                        auto& previousOp = m_ops[opIndex - 1];
+                        if (previousOp.m_op == YarrOpCode::Term) {
+                            auto* term = previousOp.m_term;
+                            if (term->type == PatternTerm::Type::CharacterClass && term->quantityType == QuantifierType::FixedCount)
+                                fallThroughToCharacterClassFixedCount = true;
+                        }
+                    }
+                    backtrackCharacterClassOnce(opIndex, fallThroughToCharacterClassFixedCount);
+                } else
                     backtrackCharacterClassFixed(opIndex);
                 break;
             case QuantifierType::Greedy:
