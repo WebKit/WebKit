@@ -550,8 +550,7 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
             @"Markable",
             @"RetainPtr",
             @"HashCountedSet",
-            @"IPC::CoreIPCRetainPtr",
-            @"WebCore::RectEdges"
+            @"IPC::CoreIPCRetainPtr"
         ];
         for (NSString *container in containerTypes) {
             if ([input hasPrefix:[container stringByAppendingString:@"<"]]
@@ -673,6 +672,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"GCGLint",
         @"GCGLenum",
         @"OSStatus",
+        @"GCGLErrorCodeSet",
+        @"CGBitmapInfo",
     ]];
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
@@ -682,12 +683,10 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
         @"PKSecureElementPass",
-        @"GCGLErrorCodeSet",
 #if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
         @"NSURLRequest",
 #endif
         @"MachSendRight",
-        @"CGBitmapInfo",
         @"NSParagraphStyle",
 #if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"DDScannerResult",

@@ -451,8 +451,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     EndPrinting() -> ()
     EndPrintingDuringDOMPrintOperation() -> () AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
-    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
-    ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::FloatBoxExtent computedPageMargin)
+    ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::FloatBoxExtent computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
     DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC

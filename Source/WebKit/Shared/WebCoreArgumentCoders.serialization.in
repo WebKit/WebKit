@@ -1919,7 +1919,7 @@ header: <WebCore/RectEdges.h>
     float left()
 };
 
-[Alias=class RectEdges<bool>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BoolBoxExtent {
+[CustomHeader] class WebCore::RectEdges<bool> {
     bool top();
     bool right();
     bool bottom();

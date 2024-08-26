@@ -489,6 +489,24 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
         } },
 #endif // USE(APPKIT)
+        { "WebCore::RectEdges<bool>"_s, {
+            {
+                "bool"_s,
+                "top()"_s
+            },
+            {
+                "bool"_s,
+                "right()"_s
+            },
+            {
+                "bool"_s,
+                "bottom()"_s
+            },
+            {
+                "bool"_s,
+                "left()"_s
+            },
+        } },
 #if USE(PASSKIT)
         { "PKPaymentMethod"_s, {
             { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }

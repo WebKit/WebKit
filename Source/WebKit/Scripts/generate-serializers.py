@@ -632,7 +632,12 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
             if type.condition is not None:
                 result.append('#if ' + type.condition)
             if type.cf_type is None and type.alias is None:
-                result.append(type.cpp_type_from_struct_or_class() + ' ' + type.cpp_struct_or_class_name() + ';')
+                name = type.cpp_struct_or_class_name()
+                less_than_index = name.find('<')
+                if less_than_index == -1:
+                    result.append(type.cpp_type_from_struct_or_class() + ' ' + name + ';')
+                else:
+                    result.append('template<typename> ' + type.cpp_type_from_struct_or_class() + ' ' + name[:less_than_index] + ';')
             if type.condition is not None:
                 result.append('#endif')
         for template in template_types_by_namespace.get(namespace, []):
