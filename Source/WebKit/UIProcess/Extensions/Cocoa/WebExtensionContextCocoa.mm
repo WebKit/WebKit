@@ -247,6 +247,56 @@ NSError *WebExtensionContext::createError(Error error, NSString *customLocalized
     return [[NSError alloc] initWithDomain:WKWebExtensionContextErrorDomain code:errorCode userInfo:userInfo];
 }
 
+void WebExtensionContext::recordError(NSError *error)
+{
+    ASSERT(error);
+
+    if (!m_errors)
+        m_errors = [NSMutableArray array];
+
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{public}@", privacyPreservingDescription(error));
+
+    // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
+    // such as repeated "resource not found" errors, from being included multiple times.
+    if ([m_errors containsObject:error])
+        return;
+
+    [wrapper() willChangeValueForKey:@"errors"];
+    [m_errors addObject:error];
+    [wrapper() didChangeValueForKey:@"errors"];
+
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionContextErrorsDidUpdateNotification object:wrapper() userInfo:nil];
+    }).get());
+}
+
+void WebExtensionContext::clearError(Error error)
+{
+    if (!m_errors.get().count)
+        return;
+
+    auto errorCode = toAPI(error);
+    auto *indexes = [m_errors indexesOfObjectsPassingTest:^BOOL(NSError *error, NSUInteger, BOOL *) {
+        return error.code == errorCode;
+    }];
+
+    if (!indexes.count)
+        return;
+
+    [wrapper() willChangeValueForKey:@"errors"];
+    [m_errors removeObjectsAtIndexes:indexes];
+    [wrapper() didChangeValueForKey:@"errors"];
+
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
+        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionContextErrorsDidUpdateNotification object:wrapper() userInfo:nil];
+    }).get());
+}
+
+NSArray *WebExtensionContext::errors()
+{
+    return [extension().errors() arrayByAddingObjectsFromArray:m_errors.get()];
+}
+
 bool WebExtensionContext::load(WebExtensionController& controller, String storageDirectory, NSError **outError)
 {
     if (outError)
@@ -3330,6 +3380,7 @@ void WebExtensionContext::loadBackgroundWebView()
         [delegate _webExtensionController:m_extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
 
     m_backgroundWebView.get()._remoteInspectionNameOverride = backgroundWebViewInspectionName();
+    clearError(Error::BackgroundContentFailedToLoad);
     m_backgroundContentLoadError = nil;
 
     if (!extension().backgroundContentIsServiceWorker()) {
@@ -3343,6 +3394,7 @@ void WebExtensionContext::loadBackgroundWebView()
     [m_backgroundWebView _loadServiceWorker:backgroundContentURL() usingModules:extension().backgroundContentUsesModules() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](BOOL success) {
         if (!success) {
             m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad);
+            recordError(backgroundContentLoadError());
             return;
         }
 
@@ -3654,6 +3706,7 @@ void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, 
         return;
 
     m_backgroundContentLoadError = createError(Error::BackgroundContentFailedToLoad, nil, error);
+    recordError(backgroundContentLoadError());
 
     unloadBackgroundWebView();
 }
@@ -4187,9 +4240,12 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         bool isRegisteredScript = !scriptID.isEmpty();
 
         for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
-            NSString *scriptString = m_extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);
-            if (!scriptString)
+            NSError *error;
+            auto *scriptString = m_extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
+            if (!scriptString) {
+                recordError(error);
                 continue;
+            }
 
             auto userScript = API::UserScript::create(WebCore::UserScript { scriptString, URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
             originInjectedScripts.append(userScript);
@@ -4208,9 +4264,12 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         }
 
         for (NSString *styleSheetPath in injectedContentData.styleSheetPaths.get()) {
-            NSString *styleSheetString = m_extension->resourceStringForPath(styleSheetPath, WebExtension::CacheResult::Yes);
-            if (!styleSheetString)
+            NSError *error;
+            auto *styleSheetString = m_extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
+            if (!styleSheetString) {
+                recordError(error);
                 continue;
+            }
 
             auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
@@ -4473,9 +4532,12 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 
-            auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
-            if (!jsonData)
+            NSError *error;
+            auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath, &error);
+            if (!jsonData) {
+                recordError(error);
                 continue;
+            }
 
             [allJSONData addObject:jsonData];
         }

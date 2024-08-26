@@ -68,6 +68,10 @@ typedef NS_ERROR_ENUM(WKWebExtensionContextErrorDomain, WKWebExtensionContextErr
     WKWebExtensionContextErrorBackgroundContentFailedToLoad,
 } NS_SWIFT_NAME(WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+/*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has new errors or errors were cleared. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_EXTERN NSNotificationName const WKWebExtensionContextErrorsDidUpdateNotification NS_SWIFT_NAME(WKWebExtensionContext.errorsDidUpdateNotification) NS_SWIFT_NONISOLATED;
+
 /*!
  @abstract Constants used to indicate permission status in ``WKWebExtensionContext``.
  @constant WKWebExtensionContextPermissionStatusDeniedExplicitly  Indicates that the permission was explicitly denied.
@@ -166,6 +170,13 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*! @abstract A Boolean value indicating if this context is loaded in an extension controller. */
 @property (nonatomic, readonly, getter=isLoaded) BOOL loaded;
+
+/*!
+ @abstract All errors that occurred in the extension context.
+ @discussion Provides an array of all parse-time and runtime errors for the extension and extension context, with repeat errors
+ consolidated into a single entry for the original occurrence. If no errors occurred, an empty array is returned.
+ */
+@property (nonatomic, readonly, copy) NSArray<NSError *> *errors;
 
 /*!
  @abstract The base URL the context uses for loading extension resources or injecting content into webpages.
@@ -529,7 +540,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 
 /*!
  @abstract Loads the background content if needed for the extension.
- @param completionHandler A block to be called upon completion of the loading process, with an optional error object.
+ @param completionHandler A block to be called upon completion of the loading process, with an optional error.
  @discussion This method forces the loading of the background content for the extension that will otherwise be loaded on-demand during specific events.
  It is useful when the app requires the background content to be loaded for other reasons. If the background content is already loaded, the completion handler
  will be called immediately. An error will occur if the extension does not have any background content to load or loading fails.

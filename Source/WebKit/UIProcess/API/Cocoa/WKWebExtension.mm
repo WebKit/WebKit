@@ -36,7 +36,6 @@
 #import "WebExtension.h"
 
 NSErrorDomain const WKWebExtensionErrorDomain = @"WKWebExtensionErrorDomain";
-NSNotificationName const WKWebExtensionErrorsWereUpdatedNotification = @"WKWebExtensionErrorsWereUpdated";
 
 @implementation WKWebExtension
 

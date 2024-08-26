@@ -82,7 +82,7 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
             return;
         }
 
-        auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
+        auto scriptPairs = getSourcePairsForParameters(parameters, *this);
         Ref executionWorld = toContentWorld(parameters.world);
 
         executeScript(scriptPairs, webView, executionWorld, *tab, parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
@@ -116,7 +116,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
         auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-        auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+        auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
         injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
@@ -150,7 +150,7 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
     auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+    auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
     removeStyleSheets(styleSheetPairs, webView, injectedFrames, *this);
 
     completionHandler({ });
@@ -360,7 +360,9 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         });
 
         for (NSString *scriptPath in scriptPaths) {
-            if (!extension().resourceStringForPath(scriptPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            NSError *error;
+            if (!extension().resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+                recordError(error);
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", scriptPath);
                 return false;
             }
@@ -373,7 +375,9 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         });
 
         for (NSString *styleSheetPath in styleSheetPaths) {
-            if (!extension().resourceStringForPath(styleSheetPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            NSError *error;
+            if (!extension().resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+                recordError(error);
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", styleSheetPath);
                 return false;
             }

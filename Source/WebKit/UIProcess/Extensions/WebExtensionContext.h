@@ -272,6 +272,11 @@ public:
     bool operator==(const WebExtensionContext& other) const { return (this == &other); }
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+    void recordErrorIfNeeded(NSError *error) { if (error) recordError(error); }
+    void recordError(NSError *);
+    void clearError(Error);
+
+    NSArray *errors();
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     const String& storageDirectory() const { return m_storageDirectory; }
@@ -898,6 +903,7 @@ private:
     String m_storageDirectory;
 
     RetainPtr<NSMutableDictionary> m_state;
+    RetainPtr<NSMutableArray> m_errors;
 
     RefPtr<WebExtension> m_extension;
     WeakPtr<WebExtensionController> m_extensionController;

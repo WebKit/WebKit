@@ -64,13 +64,13 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MessagePort)
 
 /*!
  @abstract The block to be executed when a message is received from the web extension.
- @discussion The block takes two parameters: the message and an optional error object in case of an error.
+ @discussion An optional block to be invoked when a message is received, taking two parameters: the message and an optional error.
  */
 @property (nonatomic, copy, nullable) void (^messageHandler)(id _Nullable message, NSError * _Nullable error);
 
 /*!
  @abstract The block to be executed when the port disconnects.
- @discussion This block has one parameter: an optional error object in case an error caused the disconnection.
+ @discussion An optional block to be invoked when the port disconnects, taking an optional error that indicates if the disconnection was caused by an error.
  */
 @property (nonatomic, copy, nullable) void (^disconnectHandler)(NSError * _Nullable error);
 
@@ -80,7 +80,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MessagePort)
 /*!
  @abstract Sends a message to the connected web extension.
  @param message The JSON-serializable message to be sent.
- @param completionHandler An optional block to be invoked after the message is sent, taking an optional error object.
+ @param completionHandler An optional block to be invoked after the message is sent, taking an optional error.
  @note The message must be JSON-serializable according to ``NSJSONSerialization``.
  */
 - (void)sendMessage:(nullable id)message completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(sendMessage(_:completionHandler:));

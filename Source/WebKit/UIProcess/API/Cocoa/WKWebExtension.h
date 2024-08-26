@@ -63,10 +63,6 @@ typedef NS_ERROR_ENUM(WKWebExtensionErrorDomain, WKWebExtensionError) {
     WKWebExtensionErrorInvalidBackgroundPersistence,
 } NS_SWIFT_NAME(WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
-/*! @abstract This notification is sent whenever a ``WKWebExtension`` has new errors or errors were cleared. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(WKWebExtension.errorsWereUpdatedNotification) NS_SWIFT_NONISOLATED;
-
 /*!
  @abstract A ``WKWebExtension`` object encapsulates a web extension’s resources that are defined by a `manifest.json`` file.
  @discussion This class handles the reading and parsing of the manifest file along with the supporting resources like icons and localizations.
@@ -92,8 +88,11 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 + (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
- @abstract The active errors for the extension.
- @discussion Provides an array of error objects if there are any errors, or an empty array if there are no errors.
+ @abstract An array of all errors that occurred during the processing of the extension.
+ @discussion Provides an array of all parse-time errors for the extension, with repeat errors consolidated into a single entry for the original
+ occurrence only. If no errors occurred, an empty array is returned.
+ @note Once the extension is loaded, use the ``errors`` property on an extension context to monitor any runtime errors, as they can occur
+ after the extension is loaded.
  */
 @property (nonatomic, readonly, copy) NSArray<NSError *> *errors;
 
@@ -199,7 +198,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 /*!
  @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.
  @discussion If this property is `YES`, the extension has content that can be injected by matching against the extension's requested match patterns.
- @note Once the extension is loaded, use the ``hasInjectedContent`` property on the extension context, as the injectable content can change after the extension is loaded.
+ @note Once the extension is loaded, use the ``hasInjectedContent`` property on an extension context, as the injectable content can change after the extension is loaded.
  */
 @property (nonatomic, readonly) BOOL hasInjectedContent;
 
