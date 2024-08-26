@@ -998,7 +998,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
-    for (auto* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next()) {
+    for (auto* gridItem : currentGrid().orderIterator()) {
         if (currentGrid().orderIterator().shouldSkipChild(*gridItem))
             continue;
 
@@ -1049,7 +1049,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     performAutoPlacement();
 
 #if ASSERT_ENABLED
-    for (auto* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next()) {
+    for (auto* gridItem : currentGrid().orderIterator()) {
         if (currentGrid().orderIterator().shouldSkipChild(*gridItem))
             continue;
 
@@ -1068,7 +1068,7 @@ Vector<LayoutRect> RenderGrid::gridItemsLayoutRects()
 {
     Vector<LayoutRect> items;
 
-    for (RenderBox* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next())
+    for (auto* gridItem : currentGrid().orderIterator())
         items.append(gridItem->frameRect());
 
     return items;
@@ -2488,7 +2488,7 @@ unsigned RenderGrid::numTracks(GridTrackSizingDirection direction) const
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
     ASSERT(!currentGrid().needsItemsPlacement());
-    for (RenderBox* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next())
+    for (auto* gridItem : currentGrid().orderIterator())
         paintChild(*gridItem, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }
 

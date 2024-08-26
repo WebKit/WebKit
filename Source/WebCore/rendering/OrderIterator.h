@@ -40,24 +40,40 @@ class RenderObject;
     
 class OrderIterator {
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = RenderBox;
+    using difference_type = std::ptrdiff_t;
+    using pointer = RenderBox*;
+    using reference = RenderBox&;
+    pointer operator*();
+
+    OrderIterator& operator++();
+    // Post Increment
+    OrderIterator operator++(int);
+
+    bool operator==(const OrderIterator& other) const;
+    bool operator!=(const OrderIterator& other) const = default;
+
+    OrderIterator begin();
+    const OrderIterator end() const;
+
     friend class OrderIteratorPopulator;
 
     explicit OrderIterator(RenderBox&);
-
+    OrderIterator(const OrderIterator&) = default;
     RenderBox* currentChild() const { return m_currentChild; }
-    RenderBox* first();
-    RenderBox* next();
     OrderIterator reverse();
     bool shouldSkipChild(const RenderObject&) const;
 
 private:
     void reset();
-
+    RenderBox* first();
+    RenderBox* next();
     RenderBox& m_containerBox;
     RenderBox* m_currentChild;
 
     using OrderValues = StdSet<int>;
-    OrderValues m_orderValues;
+    std::shared_ptr<OrderValues> m_orderValues;
     OrderValues::const_iterator m_orderValuesIterator;
     bool m_isReset { false };
     bool m_reversedOrder { false };
@@ -68,7 +84,7 @@ public:
     explicit OrderIteratorPopulator(OrderIterator& iterator)
         : m_iterator(iterator)
     {
-        m_iterator.m_orderValues.clear();
+        m_iterator.m_orderValues->clear();
     }
     ~OrderIteratorPopulator();
 

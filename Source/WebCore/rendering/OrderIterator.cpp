@@ -38,7 +38,7 @@
 namespace WebCore {
 
 OrderIterator::OrderIterator(RenderBox& containerBox)
-    : m_containerBox(containerBox)
+    : m_containerBox(containerBox), m_orderValues(std::make_shared<OrderValues>())
 {
     reset();
 }
@@ -49,16 +49,56 @@ RenderBox* OrderIterator::first()
     return next();
 }
 
+OrderIterator OrderIterator::begin()
+{
+    OrderIterator it(*this);
+    it.first();
+    return it;
+}
+
+const OrderIterator OrderIterator::end() const
+{
+    OrderIterator it(*this);
+    it.m_orderValuesIterator = m_orderValues->end();
+    return it;
+}
+
+OrderIterator& OrderIterator::operator++()
+{
+    next();
+    return *this;
+}
+
+OrderIterator OrderIterator::operator++(int)
+{
+    OrderIterator temp = *this;
+    ++(*this);
+    return temp;
+}
+
+RenderBox* OrderIterator::operator*()
+{
+    return m_currentChild;
+}
+
+
+bool OrderIterator::operator==(const OrderIterator& other) const
+{
+
+    return m_orderValuesIterator == other.m_orderValuesIterator;
+}
+
+
 RenderBox* OrderIterator::next()
 {
     do {
         if (!m_currentChild) {
-            if (m_orderValuesIterator == m_orderValues.end())
+            if (m_orderValuesIterator == m_orderValues->end())
                 return nullptr;
             
             if (!m_isReset) {
                 ++m_orderValuesIterator;
-                if (m_orderValuesIterator == m_orderValues.end())
+                if (m_orderValuesIterator == m_orderValues->end())
                     return nullptr;
             } else
                 m_isReset = false;
@@ -74,7 +114,7 @@ RenderBox* OrderIterator::next()
 void OrderIterator::reset()
 {
     m_currentChild = nullptr;
-    m_orderValuesIterator = m_orderValues.begin();
+    m_orderValuesIterator = m_orderValues->begin();
     m_isReset = true;
 }
 
@@ -88,9 +128,9 @@ OrderIterator OrderIterator::reverse()
     OrderIterator reversedItr(*this);
     OrderValues reversedValues;
 
-    for (auto valuesItr = m_orderValues.rbegin(); valuesItr != m_orderValues.rend(); valuesItr++)
+    for (auto valuesItr = m_orderValues->rbegin(); valuesItr != m_orderValues->rend(); valuesItr++)
         reversedValues.insert(*valuesItr);
-    reversedItr.m_orderValues = reversedValues;
+    reversedItr.m_orderValues = std::make_shared<OrderValues>(WTFMove(reversedValues));
     reversedItr.m_reversedOrder = !m_reversedOrder;
     reversedItr.reset();
 
@@ -104,7 +144,7 @@ OrderIteratorPopulator::~OrderIteratorPopulator()
 
 bool OrderIteratorPopulator::collectChild(const RenderBox& child)
 {
-    m_iterator.m_orderValues.insert(child.style().order());
+    m_iterator.m_orderValues->insert(child.style().order());
     return !m_iterator.shouldSkipChild(child);
 }
 
