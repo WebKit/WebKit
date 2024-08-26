@@ -27,45 +27,55 @@
 
 #include <wtf/WeakRef.h>
 
+namespace WebCore {
+struct PageIdentifierType;
+using PageIdentifier = LegacyNullableObjectIdentifier<PageIdentifierType>;
+}
+
 namespace WebKit {
 
 class ProcessThrottlerActivity;
+class ProcessThrottlerTimedActivity;
 class WebProcessProxy;
 
 class WebProcessActivityState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebProcessActivityState(WebProcessProxy&);
-    void takeVisibleActivity();
-    void takeAudibleActivity();
-    void takeCapturingActivity();
+    void takeVisibleActivity(WebCore::PageIdentifier);
+    void takeAudibleActivity(WebCore::PageIdentifier);
+    void takeCapturingActivity(WebCore::PageIdentifier);
 
-    void reset();
-    void dropVisibleActivity();
-    void dropAudibleActivity();
-    void dropCapturingActivity();
+    void reset(WebCore::PageIdentifier);
+    void dropVisibleActivity(WebCore::PageIdentifier);
+    void dropAudibleActivity(WebCore::PageIdentifier);
+    void dropCapturingActivity(WebCore::PageIdentifier);
 
-    bool hasValidVisibleActivity() const;
-    bool hasValidAudibleActivity() const;
-    bool hasValidCapturingActivity() const;
+    bool hasValidVisibleActivity(WebCore::PageIdentifier) const;
+    bool hasValidAudibleActivity(WebCore::PageIdentifier) const;
+    bool hasValidCapturingActivity(WebCore::PageIdentifier) const;
 
 #if PLATFORM(IOS_FAMILY)
-    void takeOpeningAppLinkActivity();
-    void dropOpeningAppLinkActivity();
-    bool hasValidOpeningAppLinkActivity() const;
+    void takeOpeningAppLinkActivity(WebCore::PageIdentifier);
+    void dropOpeningAppLinkActivity(WebCore::PageIdentifier);
+    bool hasValidOpeningAppLinkActivity(WebCore::PageIdentifier) const;
+#endif
+
+#if PLATFORM(MAC)
+    void takeWasRecentlyVisibleActivity(WebCore::PageIdentifier);
 #endif
 
 private:
     WeakRef<WebProcessProxy> m_process;
 
-    std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
+    HashMap<WebCore::PageIdentifier, UniqueRef<ProcessThrottlerActivity>> m_isVisibleActivity;
 #if PLATFORM(MAC)
-    UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
+    HashMap<WebCore::PageIdentifier, UniqueRef<ProcessThrottlerTimedActivity>> m_wasRecentlyVisibleActivity;
 #endif
-    std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
-    std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
+    HashMap<WebCore::PageIdentifier, UniqueRef<ProcessThrottlerActivity>> m_isAudibleActivity;
+    HashMap<WebCore::PageIdentifier, UniqueRef<ProcessThrottlerActivity>> m_isCapturingActivity;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
+    HashMap<WebCore::PageIdentifier, UniqueRef<ProcessThrottlerActivity>> m_openingAppLinkActivity;
 #endif
 };
 

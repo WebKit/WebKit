@@ -30,96 +30,109 @@
 #include "WebProcessProxy.h"
 
 namespace WebKit {
+using namespace WebCore;
 
 WebProcessActivityState::WebProcessActivityState(WebProcessProxy& process)
     : m_process(process)
-#if PLATFORM(MAC)
-    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(8_min))
-#endif
 {
 }
 
-void WebProcessActivityState::takeVisibleActivity()
+void WebProcessActivityState::takeVisibleActivity(PageIdentifier pageID)
 {
-    m_isVisibleActivity = m_process->throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+    m_isVisibleActivity.add(pageID, m_process->throttler().foregroundActivity("View is visible"_s));
 #if PLATFORM(MAC)
-    *m_wasRecentlyVisibleActivity = nullptr;
+    if (auto it = m_wasRecentlyVisibleActivity.find(pageID); it != m_wasRecentlyVisibleActivity.end())
+        *it->value = nullptr;
 #endif
 }
 
-void WebProcessActivityState::takeAudibleActivity()
+void WebProcessActivityState::takeAudibleActivity(PageIdentifier pageID)
 {
-    m_isAudibleActivity = m_process->throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+    m_isAudibleActivity.add(pageID, m_process->throttler().foregroundActivity("View is playing audio"_s));
 }
 
-void WebProcessActivityState::takeCapturingActivity()
+void WebProcessActivityState::takeCapturingActivity(PageIdentifier pageID)
 {
-    m_isCapturingActivity = m_process->throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+    m_isCapturingActivity.add(pageID, m_process->throttler().foregroundActivity("View is capturing media"_s));
 }
 
-void WebProcessActivityState::reset()
+void WebProcessActivityState::reset(PageIdentifier pageID)
 {
-    m_isVisibleActivity = nullptr;
+    m_isVisibleActivity.remove(pageID);
 #if PLATFORM(MAC)
-    *m_wasRecentlyVisibleActivity = nullptr;
+    if (auto it = m_wasRecentlyVisibleActivity.find(pageID); it != m_wasRecentlyVisibleActivity.end())
+        *it->value = nullptr;
 #endif
-    m_isAudibleActivity = nullptr;
-    m_isCapturingActivity = nullptr;
+    m_isAudibleActivity.remove(pageID);
+    m_isCapturingActivity.remove(pageID);
 #if PLATFORM(IOS_FAMILY)
-    m_openingAppLinkActivity = nullptr;
+    m_openingAppLinkActivity.remove(pageID);
 #endif
 }
 
-void WebProcessActivityState::dropVisibleActivity()
+void WebProcessActivityState::dropVisibleActivity(PageIdentifier pageID)
 {
 #if PLATFORM(MAC)
-    if (WTF::numberOfProcessorCores() > 4)
-        *m_wasRecentlyVisibleActivity = m_process->throttler().backgroundActivity("View was recently visible"_s);
-    else
-        *m_wasRecentlyVisibleActivity = m_process->throttler().foregroundActivity("View was recently visible"_s);
+    if (auto it = m_wasRecentlyVisibleActivity.find(pageID); it != m_wasRecentlyVisibleActivity.end()) {
+        if (WTF::numberOfProcessorCores() > 4)
+            *it->value = m_process->throttler().backgroundActivity("View was recently visible"_s);
+        else
+            *it->value = m_process->throttler().foregroundActivity("View was recently visible"_s);
+    }
 #endif
-    m_isVisibleActivity = nullptr;
+    m_isVisibleActivity.remove(pageID);
 }
 
-void WebProcessActivityState::dropAudibleActivity()
+void WebProcessActivityState::dropAudibleActivity(PageIdentifier pageID)
 {
-    m_isAudibleActivity = nullptr;
+    m_isAudibleActivity.remove(pageID);
 }
 
-void WebProcessActivityState::dropCapturingActivity()
+void WebProcessActivityState::dropCapturingActivity(PageIdentifier pageID)
 {
-    m_isCapturingActivity = nullptr;
+    m_isCapturingActivity.remove(pageID);
 }
 
-bool WebProcessActivityState::hasValidVisibleActivity() const
+bool WebProcessActivityState::hasValidVisibleActivity(PageIdentifier pageID) const
 {
-    return m_isVisibleActivity && m_isVisibleActivity->isValid();
+    auto it = m_isVisibleActivity.find(pageID);
+    return it != m_isVisibleActivity.end() && it->value->isValid();
 }
 
-bool WebProcessActivityState::hasValidAudibleActivity() const
+bool WebProcessActivityState::hasValidAudibleActivity(PageIdentifier pageID) const
 {
-    return m_isAudibleActivity && m_isAudibleActivity->isValid();
+    auto it = m_isAudibleActivity.find(pageID);
+    return it != m_isAudibleActivity.end() && it->value->isValid();
 }
 
-bool WebProcessActivityState::hasValidCapturingActivity() const
+bool WebProcessActivityState::hasValidCapturingActivity(PageIdentifier pageID) const
 {
-    return m_isCapturingActivity && m_isCapturingActivity->isValid();
+    auto it = m_isCapturingActivity.find(pageID);
+    return it != m_isCapturingActivity.end() && it->value->isValid();
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcessActivityState::takeOpeningAppLinkActivity()
+void WebProcessActivityState::takeOpeningAppLinkActivity(PageIdentifier pageID)
 {
-    m_openingAppLinkActivity = m_process->throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+    m_openingAppLinkActivity.add(pageID, m_process->throttler().backgroundActivity("Opening AppLink"_s));
 }
 
-void WebProcessActivityState::dropOpeningAppLinkActivity()
+void WebProcessActivityState::dropOpeningAppLinkActivity(PageIdentifier pageID)
 {
-    m_openingAppLinkActivity = nullptr;
+    m_openingAppLinkActivity.remove(pageID);
 }
 
-bool WebProcessActivityState::hasValidOpeningAppLinkActivity() const
+bool WebProcessActivityState::hasValidOpeningAppLinkActivity(PageIdentifier pageID) const
 {
-    return m_openingAppLinkActivity && m_openingAppLinkActivity->isValid();
+    auto it = m_openingAppLinkActivity.find(pageID);
+    return it != m_openingAppLinkActivity.end() && it->value->isValid();
+}
+#endif
+
+#if PLATFORM(MAC)
+void WebProcessActivityState::takeWasRecentlyVisibleActivity(PageIdentifier pageID)
+{
+    m_wasRecentlyVisibleActivity.add(pageID, makeUniqueRef<ProcessThrottlerTimedActivity>(8_min));
 }
 #endif
 

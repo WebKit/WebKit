@@ -567,56 +567,56 @@ Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& 
 
 void WebPageProxy::takeVisibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeVisibleActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeVisibleActivity(pageID);
     });
 }
 void WebPageProxy::takeAudibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeAudibleActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeAudibleActivity(pageID);
     });
 }
 void WebPageProxy::takeCapturingActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeCapturingActivity();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeCapturingActivity(pageID);
     });
 }
 
 void WebPageProxy::resetActivityState()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().reset();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().reset(pageID);
     });
 }
 
 void WebPageProxy::dropVisibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().dropVisibleActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().dropVisibleActivity(pageID);
     });
 }
 
 void WebPageProxy::dropAudibleActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeAudibleActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeAudibleActivity(pageID);
     });
 }
 
 void WebPageProxy::dropCapturingActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeCapturingActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeCapturingActivity(pageID);
     });
 }
 
 bool WebPageProxy::hasValidVisibleActivity() const
 {
     bool hasValidVisibleActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidVisibleActivity &= webProcess.activityState().hasValidVisibleActivity();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        hasValidVisibleActivity &= webProcess.activityState().hasValidVisibleActivity(pageID);
     });
     return hasValidVisibleActivity;
 }
@@ -624,8 +624,8 @@ bool WebPageProxy::hasValidVisibleActivity() const
 bool WebPageProxy::hasValidAudibleActivity() const
 {
     bool hasValidAudibleActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidAudibleActivity &= webProcess.activityState().hasValidAudibleActivity();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        hasValidAudibleActivity &= webProcess.activityState().hasValidAudibleActivity(pageID);
     });
     return hasValidAudibleActivity;
 }
@@ -633,8 +633,8 @@ bool WebPageProxy::hasValidAudibleActivity() const
 bool WebPageProxy::hasValidCapturingActivity() const
 {
     bool hasValidCapturingActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidCapturingActivity &= webProcess.activityState().hasValidCapturingActivity();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        hasValidCapturingActivity &= webProcess.activityState().hasValidCapturingActivity(pageID);
     });
     return hasValidCapturingActivity;
 }
@@ -642,23 +642,23 @@ bool WebPageProxy::hasValidCapturingActivity() const
 #if PLATFORM(IOS_FAMILY)
 void WebPageProxy::takeOpeningAppLinkActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().takeOpeningAppLinkActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().takeOpeningAppLinkActivity(pageID);
     });
 }
 
 void WebPageProxy::dropOpeningAppLinkActivity()
 {
-    forEachWebContentProcess([](auto& webProcess, auto) {
-        webProcess.activityState().dropOpeningAppLinkActivity();
+    forEachWebContentProcess([](auto& webProcess, auto pageID) {
+        webProcess.activityState().dropOpeningAppLinkActivity(pageID);
     });
 }
 
 bool WebPageProxy::hasValidOpeningAppLinkActivity() const
 {
     bool hasValidOpeningAppLinkActivity = true;
-    forEachWebContentProcess([&](auto& webProcess, auto) {
-        hasValidOpeningAppLinkActivity &= webProcess.activityState().hasValidOpeningAppLinkActivity();
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        hasValidOpeningAppLinkActivity &= webProcess.activityState().hasValidOpeningAppLinkActivity(pageID);
     });
     return hasValidOpeningAppLinkActivity;
 }
@@ -829,6 +829,11 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendCachedLinkDecorationFilteringData();
     });
+#endif
+
+#if PLATFORM(MAC)
+    // FIXME: If this activity state is needed for iframe processes, it should be taken for them as well.
+    m_legacyMainFrameProcess->activityState().takeWasRecentlyVisibleActivity(internals().webPageID);
 #endif
 }
 
