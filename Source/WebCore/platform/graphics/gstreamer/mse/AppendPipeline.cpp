@@ -245,18 +245,12 @@ AppendPipeline::~AppendPipeline()
 void AppendPipeline::handleErrorConditionFromStreamingThread()
 {
     ASSERT(!isMainThread());
-    // Notify the main thread that the append has a decode error.
-    auto response = m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
+    m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
         m_errorReceived = true;
         // appendParsingFailed() will cause resetParserState() to be called.
         m_sourceBufferPrivate.appendParsingFailed();
         return AbortableTaskQueue::Void();
     });
-#if !ASSERT_ENABLED
-    UNUSED_VARIABLE(response);
-#endif
-    // The streaming thread has now been unblocked because we are aborting in the main thread.
-    ASSERT(!response);
 }
 
 void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
