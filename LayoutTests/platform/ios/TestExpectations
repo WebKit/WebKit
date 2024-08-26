@@ -7552,3 +7552,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-ze
 
 # webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim
 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
+
+# webkit.org/b/278323 REGRESSION(282170@main): [ iOS ] css3/filters/backdrop-filter-page-scale.html is a flaky image failure
+css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
