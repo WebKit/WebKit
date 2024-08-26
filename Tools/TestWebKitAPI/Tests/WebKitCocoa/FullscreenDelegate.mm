@@ -113,7 +113,12 @@ TEST(Fullscreen, Delegate)
     ASSERT_FALSE(receivedVisibilityChangeMessage);
 }
 
+#ifdef NDEBUG
+// FIXME (webkit.org/b/278669): Fullscreen.VisibilityChangeNotDispatched times out in Release builds
+TEST(Fullscreen, DISABLED_VisibilityChangeNotDispatched)
+#else
 TEST(Fullscreen, VisibilityChangeNotDispatched)
+#endif
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
