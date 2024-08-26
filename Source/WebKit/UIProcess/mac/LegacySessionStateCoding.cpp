@@ -534,8 +534,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 class HistoryEntryDataDecoder {
 public:
     HistoryEntryDataDecoder(std::span<const uint8_t> buffer)
-        : m_buffer(buffer.data())
-        , m_bufferEnd(buffer.data() + buffer.size())
+        : m_buffer(buffer)
     {
         // Keep format compatibility by decoding an unused uint64_t here.
         uint64_t value;
@@ -605,7 +604,7 @@ public:
 
         UChar* buffer;
         auto string = String::createUninitialized(length, buffer);
-        decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), alignof(UChar));
+        decodeFixedLengthData({ reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar) }, alignof(UChar));
 
         value = string;
         return *this;
@@ -630,10 +629,9 @@ public:
         if (!alignBufferPosition(1, size))
             return *this;
 
-        const uint8_t* data = m_buffer;
-        m_buffer += size;
+        value.append(m_buffer.first(size));
+        m_buffer = m_buffer.subspan(size);
 
-        value.append(std::span { data, static_cast<size_t>(size) });
         return *this;
     }
 
@@ -647,10 +645,8 @@ public:
         if (!alignBufferPosition(1, size))
             return *this;
 
-        const uint8_t* data = m_buffer;
-        m_buffer += size;
-
-        value.append(std::span { data, static_cast<size_t>(size) });
+        value.append(m_buffer.first(size));
+        m_buffer = m_buffer.subspan(size);
         return *this;
     }
 
@@ -738,10 +734,14 @@ public:
         return *this;
     }
 
-    bool isValid() const { return m_buffer <= m_bufferEnd; }
-    void markInvalid() { m_buffer = m_bufferEnd + 1; }
+    bool isValid() const { return m_isValid; }
+    void markInvalid()
+    {
+        m_buffer = { };
+        m_isValid = false;
+    }
 
-    bool finishDecoding() { return m_buffer == m_bufferEnd; }
+    bool finishDecoding() { return m_isValid && m_buffer.empty(); }
 
 private:
     template<typename Type>
@@ -750,17 +750,17 @@ private:
         static_assert(std::is_arithmetic<Type>::value);
         value = Type();
 
-        decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
+        decodeFixedLengthData({ reinterpret_cast<uint8_t*>(&value), sizeof(value) }, sizeof(value));
         return *this;
     }
 
-    void decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
+    void decodeFixedLengthData(std::span<uint8_t> data, unsigned alignment)
     {
-        if (!alignBufferPosition(alignment, size))
+        if (!alignBufferPosition(alignment, data.size()))
             return;
 
-        memcpy(data, m_buffer, size);
-        m_buffer += size;
+        memcpySpan(data, m_buffer.first(data.size()));
+        m_buffer = m_buffer.subspan(data.size());
     }
 
     bool alignBufferPosition(unsigned alignment, size_t size)
@@ -772,7 +772,7 @@ private:
             return false;
         }
 
-        m_buffer = alignedPosition;
+        m_buffer = m_buffer.subspan(alignedPosition - m_buffer.data());
         return true;
     }
 
@@ -781,7 +781,7 @@ private:
         ASSERT(alignment && !(alignment & (alignment - 1)));
 
         uintptr_t alignmentMask = alignment - 1;
-        return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(m_buffer) + alignmentMask) & ~alignmentMask);
+        return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(m_buffer.data()) + alignmentMask) & ~alignmentMask);
     }
 
     template<typename T>
@@ -802,11 +802,12 @@ private:
 
     inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
     {
-        return m_bufferEnd >= alignedPosition && static_cast<size_t>(m_bufferEnd - alignedPosition) >= size;
+        auto* bufferEnd = m_buffer.data() + m_buffer.size();
+        return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
     }
 
-    const uint8_t* m_buffer;
-    const uint8_t* m_bufferEnd;
+    std::span<const uint8_t> m_buffer;
+    bool m_isValid { true };
 };
 
 static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::Element& formDataElement)
