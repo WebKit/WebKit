@@ -85,13 +85,13 @@ template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveE
 
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::beginAt(ElementType& descendant) const
 {
-    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    ASSERT(m_root.ptr() == &descendant || descendant.isDescendantOf(m_root));
     return ElementDescendantIterator<ElementType>(m_root, &descendant);
 }
 
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::from(Element& descendant) const
 {
-    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    ASSERT(m_root.ptr() == &descendant || descendant.isDescendantOf(m_root));
     if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
         return ElementDescendantIterator<ElementType>(m_root, descendantElement);
     ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
