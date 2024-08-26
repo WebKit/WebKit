@@ -10704,11 +10704,12 @@ void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
         resizeObserverForContainIntrinsicSize->resetObservationSize(target);
 }
 
-NoiseInjectionPolicy Document::noiseInjectionPolicy() const
+OptionSet<NoiseInjectionPolicy> Document::noiseInjectionPolicies() const
 {
+    OptionSet<NoiseInjectionPolicy> policies;
     if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
-        return NoiseInjectionPolicy::Minimal;
-    return NoiseInjectionPolicy::None;
+        policies.add(NoiseInjectionPolicy::Minimal);
+    return policies;
 }
 
 OptionSet<AdvancedPrivacyProtections> Document::advancedPrivacyProtections() const
@@ -10720,7 +10721,7 @@ OptionSet<AdvancedPrivacyProtections> Document::advancedPrivacyProtections() con
 
 std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 {
-    if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
+    if (!page() || !noiseInjectionPolicies())
         return std::nullopt;
     return protectedPage()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
 }

@@ -61,7 +61,7 @@ ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, c
 
 AnalyserNode::AnalyserNode(BaseAudioContext& context)
     : AudioBasicInspectorNode(context, NodeTypeAnalyser)
-    , m_analyser { context.noiseInjectionPolicy() }
+    , m_analyser { context.noiseInjectionPolicies() }
 {
     addOutput(1);
     

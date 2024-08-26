@@ -216,7 +216,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
     for (unsigned i = 0; i < numberOfOutputs(); ++i)
         m_outputs[i] = *output(i)->bus();
 
-    if (noiseInjectionPolicy() == NoiseInjectionPolicy::Minimal) {
+    if (noiseInjectionPolicies().contains(NoiseInjectionPolicy::Minimal)) {
         for (unsigned inputIndex = 0; inputIndex < numberOfInputs(); ++inputIndex) {
             if (auto& input = m_inputs[inputIndex]) {
                 for (unsigned channelIndex = 0; channelIndex < input->numberOfChannels(); ++channelIndex) {

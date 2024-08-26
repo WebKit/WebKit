@@ -38,8 +38,9 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
-#include "StyleCanvasImage.h"
+#include "NoiseInjectionPolicy.h"
 #include "RenderElement.h"
+#include "StyleCanvasImage.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
@@ -54,9 +55,9 @@ namespace WebCore {
 constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 static std::optional<size_t> maxCanvasAreaForTesting;
 
-CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
+CanvasBase::CanvasBase(IntSize size, const ScriptExecutionContext& context)
     : m_size(size)
-    , m_canvasNoiseHashSalt(noiseHashSalt)
+    , m_canvasNoiseHashSalt(context.noiseInjectionPolicies().contains(NoiseInjectionPolicy::Minimal) ? context.noiseInjectionHashSalt() : std::nullopt)
 {
 }
 

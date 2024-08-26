@@ -155,7 +155,7 @@ public:
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
 protected:
-    explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
+    explicit CanvasBase(IntSize, const ScriptExecutionContext&);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 

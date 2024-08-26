@@ -40,6 +40,7 @@ class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class NoiseInjectionPolicy : uint8_t;
 
 class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
@@ -85,6 +86,7 @@ public:
     virtual FetchOptions::Destination destination() const = 0;
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy; }
     std::optional<uint64_t> noiseInjectionHashSalt() const final { return m_noiseInjectionHashSalt; }
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return m_advancedPrivacyProtections; }
 
 protected:

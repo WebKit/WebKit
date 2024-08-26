@@ -45,10 +45,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeAnalyser);
 
-RealtimeAnalyser::RealtimeAnalyser(NoiseInjectionPolicy policy)
+RealtimeAnalyser::RealtimeAnalyser(OptionSet<NoiseInjectionPolicy> policies)
     : m_inputBuffer(InputBufferSize)
     , m_downmixBus(AudioBus::create(1, AudioUtilities::renderQuantumSize))
-    , m_noiseInjectionPolicy(policy)
+    , m_noiseInjectionPolicies(policies)
 {
     m_analysisFrame = makeUnique<FFTFrame>(DefaultFFTSize);
 }
@@ -181,7 +181,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
         destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 
-    if (m_noiseInjectionPolicy == NoiseInjectionPolicy::Minimal)
+    if (m_noiseInjectionPolicies.contains(NoiseInjectionPolicy::Minimal))
         AudioUtilities::applyNoise(destination, n, 0.25);
 }
 

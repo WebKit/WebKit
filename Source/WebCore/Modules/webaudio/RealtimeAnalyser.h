@@ -41,7 +41,7 @@ class RealtimeAnalyser {
     WTF_MAKE_TZONE_ALLOCATED(RealtimeAnalyser);
     WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);
 public:
-    explicit RealtimeAnalyser(NoiseInjectionPolicy);
+    explicit RealtimeAnalyser(OptionSet<NoiseInjectionPolicy>);
     virtual ~RealtimeAnalyser();
 
     size_t fftSize() const { return m_fftSize; }
@@ -101,7 +101,7 @@ private:
 
     // We should only do the FFT analysis once per render quantum.
     bool m_shouldDoFFTAnalysis { true };
-    NoiseInjectionPolicy m_noiseInjectionPolicy { NoiseInjectionPolicy::None };
+    OptionSet<NoiseInjectionPolicy> m_noiseInjectionPolicies;
 };
 
 } // namespace WebCore

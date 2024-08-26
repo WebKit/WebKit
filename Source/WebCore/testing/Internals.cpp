@@ -3900,7 +3900,7 @@ void Internals::setMockVideoPresentationModeEnabled(bool enabled)
 
 void Internals::setCanvasNoiseInjectionSalt(HTMLCanvasElement& element, unsigned long long salt)
 {
-    return element.setNoiseInjectionSalt(salt);
+    element.setNoiseInjectionSalt(salt);
 }
 
 bool Internals::doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement& element) const
