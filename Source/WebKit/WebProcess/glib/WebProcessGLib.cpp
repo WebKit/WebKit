@@ -62,6 +62,10 @@
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
+#if PLATFORM(GTK)
+#include <WebCore/PlatformDisplayDefault.h>
+#endif
+
 #if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
 #include <WebCore/ScrollbarThemeGtk.h>
 #endif
@@ -130,6 +134,43 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 #endif
 }
 
+void WebProcess::initializePlatformDisplayIfNeeded() const
+{
+    if (PlatformDisplay::sharedDisplayIfExists())
+        return;
+
+#if USE(GBM)
+    if (m_dmaBufRendererBufferMode.contains(DMABufRendererBufferMode::Hardware)) {
+        bool disabled = false;
+#if PLATFORM(GTK)
+        const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
+        disabled = disableGBM && strcmp(disableGBM, "0");
+#endif
+        if (!disabled) {
+            if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render)) {
+                PlatformDisplay::setSharedDisplay(PlatformDisplayGBM::create(device));
+                return;
+            }
+        }
+    }
+#endif
+
+    if (auto display = PlatformDisplaySurfaceless::create()) {
+        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        return;
+    }
+
+#if PLATFORM(GTK)
+    if (auto display = PlatformDisplayDefault::create()) {
+        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        return;
+    }
+#endif
+
+    WTFLogAlways("Could not create EGL display: no supported platform available. Aborting...");
+    CRASH();
+}
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
 #if USE(SKIA)
@@ -146,42 +187,18 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
 #endif
 
-#if PLATFORM(GTK)
-    bool isServiceWorkerProcess = false;
-#else
-    bool isServiceWorkerProcess = parameters.isServiceWorkerProcess;
-#endif
-
-    std::unique_ptr<PlatformDisplay> display;
     m_dmaBufRendererBufferMode = parameters.dmaBufRendererBufferMode;
-    if (!isServiceWorkerProcess) {
-        if (m_dmaBufRendererBufferMode.isEmpty()) {
 #if PLATFORM(WPE)
+    if (!parameters.isServiceWorkerProcess) {
+        if (m_dmaBufRendererBufferMode.isEmpty()) {
             auto& implementationLibraryName = parameters.implementationLibraryName;
             if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != '\0')
                 wpe_loader_init(parameters.implementationLibraryName.data());
-            display = PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release());
-#endif
-        } else {
-#if USE(GBM)
-            if (m_dmaBufRendererBufferMode.contains(DMABufRendererBufferMode::Hardware)) {
-                bool disabled = false;
-#if PLATFORM(GTK)
-                const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
-                disabled = disableGBM && strcmp(disableGBM, "0");
-#endif
-                if (!disabled) {
-                    if (auto* device = DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
-                        display = PlatformDisplayGBM::create(device);
-                }
-            }
-#endif
-            if (!display)
-                display = PlatformDisplaySurfaceless::create();
-        }
+            PlatformDisplay::setSharedDisplay(PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
+        } else
+            initializePlatformDisplayIfNeeded();
     }
-
-    PlatformDisplay::setSharedDisplay(WTFMove(display));
+#endif
 
 #if USE(GSTREAMER)
     WebCore::setGStreamerOptionsFromUIProcess(WTFMove(parameters.gstreamerOptions));

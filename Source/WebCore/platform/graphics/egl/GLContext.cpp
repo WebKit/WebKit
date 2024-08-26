@@ -165,6 +165,9 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
 #if USE(GBM)
     case PlatformDisplay::Type::GBM:
 #endif
+#if PLATFORM(GTK)
+    case PlatformDisplay::Type::Default:
+#endif
     case PlatformDisplay::Type::Surfaceless:
         RELEASE_ASSERT_NOT_REACHED();
         break;

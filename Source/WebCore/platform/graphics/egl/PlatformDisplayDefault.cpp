@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,39 @@
  */
 
 #include "config.h"
-#include "PlatformDisplaySurfaceless.h"
+#include "PlatformDisplayDefault.h"
+
+#if PLATFORM(GTK)
 
 #include "GLContext.h"
 #include <epoxy/egl.h>
 
 namespace WebCore {
 
-std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
+std::unique_ptr<PlatformDisplayDefault> PlatformDisplayDefault::create()
 {
-    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (!GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless"))
-        return nullptr;
-
-    std::unique_ptr<GLDisplay> glDisplay;
-    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
-    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
-
+    auto glDisplay = GLDisplay::create(eglGetDisplay(EGL_DEFAULT_DISPLAY));
     if (!glDisplay) {
-        WTFLogAlways("Could not create surfaceless EGL display: %s. Aborting...", GLContext::lastErrorString());
+        WTFLogAlways("Could not create default EGL display: %s. Aborting...", GLContext::lastErrorString());
         CRASH();
     }
 
-    return std::unique_ptr<PlatformDisplaySurfaceless>(new PlatformDisplaySurfaceless(WTFMove(glDisplay)));
+    return std::unique_ptr<PlatformDisplayDefault>(new PlatformDisplayDefault(WTFMove(glDisplay)));
 }
 
-PlatformDisplaySurfaceless::PlatformDisplaySurfaceless(std::unique_ptr<GLDisplay>&& glDisplay)
+PlatformDisplayDefault::PlatformDisplayDefault(std::unique_ptr<GLDisplay>&& glDisplay)
     : PlatformDisplay(WTFMove(glDisplay))
 {
 #if ENABLE(WEBGL)
-    m_anglePlatform = EGL_PLATFORM_SURFACELESS_MESA;
+    m_anglePlatform = 0;
     m_angleNativeDisplay = EGL_DEFAULT_DISPLAY;
 #endif
 }
 
-PlatformDisplaySurfaceless::~PlatformDisplaySurfaceless()
+PlatformDisplayDefault::~PlatformDisplayDefault()
 {
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(GTK)
