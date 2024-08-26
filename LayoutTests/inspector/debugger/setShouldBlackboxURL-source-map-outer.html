@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/log-pause-location.js"></script>
+<script src="resources/source-map.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.setShouldBlackboxURL");
+
+    const sourceMappingURL = "source-map.js.map";
+
+    async function getSourceMap() {
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap
+        }
+
+        while (true) {
+            let sourceMapAddedEvent = await WI.SourceCode.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            let {sourceMap} = sourceMapAddedEvent.data;
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+    }
+
+    async function getResources() {
+        let sourceMap = await getSourceMap();
+
+        let inner = sourceMap.resources.find((resource) => resource.url.endsWith("inner.js"));
+        let middle = sourceMap.resources.find((resource) => resource.url.endsWith("middle.js"));
+        let outer = sourceMap.resources.find((resource) => resource.url.endsWith("outer.js"));
+        InspectorTest.assert(inner && middle && outer, "All resources should exist when the WI.SourceMap is added.");
+        return {inner, middle, outer};
+    }
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        WI.debuggerManager.stepInto();
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.SourceMap.Pause.outer.Blackbox.inner",
+        async test() {
+            InspectorTest.log("Fetching scripts...");
+            let {inner, outer} = await getResources();
+
+            InspectorTest.log("Blackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(inner, true);
+
+            InspectorTest.log("Finding pause location...");
+            let location = outer.createSourceCodeLocation(3, 0); // first line of `outer`
+
+            InspectorTest.log("Creating breakpoint...");
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
+
+            InspectorTest.log("Adding breakpoint...");
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                InspectorTest.evaluateInPage(`outer(42)`),
+            ]);
+
+            InspectorTest.log("Removing breakpoint...");
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+
+            InspectorTest.log("Unblackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(inner, false);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.SourceMap.Pause.outer.Blackbox.middle",
+        async test() {
+            InspectorTest.log("Fetching scripts...");
+            let {middle, outer} = await getResources();
+
+            InspectorTest.log("Blackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(middle, true);
+
+            InspectorTest.log("Finding pause location...");
+            let location = outer.createSourceCodeLocation(3, 0); // first line of `outer`
+
+            InspectorTest.log("Creating breakpoint...");
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
+
+            InspectorTest.log("Adding breakpoint...");
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                InspectorTest.evaluateInPage(`outer(42)`),
+            ]);
+
+            InspectorTest.log("Removing breakpoint...");
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+
+            InspectorTest.log("Unblackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(middle, false);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.SourceMap.Pause.outer.Blackbox.outer",
+        async test() {
+            InspectorTest.log("Fetching scripts...");
+            let {outer} = await getResources();
+
+            InspectorTest.log("Blackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(outer, true);
+
+            InspectorTest.log("Finding pause location...");
+            let location = outer.createSourceCodeLocation(3, 0); // first line of `outer`
+
+            InspectorTest.log("Creating breakpoint...");
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
+
+            InspectorTest.log("Adding breakpoint...");
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering pause...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                InspectorTest.evaluateInPage(`outer(42)`),
+            ]);
+
+            InspectorTest.log("Removing breakpoint...");
+            WI.debuggerManager.removeBreakpoint(breakpoint);
+
+            InspectorTest.log("Unblackboxing script...");
+            WI.debuggerManager.setShouldBlackboxScript(outer, false);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Debugger.setShouldBlackboxURL.</p>
+</body>
+</html>

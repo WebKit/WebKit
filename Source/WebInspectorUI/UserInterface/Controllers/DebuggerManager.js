@@ -58,6 +58,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
+        WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._handleSourceCodeSourceMapAdded, this);
+
         this._breakpointsEnabledSetting = new WI.Setting("breakpoints-enabled", true);
         this._asyncStackTraceDepthSetting = new WI.Setting("async-stack-trace-depth", 200);
 
@@ -260,6 +262,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                     this._blackboxedPatternDataMap.set(new RegExp(data.url, !data.caseSensitive ? "i" : ""), data);
                     target.DebuggerAgent.setShouldBlackboxURL(data.url, shouldBlackbox, data.caseSensitive, isRegex);
                 }
+            }
+
+            for (let sourceMap of WI.SourceMap.instances) {
+                if (sourceMap.originalSourceCode.supportsScriptBlackboxing)
+                    this._updateBlackbox([target], sourceMap.originalSourceCode);
             }
         }
 
@@ -563,21 +570,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     setShouldBlackboxScript(sourceCode, shouldBlackbox)
     {
-        console.assert(DebuggerManager.supportsBlackboxingScripts());
-        console.assert(sourceCode instanceof WI.SourceCode);
-        console.assert(sourceCode.contentIdentifier);
-        console.assert(!isWebKitInjectedScript(sourceCode.contentIdentifier));
-        console.assert(shouldBlackbox !== ((this.blackboxDataForSourceCode(sourceCode) || {}).type === DebuggerManager.BlackboxType.URL));
+        console.assert(sourceCode instanceof WI.SourceCode, sourceCode);
+        console.assert(sourceCode.supportsScriptBlackboxing, sourceCode);
+        console.assert(sourceCode.contentIdentifier, sourceCode);
+        console.assert(!isWebKitInjectedScript(sourceCode.contentIdentifier, sourceCode));
+        console.assert(shouldBlackbox !== (this.blackboxDataForSourceCode(sourceCode)?.type === DebuggerManager.BlackboxType.URL), sourceCode);
 
         this._blackboxedURLsSetting.value.toggleIncludes(sourceCode.contentIdentifier, shouldBlackbox);
         this._blackboxedURLsSetting.save();
 
-        const caseSensitive = true;
-        for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
-            if (target.hasCommand("Debugger.setShouldBlackboxURL"))
-                target.DebuggerAgent.setShouldBlackboxURL(sourceCode.contentIdentifier, !!shouldBlackbox, caseSensitive);
-        }
+        this._updateBlackbox(WI.targets, sourceCode);
 
         this.dispatchEventToListeners(DebuggerManager.Event.BlackboxChanged);
     }
@@ -608,6 +610,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
             if (target.hasCommand("Debugger.setShouldBlackboxURL"))
                 target.DebuggerAgent.setShouldBlackboxURL(regex.source, !!shouldBlackbox, !regex.ignoreCase, isRegex);
+        }
+
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.originalSourceCode.supportsScriptBlackboxing)
+                this._updateBlackbox(WI.targets, sourceMap.originalSourceCode);
         }
 
         this.dispatchEventToListeners(DebuggerManager.Event.BlackboxChanged);
@@ -1416,6 +1423,31 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
     }
 
+    _updateBlackbox(targets, sourceCode)
+    {
+        if (sourceCode instanceof WI.SourceMapResource)
+            sourceCode = sourceCode.sourceMap.originalSourceCode;
+
+        let commandArguments = {
+            url: sourceCode.contentIdentifier,
+            caseSensitive: true,
+        };
+
+        let sourceRanges = sourceCode.sourceMaps.flatMap((sourceMap) => sourceMap.calculateBlackboxSourceRangesForProtocol());
+        console.assert(sourceCode instanceof WI.Script || !sourceRanges.length, sourceCode);
+        if (sourceRanges.length) {
+            commandArguments.shouldBlackbox = true;
+            commandArguments.sourceRanges = sourceRanges;
+        } else
+            commandArguments.shouldBlackbox = !!this.blackboxDataForSourceCode(sourceCode);
+
+        for (let target of targets) {
+            // COMPATIBILITY (iOS 13): Debugger.setShouldBlackboxURL did not exist yet.
+            if (target.hasCommand("Debugger.setShouldBlackboxURL"))
+                target.DebuggerAgent.setShouldBlackboxURL.invoke(commandArguments);
+        }
+    }
+
     _setBlackboxBreakpointEvaluations(target)
     {
         // COMPATIBILITY (macOS 12.3, iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
@@ -1637,6 +1669,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
 
         this._didResumeInternal(WI.mainTarget);
+    }
+
+    _handleSourceCodeSourceMapAdded(event)
+    {
+        if (event.target.supportsScriptBlackboxing)
+            this._updateBlackbox(WI.targets, event.target);
     }
 
     _didResumeInternal(target)
