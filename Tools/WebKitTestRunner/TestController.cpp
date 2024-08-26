@@ -4166,6 +4166,13 @@ void TestController::triggerMockCaptureConfigurationChange(bool forMicrophone, b
     WKPageTriggerMockCaptureConfigurationChange(m_mainWebView->page(), forMicrophone, forDisplay);
 }
 
+void TestController::setCaptureState(bool cameraState, bool microphoneState, bool displayState)
+{
+    WKPageSetMuted(m_mainWebView->page(), (cameraState ? kWKMediaCameraCaptureUnmuted : kWKMediaCameraCaptureMuted)
+                   | (microphoneState ? kWKMediaMicrophoneCaptureUnmuted : kWKMediaMicrophoneCaptureMuted)
+                   | (displayState ? kWKMediaScreenCaptureUnmuted : kWKMediaScreenCaptureMuted));
+}
+
 struct InAppBrowserPrivacyCallbackContext {
     explicit InAppBrowserPrivacyCallbackContext(TestController& controller)
         : testController(controller)

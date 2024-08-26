@@ -171,6 +171,7 @@ public:
 
     WEBCORE_EXPORT void addAudioCaptureSource(AudioCaptureSource&);
     WEBCORE_EXPORT void removeAudioCaptureSource(AudioCaptureSource&);
+    void audioCaptureSourceStateChanged() { updateSessionState(); }
     bool hasAudioCaptureSource(AudioCaptureSource& source) const { return m_audioCaptureSources.contains(source); }
 
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);

@@ -197,6 +197,11 @@ void UserMediaPermissionRequestManager::removeDeviceChangeObserver(UserMediaClie
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
+void UserMediaPermissionRequestManager::updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    m_page.updateCaptureState(isActive, kind, WTFMove(completionHandler));
+}
+
 void UserMediaPermissionRequestManager::captureDevicesChanged()
 {
     // When new media input and/or output devices are made available, or any available input and/or

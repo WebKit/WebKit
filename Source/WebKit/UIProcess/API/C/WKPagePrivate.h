@@ -127,7 +127,13 @@ enum {
     kWKMediaAudioMuted = 1 << 0,
     kWKMediaCaptureDevicesMuted = 1 << 1,
     kWKMediaScreenCaptureMuted = 1 << 2,
+    kWKMediaCameraCaptureMuted = 1 << 3,
+    kWKMediaMicrophoneCaptureMuted = 1 << 4,
+    kWKMediaScreenCaptureUnmuted = 1 << 5,
+    kWKMediaCameraCaptureUnmuted = 1 << 6,
+    kWKMediaMicrophoneCaptureUnmuted = 1 << 7,
 };
+
 typedef uint32_t WKMediaMutedState;
 WK_EXPORT void WKPageSetMuted(WKPageRef page, WKMediaMutedState muted);
 

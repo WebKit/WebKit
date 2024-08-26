@@ -119,6 +119,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     int webAudioCount = 0;
     int audioMediaStreamTrackCount = 0;
     int captureCount = countActiveAudioCaptureSources();
+
     bool hasAudibleAudioOrVideoMediaType = false;
     bool hasAudibleVideoMediaType = false;
     bool isPlayingAudio = false;
@@ -203,7 +204,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     else if (webAudioCount)
         category = AudioSession::CategoryType::AmbientSound;
 
-    if (category == AudioSession::CategoryType::None && m_previousCategory != AudioSession::CategoryType::None) {
+    if (category == AudioSession::CategoryType::None && m_previousCategory != AudioSession::CategoryType::None && m_previousCategory != AudioSession::CategoryType::PlayAndRecord) {
         if (!m_delayCategoryChangeTimer.isActive()) {
             m_delayCategoryChangeTimer.startOneShot(delayBeforeSettingCategoryNone);
             ALWAYS_LOG(LOGIDENTIFIER, "setting timer");

@@ -45,6 +45,7 @@ private:
 
     DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&) final;
     void removeDeviceChangeObserver(DeviceChangeObserverToken) final;
+    void updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
 
     void initializeFactories();
 

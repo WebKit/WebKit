@@ -2788,6 +2788,38 @@ void Page::setMuted(MediaProducerMutedStateFlags mutedState)
     });
 }
 
+#if ENABLE(MEDIA_STREAM)
+static inline MediaProducerMutedStateFlags toMediaProducerMutedStateFlags(MediaProducerMediaCaptureKind kind)
+{
+    switch (kind) {
+    case MediaProducerMediaCaptureKind::Microphone:
+        return MediaProducerMutedState::AudioCaptureIsMuted;
+    case MediaProducerMediaCaptureKind::Camera:
+        return MediaProducerMutedState::VideoCaptureIsMuted;
+    case MediaProducerMediaCaptureKind::Display:
+        return { MediaProducerMutedState::ScreenCaptureIsMuted, MediaProducerMutedState::WindowCaptureIsMuted };
+    case MediaProducerMediaCaptureKind::SystemAudio:
+    case MediaProducerMediaCaptureKind::EveryKind:
+        ASSERT_NOT_REACHED();
+    }
+    return { };
+}
+
+static inline MediaProducerMutedStateFlags computeCaptureMutedState(MediaProducerMutedStateFlags currentState, bool isActive, MediaProducerMediaCaptureKind kind)
+{
+    auto flagsToUpdate = toMediaProducerMutedStateFlags(kind);
+    return isActive ? (currentState - flagsToUpdate) : (currentState | flagsToUpdate);
+}
+
+void Page::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind)
+{
+    m_mutedState = computeCaptureMutedState(m_mutedState, isActive, kind);
+    forEachDocument([&] (Document& document) {
+        document.pageMutedStateDidChange();
+    });
+}
+#endif
+
 void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
     UNUSED_PARAM(kind);

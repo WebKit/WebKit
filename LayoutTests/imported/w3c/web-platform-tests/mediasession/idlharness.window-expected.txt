@@ -22,8 +22,9 @@ PASS MediaSession interface: attribute metadata
 PASS MediaSession interface: attribute playbackState
 PASS MediaSession interface: operation setActionHandler(MediaSessionAction, MediaSessionActionHandler?)
 PASS MediaSession interface: operation setPositionState(optional MediaPositionState)
-FAIL MediaSession interface: operation setMicrophoneActive(boolean) assert_own_property: interface prototype object missing non-static operation expected property "setMicrophoneActive" missing
-FAIL MediaSession interface: operation setCameraActive(boolean) assert_own_property: interface prototype object missing non-static operation expected property "setCameraActive" missing
+PASS MediaSession interface: operation setMicrophoneActive(boolean)
+PASS MediaSession interface: operation setCameraActive(boolean)
+PASS MediaSession interface: operation setScreenshareActive(boolean)
 PASS MediaSession must be primary interface of navigator.mediaSession
 PASS Stringification of navigator.mediaSession
 PASS MediaSession interface: navigator.mediaSession must inherit property "metadata" with the proper type
@@ -32,10 +33,12 @@ PASS MediaSession interface: navigator.mediaSession must inherit property "setAc
 PASS MediaSession interface: calling setActionHandler(MediaSessionAction, MediaSessionActionHandler?) on navigator.mediaSession with too few arguments must throw TypeError
 PASS MediaSession interface: navigator.mediaSession must inherit property "setPositionState(optional MediaPositionState)" with the proper type
 PASS MediaSession interface: calling setPositionState(optional MediaPositionState) on navigator.mediaSession with too few arguments must throw TypeError
-FAIL MediaSession interface: navigator.mediaSession must inherit property "setMicrophoneActive(boolean)" with the proper type assert_inherits: property "setMicrophoneActive" not found in prototype chain
-FAIL MediaSession interface: calling setMicrophoneActive(boolean) on navigator.mediaSession with too few arguments must throw TypeError assert_inherits: property "setMicrophoneActive" not found in prototype chain
-FAIL MediaSession interface: navigator.mediaSession must inherit property "setCameraActive(boolean)" with the proper type assert_inherits: property "setCameraActive" not found in prototype chain
-FAIL MediaSession interface: calling setCameraActive(boolean) on navigator.mediaSession with too few arguments must throw TypeError assert_inherits: property "setCameraActive" not found in prototype chain
+PASS MediaSession interface: navigator.mediaSession must inherit property "setMicrophoneActive(boolean)" with the proper type
+PASS MediaSession interface: calling setMicrophoneActive(boolean) on navigator.mediaSession with too few arguments must throw TypeError
+PASS MediaSession interface: navigator.mediaSession must inherit property "setCameraActive(boolean)" with the proper type
+PASS MediaSession interface: calling setCameraActive(boolean) on navigator.mediaSession with too few arguments must throw TypeError
+PASS MediaSession interface: navigator.mediaSession must inherit property "setScreenshareActive(boolean)" with the proper type
+PASS MediaSession interface: calling setScreenshareActive(boolean) on navigator.mediaSession with too few arguments must throw TypeError
 PASS MediaMetadata interface: existence and properties of interface object
 PASS MediaMetadata interface object length
 PASS MediaMetadata interface object name

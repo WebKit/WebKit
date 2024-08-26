@@ -11106,50 +11106,69 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
 
 #endif
 
+#if ENABLE(MEDIA_STREAM)
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, const SecurityOriginData& userMediaDocumentOriginData, const SecurityOriginData& topLevelDocumentOriginData, MediaStreamRequest&& request)
 {
-#if ENABLE(MEDIA_STREAM)
     MESSAGE_CHECK_BASE(WebFrameProxy::webFrame(frameID), connection);
 #if PLATFORM(MAC)
     CoreAudioCaptureDeviceManager::singleton().setFilterTapEnabledDevices(!preferences().captureAudioInGPUProcessEnabled());
 #endif
     userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), WTFMove(request));
-#else
-    UNUSED_PARAM(userMediaID);
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginData);
-    UNUSED_PARAM(topLevelDocumentOriginData);
-    UNUSED_PARAM(request);
-#endif
 }
 
 void WebPageProxy::enumerateMediaDevicesForFrame(IPC::Connection& connection, FrameIdentifier frameID, const SecurityOriginData& userMediaDocumentOriginData, const SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<CaptureDeviceWithCapabilities>&, MediaDeviceHashSalts&&)>&& completionHandler)
 {
-#if ENABLE(MEDIA_STREAM)
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK_BASE(frame, connection);
 
     userMediaPermissionRequestManager().enumerateMediaDevicesForFrame(frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), WTFMove(completionHandler));
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(userMediaDocumentOriginData);
-    UNUSED_PARAM(topLevelDocumentOriginData);
-    UNUSED_PARAM(completionHandler);
-#endif
 }
+
+void WebPageProxy::beginMonitoringCaptureDevices()
+{
+    userMediaPermissionRequestManager().syncWithWebCorePrefs();
+    UserMediaProcessManager::singleton().beginMonitoringCaptureDevices();
+}
+
+void WebPageProxy::validateCaptureStateUpdate(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    if (!isActive) {
+        completionHandler({ });
+        return;
+    }
+
+    WebCore::MediaProducerMutedStateFlags mutedState = internals().mutedState;
+    switch (kind) {
+    case WebCore::MediaProducerMediaCaptureKind::Microphone:
+        if (mutedState.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted)) {
+            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting microphone access is denied"_s });
+            return;
+        }
+        break;
+    case WebCore::MediaProducerMediaCaptureKind::Camera:
+        if (mutedState.contains(WebCore::MediaProducerMutedState::VideoCaptureIsMuted)) {
+            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting camera access is denied"_s });
+            return;
+        }
+        break;
+    case WebCore::MediaProducerMediaCaptureKind::Display:
+        if (mutedState.containsAny({ WebCore::MediaProducerMutedState::ScreenCaptureIsMuted, WebCore::MediaProducerMutedState::WindowCaptureIsMuted })) {
+            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting screen capture access is denied"_s });
+            return;
+        }
+        break;
+    case WebCore::MediaProducerMediaCaptureKind::SystemAudio:
+    case WebCore::MediaProducerMediaCaptureKind::EveryKind:
+        ASSERT_NOT_REACHED();
+    }
+    completionHandler({ });
+}
+#endif
 
 void WebPageProxy::syncIfMockDevicesEnabledChanged()
 {
 #if ENABLE(MEDIA_STREAM)
     userMediaPermissionRequestManager().syncWithWebCorePrefs();
-#endif
-}
-
-void WebPageProxy::beginMonitoringCaptureDevices()
-{
-#if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().syncWithWebCorePrefs();
-    UserMediaProcessManager::singleton().beginMonitoringCaptureDevices();
 #endif
 }
 

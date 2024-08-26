@@ -9953,6 +9953,22 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
     completion(true);
 }
 
+#if ENABLE(MEDIA_STREAM)
+void WebPage::updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::ValidateCaptureStateUpdate(isActive, kind), [weakThis = WeakPtr { *this }, isActive, kind, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
+        completionHandler(WTFMove(error));
+        if (error)
+            return;
+
+        RefPtr webPage = weakThis.get();
+        RefPtr page = webPage ? webPage->corePage() : nullptr;
+        if (page)
+            page->updateCaptureState(isActive, kind);
+    });
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

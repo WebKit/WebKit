@@ -5405,7 +5405,6 @@ void Document::pageMutedStateDidChange()
 static void updateCaptureSourceToPageMutedState(Document& document, Page& page, RealtimeMediaSource& source)
 {
     ASSERT(source.isCaptureSource());
-
     switch (source.deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
 #if PLATFORM(IOS_FAMILY)
@@ -5418,8 +5417,10 @@ static void updateCaptureSourceToPageMutedState(Document& document, Page& page, 
         source.setMuted(page.mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted) || (document.hidden() && document.settings().interruptVideoOnPageVisibilityChangeEnabled()));
         break;
     case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
         source.setMuted(page.mutedState().contains(MediaProducerMutedState::ScreenCaptureIsMuted));
+        break;
+    case CaptureDevice::DeviceType::Window:
+        source.setMuted(page.mutedState().contains(MediaProducerMutedState::WindowCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Speaker:

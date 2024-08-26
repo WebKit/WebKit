@@ -2811,8 +2811,20 @@ void WKPageSetMuted(WKPageRef pageRef, WKMediaMutedState mutedState)
         coreState.add(WebCore::MediaProducerMutedState::AudioIsMuted);
     if (mutedState & kWKMediaCaptureDevicesMuted)
         coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
+
     if (mutedState & kWKMediaScreenCaptureMuted)
         coreState.add(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted);
+    if (mutedState & kWKMediaCameraCaptureMuted)
+        coreState.add(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
+    if (mutedState & kWKMediaMicrophoneCaptureMuted)
+        coreState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
+
+    if (mutedState & kWKMediaScreenCaptureUnmuted)
+        coreState.remove(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted);
+    if (mutedState & kWKMediaCameraCaptureUnmuted)
+        coreState.remove(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
+    if (mutedState & kWKMediaMicrophoneCaptureUnmuted)
+        coreState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
 
     toImpl(pageRef)->setMuted(coreState);
 }

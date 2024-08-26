@@ -343,6 +343,7 @@ public:
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
+    void setCaptureState(bool cameraState, bool microphoneState, bool displayState);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);

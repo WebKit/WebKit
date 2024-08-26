@@ -40,6 +40,10 @@
     Promise<undefined> callActionHandler(MediaSessionActionDetails actionDetails);
 
     undefined setPositionState(optional MediaPositionState? state = null);
+
+    [Conditional=MEDIA_STREAM, EnabledBySetting=MediaSessionCaptureToggleAPIEnabled] Promise<undefined> setMicrophoneActive(boolean active);
+    [Conditional=MEDIA_STREAM, EnabledBySetting=MediaSessionCaptureToggleAPIEnabled] Promise<undefined> setCameraActive(boolean active);
+    [Conditional=MEDIA_STREAM, EnabledBySetting=MediaSessionCaptureToggleAPIEnabled] Promise<undefined> setScreenshareActive(boolean active);
 };
 
 MediaSession includes MediaSessionCoordinatorMixin;

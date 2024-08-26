@@ -1,0 +1,7 @@
+
+PASS MediaSession setCameraActive, setMicrophoneActive and setScreenshareActive are no ops if document is not capturing anything
+PASS MediaSession setCameraActive, setMicrophoneActive and setScreenshareActive are no ops if trying to deactivate while capture is already muted
+PASS togglecamera and mute/unmute events order
+PASS togglemicrophone and mute/unmute events order
+PASS togglescreenshare and mute/unmute events order
+

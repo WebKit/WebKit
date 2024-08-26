@@ -252,6 +252,9 @@ void MediaStreamTrack::stopTrack(StopMode mode)
     m_private->endTrack();
     m_ended = true;
 
+    if (isAudio() && isCaptureTrack())
+        PlatformMediaSessionManager::sharedManager().audioCaptureSourceStateChanged();
+
     configureTrackRendering();
 }
 
@@ -529,6 +532,10 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
             return;
 
         m_muted = muted;
+
+        if (isAudio() && isCaptureTrack())
+            PlatformMediaSessionManager::sharedManager().audioCaptureSourceStateChanged();
+
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
     };
     if (m_shouldFireMuteEventImmediately)

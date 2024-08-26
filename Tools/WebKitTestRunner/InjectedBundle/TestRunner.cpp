@@ -1702,6 +1702,15 @@ void TestRunner::triggerMockCaptureConfigurationChange(bool forMicrophone, bool 
     }));
 }
 
+void TestRunner::setCaptureState(bool cameraState, bool microphoneState, bool displayState)
+{
+    postSynchronousMessage("SetCaptureState", createWKDictionary({
+        { "camera", adoptWK(WKBooleanCreate(cameraState)) },
+        { "microphone", adoptWK(WKBooleanCreate(microphoneState)) },
+        { "display", adoptWK(WKBooleanCreate(displayState)) },
+    }));
+}
+
 #if ENABLE(GAMEPAD)
 
 void TestRunner::connectMockGamepad(unsigned index)

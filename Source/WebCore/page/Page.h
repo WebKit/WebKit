@@ -933,6 +933,9 @@ public:
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
 
     WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
+#if ENABLE(MEDIA_STREAM)
+    WEBCORE_EXPORT void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind);
+#endif
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();

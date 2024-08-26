@@ -892,6 +892,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
         return nullptr;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCaptureState")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        bool camera = booleanValue(messageBodyDictionary, "camera");
+        bool microphone = booleanValue(messageBodyDictionary, "microphone");
+        bool display = booleanValue(messageBodyDictionary, "display");
+        TestController::singleton().setCaptureState(camera, microphone, display);
+        return nullptr;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "HasAppBoundSession"))
         return adoptWK(WKBooleanCreate(TestController::singleton().hasAppBoundSession()));

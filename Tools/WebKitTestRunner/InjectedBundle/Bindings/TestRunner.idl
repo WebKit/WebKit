@@ -412,6 +412,8 @@ interface TestRunner {
     undefined setMockCaptureDevicesInterrupted(boolean isCameraInterrupted, boolean isMicrophoneInterrupted);
     undefined triggerMockCaptureConfigurationChange(boolean forMicrophone, boolean forDisplay);
 
+    undefined setCaptureState(boolean cameraState, boolean microphoneState, boolean displayState);
+
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
     undefined setAppBoundDomains(object originsArray, object callback);
