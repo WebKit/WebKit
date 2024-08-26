@@ -500,6 +500,16 @@
    },
    {
       "emails" : [
+         "alexbdamac@gmail.com"
+      ],
+      "github" : "AlexsanderDamaceno",
+      "name" : "Alexsander Borges Damaceno",
+      "nicks" : [
+         "alexbdamac"
+      ]
+   },
+   {
+      "emails" : [
          "ajuma@chromium.org"
       ],
       "github" : "alijuma",
