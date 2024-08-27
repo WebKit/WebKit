@@ -4632,6 +4632,8 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     if (wasTiledLayer || isTiledLayer)
         client().tiledBackingUsageChanged(this, isTiledLayer);
+
+    oldLayer->setOwner(nullptr);
 }
 
 void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer, CompositingCoordinatesOrientation orientation)
