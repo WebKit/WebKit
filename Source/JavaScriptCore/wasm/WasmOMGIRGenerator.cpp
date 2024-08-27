@@ -328,7 +328,7 @@ public:
     enum class CastKind { Cast, Test };
 
     struct AbstractHeap {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AbstractHeap);
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Vector<AbstractHeap*> m_children;
         bool hasAnyUnindexed = false;
         unsigned minBeginIndex = 0xffffffffu;
