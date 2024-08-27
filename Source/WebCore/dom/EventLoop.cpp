@@ -362,8 +362,8 @@ void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionCont
 
 bool EventLoop::findMatchingAssociatedContext(const Function<bool(ScriptExecutionContext&)>& predicate)
 {
-    for (auto& context : m_associatedContexts) {
-        if (predicate(context))
+    for (Ref context : m_associatedContexts) {
+        if (predicate(context.get()))
             return true;
     }
     return false;

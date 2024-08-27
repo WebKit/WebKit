@@ -889,7 +889,7 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingS
             return incomingStyle;
         if (isDocumentNode())
             return renderStyle();
-        auto* element = dynamicDowncast<Element>(*this);
+        RefPtr element = dynamicDowncast<Element>(*this);
         if (!element)
             element = parentElementInComposedTree();
         return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;
