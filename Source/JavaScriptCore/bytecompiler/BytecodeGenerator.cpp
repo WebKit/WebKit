@@ -4280,6 +4280,7 @@ void BytecodeGenerator::pushLocalControlFlowScope()
     ControlFlowScope scope(ControlFlowScope::Label, currentLexicalScopeIndex());
     m_controlFlowScopeStack.append(WTFMove(scope));
     m_localScopeDepth++;
+    m_localScopeCount++;
 }
 
 void BytecodeGenerator::popLocalControlFlowScope()
@@ -4519,7 +4520,6 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
 
             // Finally fall through case.
             emitLabel(finallyBodyLabel.get());
-            restoreScopeRegister();
 
             Ref<Label> returnCallTryStart = newLabel();
             emitLabel(returnCallTryStart.get());
@@ -4663,7 +4663,6 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 
             // Finally fall through case.
             emitLabel(finallyBodyLabel.get());
-            restoreScopeRegister();
 
             Ref<Label> returnCallTryStart = newLabel();
             emitLabel(returnCallTryStart.get());

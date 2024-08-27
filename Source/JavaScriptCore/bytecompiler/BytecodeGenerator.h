@@ -1280,6 +1280,8 @@ namespace JSC {
                 && !isArrowFunctionParseMode(parseMode())
                 && !isGeneratorOrAsyncFunctionBodyParseMode(parseMode());
         }
+
+        unsigned localScopeCount() const { return m_localScopeCount; }
     private:
         OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
@@ -1324,6 +1326,7 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         unsigned m_finallyDepth { 0 };
         unsigned m_localScopeDepth { 0 };
+        unsigned m_localScopeCount { 0 };
         const CodeType m_codeType;
 
         unsigned localScopeDepth() const;
