@@ -1,0 +1,70 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useResizableArrayBuffer=true,--useSharedArrayBuffer=true ] -->
+<body>
+    <script>
+
+    const WORKER_CODE = `
+        self.onmessage = e => {
+            const arrayBuffer = e.data;
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            uint8Array[0] = 1;
+
+            while (uint8Array[0] === 1) {
+
+            }
+
+            arrayBuffer.grow(5);
+        };
+    `;
+
+    async function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function main() {
+        const w = new Worker(URL.createObjectURL(new Blob([WORKER_CODE])));
+
+        const arrayBuffer = new SharedArrayBuffer(1, {
+            maxByteLength: 5
+        });
+
+        const uint8Array = new Uint8Array(arrayBuffer);
+        w.postMessage(arrayBuffer);
+
+        while (uint8Array[0] === 0) {
+            await sleep(0);
+        }
+
+        const array = [new ArrayBuffer(0x1000_0000), new ArrayBuffer(0x400_0000 - 19)];
+        array.__defineGetter__(2, () => {
+            uint8Array[0] = 2;
+
+            return arrayBuffer;
+        });
+
+        array[37] = new Uint8Array([
+            0x00, 0x00,
+
+            0x37, 0x13, 0x00, 0x00,  // 0x1337,
+            0x10,  // StringTag
+            0x05, 0x00, 0x00, 0x80,  // length
+            0x68, 0x65, 0x6c, 0x6c, 0x6f,  // hello
+
+            0xff, 0xff, 0xff, 0xff,  // TerminatorTag
+        ]);
+
+        const result = structuredClone(array)[0x1337];
+        alert(result === undefined ? 'PASS' : 'FAIL');
+    }
+
+    globalThis.testRunner?.waitUntilDone();
+    globalThis.testRunner?.dumpAsText();
+
+    main().catch(e => {
+        console.log(e);
+    }).finally(async () => {
+        globalThis.testRunner?.notifyDone();
+    });
+
+    </script>
+</body>
