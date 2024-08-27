@@ -3,8 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
- * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -2406,7 +2406,7 @@ bool RenderElement::createsNewFormattingContext() const
     if (isBlockContainer() && !style().alignContent().isNormal())
         return true;
     return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
-        || isRenderTableCell() || isRenderTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderSVGForeignObject()
+        || isRenderTableCell() || isRenderTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderOrLegacyRenderSVGForeignObject()
         || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
 }
 
