@@ -1270,6 +1270,7 @@ enum RenderingMode {
     VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);
     AV1CodecConfigurationRecord? parseAV1CodecParameters(DOMString codecParameters);
     DOMString createAV1CodecParametersString(AV1CodecConfigurationRecord parameters);
+    boolean validateAV1ConfigurationRecord(DOMString codecParameters);
     boolean validateAV1PerLevelConstraints(DOMString codecParameters, VideoConfiguration configuration);
 
     sequence<CookieData> getCookies();

@@ -1247,6 +1247,7 @@ public:
     using AV1CodecConfigurationRecord = WebCore::AV1CodecConfigurationRecord;
     std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(const String&);
     String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
+    bool validateAV1ConfigurationRecord(const String&);
     bool validateAV1PerLevelConstraints(const String&, const VideoConfiguration&);
 
     struct CookieData {

@@ -6736,6 +6736,13 @@ bool Internals::validateAV1PerLevelConstraints(const String& parameters, const V
     return false;
 }
 
+bool Internals::validateAV1ConfigurationRecord(const String& parameters)
+{
+    if (auto record = WebCore::parseAV1CodecParameters(parameters))
+        return WebCore::validateAV1ConfigurationRecord(*record);
+    return false;
+}
+
 auto Internals::getCookies() const -> Vector<CookieData>
 {
     auto* document = contextDocument();

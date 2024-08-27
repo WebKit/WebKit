@@ -326,6 +326,52 @@ static const AV1PerLevelConstraintsMap& perLevelConstraints()
     return perLevelConstraints;
 }
 
+bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord& record)
+{
+    // Ref: https://aomediacodec.github.io/av1-spec/av1-spec.pdf
+
+    // 6.4.1.General sequence header OBU semantics
+
+    if (!isValidEnum<AV1ConfigurationChromaSubsampling>(record.chromaSubsampling))
+        return false;
+    auto chromaSubsampling = static_cast<AV1ConfigurationChromaSubsampling>(record.chromaSubsampling);
+
+    switch (record.profile) {
+    case AV1ConfigurationProfile::Main:
+        if (record.bitDepth != 8 && record.bitDepth != 10)
+            return false;
+        if (chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown
+            && chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_420_Vertical
+            && chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_420_Colocated)
+            return false;
+        break;
+    case AV1ConfigurationProfile::High:
+        if (record.bitDepth != 8 && record.bitDepth != 10)
+            return false;
+        if (record.monochrome)
+            return false;
+        if (chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_444)
+            return false;
+        break;
+    case AV1ConfigurationProfile::Professional:
+        if (record.bitDepth == 8 || record.bitDepth == 10) {
+            if (chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_444)
+                return false;
+        } else if (record.bitDepth != 12)
+            return false;
+        break;
+    }
+
+    // 6.4.2. Color config semantics
+    // When monochrome is set to 1, the only valid setting for subsampling_x and subsampling_y
+    // is 1 and 1. Additionally, when monochrome is set to 1 in the color_config of the Sequence OBU,
+    // the only valid setting for chroma_sample_position is CSP_UNKNOWN (0).
+    if (record.monochrome && chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_420_Unknown)
+        return false;
+
+    return true;
+}
+
 bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
 {
     // Check that VideoConfiguration is within the specified profile and level from the configuration record:
