@@ -1054,14 +1054,18 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, L
         }
     }
 
+    ResourceRequest request { url };
+    if (!referer.isEmpty())
+        request.setHTTPReferrer(referer);
+    childFrame->checkedLoader()->updateRequestAndAddExtraFields(request, IsMainResource::Yes, FrameLoadType::RedirectWithLockedBackForwardList, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, WillOpenInNewWindow::No, m_frame->protectedDocument().get());
+
     RefPtr lexicalFrame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = lexicalFrame && lexicalFrame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
-
-    FrameLoadRequest frameLoadRequest { m_frame->protectedDocument().releaseNonNull(), m_frame->document()->securityOrigin(), { url }, selfTargetFrameName(), initiatedByMainFrame };
-    frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
-    frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
-    frameLoadRequest.setIsInitialFrameSrcLoad(true);
-    childFrame->checkedLoader()->loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, { }, std::nullopt, [] { });
+    NavigationAction action { m_frame->protectedDocument().releaseNonNull(), request, initiatedByMainFrame, false, FrameLoadType::RedirectWithLockedBackForwardList, false, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    action.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
+    action.setLockBackForwardList(LockBackForwardList::Yes);
+    action.setIsInitialFrameSrcLoad(true);
+    childFrame->checkedLoader()->loadWithNavigationAction(request, WTFMove(action), FrameLoadType::RedirectWithLockedBackForwardList, { }, AllowNavigationToInvalidURL::Yes, ShouldTreatAsContinuingLoad::No);
 }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -1496,8 +1500,6 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (m_inStopAllLoaders || m_inClearProvisionalLoadForPolicyCheck)
         return;
 
-    Ref frame = m_frame.get();
-
     // Anchor target is ignored when the download attribute is set since it will download the hyperlink rather than follow it.
     auto effectiveFrameName = frameLoadRequest.downloadAttribute().isNull() ? frameLoadRequest.frameName() : nullAtom();
     bool isFormSubmission = formState;
@@ -1511,7 +1513,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     }
 
     RefPtr targetFrame = isFormSubmission ? nullptr : dynamicDowncast<LocalFrame>(effectiveTargetFrame);
-    if (targetFrame && targetFrame != frame.ptr()) {
+    if (targetFrame && targetFrame != m_frame.ptr()) {
         frameLoadRequest.setFrameName(selfTargetFrameName());
         targetFrame->checkedLoader()->loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), completionHandlerCaller.release());
         return;
@@ -1534,7 +1536,6 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setLockHistory(frameLoadRequest.lockHistory());
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
     action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
-    action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
     auto historyHandling = frameLoadRequest.navigationHistoryBehavior();
     RefPtr document = m_frame->document();
@@ -1550,13 +1551,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             historyHandling = NavigationHistoryBehavior::Replace;
     }
     action.setNavigationAPIType(determineNavigationType(newLoadType, historyHandling));
-    if (privateClickMeasurement && frame->isMainFrame())
+    if (privateClickMeasurement && m_frame->isMainFrame())
         action.setPrivateClickMeasurement(WTFMove(*privateClickMeasurement));
 
     NewFrameOpenerPolicy openerPolicy = frameLoadRequest.newFrameOpenerPolicy();
     AllowNavigationToInvalidURL allowNavigationToInvalidURL = frameLoadRequest.allowNavigationToInvalidURL();
     if (!targetFrame && !effectiveFrameName.isEmpty()) {
-        action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(frame, frameLoadRequest));
+        action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
 
         // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
         if (frameLoadRequest.requester().shouldForceNoOpenerBasedOnCOOP()) {
@@ -1593,8 +1594,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        RELEASE_ASSERT(!isBackForwardLoadType(newLoadType) || frame->history().provisionalItem());
-        policyChecker().checkNavigationPolicy(WTFMove(request), ResourceResponse { } /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, frame, requesterOrigin = Ref { frameLoadRequest.requesterSecurityOrigin() }, historyHandling] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
+        RELEASE_ASSERT(!isBackForwardLoadType(newLoadType) || m_frame->history().provisionalItem());
+        policyChecker().checkNavigationPolicy(WTFMove(request), ResourceResponse { } /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, requesterOrigin = Ref { frameLoadRequest.requesterSecurityOrigin() }, historyHandling] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
             continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.ptr(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad, historyHandling);
         }, PolicyDecisionMode::Synchronous);
         return;
@@ -1607,7 +1608,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     // Must grab this now, since this load may stop the previous load and clear this flag.
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(request, WTFMove(action), newLoadType, WTFMove(formState), allowNavigationToInvalidURL, frameLoadRequest.shouldTreatAsContinuingLoad(), [this, isRedirect, sameURL, newLoadType, frame, completionHandler = completionHandlerCaller.release()] () mutable {
+    loadWithNavigationAction(request, WTFMove(action), newLoadType, WTFMove(formState), allowNavigationToInvalidURL, frameLoadRequest.shouldTreatAsContinuingLoad(), [this, isRedirect, sameURL, newLoadType, completionHandler = completionHandlerCaller.release()] () mutable {
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader)
