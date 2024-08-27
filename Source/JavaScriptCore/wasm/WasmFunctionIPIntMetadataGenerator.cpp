@@ -45,78 +45,79 @@ unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& sign
     return index;
 }
 
-void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
+void FunctionIPIntMetadataGenerator::addBlankSpace(size_t size)
 {
     m_metadata.grow(m_metadata.size() + size);
 }
 
-void FunctionIPIntMetadataGenerator::addRawValue(uint64_t value)
+void FunctionIPIntMetadataGenerator::addLength(size_t length)
 {
-    auto size = m_metadata.size();
-    m_metadata.grow(m_metadata.size() + 8);
-    WRITE_TO_METADATA(m_metadata.data() + size, value, uint64_t);
-}
-
-void FunctionIPIntMetadataGenerator::addLength(uint32_t length)
-{
+    IPInt::InstructionLengthMetadata InstructionLengthMetadata {
+        .length = safeCast<uint8_t>(length)
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 1);
-    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
+    m_metadata.grow(size + sizeof(InstructionLengthMetadata));
+    WRITE_TO_METADATA(m_metadata.data() + size, InstructionLengthMetadata, IPInt::InstructionLengthMetadata);
 }
 
-void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, size_t length)
 {
+    IPInt::const32Metadata mdConst {
+        .instructionLength = { .length = safeCast<uint8_t>(length) },
+        .value = value
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 5);
-    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, uint32_t);
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
 }
 
-void FunctionIPIntMetadataGenerator::addCondensedLocalIndexAndLength(uint32_t index, uint32_t length)
-{
-    size_t size = m_metadata.size();
-    if (length == 2) {
-        m_metadata.grow(size + 1);
-        WRITE_TO_METADATA(m_metadata.data() + size, 0, uint8_t);
-    } else {
-        m_metadata.grow(size + 5);
-        WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, index, uint32_t);
-    }
-}
-
-void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, size_t length)
 {
     if (type.isI32()) {
         size_t size = m_metadata.size();
         if (length == 2) {
-            m_metadata.grow(size + 1);
-            WRITE_TO_METADATA(m_metadata.data() + size, (value >> 7) & 1, uint8_t);
+            IPInt::InstructionLengthMetadata mdConst {
+                .length = safeCast<uint8_t>((value >> 7) & 1)
+            };
+            m_metadata.grow(size + sizeof(mdConst));
+            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::InstructionLengthMetadata);
         } else {
-            m_metadata.grow(size + 5);
-            WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-            WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
+            IPInt::const32Metadata mdConst {
+                .instructionLength = { .length = safeCast<uint8_t>(length) },
+                .value = static_cast<uint32_t>(value)
+            };
+            m_metadata.grow(size + sizeof(mdConst));
+            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
         }
     } else if (type.isI64()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 9);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint64_t>(value), uint64_t);
+        IPInt::const64Metadata mdConst {
+            .instructionLength = { .length = safeCast<uint8_t>(length) },
+            .value = static_cast<uint64_t>(value)
+        };
+        m_metadata.grow(size + sizeof(mdConst));
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const64Metadata);
     }  else if (type.isFuncref()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 5);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
+        IPInt::const32Metadata mdConst {
+            .instructionLength = { .length = safeCast<uint8_t>(length) },
+            .value = static_cast<uint32_t>(value)
+        };
+        m_metadata.grow(size + sizeof(mdConst));
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, uint32_t length)
+void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, size_t length)
 {
+    IPInt::const128Metadata mdConst {
+        .instructionLength = { .length = safeCast<uint8_t>(length) },
+        .value = value
+    };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 17);
-    WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, v128_t);
+    m_metadata.grow(size + sizeof(mdConst));
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const128Metadata);
 }
 
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
@@ -134,10 +135,10 @@ void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types
     int fprsUsed = 0;
     for (size_t i = 0; i < types.size(); ++i) {
         auto type = types[i];
-        if ((type.isI32() || type.isI64()) && gprsUsed != returnGPRs)
-            uINTBytecode.append(gprsUsed++);
-        else if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
+        if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
             uINTBytecode.append(2 + fprsUsed++);
+        else if (gprsUsed != returnGPRs)
+            uINTBytecode.append(gprsUsed++);
         else
             uINTBytecode.append(0x03);
     }
