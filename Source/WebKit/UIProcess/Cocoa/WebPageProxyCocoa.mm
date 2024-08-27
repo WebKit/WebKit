@@ -1293,12 +1293,17 @@ void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimation(IPC::Connecti
     didEndPartialIntelligenceTextPonderingAnimationImpl();
 }
 
+bool WebPageProxy::writingToolsTextReplacementsFinished()
+{
+    return protectedPageClient()->writingToolsTextReplacementsFinished();
+}
+
 void WebPageProxy::showSelectionForActiveWritingToolsSessionIfNeeded()
 {
     if (!hasRunningProcess())
         return;
 
-    if (protectedPageClient()->intelligenceTextPonderingAnimationIsComplete()) {
+    if (protectedPageClient()->intelligenceTextPonderingAnimationIsComplete() && writingToolsTextReplacementsFinished()) {
         // If the entire replacement has already been completed, and this is the end of the last animation,
         // then reveal the selection.
         legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());

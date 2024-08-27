@@ -2277,7 +2277,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (BOOL)_intelligenceTextPonderingAnimationIsComplete
 {
-    return !_partialIntelligenceTextPonderingAnimationCount && _writingToolsTextReplacementsFinished;
+    return !_partialIntelligenceTextPonderingAnimationCount;
+}
+
+- (BOOL)_writingToolsTextReplacementsFinished
+{
+    return _writingToolsTextReplacementsFinished;
 }
 
 - (void)_addTextAnimationForAnimationID:(NSUUID *)nsUUID withData:(const WebCore::TextAnimationData&)data

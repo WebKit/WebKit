@@ -308,6 +308,11 @@ bool PageClientImplCocoa::intelligenceTextPonderingAnimationIsComplete()
     return [m_webView _intelligenceTextPonderingAnimationIsComplete];
 }
 
+bool PageClientImplCocoa::writingToolsTextReplacementsFinished()
+{
+    return [m_webView _writingToolsTextReplacementsFinished];
+}
+
 void PageClientImplCocoa::addTextAnimationForAnimationID(const WTF::UUID& uuid, const WebCore::TextAnimationData& data)
 {
     [m_webView _addTextAnimationForAnimationID:uuid withData:data];
