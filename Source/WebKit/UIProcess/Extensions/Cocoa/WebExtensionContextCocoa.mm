@@ -731,8 +731,8 @@ void WebExtensionContext::setGrantedPermissions(PermissionsMap&& grantedPermissi
 
     removeDeniedPermissions(addedPermissions);
 
-    postAsyncNotification(WKWebExtensionContextGrantedPermissionsWereRemovedNotification, removedPermissions);
-    postAsyncNotification(WKWebExtensionContextPermissionsWereGrantedNotification, addedPermissions);
+    permissionsDidChange(WKWebExtensionContextGrantedPermissionsWereRemovedNotification, removedPermissions);
+    permissionsDidChange(WKWebExtensionContextPermissionsWereGrantedNotification, addedPermissions);
 }
 
 const WebExtensionContext::PermissionsMap& WebExtensionContext::deniedPermissions()
@@ -764,8 +764,8 @@ void WebExtensionContext::setDeniedPermissions(PermissionsMap&& deniedPermission
 
     removeGrantedPermissions(addedPermissions);
 
-    postAsyncNotification(WKWebExtensionContextDeniedPermissionsWereRemovedNotification, removedPermissions);
-    postAsyncNotification(WKWebExtensionContextPermissionsWereDeniedNotification, addedPermissions);
+    permissionsDidChange(WKWebExtensionContextDeniedPermissionsWereRemovedNotification, removedPermissions);
+    permissionsDidChange(WKWebExtensionContextPermissionsWereDeniedNotification, addedPermissions);
 }
 
 const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::grantedPermissionMatchPatterns()
@@ -773,7 +773,7 @@ const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::gran
     return removeExpired(m_grantedPermissionMatchPatterns, m_nextGrantedPermissionMatchPatternsExpirationDate, WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
 }
 
-void WebExtensionContext::setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&& grantedPermissionMatchPatterns)
+void WebExtensionContext::setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&& grantedPermissionMatchPatterns, EqualityOnly equalityOnly)
 {
     MatchPatternSet removedMatchPatterns;
     for (auto& entry : m_grantedPermissionMatchPatterns)
@@ -795,11 +795,10 @@ void WebExtensionContext::setGrantedPermissionMatchPatterns(PermissionMatchPatte
     if (addedMatchPatterns.isEmpty() && removedMatchPatterns.isEmpty())
         return;
 
-    removeDeniedPermissionMatchPatterns(addedMatchPatterns, EqualityOnly::Yes);
-    clearCachedPermissionStates();
+    removeDeniedPermissionMatchPatterns(addedMatchPatterns, equalityOnly);
 
-    postAsyncNotification(WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
-    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, addedMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, addedMatchPatterns);
 }
 
 const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::deniedPermissionMatchPatterns()
@@ -807,7 +806,7 @@ const WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::deni
     return removeExpired(m_deniedPermissionMatchPatterns, m_nextDeniedPermissionMatchPatternsExpirationDate, WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification);
 }
 
-void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&& deniedPermissionMatchPatterns)
+void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&& deniedPermissionMatchPatterns, EqualityOnly equalityOnly)
 {
     MatchPatternSet removedMatchPatterns;
     for (auto& entry : m_deniedPermissionMatchPatterns)
@@ -829,70 +828,67 @@ void WebExtensionContext::setDeniedPermissionMatchPatterns(PermissionMatchPatter
     if (addedMatchPatterns.isEmpty() && removedMatchPatterns.isEmpty())
         return;
 
-    removeGrantedPermissionMatchPatterns(addedMatchPatterns, EqualityOnly::Yes);
-    clearCachedPermissionStates();
+    removeGrantedPermissionMatchPatterns(addedMatchPatterns, equalityOnly);
 
-    postAsyncNotification(WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
-    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification, removedMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
 }
 
-void WebExtensionContext::permissionsDidChange(const PermissionsSet& changedPermissions)
-{
-    if (!isLoaded())
-        return;
-
-    extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::UpdateGrantedPermissions(m_grantedPermissions), identifier());
-
-    if (changedPermissions.contains(WKWebExtensionPermissionClipboardWrite)) {
-        bool granted = hasPermission(WKWebExtensionPermissionClipboardWrite);
-
-        enumerateExtensionPages([&](auto& page, bool&) {
-            page.preferences().setJavaScriptCanAccessClipboard(granted);
-        });
-    }
-}
-
-void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, const PermissionsSet& permissions)
+void WebExtensionContext::permissionsDidChange(NSNotificationName notificationName, const PermissionsSet& permissions)
 {
     if (permissions.isEmpty())
         return;
 
-    permissionsDidChange(permissions);
-
     if (isLoaded()) {
+        extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::UpdateGrantedPermissions(m_grantedPermissions), identifier());
+
+        if (permissions.contains(WKWebExtensionPermissionClipboardWrite)) {
+            bool granted = hasPermission(WKWebExtensionPermissionClipboardWrite);
+
+            enumerateExtensionPages([&](auto& page, bool&) {
+                page.preferences().setJavaScriptCanAccessClipboard(granted);
+            });
+        }
+
         if ([notificationName isEqualToString:WKWebExtensionContextPermissionsWereGrantedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
         else if ([notificationName isEqualToString:WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
     }
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), permissions]() {
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), permissions] {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyPermissions: toAPI(permissions) }];
     }).get());
 }
 
-void WebExtensionContext::postAsyncNotification(NSNotificationName notificationName, const MatchPatternSet& matchPatterns)
+void WebExtensionContext::permissionsDidChange(NSNotificationName notificationName, const MatchPatternSet& matchPatterns)
 {
     if (matchPatterns.isEmpty())
         return;
 
-    if (isLoaded()) {
-        if ([notificationName isEqualToString:WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
-            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
-        else if ([notificationName isEqualToString:WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
-            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
-    }
+    clearCachedPermissionStates();
 
-    // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
-    constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
-    for (Ref tab : openTabs()) {
-        for (auto& matchPattern : matchPatterns) {
-            if (matchPattern->matchesURL(tab->url()))
-                didChangeTabProperties(tab, changedProperties);
+    if (isLoaded()) {
+        if ([notificationName isEqualToString:WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification]) {
+            addInjectedContent(injectedContents(), matchPatterns);
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
+        } else if ([notificationName isEqualToString:WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification]) {
+            removeInjectedContent(matchPatterns);
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+        } else
+            updateInjectedContent();
+
+        // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
+        constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
+        for (Ref tab : openTabs()) {
+            for (auto& matchPattern : matchPatterns) {
+                if (matchPattern->matchesURL(tab->url()))
+                    didChangeTabProperties(tab, changedProperties);
+            }
         }
     }
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), matchPatterns]() {
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), matchPatterns] {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
     }).get());
 }
@@ -907,12 +903,18 @@ void WebExtensionContext::grantPermissions(PermissionsSet&& permissions, WallTim
     if (m_nextGrantedPermissionsExpirationDate > expirationDate)
         m_nextGrantedPermissionsExpirationDate = expirationDate;
 
-    for (auto& permission : permissions)
-        m_grantedPermissions.add(permission, expirationDate);
+    PermissionsSet addedPermissions;
+    for (auto& permission : permissions) {
+        if (m_grantedPermissions.add(permission, expirationDate))
+            addedPermissions.addVoid(permission);
+    }
 
-    removeDeniedPermissions(permissions);
+    if (addedPermissions.isEmpty())
+        return;
 
-    postAsyncNotification(WKWebExtensionContextPermissionsWereGrantedNotification, permissions);
+    removeDeniedPermissions(addedPermissions);
+
+    permissionsDidChange(WKWebExtensionContextPermissionsWereGrantedNotification, addedPermissions);
 }
 
 void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime expirationDate)
@@ -925,12 +927,18 @@ void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime
     if (m_nextDeniedPermissionsExpirationDate > expirationDate)
         m_nextDeniedPermissionsExpirationDate = expirationDate;
 
-    for (auto& permission : permissions)
-        m_deniedPermissions.add(permission, expirationDate);
+    PermissionsSet addedPermissions;
+    for (auto& permission : permissions) {
+        if (m_deniedPermissions.add(permission, expirationDate))
+            addedPermissions.addVoid(permission);
+    }
 
-    removeGrantedPermissions(permissions);
+    if (addedPermissions.isEmpty())
+        return;
 
-    postAsyncNotification(WKWebExtensionContextPermissionsWereDeniedNotification, permissions);
+    removeGrantedPermissions(addedPermissions);
+
+    permissionsDidChange(WKWebExtensionContextPermissionsWereDeniedNotification, addedPermissions);
 }
 
 void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
@@ -943,15 +951,18 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
     if (m_nextGrantedPermissionMatchPatternsExpirationDate > expirationDate)
         m_nextGrantedPermissionMatchPatternsExpirationDate = expirationDate;
 
-    for (auto& pattern : permissionMatchPatterns)
-        m_grantedPermissionMatchPatterns.add(pattern, expirationDate);
+    MatchPatternSet addedMatchPatterns;
+    for (auto& pattern : permissionMatchPatterns) {
+        if (m_grantedPermissionMatchPatterns.add(pattern, expirationDate))
+            addedMatchPatterns.addVoid(pattern);
+    }
 
-    removeDeniedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
-    clearCachedPermissionStates();
+    if (addedMatchPatterns.isEmpty())
+        return;
 
-    addInjectedContent(injectedContents(), permissionMatchPatterns);
+    removeDeniedPermissionMatchPatterns(addedMatchPatterns, equalityOnly);
 
-    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, permissionMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, addedMatchPatterns);
 }
 
 void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
@@ -964,15 +975,18 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
     if (m_nextDeniedPermissionMatchPatternsExpirationDate > expirationDate)
         m_nextDeniedPermissionMatchPatternsExpirationDate = expirationDate;
 
-    for (auto& pattern : permissionMatchPatterns)
-        m_deniedPermissionMatchPatterns.add(pattern, expirationDate);
+    MatchPatternSet addedMatchPatterns;
+    for (auto& pattern : permissionMatchPatterns) {
+        if (m_deniedPermissionMatchPatterns.add(pattern, expirationDate))
+            addedMatchPatterns.addVoid(pattern);
+    }
 
-    removeGrantedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
-    clearCachedPermissionStates();
+    if (addedMatchPatterns.isEmpty())
+        return;
 
-    updateInjectedContent();
+    removeGrantedPermissionMatchPatterns(addedMatchPatterns, equalityOnly);
 
-    postAsyncNotification(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, permissionMatchPatterns);
+    permissionsDidChange(WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, addedMatchPatterns);
 }
 
 bool WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
@@ -1040,7 +1054,7 @@ bool WebExtensionContext::removePermissions(PermissionsMap& permissionMap, Permi
     if (removedPermissions.isEmpty() || !notificationName)
         return false;
 
-    postAsyncNotification(notificationName, removedPermissions);
+    permissionsDidChange(notificationName, removedPermissions);
 
     return true;
 }
@@ -1083,9 +1097,7 @@ bool WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsM
     if (removedMatchPatterns.isEmpty() || !notificationName)
         return false;
 
-    clearCachedPermissionStates();
-
-    postAsyncNotification(notificationName, removedMatchPatterns);
+    permissionsDidChange(notificationName, removedMatchPatterns);
 
     return true;
 }
@@ -1116,7 +1128,7 @@ WebExtensionContext::PermissionsMap& WebExtensionContext::removeExpired(Permissi
     if (removedPermissions.isEmpty() || !notificationName)
         return permissionMap;
 
-    postAsyncNotification(notificationName, removedPermissions);
+    permissionsDidChange(notificationName, removedPermissions);
 
     return permissionMap;
 }
@@ -1147,11 +1159,7 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
     if (removedMatchPatterns.isEmpty() || !notificationName)
         return matchPatternMap;
 
-    clearCachedPermissionStates();
-
-    updateInjectedContent();
-
-    postAsyncNotification(notificationName, removedMatchPatterns);
+    permissionsDidChange(notificationName, removedMatchPatterns);
 
     return matchPatternMap;
 }
@@ -4087,7 +4095,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
     addInjectedContent(injectedContents, grantedMatchPatterns);
 }
 
-void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, MatchPatternSet& grantedMatchPatterns)
+void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, const MatchPatternSet& grantedMatchPatterns)
 {
     if (!isLoaded())
         return;
@@ -4325,7 +4333,7 @@ void WebExtensionContext::removeInjectedContent()
     m_injectedStyleSheetsPerPatternMap.clear();
 }
 
-void WebExtensionContext::removeInjectedContent(MatchPatternSet& removedMatchPatterns)
+void WebExtensionContext::removeInjectedContent(const MatchPatternSet& removedMatchPatterns)
 {
     if (!isLoaded())
         return;
