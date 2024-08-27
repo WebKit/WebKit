@@ -3116,18 +3116,15 @@ private:
         void takeVisibleActivity();
         void takeAudibleActivity();
         void takeCapturingActivity();
-        void takeMutedCaptureActivity();
 
         void reset();
         void dropVisibleActivity();
         void dropAudibleActivity();
         void dropCapturingActivity();
-        void dropMutedCaptureActivity();
 
         bool hasValidVisibleActivity() const;
         bool hasValidAudibleActivity() const;
         bool hasValidCapturingActivity() const;
-        bool hasValidMutedCaptureActivity() const;
 
 #if PLATFORM(IOS_FAMILY)
         void takeOpeningAppLinkActivity();
@@ -3144,7 +3141,6 @@ private:
 #endif
         std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
         std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
-        std::unique_ptr<ProcessThrottlerActivity> m_isMutedCaptureActivity;
 #if PLATFORM(IOS_FAMILY)
         std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
 #endif
