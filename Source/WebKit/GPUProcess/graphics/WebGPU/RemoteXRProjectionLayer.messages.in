@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[EnabledBy=WebGPUEnabled]
+[EnabledBy=WebXRWebGPUBindingsEnabled]
 messages -> RemoteXRProjectionLayer NotRefCounted Stream {
 void StartFrame()
 void EndFrame()

@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[EnabledBy=WebGPUEnabled]
+[EnabledBy=WebXRWebGPUBindingsEnabled]
 messages -> RemoteXRSubImage NotRefCounted Stream {
 void Destruct()
 }
