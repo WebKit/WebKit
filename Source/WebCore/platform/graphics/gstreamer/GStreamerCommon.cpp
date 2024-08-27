@@ -1125,6 +1125,16 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         if (!resultValue)
             return nullptr;
         auto bigIntValue = JSON::Value::create(makeString(g_value_get_uint64(value)));
+        resultValue->setValue("$biguint"_s, bigIntValue->asValue().releaseNonNull());
+        return resultValue;
+    }
+
+    if (valueType == G_TYPE_INT64) {
+        auto jsonObject = JSON::Object::create();
+        auto resultValue = jsonObject->asObject();
+        if (!resultValue)
+            return nullptr;
+        auto bigIntValue = JSON::Value::create(makeString(g_value_get_int64(value)));
         resultValue->setValue("$bigint"_s, bigIntValue->asValue().releaseNonNull());
         return resultValue;
     }
@@ -1135,7 +1145,7 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
 #if USE(GSTREAMER_WEBRTC)
     if (valueType == GST_TYPE_WEBRTC_STATS_TYPE) {
         auto name = webrtcStatsTypeName(g_value_get_enum(value));
-        if (LIKELY(name.isEmpty()))
+        if (LIKELY(!name.isEmpty()))
             return JSON::Value::create(makeString(name))->asValue();
     }
 #endif
