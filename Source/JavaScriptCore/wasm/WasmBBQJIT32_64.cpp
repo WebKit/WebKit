@@ -122,7 +122,6 @@ uint32_t BBQJIT::sizeOfType(TypeKind type)
     switch (type) {
     case TypeKind::I32:
     case TypeKind::F32:
-    case TypeKind::I31ref:
         // NB: size in memory (on JSVALUE32_64 we represent even four-byte values as EncodedJSValue)
         return sizeof(EncodedJSValue);
     case TypeKind::I64:
@@ -130,6 +129,7 @@ uint32_t BBQJIT::sizeOfType(TypeKind type)
         return 8;
     case TypeKind::V128:
         return 16;
+    case TypeKind::I31ref:
     case TypeKind::Func:
     case TypeKind::Funcref:
     case TypeKind::Ref:
@@ -342,9 +342,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setGlobal(uint32_t index, Value value)
         case TypeKind::I32:
             m_jit.store32(valueLocation.asGPR(), Address(wasmScratchGPR));
             break;
-        case TypeKind::I31ref:
-            m_jit.store32(valueLocation.asGPRlo(), Address(wasmScratchGPR));
-            break;
         case TypeKind::I64:
             m_jit.storePair32(valueLocation.asGPRlo(), valueLocation.asGPRhi(), Address(wasmScratchGPR));
             break;
@@ -357,6 +354,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setGlobal(uint32_t index, Value value)
         case TypeKind::V128:
             m_jit.storeVector(valueLocation.asFPR(), Address(wasmScratchGPR));
             break;
+        case TypeKind::I31ref:
         case TypeKind::Func:
         case TypeKind::Funcref:
         case TypeKind::Ref:
@@ -1397,6 +1395,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetS(ExpressionType value, Expres
 
 
     Location initialValue = loadIfNecessary(value);
+    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     consume(value);
 
     result = topValue(TypeKind::I32);
@@ -1404,7 +1403,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetS(ExpressionType value, Expres
 
     LOG_INSTRUCTION("I31GetS", value, RESULT(result));
 
-    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     m_jit.move(initialValue.asGPRlo(), resultLocation.asGPR());
 
     m_jit.lshift32(TrustedImm32(1), resultLocation.asGPR());
@@ -1429,6 +1427,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetU(ExpressionType value, Expres
 
 
     Location initialValue = loadIfNecessary(value);
+    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     consume(value);
 
     result = topValue(TypeKind::I32);
@@ -1436,7 +1435,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetU(ExpressionType value, Expres
 
     LOG_INSTRUCTION("I31GetU", value, RESULT(result));
 
-    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     m_jit.move(initialValue.asGPRlo(), resultLocation.asGPR());
 
     return { };

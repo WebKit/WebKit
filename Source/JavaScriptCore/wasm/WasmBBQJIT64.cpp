@@ -101,13 +101,13 @@ uint32_t BBQJIT::sizeOfType(TypeKind type)
     switch (type) {
     case TypeKind::I32:
     case TypeKind::F32:
-    case TypeKind::I31ref:
         return 4;
     case TypeKind::I64:
     case TypeKind::F64:
         return 8;
     case TypeKind::V128:
         return 16;
+    case TypeKind::I31ref:
     case TypeKind::Func:
     case TypeKind::Funcref:
     case TypeKind::Ref:
@@ -1530,15 +1530,15 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetS(ExpressionType value, Expres
 
 
     Location initialValue = loadIfNecessary(value);
+    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     consume(value);
 
-    result = topValue(TypeKind::I64);
+    result = topValue(TypeKind::I32);
     Location resultLocation = allocateWithHint(result, initialValue);
 
     LOG_INSTRUCTION("I31GetS", value, RESULT(result));
 
     m_jit.move(initialValue.asGPR(), resultLocation.asGPR());
-    emitThrowOnNullReference(ExceptionType::NullI31Get, resultLocation);
 
     return { };
 }
@@ -1560,16 +1560,15 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI31GetU(ExpressionType value, Expres
 
 
     Location initialValue = loadIfNecessary(value);
+    emitThrowOnNullReference(ExceptionType::NullI31Get, initialValue);
     consume(value);
 
-    result = topValue(TypeKind::I64);
+    result = topValue(TypeKind::I32);
     Location resultLocation = allocateWithHint(result, initialValue);
 
     LOG_INSTRUCTION("I31GetU", value, RESULT(result));
 
-    m_jit.move(initialValue.asGPR(), resultLocation.asGPR());
-    emitThrowOnNullReference(ExceptionType::NullI31Get, resultLocation);
-    m_jit.and32(TrustedImm32(0x7fffffff), resultLocation.asGPR(), resultLocation.asGPR());
+    m_jit.and32(TrustedImm32(0x7fffffff), initialValue.asGPR(), resultLocation.asGPR());
 
     return { };
 }
@@ -4392,7 +4391,6 @@ void BBQJIT::emitStore(TypeKind type, Location src, Location dst)
 
     switch (type) {
     case TypeKind::I32:
-    case TypeKind::I31ref:
         m_jit.store32(src.asGPR(), dst.asAddress());
         break;
     case TypeKind::I64:
@@ -4404,6 +4402,7 @@ void BBQJIT::emitStore(TypeKind type, Location src, Location dst)
     case TypeKind::F64:
         m_jit.storeDouble(src.asFPR(), dst.asAddress());
         break;
+    case TypeKind::I31ref:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
@@ -4435,7 +4434,6 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
 
     switch (type) {
     case TypeKind::I32:
-    case TypeKind::I31ref:
     case TypeKind::F32:
         m_jit.transfer32(src.asAddress(), dst.asAddress());
         break;
@@ -4443,6 +4441,7 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
     case TypeKind::F64:
         m_jit.transfer64(src.asAddress(), dst.asAddress());
         break;
+    case TypeKind::I31ref:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
@@ -4508,7 +4507,6 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
 
     switch (type) {
     case TypeKind::I32:
-    case TypeKind::I31ref:
         m_jit.load32(src.asAddress(), dst.asGPR());
         break;
     case TypeKind::I64:
@@ -4520,6 +4518,7 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
     case TypeKind::F64:
         m_jit.loadDouble(src.asAddress(), dst.asFPR());
         break;
+    case TypeKind::I31ref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
     case TypeKind::Externref:
