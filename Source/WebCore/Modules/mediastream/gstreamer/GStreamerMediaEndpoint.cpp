@@ -1090,6 +1090,11 @@ void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredProm
     } else
         RELEASE_ASSERT_NOT_REACHED();
 
+    if (!bin) {
+        promise->resolve();
+        return;
+    }
+
     auto sinkPad = adoptGRef(gst_element_get_static_pad(bin, "sink"));
     if (!sinkPad) {
         // The incoming source bin is not linked yet, so look for a matching upstream track processor.
