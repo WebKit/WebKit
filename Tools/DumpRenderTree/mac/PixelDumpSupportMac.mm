@@ -30,21 +30,21 @@
 
 #import "config.h"
 #import "PixelDumpSupport.h"
-#import "PixelDumpSupportCG.h"
 
-#import "DumpRenderTree.h" 
+#import "DumpRenderTree.h"
+#import "PixelDumpSupportCG.h"
 #import "TestRunner.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/Assertions.h>
-#import <wtf/RefPtr.h>
-
+#import <WebCore/CGWindowUtilities.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Assertions.h>
+#import <wtf/RefPtr.h>
 
 @interface WebView ()
 - (BOOL)_flushCompositingChanges;
@@ -82,7 +82,7 @@ static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, CGWindowImageOption imageOptions)
 {
     imageOptions |= kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+    return adoptCF(WebCore::cgWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
 }
 
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)

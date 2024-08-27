@@ -91,6 +91,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/AttributedString.h>
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CaretRectComputation.h>
 #import <WebCore/CharacterRange.h>
 #import <WebCore/ColorMac.h>
@@ -4553,9 +4554,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-ALLOW_DEPRECATED_DECLARATIONS_END
+    return adoptCF(WebCore::cgWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()

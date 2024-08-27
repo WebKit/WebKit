@@ -137,6 +137,7 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BroadcastChannelRegistry.h>
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CacheStorageProvider.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -9838,3 +9839,16 @@ void WebInstallMemoryPressureHandler(void)
         });
     }
 }
+
+#if !TARGET_OS_IPHONE
+@implementation WebView (WKWindowSnapshot)
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options
+{
+    RetainPtr snapshot = WebCore::cgWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, (CGSWindowID)[[self window] windowNumber], options);
+    if (!snapshot)
+        return nil;
+
+    return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
+}
+@end
+#endif

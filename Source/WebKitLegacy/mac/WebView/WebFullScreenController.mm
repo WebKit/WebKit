@@ -31,6 +31,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebViewInternal.h"
 #import "WebWindowAnimation.h"
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentInlines.h>
 #import <WebCore/Element.h>
@@ -205,7 +206,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     CGWindowID windowID = [[_webView window] windowNumber];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
+    RetainPtr<CGImageRef> webViewContents = adoptCF(WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Screen updates to be re-enabled in beganEnterFullScreenWithInitialFrame:finalFrame:
