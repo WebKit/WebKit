@@ -2226,6 +2226,13 @@ TEST(WebAuthenticationPanel, EncodeCTAPAssertion)
     EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AqMBYAJYIAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEBaFidXD1");
 }
 
+TEST(WebAuthenticationPanel, EncodeClientDataJSONWithTopOrigin)
+{
+    uint8_t challenge[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsChallenge = adoptNS([[NSData alloc] initWithBytes:challenge length:sizeof(challenge)]);
+    EXPECT_WK_STREQ("{\"type\":\"webauthn.get\",\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://a.com\",\"crossOrigin\":true,\"topOrigin\":\"https://b.com\"}", [[NSString alloc] initWithData:[_WKWebAuthenticationPanel getClientDataJSONWithTopOrigin:_WKWebAuthenticationTypeGet challenge:nsChallenge.get() origin:@"https://a.com" topOrigin:@"https://b.com" crossOrigin:YES] encoding:NSUTF8StringEncoding]);
+}
+
 TEST(WebAuthenticationPanel, EncodeCTAPCreation)
 {
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };

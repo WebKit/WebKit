@@ -31,6 +31,8 @@
 #include "SVGRenderTreeAsText.h"
 
 #include "ColorSerialization.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorInlineBox.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
@@ -322,7 +324,7 @@ static TextStream& operator<<(TextStream& ts, const LegacyRenderSVGShape& shape)
 
 static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 {
-    auto* box = downcast<SVGRootInlineBox>(text.legacyRootBox());
+    auto box = InlineIterator::firstRootInlineBoxFor(text);
     if (!box)
         return;
 
@@ -335,20 +337,20 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
         writeNameValuePair(ts, "color"_s, serializationForRenderTreeAsText(text.style().visitedDependentColor(CSSPropertyColor)));
 }
 
-static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox)
+static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::TextBox& textBox)
 {
-    Vector<SVGTextFragment>& fragments = textBox->textFragments();
+    auto& fragments = textBox.svgTextFragments();
     if (fragments.isEmpty())
         return;
 
-    Ref svgStyle = textBox->renderer().style().svgStyle();
-    String text = textBox->renderer().text();
+    Ref svgStyle = textBox.renderer().style().svgStyle();
+    String text = textBox.renderer().text();
 
     TextStream::IndentScope indentScope(ts);
 
     unsigned fragmentsSize = fragments.size();
     for (unsigned i = 0; i < fragmentsSize; ++i) {
-        SVGTextFragment& fragment = fragments.at(i);
+        auto& fragment = fragments.at(i);
         ts << indent;
 
         unsigned startOffset = fragment.characterOffset;
@@ -357,7 +359,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 "_s;
         TextAnchor anchor = svgStyle->textAnchor();
-        bool isVerticalText = textBox->renderer().style().isVerticalWritingMode();
+        bool isVerticalText = textBox.renderer().style().isVerticalWritingMode();
         if (anchor == TextAnchor::Middle) {
             ts << "(middle anchor"_s;
             if (isVerticalText)
@@ -370,8 +372,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
             ts << ") "_s;
         } else if (isVerticalText)
             ts << "(vertical) "_s;
-        startOffset -= textBox->start();
-        endOffset -= textBox->start();
+        startOffset -= textBox.start();
+        endOffset -= textBox.start();
         // </hack>
 
         ts << "text run "_s << i + 1 << " at ("_s << fragment.x << ',' << fragment.y << ')';
@@ -381,19 +383,17 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
         else
             ts << " width "_s << fragment.width;
 
-        if (!textBox->isLeftToRightDirection())
+        if (!textBox.isLeftToRightDirection())
             ts << " RTL"_s;
 
         ts << ": "_s << quoteAndEscapeNonPrintables(text.substring(fragment.characterOffset, fragment.length)) << '\n';
     }
 }
 
-static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& text)
+static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderSVGInlineText& text)
 {
-    for (auto* box = text.firstTextBox(); box; box = box->nextTextBox()) {
-        if (auto* inlineTextBox = dynamicDowncast<SVGInlineTextBox>(*box))
-            writeSVGInlineTextBox(ts, inlineTextBox);
-    }
+    for (auto& box : InlineIterator::textBoxesFor(text))
+        writeSVGInlineTextBox(ts, box);
 }
 
 enum class WriteIndentOrNot : bool { No, Yes };

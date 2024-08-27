@@ -43,6 +43,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
@@ -52,6 +53,8 @@
 namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageDebugger);
 
 PageDebugger::PageDebugger(Page& page)
     : Debugger(WebCore::commonVM())

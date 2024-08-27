@@ -182,7 +182,6 @@ public:
     void runJavaScriptAlert(LocalFrame&, const String&);
     bool runJavaScriptConfirm(LocalFrame&, const String&);
     bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result);
-    WEBCORE_EXPORT void setStatusbarText(LocalFrame&, const String&);
 
     void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
 

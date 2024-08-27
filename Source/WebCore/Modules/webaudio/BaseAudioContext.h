@@ -235,7 +235,7 @@ public:
     void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
     const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
-    NoiseInjectionPolicy noiseInjectionPolicy() const { return m_noiseInjectionPolicy; }
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const { return m_noiseInjectionPolicies; }
 
 protected:
     explicit BaseAudioContext(Document&);
@@ -378,7 +378,7 @@ private:
     bool m_isAudioThreadFinished { false };
     bool m_automaticPullNodesNeedUpdating { false };
     bool m_hasFinishedAudioSourceNodes { false };
-    NoiseInjectionPolicy m_noiseInjectionPolicy { NoiseInjectionPolicy::None };
+    OptionSet<NoiseInjectionPolicy> m_noiseInjectionPolicies;
 };
 
 } // WebCore

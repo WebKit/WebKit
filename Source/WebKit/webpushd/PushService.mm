@@ -52,22 +52,6 @@
 #import "UIKitSPI.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PushServiceAdditions.mm>)
-#import <WebKitAdditions/PushServiceAdditions.mm>
-#endif
-
-#if !defined(PUSH_SERVICE_CONSTRUCTOR_ADDITIONS)
-#define PUSH_SERVICE_CONSTRUCTOR_ADDITIONS
-#endif
-
-#if !defined(UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_1)
-#define UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_1
-#endif
-
-#if !defined(UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_2)
-#define UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_2
-#endif
-
 namespace WebPushD {
 using namespace WebKit;
 using namespace WebCore;
@@ -161,10 +145,7 @@ void PushService::create(const String& incomingPushServiceName, const String& da
             // date, which APSConnection cares about.
             auto& serviceRef = service.get();
             serviceRef.updateTopicLists([transaction, service = WTFMove(service), creationHandler = WTFMove(creationHandler)]() mutable {
-                auto& serviceRef = service.get();
-                serviceRef.updateSubscriptionSetState([transaction, service = WTFMove(service), creationHandler = WTFMove(creationHandler)]() mutable {
-                    creationHandler(service.moveToUniquePtr());
-                });
+                creationHandler(service.moveToUniquePtr());
             });
         });
     });
@@ -197,7 +178,6 @@ PushService::PushService(UniqueRef<PushServiceConnection>&& pushServiceConnectio
     : m_connection(WTFMove(pushServiceConnection))
     , m_database(WTFMove(pushDatabase))
     , m_incomingPushMessageHandler(WTFMove(incomingPushMessageHandler))
-    , m_notifyToken(NOTIFY_TOKEN_INVALID)
 {
     RELEASE_ASSERT(m_incomingPushMessageHandler);
 
@@ -212,15 +192,9 @@ PushService::PushService(UniqueRef<PushServiceConnection>&& pushServiceConnectio
             return;
         didReceivePushMessage(topic, userInfo);
     });
-
-    PUSH_SERVICE_CONSTRUCTOR_ADDITIONS;
 }
 
-PushService::~PushService()
-{
-    if (m_notifyToken != NOTIFY_TOKEN_INVALID)
-        notify_cancel(m_notifyToken);
-}
+PushService::~PushService() = default;
 
 static PushSubscriptionData makePushSubscriptionFromRecord(PushRecord&& record)
 {
@@ -418,6 +392,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
             }
 
             auto clientKeys = m_service.connection().generateClientKeys();
+            IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
             PushRecord record {
                 .subscriptionSetIdentifier = m_identifier,
                 .securityOrigin = SecurityOrigin::createFromString(m_scope)->data().toString(),
@@ -429,6 +404,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
                 .clientPrivateKey = WTFMove(clientKeys.clientP256DHKeyPair.privateKey),
                 .sharedAuthSecret = WTFMove(clientKeys.sharedAuthSecret)
             };
+            IGNORE_CLANG_WARNINGS_END
 
             m_database.insertRecord(record, [this, weakThis = WeakPtr { *this }](auto&& result) mutable {
                 if (!weakThis)
@@ -705,41 +681,21 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
         m_database->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
 }
 
-void PushService::updateSubscriptionSetState(CompletionHandler<void()>&& completionHandler)
+#if PLATFORM(IOS)
+
+void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundleIdentifiers, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
 {
-#if !PLATFORM(IOS) && !PLATFORM(VISION)
-    completionHandler();
-#else
-    RetainPtr<NSMutableSet> installedWebClipIdentifiers;
-
-    @autoreleasepool {
-        NSArray *webClips = [UIWebClip webClips];
-        installedWebClipIdentifiers = adoptNS([[NSMutableSet alloc] initWithCapacity:webClips.count]);
-
-        for (UIWebClip *webClip in webClips) {
-            if (NSString *identifier = [webClip identifier])
-                [installedWebClipIdentifiers addObject:identifier];
-        }
-    }
-
-    RELEASE_LOG(Push, "Found %zu web clips", [installedWebClipIdentifiers count]);
-
-    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, installedWebClipIdentifiers = WTFMove(installedWebClipIdentifiers), completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
+    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, allowedBundleIdentifiers, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
         if (!weakThis)
             return completionHandler();
 
         HashSet<PushSubscriptionSetIdentifier> identifiersToRemove;
 
-        UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_1;
-
         for (const auto& record : records) {
-            NSString *webClipIdentifier = (NSString *)record.identifier.pushPartition;
-            if (![installedWebClipIdentifiers containsObject:webClipIdentifier]) {
+            auto bundleIdentifier = record.identifier.bundleIdentifier;
+            auto webClipIdentifier = record.identifier.pushPartition;
+            if (!allowedBundleIdentifiers.contains(bundleIdentifier) || !installedWebClipIdentifiers.contains(webClipIdentifier))
                 identifiersToRemove.add(record.identifier);
-                continue;
-            }
-
-            UPDATE_SUBSCRIPTION_SET_STATE_ADDITIONS_2;
         }
 
         if (identifiersToRemove.isEmpty()) {
@@ -769,8 +725,9 @@ void PushService::updateSubscriptionSetState(CompletionHandler<void()>&& complet
             });
         }
     });
-#endif
 }
+
+#endif
 
 void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler)
 {

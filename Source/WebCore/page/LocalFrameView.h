@@ -675,6 +675,7 @@ public:
     void hide() final;
 
     bool shouldPlaceVerticalScrollbarOnLeft() const final;
+    bool isHorizontalWritingMode() const final;
 
     void didRestoreFromBackForwardCache();
 
@@ -727,6 +728,10 @@ public:
     void scrollbarWidthChanged(ScrollbarWidth) override;
 
     FrameIdentifier rootFrameID() const final;
+
+    IntSize totalScrollbarSpace() const final;
+    int scrollbarGutterWidth(bool isHorizontalWritingMode = true) const;
+    int insetForLeftScrollbarSpace() const final;
 
 private:
     explicit LocalFrameView(LocalFrame&);

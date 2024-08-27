@@ -122,6 +122,8 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     }
 
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
+    if (UNLIKELY(Options::dumpGeneratedWasmBytecodes()))
+        BytecodeDumper::dumpBlock(m_wasmInternalFunctions[functionIndex].get(), m_moduleInformation, WTF::dataFile());
 
     LLIntCallee* llintCallee = nullptr;
     if (!m_callees) {
@@ -188,10 +190,6 @@ void LLIntPlan::didCompleteCompilation()
 
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
-        if (UNLIKELY(Options::dumpGeneratedWasmBytecodes())) {
-            for (unsigned i = 0; i < functionCount; ++i)
-                BytecodeDumper::dumpBlock(m_wasmInternalFunctions[i].get(), m_moduleInformation, WTF::dataFile());
-        }
         m_callees = m_calleesVector.data();
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();

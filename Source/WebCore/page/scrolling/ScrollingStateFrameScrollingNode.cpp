@@ -115,10 +115,10 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     scrollbarLayoutDirection,
     scrollbarWidth,
     WTFMove(keyboardScrollData))
-    , m_rootContentsLayer(rootContentsLayer.value_or(PlatformLayerIdentifier()))
-    , m_counterScrollingLayer(counterScrollingLayer.value_or(PlatformLayerIdentifier()))
-    , m_insetClipLayer(insetClipLayer.value_or(PlatformLayerIdentifier()))
-    , m_contentShadowLayer(contentShadowLayer.value_or(PlatformLayerIdentifier()))
+    , m_rootContentsLayer(rootContentsLayer)
+    , m_counterScrollingLayer(counterScrollingLayer)
+    , m_insetClipLayer(insetClipLayer)
+    , m_contentShadowLayer(contentShadowLayer)
     , m_eventTrackingRegions(WTFMove(eventTrackingRegions))
     , m_layoutViewport(layoutViewport)
     , m_minLayoutViewportOrigin(minLayoutViewportOrigin)

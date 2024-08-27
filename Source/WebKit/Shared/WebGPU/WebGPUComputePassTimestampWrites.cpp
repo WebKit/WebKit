@@ -50,7 +50,7 @@ std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBack
 
 std::optional<WebCore::WebGPU::ComputePassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrites& computePassTimestampWrites)
 {
-    auto* querySet = convertQuerySetFromBacking(computePassTimestampWrites.querySet);
+    WeakPtr querySet = convertQuerySetFromBacking(computePassTimestampWrites.querySet);
     if (!querySet)
         return std::nullopt;
 

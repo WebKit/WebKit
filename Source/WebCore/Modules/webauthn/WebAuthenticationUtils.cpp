@@ -157,9 +157,9 @@ Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& form
     return *attestationObject;
 }
 
-// FIXME(181948): Add token binding ID.
 Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin, WebAuthn::Scope scope, const String& topOrigin)
 {
+    // https://www.w3.org/TR/webauthn-2/#clientdatajson-verification
     auto object = JSON::Object::create();
     switch (type) {
     case ClientDataType::Create:
@@ -171,12 +171,12 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     }
     object->setString("challenge"_s, base64URLEncodeToString(challenge.span()));
     object->setString("origin"_s, origin.toRawString());
-    
-    if (!topOrigin.isNull())
-        object->setString("topOrigin"_s, topOrigin);
-    
+
     if (scope != WebAuthn::Scope::SameOrigin)
         object->setBoolean("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
+
+    if (!topOrigin.isNull())
+        object->setString("topOrigin"_s, topOrigin);
 
     return ArrayBuffer::create(object->toJSONString().utf8().span());
 }

@@ -61,6 +61,8 @@
 
 namespace Inspector {
 
+RemoteInspector::~RemoteInspector() = default;
+
 static void convertNSNullToNil(__strong NSNumber *& number)
 {
     if ([number isEqual:[NSNull null]])

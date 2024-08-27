@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct DictationContextType;
-using DictationContext = ObjectIdentifier<DictationContextType>;
+using DictationContext = LegacyNullableObjectIdentifier<DictationContextType>;
 
 } // namespace WebCore

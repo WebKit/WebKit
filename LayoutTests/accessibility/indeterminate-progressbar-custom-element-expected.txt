@@ -1,0 +1,9 @@
+This test ensures that we properly respect null values set via ElementInternals, e.g. ariaValueNow for role='progressbar' custom elements.
+
+PASS: accessibilityController.accessibleElementById('progress').isIndeterminate === false
+PASS: accessibilityController.accessibleElementById('progress').isIndeterminate === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -33,6 +33,7 @@
 #include "WebGPUTextureFormat.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
@@ -40,7 +41,7 @@ class ConvertToBackingContext;
 class TextureImpl;
 
 class PresentationContextImpl final : public PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PresentationContextImpl);
 public:
     static Ref<PresentationContextImpl> create(WebGPUPtr<WGPUSurface>&& surface, ConvertToBackingContext& convertToBackingContext)
     {
@@ -54,7 +55,7 @@ public:
     void present(bool = false);
 
     WGPUSurface backing() const { return m_backing.get(); }
-    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex) final;
+    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
 
 private:
     friend class DowncastConvertToBackingContext;

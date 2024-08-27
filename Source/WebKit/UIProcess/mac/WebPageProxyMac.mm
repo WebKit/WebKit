@@ -72,6 +72,7 @@
 #import <wtf/ProcessPrivilege.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_legacyMainFrameProcess, url), m_legacyMainFrameProcess->connection())
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, process().connection(), returnValue)
 
@@ -333,7 +334,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t>
 
 void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, const String& selector, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(isValidKeypressCommandName(selector), connection);
+    MESSAGE_CHECK_COMPLETION(isValidKeypressCommandName(selector), connection, completionHandler(false));
 
     completionHandler(protectedPageClient()->executeSavedCommandBySelector(selector));
 }
@@ -825,4 +826,5 @@ void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::Requeste
 
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
 #undef MESSAGE_CHECK_URL
+#undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK

@@ -82,32 +82,32 @@ std::optional<NumberRaw> RawResolverBase::resolve(SymbolRaw value, const CSSCalc
 
 std::optional<AngleRaw> RawResolverBase::resolve(UnevaluatedCalc<AngleRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 std::optional<LengthRaw> RawResolverBase::resolve(UnevaluatedCalc<LengthRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 std::optional<NumberRaw> RawResolverBase::resolve(UnevaluatedCalc<NumberRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 std::optional<PercentRaw> RawResolverBase::resolve(UnevaluatedCalc<PercentRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 std::optional<ResolutionRaw> RawResolverBase::resolve(UnevaluatedCalc<ResolutionRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 std::optional<TimeRaw> RawResolverBase::resolve(UnevaluatedCalc<TimeRaw> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
 {
-    return validatedRange(evaluateCalc(value, symbolTable), options);
+    return validatedRange(evaluateCalcNoConversionDataRequired(value, symbolTable), options);
 }
 
 } // namespace CSSPropertyParserHelpers

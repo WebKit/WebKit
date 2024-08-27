@@ -22,18 +22,6 @@ onload = function() {
                     if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                         testFailed("Host did not get cleared of user interaction.");
 
-                    testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-
-                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                            testPassed("Origin did not get user interaction credit.");
-
-                        setTimeout(function() {
-                            testFrame.src = "about:blank";
-                            setTimeout(function() {
-                                setEnableFeature(false, finishJSTest);
-                            }, 0);
-                        }, 0);
-                    });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
 
@@ -42,6 +30,16 @@ onload = function() {
                         eventSender.keyDown("a", ["metaKey"]);
 
                     await testRunner.statisticsProcessStatisticsAndDataRecords();
+
+                    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                        testPassed("Origin did not get user interaction credit.");
+
+                    setTimeout(function() {
+                        testFrame.src = "about:blank";
+                        setTimeout(function() {
+                            setEnableFeature(false, finishJSTest);
+                        }, 0);
+                    }, 0);
                 });
             });
         });

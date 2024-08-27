@@ -28,8 +28,11 @@
 
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteFrameView);
 
 RemoteFrameView::RemoteFrameView(RemoteFrame& frame)
     : m_frame(frame)

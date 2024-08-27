@@ -49,10 +49,8 @@ ScrollingTreeOverflowScrollProxyNodeNicosia::~ScrollingTreeOverflowScrollProxyNo
 
 bool ScrollingTreeOverflowScrollProxyNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(stateNode.layer());
-        m_layer = downcast<Nicosia::CompositionLayer>(layer);
-    }
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+        m_layer = static_cast<Nicosia::CompositionLayer*>(stateNode.layer());
 
     return ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(stateNode);
 }

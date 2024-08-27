@@ -33,8 +33,11 @@
 #include "LocalFrame.h"
 #include "MediaKeySystemRequest.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemController);
 
 ASCIILiteral MediaKeySystemController::supplementName()
 {

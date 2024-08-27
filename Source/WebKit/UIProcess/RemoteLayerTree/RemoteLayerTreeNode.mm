@@ -235,10 +235,10 @@ void RemoteLayerTreeNode::propagateInteractionRegionsChangeInHierarchy(Interacti
 }
 #endif
 
-WebCore::PlatformLayerIdentifier RemoteLayerTreeNode::layerID(CALayer *layer)
+std::optional<WebCore::PlatformLayerIdentifier> RemoteLayerTreeNode::layerID(CALayer *layer)
 {
     auto* node = forCALayer(layer);
-    return node ? node->layerID() : WebCore::PlatformLayerIdentifier { };
+    return node ? std::optional { node->layerID() } : std::nullopt;
 }
 
 RemoteLayerTreeNode* RemoteLayerTreeNode::forCALayer(CALayer *layer)
@@ -248,7 +248,8 @@ RemoteLayerTreeNode* RemoteLayerTreeNode::forCALayer(CALayer *layer)
 
 NSString *RemoteLayerTreeNode::appendLayerDescription(NSString *description, CALayer *layer)
 {
-    NSString *layerDescription = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(layer).object().toUInt64(), layer.name ? layer.name : @""];
+    auto layerID = WebKit::RemoteLayerTreeNode::layerID(layer);
+    NSString *layerDescription = [NSString stringWithFormat:@" layerID = %llu \"%@\"", layerID ? layerID->object().toUInt64() : 0, layer.name ? layer.name : @""];
     return [description stringByAppendingString:layerDescription];
 }
 

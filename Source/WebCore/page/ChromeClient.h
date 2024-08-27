@@ -221,7 +221,6 @@ public:
     virtual void runJavaScriptAlert(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptConfirm(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result) = 0;
-    virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
     virtual bool hoverSupportedByPrimaryPointingDevice() const = 0;

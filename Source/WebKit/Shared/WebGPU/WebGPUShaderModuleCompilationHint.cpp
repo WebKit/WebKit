@@ -30,6 +30,7 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <WebCore/WebGPUPipelineLayout.h>
 #include <WebCore/WebGPUShaderModuleCompilationHint.h>
 
 namespace WebKit::WebGPU {
@@ -45,7 +46,7 @@ std::optional<ShaderModuleCompilationHint> ConvertToBackingContext::convertToBac
 
 std::optional<WebCore::WebGPU::ShaderModuleCompilationHint> ConvertFromBackingContext::convertFromBacking(const ShaderModuleCompilationHint& shaderModuleCompilationHint)
 {
-    auto* pipelineLayout = convertPipelineLayoutFromBacking(shaderModuleCompilationHint.pipelineLayout);
+    WeakPtr pipelineLayout = convertPipelineLayoutFromBacking(shaderModuleCompilationHint.pipelineLayout);
     if (!pipelineLayout)
         return std::nullopt;
 

@@ -48,11 +48,6 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
         vorbisDecoderEnabled = true;
 #endif
 
-#if ENABLE(WEBM_FORMAT_READER)
-    if (webPreferences.webMFormatReaderEnabled())
-        webMFormatReaderEnabled = true;
-#endif
-
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     if (webPreferences.webMParserEnabled())
         webMParserEnabled = true;

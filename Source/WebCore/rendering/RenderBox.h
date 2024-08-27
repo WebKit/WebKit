@@ -110,9 +110,8 @@ public:
     LayoutRect borderBoundingBox() const final { return borderBoxRect(); }
     inline LayoutSize borderBoxLogicalSize() const;
 
+    // Don't use this; it doesn't make sense in a future world with corner-shape. Use BorderShape instead.
     WEBCORE_EXPORT RoundedRectRadii borderRadii() const;
-    RoundedRect borderRoundedRect() const;
-    RoundedRect roundedBorderBoxRect() const;
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     inline LayoutRect contentBoxRect() const;
@@ -666,6 +665,9 @@ protected:
 
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
+    void clipToPaddingBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
+    void clipToContentBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
+
     BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext&) const;
     bool backgroundHasOpaqueTopLayer() const;
 
@@ -762,8 +764,6 @@ private:
     RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
     
     LayoutPoint topLeftLocationWithFlipping() const;
-
-    void clipContentForBorderRadius(GraphicsContext&, const LayoutPoint&, float);
 
     void addLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientRect);
 

@@ -44,6 +44,7 @@
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserToken.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
@@ -870,7 +871,7 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     // @font-feature-values <family-name># { <declaration-list> }
 
     auto originalPrelude = prelude;
-    auto fontFamilies = CSSPropertyParserHelpers::consumeFamilyNameListRaw(prelude);
+    auto fontFamilies = CSSPropertyParserHelpers::consumeFontFeatureValuesFamilyNameList(prelude);
     if (fontFamilies.isEmpty() || !prelude.atEnd())
         return nullptr;
 

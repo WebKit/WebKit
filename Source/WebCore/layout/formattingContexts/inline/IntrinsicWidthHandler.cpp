@@ -254,7 +254,7 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
             }
             continue;
         }
-        if (child->isAtomicInlineLevelBox() || child->isReplacedBox()) {
+        if (child->isAtomicInlineBox() || child->isReplacedBox()) {
             maximumWidth = std::max<InlineLayoutUnit>(maximumWidth, formattingContext().geometryForBox(*child).marginBoxWidth());
             continue;
         }

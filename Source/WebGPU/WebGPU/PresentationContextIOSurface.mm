@@ -89,21 +89,26 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& c
         completionHandler();
 }
 
-RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex)
+RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
+    isIOSurfaceSupportedFormat = false;
     auto* device = m_device.get();
     if (!device || bufferIndex >= m_renderBuffers.size())
         return nullptr;
 
     auto& renderBuffer = m_renderBuffers[bufferIndex];
-    auto* texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
-    if (!texture)
+    WeakPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
+    if (!texture || !texture->waitForCommandBufferCompletion())
         return nullptr;
 
-    texture->waitForCommandBufferCompletion();
-    id<MTLTexture> mtlTexture = texture->texture();
-    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm)
+    if (!texture.get())
         return nullptr;
+
+    id<MTLTexture> mtlTexture = texture->texture();
+    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB) {
+        isIOSurfaceSupportedFormat = true;
+        return nullptr;
+    }
 
     bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
     CFStringRef colorSpaceName = kCGColorSpaceSRGB;

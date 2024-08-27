@@ -50,6 +50,8 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
+FetchResponse::~FetchResponse() = default;
+
 Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::optional<FetchBody>&& body, FetchHeaders::Guard guard, ResourceResponse&& response)
 {
     bool isSynthetic = response.type() == ResourceResponse::Type::Default || response.type() == ResourceResponse::Type::Error;
@@ -298,6 +300,8 @@ const ResourceResponse& FetchResponse::filteredResponse() const
         return m_filteredResponse.value();
     return m_internalResponse;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchResponseLoader, FetchResponse::Loader);
 
 void FetchResponse::Loader::didSucceed(const NetworkLoadMetrics& metrics)
 {

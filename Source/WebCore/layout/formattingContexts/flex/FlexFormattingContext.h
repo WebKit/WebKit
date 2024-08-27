@@ -29,6 +29,7 @@
 #include "FlexFormattingUtils.h"
 #include "FlexLayout.h"
 #include "FlexRect.h"
+#include "LayoutIntegrationUtils.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -50,8 +51,7 @@ public:
     const BoxGeometry& geometryForFlexItem(const Box&) const;
     BoxGeometry& geometryForFlexItem(const Box&);
 
-    const LayoutState& layoutState() const { return m_layoutState; }
-    LayoutState& layoutState() { return m_layoutState; }
+    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
 private:
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
@@ -61,8 +61,9 @@ private:
 
 private:
     const ElementBox& m_flexBox;
-    LayoutState& m_layoutState;
+    LayoutState& m_globalLayoutState;
     const FlexFormattingUtils m_flexFormattingUtils;
+    const IntegrationUtils m_integrationUtils;
 };
 
 }

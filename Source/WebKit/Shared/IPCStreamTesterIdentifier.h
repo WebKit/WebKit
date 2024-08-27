@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct IPCStreamTesterIdentifierType;
-using IPCStreamTesterIdentifier = ObjectIdentifier<IPCStreamTesterIdentifierType>;
+using IPCStreamTesterIdentifier = LegacyNullableObjectIdentifier<IPCStreamTesterIdentifierType>;
 
 }
 

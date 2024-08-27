@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
 #import <pal/spi/cocoa/WritingToolsUISPI.h>
 #import <wtf/SoftLinking.h>
@@ -44,5 +44,5 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, _WTReplaceDestinationTextEffect)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, _WTTextChunk)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, _WTTextPreview)
 
-#endif // ENABLE(WRITING_TOOLS_UI)
+#endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 

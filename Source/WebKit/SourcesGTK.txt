@@ -271,6 +271,9 @@ UIProcess/gtk/AcceleratedBackingStoreDMABuf.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
 UIProcess/gtk/ClipboardGtk3.cpp @no-unify
 UIProcess/gtk/ClipboardGtk4.cpp @no-unify
+UIProcess/gtk/Display.cpp @no-unify
+UIProcess/gtk/DisplayX11.cpp @no-unify
+UIProcess/gtk/DisplayWayland.cpp @no-unify
 UIProcess/gtk/WebDateTimePickerGtk.cpp
 UIProcess/gtk/GtkSettingsManager.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp

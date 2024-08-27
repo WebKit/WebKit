@@ -27,6 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -37,7 +38,6 @@ class TextureMapperLayer;
 class TextureMapperPlatformLayerBuffer;
 
 class TextureMapperPlatformLayerProxy : public ThreadSafeRefCounted<TextureMapperPlatformLayerProxy> {
-    WTF_MAKE_FAST_ALLOCATED();
 public:
     enum class ContentType : uint8_t {
         WebGL,
@@ -52,14 +52,13 @@ public:
         virtual void onNewBufferAvailable() = 0;
     };
 
-    explicit TextureMapperPlatformLayerProxy(ContentType);
     virtual ~TextureMapperPlatformLayerProxy();
 
     virtual bool isGLBased() const { return false; }
     virtual bool isDMABufBased() const { return false; }
 
     Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
-    bool isActive();
+    bool isActive() const;
 
     ContentType contentType() const { return m_contentType; }
 
@@ -67,11 +66,17 @@ public:
     virtual void invalidate() = 0;
     virtual void swapBuffer() = 0;
 
+    void setSwapBuffersFunction(Function<void(TextureMapperPlatformLayerProxy&)>&& function) { m_swapBuffersFunction = WTFMove(function); }
+    void swapBuffersIfNeeded();
+
 protected:
+    explicit TextureMapperPlatformLayerProxy(ContentType);
+
     Lock m_lock;
     Compositor* m_compositor { nullptr };
     TextureMapperLayer* m_targetLayer { nullptr };
     ContentType m_contentType;
+    Function<void(TextureMapperPlatformLayerProxy&)> m_swapBuffersFunction;
 };
 
 } // namespace WebCore

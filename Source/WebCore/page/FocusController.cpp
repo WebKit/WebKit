@@ -65,8 +65,11 @@
 #include "Widget.h"
 #include <limits>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusController);
 
 using namespace HTMLNames;
 

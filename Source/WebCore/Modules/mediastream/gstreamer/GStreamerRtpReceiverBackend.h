@@ -24,11 +24,12 @@
 #include "GRefPtrGStreamer.h"
 #include "RTCRtpReceiverBackend.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerRtpReceiverBackend final : public RTCRtpReceiverBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerRtpReceiverBackend);
 public:
     explicit GStreamerRtpReceiverBackend(GRefPtr<GstWebRTCRTPReceiver>&& rtcReceiver)
         : m_rtcReceiver(WTFMove(rtcReceiver))

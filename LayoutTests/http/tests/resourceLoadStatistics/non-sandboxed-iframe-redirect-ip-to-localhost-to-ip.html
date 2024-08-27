@@ -25,8 +25,10 @@
             lastPageInRedirectChainLoaded = true;
             if (statsChecked)
                 finishTest();
-            else
+            else {
                 await testRunner.statisticsNotifyObserver();
+                checkStats();
+            }
         }
 
         function checkStats() {
@@ -40,9 +42,7 @@
         }
 
         if (testRunner) {
-            setEnableFeature(true, function() {
-                testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
-            });
+            setEnableFeature(true, function() { });
         }
     </script>
 </head>

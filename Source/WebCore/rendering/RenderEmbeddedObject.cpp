@@ -89,10 +89,8 @@ RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Rende
     ASSERT(isRenderEmbeddedObject());
 }
 
-RenderEmbeddedObject::~RenderEmbeddedObject()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderEmbeddedObject::~RenderEmbeddedObject() = default;
 
 void RenderEmbeddedObject::willBeDestroyed()
 {

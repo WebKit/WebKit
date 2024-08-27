@@ -48,7 +48,6 @@ using namespace WebCore;
 using namespace cbor;
 using namespace fido;
 using namespace fido::pin;
-static constexpr auto useCryptoKit = WebCore::UseCryptoKit::Yes;
 
 TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 {
@@ -75,7 +74,7 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 TEST(CtapPinTest, TestSetPinRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -127,11 +126,11 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, useCryptoKit);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
@@ -250,7 +249,7 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     // Success cases
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinKeyAgreementResponse, sizeof(TestData::kCtapClientPinKeyAgreementResponse)));
     EXPECT_TRUE(result);
-    auto exportedRawKey = result->peerKey->exportRaw(useCryptoKit);
+    auto exportedRawKey = result->peerKey->exportRaw();
     EXPECT_FALSE(exportedRawKey.hasException());
     Vector<uint8_t> expectedRawKey;
     expectedRawKey.reserveCapacity(65);
@@ -263,7 +262,7 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 TEST(CtapPinTest, TestTokenRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -315,11 +314,11 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits, useCryptoKit);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.
-    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey, useCryptoKit);
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);

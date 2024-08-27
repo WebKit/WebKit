@@ -9,6 +9,26 @@ jsTestIsAsync = true;
 
 const statisticsUrl = "http://127.0.0.1:8000/temp";
 
+function completeTestWhenKeyDownIsReceived() {
+    if (testInput.value != "a") {
+        setTimeout(completeTestWhenKeyDownIsReceived, 100);
+        return;
+    }
+    shouldBeEqualToString("testInput.value", "a");
+
+    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+        testFailed("Origin did not get user interaction credit.");
+    else
+        testPassed("Origin was granted user interaction.");
+
+    setTimeout(function() {
+        testFrame.src = "about:blank";
+        setTimeout(function() {
+            setEnableFeature(false, finishJSTest);
+        }, 0);
+    }, 0);
+}
+
 onload = function() {
     const testFrame = document.getElementById("testFrame");
 
@@ -24,21 +44,6 @@ onload = function() {
 
                     testInput = document.getElementById("testInput");
 
-                    testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                        shouldBeEqualToString("testInput.value", "a");
-
-                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                            testFailed("Origin did not get user interaction credit.");
-                        else
-                            testPassed("Origin was granted user interaction.");
-
-                        setTimeout(function() {
-                            testFrame.src = "about:blank";
-                            setTimeout(function() {
-                                setEnableFeature(false, finishJSTest);
-                            }, 0);
-                        }, 0);
-                    });
                     testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                     testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
                     await testRunner.statisticsProcessStatisticsAndDataRecords();
@@ -47,6 +52,7 @@ onload = function() {
                     testInput.focus();
                     if (window.eventSender)
                         eventSender.keyDown("a");
+                    completeTestWhenKeyDownIsReceived();
                 });
             });
         });

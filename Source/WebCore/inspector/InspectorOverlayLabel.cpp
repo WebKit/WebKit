@@ -35,9 +35,12 @@
 #include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
 #include "Path.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorOverlayLabel);
 
 static constexpr float labelPadding = 4;
 static constexpr float labelArrowSize = 6;

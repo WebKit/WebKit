@@ -90,7 +90,7 @@ private:
 
     bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
     const ElementBox& flexContainer() const;
-    FlexFormattingContext& flexFormattingContext();
+    FlexFormattingContext& formattingContext();
     const RenderStyle& flexContainerStyle() const { return flexContainer().style(); }
 
 private:

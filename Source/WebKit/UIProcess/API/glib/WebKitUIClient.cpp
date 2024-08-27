@@ -41,12 +41,12 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
-#include <WebCore/PlatformDisplay.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 #if PLATFORM(GTK)
+#include "Display.h"
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #endif
@@ -147,10 +147,7 @@ private:
     {
         GdkRectangle geometry = { 0, 0, 0, 0 };
         // Position a toplevel window is not supported under wayland.
-#if PLATFORM(WAYLAND)
-        if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
-#endif
-        {
+        if (!Display::singleton().isWayland()) {
             gtk_window_get_position(window, &geometry.x, &geometry.y);
             if (geometry.x != targetGeometry->x || geometry.y != targetGeometry->y)
                 return FALSE;
@@ -180,10 +177,7 @@ private:
             // Querying and setting window positions is not supported in GTK4.
 #if !USE(GTK4)
             // Position a toplevel window is not supported under wayland.
-#if PLATFORM(WAYLAND)
-            if (WebCore::PlatformDisplay::sharedDisplay().type() != WebCore::PlatformDisplay::Type::Wayland)
-#endif // PLATFORM(WAYLAND)
-            {
+            if (!Display::singleton().isWayland()) {
                 if (geometry.x >= 0 && geometry.y >= 0) {
                     int x, y;
                     gtk_window_get_position(GTK_WINDOW(window), &x, &y);

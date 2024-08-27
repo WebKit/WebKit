@@ -32,7 +32,6 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "NicosiaBackingStore.h"
-#include "NicosiaContentLayer.h"
 #include "NicosiaImageBacking.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -42,6 +41,7 @@
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif
+#include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 
 #if USE(CAIRO)
@@ -145,7 +145,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
-    , m_shouldUpdatePlatformLayer(false)
     , m_coordinator(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
     , m_requestPendingTileCreationTimer(RunLoop::main(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
@@ -190,9 +189,9 @@ Nicosia::PlatformLayer::LayerID CoordinatedGraphicsLayer::id() const
     return m_id;
 }
 
-auto CoordinatedGraphicsLayer::primaryLayerID() const -> PlatformLayerIdentifier
+auto CoordinatedGraphicsLayer::primaryLayerID() const -> std::optional<PlatformLayerIdentifier>
 {
-    return { ObjectIdentifier<PlatformLayerIdentifierType>(id()), Process::identifier() };
+    return PlatformLayerIdentifier { ObjectIdentifier<PlatformLayerIdentifierType>(id()), Process::identifier() };
 }
 
 bool CoordinatedGraphicsLayer::setChildren(Vector<Ref<GraphicsLayer>>&& children)
@@ -504,10 +503,8 @@ bool GraphicsLayer::supportsContentsTiling()
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    if (m_nicosia.contentLayer)
-        m_shouldUpdatePlatformLayer = true;
-#endif
+    if (m_contentsLayer)
+        m_contentsLayerNeedsUpdate = true;
 
     notifyFlushRequired();
     addRepaintRect(contentsRect());
@@ -524,18 +521,14 @@ void CoordinatedGraphicsLayer::markDamageRectsUnreliable()
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    auto* contentLayer = downcast<Nicosia::ContentLayer>(platformLayer);
-    if (m_nicosia.contentLayer != contentLayer) {
-        m_nicosia.contentLayer = contentLayer;
-        m_nicosia.delta.contentLayerChanged = true;
-        if (m_nicosia.contentLayer)
-            m_shouldUpdatePlatformLayer = true;
-    }
+    if (m_contentsLayer.get() == platformLayer)
+        return;
+
+    m_contentsLayer = platformLayer;
+    m_nicosia.delta.contentLayerChanged = true;
+    if (m_contentsLayer)
+        m_contentsLayerNeedsUpdate = true;
     notifyFlushRequired();
-#else
-    UNUSED_PARAM(platformLayer);
-#endif
 }
 
 void CoordinatedGraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
@@ -757,23 +750,9 @@ void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
     }
 }
 
-void CoordinatedGraphicsLayer::updatePlatformLayer()
-{
-    if (!m_shouldUpdatePlatformLayer)
-        return;
-
-    m_shouldUpdatePlatformLayer = false;
-#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
-    if (m_nicosia.contentLayer) {
-        m_nicosia.contentLayer->swapBuffersIfNeeded();
-        m_nicosia.contentLayerUpdated = true;
-    }
-#endif
-}
-
 bool CoordinatedGraphicsLayer::checkContentLayerUpdated()
 {
-    return std::exchange(m_nicosia.contentLayerUpdated, false);
+    return std::exchange(m_contentsLayerUpdated, false);
 }
 
 static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
@@ -871,7 +850,12 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     computePixelAlignment(m_adjustedPosition, m_adjustedSize, m_adjustedAnchorPoint, m_pixelAlignmentOffset);
 
     computeTransformedVisibleRect();
-    updatePlatformLayer();
+
+    if (m_contentsLayer && m_contentsLayerNeedsUpdate) {
+        m_contentsLayerNeedsUpdate = false;
+        m_contentsLayer->swapBuffersIfNeeded();
+        m_contentsLayerUpdated = true;
+    }
 
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
@@ -1060,7 +1044,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                 if (localDelta.backingStoreChanged)
                     state.backingStore = m_nicosia.backingStore;
                 if (localDelta.contentLayerChanged)
-                    state.contentLayer = m_nicosia.contentLayer;
+                    state.contentLayer = m_contentsLayer;
                 if (localDelta.imageBackingChanged)
                     state.imageBacking = m_nicosia.imageBacking;
                 if (localDelta.animatedBackingStoreClientChanged)
@@ -1160,6 +1144,10 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     if (!m_nicosia.backingStore)
         return;
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    TraceScope traceScope(UpdateLayerContentBuffersStart, UpdateLayerContentBuffersEnd);
+#endif
+
     // Prepare for painting on the impl-contained backing store. isFlushing is used there
     // for internal sanity checks.
     auto& layerState = m_nicosia.backingStore->layerState();
@@ -1219,15 +1207,22 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     // With all the affected tiles created and/or invalidated, we can finally paint them.
     auto dirtyTiles = layerState.mainBackingStore->dirtyTiles();
     if (!dirtyTiles.isEmpty()) {
+        auto dirtyTilesCount = dirtyTiles.size();
         bool didUpdateTiles = false;
 
-        for (auto& tileReference : dirtyTiles) {
-            auto& tile = tileReference.get();
+        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %lu", dirtyTilesCount);
+
+        for (unsigned dirtyTileIndex = 0; dirtyTileIndex < dirtyTilesCount; ++dirtyTileIndex) {
+            auto& tile = dirtyTiles[dirtyTileIndex].get();
             tile.ensureTileID();
+
+            WTFBeginSignpost(this, UpdateTile, "%u/%lu, id: %d", dirtyTileIndex + 1, dirtyTilesCount, tile.tileID());
 
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
             auto buffer = paintTile(dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect), layerState.mainBackingStore->contentsScale());
+
+            WTFBeginSignpost(this, UpdateTileBackingStore, "rect %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
 
             IntRect updateRect(dirtyRect);
             updateRect.move(-tileRect.x(), -tileRect.y());
@@ -1235,10 +1230,15 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
             tile.markClean();
             didUpdateTiles |= true;
+
+            WTFEndSignpost(this, UpdateTileBackingStore);
+            WTFEndSignpost(this, UpdateTile);
         }
 
         if (didUpdateTiles)
             didUpdateTileBuffers();
+
+        WTFEndSignpost(this, UpdateTiles);
     }
 
     // Request a new update immediately if some tiles are still pending creation. Do this on a timer
@@ -1523,15 +1523,8 @@ void CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired()
 
 bool CoordinatedGraphicsLayer::usesContentsLayer() const
 {
-    return m_nicosia.contentLayer || m_compositedImage;
+    return m_contentsLayer || m_compositedImage;
 }
-
-#if USE(NICOSIA)
-PlatformLayer* CoordinatedGraphicsLayer::platformLayer() const
-{
-    return m_nicosia.layer.get();
-}
-#endif
 
 static void dumpInnerLayer(TextStream& textStream, const String& label, CoordinatedGraphicsLayer* layer, OptionSet<LayerTreeAsTextOptions> options)
 {

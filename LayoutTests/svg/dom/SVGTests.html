@@ -13,8 +13,7 @@ var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 var foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
 
 debug("");
-debug("Check the requiredFeatures, requiredExtensions and systemLanguage attributes");
-shouldBeTrue("foreignObject.requiredFeatures instanceof SVGStringList");
+debug("Check the requiredExtensions and systemLanguage attributes");
 shouldBeTrue("foreignObject.requiredExtensions instanceof SVGStringList");
 shouldBeTrue("foreignObject.systemLanguage instanceof SVGStringList");
 successfullyParsed = true;

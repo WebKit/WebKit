@@ -47,13 +47,6 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSScale);
 
 static bool isValidScaleCoord(const CSSNumericValue& coord)
 {
-    if (auto* mathValue = dynamicDowncast<CSSMathValue>(coord)) {
-        auto node = mathValue->toCalcExpressionNode();
-        if (!node)
-            return false;
-        auto resolvedType = node->primitiveType();
-        return resolvedType == CSSUnitType::CSS_NUMBER || resolvedType == CSSUnitType::CSS_INTEGER;
-    }
     return coord.type().matchesNumber();
 }
 

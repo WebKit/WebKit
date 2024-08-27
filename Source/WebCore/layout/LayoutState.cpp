@@ -42,11 +42,12 @@ namespace Layout {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, FormattingContextLayoutFunction&& formattingContextLayoutFunction, FormattingContextPreferredWidthsFunction&& formattingContextPreferredWidthsFunction)
     : m_type(type)
     , m_rootContainer(rootContainer)
     , m_securityOrigin(document.securityOrigin())
     , m_formattingContextLayoutFunction(WTFMove(formattingContextLayoutFunction))
+    , m_formattingContextPreferredWidthsFunction(WTFMove(formattingContextPreferredWidthsFunction))
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -151,9 +152,14 @@ void LayoutState::destroyInlineContentCache(const ElementBox& formattingContextR
     m_inlineContentCaches.remove(&formattingContextRoot);
 }
 
-void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box)
+void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> widthConstraint) const
 {
-    return m_formattingContextLayoutFunction(box, *this);
+    const_cast<LayoutState&>(*this).m_formattingContextLayoutFunction(box, widthConstraint, const_cast<LayoutState&>(*this));
+}
+
+std::pair<LayoutUnit, LayoutUnit> LayoutState::preferredWidthWithFormattingContextForBox(const ElementBox& box) const
+{
+    return const_cast<LayoutState&>(*this).m_formattingContextPreferredWidthsFunction(box);
 }
 
 }

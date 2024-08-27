@@ -37,6 +37,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -77,7 +78,7 @@ using GetAllResultsCallback = Function<void(const IDBError&, const IDBGetAllResu
 using CountCallback = Function<void(const IDBError&, uint64_t)>;
 
 class UniqueIDBDatabase : public CanMakeWeakPtr<UniqueIDBDatabase> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UniqueIDBDatabase, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT UniqueIDBDatabase(UniqueIDBDatabaseManager&, const IDBDatabaseIdentifier&);
     UniqueIDBDatabase(UniqueIDBDatabase&) = delete;

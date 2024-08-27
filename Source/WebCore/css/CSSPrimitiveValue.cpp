@@ -24,7 +24,6 @@
 #include "CSSAnchorValue.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
-#include "CSSHelper.h"
 #include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -264,25 +263,7 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
     if (!isCalculated())
         return primitiveUnitType();
 
-    switch (m_value.calc->category()) {
-    case CalculationCategory::Number:
-        return CSSUnitType::CSS_NUMBER;
-    case CalculationCategory::Percent:
-        return CSSUnitType::CSS_PERCENTAGE;
-    case CalculationCategory::PercentNumber:
-        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER;
-    case CalculationCategory::PercentLength:
-        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
-    case CalculationCategory::Length:
-    case CalculationCategory::Angle:
-    case CalculationCategory::Time:
-    case CalculationCategory::Frequency:
-    case CalculationCategory::Resolution:
-        return m_value.calc->primitiveType();
-    case CalculationCategory::Other:
-        return CSSUnitType::CSS_UNKNOWN;
-    }
-    return CSSUnitType::CSS_UNKNOWN;
+    return m_value.calc->primitiveType();
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(CSSPropertyID propertyID)
@@ -586,8 +567,7 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length, const Ren
     case LengthType::Fixed:
         return create(adjustFloatForAbsoluteZoom(length.value(), style), CSSUnitType::CSS_PX);
     case LengthType::Calculated:
-        // FIXME: Do we have a guarantee that CSSCalcValue::create will not return null here?
-        return create(CSSCalcValue::create(length.calculationValue(), style).releaseNonNull());
+        return create(CSSCalcValue::create(length.calculationValue(), style));
     case LengthType::Relative:
     case LengthType::Undefined:
         break;
@@ -684,15 +664,11 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
 {
     if (isCalculated()) {
         // The multiplier and factor is applied to each value in the calc expression individually
-        return m_value.calc->computeLengthPx(conversionData);
+        return m_value.calc->computeLengthPx(conversionData, CSSCalcSymbolTable { });
     }
 
     return computeNonCalcLengthDouble(conversionData, primitiveType(), m_value.number);
 }
-
-static constexpr double mmPerInch = 25.4;
-static constexpr double cmPerInch = 2.54;
-static constexpr double QPerInch = 25.4 * 4.0;
 
 static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderStyle* style)
 {
@@ -757,22 +733,21 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
-        return cssPixelsPerInch / cmPerInch * value;
+        return CSS::pixelsPerCm * value;
     case CSSUnitType::CSS_MM:
-        return cssPixelsPerInch / mmPerInch * value;
+        return CSS::pixelsPerMm * value;
     case CSSUnitType::CSS_Q:
-        return cssPixelsPerInch / QPerInch * value;
+        return CSS::pixelsPerQ * value;
     case CSSUnitType::CSS_LH:
     case CSSUnitType::CSS_RLH:
         ASSERT_NOT_REACHED();
         return -1.0;
     case CSSUnitType::CSS_IN:
-        return cssPixelsPerInch * value;
+        return CSS::pixelsPerInch * value;
     case CSSUnitType::CSS_PT:
-        return cssPixelsPerInch / 72.0 * value;
+        return CSS::pixelsPerPt * value;
     case CSSUnitType::CSS_PC:
-        // 1 pc == 12 pt
-        return cssPixelsPerInch * 12.0 / 72.0 * value;
+        return CSS::pixelsPerPc * value;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
         ASSERT_NOT_REACHED();
@@ -1057,46 +1032,33 @@ std::optional<double> CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(C
         return 1.0;
 
     case CSSUnitType::CSS_X:
-        // This is semantically identical to (canonical) dppx
-        return 1.0;
-
+        return CSS::dppxPerX;
     case CSSUnitType::CSS_CM:
-        return cssPixelsPerInch / cmPerInch;
-
+        return CSS::pixelsPerCm;
     case CSSUnitType::CSS_DPCM:
-        return cmPerInch / cssPixelsPerInch; // (2.54 cm/in)
-
+        return CSS::dppxPerDpcm;
     case CSSUnitType::CSS_MM:
-        return cssPixelsPerInch / mmPerInch;
-
+        return CSS::pixelsPerMm;
     case CSSUnitType::CSS_Q:
-        return cssPixelsPerInch / QPerInch;
-
+        return CSS::pixelsPerQ;
     case CSSUnitType::CSS_IN:
-        return cssPixelsPerInch;
-
+        return CSS::pixelsPerInch;
     case CSSUnitType::CSS_DPI:
-        return 1 / cssPixelsPerInch;
-
+        return CSS::dppxPerDpi;
     case CSSUnitType::CSS_PT:
-        return cssPixelsPerInch / 72.0;
-
+        return CSS::pixelsPerPt;
     case CSSUnitType::CSS_PC:
-        return cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
-
+        return CSS::pixelsPerPc;
     case CSSUnitType::CSS_RAD:
         return degreesPerRadianDouble;
-
     case CSSUnitType::CSS_GRAD:
         return degreesPerGradientDouble;
-
     case CSSUnitType::CSS_TURN:
         return degreesPerTurnDouble;
-
     case CSSUnitType::CSS_MS:
-        return 0.001;
+        return CSS::secondsPerMillisecond;
     case CSSUnitType::CSS_KHZ:
-        return 1000;
+        return CSS::hertzPerKilohertz;
 
     default:
         return std::nullopt;
@@ -1118,13 +1080,15 @@ double CSSPrimitiveValue::doubleValue(CSSUnitType unitType) const
 
 double CSSPrimitiveValue::doubleValue() const
 {
-    return isCalculated() ? m_value.calc->doubleValue({ }) : m_value.number;
+    // FIXME: All calls to doubleValue() need to pass in CSSToLengthConversionData to work correctly with calc values.
+    return isCalculated() ? m_value.calc->doubleValueDeprecated({ }) : m_value.number;
 }
 
 double CSSPrimitiveValue::doubleValueDividingBy100IfPercentage() const
 {
+    // FIXME: All calls to doubleValue() need to pass in CSSToLengthConversionData to work correctly with calc values.
     if (isCalculated())
-        return m_value.calc->primitiveType() == CSSUnitType::CSS_PERCENTAGE ? m_value.calc->doubleValue({ }) / 100.0 : m_value.calc->doubleValue({ });
+        return m_value.calc->primitiveType() == CSSUnitType::CSS_PERCENTAGE ? m_value.calc->doubleValueDeprecated({ }) / 100.0 : m_value.calc->doubleValueDeprecated({ });
     if (isPercentage())
         return m_value.number / 100.0;
     return m_value.number;

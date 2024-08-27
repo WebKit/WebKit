@@ -38,8 +38,10 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Supplementable.h"
 #include "Timer.h"
+#include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -50,6 +52,7 @@ class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;
 class WebCoreOpaqueRoot;
+struct CookieStoreGetOptions;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTarget, public ActiveDOMObject, public PushSubscriptionOwner {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ServiceWorkerRegistration, WEBCORE_EXPORT);
@@ -96,6 +99,7 @@ public:
 
     NavigationPreloadManager& navigationPreload();
     ServiceWorkerContainer& container() { return m_container.get(); }
+    Ref<ServiceWorkerContainer> protectedContainer() const;
 
 #if ENABLE(NOTIFICATION_EVENT)
     struct GetNotificationOptions {
@@ -107,6 +111,9 @@ public:
 #endif
 
     CookieStoreManager& cookies();
+    void addCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
+    void removeCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
+    void cookieChangeSubscriptions(Ref<DeferredPromise>&&);
 
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);

@@ -24,6 +24,7 @@
 #include "LengthBox.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ class LocalFrame;
 class Node;
 
 class PrintContext : public FrameDestructionObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PrintContext);
 public:
     WEBCORE_EXPORT explicit PrintContext(LocalFrame*);
     WEBCORE_EXPORT ~PrintContext();

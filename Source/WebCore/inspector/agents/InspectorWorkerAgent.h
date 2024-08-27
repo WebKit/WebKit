@@ -30,13 +30,14 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::WorkerBackendDispatcherHandler, public WorkerInspectorProxy::PageChannel {
     WTF_MAKE_NONCOPYABLE(InspectorWorkerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorWorkerAgent);
 public:
     ~InspectorWorkerAgent();
 

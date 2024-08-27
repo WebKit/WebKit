@@ -77,6 +77,7 @@
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextPosition.h>
@@ -91,6 +92,8 @@ namespace WebCore {
 using namespace JSC;
 
 enum class WebCoreProfileTag { };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptController);
 
 void ScriptController::initializeMainThread()
 {

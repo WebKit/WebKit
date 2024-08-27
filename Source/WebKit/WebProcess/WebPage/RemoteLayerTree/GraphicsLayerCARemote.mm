@@ -154,7 +154,7 @@ public:
             m_surfaceIdentifier = clone->renderingResourceIdentifier();
         }
 
-        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, WTFMove(*backendHandle), clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTFMove(*backendHandle), clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
 
         return true;
     }
@@ -176,7 +176,7 @@ public:
 private:
     Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
-    WebCore::PlatformLayerIdentifier m_layerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_layerID;
     Lock m_surfaceLock;
     std::optional<ImageBufferBackendHandle> m_surfaceBackendHandle WTF_GUARDED_BY_LOCK(m_surfaceLock);
     WebCore::RenderingResourceIdentifier m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);

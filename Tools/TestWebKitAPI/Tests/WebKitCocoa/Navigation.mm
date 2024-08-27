@@ -1648,23 +1648,11 @@ TEST(WKNavigation, HTTPSFirstRedirectNoHTTPDowngradeRedirect)
 TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
 {
     using namespace TestWebKitAPI;
-    HTTPServer httpsServer({
-        { "/secure"_s, { { }, "secure page"_s } }
-    }, HTTPServer::Protocol::HttpsProxy);
     HTTPServer httpServer({
-        { "http://localhost/notsecure"_s, { { }, "not secure page"_s } },
+        { "/notsecure"_s, { { }, "not secure page"_s } },
     }, HTTPServer::Protocol::Http);
 
-    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
-    [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
-        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
-    }];
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration setWebsiteDataStore:dataStore.get()];
     configuration.get().defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
@@ -1714,14 +1702,14 @@ TEST(WKNavigation, HTTPSFirstLocalHostIPAddress)
     EXPECT_FALSE(didReceiveAuthenticationChallenge);
     EXPECT_EQ(loadCount, 1);
     EXPECT_WK_STREQ(url, [webView URL].absoluteString);
-
 }
 
 TEST(WKNavigation, HTTPSOnlyInitialLoad)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpsServer({
-        { "/secure"_s, { { }, "secure page"_s } }
+        { "/secure"_s, { { }, "secure page"_s } },
+        { "/notsecure"_s, { { }, "notsecure page upgraded to secure page"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     HTTPServer httpServer({
         { "http://site.example/notsecure"_s, { { }, "not secure page"_s } },

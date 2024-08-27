@@ -82,7 +82,6 @@ public:
     ~WebExtension() { }
 
     enum class CacheResult : bool { No, Yes };
-    enum class SuppressNotification : bool { No, Yes };
     enum class SuppressNotFoundErrors : bool { No, Yes };
 
     enum class Error : uint8_t {
@@ -209,12 +208,10 @@ public:
 
     bool isWebAccessibleResource(const URL& resourceURL, const URL& pageURL);
 
-    NSURL *resourceFileURLForPath(NSString *);
-
     UTType *resourceTypeForPath(NSString *);
 
-    NSString *resourceStringForPath(NSString *, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
-    NSData *resourceDataForPath(NSString *, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    NSString *resourceStringForPath(NSString *, NSError **, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    NSData *resourceDataForPath(NSString *, NSError **, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     _WKWebExtensionLocalization *localization();
     NSLocale *defaultLocale();
@@ -243,10 +240,10 @@ public:
     NSString *sidebarTitle();
 #endif
 
-    CocoaImage *imageForPath(NSString *);
+    CocoaImage *imageForPath(NSString *, NSError **);
 
     NSString *pathForBestImageInIconsDictionary(NSDictionary *, size_t idealPixelSize);
-    CocoaImage *bestImageInIconsDictionary(NSDictionary *, size_t idealPointSize);
+    CocoaImage *bestImageInIconsDictionary(NSDictionary *, size_t idealPointSize, NSError **);
     CocoaImage *bestImageForIconsDictionaryManifestKey(NSDictionary *, NSString *manifestKey, CGSize idealSize, RetainPtr<CocoaImage>& cacheLocation, Error, NSString *customLocalizedDescription);
 
     bool hasBackgroundContent();
@@ -297,11 +294,8 @@ public:
     MatchPatternSet allRequestedMatchPatterns();
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
-
-    // If an error can't be synchronously determined by one of the populate methods in the errors() getter,
-    // then the caller of recordError() should pass SuppressNotification::No.
-    void recordError(NSError *, SuppressNotification = SuppressNotification::Yes);
-    void removeError(Error, SuppressNotification = SuppressNotification::No);
+    void recordErrorIfNeeded(NSError *error) { if (error) recordError(error); }
+    void recordError(NSError *);
 
     NSArray *errors();
 
@@ -329,6 +323,8 @@ private:
     void populateSidebarActionProperties(RetainPtr<NSDictionary>);
     void populateSidePanelProperties(RetainPtr<NSDictionary>);
 #endif
+
+    NSURL *resourceFileURLForPath(NSString *);
 
     std::optional<WebExtension::DeclarativeNetRequestRulesetData> parseDeclarativeNetRequestRulesetDictionary(NSDictionary *, NSError **);
 

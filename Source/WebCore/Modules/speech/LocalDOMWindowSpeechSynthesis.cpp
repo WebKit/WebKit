@@ -35,8 +35,11 @@
 
 #include "LocalDOMWindow.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalDOMWindowSpeechSynthesis);
 
 LocalDOMWindowSpeechSynthesis::LocalDOMWindowSpeechSynthesis(DOMWindow* window)
     : LocalDOMWindowProperty(dynamicDowncast<LocalDOMWindow>(window))

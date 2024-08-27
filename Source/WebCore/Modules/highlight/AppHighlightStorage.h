@@ -32,6 +32,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,7 +50,7 @@ enum class RestoreWithTextSearch : bool { No, Yes };
 enum class ScrollToHighlight : bool { No, Yes };
 
 class AppHighlightStorage final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AppHighlightStorage);
 public:
     AppHighlightStorage(Document&);
     ~AppHighlightStorage();

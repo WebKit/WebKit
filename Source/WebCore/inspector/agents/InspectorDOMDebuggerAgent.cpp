@@ -47,10 +47,13 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMDebuggerAgent);
 
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase("DOMDebugger"_s, context)

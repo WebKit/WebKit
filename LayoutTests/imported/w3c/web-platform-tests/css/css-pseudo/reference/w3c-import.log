@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-018-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-025-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-027-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-031-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/active-selection-041-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/first-letter-digraph-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/first-letter-with-preceding-new-line-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/first-line-with-inline-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/grammar-spelling-errors-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/grammar-spelling-errors-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/placeholder-excluded-properties-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-contenteditable-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-input-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-intercharacter-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-intercharacter-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-overlay-and-grammar-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-overlay-and-spelling-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/selection-textarea-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/reference/svg-text-selection-002-ref.html

@@ -30,7 +30,7 @@
 
 #import "ARKitBadgeSystemImage.h"
 #import "BitmapImage.h"
-#import "BorderPainter.h"
+#import "BorderShape.h"
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKey.h"
@@ -129,28 +129,6 @@ bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderObject& rendere
     UNUSED_PARAM(type);
     return false;
 #endif
-}
-
-FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, GraphicsContext& context, const IntRect& rect)
-{
-    // To fix inner border bleeding issues <rdar://problem/9812507>, we clip to the outer border and assert that
-    // the border is opaque or transparent, unless we're checked because checked radio/checkboxes show no bleeding.
-    auto& style = box.style();
-    RoundedRect border = isChecked(box) ? style.getRoundedInnerBorderFor(rect) : style.getRoundedBorderFor(rect);
-
-    if (border.isRounded())
-        context.clipRoundedRect(FloatRoundedRect(border));
-    else
-        context.clip(border.rect());
-
-    if (isChecked(box)) {
-        ASSERT(style.visitedDependentColor(CSSPropertyBorderTopColor).alphaByte() % 255 == 0);
-        ASSERT(style.visitedDependentColor(CSSPropertyBorderRightColor).alphaByte() % 255 == 0);
-        ASSERT(style.visitedDependentColor(CSSPropertyBorderBottomColor).alphaByte() % 255 == 0);
-        ASSERT(style.visitedDependentColor(CSSPropertyBorderLeftColor).alphaByte() % 255 == 0);
-    }
-
-    return border.rect();
 }
 
 void RenderThemeIOS::adjustStyleForAlternateFormControlDesignTransition(RenderStyle& style, const Element* element) const
@@ -314,9 +292,6 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto& style = box.style();
-    auto roundedRect = style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor());
-
     auto shouldPaintFillAndInnerShadow = false;
     auto element = box.element();
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element)) {
@@ -327,13 +302,12 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
 
     auto useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
     if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
-        Path path;
-        path.addRoundedRect(roundedRect);
-
+        auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(rect));
+        auto path = borderShape.pathForOuterShape(box.document().deviceScaleFactor());
         context.setFillColor(Color::black.colorWithAlphaByte(10));
         context.drawPath(path);
         context.clipPath(path);
-        paintTextFieldInnerShadow(paintInfo, roundedRect);
+        paintTextFieldInnerShadow(paintInfo,  borderShape.deprecatedPixelSnappedRoundedRect(box.document().deviceScaleFactor()));
     }
 }
 

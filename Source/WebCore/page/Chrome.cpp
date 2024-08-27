@@ -345,11 +345,6 @@ bool Chrome::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const 
     return ok;
 }
 
-void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
-{
-    m_client->setStatusbarText(frame.displayStringModifiedByEncoding(status));
-}
-
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {

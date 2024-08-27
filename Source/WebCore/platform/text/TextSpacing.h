@@ -24,10 +24,40 @@
  */
 
 #pragma once
+#include <unicode/umachine.h>
 #include <wtf/Forward.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+class Font;
+
+namespace TextSpacing {
+
+enum class CharacterClass : uint8_t {
+    Undefined = 0,
+    Ideograph = 1 << 0,
+    NonIdeographLetter = 1 << 1,
+    NonIdeographNumeral = 1 << 2,
+    FullWidthOpeningPunctuation = 1 << 3,
+    FullWidthClosingPunctuation = 1 << 4,
+    FullWidthMiddleDotPunctuation = 1 << 5,
+    FullWidthColonPunctuation = 1 << 6,
+    FullWidthDotPunctuation = 1 << 7
+};
+
+// Classes are defined at https://www.w3.org/TR/css-text-4/#text-spacing-classes
+CharacterClass characterClass(char32_t character);
+struct SpacingState {
+    bool operator==(const SpacingState&) const = default;
+    CharacterClass lastCharacterClassFromPreviousRun { CharacterClass::Undefined };
+};
+
+bool isIdeograph(char32_t character);
+
+} // namespace TextSpacing
 
 struct TextSpacingTrim {
     enum class TrimType : bool {
@@ -72,10 +102,13 @@ public:
     bool isAuto() const { return m_options.contains(Type::Auto); }
     bool isNoAutospace() const { return m_options.isEmpty(); }
     bool isNormal() const { return m_options.contains(Type::Normal); }
-    bool hasIdeographAlpha() const { return m_options.contains(Type::IdeographAlpha); }
-    bool hasIdeographNumeric() const { return m_options.contains(Type::IdeographNumeric); }
+    bool hasIdeographAlpha() const { return m_options.containsAny({ Type::IdeographAlpha, Type::Normal }); }
+    bool hasIdeographNumeric() const { return m_options.containsAny({ Type::IdeographNumeric, Type::Normal }); }
     Options options() { return m_options; }
     friend bool operator==(const TextAutospace&, const TextAutospace&) = default;
+    bool shouldApplySpacing(TextSpacing::CharacterClass firstCharacterClass, TextSpacing::CharacterClass secondCharacterClass) const;
+    static float textAutospaceSize(const Font&);
+
 private:
     Options m_options { };
 };
@@ -95,4 +128,5 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& val
         ts << "ideograph-numeric";
     return ts;
 }
+
 } // namespace WebCore

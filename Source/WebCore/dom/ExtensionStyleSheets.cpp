@@ -80,13 +80,13 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
     
-    Page* owningPage = m_document->page();
+    RefPtr owningPage = m_document->page();
     if (!owningPage)
-        return 0;
+        return nullptr;
     
     String userSheetText = owningPage->userStyleSheet();
     if (userSheetText.isEmpty())
-        return 0;
+        return nullptr;
     
     m_pageUserSheet = createExtensionsStyleSheet(protectedDocument().get(), m_document->settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
 

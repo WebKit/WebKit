@@ -132,6 +132,54 @@ Internal Properties:
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
+-- Running test case: Runtime.getDisplayableProperties.ArrowFunction
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "length"     =>  3 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  undefined (undefined)  []
+
+-- Running test case: Runtime.getDisplayableProperties.ArrowFunctionNoParameters
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "length"     =>  0 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  undefined (undefined)  []
+
+-- Running test case: Runtime.getDisplayableProperties.BoundArrowFunction
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "length"     =>  3 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  "Object" (object)  []
+
+-- Running test case: Runtime.getDisplayableProperties.BoundArrowFunctionNoParameters
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "length"     =>  0 (number)  [configurable | isOwn]
+    "name"       =>  "" (string)  [configurable | isOwn]
+    "arguments"  =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "caller"     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+Internal Properties:
+    "boundThis"  =>  "Object" (object)  []
+
 -- Running test case: Runtime.getDisplayableProperties.Private.Instance.Parent
 Evaluating expression...
 Getting displayable properties...

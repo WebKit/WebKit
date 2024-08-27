@@ -24,7 +24,7 @@
 #include "config.h"
 #include "SVGLengthContext.h"
 
-#include "CSSHelper.h"
+#include "CSSUnits.h"
 #include "FontMetrics.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LengthFunctions.h"
@@ -144,15 +144,15 @@ ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLen
     case SVGLengthType::Exs:
         return convertValueFromEXSToUserUnits(value);
     case SVGLengthType::Centimeters:
-        return value * cssPixelsPerInch / 2.54f;
+        return value * CSS::pixelsPerCm;
     case SVGLengthType::Millimeters:
-        return value * cssPixelsPerInch / 25.4f;
+        return value * CSS::pixelsPerMm;
     case SVGLengthType::Inches:
-        return value * cssPixelsPerInch;
+        return value * CSS::pixelsPerInch;
     case SVGLengthType::Points:
-        return value * cssPixelsPerInch / 72;
+        return value * CSS::pixelsPerPt;
     case SVGLengthType::Picas:
-        return value * cssPixelsPerInch / 6;
+        return value * CSS::pixelsPerPc;
     }
 
     ASSERT_NOT_REACHED();
@@ -175,15 +175,15 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnits(float value, SVGL
     case SVGLengthType::Pixels:
         return value;
     case SVGLengthType::Centimeters:
-        return value * 2.54f / cssPixelsPerInch;
+        return value / CSS::pixelsPerCm;
     case SVGLengthType::Millimeters:
-        return value * 25.4f / cssPixelsPerInch;
+        return value / CSS::pixelsPerMm;
     case SVGLengthType::Inches:
-        return value / cssPixelsPerInch;
+        return value / CSS::pixelsPerInch;
     case SVGLengthType::Points:
-        return value * 72 / cssPixelsPerInch;
+        return value / CSS::pixelsPerPt;
     case SVGLengthType::Picas:
-        return value * 6 / cssPixelsPerInch;
+        return value / CSS::pixelsPerPc;
     }
 
     ASSERT_NOT_REACHED();

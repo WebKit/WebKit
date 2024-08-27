@@ -24,7 +24,6 @@
                 if (window.testRunner && window.internals) {
                     testRunner.waitUntilDone();
                     setEnableFeature(true, function() {
-                        testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
                         document.location.hash = "step1";
                         runTest();
                     });
@@ -39,6 +38,7 @@
                 break;
             case "#step2":
                 await testRunner.statisticsNotifyObserver();
+                finishTest();
                 break;
         }
     }

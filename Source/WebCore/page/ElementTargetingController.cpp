@@ -67,9 +67,12 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ElementTargetingController);
 
 static constexpr auto maximumNumberOfClasses = 5;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
@@ -119,7 +122,7 @@ static float maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
 
 class ClearVisibilityAdjustmentForScope {
     WTF_MAKE_NONCOPYABLE(ClearVisibilityAdjustmentForScope);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ClearVisibilityAdjustmentForScope);
 public:
     ClearVisibilityAdjustmentForScope(Element& element)
         : m_element(element)
@@ -1397,8 +1400,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
 
     if (RefPtr loader = document.loader(); loader && !m_didCollectInitialAdjustments) {
         m_initialVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
-        m_visibilityAdjustmentSelectors.appendVector(m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
-            return { { }, selectors };
+        m_visibilityAdjustmentSelectors.appendVector(m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<Markable<ElementIdentifier>, TargetedElementSelectors> {
+            return { std::nullopt, selectors };
         }));
         m_startTimeForSelectorBasedVisibilityAdjustment = ApproximateTime::now();
         m_didCollectInitialAdjustments = true;
@@ -1669,8 +1672,8 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
             auto foundElement = findElementFromSelectors(selectors).element;
             return foundElement && elementsToReset.contains(*foundElement);
         });
-        m_visibilityAdjustmentSelectors = m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<ElementIdentifier, TargetedElementSelectors> {
-            return { { }, selectors };
+        m_visibilityAdjustmentSelectors = m_initialVisibilityAdjustmentSelectors.map([](auto& selectors) -> std::pair<Markable<ElementIdentifier>, TargetedElementSelectors> {
+            return { std::nullopt, selectors };
         });
     } else {
         // There are no initial adjustments after resetting.
@@ -1874,6 +1877,9 @@ RefPtr<Image> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(E
 
     CheckedPtr renderer = element->renderer();
     if (!renderer)
+        return { };
+
+    if (!renderer->isRenderReplaced() && !renderer->firstChild() && !renderer->style().hasBackgroundImage())
         return { };
 
     auto backgroundColor = frameView->baseBackgroundColor();

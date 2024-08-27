@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FrameLoaderClient.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ enum class RenderAsTextFlag : uint16_t;
 struct MessageWithMessagePorts;
 
 class RemoteFrameClient : public FrameLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteFrameClient);
 public:
     virtual void frameDetached() = 0;
     virtual void sizeDidChange(IntSize) = 0;

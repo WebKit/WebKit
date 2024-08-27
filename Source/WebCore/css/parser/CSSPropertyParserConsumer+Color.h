@@ -25,7 +25,7 @@
 #pragma once
 
 #include "CSSParserFastPaths.h"
-#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedColorResolutionState.h"
 #include "StyleColor.h"
 #include <optional>
 #include <wtf/OptionSet.h>
@@ -55,10 +55,10 @@ std::optional<CSSUnresolvedColor> consumeUnresolvedColor(CSSParserTokenRange&, c
 RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions& = { });
 
 // MARK: <color> consuming (raw)
-Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&, const CSSUnresolvedColorResolutionContext& = { });
+Color consumeColorRaw(CSSParserTokenRange&, const CSSParserContext&, const CSSColorParsingOptions&, CSSUnresolvedColorResolutionState&);
 
 // MARK: <color> parsing (raw)
-Color parseColorRawSlow(const String&, const CSSParserContext&, const CSSColorParsingOptions&, const CSSUnresolvedColorResolutionContext& = { });
+Color parseColorRawSlow(const String&, const CSSParserContext&, const CSSColorParsingOptions&, CSSUnresolvedColorResolutionState&);
 
 template<typename F> Color parseColorRaw(const String& string, const CSSParserContext& context, F&& lazySlowPathOptionsFunctor)
 {
@@ -68,14 +68,14 @@ template<typename F> Color parseColorRaw(const String& string, const CSSParserCo
 
     // To avoid doing anything unnecessary before the fast path can run, callers bundle up
     // a functor to generate the slow path parameters.
-    auto [options, eagerResolutionContext, eagerResolutionDelegate] = lazySlowPathOptionsFunctor();
+    auto [options, eagerResolutionState, eagerResolutionDelegate] = lazySlowPathOptionsFunctor();
 
     // If a delegate is provided, hook it up to the context here. By having it live on the stack,
     // we avoid allocating it.
     if (eagerResolutionDelegate)
-        eagerResolutionContext.delegate = &eagerResolutionDelegate.value();
+        eagerResolutionState.delegate = &eagerResolutionDelegate.value();
 
-    return parseColorRawSlow(string, context, options, eagerResolutionContext);
+    return parseColorRawSlow(string, context, options, eagerResolutionState);
 }
 
 } // namespace CSSPropertyParserHelpers

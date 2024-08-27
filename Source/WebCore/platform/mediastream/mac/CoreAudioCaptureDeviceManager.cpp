@@ -49,6 +49,8 @@ CoreAudioCaptureDeviceManager& CoreAudioCaptureDeviceManager::singleton()
     return manager;
 }
 
+CoreAudioCaptureDeviceManager::~CoreAudioCaptureDeviceManager() = default;
+
 const Vector<CaptureDevice>& CoreAudioCaptureDeviceManager::captureDevices()
 {
     coreAudioCaptureDevices();

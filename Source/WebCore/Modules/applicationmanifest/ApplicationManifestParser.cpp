@@ -102,6 +102,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.rawJSON = text;
     parsedManifest.manifestURL = manifestURL;
     parsedManifest.startURL = parseStartURL(manifest, documentURL);
+    parsedManifest.dir = parseDir(manifest);
     parsedManifest.display = parseDisplay(manifest);
     parsedManifest.name = parseName(manifest);
     parsedManifest.description = parseDescription(manifest);
@@ -173,6 +174,34 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
     return startURL;
 }
 
+ApplicationManifest::Direction ApplicationManifestParser::parseDir(const JSON::Object& manifest)
+{
+    using enum ApplicationManifest::Direction;
+
+    auto value = manifest.getValue("dir"_s);
+    if (!value)
+        return Auto;
+
+    auto stringValue = value->asString();
+    if (!stringValue) {
+        logManifestPropertyNotAString("dir"_s);
+        return Auto;
+    }
+
+    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Direction> directionMappings[] = {
+        { "auto", Auto },
+        { "ltr", LTR },
+        { "rtl", RTL },
+    };
+    static constexpr SortedArrayMap directions { directionMappings };
+
+    if (auto* dirValue = directions.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
+        return *dirValue;
+
+    logDeveloperWarning(makeString('"', stringValue, "\" is not a valid dir."_s));
+    return Auto;
+}
+
 ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON::Object& manifest)
 {
     auto value = manifest.getValue("display"_s);
@@ -193,7 +222,7 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
     };
     static constexpr SortedArrayMap displayValues { displayValueMappings };
 
-    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *displayValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
@@ -225,7 +254,7 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
 
     static SortedArrayMap orientationValues { orientationValueMappings };
 
-    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>)))
+    if (auto* orientationValue = orientationValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<UChar>)))
         return *orientationValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
@@ -327,7 +356,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
                 purposes.add(ApplicationManifest::Icon::Purpose::Any);
                 currentIcon.purposes = purposes;
             } else {
-                for (auto keyword : StringView(purposeStringValue).trim(isUnicodeCompatibleASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
+                for (auto keyword : StringView(purposeStringValue).trim(isASCIIWhitespace<UChar>).splitAllowingEmptyEntries(' ')) {
                     if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
                     else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))

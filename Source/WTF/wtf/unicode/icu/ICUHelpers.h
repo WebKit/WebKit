@@ -96,13 +96,13 @@ template<typename FunctionType, typename ...ArgumentTypes> UErrorCode callBuffer
     auto& buffer = CallBufferProducingFunction::findVector(std::forward<ArgumentTypes>(arguments)...);
     buffer.grow(buffer.capacity());
     auto status = U_ZERO_ERROR;
-    auto resultLength = apply(function, CallBufferProducingFunction::argumentTuple(std::forward<ArgumentTypes>(arguments)..., &status));
+    auto resultLength = std::apply(function, CallBufferProducingFunction::argumentTuple(std::forward<ArgumentTypes>(arguments)..., &status));
     if (U_SUCCESS(status))
         buffer.shrink(resultLength);
     else if (needsToGrowToProduceBuffer(status)) {
         status = U_ZERO_ERROR;
         buffer.grow(resultLength);
-        apply(function, CallBufferProducingFunction::argumentTuple(std::forward<ArgumentTypes>(arguments)..., &status));
+        std::apply(function, CallBufferProducingFunction::argumentTuple(std::forward<ArgumentTypes>(arguments)..., &status));
         ASSERT(U_SUCCESS(status));
     }
     return status;

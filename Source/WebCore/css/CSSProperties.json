@@ -738,7 +738,8 @@
                 "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
-                "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
+                "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-fonts-4",
@@ -8392,23 +8393,21 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextUnderlineOffset",
-                "parser-grammar": "auto | <length>",
-                "parser-grammar-comment": "The current specification has a <length-percentage>, not just <length>"
+                "parser-grammar": "auto | <length-percentage>"
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-4/#underline-offset"
+                "url": "https://drafts.csswg.org/css-text-decor-4/#underline-offset"
             }
         },
         "text-decoration-thickness": {
             "codegen-properties": {
                 "converter": "TextDecorationThickness",
-                "parser-grammar": "auto | from-font | <length-percentage>",
-                "parser-grammar-comment": "The current specification has a <length-percentage>, not just <length>"
+                "parser-grammar": "auto | from-font | <length-percentage>"
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-4/#text-decoration-thickness"
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-thickness-property"
             }
         },
         "-webkit-text-decorations-in-effect": {
@@ -9674,7 +9673,8 @@
                     "normal"
                 ],
                 "codegen-properties": {
-                    "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)"
+                    "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
+                    "parser-exported": true
                 },
                 "specification": {
                     "category": "css-fonts-4",
@@ -9937,7 +9937,7 @@
         "@font-palette-values": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-function": "consumeFamilyNameList",
+                    "parser-function": "consumeFontPaletteValuesFontFamily",
                     "parser-grammar-unused": "<family-name>#",
                     "parser-grammar-unused-reason": "Needs support for special 'family-name' processing."
                 },
@@ -10353,6 +10353,7 @@
         },
         "<font-stretch-absolute>": {
             "grammar": "normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded",
+            "exported": true,
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#stretchmappings"

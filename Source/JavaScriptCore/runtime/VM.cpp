@@ -71,6 +71,7 @@
 #include "JSBigInt.h"
 #include "JSGlobalObject.h"
 #include "JSImmutableButterflyInlines.h"
+#include "JSIterator.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMicrotask.h"

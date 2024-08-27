@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
@@ -37,6 +38,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewportConfiguration);
 
 static inline bool viewportArgumentValueIsValid(float value)
 {

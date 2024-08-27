@@ -153,7 +153,7 @@ void Frame::detachFromPage()
     if (isRootFrame()) {
         if (m_page) {
             m_page->removeRootFrame(downcast<LocalFrame>(*this));
-            if (auto* scrollingCoordinator = m_page->scrollingCoordinator())
+            if (RefPtr scrollingCoordinator = m_page->scrollingCoordinator())
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }
     }

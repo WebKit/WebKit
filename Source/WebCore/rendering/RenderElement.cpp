@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CachedResourceLoader.h"
 #include "ContentData.h"
 #include "ContentVisibilityDocumentState.h"
@@ -856,7 +857,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*this); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
                 inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, newStyle);
             if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-                lineLayout->styleWillChange(*this, newStyle);
+                lineLayout->styleWillChange(*this, newStyle, diff);
         }
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
@@ -1306,9 +1307,9 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
             // If the border radius changed, repaints at style change time will take care of that.
             // This code is attempting to detect whether border-radius constraining based on box size
             // affects the radii, using the outlineBoundsRect as a proxy for the border box.
-            auto oldRadii = style().getRoundedBorderFor(oldOutlineBounds).radii();
-            auto newRadii = style().getRoundedBorderFor(newOutlineBounds).radii();
-            if (oldRadii != newRadii)
+            auto oldShapeApproximation = BorderShape::shapeForBorderRect(style(), oldOutlineBounds);
+            auto newShapeApproximation = BorderShape::shapeForBorderRect(style(), newOutlineBounds);
+            if (oldShapeApproximation.radii() != newShapeApproximation.radii())
                 return true;
         }
 

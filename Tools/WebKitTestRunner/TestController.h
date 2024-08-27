@@ -252,7 +252,6 @@ public:
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsProcessStatisticsAndDataRecords(CompletionHandler<void(WKTypeRef)>&&);
     void statisticsUpdateCookieBlocking(CompletionHandler<void(WKTypeRef)>&&);
-    void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
@@ -344,6 +343,7 @@ public:
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
+    void setCaptureState(bool cameraState, bool microphoneState, bool displayState);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);

@@ -6,6 +6,23 @@ TestPage.registerInitializer(() => {
         return str.slice(0, index) + caret + str.slice(index);
     }
 
+    function isSourceAvailable(sourceCode) {
+        if (sourceCode === linesSourceCode)
+            return true;
+        if (WI.networkManager.mainFrame.mainResource.scripts.includes(sourceCode))
+            return true;
+        if (sourceCode instanceof WI.SourceMapResource)
+            return true;
+        return false;
+    }
+
+    function getLineContent(sourceCode, lineNumber) {
+        if (sourceCode instanceof WI.SourceMapResource)
+            return sourceCode.sourceMap.sourceContent(sourceCode.url).split("\n")[lineNumber];
+
+        return lines[lineNumber];
+    }
+
     window.findScript = function(regex) {
         for (let resource of WI.networkManager.mainFrame.resourceCollection) {
             if (regex.test(resource.url))
@@ -142,22 +159,24 @@ TestPage.registerInitializer(() => {
     }
 
     window.logLinesWithContext = function(location, context) {
-        if (location.sourceCode !== linesSourceCode && !WI.networkManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
+        let sourceCode = location.displaySourceCode;
+
+        if (!isSourceAvailable(sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }
 
-        let startLine = location.lineNumber - context;
-        let endLine = location.lineNumber + context;
+        let startLine = location.displayLineNumber - context;
+        let endLine = location.displayLineNumber + context;
         for (let lineNumber = startLine; lineNumber <= endLine; ++lineNumber) {
-            let lineContent = lines[lineNumber];
+            let lineContent = getLineContent(sourceCode, lineNumber);
             if (typeof lineContent !== "string")
                 continue;
 
-            let active = lineNumber === location.lineNumber;
+            let active = lineNumber === location.displayLineNumber;
             let prefix = active ? " -> " : "    ";
             let number = lineNumber.toString().padStart(3);
-            lineContent = active ? insertCaretIntoStringAtIndex(lineContent, location.columnNumber) : lineContent;
+            lineContent = active ? insertCaretIntoStringAtIndex(lineContent, location.displayColumnNumber) : lineContent;
             InspectorTest.log(`${prefix}${number}    ${lineContent}`);
         }
     }
@@ -166,8 +185,8 @@ TestPage.registerInitializer(() => {
         let callFrame = WI.debuggerManager.activeCallFrame;
         let name = callFrame.functionName || "<anonymous>";
         let location = callFrame.sourceCodeLocation;
-        let line = location.lineNumber + 1;
-        let column = location.columnNumber + 1;
+        let line = location.displayLineNumber + 1;
+        let column = location.displayColumnNumber + 1;
         InspectorTest.log(`PAUSE AT ${name}:${line}:${column}`);
         logLinesWithContext(location, 3);
         InspectorTest.log("");

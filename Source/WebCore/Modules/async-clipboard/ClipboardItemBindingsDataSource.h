@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
 #include <variant>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class PasteboardCustomData;
 class ScriptExecutionContext;
 
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ClipboardItemBindingsDataSource);
 public:
     ClipboardItemBindingsDataSource(ClipboardItem&, Vector<KeyValuePair<String, Ref<DOMPromise>>>&&);
     ~ClipboardItemBindingsDataSource();

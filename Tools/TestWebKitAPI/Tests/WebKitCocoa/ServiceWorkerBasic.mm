@@ -2139,7 +2139,9 @@ TEST(ServiceWorkers, ThrottleCrash)
 #endif
     [webView2Configuration setProcessPool:processPool];
     [[webView2Configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:navigationDelegate.get()];
@@ -2958,7 +2960,9 @@ TEST(ServiceWorker, ExtensionServiceWorker)
     auto otherViewPID = [otherWebView _webProcessIdentifier];
 
     webViewConfiguration.websiteDataStore = [otherViewConfiguration websiteDataStore];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webViewConfiguration._relatedWebView = otherWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
 
@@ -3284,7 +3288,9 @@ TEST(ServiceWorker, RemovalOfSameRegistrableDomainButDifferentOrigin)
     [mainWebView _setThrottleStateForTesting:1];
 
     // Load other page with different origin but same registrable domain in the same process as main page.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     mainViewConfiguration.get()._relatedWebView = mainWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto otherWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:mainViewConfiguration.get()]);
     [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://b.amazon.com:%d/other.html", server.port()]]]];
     EXPECT_WK_STREQ([otherWebView _test_waitForAlert], "loaded");

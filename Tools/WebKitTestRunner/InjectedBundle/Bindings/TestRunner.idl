@@ -313,8 +313,6 @@ interface TestRunner {
     boolean doesStatisticsDomainIDExistInDatabase(unsigned long domainID);
     undefined setStatisticsEnabled(boolean value);
     boolean isStatisticsEphemeral();
-    undefined installStatisticsDidModifyDataRecordsCallback(object callback);
-    undefined installStatisticsDidScanDataRecordsCallback(object callback);
     undefined setStatisticsDebugMode(boolean value, object completionHandler);
     undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
     Promise<undefined> setStatisticsLastSeen(DOMString hostName, double seconds);
@@ -413,6 +411,8 @@ interface TestRunner {
     boolean isMockRealtimeMediaSourceCenterEnabled();
     undefined setMockCaptureDevicesInterrupted(boolean isCameraInterrupted, boolean isMicrophoneInterrupted);
     undefined triggerMockCaptureConfigurationChange(boolean forMicrophone, boolean forDisplay);
+
+    undefined setCaptureState(boolean cameraState, boolean microphoneState, boolean displayState);
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();

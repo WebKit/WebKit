@@ -39,15 +39,17 @@
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "RenderDescendantIterator.h"
 #include "RenderStyleInlines.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentChangeObserver);
 
 #if ENABLE(FULLSCREEN_API)
 static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
@@ -150,9 +152,6 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
 
 bool ContentChangeObserver::isConsideredActionableContent(const Element& candidateElement, ElementHadRenderer hadRenderer) const
 {
-    if (m_document.quirks().shouldTooltipPreventFromProceedingWithClick(candidateElement))
-        return true;
-
     auto isConsideredClickable = [&] {
         auto& element = const_cast<Element&>(candidateElement);
         if (element.isInUserAgentShadowTree())

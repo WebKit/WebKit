@@ -11,9 +11,9 @@ This test ensures that a link is activated with a simulated accessibility press 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-click event [object MouseEvent] for element A with id multiline-link
+click event [object PointerEvent] for element A with id multiline-link
 PASS clicked became true
-click event [object MouseEvent] for element A with id singleline-link
+click event [object PointerEvent] for element A with id singleline-link
 PASS clicked became true
 PASS successfullyParsed is true
 

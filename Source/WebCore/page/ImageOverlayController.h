@@ -29,6 +29,7 @@
 #include "LayoutRect.h"
 #include "PageOverlay.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +59,7 @@ class ImageOverlayController final : private PageOverlayClient
     , DataDetectorHighlightClient
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageOverlayController);
 public:
     explicit ImageOverlayController(Page&);
 

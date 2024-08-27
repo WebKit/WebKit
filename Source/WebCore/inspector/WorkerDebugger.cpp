@@ -39,10 +39,13 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VM.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerDebugger);
 
 WorkerDebugger::WorkerDebugger(WorkerOrWorkletGlobalScope& context)
     : Debugger(context.script()->vm())

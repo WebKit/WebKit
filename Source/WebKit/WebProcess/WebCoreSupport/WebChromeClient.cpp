@@ -612,15 +612,6 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     return !result.isNull();
 }
 
-void WebChromeClient::setStatusbarText(const String& statusbarText)
-{
-    // Notify the bundle client.
-    auto page = protectedPage();
-    page->injectedBundleUIClient().willSetStatusbarText(page.ptr(), statusbarText);
-
-    page->send(Messages::WebPageProxy::SetStatusText(statusbarText));
-}
-
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     return protectedPage()->keyboardUIMode();
@@ -1005,6 +996,9 @@ std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(Seria
 #if ENABLE(WEBGL)
 RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
+#if PLATFORM(GTK)
+    WebProcess::singleton().initializePlatformDisplayIfNeeded();
+#endif
 #if ENABLE(GPU_PROCESS)
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
         return RemoteGraphicsContextGLProxy::create(attributes, protectedPage());
@@ -1881,10 +1875,6 @@ void WebChromeClient::proofreadingSessionUpdateStateForSuggestionWithID(WritingT
 {
     protectedPage()->proofreadingSessionUpdateStateForSuggestionWithID(state, replacementID);
 }
-
-#endif
-
-#if ENABLE(WRITING_TOOLS_UI)
 
 void WebChromeClient::removeTextAnimationForAnimationID(const WTF::UUID& animationID)
 {

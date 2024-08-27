@@ -397,13 +397,6 @@ static inline DisplayType blendFunc(DisplayType from, DisplayType to, const CSSP
     return from == DisplayType::None ? to : from;
 }
 
-static inline TextUnderlineOffset blendFunc(const TextUnderlineOffset& from, const TextUnderlineOffset& to, const CSSPropertyBlendingContext& context)
-{
-    if (from.isLength() && to.isLength())
-        return TextUnderlineOffset::createWithLength(blendFunc(from.lengthValue(), to.lengthValue(), context));
-    return TextUnderlineOffset::createWithAuto();
-}
-
 static inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::NonNegative)
 {
     LengthBox result(blendFunc(from.top(), to.top(), context, valueRange),
@@ -2816,6 +2809,47 @@ private:
 };
 
 
+class PropertyWrapperTextUnderlineOffset final : public PropertyWrapperGetter<TextUnderlineOffset> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+public:
+    PropertyWrapperTextUnderlineOffset()
+        : PropertyWrapperGetter(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        auto fromTextUnderlineOffset = from.textUnderlineOffset();
+        auto toTextUnderlineOffset = to.textUnderlineOffset();
+        if (fromTextUnderlineOffset.isAuto() || toTextUnderlineOffset.isAuto())
+            return false;
+
+        auto fromValue = fromTextUnderlineOffset.resolve(from.computedFontSize());
+        auto toValue = toTextUnderlineOffset.resolve(to.computedFontSize());
+        return fromValue != toValue;
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        auto blendedTextUnderlineOffset = [&]() -> TextUnderlineOffset {
+            if (context.isDiscrete)
+                return (!context.progress ? from : to).textUnderlineOffset();
+
+            auto fromTextUnderlineOffset = from.textUnderlineOffset();
+            auto toTextUnderlineOffset = to.textUnderlineOffset();
+
+            auto fromValue = fromTextUnderlineOffset.resolve(from.computedFontSize());
+            auto toValue = toTextUnderlineOffset.resolve(to.computedFontSize());
+
+            auto blendedValue = blendFunc(fromValue, toValue, context);
+            return TextUnderlineOffset::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+        };
+
+        destination.setTextUnderlineOffset(blendedTextUnderlineOffset());
+    }
+};
+
 
 class PropertyWrapperTextDecorationThickness final : public PropertyWrapperGetter<TextDecorationThickness> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
@@ -3895,7 +3929,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
         new PropertyWrapperFontStyle,
         new PropertyWrapperTextDecorationThickness,
-        new PropertyWrapper<TextUnderlineOffset>(CSSPropertyTextUnderlineOffset, &RenderStyle::textUnderlineOffset, &RenderStyle::setTextUnderlineOffset),
+        new PropertyWrapperTextUnderlineOffset,
         new PropertyWrapperVisitedAffectedStyleColor(CSSPropertyTextDecorationColor, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::visitedLinkTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor),
 
         new LengthPropertyWrapper(CSSPropertyFlexBasis, &RenderStyle::flexBasis, &RenderStyle::setFlexBasis, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),

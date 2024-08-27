@@ -1585,6 +1585,60 @@ TEST(WritingTools, CompositionWithMultipleChunks)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, CompositionShowOriginalHasNoTransparentMarkers)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><div id='first'><b>Dream interpretation is a skill that anyone can learn</b>. It’s like a treasure hunt into our subconscious minds.</div></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    RetainPtr originalText = @"Dream interpretation is a skill that anyone can learn. It’s like a treasure hunt into our subconscious minds.";
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText.get(), contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+        EXPECT_WK_STREQ(originalText.get(), [webView contentsAsStringWithoutNBSP]);
+
+#if PLATFORM(MAC)
+        RetainPtr fontManager = [NSFontManager sharedFontManager];
+        RetainPtr boldFont = [fontManager fontWithFamily:@"Helvetica" traits:NSBoldFontMask weight:0 size:14];
+#else
+        RetainPtr boldFont = [UIFont boldSystemFontOfSize:14.0];
+#endif
+
+        RetainPtr boldText = adoptNS([[NSAttributedString alloc] initWithString:@"Dream interpretation is a skill that anyone can acquire" attributes: @{
+            NSFontAttributeName: boldFont.get()
+        }]);
+
+        RetainPtr normalText = adoptNS([[NSAttributedString alloc] initWithString:@". It’s akin to embarking on a treasure hunt into our subconscious minds."]);
+
+        RetainPtr attributedText = adoptNS([[NSMutableAttributedString alloc] init]);
+        [attributedText appendAttributedString:boldText.get()];
+        [attributedText appendAttributedString:normalText.get()];
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 109) inContext:contexts.firstObject finished:YES];
+
+        TestWebKitAPI::Util::runFor(1.0_s);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowOriginal];
+
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+        NSString *hasAnyTransparentMarker = [webView stringByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(0, 0);"];
+        EXPECT_WK_STREQ("0", hasAnyTransparentMarker);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, CompositionWithTrailingNewlines)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
@@ -2050,8 +2104,6 @@ TEST(WritingTools, EphemeralSession)
     TestWebKitAPI::Util::run(&finished);
 }
 
-#if ENABLE(WRITING_TOOLS_UI)
-
 TEST(WritingTools, TransparencyMarkersForInlineEditing)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
@@ -2106,11 +2158,11 @@ TEST(WritingTools, TransparencyMarkersUsingWKWebViewSPI)
 
     EXPECT_EQ(0U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 
-    RetainPtr identifier = [webView _enableTextIndicatorStylingAfterElementWithID:@"title"];
+    RetainPtr identifier = [webView _enableSourceTextAnimationAfterElementWithID:@"title"];
     waitForValue(1U);
     EXPECT_EQ(1U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 
-    [webView _disableTextIndicatorStylingWithUUID:identifier.get()];
+    [webView _disableTextAnimationWithUUID:identifier.get()];
     waitForValue(0U);
     EXPECT_EQ(0U, [webView transparentContentMarkerCount:@"document.getElementById('content').childNodes[0]"]);
 }
@@ -2156,8 +2208,6 @@ TEST(WritingTools, NoCrashWhenWebProcessTerminates)
     [webView _killWebContentProcess];
     TestWebKitAPI::Util::run(&webProcessTerminated);
 }
-
-#endif
 
 #if PLATFORM(MAC)
 

@@ -98,7 +98,9 @@ RangeResponseGenerator::~RangeResponseGenerator() = default;
 HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
     assertIsCurrent(m_targetDispatcher.get());
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_map;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, std::optional<size_t> totalContentLength)

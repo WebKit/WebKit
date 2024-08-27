@@ -49,6 +49,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
+#include "LayoutIntegrationUtils.h"
 #include "LayoutState.h"
 #include "Logging.h"
 #include "RangeBasedLineBuilder.h"
@@ -88,16 +89,17 @@ static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
     return inlineTextItem && !inlineTextItem->length();
 }
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, BlockLayoutState& parentBlockLayoutState)
     : m_rootBlockContainer(rootBlockContainer)
-    , m_globalLayoutState(layoutState)
-    , m_floatingContext(rootBlockContainer, layoutState, parentBlockLayoutState.placedFloats())
+    , m_globalLayoutState(globalLayoutState)
+    , m_floatingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState.placedFloats())
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
-    , m_inlineContentCache(layoutState.inlineContentCache(rootBlockContainer))
+    , m_integrationUtils(globalLayoutState)
+    , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
     , m_inlineLayoutState(parentBlockLayoutState)
 {
-    initializeInlineLayoutState(layoutState);
+    initializeInlineLayoutState(globalLayoutState);
 }
 
 InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, InlineDamage* lineDamage)
@@ -333,7 +335,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
         if (inlineItem.isFloat()) {
             auto& floatBox = inlineItem.layoutBox();
 
-            layoutWithFormattingContextForBox(downcast<ElementBox>(floatBox));
+            integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(floatBox));
 
             auto& floatBoxGeometry = geometryForBox(floatBox);
             auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
@@ -409,7 +411,7 @@ void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRan
     auto& inlineItemList = inlineContentCache().inlineItems().content();
     for (size_t index = needsDisplayContentRange.startIndex(); index < needsDisplayContentRange.endIndex(); ++index) {
         auto& inlineItem = inlineItemList[index];
-        auto hasBoxGeometry = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
+        auto hasBoxGeometry = inlineItem.isAtomicInlineBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
         if (!hasBoxGeometry)
             continue;
         auto& boxGeometry = geometryForBox(inlineItem.layoutBox());
@@ -475,15 +477,15 @@ void InlineFormattingContext::createDisplayContentForEmptyInlineContent(const Co
     createDisplayContentForInlineContent(lineBox, emptyLineBreakingResult, constraints, layoutResult.displayContent);
 }
 
-void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& layoutState)
+void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& globalLayoutState)
 {
-    auto& inlineLayoutState = this->layoutState();
+    auto& inlineLayoutState = layoutState();
 
     if (auto limitLinesValue = root().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
         inlineLayoutState.setHyphenationLimitLines(limitLinesValue);
     // FIXME: Remove when IFC takes care of running layout on inline-blocks.
     inlineLayoutState.setShouldNotSynthesizeInlineBlockBaseline();
-    if (layoutState.inStandardsMode())
+    if (globalLayoutState.inStandardsMode())
         inlineLayoutState.setInStandardsMode();
 }
 
@@ -513,9 +515,9 @@ const BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox,
     return m_globalLayoutState.geometryForBox(layoutBox);
 }
 
-BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason)
+BoxGeometry& InlineFormattingContext::geometryForBox(const Box& layoutBox)
 {
-    ASSERT_UNUSED(escapeReason, isOkToAccessBoxGeometry(layoutBox, root(), escapeReason));
+    ASSERT(isOkToAccessBoxGeometry(layoutBox, root(), { }));
     return m_globalLayoutState.ensureGeometryForBox(layoutBox);
 }
 
@@ -546,12 +548,6 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
         lineDamage->setInlineItemListClean();
     inlineContentCache.clearMaximumIntrinsicWidthLineContent();
 }
-
-void InlineFormattingContext::layoutWithFormattingContextForBox(const ElementBox& box)
-{
-    m_globalLayoutState.layoutWithFormattingContextForBox(box);
-}
-
 
 }
 }

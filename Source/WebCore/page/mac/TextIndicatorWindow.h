@@ -30,6 +30,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSView;
 OBJC_CLASS WebTextIndicatorLayer;
@@ -39,7 +40,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
 
 class TextIndicatorWindow {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextIndicatorWindow);
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:

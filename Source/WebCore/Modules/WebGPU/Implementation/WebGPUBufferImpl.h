@@ -31,13 +31,14 @@
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class BufferImpl final : public Buffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BufferImpl);
 public:
     static Ref<BufferImpl> create(WebGPUPtr<WGPUBuffer>&& buffer, ConvertToBackingContext& convertToBackingContext)
     {

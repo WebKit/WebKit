@@ -34,12 +34,6 @@
 
 typedef void *EGLImageKHR;
 
-#if USE(NICOSIA)
-namespace Nicosia {
-class GCGLANGLELayer;
-}
-#endif
-
 namespace WebCore {
 
 class GLFence;
@@ -104,15 +98,13 @@ public:
 protected:
     explicit GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
 
-private:
     void allocateDrawBufferObject();
 
     EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
-    std::unique_ptr<GLFence> m_frameFence;
 
-#if USE(NICOSIA)
-    friend class Nicosia::GCGLANGLELayer;
+#if USE(ANGLE_GBM)
+    std::unique_ptr<GLFence> m_frameFence;
 #endif
 };
 

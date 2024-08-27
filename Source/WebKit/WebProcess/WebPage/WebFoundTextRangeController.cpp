@@ -193,7 +193,7 @@ void WebFoundTextRangeController::didBeginTextSearchOperation()
     m_findPageOverlay->setNeedsDisplay();
 }
 
-void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& completionHandler)
+void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&& completionHandler)
 {
     if (!m_findPageOverlay) {
         m_findPageOverlay = WebCore::PageOverlay::create(*this, WebCore::PageOverlay::OverlayType::Document, WebCore::PageOverlay::AlwaysTileOverlayLayer::Yes);

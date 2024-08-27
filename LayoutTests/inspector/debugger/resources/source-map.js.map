@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "sources": [
+        "inner.js",
+        "middle.js",
+        "outer.js"
+    ],
+    "sourcesContent": [
+        "export function inner(x) {\n    return \"inner\" + x;\n}\n",
+        "import { inner } from \"./inner.js\"\n\nexport function middle(x) {\n    let y = \"middle\";\n    y += inner(x);\n    return y;\n}\n",
+        "import { middle } from \"./middle.js\"\n\nglobalThis.outer = function(x) {\n    let y = \"outer\";\n    y += middle(x);\n    return y;\n};\n"
+    ],
+    "mappings": "MAAO,SAASA,EAAMC,EAAG,CACrB,MAAO,QAAUA,CACrB,CCAO,SAASC,EAAOC,EAAG,CACtB,IAAIC,EAAI,SACR,OAAAA,GAAKC,EAAMF,CAAC,EACLC,CACX,CCJA,WAAW,MAAQ,SAASE,EAAG,CAC3B,IAAIC,EAAI,QACR,OAAAA,GAAKC,EAAOF,CAAC,EACNC,CACX",
+    "names": ["inner", "x", "middle", "x", "y", "inner", "x", "y", "middle"]
+}

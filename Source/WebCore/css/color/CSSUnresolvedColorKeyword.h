@@ -29,16 +29,11 @@
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
 class Color;
-class Document;
-class RenderStyle;
 class StyleColor;
 
-struct CSSUnresolvedColorResolutionContext;
+struct CSSUnresolvedColorResolutionState;
+struct CSSUnresolvedStyleColorResolutionState;
 
 enum CSSValueID : uint16_t;
 
@@ -51,8 +46,8 @@ struct CSSUnresolvedColorKeyword {
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorKeyword&);
 String serializationForCSS(const CSSUnresolvedColorKeyword&);
 
-StyleColor createStyleColor(const CSSUnresolvedColorKeyword&, const Document&, RenderStyle&, Style::ForVisitedLink);
-Color createColor(const CSSUnresolvedColorKeyword&, const CSSUnresolvedColorResolutionContext&);
+StyleColor createStyleColor(const CSSUnresolvedColorKeyword&, CSSUnresolvedStyleColorResolutionState&);
+Color createColor(const CSSUnresolvedColorKeyword&, CSSUnresolvedColorResolutionState&);
 
 bool containsCurrentColor(const CSSUnresolvedColorKeyword&);
 bool containsColorSchemeDependentColor(const CSSUnresolvedColorKeyword&);

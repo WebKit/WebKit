@@ -53,6 +53,8 @@ public:
     double movementX() const { return m_movementX; }
     double movementY() const { return m_movementY; }
 
+    const IntPoint& windowLocation() const { return m_windowLocation; }
+
     const LayoutPoint& clientLocation() const { return m_clientLocation; }
     int layerX() override;
     int layerY() override;
@@ -104,6 +106,7 @@ private:
     LayoutPoint m_layerLocation;
     LayoutPoint m_offsetLocation;
     LayoutPoint m_absoluteLocation;
+    IntPoint m_windowLocation;
     bool m_isSimulated { false };
     bool m_hasCachedRelativePosition { false };
 };

@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +47,7 @@ class WeakPtrImplWithEventTargetData;
 
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorLayerTreeAgent);
 public:
     InspectorLayerTreeAgent(WebAgentContext&);
     ~InspectorLayerTreeAgent();

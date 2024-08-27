@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GLDisplay.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -35,12 +36,6 @@ typedef void *EGLContext;
 typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
-
-#if PLATFORM(GTK)
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GdkDisplay GdkDisplay;
-#endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 #include "GRefPtrGStreamer.h"
@@ -65,16 +60,13 @@ class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static PlatformDisplay& sharedDisplay();
+#if !PLATFORM(WIN)
     WEBCORE_EXPORT static void setSharedDisplay(std::unique_ptr<PlatformDisplay>&&);
+    WEBCORE_EXPORT static PlatformDisplay* sharedDisplayIfExists();
+#endif
     virtual ~PlatformDisplay();
 
     enum class Type {
-#if PLATFORM(X11)
-        X11,
-#endif
-#if PLATFORM(WAYLAND)
-        Wayland,
-#endif
 #if PLATFORM(WIN)
         Windows,
 #endif
@@ -85,6 +77,9 @@ public:
 #if USE(GBM)
         GBM,
 #endif
+#if PLATFORM(GTK)
+        Default,
+#endif
     };
 
     virtual Type type() const = 0;
@@ -94,30 +89,12 @@ public:
     EGLDisplay eglDisplay() const;
     bool eglCheckVersion(int major, int minor) const;
 
-    struct EGLExtensions {
-        bool KHR_image_base { false };
-        bool KHR_fence_sync { false };
-        bool KHR_surfaceless_context { false };
-        bool KHR_wait_sync { false };
-        bool EXT_image_dma_buf_import { false };
-        bool EXT_image_dma_buf_import_modifiers { false };
-        bool MESA_image_dma_buf_export { false };
-        bool ANDROID_native_fence_sync { false };
-    };
-    const EGLExtensions& eglExtensions() const;
+    const GLDisplay::Extensions& eglExtensions() const;
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
 #if USE(GBM)
-    struct DMABufFormat {
-        uint32_t fourcc { 0 };
-        Vector<uint64_t, 1> modifiers;
-    };
-    const Vector<DMABufFormat>& dmabufFormats();
-#endif
-
-#if PLATFORM(GTK)
-    virtual EGLDisplay gtkEGLDisplay() { return nullptr; }
+    const Vector<GLDisplay::DMABufFormat>& dmabufFormats();
 #endif
 
 #if ENABLE(WEBGL)
@@ -137,26 +114,10 @@ public:
     unsigned msaaSampleCount() const;
 #endif
 
-#if USE(ATSPI)
-    virtual String accessibilityBusAddress() const;
-#endif
-
 protected:
-    PlatformDisplay();
-#if PLATFORM(GTK)
-    explicit PlatformDisplay(GdkDisplay*);
-#endif
+    explicit PlatformDisplay(std::unique_ptr<GLDisplay>&&);
 
-    virtual void initializeEGLDisplay();
-
-#if PLATFORM(GTK)
-    virtual void sharedDisplayDidClose();
-
-    GRefPtr<GdkDisplay> m_sharedDisplay;
-#endif
-
-    EGLDisplay m_eglDisplay;
-    bool m_eglDisplayOwned { true };
+    std::unique_ptr<GLDisplay> m_eglDisplay;
     std::unique_ptr<GLContext> m_sharingGLContext;
 
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
@@ -165,8 +126,6 @@ protected:
 #endif
 
 private:
-    static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
-
 #if USE(SKIA)
     void invalidateSkiaGLContexts();
 #endif
@@ -177,16 +136,9 @@ private:
 
     void terminateEGLDisplay();
 
-    bool m_eglDisplayInitialized { false };
-    int m_eglMajorVersion { 0 };
-    int m_eglMinorVersion { 0 };
-    EGLExtensions m_eglExtensions;
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
     mutable EGLDisplay m_angleEGLDisplay { nullptr };
     EGLContext m_angleSharingGLContext { nullptr };
-#endif
-#if USE(GBM)
-    Vector<DMABufFormat> m_dmabufFormats;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

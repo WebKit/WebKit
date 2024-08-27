@@ -130,7 +130,7 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
             auto presentationSessionDesc = adoptNS([WKARPresentationSessionDescriptor new]);
             [presentationSessionDesc setPresentingViewController:presentingViewController];
 
-            auto presentationSession = adoptNS(createPresesentationSession(m_session.get(), presentationSessionDesc.get()));
+            auto presentationSession = adoptNS(createPresentationSession(m_session.get(), presentationSessionDesc.get()));
 
             auto renderState = Box<RenderState>::create();
             renderState->presentationSession = WTFMove(presentationSession);

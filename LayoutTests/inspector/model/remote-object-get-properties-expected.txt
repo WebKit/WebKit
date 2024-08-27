@@ -478,6 +478,92 @@ ALL PROPERTIES:
 -----------------------------------------------------
 
 -----------------------------------------------------
+EXPRESSION: window.unboundArrowFunction
+type: function
+description: () => {}
+
+OWN PROPERTIES:
+    length
+    name
+    __proto__
+    boundThis
+
+DISPLAYABLE PROPERTIES:
+    length
+    name
+    arguments
+    caller
+    __proto__
+    boundThis
+
+ALL PROPERTIES:
+    length
+    name
+    toString
+    apply
+    call
+    bind
+    arguments
+    caller
+    constructor
+    Symbol(Symbol.hasInstance)
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+    boundThis
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.boundArrowFunction
+type: function
+description: () => this
+
+OWN PROPERTIES:
+    length
+    name
+    __proto__
+    boundThis
+
+DISPLAYABLE PROPERTIES:
+    length
+    name
+    arguments
+    caller
+    __proto__
+    boundThis
+
+ALL PROPERTIES:
+    length
+    name
+    toString
+    apply
+    call
+    bind
+    arguments
+    caller
+    constructor
+    Symbol(Symbol.hasInstance)
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+    boundThis
+-----------------------------------------------------
+
+-----------------------------------------------------
 EXPRESSION: window.objectWithSymbolProperties
 type: object
 description: Object

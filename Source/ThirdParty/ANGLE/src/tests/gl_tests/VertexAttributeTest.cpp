@@ -5214,11 +5214,11 @@ void main(void)
 
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
-#    define EMULATED_VAO_CONFIGS                                       \
-        ES2_OPENGL().enable(Feature::SyncVertexArraysToDefault),       \
-            ES2_OPENGLES().enable(Feature::SyncVertexArraysToDefault), \
-            ES3_OPENGL().enable(Feature::SyncVertexArraysToDefault),   \
-            ES3_OPENGLES().enable(Feature::SyncVertexArraysToDefault),
+#    define EMULATED_VAO_CONFIGS                                          \
+        ES2_OPENGL().enable(Feature::SyncAllVertexArraysToDefault),       \
+            ES2_OPENGLES().enable(Feature::SyncAllVertexArraysToDefault), \
+            ES3_OPENGL().enable(Feature::SyncAllVertexArraysToDefault),   \
+            ES3_OPENGLES().enable(Feature::SyncAllVertexArraysToDefault),
 #else
 #    define EMULATED_VAO_CONFIGS
 #endif

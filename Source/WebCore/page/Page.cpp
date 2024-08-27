@@ -190,6 +190,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
@@ -232,6 +233,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Page);
 
 static HashSet<WeakRef<Page>>& allPages()
 {
@@ -2764,7 +2767,7 @@ void Page::mediaEngineChanged(HTMLMediaElement& mediaElement)
 
 void Page::setMuted(MediaProducerMutedStateFlags mutedState)
 {
-#if ENABLE(MEDIA_SESSION)
+#if ENABLE(MEDIA_STREAM) && ENABLE(MEDIA_SESSION)
     bool cameraCaptureStateDidChange = mutedState.contains(MediaProducerMutedState::VideoCaptureIsMuted) != m_mutedState.contains(MediaProducerMutedState::VideoCaptureIsMuted);
     bool microphoneCaptureStateDidChange = mutedState.contains(MediaProducerMutedState::AudioCaptureIsMuted) != m_mutedState.contains(MediaProducerMutedState::AudioCaptureIsMuted);
     bool screenshareCaptureStateDidChange = (mutedState.contains(MediaProducerMutedState::ScreenCaptureIsMuted) || mutedState.contains(MediaProducerMutedState::WindowCaptureIsMuted)) != (m_mutedState.contains(MediaProducerMutedState::ScreenCaptureIsMuted) || m_mutedState.contains(MediaProducerMutedState::WindowCaptureIsMuted));
@@ -2784,6 +2787,38 @@ void Page::setMuted(MediaProducerMutedStateFlags mutedState)
         document.pageMutedStateDidChange();
     });
 }
+
+#if ENABLE(MEDIA_STREAM)
+static inline MediaProducerMutedStateFlags toMediaProducerMutedStateFlags(MediaProducerMediaCaptureKind kind)
+{
+    switch (kind) {
+    case MediaProducerMediaCaptureKind::Microphone:
+        return MediaProducerMutedState::AudioCaptureIsMuted;
+    case MediaProducerMediaCaptureKind::Camera:
+        return MediaProducerMutedState::VideoCaptureIsMuted;
+    case MediaProducerMediaCaptureKind::Display:
+        return { MediaProducerMutedState::ScreenCaptureIsMuted, MediaProducerMutedState::WindowCaptureIsMuted };
+    case MediaProducerMediaCaptureKind::SystemAudio:
+    case MediaProducerMediaCaptureKind::EveryKind:
+        ASSERT_NOT_REACHED();
+    }
+    return { };
+}
+
+static inline MediaProducerMutedStateFlags computeCaptureMutedState(MediaProducerMutedStateFlags currentState, bool isActive, MediaProducerMediaCaptureKind kind)
+{
+    auto flagsToUpdate = toMediaProducerMutedStateFlags(kind);
+    return isActive ? (currentState - flagsToUpdate) : (currentState | flagsToUpdate);
+}
+
+void Page::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind)
+{
+    m_mutedState = computeCaptureMutedState(m_mutedState, isActive, kind);
+    forEachDocument([&] (Document& document) {
+        document.pageMutedStateDidChange();
+    });
+}
+#endif
 
 void Page::stopMediaCapture(MediaProducerMediaCaptureKind kind)
 {
@@ -2840,7 +2875,7 @@ MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {
         if (auto identifier = this->identifier())
-            m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+            m_mediaSessionGroupIdentifier = LegacyNullableObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
     }
     return m_mediaSessionGroupIdentifier;
 }

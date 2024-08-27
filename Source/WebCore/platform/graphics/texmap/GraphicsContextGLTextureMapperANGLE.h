@@ -30,12 +30,6 @@
 #include "GLContextWrapper.h"
 #include "GraphicsContextGLANGLE.h"
 
-#if USE(NICOSIA)
-namespace Nicosia {
-class GCGLANGLELayer;
-}
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -96,11 +90,9 @@ private:
 #if USE(NICOSIA)
     GCGLuint m_textureID { 0 };
     GCGLuint m_compositorTextureID { 0 };
+#endif
 
-    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
-
-    friend class Nicosia::GCGLANGLELayer;
-#else
+#if !USE(COORDINATED_GRAPHICS)
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 
     friend class TextureMapperGCGLPlatformLayer;

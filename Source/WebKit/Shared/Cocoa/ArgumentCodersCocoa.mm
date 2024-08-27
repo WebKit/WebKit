@@ -202,7 +202,7 @@
     }
 
     if (!m_wrappedURL)
-        m_wrappedURL = [NSURL URLWithString:@""];
+        m_wrappedURL = adoptNS([[NSURL alloc] initWithString:@""]);
 
     return self;
 }

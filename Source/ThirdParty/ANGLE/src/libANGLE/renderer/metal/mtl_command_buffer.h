@@ -608,8 +608,9 @@ class RenderCommandEncoder final : public CommandEncoder
     void initAttachmentWriteDependencyAndScissorRect(const RenderPassAttachmentDesc &attachment);
     void initWriteDependency(const TextureRef &texture);
 
+    template <typename ObjCAttachmentDescriptor>
     bool finalizeLoadStoreAction(const RenderPassAttachmentDesc &cppRenderPassAttachment,
-                                 MTLRenderPassAttachmentDescriptor *objCRenderPassAttachment);
+                                 ObjCAttachmentDescriptor *objCRenderPassAttachment);
 
     void encodeMetalEncoder();
     void simulateDiscardFramebuffer();

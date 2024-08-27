@@ -44,6 +44,7 @@ public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, size_t sampleCount);
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
+    WEBCORE_EXPORT virtual ~WebAudioBufferList();
 
     void reset();
     WEBCORE_EXPORT void setSampleCount(size_t);

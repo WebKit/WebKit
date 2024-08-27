@@ -90,10 +90,9 @@ SetPrivateBrandStatus::SetPrivateBrandStatus(StubInfoSummary summary, StructureS
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback(
-    const ConcurrentJSLocker&, CodeBlock* block, StructureStubInfo* stubInfo)
+SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* block, StructureStubInfo* stubInfo)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(block->vm(), stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(locker, block->vm(), stubInfo);
     if (!isInlineable(summary))
         return SetPrivateBrandStatus(summary, *stubInfo);
 
@@ -104,10 +103,10 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFe
         return SetPrivateBrandStatus(NoInformation);
 
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->m_stub.get();
+        auto list = stubInfo->listedAccessCases(locker);
 
-        for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
-            const AccessCase& access = list->at(listIndex);
+        for (unsigned listIndex = 0; listIndex < list.size(); ++listIndex) {
+            const AccessCase& access = *list.at(listIndex);
 
             Structure* structure = access.structure();
             ASSERT(structure);

@@ -35,11 +35,14 @@ ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/media_stream_interface.h>
 #include <webrtc/api/make_ref_counted.h>
+// See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
+IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 #include <webrtc/api/peer_connection_interface.h>
+IGNORE_CLANG_WARNINGS_END
 
+ALLOW_COMMA_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
-ALLOW_COMMA_END
 
 #include <wtf/text/WTFString.h>
 

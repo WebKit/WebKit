@@ -47,7 +47,7 @@ public:
 
     ComposedTreeAncestorIterator& operator++()
     {
-        m_current = traverseParent(m_current);
+        m_current = traverseParent(m_current.get());
         return *this;
     }
 
@@ -57,7 +57,7 @@ private:
     void traverseParentInShadowTree();
     static Element* traverseParent(Node*);
 
-    Element* m_current { nullptr };
+    CheckedPtr<Element> m_current;
 };
 
 inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator()

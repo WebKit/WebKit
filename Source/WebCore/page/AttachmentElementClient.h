@@ -28,13 +28,14 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class FloatSize;
 
 class AttachmentElementClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AttachmentElementClient);
 public:
     virtual ~AttachmentElementClient() { }
     virtual void requestAttachmentIcon(const String& identifier, const FloatSize&) = 0;

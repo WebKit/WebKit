@@ -29,6 +29,7 @@
 #include "IDBKeyData.h"
 #include "IndexValueEntry.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ class MemoryIndex;
 typedef HashMap<IDBKeyData, std::unique_ptr<IndexValueEntry>, IDBKeyDataHash, IDBKeyDataHashTraits> IndexKeyValueMap;
 
 class IndexValueStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IndexValueStore);
 public:
     explicit IndexValueStore(bool unique);
 

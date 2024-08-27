@@ -31,6 +31,7 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromise.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -235,7 +236,7 @@ private:
 };
 
 class DOMPromiseDeferredBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMPromiseDeferredBase);
 public:
     DOMPromiseDeferredBase(Ref<DeferredPromise>&& genericPromise)
         : m_promise(WTFMove(genericPromise))

@@ -32,6 +32,7 @@
 #include "InspectorWebAgentBase.h"
 #include "StorageArea.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -47,7 +48,7 @@ class Storage;
 
 class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::DOMStorageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMStorageAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorDOMStorageAgent);
 public:
     InspectorDOMStorageAgent(PageAgentContext&);
     ~InspectorDOMStorageAgent();

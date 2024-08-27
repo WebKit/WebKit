@@ -42,19 +42,14 @@ WebColorPicker::~WebColorPicker()
 
 void WebColorPicker::endPicker()
 {
-    if (!m_client)
-        return;
-
-    if (auto client = std::exchange(m_client, nullptr))
+    if (CheckedPtr client = std::exchange(m_client, nullptr))
         client->didEndColorPicker();
 }
 
 void WebColorPicker::setSelectedColor(const WebCore::Color& color)
 {
-    if (!m_client)
-        return;
-
-    m_client->didChooseColor(color);
+    if (CheckedPtr client = m_client)
+        client->didChooseColor(color);
 }
 
 void WebColorPicker::showColorPicker(const WebCore::Color&)

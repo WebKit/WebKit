@@ -240,7 +240,11 @@ using namespace WebKit;
 - (LocalizationDictionary *)_localizationDictionaryForWebExtension:(WebExtension&)webExtension withLocale:(NSString *)localeString
 {
     auto *path = [NSString stringWithFormat:pathToJSONFile, localeString];
-    auto *data = [NSData dataWithData:webExtension.resourceDataForPath(path, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)];
+
+    NSError *error;
+    NSData *data = [NSData dataWithData:webExtension.resourceDataForPath(path, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)];
+    webExtension.recordErrorIfNeeded(error);
+
     return parseJSON(data);
 }
 

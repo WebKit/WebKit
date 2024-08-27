@@ -55,8 +55,6 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 
 void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier rootLayerID)
 {
-    ASSERT_ARG(rootLayerID, rootLayerID);
-
     m_rootLayerID = rootLayerID;
 }
 
@@ -377,7 +375,7 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::operator=(LayerCreatio
 
 RemoteLayerBackingStoreOrProperties::~RemoteLayerBackingStoreOrProperties() = default;
 
-RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(WebCore::PlatformLayerIdentifier layerID, WebCore::PlatformCALayer::LayerType type, std::optional<RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData>&& videoElementData, RemoteLayerTreeTransaction::LayerCreationProperties::AdditionalData&& additionalData)
+RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(Markable<WebCore::PlatformLayerIdentifier> layerID, WebCore::PlatformCALayer::LayerType type, std::optional<RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData>&& videoElementData, RemoteLayerTreeTransaction::LayerCreationProperties::AdditionalData&& additionalData)
     : layerID(layerID)
     , type(type)
     , videoElementData(WTFMove(videoElementData))

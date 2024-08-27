@@ -29,11 +29,12 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class WorkerToPageFrontendChannel final : public Inspector::FrontendChannel {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerToPageFrontendChannel);
 public:
     explicit WorkerToPageFrontendChannel(WorkerOrWorkletGlobalScope& globalScope)
         : m_globalScope(globalScope)

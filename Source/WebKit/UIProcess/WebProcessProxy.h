@@ -124,7 +124,6 @@ class WebPageGroup;
 class WebPageProxy;
 class WebPermissionControllerProxy;
 class WebPreferences;
-class WebProcessActivityState;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
@@ -300,11 +299,6 @@ public:
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
-
-    static void notifyPageStatisticsAndDataRecordsProcessed();
-
-    static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
-    static void notifyWebsiteDataScanForRegistrableDomainsFinished();
 
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
 
@@ -518,8 +512,6 @@ public:
 #if ENABLE(WEBXR)
     const WebCore::ProcessIdentity& processIdentity();
 #endif
-
-    WebProcessActivityState& activityState() { return m_activityState; }
 
 private:
     Type type() const final { return Type::WebContent; }
@@ -801,8 +793,6 @@ private:
     Seconds m_totalBackgroundTime;
     Seconds m_totalSuspendedTime;
     WebCore::ProcessIdentity m_processIdentity;
-
-    UniqueRef<WebProcessActivityState> m_activityState;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

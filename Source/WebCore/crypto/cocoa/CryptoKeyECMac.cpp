@@ -114,103 +114,76 @@ static PAL::ECCurve namedCurveToCryptoKitCurve(CryptoKeyEC::NamedCurve curve)
     ASSERT_NOT_REACHED();
     return PAL::ECCurve::p256();
 }
+static PlatformECKeyContainer toPlatformKey(PAL::ECKey key)
+{
+    return makeUniqueRefWithoutFastMallocCheck<PAL::ECKey>(key);
+}
 #endif
 
-std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        auto privateKeyCK = PAL::ECKey::init(namedCurveToCryptoKitCurve(curve));
-        auto publicKeyCK = privateKeyCK.toPub();
-        auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, toCKPlatformECKeyContainer(publicKeyCK), true, usages);
-        auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, toCKPlatformECKeyContainer(privateKeyCK), extractable, usages);
-        return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
-    }
+    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, toPlatformKey(PAL::ECKey::init(namedCurveToCryptoKitCurve(curve))), extractable, usages);
+    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, toPlatformKey(privateKey->platformKey()->toPub()), true, usages);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     size_t size = keySizeInBitsFromNamedCurve(curve);
     CCECCryptorRef ccPublicKey = nullptr;
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
         return std::nullopt;
-#if HAVE(SWIFT_CPP_INTEROP)
-    auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, toCCPlatformECKeyContainer(ccPublicKey), true, usages);
-    auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, toCCPlatformECKeyContainer(ccPrivateKey), extractable, usages);
-#else
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 #endif
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!doesUncompressedPointMatchNamedCurve(curve, keyData.size()))
         return nullptr;
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        auto rv = PAL::ECKey::importX963Pub(keyData.span(), namedCurveToCryptoKitCurve(curve));
-        if (!rv.getErrorCode().isSuccess() || !rv.getKey())
-            return nullptr;
-        return create(identifier, curve, CryptoKeyType::Public, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
-    }
+    auto rv = PAL::ECKey::importX963Pub(keyData.span(), namedCurveToCryptoKitCurve(curve));
+    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+        return nullptr;
+    return create(identifier, curve, CryptoKeyType::Public, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyData.data(), keyData.size(), ccECKeyPublic, &ccPublicKey))
         return nullptr;
-#if HAVE(SWIFT_CPP_INTEROP)
-    return create(identifier, curve, CryptoKeyType::Public, toCCPlatformECKeyContainer(ccPublicKey), extractable, usages);
-#else
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 #endif
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportRaw(UseCryptoKit useCryptoKit) const
+Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
     size_t expectedSize = 2 * keySizeInBytes() + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        const auto* pub = std::get_if<CKPlatformECKeyContainer>(&platformKey());
-        if (!pub)
-            return { };
-        auto rv = (*pub)->exportX963Pub();
-        if (rv.errorCode != Cpp::ErrorCodes::Success)
-            return { };
-        if (rv.result.size() != expectedSize)
-            return { };
-        return WTFMove(rv.result);
-    }
+    auto rv = platformKey()->exportX963Pub();
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
+        return { };
+    if (rv.result.size() != expectedSize)
+        return { };
+    return WTFMove(rv.result);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     Vector<uint8_t> result(expectedSize);
     size_t size = result.size();
-#if HAVE(SWIFT_CPP_INTEROP)
-    const auto* pub = std::get_if<CCPlatformECKeyContainer>(&platformKey());
-    if (!pub)
-        return { };
-    if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, (*pub).get()) || size != expectedSize))
-#else
     if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, platformKey().get()) || size != expectedSize))
-#endif
         return { };
     return result;
+#endif
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!doesFieldElementMatchNamedCurve(curve, x.size()) || !doesFieldElementMatchNamedCurve(curve, y.size()))
         return nullptr;
     Vector<uint8_t> combined { InitialOctetEC };
     combined.appendVector(x);
     combined.appendVector(y);
-    return platformImportRaw(identifier, curve, WTFMove(combined), extractable, usages, useCryptoKit);
+    return platformImportRaw(identifier, curve, WTFMove(combined), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap usages)
 {
     if (!doesFieldElementMatchNamedCurve(curve, x.size()) || !doesFieldElementMatchNamedCurve(curve, y.size()) || !doesFieldElementMatchNamedCurve(curve, d.size()))
         return nullptr;
@@ -223,89 +196,62 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     binaryInput.appendVector(y);
     binaryInput.appendVector(d);
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        auto rv = PAL::ECKey::importX963Private(binaryInput.span(), namedCurveToCryptoKitCurve(curve));
-        if (!rv.getErrorCode().isSuccess() || !rv.getKey())
-            return nullptr;
-        return create(identifier, curve, CryptoKeyType::Private, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
-    }
+    auto rv = PAL::ECKey::importX963Private(binaryInput.span(), namedCurveToCryptoKitCurve(curve));
+    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+        return nullptr;
+    return create(identifier, curve, CryptoKeyType::Private, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, binaryInput.data(), binaryInput.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
-#if HAVE(SWIFT_CPP_INTEROP)
-    return create(identifier, curve, CryptoKeyType::Private, toCCPlatformECKeyContainer(ccPrivateKey), extractable, usages);
-#else
     return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 #endif
 }
 
-bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit useCryptoKit) const
+bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
     size_t keySizeInBytes = this->keySizeInBytes();
     size_t publicKeySize = keySizeInBytes * 2 + 1; // 04 + X + Y per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     size_t privateKeySize = keySizeInBytes * 3 + 1; // 04 + X + Y + D
 
     Vector<uint8_t> result(privateKeySize);
-    size_t size = result.size();
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        const auto* pubOrPriv = std::get_if<CKPlatformECKeyContainer>(&platformKey());
-        if (!pubOrPriv)
+    switch (type()) {
+    case CryptoKeyType::Public: {
+        auto rv = platformKey()->exportX963Pub();
+        if (rv.errorCode != Cpp::ErrorCodes::Success)
             return false;
-        switch (type()) {
-        case CryptoKeyType::Public: {
-            auto rv = (*pubOrPriv)->exportX963Pub();
-            if (rv.errorCode != Cpp::ErrorCodes::Success)
-                return false;
-            result = WTFMove(rv.result);
-            break;
-        }
-        case CryptoKeyType::Private: {
-            auto rv = (*pubOrPriv)->exportX963Private();
-            if (rv.errorCode != Cpp::ErrorCodes::Success)
-                return false;
-            result = WTFMove(rv.result);
-            break;
-        }
-        case CryptoKeyType::Secret:
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-        if (UNLIKELY((result.size() != publicKeySize) && (result.size() != privateKeySize)))
-            return false;
-        jwk.x = base64URLEncodeToString(result.subspan(1, keySizeInBytes));
-        jwk.y = base64URLEncodeToString(result.subspan(keySizeInBytes + 1, keySizeInBytes));
-        if (result.size() > publicKeySize)
-            jwk.d = base64URLEncodeToString(result.subspan(publicKeySize, keySizeInBytes));
-        return true;
+        result = WTFMove(rv.result);
+        break;
     }
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
-#if HAVE(SWIFT_CPP_INTEROP)
-    const auto* pubOrPriv = std::get_if<CCPlatformECKeyContainer>(&platformKey());
-    if (!pubOrPriv)
+    case CryptoKeyType::Private: {
+        auto rv = platformKey()->exportX963Private();
+        if (rv.errorCode != Cpp::ErrorCodes::Success)
+            return false;
+        result = WTFMove(rv.result);
+        break;
+    }
+    case CryptoKeyType::Secret:
+        ASSERT_NOT_REACHED();
         return false;
-#endif
+    }
+    if (UNLIKELY((result.size() != publicKeySize) && (result.size() != privateKeySize)))
+        return false;
+    jwk.x = base64URLEncodeToString(result.subspan(1, keySizeInBytes));
+    jwk.y = base64URLEncodeToString(result.subspan(keySizeInBytes + 1, keySizeInBytes));
+    if (result.size() > publicKeySize)
+        jwk.d = base64URLEncodeToString(result.subspan(publicKeySize, keySizeInBytes));
+    return true;
+#else
+    size_t size = result.size();
     switch (type()) {
     case CryptoKeyType::Public:
-#if HAVE(SWIFT_CPP_INTEROP)
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, (*pubOrPriv).get())))
-#else
         if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPublic, platformKey().get())))
-#endif
-        return false;
+            return false;
         break;
     case CryptoKeyType::Private:
-#if HAVE(SWIFT_CPP_INTEROP)
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPrivate, (*pubOrPriv).get())))
-#else
         if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, result.data(), &size, ccECKeyPrivate, platformKey().get())))
-#endif
-        return false;
+            return false;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -319,6 +265,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk, UseCryptoKit useCryp
     if (size > publicKeySize)
         jwk.d = base64URLEncodeToString(result.subspan(publicKeySize, keySizeInBytes));
     return true;
+#endif
 }
 
 static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
@@ -349,7 +296,7 @@ static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
 // secp256r1 OBJECT IDENTIFIER      ::= { iso(1) member-body(2) us(840) ansi-X9-62(10045) curves(3) prime(1) 7 }
 // secp384r1 OBJECT IDENTIFIER      ::= { iso(1) identified-organization(3) certicom(132) curve(0) 34 }
 // secp521r1 OBJECT IDENTIFIER      ::= { iso(1) identified-organization(3) certicom(132) curve(0) 35 }
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // The following is a loose check on the provided SPKI key, it aims to extract AlgorithmIdentifier, ECParameters, and Key.
     // Once the underlying crypto library is updated to accept SPKI EC Key, we should remove this hack.
@@ -377,55 +324,36 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length
     if (doesUncompressedPointMatchNamedCurve(curve, keyData.size() - index))
-        return platformImportRaw(identifier, curve, Vector<uint8_t>(keyData.subspan(index, keyData.size() - index)), extractable, usages, useCryptoKit);
+        return platformImportRaw(identifier, curve, Vector<uint8_t>(keyData.subspan(index, keyData.size() - index)), extractable, usages);
 #if HAVE(SWIFT_CPP_INTEROP)
     // CryptoKit can read pure compressed so no need for index++ here.
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        auto rv = PAL::ECKey::importCompressedPub(keyData.subspan(index, keyData.size() - index), namedCurveToCryptoKitCurve(curve));
-        if (!rv.getErrorCode().isSuccess() || !rv.getKey())
-            return nullptr;
-        return create(identifier, curve, CryptoKeyType::Public, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
-    }
+    auto rv = PAL::ECKey::importCompressedPub(keyData.subspan(index, keyData.size() - index), namedCurveToCryptoKitCurve(curve));
+    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+        return nullptr;
+    return create(identifier, curve, CryptoKeyType::Public, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     ++index;
     CCECCryptorRef ccPublicKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyCompact, keyData.data() + index, keyData.size() - index, ccECKeyPublic, &ccPublicKey))
         return nullptr;
-#if HAVE(SWIFT_CPP_INTEROP)
-    return create(identifier, curve, CryptoKeyType::Public, toCCPlatformECKeyContainer(ccPublicKey), extractable, usages);
-#else
     return create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), extractable, usages);
 #endif
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportSpki(UseCryptoKit useCryptoKit) const
+Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
 {
     size_t expectedKeySize = 2 * keySizeInBytes() + 1; // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
     Vector<uint8_t> keyBytes(expectedKeySize);
     size_t keySize = keyBytes.size();
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        const auto* pub = std::get_if<CKPlatformECKeyContainer>(&platformKey());
-        if (!pub)
-            return { };
-        auto rv = (*pub)->exportX963Pub();
-        if (rv.errorCode != Cpp::ErrorCodes::Success)
-            return { };
-        if (rv.result.size() != expectedKeySize)
-            return { };
-        keyBytes = WTFMove(rv.result);
-        keySize = expectedKeySize;
-    } else {
-        const auto* pub = std::get_if<CCPlatformECKeyContainer>(&platformKey());
-        if (!pub)
-            return { };
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, (*pub).get()) || keySize != expectedKeySize))
-            return { };
-    }
+    auto rv = platformKey()->exportX963Pub();
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
+        return { };
+    if (rv.result.size() != expectedKeySize)
+        return { };
+    keyBytes = WTFMove(rv.result);
+    keySize = expectedKeySize;
 #else
-    UNUSED_PARAM(useCryptoKit);
     if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPublic, platformKey().get()) || keySize != expectedKeySize))
         return { };
 #endif
@@ -459,7 +387,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki(UseCryptoKit useCryptoKit) const
 // Per https://www.ietf.org/rfc/rfc5915.txt
 // ECPrivateKey ::= SEQUENCE { version INTEGER { ecPrivkeyVer1(1) }, privateKey OCTET STRING, parameters CustomECParameters, publicKey BIT STRING }
 // OpenSSL uses custom ECParameters. We follow OpenSSL as a compatibility concern.
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages, UseCryptoKit useCryptoKit)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     // The following is a loose check on the provided PKCS8 key, it aims to extract AlgorithmIdentifier, ECParameters, and Key.
     // Once the underlying crypto library is updated to accept PKCS8 EC Key, we should remove this hack.
@@ -511,52 +439,32 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         return nullptr;
     keyBinary.append(keyData.subspan(privateKeyPos, privateKeySize));
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        auto rv = PAL::ECKey::importX963Private(keyBinary.span(), namedCurveToCryptoKitCurve(curve));
-        if (!rv.getErrorCode().isSuccess() || !rv.getKey())
-            return nullptr;
-        return create(identifier, curve, CryptoKeyType::Private, toCKPlatformECKeyContainer(rv.getKey().get()), extractable, usages);
-    }
+    auto rv = PAL::ECKey::importX963Private(keyBinary.span(), namedCurveToCryptoKitCurve(curve));
+    if (!rv.getErrorCode().isSuccess() || !rv.getKey())
+        return nullptr;
+    return create(identifier, curve, CryptoKeyType::Private, toPlatformKey(rv.getKey().get()), extractable, usages);
 #else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
         return nullptr;
-#if HAVE(SWIFT_CPP_INTEROP)
-    return create(identifier, curve, CryptoKeyType::Private, toCCPlatformECKeyContainer(ccPrivateKey), extractable, usages);
-#else
     return create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);
 #endif
 }
 
-Vector<uint8_t> CryptoKeyEC::platformExportPkcs8(UseCryptoKit useCryptoKit) const
+Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 {
     size_t keySizeInBytes = this->keySizeInBytes();
     size_t expectedKeySize = keySizeInBytes * 3 + 1; // 04 + X + Y + D
     Vector<uint8_t> keyBytes(expectedKeySize);
-    size_t keySize = keyBytes.size();
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (useCryptoKit == UseCryptoKit::Yes) {
-        const auto* priv = std::get_if<CKPlatformECKeyContainer>(&platformKey());
-        if (!priv)
-            return { };
-        auto rv = (*priv)->exportX963Private();
-        if (rv.errorCode != Cpp::ErrorCodes::Success)
-            return { };
-        if (rv.result.size() != expectedKeySize)
-            return { };
-        keyBytes = WTFMove(rv.result);
-        keySize = expectedKeySize;
-    } else {
-        const auto* priv = std::get_if<CCPlatformECKeyContainer>(&platformKey());
-        if (!priv)
-            return { };
-        if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPrivate, (*priv).get()) || keySize != expectedKeySize))
-            return { };
-    }
+    auto rv = platformKey()->exportX963Private();
+    if (rv.errorCode != Cpp::ErrorCodes::Success)
+        return { };
+    if (rv.result.size() != expectedKeySize)
+        return { };
+    keyBytes = WTFMove(rv.result);
 #else
-    UNUSED_PARAM(useCryptoKit);
+    size_t keySize = keyBytes.size();
     if (UNLIKELY(CCECCryptorExportKey(kCCImportKeyBinary, keyBytes.data(), &keySize, ccECKeyPrivate, platformKey().get()) || keySize != expectedKeySize))
         return { };
 #endif

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,7 +35,7 @@ namespace WebCore {
 class PerformanceEntry;
 
 class PerformanceObserverEntryList : public RefCounted<PerformanceObserverEntryList> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceObserverEntryList);
 public:
     static Ref<PerformanceObserverEntryList> create(Vector<Ref<PerformanceEntry>>&& entries);
 

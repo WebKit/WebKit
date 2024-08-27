@@ -82,7 +82,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @result A Boolean value indicating if the context was successfully loaded.
  @seealso loadExtensionContext:
 */
-- (BOOL)loadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)error;
+- (BOOL)loadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)error NS_SWIFT_NAME(load(_:));
 
 /*!
  @abstract Unloads the specified extension context.
@@ -91,7 +91,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @result A Boolean value indicating if the context was successfully unloaded.
  @seealso unloadExtensionContext:
 */
-- (BOOL)unloadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)error;
+- (BOOL)unloadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)error NS_SWIFT_NAME(unload(_:));
 
 /*!
  @abstract Returns a loaded extension context for the specified extension.
@@ -127,29 +127,29 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
 @property (class, nonatomic, readonly, copy) NSSet<WKWebExtensionDataType> *allExtensionDataTypes;
 
 /*!
-  @abstract Fetches data records containing the given extension data types for all known extensions.
-  @param dataTypes The extension data types to fetch records for.
-  @param completionHandler A block to invoke when the data records have been fetched.
-  @note The extension does not need to be loaded to be included in the result.
+ @abstract Fetches data records containing the given extension data types for all known extensions.
+ @param dataTypes The extension data types to fetch records for.
+ @param completionHandler A block to invoke when the data records have been fetched.
+ @note The extension does not need to be loaded to be included in the result.
 */
-- (void)fetchDataRecordsOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes completionHandler:(void (^)(NSArray<WKWebExtensionDataRecord *> *))completionHandler WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
+- (void)fetchDataRecordsOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes completionHandler:(void (^)(NSArray<WKWebExtensionDataRecord *> *))completionHandler NS_SWIFT_NAME(fetchDataRecords(ofTypes:completionHandler:)) WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
 
 /*!
-  @abstract Fetches a data record containing the given extension data types for a specific known web extension context.
-  @param dataTypes The extension data types to fetch records for.
-  @param extensionContext The specific web extension context to fetch records for.
-  @param completionHandler A block to invoke when the data record has been fetched.
-  @note The extension does not need to be loaded to be included in the result.
+ @abstract Fetches a data record containing the given extension data types for a specific known web extension context.
+ @param dataTypes The extension data types to fetch records for.
+ @param extensionContext The specific web extension context to fetch records for.
+ @param completionHandler A block to invoke when the data record has been fetched.
+ @note The extension does not need to be loaded to be included in the result.
 */
-- (void)fetchDataRecordOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(WKWebExtensionDataRecord * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(dataRecord(ofTypes:for:));
+- (void)fetchDataRecordOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(WKWebExtensionDataRecord * _Nullable))completionHandler NS_SWIFT_NAME(fetchDataRecord(ofTypes:for:completionHandler:)) WK_SWIFT_ASYNC_NAME(dataRecord(ofTypes:for:));
 
 /*!
-  @abstract Removes extension data of the given types for the given data records.
-  @param dataTypes The extension data types that should be removed.
-  @param dataRecords The extension data records to delete data for.
-  @param completionHandler A block to invoke when the data has been removed.
+ @abstract Removes extension data of the given types for the given data records.
+ @param dataTypes The extension data types that should be removed.
+ @param dataRecords The extension data records to delete data from.
+ @param completionHandler A block to invoke when the data has been removed.
 */
-- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes forDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)(void))completionHandler;
+- (void)removeDataOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes fromDataRecords:(NSArray<WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)(void))completionHandler NS_SWIFT_NAME(removeData(ofTypes:from:completionHandler:));
 
 /*!
  @abstract Should be called by the app when a new window is opened to fire appropriate events with all loaded web extensions.

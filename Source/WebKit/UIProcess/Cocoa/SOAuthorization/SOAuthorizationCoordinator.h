@@ -59,7 +59,7 @@ public:
     // For PopUp interception.
     using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
     using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
-    void tryAuthorize(Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
+    void tryAuthorize(Ref<API::PageConfiguration>&&, Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
 
 private:
     bool canAuthorize(const URL&) const;

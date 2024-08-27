@@ -2193,6 +2193,13 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript("uiController.resetVisibilityAdjustments(result => uiController.uiScriptComplete(result));", resolve);
         });
     }
+
+    static async waitForPDFFadeIn()
+    {
+        const pdfFadeInDelay = 250;
+        await new Promise(resolve => setTimeout(resolve, pdfFadeInDelay));
+        await new Promise(requestAnimationFrame);
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

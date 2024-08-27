@@ -70,8 +70,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
     ASSERT(m_currentNode);
     if (n != document())
         n->ref();
-    m_currentNodeStack.append(m_currentNode);
-    m_currentNode = n;
+    m_currentNodeStack.append(std::exchange(m_currentNode, n));
     if (m_currentNodeStack.size() > maxXMLTreeDepth)
         handleError(XMLErrors::fatal, "Excessive node nesting.", textPosition());
 }
@@ -85,8 +84,7 @@ void XMLDocumentParser::popCurrentNode()
     if (m_currentNode != document())
         m_currentNode->deref();
 
-    m_currentNode = m_currentNodeStack.last();
-    m_currentNodeStack.removeLast();
+    m_currentNode = m_currentNodeStack.takeLast();
 }
 
 void XMLDocumentParser::clearCurrentNodeStack()

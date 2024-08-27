@@ -59,9 +59,11 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
         return;
 
     let sourceCode = sourceCodeOrLocation;
+    let displaySourceCode = sourceCode;
     let location = null;
     if (sourceCodeOrLocation instanceof WI.SourceCodeLocation) {
         sourceCode = sourceCodeOrLocation.sourceCode;
+        displaySourceCode = sourceCodeOrLocation.displaySourceCode;
         location = sourceCodeOrLocation;
     }
 
@@ -129,7 +131,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
-    if (location && (sourceCode instanceof WI.Script || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.Script && !sourceCode.localResourceOverride))) {
+    if (location && (displaySourceCode instanceof WI.Script || (displaySourceCode instanceof WI.Resource && displaySourceCode.type === WI.Resource.Type.Script && !displaySourceCode.localResourceOverride))) {
         let existingJavaScriptBreakpoint = WI.debuggerManager.breakpointForSourceCodeLocation(location);
         if (existingJavaScriptBreakpoint) {
             contextMenu.appendItem(WI.UIString("Delete JavaScript Breakpoint"), () => {
@@ -156,8 +158,8 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
         }
     }
 
-    if (sourceCode.supportsScriptBlackboxing) {
-        let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(sourceCode);
+    if (displaySourceCode.supportsScriptBlackboxing) {
+        let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(displaySourceCode);
         if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
             contextMenu.appendItem(WI.UIString("Reveal Blackbox Pattern"), () => {
                 WI.showSettingsTab({
@@ -167,7 +169,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
             });
         } else {
             contextMenu.appendItem(blackboxData ? WI.UIString("Unblackbox Script") : WI.UIString("Blackbox Script"), () => {
-                WI.debuggerManager.setShouldBlackboxScript(sourceCode, !blackboxData);
+                WI.debuggerManager.setShouldBlackboxScript(displaySourceCode, !blackboxData);
             });
         }
     }
@@ -204,15 +206,15 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
         contextMenu.appendSeparator();
 
         contextMenu.appendItem(WI.UIString("Save File"), () => {
-            sourceCode.requestContent().then(() => {
+            displaySourceCode.requestContent().then(() => {
                 let saveData = {
-                    url: sourceCode.url,
-                    content: sourceCode.content,
-                    base64Encoded: sourceCode.base64Encoded,
+                    url: displaySourceCode.url,
+                    content: displaySourceCode.content,
+                    base64Encoded: displaySourceCode.base64Encoded,
                 };
 
-                if (sourceCode.urlComponents.path === "/") {
-                    let extension = WI.fileExtensionForMIMEType(sourceCode.mimeType);
+                if (displaySourceCode.urlComponents.path === "/") {
+                    let extension = WI.fileExtensionForMIMEType(displaySourceCode.mimeType);
                     if (extension)
                         saveData.suggestedName = `index.${extension}`;
                 }

@@ -35,6 +35,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -73,7 +74,7 @@ class XRProjectionLayer;
 class XRSubImage;
 
 class GPUImpl final : public GPU, public RefCounted<GPUImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GPUImpl);
 public:
     static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
     {

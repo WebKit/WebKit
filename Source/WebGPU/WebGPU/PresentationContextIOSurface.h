@@ -58,7 +58,7 @@ private:
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
     void onSubmittedWorkScheduled(Function<void()>&&);
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex) final;
+    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {

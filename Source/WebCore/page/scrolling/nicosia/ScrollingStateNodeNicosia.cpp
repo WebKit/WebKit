@@ -28,8 +28,8 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "NicosiaPlatformLayer.h"
-#include "PlatformLayer.h"
+#include "CoordinatedGraphicsLayer.h"
+#include "NicosiaCompositionLayer.h"
 
 namespace WebCore {
 
@@ -45,14 +45,19 @@ void LayerRepresentation::releasePlatformLayer(void* typelessLayer)
         layer->deref();
 }
 
-PlatformLayer* LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)
+Nicosia::CompositionLayer* LayerRepresentation::makePlatformLayerTyped(void* typelessLayer)
 {
-    return static_cast<PlatformLayer*>(typelessLayer);
+    return static_cast<Nicosia::CompositionLayer*>(typelessLayer);
 }
 
-void* LayerRepresentation::makePlatformLayerTypeless(PlatformLayer* layer)
+void* LayerRepresentation::makePlatformLayerTypeless(Nicosia::CompositionLayer* layer)
 {
     return layer;
+}
+
+Nicosia::CompositionLayer* LayerRepresentation::platformLayerFromGraphicsLayer(GraphicsLayer& graphicsLayer)
+{
+    return downcast<CoordinatedGraphicsLayer>(graphicsLayer).compositionLayer().get();
 }
 
 } // namespace WebCore

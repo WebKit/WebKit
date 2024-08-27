@@ -1534,7 +1534,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             try {
                 let payload = JSON.parse(content);
                 let baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
-                let sourceMap = new WI.SourceMap(baseURL, payload, originalSourceCode);
+                let sourceMap = new WI.SourceMap(baseURL, originalSourceCode, payload);
                 this._sourceMapLoadAndParseSucceeded(sourceMapURL, sourceMap);
             } catch {
                 this._sourceMapLoadAndParseFailed(sourceMapURL);

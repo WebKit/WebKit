@@ -227,6 +227,8 @@ void SessionHost::connectionDidClose()
 
     inspectorDisconnected();
     m_socketConnection = nullptr;
+    m_connectionID = 0;
+    m_target = Target();
 }
 
 void SessionHost::setupConnection(Ref<SocketConnection>&& connection)
@@ -344,19 +346,17 @@ void SessionHost::didStartAutomationSession(GVariant* parameters)
 
 void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetList)
 {
-    // The server notifies all its clients when connection is lost by sending an empty target list.
-    // We only care about automation connection.
+    // The server notifies all its clients when connection is lost by sending an empty target list
     if (m_connectionID && m_connectionID != connectionID)
         return;
 
     ASSERT(targetList.size() <= 1);
     if (targetList.isEmpty()) {
-        m_target = Target();
         if (m_connectionID) {
             if (m_socketConnection)
                 m_socketConnection->close();
-            m_connectionID = 0;
         }
+        connectionDidClose();
         return;
     }
 
@@ -391,6 +391,11 @@ void SessionHost::sendMessageToBackend(const String& message)
     ASSERT(m_connectionID);
     ASSERT(m_target.id);
     m_socketConnection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().data()));
+}
+
+bool SessionHost::isRemoteBrowser() const
+{
+    return m_isRemoteBrowser;
 }
 
 } // namespace WebDriver

@@ -532,7 +532,7 @@ auto SectionParser::parseElement() -> PartialResult
         switch (elementFlags) {
         case 0x00: {
             constexpr uint32_t tableIndex = 0;
-            WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, funcrefType()));
+            WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, nonNullFuncrefType()));
 
             std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
@@ -541,7 +541,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
             ASSERT(!!m_info->tables[tableIndex]);
 
-            Element element(Element::Kind::Active, funcrefType(), tableIndex, WTFMove(initExpr));
+            Element element(Element::Kind::Active, nonNullFuncrefType(), tableIndex, WTFMove(initExpr));
             WASM_PARSER_FAIL_IF(!element.initTypes.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
             WASM_PARSER_FAIL_IF(!element.initialBitsOrIndices.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
 
@@ -555,7 +555,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
-            Element element(Element::Kind::Passive, funcrefType());
+            Element element(Element::Kind::Passive, nonNullFuncrefType());
             WASM_PARSER_FAIL_IF(!element.initTypes.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
             WASM_PARSER_FAIL_IF(!element.initialBitsOrIndices.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
 
@@ -566,7 +566,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x02: {
             uint32_t tableIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get "_s, elementNum, "th Element table index"_s);
-            WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, funcrefType()));
+            WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex, nonNullFuncrefType()));
 
             std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
@@ -578,7 +578,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
             ASSERT(!!m_info->tables[tableIndex]);
 
-            Element element(Element::Kind::Active, funcrefType(), tableIndex, WTFMove(initExpr));
+            Element element(Element::Kind::Active, nonNullFuncrefType(), tableIndex, WTFMove(initExpr));
             WASM_PARSER_FAIL_IF(!element.initTypes.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
             WASM_PARSER_FAIL_IF(!element.initialBitsOrIndices.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
 
@@ -592,7 +592,7 @@ auto SectionParser::parseElement() -> PartialResult
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
-            Element element(Element::Kind::Declared, funcrefType());
+            Element element(Element::Kind::Declared, nonNullFuncrefType());
             WASM_PARSER_FAIL_IF(!element.initTypes.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
             WASM_PARSER_FAIL_IF(!element.initialBitsOrIndices.tryReserveInitialCapacity(indexCount), "can't allocate memory for "_s, indexCount, " Element init_exprs"_s);
 

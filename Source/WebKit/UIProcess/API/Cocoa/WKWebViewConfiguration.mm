@@ -256,6 +256,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self._multiRepresentationHEICInsertionEnabled forKey:@"multiRepresentationHEICInsertionEnabled"];
 #if PLATFORM(VISION)
     [coder encodeBool:self._gamepadAccessRequiresExplicitConsent forKey:@"gamepadAccessRequiresExplicitConsent"];
+    [coder encodeBool:self._overlayRegionsEnabled forKey:@"overlayRegionsEnabled"];
 #endif
 }
 
@@ -306,6 +307,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._multiRepresentationHEICInsertionEnabled = [coder decodeBoolForKey:@"multiRepresentationHEICInsertionEnabled"];
 #if PLATFORM(VISION)
     self._gamepadAccessRequiresExplicitConsent = [coder decodeBoolForKey:@"gamepadAccessRequiresExplicitConsent"];
+    self._overlayRegionsEnabled = [coder decodeBoolForKey:@"overlayRegionsEnabled"];
 #endif
 
     return self;
@@ -613,6 +615,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (WKWebView *)_relatedWebView
 {
+    // FIXME: Remove when rdar://134318457, rdar://134318538 and rdar://125369363 are complete.
     if (RefPtr page = _pageConfiguration->relatedPage())
         return page->cocoaView().autorelease();
     return nil;
@@ -1519,6 +1522,23 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     _pageConfiguration->setGamepadAccessRequiresExplicitConsent(gamepadAccessRequiresExplicitConsent ? WebCore::ShouldRequireExplicitConsentForGamepadAccess::Yes : WebCore::ShouldRequireExplicitConsentForGamepadAccess::No);
 #endif
 }
+
+- (BOOL)_overlayRegionsEnabled
+{
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    return _pageConfiguration->overlayRegionsEnabled();
+#else
+    return NO;
+#endif
+}
+
+- (void)_setOverlayRegionsEnabled:(BOOL)overlayRegionsEnabled
+{
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    _pageConfiguration->setOverlayRegionsEnabled(overlayRegionsEnabled);
+#endif
+}
+
 #endif // PLATFORM(VISION)
 
 @end

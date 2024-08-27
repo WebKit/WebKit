@@ -31,9 +31,9 @@ PASS atan2(1em, -1em) should be used-value-equivalent to 135deg
 PASS atan2(1ex, -1ex) should be used-value-equivalent to 135deg
 PASS atan2(1ch, -1ch) should be used-value-equivalent to 135deg
 PASS atan2(1rem, -1rem) should be used-value-equivalent to 135deg
-FAIL atan2(1rem + 1px - 1px, -1rem) should be used-value-equivalent to 135deg assert_approx_equals: atan2(1rem + 1px - 1px, -1rem) and 135deg 0.1 serialize to the same thing in used values. expected 135 +/- 0.1 but got 180
+PASS atan2(1rem + 1px - 1px, -1rem) should be used-value-equivalent to 135deg
 PASS atan2(1vh, -1vh) should be used-value-equivalent to 135deg
-FAIL atan2(1vh + 0px, -1vh + 0px) should be used-value-equivalent to 135deg assert_approx_equals: atan2(1vh + 0px, -1vh + 0px) and 135deg 0.1 serialize to the same thing in used values. expected 135 +/- 0.1 but got 0
+PASS atan2(1vh + 0px, -1vh + 0px) should be used-value-equivalent to 135deg
 PASS atan2(1vw, -1vw) should be used-value-equivalent to 135deg
 PASS atan2(1deg, -1deg) should be used-value-equivalent to 135deg
 PASS atan2(1grad, -1grad) should be used-value-equivalent to 135deg

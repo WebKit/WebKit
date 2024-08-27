@@ -53,7 +53,7 @@ std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const 
 
 std::optional<WebCore::WebGPU::ImageCopyTexture> ConvertFromBackingContext::convertFromBacking(const ImageCopyTexture& imageCopyTexture)
 {
-    auto* texture = convertTextureFromBacking(imageCopyTexture.texture);
+    WeakPtr texture = convertTextureFromBacking(imageCopyTexture.texture);
     if (!texture)
         return std::nullopt;
 

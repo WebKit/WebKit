@@ -91,7 +91,7 @@ static std::variant<std::monostate, String, SidebarError> parseDetailsStringFrom
         return SidebarError { toErrorString(nil, @"details", [NSString stringWithFormat:@"'%@' must be of type 'string' or 'null'", key]) };
     }
 
-    return SidebarError { (NSString *)maybeValue };
+    return String((NSString *)maybeValue);
 }
 
 template<typename VariantType>
@@ -197,7 +197,7 @@ void WebExtensionAPISidebarAction::setPanel(NSDictionary *details, Ref<WebExtens
 
     const auto [windowId, tabId] = getIdentifiers(result);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(windowId, tabId, std::nullopt, std::nullopt), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(windowId, tabId, panelPath, std::nullopt), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

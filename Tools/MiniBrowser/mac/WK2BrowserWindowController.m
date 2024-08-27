@@ -1078,7 +1078,7 @@ static BOOL isJavaScriptURL(NSURL *url)
 
 - (NSImage *)windowSnapshotInRect:(CGRect)rect
 {
-    return [_webView _windowSnapshotInRect:rect];
+    return [_webView _windowSnapshotInRect:rect withOptions:kCGWindowImageBoundsIgnoreFraming];
 }
 
 @end

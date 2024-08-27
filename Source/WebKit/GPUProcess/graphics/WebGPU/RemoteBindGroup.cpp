@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUBindGroup.h>
+#include <WebCore/WebGPUExternalTexture.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -57,8 +58,8 @@ void RemoteBindGroup::destruct()
 
 void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier)
 {
-    if (auto* externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier))
-        m_backing->updateExternalTextures(*externalTexture);
+    if (auto externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
+        m_backing->updateExternalTextures(*externalTexture.get());
 }
 
 void RemoteBindGroup::stopListeningForIPC()

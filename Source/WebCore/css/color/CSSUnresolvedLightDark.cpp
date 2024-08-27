@@ -27,7 +27,8 @@
 #include "CSSUnresolvedLightDark.h"
 
 #include "CSSUnresolvedColor.h"
-#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "Document.h"
 #include "StyleBuilderState.h"
 
@@ -55,23 +56,25 @@ bool CSSUnresolvedLightDark::operator==(const CSSUnresolvedLightDark& other) con
         && darkColor == other.darkColor;
 }
 
-StyleColor createStyleColor(const CSSUnresolvedLightDark& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
+StyleColor createStyleColor(const CSSUnresolvedLightDark& unresolved, CSSUnresolvedStyleColorResolutionState& state)
 {
-    if (document.useDarkAppearance(&style))
-        return unresolved.darkColor->createStyleColor(document, style, forVisitedLink);
-    return unresolved.lightColor->createStyleColor(document, style, forVisitedLink);
+    CSSUnresolvedStyleColorResolutionNester nester { state };
+
+    if (state.document.useDarkAppearance(&state.style))
+        return unresolved.darkColor->createStyleColor(state);
+    return unresolved.lightColor->createStyleColor(state);
 }
 
-Color createColor(const CSSUnresolvedLightDark& unresolved, const CSSUnresolvedColorResolutionContext& context)
+Color createColor(const CSSUnresolvedLightDark& unresolved, CSSUnresolvedColorResolutionState& state)
 {
-    if (!context.appearance)
+    if (!state.appearance)
         return { };
 
-    switch (*context.appearance) {
+    switch (*state.appearance) {
     case CSSUnresolvedLightDarkAppearance::Light:
-        return unresolved.lightColor->createColor(context);
+        return unresolved.lightColor->createColor(state);
     case CSSUnresolvedLightDarkAppearance::Dark:
-        return unresolved.darkColor->createColor(context);
+        return unresolved.darkColor->createColor(state);
     }
 
     ASSERT_NOT_REACHED();

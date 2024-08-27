@@ -30,6 +30,7 @@
 #include "AnchorPositionEvaluator.h"
 #include "BasicShapeConversion.h"
 #include "CSSBasicShapes.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCounterStyleRegistry.h"
@@ -45,13 +46,12 @@
 #include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSValuePair.h"
-#include "CalcExpressionLength.h"
-#include "CalcExpressionOperation.h"
 #include "CalculationValue.h"
 #include "FontPalette.h"
 #include "FontSelectionValueInlines.h"
@@ -236,7 +236,6 @@ private:
     static void updateColorScheme(const CSSPrimitiveValue&, StyleColorScheme&);
 #endif
 
-    static Length convertTo100PercentMinusLength(const Length&);
     template<CSSValueID, CSSValueID> static Length convertPositionComponent(BuilderState&, const CSSValue&);
 
     static GridLength createGridTrackBreadth(const CSSPrimitiveValue&, BuilderState&);
@@ -264,7 +263,7 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
         return Length(primitiveValue.doubleValue(), LengthType::Percent);
 
     if (primitiveValue.isCalculatedPercentageWithLength())
-        return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
+        return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
 
     if (primitiveValue.isAnchor())
         return AnchorPositionEvaluator::resolveAnchorValue(builderState, *primitiveValue.cssAnchorValue());
@@ -394,7 +393,7 @@ inline Length BuilderConverter::convertToRadiusLength(const CSSToLengthConversio
     if (value.isPercentage())
         return Length(value.doubleValue(), LengthType::Percent);
     if (value.isCalculatedPercentageWithLength())
-        return Length(value.cssCalcValue()->createCalculationValue(conversionData));
+        return Length(value.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
     auto length = value.computeLength<Length>(conversionData);
     if (length.isNegative())
         return { 0, LengthType::Fixed };
@@ -412,20 +411,6 @@ inline LengthSize BuilderConverter::convertRadius(BuilderState& builderState, co
     ASSERT(!radius.width.isNegative());
     ASSERT(!radius.height.isNegative());
     return radius;
-}
-
-inline Length BuilderConverter::convertTo100PercentMinusLength(const Length& length)
-{
-    if (length.isPercent())
-        return Length(100 - length.value(), LengthType::Percent);
-    
-    // Turn this into a calc expression: calc(100% - length)
-    auto lengths = Vector<std::unique_ptr<CalcExpressionNode>>::from(
-        makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)),
-        makeUnique<CalcExpressionLength>(length)
-    );
-    auto operation = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
-    return Length(CalculationValue::create(WTFMove(operation), ValueRange::All));
 }
 
 inline Length BuilderConverter::convertPositionComponentX(BuilderState& builderState, const CSSValue& value)
@@ -848,7 +833,7 @@ inline int BuilderConverter::convertMarqueeSpeed(BuilderState&, const CSSValue& 
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isTime())
-        return primitiveValue.computeTime<int, CSSPrimitiveValue::Milliseconds>();
+        return primitiveValue.computeTime<int, CSSPrimitiveValue::TimeUnit::Milliseconds>();
     // For scrollamount support.
     ASSERT(primitiveValue.isNumber());
     return primitiveValue.intValue();
@@ -918,15 +903,7 @@ inline OptionSet<TextUnderlinePosition> BuilderConverter::convertTextUnderlinePo
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.valueID()) {
-    case CSSValueAuto:
-        return TextUnderlineOffset::createWithAuto();
-    default:
-        ASSERT(primitiveValue.isLength());
-        auto computedLength = convertComputedLength<float>(builderState, primitiveValue);
-        return TextUnderlineOffset::createWithLength(computedLength);
-    }
+    return TextUnderlineOffset::createWithLength(BuilderConverter::convertLengthOrAuto(builderState, value));
 }
 
 inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(BuilderState& builderState, const CSSValue& value)
@@ -943,7 +920,7 @@ inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(
 
         auto conversionData = builderState.cssToLengthConversionData();
         if (primitiveValue.isCalculatedPercentageWithLength())
-            return TextDecorationThickness::createWithLength(Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData)));
+            return TextDecorationThickness::createWithLength(Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })));
 
         ASSERT(primitiveValue.isLength());
         return TextDecorationThickness::createWithLength(primitiveValue.computeLength<Length>(conversionData));
@@ -1527,7 +1504,7 @@ inline Length BuilderConverter::convertTextLengthOrNormal(BuilderState& builderS
     if (primitiveValue.isPercentage())
         return Length(clampTo<double>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
     if (primitiveValue.isCalculatedPercentageWithLength())
-        return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
+        return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
     if (primitiveValue.isNumber())
         return Length(primitiveValue.doubleValue(), LengthType::Fixed);
     ASSERT_NOT_REACHED();
@@ -1878,7 +1855,7 @@ inline Length BuilderConverter::convertLineHeight(BuilderState& builderState, co
         if (primitiveValue.isLength())
             length = primitiveValue.computeLength<Length>(conversionData);
         else {
-            auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(builderState.style().computedFontSize());
+            auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(builderState.style().computedFontSize());
             length = { clampTo<float>(value, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed };
         }
         if (multiplier != 1.f)

@@ -263,7 +263,7 @@ bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const RenderSt
     return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.rootStyleWillChange(downcast<Layout::ElementBox>(*root.layoutBox()), newStyle);
 }
 
-bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle)
+bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyle& newStyle, StyleDifference diff)
 {
     if (!renderer.layoutBox()) {
         ASSERT_NOT_REACHED();
@@ -272,7 +272,7 @@ bool LineLayout::styleWillChange(const RenderElement& renderer, const RenderStyl
     if (!m_inlineContent)
         return false;
 
-    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.styleWillChange(*renderer.layoutBox(), newStyle);
+    return Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() }.styleWillChange(*renderer.layoutBox(), newStyle, diff);
 }
 
 bool LineLayout::boxContentWillChange(const RenderBox& renderer)
@@ -321,6 +321,16 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     if (layoutState->hasTextBoxTrimEnd(rootRenderer))
         textBoxTrimForIFC.add(isFlippedLinesWritingMode ? Layout::BlockLayoutState::TextBoxTrimSide::Start : Layout::BlockLayoutState::TextBoxTrimSide::End);
     return textBoxTrimForIFC;
+}
+
+static inline TextEdge textBoxEdge(const RenderBlockFlow& rootRenderer)
+{
+    auto* layoutState = rootRenderer.view().frameView().layoutContext().layoutState();
+    if (!layoutState)
+        return { };
+    if (auto textBoxTrim = layoutState->textBoxTrim())
+        return textBoxTrim->propagatedTextBoxEdge;
+    return { };
 }
 
 static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const RenderBlockFlow& rootRenderer)
@@ -390,6 +400,7 @@ std::optional<LayoutRect> LineLayout::layout()
         m_blockFormattingState.placedFloats(),
         lineClamp(flow()),
         textBoxTrim(flow()),
+        textBoxEdge(flow()),
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };
@@ -457,7 +468,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& layoutBox = box.layoutBox();
-        if (!layoutBox.isAtomicInlineLevelBox())
+        if (!layoutBox.isAtomicInlineBox())
             continue;
 
         auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
@@ -465,24 +476,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
         renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
-        auto relayoutRubyAnnotationIfNeeded = [&] {
-            if (!layoutBox.isRubyAnnotationBox())
-                return;
-            // Annotation inline-block may get resized during inline layout (when base is wider) and
-            // we need to apply this new size on the annotation content by running layout.
-            auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
-            if (!needsResizing)
-                return;
-            auto logicalMarginBoxSize = Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).size();
-            if (logicalMarginBoxSize == renderer.size())
-                return;
-            renderer.setSize(logicalMarginBoxSize);
-            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxSize.width(), LengthType::Fixed });
-            renderer.setNeedsLayout(MarkOnlyThis);
-            renderer.layoutIfNeeded();
-            renderer.clearOverridingLogicalWidthLength();
-        };
-        relayoutRubyAnnotationIfNeeded();
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
@@ -1022,7 +1015,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!layerPaintScope.includes(box))
             continue;
 
-        if (box.isAtomicInlineLevelBox()) {
+        if (box.isAtomicInlineBox()) {
             if (renderer.hitTest(request, result, locationInContainer, flippedContentOffsetIfNeeded(flow(), downcast<RenderBox>(renderer), accumulatedOffset)))
                 return true;
             continue;
@@ -1067,7 +1060,7 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
         else
             box.moveHorizontally(blockShift);
 
-        if (box.isAtomicInlineLevelBox()) {
+        if (box.isAtomicInlineBox()) {
             CheckedRef renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
             renderer->move(deltaX, deltaY);
         }

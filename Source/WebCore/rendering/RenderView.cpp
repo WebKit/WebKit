@@ -80,7 +80,7 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTFMove(style))
     , m_frameView(*document.view())
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
-    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox))
+    , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::preferredLogicalWidths))
     , m_selection(*this)
 {
     // FIXME: We should find a way to enforce this at compile time.

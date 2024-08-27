@@ -187,7 +187,7 @@ public:
     using AVContentKeySessionDelegateClient::WeakPtrImplType;
 
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
-    virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
+    virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // CDMInstanceSession
     void requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;

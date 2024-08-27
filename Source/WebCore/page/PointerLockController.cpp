@@ -40,8 +40,11 @@
 #include "PointerCaptureController.h"
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerLockController);
 
 class UnadjustedMovementPlatformMouseEvent : public PlatformMouseEvent {
 public:

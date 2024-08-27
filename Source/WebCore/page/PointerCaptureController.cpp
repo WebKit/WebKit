@@ -34,12 +34,15 @@
 #include "Page.h"
 #include "PointerEvent.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(POINTER_LOCK)
 #include "PointerLockController.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerCaptureController);
 
 PointerCaptureController::PointerCaptureController(Page& page)
     : m_page(page)
@@ -324,27 +327,6 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 }
 #endif
 
-static AtomString pointerEventType(const AtomString& mouseEventType)
-{
-    auto& names = eventNames();
-    if (mouseEventType == names.mousedownEvent)
-        return names.pointerdownEvent;
-    if (mouseEventType == names.mouseoverEvent)
-        return names.pointeroverEvent;
-    if (mouseEventType == names.mouseenterEvent)
-        return names.pointerenterEvent;
-    if (mouseEventType == names.mousemoveEvent)
-        return names.pointermoveEvent;
-    if (mouseEventType == names.mouseleaveEvent)
-        return names.pointerleaveEvent;
-    if (mouseEventType == names.mouseoutEvent)
-        return names.pointeroutEvent;
-    if (mouseEventType == names.mouseupEvent)
-        return names.pointerupEvent;
-
-    return nullAtom();
-}
-
 RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     // If we already have known touches then we cannot dispatch a mouse event,
@@ -363,7 +345,8 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     MouseButton newButton = mouseEvent.button();
     MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerHasNotChanged;
     MouseButton button = [&] {
-        if (!PointerEvent::typeIsUpOrDown(pointerEventType(type))) {
+        auto pointerEventType = PointerEvent::typeFromMouseEventType(type);
+        if (!PointerEvent::typeRequiresResolvedButton(pointerEventType)) {
             if (newButton == previousMouseButton || !pointerIsPressed)
                 return MouseButton::PointerHasNotChanged;
         }

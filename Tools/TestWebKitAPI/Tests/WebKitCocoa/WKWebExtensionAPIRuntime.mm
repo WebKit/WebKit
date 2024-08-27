@@ -1368,10 +1368,9 @@ TEST(WKWebExtensionAPIRuntime, ConnectNativeWithInvalidMessage)
 
             [messagePort sendMessage:@{ @"bad": NSUUID.UUID } completionHandler:^(NSError *error) {
                 EXPECT_NOT_NULL(error);
-                EXPECT_EQ(error.code, WKWebExtensionMessagePortErrorMessageInvalid);
             }];
 
-            [messagePort disconnectWithError:nil];
+            [messagePort disconnect];
 
             [manager done];
         };

@@ -6,6 +6,14 @@ description: |
 defines: [asyncTest]
 ---*/
 
+/**
+ * Defines the **sole** asynchronous test of a file.
+ * @see {@link ../docs/rfcs/async-helpers.md} for background.
+ *
+ * @param {Function} testFunc a callback whose returned promise indicates test results
+ *   (fulfillment for success, rejection for failure)
+ * @returns {void}
+ */
 function asyncTest(testFunc) {
   if (!Object.hasOwn(globalThis, "$DONE")) {
     throw new Test262Error("asyncTest called without async flag");
@@ -28,86 +36,62 @@ function asyncTest(testFunc) {
   }
 }
 
+/**
+ * Asserts that a callback asynchronously throws an instance of a particular
+ * error (i.e., returns a promise whose rejection value is an object referencing
+ * the constructor).
+ *
+ * @param {Function} expectedErrorConstructor the expected constructor of the
+ *   rejection value
+ * @param {Function} func the callback
+ * @param {string} [message] the prefix to use for failure messages
+ * @returns {Promise<void>} fulfills if the expected error is thrown,
+ *   otherwise rejects
+ */
 assert.throwsAsync = function (expectedErrorConstructor, func, message) {
   return new Promise(function (resolve) {
-    var innerThenable;
-    if (message === undefined) {
-      message = "";
-    } else {
-      message += " ";
-    }
-    if (typeof func === "function") {
-      try {
-        innerThenable = func();
-        if (
-          innerThenable === null ||
-          typeof innerThenable !== "object" ||
-          typeof innerThenable.then !== "function"
-        ) {
-          message +=
-            "Expected to obtain an inner promise that would reject with a" +
-            expectedErrorConstructor.name +
-            " but result was not a thenable";
-          throw new Test262Error(message);
-        }
-      } catch (thrown) {
-        message +=
-          "Expected a " +
-          expectedErrorConstructor.name +
-          " to be thrown asynchronously but an exception was thrown synchronously while obtaining the inner promise";
-        throw new Test262Error(message);
+    var expectedName = expectedErrorConstructor.name;
+    var expectation = "Expected a " + expectedName + " to be thrown asynchronously";
+    var fail = function (detail) {
+      if (message === undefined) {
+        throw new Test262Error(detail);
       }
-    } else {
-      message +=
-        "assert.throwsAsync called with an argument that is not a function";
-      throw new Test262Error(message);
+      throw new Test262Error(message + " " + detail);
+    };
+    var res;
+    if (typeof func !== "function") {
+      fail("assert.throwsAsync called with an argument that is not a function");
+    }
+    try {
+      res = func();
+    } catch (thrown) {
+      fail(expectation + " but the function threw synchronously");
+    }
+    if (res === null || typeof res !== "object" || typeof res.then !== "function") {
+      fail(expectation + " but result was not a thenable");
     }
 
     try {
-      resolve(innerThenable.then(
+      resolve(Promise.resolve(res).then(
         function () {
-          message +=
-            "Expected a " +
-            expectedErrorConstructor.name +
-            " to be thrown asynchronously but no exception was thrown at all";
-          throw new Test262Error(message);
+          fail(expectation + " but no exception was thrown at all");
         },
         function (thrown) {
-          var expectedName, actualName;
-          if (typeof thrown !== "object" || thrown === null) {
-            message += "Thrown value was not an object!";
-            throw new Test262Error(message);
+          var actualName;
+          if (thrown === null || typeof thrown !== "object") {
+            fail(expectation + " but thrown value was not an object");
           } else if (thrown.constructor !== expectedErrorConstructor) {
-            expectedName = expectedErrorConstructor.name;
             actualName = thrown.constructor.name;
             if (expectedName === actualName) {
-              message +=
-                "Expected a " +
-                expectedName +
-                " but got a different error constructor with the same name";
-            } else {
-              message +=
-                "Expected a " + expectedName + " but got a " + actualName;
+              fail(expectation +
+                " but got a different error constructor with the same name");
             }
-            throw new Test262Error(message);
+            fail(expectation + " but got a " + actualName);
           }
         }
       ));
     } catch (thrown) {
-      if (typeof thrown !== "object" || thrown === null) {
-        message +=
-          "Expected a " +
-          expectedErrorConstructor.name +
-          " to be thrown asynchronously but innerThenable synchronously threw a value that was not an object ";
-      } else {
-        message +=
-          "Expected a " +
-          expectedErrorConstructor.name +
-          " to be thrown asynchronously but a " +
-          thrown.constructor.name +
-          " was thrown synchronously";
-      }
-      throw new Test262Error(message);
+      fail(expectation + " but .then threw synchronously");
     }
   });
 };

@@ -32,6 +32,7 @@
 #include "InstrumentingAgents.h"
 #include <JavaScriptCore/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,7 +68,7 @@ public:
     void copyText(const String& text);
 
     class InspectableObject {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(InspectableObject);
     public:
         virtual JSC::JSValue get(JSC::JSGlobalObject&);
         virtual ~InspectableObject() = default;

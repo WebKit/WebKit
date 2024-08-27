@@ -397,11 +397,9 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, initialSize = initialSize, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()] (LayerHostingContextID contextID, const FloatSize& size) {
         if (!page || !videoElement)
             return;
-        RefPtr player = videoElement->player();
-        bool isSpatial = player && player->videoPlaybackConfiguration().contains(MediaPlayer::VideoPlaybackConfigurationOption::Spatial);
-        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isSpatial));
+        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), videoElement->spatialVideoMetadata()));
 
-        if (player) {
+        if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
                 protectedThis->setPlayerIdentifier(contextId, identifier);
         }

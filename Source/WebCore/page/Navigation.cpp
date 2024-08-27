@@ -317,7 +317,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#performing-a-navigation-api-traversal
-Navigation::Result Navigation::performTraversal(const String& key, Navigation::Options options, FrameLoadType loadType, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+Navigation::Result Navigation::performTraversal(const String& key, Navigation::Options options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     if (!window()->protectedDocument()->isFullyActive() || window()->document()->unloadCounter())
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
@@ -335,12 +335,10 @@ Navigation::Result Navigation::performTraversal(const String& key, Navigation::O
     RefPtr apiMethodTracker = addUpcomingTrarveseAPIMethodTracker(WTFMove(committed), WTFMove(finished), key, options.info);
 
     // FIXME: 11. Let sourceSnapshotParams be the result of snapshotting source snapshot params given document.
-    // FIXME: 12. Append the following session history traversal steps to traversable
-
-    // FIXME: This is just a stub that loads a URL for now.
-    auto entry = findEntryByKey(key);
-    ASSERT(entry);
-    frame()->loader().loadItem(entry.value()->associatedHistoryItem(), &currentEntry()->associatedHistoryItem(), loadType, ShouldTreatAsContinuingLoad::No);
+    frame()->checkedNavigationScheduler()->scheduleHistoryNavigationByKey(key, [apiMethodTracker] (ScheduleHistoryNavigationResult result) {
+        if (result == ScheduleHistoryNavigationResult::Aborted)
+            createErrorResult(WTFMove(apiMethodTracker->committedPromise), WTFMove(apiMethodTracker->finishedPromise), ExceptionCode::AbortError, "Navigation aborted"_s);
+    });
 
     return apiMethodTrackerDerivedResult(*apiMethodTracker);
 }
@@ -364,7 +362,7 @@ Navigation::Result Navigation::traverseTo(const String& key, Options&& options, 
     if (!entry)
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid key"_s);
 
-    return performTraversal(key, options, FrameLoadType::IndexedBackForward, WTFMove(committed), WTFMove(finished));
+    return performTraversal(key, options, WTFMove(committed), WTFMove(finished));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-back
@@ -375,7 +373,7 @@ Navigation::Result Navigation::back(Options&& options, Ref<DeferredPromise>&& co
 
     Ref previousEntry = m_entries[m_currentEntryIndex.value() - 1];
 
-    return performTraversal(previousEntry->key(), options, FrameLoadType::Back, WTFMove(committed), WTFMove(finished));
+    return performTraversal(previousEntry->key(), options, WTFMove(committed), WTFMove(finished));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-forward
@@ -386,7 +384,7 @@ Navigation::Result Navigation::forward(Options&& options, Ref<DeferredPromise>&&
 
     Ref nextEntry = m_entries[m_currentEntryIndex.value() + 1];
 
-    return performTraversal(nextEntry->key(), options, FrameLoadType::Forward, WTFMove(committed), WTFMove(finished));
+    return performTraversal(nextEntry->key(), options, WTFMove(committed), WTFMove(finished));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-updatecurrententry
@@ -602,7 +600,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     m_ongoingNavigateEvent = nullptr;
 
     // FIXME: Fill in exception information.
-    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, { }, 0, 0, { globalObject->vm(), domException }));
+    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), { }, 0, 0, { globalObject->vm(), domException }));
 
     if (m_ongoingAPIMethodTracker)
         rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), exception, domException);

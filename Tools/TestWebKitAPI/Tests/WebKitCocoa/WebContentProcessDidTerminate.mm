@@ -354,7 +354,9 @@ TEST(WKNavigation, ReloadRelatedViewsInProcessDidTerminate)
     Vector<RetainPtr<WKWebView>> webViews;
     webViews.append(webView1);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     for (unsigned i = 0; i < numberOfViews - 1; ++i) {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
         webViews.append(webView);
@@ -497,7 +499,9 @@ TEST(WKNavigation, MultipleProcessCrashesRelatedWebViews)
     [webView1 loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     TestWebKitAPI::Util::run(&webview1FinishedLoad);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration.get()._relatedWebView = webView1.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView2 setNavigationDelegate:navigationDelegate.get()];
 

@@ -80,6 +80,7 @@ protected:
     bool WARN_UNUSED_RETURN parseInt7(int8_t&);
     bool WARN_UNUSED_RETURN peekInt7(int8_t&);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
+    bool WARN_UNUSED_RETURN peekUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseUInt64(uint64_t&);
@@ -242,6 +243,14 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseImmLaneIdx(uin
     WASM_PARSER_FAIL_IF(!parseUInt8(result), "Could not parse the lane index immediate byte."_s);
     WASM_PARSER_FAIL_IF(result >= laneCount, "Lane index immediate is too large, saw "_s, laneCount, ", expected an ImmLaneIdx"_s, laneCount);
     return { };
+}
+
+ALWAYS_INLINE bool ParserBase::peekUInt8(uint8_t& result)
+{
+    if (m_offset >= m_source.size())
+        return false;
+    result = m_source[m_offset];
+    return true;
 }
 
 ALWAYS_INLINE bool ParserBase::parseUInt8(uint8_t& result)

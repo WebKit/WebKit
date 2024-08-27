@@ -43,7 +43,10 @@ public:
 
 private:
     YouTubePluginReplacement(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    virtual ~YouTubePluginReplacement();
+
     static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+
     static bool supportsMIMEType(const String&);
     static bool supportsFileExtension(StringView);
     static bool supportsURL(const URL&);

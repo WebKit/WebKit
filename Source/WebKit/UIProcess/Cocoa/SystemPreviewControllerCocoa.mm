@@ -405,7 +405,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
             return completionHandler();
 
         auto protectedThis = weakThis.get();
-        RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+        RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.elementIdentifier ? protectedThis->m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
         auto request = WebCore::ResourceRequest(url);
         bool shouldRunAtForegroundPriority = false;
         protectedThis->m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
@@ -473,7 +473,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
 void SystemPreviewController::loadStarted(const URL& localFileURL)
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview load has started on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview load has started on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
     m_localFileURL = localFileURL;
 
     // Take the local URL, but add on the fragment from the original request URL.
@@ -490,7 +490,7 @@ void SystemPreviewController::loadStarted(const URL& localFileURL)
 
 void SystemPreviewController::loadCompleted(const URL& localFileURL)
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
 
     ASSERT(equalIgnoringFragmentIdentifier(m_localFileURL, localFileURL));
 
@@ -511,7 +511,7 @@ void SystemPreviewController::loadCompleted(const URL& localFileURL)
 
 void SystemPreviewController::loadFailed()
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview load has failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview load has failed on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
 
 #if PLATFORM(VISION)
     if (m_state == State::Loading && [getASVLaunchPreviewClass() respondsToSelector:@selector(cancelPreviewApplicationWithURLs:error:completion:)])
@@ -538,7 +538,7 @@ void SystemPreviewController::loadFailed()
 
 void SystemPreviewController::end()
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview ended on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview ended on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
 
 #if !PLATFORM(VISION)
     m_qlPreviewControllerDelegate = nullptr;
@@ -586,7 +586,7 @@ void SystemPreviewController::setCompletionHandlerForLoadTesting(CompletionHandl
 
 void SystemPreviewController::triggerSystemPreviewAction()
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview action was triggered on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview action was triggered on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
 
     page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
 }
@@ -599,9 +599,12 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
         return;
 
     m_systemPreviewInfo.isPreview = true;
-    m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
+    if (elementID)
+        m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
+    else
+        m_systemPreviewInfo.element.elementIdentifier = std::nullopt;
     m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.legacyMainFrameProcess().coreProcessIdentifier() };
-    m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
+    m_systemPreviewInfo.element.webPageIdentifier = LegacyNullableObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }
 

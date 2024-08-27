@@ -65,9 +65,11 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
     if (insertionType.treeScopeChanged && isInShadowTree()) {
         if (auto* shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
+
+        return Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
 
-    return InsertedIntoAncestorResult::Done;
+    return Node::InsertedIntoAncestorResult::Done;
 }
 
 void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -99,6 +101,13 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
         if (RefPtr shadowRoot = containingShadowRoot())
             shadowRoot->renameSlotElement(*this, oldValue, newValue);
     }
+}
+
+void HTMLSlotElement::didFinishInsertingNode()
+{
+    HTMLElement::didFinishInsertingNode();
+    if (selfOrPrecedingNodesAffectDirAuto())
+        updateEffectiveTextDirection();
 }
 
 const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* HTMLSlotElement::assignedNodes() const
@@ -225,5 +234,4 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
     dispatchEvent(event);
 }
 
-}
-
+} // namespace WebCore

@@ -741,18 +741,9 @@ public:
     bool inlinePredictionsEnabled() const { return m_inlinePredictionsEnabled; }
 #endif
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);
-
-    void writingToolsCompositionSessionDidReceiveRestartAction();
-    void writingToolsCompositionSessionDidReceiveReplacements(const WTF::UUID&, bool finished);
-
-    bool isWritingToolsTextReplacementsFinished() const;
-    bool isIntelligenceTextPonderingAnimationFinished() const;
-
-    void willBeginPartialIntelligenceTextPonderingAnimation();
-    void didEndPartialIntelligenceTextPonderingAnimation();
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)
@@ -992,11 +983,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
 #endif
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
     RetainPtr<WKTextAnimationManager> m_textAnimationTypeManager;
-
-    unsigned m_partialIntelligenceTextPonderingAnimationCount { 0 };
-    bool m_writingToolsTextReplacementsFinished { false };
 #endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

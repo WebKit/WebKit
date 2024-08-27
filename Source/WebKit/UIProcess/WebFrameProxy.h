@@ -76,9 +76,10 @@ struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
 public:
-    static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID)
+    enum class IsMainFrame : bool { No, Yes };
+    static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID, IsMainFrame isMainFrame)
     {
-        return adoptRef(*new WebFrameProxy(page, process, frameID));
+        return adoptRef(*new WebFrameProxy(page, process, frameID, isMainFrame));
     }
 
     static WebFrameProxy* webFrame(WebCore::FrameIdentifier);
@@ -168,6 +169,7 @@ public:
     Ref<WebProcessProxy> protectedProcess() const { return process(); }
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
+    FrameProcess& frameProcess() { return m_frameProcess.get(); }
     void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
@@ -195,7 +197,7 @@ public:
     void setRemoteFrameSize(WebCore::IntSize size) { m_remoteFrameSize = size; }
 
 private:
-    WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier);
+    WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, IsMainFrame);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
@@ -226,6 +228,7 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
     bool m_hasPendingBackForwardItem { false };
+    const IsMainFrame m_isMainFrame;
     std::optional<WebCore::IntSize> m_remoteFrameSize;
 };
 

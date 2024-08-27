@@ -51,7 +51,7 @@ RemoteMediaRecorderManager::~RemoteMediaRecorderManager()
 
 void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* recorder = m_recorders.get(ObjectIdentifier<MediaRecorderIdentifierType>(decoder.destinationID())))
+    if (auto* recorder = m_recorders.get(LegacyNullableObjectIdentifier<MediaRecorderIdentifierType>(decoder.destinationID())))
         recorder->didReceiveMessage(connection, decoder);
 }
 

@@ -580,6 +580,11 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     if (RefPtr document = m_frame->document()) {
         // FIXME: Should the DatabaseManager watch for something like ActiveDOMObject::stop() rather than being special-cased here?
         DatabaseManager::singleton().stopDatabases(*document, nullptr);
+
+        if (document->settings().navigationAPIEnabled() && unloadEventPolicy != UnloadEventPolicy::UnloadAndPageHide) {
+            RefPtr window = m_frame->document()->domWindow();
+            window->protectedNavigation()->abortOngoingNavigationIfNeeded();
+        }
     }
 
     policyChecker().stopCheck();
@@ -2030,11 +2035,6 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
             localChild->checkedLoader()->stopAllLoaders(clearProvisionalItem);
     }
 
-    if (m_frame->document()->settings().navigationAPIEnabled()) {
-        RefPtr window = m_frame->document()->domWindow();
-        window->protectedNavigation()->abortOngoingNavigationIfNeeded();
-    }
-
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "stopAllLoaders: m_provisionalDocumentLoader=%p, m_documentLoader=%p", m_provisionalDocumentLoader.get(), m_documentLoader.get());
 
     if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader)
@@ -2882,7 +2882,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
             auto types = OptionSet<DataDetectorType>::fromRaw(enumToUnderlyingType(m_frame->settings().dataDetectorTypes()));
 
             if (document && types) {
-                DataDetection::detectContentInFrame(protectedFrame().ptr(), types, m_client->dataDetectionReferenceDate(), [this, weakFrame = WeakPtr { m_frame.get() }, document](NSArray *results) {
+                DataDetection::detectContentInFrame(protectedFrame().ptr(), types, m_client->dataDetectionReferenceDate(), [this, weakFrame = WeakPtr { m_frame.get() }](NSArray *results) {
                     RefPtr strongFrame { weakFrame.get() };
                     if (!strongFrame || &strongFrame->loader() != this)
                         return;

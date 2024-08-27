@@ -63,6 +63,8 @@ RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStre
 {
 }
 
+RealtimeOutgoingVideoSourceCocoa::~RealtimeOutgoingVideoSourceCocoa() = default;
+
 void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
 #if !RELEASE_LOG_DISABLED

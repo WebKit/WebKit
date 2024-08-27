@@ -40,6 +40,7 @@
 namespace WebKit {
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process.connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_process.connection(), completion)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLockRegistryProxy);
 
@@ -86,8 +87,8 @@ void WebLockRegistryProxy::releaseLock(WebCore::ClientOrigin&& clientOrigin, Web
 
 void WebLockRegistryProxy::abortLockRequest(WebCore::ClientOrigin&& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier());
-    MESSAGE_CHECK(clientID.processIdentifier() == m_process.coreProcessIdentifier());
+    MESSAGE_CHECK_COMPLETION(lockIdentifier.processIdentifier() == m_process.coreProcessIdentifier(), completionHandler(false));
+    MESSAGE_CHECK_COMPLETION(clientID.processIdentifier() == m_process.coreProcessIdentifier(), completionHandler(false));
     auto* dataStore = m_process.websiteDataStore();
     if (!dataStore) {
         completionHandler(false);
@@ -125,5 +126,6 @@ void WebLockRegistryProxy::processDidExit()
 }
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
 
 } // namespace WebKit

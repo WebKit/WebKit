@@ -1795,6 +1795,11 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         }
     }
 
+    if (traceNameIs("grand_mountain_adventure"))
+    {
+        addIntegerPrerequisite(GL_MAX_TEXTURE_SIZE, 11016);
+    }
+
     if (IsGalaxyS22())
     {
         if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||

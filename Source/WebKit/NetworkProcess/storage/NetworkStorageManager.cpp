@@ -766,7 +766,7 @@ void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageId
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto* sessionStorageManager = manager->existingSessionStorageManager())
-                sessionStorageManager->removeNamespace(ObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64()));
+                sessionStorageManager->removeNamespace(LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64()));
         }
     });
 }
@@ -778,7 +778,7 @@ void NetworkStorageManager::cloneSessionStorageForWebPage(WebPageProxyIdentifier
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, fromIdentifier, toIdentifier]() mutable {
         assertIsCurrent(workQueue());
-        cloneSessionStorageNamespace(ObjectIdentifier<StorageNamespaceIdentifierType>(fromIdentifier.toUInt64()), ObjectIdentifier<StorageNamespaceIdentifierType>(toIdentifier.toUInt64()));
+        cloneSessionStorageNamespace(LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(fromIdentifier.toUInt64()), LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(toIdentifier.toUInt64()));
     });
 }
 
@@ -2030,3 +2030,6 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK_COMPLETION
+#undef MESSAGE_CHECK

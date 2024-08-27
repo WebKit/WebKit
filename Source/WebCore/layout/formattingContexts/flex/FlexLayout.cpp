@@ -169,9 +169,8 @@ LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem)
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
-    auto placedFloats = PlacedFloats { flexItemBox };
-    auto blockLayoutState = BlockLayoutState { placedFloats };
-    return InlineFormattingContext { flexItemBox, flexFormattingContext().layoutState(), blockLayoutState }.maximumContentSize();
+
+    return formattingContext().integrationUtils().preferredWidthWithFormattingContextForBox(downcast<ElementBox>(flexItemBox)).second;
 }
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems)
@@ -439,13 +438,8 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
             }
-            // FIXME: Let it run through integration codepath.
-            auto placedFloats = PlacedFloats { flexItemBox };
-            auto blockLayoutState = BlockLayoutState { placedFloats };
-            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, flexFormattingContext().layoutState(), blockLayoutState };
-            auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };
-            auto layoutResult = inlineFormattingContext.layout({ constraintsForInFlowContent, { } });
-            return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };
+            formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), flexItemsMainSizeList[flexItemIndex]);
+            return BoxGeometry::marginBoxRect(formattingContext().geometryForFlexItem(flexItemBox)).height();
         };
         auto usedCrossSize = crossSizeAfterPerformingLayout();
         if (!flexItem.isContentBoxBased())
@@ -868,7 +862,7 @@ const ElementBox& FlexLayout::flexContainer() const
     return m_flexFormattingContext.root();
 }
 
-FlexFormattingContext& FlexLayout::flexFormattingContext()
+FlexFormattingContext& FlexLayout::formattingContext()
 {
     return m_flexFormattingContext;
 }

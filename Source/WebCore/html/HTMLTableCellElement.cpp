@@ -41,16 +41,6 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLTableCellElement);
 
 using namespace HTMLNames;
 
-// These limits are defined in the HTML specification:
-// - https://html.spec.whatwg.org/#dom-tdth-colspan
-// - https://html.spec.whatwg.org/#dom-tdth-rowspan
-static const unsigned minColspan = 1;
-static const unsigned maxColspan = 1000;
-static const unsigned defaultColspan = 1;
-static const unsigned minRowspan = 0;
-static const unsigned maxRowspan = 65534;
-static const unsigned defaultRowspan = 1;
-
 Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLTableCellElement(tagName, document));

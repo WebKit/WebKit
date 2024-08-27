@@ -86,6 +86,7 @@ struct FunctionParserTypes {
         }
 
         Type type() const { return m_type; }
+        void setType(Type type) { m_type = type; }
 
         ExpressionType& value() { return m_value; }
         ExpressionType value() const { return m_value; }
@@ -113,6 +114,8 @@ struct FunctionParserTypes {
     using ControlStack = Vector<ControlEntry, 16>;
 
     using ResultList = Vector<ExpressionType, 8>;
+
+    using ArgumentList = Vector<ExpressionType, 8>;
 };
 
 template<typename Context>
@@ -127,6 +130,7 @@ public:
     using TypedExpression = typename FunctionParser::TypedExpression;
     using Stack = typename FunctionParser::Stack;
     using ResultList = typename FunctionParser::ResultList;
+    using ArgumentList = typename FunctionParser::ArgumentList;
 
     FunctionParser(Context&, std::span<const uint8_t> function, const TypeDefinition&, const ModuleInformation&);
 
@@ -177,10 +181,16 @@ private:
     PartialResult WARN_UNUSED_RETURN parseBody();
     PartialResult WARN_UNUSED_RETURN parseExpression();
     PartialResult WARN_UNUSED_RETURN parseUnreachableExpression();
-    PartialResult WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
-    PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&);
+    PartialResult WARN_UNUSED_RETURN unifyControl(ArgumentList&, unsigned level);
     PartialResult WARN_UNUSED_RETURN checkLocalInitialized(uint32_t);
     PartialResult WARN_UNUSED_RETURN unify(const ControlType&);
+
+    enum BranchConditionalityTag {
+        Unconditional,
+        Conditional
+    };
+
+    PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&, BranchConditionalityTag);
 
     PartialResult WARN_UNUSED_RETURN parseNestedBlocksEagerly(bool&);
     void switchToBlock(ControlType&&, Stack&&);
@@ -193,8 +203,10 @@ private:
 
     using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN unaryCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
+    PartialResult WARN_UNUSED_RETURN unaryCompareCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
     using BinaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN binaryCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
+    PartialResult WARN_UNUSED_RETURN binaryCompareCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
 
     PartialResult WARN_UNUSED_RETURN store(Type memoryType);
     PartialResult WARN_UNUSED_RETURN load(Type memoryType);
@@ -527,12 +539,130 @@ auto FunctionParser<Context>::binaryCase(OpType op, BinaryOperationHandler handl
 }
 
 template<typename Context>
+auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandler handler, Type returnType, Type lhsType, Type rhsType) -> PartialResult
+{
+    TypedExpression right;
+    TypedExpression left;
+
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(right, "binary right"_s);
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(left, "binary left"_s);
+
+    WASM_VALIDATOR_FAIL_IF(left.type() != lhsType, op, " left value type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(right.type() != rhsType, op, " right value type mismatch"_s);
+
+    uint8_t nextOpcode;
+    if (Context::shouldFuseBranchCompare && peekUInt8(nextOpcode)) {
+        if (nextOpcode == OpType::BrIf) {
+            m_currentOpcodeStartingOffset = m_offset;
+            m_currentOpcode = static_cast<OpType>(nextOpcode);
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+            m_context.willParseOpcode();
+
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, left, right, m_expressionStack));
+            m_context.didParseOpcode();
+            return { };
+        }
+        if (nextOpcode == OpType::If) {
+            m_currentOpcodeStartingOffset = m_offset;
+            m_currentOpcode = static_cast<OpType>(nextOpcode);
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+            m_context.willParseOpcode();
+
+            BlockSignature inlineSignature;
+            WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
+
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature->toString());
+            unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
+            for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+
+            int64_t oldSize = m_expressionStack.size();
+            Stack newStack;
+            ControlType control;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, inlineSignature, m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+            ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
+            m_expressionStack = WTFMove(newStack);
+            m_context.didParseOpcode();
+            return { };
+        }
+    }
+
+    ExpressionType result;
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(left, right, result));
+    m_expressionStack.constructAndAppend(returnType, result);
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::unaryCase(OpType op, UnaryOperationHandler handler, Type returnType, Type operandType) -> PartialResult
 {
     TypedExpression value;
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary"_s);
 
     WASM_VALIDATOR_FAIL_IF(value.type() != operandType, op, " value type mismatch"_s);
+
+    ExpressionType result;
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(value, result));
+    m_expressionStack.constructAndAppend(returnType, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler handler, Type returnType, Type operandType) -> PartialResult
+{
+    TypedExpression value;
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary"_s);
+
+    WASM_VALIDATOR_FAIL_IF(value.type() != operandType, op, " value type mismatch"_s);
+
+    uint8_t nextOpcode;
+    if (Context::shouldFuseBranchCompare && peekUInt8(nextOpcode)) {
+        if (nextOpcode == OpType::BrIf) {
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, value, m_expressionStack));
+            return { };
+        }
+        if (nextOpcode == OpType::If) {
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the if, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+
+            BlockSignature inlineSignature;
+            WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
+
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature->toString());
+            unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
+            for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+
+            int64_t oldSize = m_expressionStack.size();
+            Stack newStack;
+            ControlType control;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, inlineSignature, m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+            ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
+            m_expressionStack = WTFMove(newStack);
+            return { };
+        }
+    }
 
     ExpressionType result;
     WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(value, result));
@@ -1590,17 +1720,25 @@ auto FunctionParser<Context>::parseStructFieldManipulation(StructFieldManipulati
 }
 
 template<typename Context>
-auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
+auto FunctionParser<Context>::checkBranchTarget(const ControlType& target, BranchConditionalityTag conditionality) -> PartialResult
 {
     if (!target.branchTargetArity())
         return { };
 
     WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < target.branchTargetArity(), ControlType::isTopLevel(target) ? "branch out of function"_s : "branch to block"_s, " on expression stack of size "_s, m_expressionStack.size(), ", but block, "_s, target.signature()->toString() , " expects "_s, target.branchTargetArity(), " values"_s);
 
-
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
-    for (unsigned i = 0; i < target.branchTargetArity(); ++i)
+    for (unsigned i = 0; i < target.branchTargetArity(); ++i) {
         WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type "_s, m_expressionStack[offset + i].type(), " but branch target expects a value of "_s, target.branchTargetType(i), " at index "_s, i);
+
+        if (conditionality == Conditional) {
+            // Types must widen to the branch target type via subtyping. See https://github.com/WebAssembly/gc/issues/516.
+            // We only do this for conditional branches, because in unconditional branches we cannot observe the
+            // broadening of our local values after the branch - we instead jump to a different block with exactly its
+            // parameter types.
+            m_expressionStack[offset + i].setType(target.branchTargetType(i));
+        }
+    }
 
     return { };
 }
@@ -1726,11 +1864,19 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 {
     switch (m_currentOpcode) {
 #define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCase(OpType::name, &Context::add##name, Types::returnType, Types::lhsType, Types::rhsType);
-        FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+        FOR_EACH_WASM_NON_COMPARE_BINARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCompareCase(OpType::name, &Context::add##name, Types::returnType, Types::lhsType, Types::rhsType);
+        FOR_EACH_WASM_COMPARE_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
 #define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCase(OpType::name, &Context::add##name, Types::returnType, Types::operandType);
-        FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
+        FOR_EACH_WASM_NON_COMPARE_UNARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCompareCase(OpType::name, &Context::add##name, Types::returnType, Types::operandType);
+        FOR_EACH_WASM_COMPARE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
     case Select: {
@@ -2121,7 +2267,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size(), "array_new_fixed: found ", m_expressionStack.size(), " operands on stack; expected ", argc, " operands");
 
             // Allocate stack space for arguments
-            Vector<ExpressionType> args;
+            ArgumentList args;
             size_t firstArgumentIndex = m_expressionStack.size() - argc;
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argc), "can't allocate enough memory for array.new_fixed "_s, argc, " values"_s);
             args.grow(argc);
@@ -2419,7 +2565,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             const auto* structType = typeDefinition->expand().template as<StructType>();
             WASM_PARSER_FAIL_IF(structType->fieldCount() > m_expressionStack.size(), "struct.new "_s, typeIndex, " requires "_s, structType->fieldCount(), " values, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
 
-            Vector<ExpressionType> args;
+            ArgumentList args;
             size_t firstArgumentIndex = m_expressionStack.size() - structType->fieldCount();
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new "_s, structType->fieldCount(), " values"_s);
             args.grow(structType->fieldCount());
@@ -2614,7 +2760,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // Put the ref back on the stack to check the branch type.
             m_expressionStack.constructAndAppend(branchTargetType, ref.value());
             ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
             m_expressionStack.takeLast();
             m_expressionStack.constructAndAppend(nonTakenType, ref.value());
@@ -2756,7 +2902,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
 
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, false, result));
@@ -2777,7 +2923,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type "_s, ref.type(), " expected a reference type"_s);
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
 
         ExpressionType unused;
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
@@ -2900,7 +3046,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(calleeSignature.argumentCount() > m_expressionStack.size(), "call function index "_s, functionIndex, " has "_s, calleeSignature.argumentCount(), " arguments, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
 
         size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature.argumentCount();
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's "_s, calleeSignature.argumentCount(), " arguments"_s);
         args.grow(calleeSignature.argumentCount());
         for (size_t i = 0; i < calleeSignature.argumentCount(); ++i) {
@@ -2969,7 +3115,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isI32(), "non-i32 call_indirect index "_s, m_expressionStack.last().type());
 
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for "_s, argumentCount, " call_indirect arguments"_s);
         args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
@@ -3034,7 +3180,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's value.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
         args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
@@ -3249,7 +3395,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
-        Vector<ExpressionType> args;
+        ArgumentList args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's "_s, exceptionSignature.argumentCount(), " arguments"_s);
         args.grow(exceptionSignature.argumentCount());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
@@ -3292,7 +3438,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
 
         ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, m_currentOpcode == BrIf ? Conditional : Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addBranch(data, condition, m_expressionStack));
         return { };
     }
@@ -3335,10 +3481,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ControlType* target = targets[i];
             WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetArity() != target->branchTargetArity(), "br_table target type size mismatch. Default has size: ", defaultTarget.branchTargetArity(), "but target: ", i, " has size: ", target->branchTargetArity());
             // In the presence of subtyping, we need to check each branch target.
-            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target));
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target, Unconditional));
         }
 
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, defaultTarget, m_expressionStack));
 
         m_unreachableBlocks = 1;
@@ -3346,7 +3492,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Return: {
-        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData));
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(m_controlStack[0].controlData, Unconditional));
         WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, m_expressionStack));
         m_unreachableBlocks = 1;
         return { };

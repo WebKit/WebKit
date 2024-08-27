@@ -58,11 +58,8 @@
 
 #if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
+#include "Display.h"
 #include <gtk/gtk.h>
-
-#if PLATFORM(X11)
-#include <WebCore/PlatformDisplayX11.h>
-#endif
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -167,7 +164,7 @@ static bool canvasAccelerationEnabled(WebKitURISchemeRequest* request)
 static bool uiProcessContextIsEGL()
 {
 #if PLATFORM(GTK)
-    return !!PlatformDisplay::sharedDisplay().gtkEGLDisplay();
+    return Display::singleton().glDisplayIsSharedWithGtk();
 #else
     return true;
 #endif
@@ -408,14 +405,10 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if PLATFORM(GTK)
     StringBuilder typeStringBuilder;
-#if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+    if (Display::singleton().isWayland())
         typeStringBuilder.append("Wayland"_s);
-#endif
-#if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+    else if (Display::singleton().isX11())
         typeStringBuilder.append("X11"_s);
-#endif
     addTableRow(displayObject, "Type"_s, !typeStringBuilder.isEmpty() ? typeStringBuilder.toString() : "Unknown"_s);
 #endif // PLATFORM(GTK)
 
@@ -466,7 +459,6 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(hardwareAccelerationObject, "2D canvas"_s, canvasAccelerationEnabled(request) ? "Accelerated"_s : "Unaccelerated"_s);
 #endif
 
-    std::unique_ptr<PlatformDisplay> renderDisplay;
     if (policy != "never"_s) {
         addTableRow(jsonObject, "API"_s, String::fromUTF8(openGLAPI()));
 #if PLATFORM(GTK)
@@ -490,55 +482,49 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
 
 #if PLATFORM(GTK)
-    if (policy != "never"_s) {
+    if (usingDMABufRenderer && policy != "never"_s) {
         std::unique_ptr<PlatformDisplay> platformDisplay;
 #if USE(GBM)
         UnixFileDescriptor fd;
         struct gbm_device* device = nullptr;
-#endif
-        if (usingDMABufRenderer) {
-#if USE(GBM)
-            const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
-            if (!disableGBM || !strcmp(disableGBM, "0")) {
-                auto renderNode = drmRenderNodeDevice();
-                if (!renderNode.isEmpty()) {
-                    fd = UnixFileDescriptor { open(renderNode.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-                    if (fd) {
-                        device = gbm_create_device(fd.value());
-                        if (device)
-                            platformDisplay = PlatformDisplayGBM::create(device);
-                    }
+        const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
+        if (!disableGBM || !strcmp(disableGBM, "0")) {
+            auto renderNode = drmRenderNodeDevice();
+            if (!renderNode.isEmpty()) {
+                fd = UnixFileDescriptor { open(renderNode.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+                if (fd) {
+                    device = gbm_create_device(fd.value());
+                    if (device)
+                        platformDisplay = PlatformDisplayGBM::create(device);
                 }
             }
-#endif
-            if (!platformDisplay)
-                platformDisplay = PlatformDisplaySurfaceless::create();
         }
+#endif
+        if (!platformDisplay)
+            platformDisplay = PlatformDisplaySurfaceless::create();
 
-        if (platformDisplay || !uiProcessContextIsEGL()) {
+        if (platformDisplay) {
             auto hardwareAccelerationObject = JSON::Object::create();
             startTable("Hardware Acceleration Information (Render Process)"_s);
 
-            if (platformDisplay) {
-                addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::Surfaceless ? "Surfaceless"_s : "GBM"_s));
+            addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::Surfaceless ? "Surfaceless"_s : "GBM"_s));
 
 #if USE(GBM)
-                if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
-                    if (drmVersion* version = drmGetVersion(gbm_device_get_fd(device))) {
-                        addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
-                        drmFreeVersion(version);
-                    }
+            if (platformDisplay->type() == PlatformDisplay::Type::GBM) {
+                if (drmVersion* version = drmGetVersion(gbm_device_get_fd(device))) {
+                    addTableRow(hardwareAccelerationObject, "DRM version"_s, makeString(span(version->name), " ("_s, span(version->desc), ") "_s, version->version_major, '.', version->version_minor, '.', version->version_patchlevel, ". "_s, span(version->date)));
+                    drmFreeVersion(version);
                 }
-#endif
             }
+#endif
 
             if (uiProcessContextIsEGL()) {
-                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));
+                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(*platformDisplay));
                 addEGLInfo(hardwareAccelerationObject);
             } else {
                 // Create the context in a different thread to ensure it doesn't affect any current context in the main thread.
                 WorkQueue::create("GPU handler EGL context"_s)->dispatchSync([&] {
-                    auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
+                    auto glContext = GLContext::createOffscreen(*platformDisplay);
                     glContext->makeContextCurrent();
                     addEGLInfo(hardwareAccelerationObject);
                 });
@@ -547,10 +533,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             stopTable();
             jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
 
-            if (platformDisplay) {
-                // Clear the contexts used by the display before it's destroyed.
-                platformDisplay->clearSharingGLContext();
-            }
+            // Clear the contexts used by the display before it's destroyed.
+            platformDisplay->clearSharingGLContext();
         }
 
 #if USE(GBM)
@@ -594,7 +578,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
             {
-                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));
+                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(*platformDisplay));
                 addEGLInfo(hardwareAccelerationObject);
             }
 

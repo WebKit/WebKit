@@ -96,6 +96,10 @@ public:
 #if ENABLE(WPE_PLATFORM)
     virtual WPEView* wpeView() const { return nullptr; }
 #endif
+#if ENABLE(POINTER_LOCK)
+    virtual void requestPointerLock() { };
+    virtual void didLosePointerLock() { };
+#endif
 
     virtual void setCursor(const WebCore::Cursor&) { };
     virtual void synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&) = 0;

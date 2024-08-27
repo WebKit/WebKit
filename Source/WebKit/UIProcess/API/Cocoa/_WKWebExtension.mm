@@ -49,7 +49,7 @@
 
 NSErrorDomain const _WKWebExtensionErrorDomain = @"WKWebExtensionErrorDomain";
 
-NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"WKWebExtensionErrorsWereUpdated";
+NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"WKWebExtensionContextErrorsDidUpdate";
 
 #undef _WKWebExtension
 @implementation _WKWebExtension

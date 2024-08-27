@@ -32,8 +32,11 @@
 #import "Logging.h"
 #import "PlatformWheelEvent.h"
 #import <pal/spi/mac/NSScrollingInputFilterSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WheelEventDeltaFilterMac);
 
 WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
     : WheelEventDeltaFilter()

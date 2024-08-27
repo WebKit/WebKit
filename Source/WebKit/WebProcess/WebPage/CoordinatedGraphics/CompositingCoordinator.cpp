@@ -39,7 +39,6 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NicosiaBackingStore.h>
-#include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
@@ -170,48 +169,48 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     m_page.updateRendering();
     m_page.flushPendingEditorStateUpdate();
 
+    WTFBeginSignpost(this, FlushRootCompositingLayer);
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_client.didFlushRootLayer(m_visibleContentsRect);
+    WTFEndSignpost(this, FlushRootCompositingLayer);
 
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
     m_page.finalizeRenderingUpdate(flags);
 
+    WTFBeginSignpost(this, FinalizeCompositingStateFlush);
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     auto [performLayerSync, platformLayerUpdated] = coordinatedLayer.finalizeCompositingStateFlush();
     shouldSyncFrame |= performLayerSync;
     shouldSyncFrame |= m_forceFrameSync;
+    WTFEndSignpost(this, FinalizeCompositingStateFlush);
 
     if (shouldSyncFrame) {
+        WTFBeginSignpost(this, SyncFrame);
+
         m_nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
-                bool platformLayerUpdated = false;
                 for (auto& compositionLayer : m_nicosia.state.layers) {
-                    compositionLayer->flushState(
-                        [&platformLayerUpdated]
-                        (const Nicosia::CompositionLayer::LayerState& state)
-                        {
-                            if (state.backingStore)
-                                state.backingStore->flushUpdate();
+                    compositionLayer->flushState([] (const Nicosia::CompositionLayer::LayerState& state) {
+                        if (state.backingStore)
+                            state.backingStore->flushUpdate();
 
-                            if (state.imageBacking)
-                                state.imageBacking->flushUpdate();
-
-                            if (state.contentLayer)
-                                platformLayerUpdated |= state.contentLayer->flushUpdate();
-                        });
+                        if (state.imageBacking)
+                            state.imageBacking->flushUpdate();
+                    });
                 }
 
                 ++state.id;
-                state.platformLayerUpdated = platformLayerUpdated;
                 state.layers = m_nicosia.state.layers;
                 state.rootLayer = m_nicosia.state.rootLayer;
             });
 
         m_client.commitSceneState(m_nicosia.scene);
         m_forceFrameSync = false;
+
+        WTFEndSignpost(this, SyncFrame);
     }
 #if HAVE(DISPLAY_LINK)
     else if (platformLayerUpdated)

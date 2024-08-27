@@ -34,6 +34,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ class GeolocationError;
 class GeolocationPositionData;
 
 class GeolocationController : public Supplement<Page>, private ActivityStateChangeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GeolocationController);
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
     GeolocationController(Page&, GeolocationClient&);

@@ -898,7 +898,7 @@ TEST(WKWebExtensionContext, CommandsParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
-    EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
+    EXPECT_EQ(testContext.errors.count, 1lu);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 0lu);
 
@@ -914,9 +914,53 @@ TEST(WKWebExtensionContext, CommandsParsing)
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[WKWebExtensionContext alloc] initForExtension:testExtension];
-    EXPECT_EQ(testContext.webExtension.errors.count, 1lu);
+    EXPECT_EQ(testContext.errors.count, 1lu);
     EXPECT_NOT_NULL(testContext.commands);
     EXPECT_EQ(testContext.commands.count, 0lu);
+}
+
+TEST(WKWebExtensionContext, LoadNonExistentImage)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Extension",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const img = new Image()",
+        @"img.src = 'non-existent-image.png'",
+
+        @"img.onload = () => {",
+        @"  browser.test.notifyFail('Image should not load successfully')",
+        @"}",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    EXPECT_NS_EQUAL(manager.get().context.errors, @[ ]);
+
+    [NSNotificationCenter.defaultCenter addObserverForName:WKWebExtensionContextErrorsDidUpdateNotification object:nil queue:nil usingBlock:^(NSNotification *notification) {
+        auto *extensionContext = dynamic_objc_cast<WKWebExtensionContext>(notification.object);
+
+        EXPECT_EQ(extensionContext.errors.count, 1ul);
+
+        auto *predicate = [NSPredicate predicateWithFormat:@"localizedDescription CONTAINS %@", @"Unable to find \"non-existent-image.png\" in the extension’s resources."];
+        auto *filteredErrors = [extensionContext.errors filteredArrayUsingPredicate:predicate];
+
+        EXPECT_NS_EQUAL(extensionContext.errors, filteredErrors);
+
+        [manager done];
+    }];
 }
 
 } // namespace TestWebKitAPI

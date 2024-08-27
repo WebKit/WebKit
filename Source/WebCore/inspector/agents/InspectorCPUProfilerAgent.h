@@ -31,12 +31,13 @@
 #include "ResourceUsageData.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspector::CPUProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorCPUProfilerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorCPUProfilerAgent);
 public:
     InspectorCPUProfilerAgent(PageAgentContext&);
     ~InspectorCPUProfilerAgent();

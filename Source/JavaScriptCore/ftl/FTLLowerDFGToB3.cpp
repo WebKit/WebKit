@@ -5002,7 +5002,7 @@ private:
         LValue result;
 
         auto sanitizeResult = [&] (LValue value) -> LValue {
-            if (isSigned(type)) {
+            if (!isSigned(type)) {
                 switch (elementSize(type)) {
                 case 1:
                     value = m_out.bitAnd(value, m_out.constInt32(0xff));

@@ -72,6 +72,7 @@
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -91,6 +92,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorPageAgent);
 
 static bool decodeBuffer(std::span<const uint8_t> buffer, const String& textEncodingName, String* result)
 {

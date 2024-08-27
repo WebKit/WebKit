@@ -26,13 +26,14 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Navigator;
 
 class NavigatorWebDriver final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorWebDriver);
 public:
     NavigatorWebDriver();
     virtual ~NavigatorWebDriver();

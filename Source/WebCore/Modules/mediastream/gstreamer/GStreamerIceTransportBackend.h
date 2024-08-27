@@ -23,6 +23,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include "RTCIceTransportBackend.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::GStreamerIce
 namespace WebCore {
 
 class GStreamerIceTransportBackend final : public RTCIceTransportBackend, public CanMakeWeakPtr<GStreamerIceTransportBackend> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerIceTransportBackend);
 
 public:
     explicit GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&&);

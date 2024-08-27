@@ -70,8 +70,15 @@ template<> inline float roundForImpreciseConversion(double value)
 class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);
+
     static double computeDegrees(CSSUnitType, double angle);
     static double computeRadians(CSSUnitType, double angle);
+
+    enum class TimeUnit { Seconds, Milliseconds, Canonical = Seconds };
+    template<typename T, TimeUnit> static T computeTime(CSSUnitType, T time);
+
+    enum class FrequencyUnit { Hz, kHz, Canonical = Hz };
+    template<typename T, FrequencyUnit> static T computeFrequency(CSSUnitType, T frequency);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
@@ -151,9 +158,8 @@ public:
     ExceptionOr<float> getFloatValue(CSSUnitType) const;
 
     double computeDegrees() const;
-
-    enum TimeUnit { Seconds, Milliseconds };
-    template<typename T, TimeUnit timeUnit> T computeTime() const;
+    template<typename T, TimeUnit> T computeTime() const;
+    template<typename T, FrequencyUnit> T computeFrequency() const;
 
     template<typename T> T computeLength(const CSSToLengthConversionData&) const;
     template<int> Length convertToLength(const CSSToLengthConversionData&) const;
@@ -324,20 +330,6 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
     return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewportCSSUnitType;
 }
 
-template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const
-{
-    if (timeUnit == Seconds && primitiveType() == CSSUnitType::CSS_S)
-        return value<T>();
-    if (timeUnit == Seconds && primitiveType() == CSSUnitType::CSS_MS)
-        return value<T>() / 1000;
-    if (timeUnit == Milliseconds && primitiveType() == CSSUnitType::CSS_MS)
-        return value<T>();
-    if (timeUnit == Milliseconds && primitiveType() == CSSUnitType::CSS_S)
-        return value<T>() * 1000;
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
 {
     switch (type) {
@@ -370,6 +362,52 @@ inline double CSSPrimitiveValue::computeRadians(CSSUnitType type, double angle)
         ASSERT_NOT_REACHED();
         return 0;
     }
+}
+
+template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime(CSSUnitType type, T value)
+{
+    if constexpr (timeUnit == TimeUnit::Seconds) {
+        if (type == CSSUnitType::CSS_S)
+            return value;
+        if (type == CSSUnitType::CSS_MS)
+            return value / 1000;
+    } else if constexpr (timeUnit == TimeUnit::Milliseconds) {
+        if (type == CSSUnitType::CSS_S)
+            return value * 1000;
+        if (type == CSSUnitType::CSS_MS)
+            return value;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const
+{
+    return computeTime<T, timeUnit>(primitiveType(), value<T>());
+}
+
+template<typename T, CSSPrimitiveValue::FrequencyUnit frequencyUnit> inline T CSSPrimitiveValue::computeFrequency(CSSUnitType type, T value)
+{
+    if constexpr (frequencyUnit == FrequencyUnit::Hz) {
+        if (type == CSSUnitType::CSS_HZ)
+            return value;
+        if (type == CSSUnitType::CSS_KHZ)
+            return value * 1000;
+    } else if constexpr (frequencyUnit == FrequencyUnit::kHz) {
+        if (type == CSSUnitType::CSS_HZ)
+            return value / 1000;
+        if (type == CSSUnitType::CSS_KHZ)
+            return value;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+template<typename T, CSSPrimitiveValue::FrequencyUnit frequencyUnit> inline T CSSPrimitiveValue::computeFrequency() const
+{
+    return computeFrequency<T, frequencyUnit>(primitiveType(), value<T>());
 }
 
 inline CSSValueID valueID(const CSSPrimitiveValue& value)

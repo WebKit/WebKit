@@ -1181,6 +1181,7 @@ void TestAPI::testBigInt()
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
+    JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
 }
 
 #define RUN(test) do {                                 \

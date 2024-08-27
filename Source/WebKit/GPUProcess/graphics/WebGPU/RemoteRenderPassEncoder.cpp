@@ -31,7 +31,9 @@
 #include "RemoteRenderPassEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/WebGPUBindGroup.h>
 #include <WebCore/WebGPURenderPassEncoder.h>
+#include <WebCore/WebGPURenderPipeline.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -87,7 +89,7 @@ void RemoteRenderPassEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, Web
     if (!convertedBuffer)
         return;
 
-    m_backing->setVertexBuffer(slot, convertedBuffer, offset, size);
+    m_backing->setVertexBuffer(slot, convertedBuffer.get(), offset, size);
 }
 
 void RemoteRenderPassEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)

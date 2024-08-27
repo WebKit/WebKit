@@ -231,7 +231,7 @@ void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
     auto trailingNonWhitespaceOnlyRunIndex = std::optional<size_t> { };
     for (auto index = m_runs.size(); index--;) {
         auto& run = m_runs[index];
-        if (run.isBox() || run.isLineBreak() || (run.isText() && !run.hasTrailingWhitespace()))
+        if (run.isAtomicInlineBox() || run.isLineBreak() || (run.isText() && !run.hasTrailingWhitespace()))
             break;
 
         if (!run.hasTrailingWhitespace()) {
@@ -279,8 +279,8 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
         appendInlineBoxStart(inlineItem, style, logicalWidth);
     else if (inlineItem.isInlineBoxEnd())
         appendInlineBoxEnd(inlineItem, style, logicalWidth);
-    else if (inlineItem.isBox())
-        appendGenericInlineLevelBox(inlineItem, style, logicalWidth);
+    else if (inlineItem.isAtomicInlineBox())
+        appendAtomicInlineBox(inlineItem, style, logicalWidth);
     else if (inlineItem.isOpaque()) {
         ASSERT(!logicalWidth);
         appendOpaqueBox(inlineItem, style);
@@ -357,7 +357,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             return false;
         // This content is collapsible. Let's check if the last item is collapsed.
         for (auto& run : makeReversedRange(m_runs)) {
-            if (run.isBox())
+            if (run.isAtomicInlineBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
             // Any collapsible space immediately following another collapsible space—even one outside the boundary of the inline containing that space,
@@ -554,7 +554,7 @@ void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyl
         m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
 }
 
-void Line::appendGenericInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendAtomicInlineBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     resetTrailingContent();
     // Do not let negative margin make the content shorter than it already is.
@@ -752,10 +752,10 @@ inline static Line::Run::Type toLineRunType(const InlineItem& inlineItem)
         return Line::Run::Type::HardLineBreak;
     case InlineItem::Type::WordBreakOpportunity:
         return Line::Run::Type::WordBreakOpportunity;
-    case InlineItem::Type::Box:
+    case InlineItem::Type::AtomicInlineBox:
         if (inlineItem.layoutBox().isListMarkerBox())
             return downcast<ElementBox>(inlineItem.layoutBox()).isListMarkerOutside() ? Line::Run::Type::ListMarkerOutside : Line::Run::Type::ListMarkerInside;
-        return Line::Run::Type::GenericInlineLevelBox;
+        return Line::Run::Type::AtomicInlineBox;
     case InlineItem::Type::InlineBoxStart:
         return Line::Run::Type::InlineBoxStart;
     case InlineItem::Type::InlineBoxEnd:

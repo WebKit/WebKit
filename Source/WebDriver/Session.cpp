@@ -125,10 +125,27 @@ void Session::close(Function<void(CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        if (auto handle = firstWindowHandleInResult(*result.result())) {
-            closeAllToplevelBrowsingContexts(handle.value(), WTFMove(completionHandler));
+
+        // We shouldn't close the windows if we connected to an already running browser, leaving this decision
+        // to the client script. For example, the client script might want to keep the browser open for debugging
+        if (!m_host->isRemoteBrowser()) {
+            if (auto handle = firstWindowHandleInResult(*result.result())) {
+                closeAllToplevelBrowsingContexts(handle.value(), WTFMove(completionHandler));
+                return;
+            }
+        }
+
+        if (m_host->isConnected()) {
+            m_host->sendCommandToBackend("deleteSession"_s, nullptr, [completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+                if (response.isError) {
+                    completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                    return;
+                }
+                completionHandler(CommandResult::success());
+            });
             return;
         }
+
         completionHandler(CommandResult::success());
     });
 }

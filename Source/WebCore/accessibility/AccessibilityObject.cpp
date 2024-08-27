@@ -66,6 +66,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
@@ -351,7 +352,7 @@ String AccessibilityObject::computedLabel()
 {
     // This method is being called by WebKit inspector, which may happen at any time, so we need to update our backing store now.
     // Also hold onto this object in case updateBackingStore deletes this node.
-    RefPtr<AccessibilityObject> protectedThis(this);
+    Ref protectedThis { *this };
     updateBackingStore();
     Vector<AccessibilityText> text;
     accessibilityText(text);
@@ -629,13 +630,20 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
         }
     }
 
-    auto* displayContentsParent = child->displayContentsParent();
+    RefPtr displayContentsParent = child->displayContentsParent();
     // To avoid double-inserting a child of a `display: contents` element, only insert if `this` is the rightful parent.
     if (displayContentsParent && displayContentsParent != this) {
         // Make sure the display:contents parent object knows it has a child it needs to add.
         displayContentsParent->setNeedsToUpdateChildren();
+
         // Don't exit early for certain table components, as they rely on inserting children for which they are not the rightful parent to behave correctly.
-        if (!isTableColumn() && roleValue() != AccessibilityRole::TableHeaderContainer)
+        bool allowInsert = isTableColumn() || roleValue() == AccessibilityRole::TableHeaderContainer;
+
+        // AccessibilityTable::addChildren never actually calls `insertChild` for table section elements
+        // (e.g. tbody, thead), so don't block this `insertChild` for display:contents section elements,
+        // or else the child elements of the section element will never be inserted into the tree.
+        allowInsert = allowInsert || (isAccessibilityTableInstance() && is<HTMLTableSectionElement>(displayContentsParent->element()));
+        if (!allowInsert)
             return;
     }
 
@@ -2430,8 +2438,12 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     if (element->hasAttributeWithoutSynchronization(attribute))
         return true;
 
-    if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-        return defaultARIA->hasAttribute(attribute);
+    if (auto* defaultARIA = element->customElementDefaultARIAIfExists()) {
+        // We do not want to use CustomElementDefaultARIA::hasAttribute here, as it returns true
+        // even if the author has set the attribute to null (e.g. this.internals.ariaValueNow = null),
+        // which should be treated the same as removing the attribute.
+        return !defaultARIA->valueForAttribute(*element, attribute).isNull();
+    }
 
     return false;
 }

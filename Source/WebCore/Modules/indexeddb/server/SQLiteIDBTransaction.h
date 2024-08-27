@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ class SQLiteIDBBackingStore;
 class SQLiteIDBCursor;
 
 class SQLiteIDBTransaction {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SQLiteIDBTransaction);
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
     SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);

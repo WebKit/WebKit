@@ -38,7 +38,7 @@ class Navigator;
 struct RequestCookieConsentOptions;
 
 class NavigatorCookieConsent final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorCookieConsent);
 public:
     explicit NavigatorCookieConsent(Navigator& navigator)
         : m_navigator(navigator)

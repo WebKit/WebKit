@@ -1271,9 +1271,19 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElement()) || !selector.argumentList())
                 return false;
 
-            // Wildcard always matches.
-            auto& argument = selector.argumentList()->first();
-            return argument == starAtom() || argument == checkingContext.pseudoElementNameArgument;
+            auto& list = *selector.argumentList();
+            auto& name = list.first();
+            if (name != starAtom() && name != checkingContext.pseudoElementNameArgument)
+                return false;
+
+            if (list.size() == 1)
+                return true;
+
+            return std::ranges::all_of(list.begin() + 1, list.end(),
+                [&](const PossiblyQuotedIdentifier& classSelector) {
+                    return checkingContext.classList.contains(classSelector.identifier);
+                }
+            );
         }
 
         default:

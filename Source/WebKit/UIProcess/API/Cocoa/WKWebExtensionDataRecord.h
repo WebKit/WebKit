@@ -31,20 +31,21 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract Indicates a ``WKWebExtensionDataRecord`` error. */
-WK_EXTERN NSErrorDomain const WKWebExtensionDataRecordErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_EXTERN NSErrorDomain const WKWebExtensionDataRecordErrorDomain NS_SWIFT_NAME(WKWebExtensionDataRecord.errorDomain) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionDataRecord`` domain.
  @constant WKWebExtensionDataRecordErrorUnknown  Indicates that an unknown error occurred.
- @constant WKWebExtensionDataRecordErrorLocalStorageFailed  Indicates a failure occurred when either deleting or calculating `local` storage.
- @constant WKWebExtensionDataRecordErrorSessionStorageFailed  Indicates a failure occurred when either deleting or calculating `session` storage.
- @constant WKWebExtensionDataRecordErrorSyncStorageFailed  Indicates a failure occurred when either deleting or calculating `sync` storage.
+ @constant WKWebExtensionDataRecordErrorLocalStorageFailed  Indicates a failure occurred when either deleting or calculating local storage.
+ @constant WKWebExtensionDataRecordErrorSessionStorageFailed  Indicates a failure occurred when either deleting or calculating session storage.
+ @constant WKWebExtensionDataRecordErrorSynchronizedStorageFailed  Indicates a failure occurred when either deleting or calculating synchronized storage.
  */
 typedef NS_ERROR_ENUM(WKWebExtensionDataRecordErrorDomain, WKWebExtensionDataRecordError) {
-    WKWebExtensionDataRecordErrorUnknown,
+    WKWebExtensionDataRecordErrorUnknown = 1,
     WKWebExtensionDataRecordErrorLocalStorageFailed,
     WKWebExtensionDataRecordErrorSessionStorageFailed,
-    WKWebExtensionDataRecordErrorSyncStorageFailed,
+    WKWebExtensionDataRecordErrorSynchronizedStorageFailed,
 } NS_SWIFT_NAME(WKWebExtensionDataRecord.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
@@ -65,20 +66,24 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.DataRecord)
 @property (nonatomic, readonly, copy) NSString *uniqueIdentifier;
 
 /*! @abstract The set of data types contained in this data record. */
-@property (nonatomic, readonly, copy) NSSet<WKWebExtensionDataType> *dataTypes;
+@property (nonatomic, readonly, copy) NSSet<WKWebExtensionDataType> *containedDataTypes;
 
-/*! @abstract The total size of all data types contained in this data record. */
-@property (nonatomic, readonly) unsigned long long totalSize;
-
-/*! @abstract An array containing all errors that may have occurred when either calculating or deleting storage. */
+/*! @abstract An array of errors that may have occurred when either calculating or deleting storage. */
 @property (nonatomic, readonly, copy) NSArray<NSError *> *errors;
 
 /*!
- @abstract Retrieves the size of the specific data types in this data record.
+ @abstract The total size in bytes of all data types contained in this data record.
+ @seealso sizeInBytesOfTypes:
+ */
+@property (nonatomic, readonly) NSUInteger totalSizeInBytes;
+
+/*!
+ @abstract Retrieves the size in bytes of the specific data types in this data record.
  @param dataTypes The set of data types to measure the size for.
  @return The total size of the specified data types.
+ @seealso totalSizeInBytes
  */
-- (unsigned long long)sizeOfDataTypes:(NSSet<WKWebExtensionDataType> *)dataTypes;
+- (NSUInteger)sizeInBytesOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes NS_SWIFT_NAME(sizeInBytes(ofTypes:));
 
 @end
 

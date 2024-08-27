@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 namespace {
 
 enum class TestedObjectIdentifierType { };
-using TestedObjectIdentifier = AtomicObjectIdentifier<TestedObjectIdentifierType>;
+using TestedObjectIdentifier = LegacyNullableAtomicObjectIdentifier<TestedObjectIdentifierType>;
 using TestedObjectReadReference = IPC::ObjectIdentifierReadReference<TestedObjectIdentifier>;
 using TestedObjectWriteReference = IPC::ObjectIdentifierWriteReference<TestedObjectIdentifier>;
 using TestedObjectReference = IPC::ObjectIdentifierReference<TestedObjectIdentifier>;

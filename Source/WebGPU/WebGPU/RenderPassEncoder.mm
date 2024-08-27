@@ -476,6 +476,17 @@ bool RenderPassEncoder::issuedDrawCall() const
     return m_drawCount;
 }
 
+void RenderPassEncoder::setCachedRenderPassState(id<MTLRenderCommandEncoder> commandEncoder)
+{
+    [commandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
+    if (m_blendColor)
+        [commandEncoder setBlendColorRed:m_blendColor->r green:m_blendColor->g blue:m_blendColor->b alpha:m_blendColor->a];
+    if (m_stencilReferenceValue)
+        [commandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
+    if (m_scissorRect)
+        [commandEncoder setScissorRect:*m_scissorRect];
+}
+
 bool RenderPassEncoder::executePreDrawCommands(bool passWasSplit, const Buffer* indirectBuffer)
 {
     if (!m_pipeline) {
@@ -541,13 +552,7 @@ bool RenderPassEncoder::executePreDrawCommands(bool passWasSplit, const Buffer* 
     [commandEncoder setFrontFacingWinding:pipeline.frontFace()];
     [commandEncoder setDepthClipMode:pipeline.depthClipMode()];
     [commandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
-    [commandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
-    if (m_blendColor)
-        [commandEncoder setBlendColorRed:m_blendColor->r green:m_blendColor->g blue:m_blendColor->b alpha:m_blendColor->a];
-    if (m_stencilReferenceValue)
-        [commandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
-    if (m_scissorRect)
-        [commandEncoder setScissorRect:*m_scissorRect];
+    setCachedRenderPassState(commandEncoder);
 
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
 
@@ -981,7 +986,8 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
 {
     RETURN_IF_FINISHED();
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
-    [renderCommandEncoder() setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
+    id<MTLRenderCommandEncoder> commandEncoder = renderCommandEncoder();
+    setCachedRenderPassState(commandEncoder);
 
     for (auto& bundle : bundles) {
         auto& renderBundle = bundle.get();
@@ -997,7 +1003,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             return;
         }
 
-        id<MTLRenderCommandEncoder> commandEncoder = renderCommandEncoder();
+        commandEncoder = renderCommandEncoder();
         if (!renderBundle.requiresCommandReplay()) {
             bool splitPass = false;
             for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {

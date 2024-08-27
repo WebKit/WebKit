@@ -42,6 +42,8 @@
 
 namespace WebCore::WebGPU {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextImpl);
+
 PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surface, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(surface))
     , m_convertToBackingContext(convertToBackingContext)
@@ -131,10 +133,10 @@ void PresentationContextImpl::present(bool)
     m_currentTexture = nullptr;
 }
 
-RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex)
+RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
     if (auto* surface = m_swapChain.get())
-        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex));
+        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex, isIOSurfaceSupportedFormat));
 
     return nullptr;
 }

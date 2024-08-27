@@ -213,6 +213,11 @@ inline JSString* typeToJSAPIString(VM& vm, Type type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline Type nonNullFuncrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+}
+
 inline Type funcrefType()
 {
     return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };

@@ -88,13 +88,16 @@ private:
     void addSourceSignal(AbortSignal&);
     void addDependentSignal(AbortSignal&);
 
+    void markAborted(JSC::JSValue);
+    void runAbortSteps();
+
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::AbortSignal; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
-    
+
     Vector<std::pair<uint32_t, Algorithm>> m_algorithms;
     WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> m_followingSignal;
     AbortSignalSet m_sourceSignals;
@@ -110,4 +113,3 @@ private:
 WebCoreOpaqueRoot root(AbortSignal*);
 
 } // namespace WebCore
-

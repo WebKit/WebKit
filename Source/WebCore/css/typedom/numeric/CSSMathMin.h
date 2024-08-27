@@ -39,7 +39,7 @@ public:
     static ExceptionOr<Ref<CSSMathMin>> create(Vector<Ref<CSSNumericValue>>&&);
     const CSSNumericArray& values() const;
 
-    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+    std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Min; }

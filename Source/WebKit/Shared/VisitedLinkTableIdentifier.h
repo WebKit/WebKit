@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class VisitedLinkTableIdentifierType { };
-using VisitedLinkTableIdentifier = ObjectIdentifier<VisitedLinkTableIdentifierType>;
+using VisitedLinkTableIdentifier = LegacyNullableObjectIdentifier<VisitedLinkTableIdentifierType>;
 
 } // namespace WebKit

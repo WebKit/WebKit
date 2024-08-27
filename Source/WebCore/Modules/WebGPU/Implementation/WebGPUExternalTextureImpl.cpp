@@ -31,8 +31,11 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUExternalTextureDescriptor.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternalTextureImpl);
 
 ExternalTextureImpl::ExternalTextureImpl(WebGPUPtr<WGPUExternalTexture>&& externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)

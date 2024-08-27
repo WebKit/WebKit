@@ -35,11 +35,14 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorApplicationCacheAgent);
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(PageAgentContext& context)
     : InspectorAgentBase("ApplicationCache"_s, context)

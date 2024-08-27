@@ -27,6 +27,7 @@
 
 #include <gst/gst.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GStreamerPeerConnectionBackend;
@@ -59,7 +60,7 @@ struct GStreamerIceCandidate {
 };
 
 class GStreamerPeerConnectionBackend final : public PeerConnectionBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerPeerConnectionBackend);
 public:
     explicit GStreamerPeerConnectionBackend(RTCPeerConnection&);
     ~GStreamerPeerConnectionBackend();

@@ -182,13 +182,13 @@ static RefPtr<WebImage> imageForRect(LocalFrameView* frameView, const IntRect& p
     graphicsContext.translate(-paintingRect.location());
 
     auto shouldPaintSelection = LocalFrameView::IncludeSelection;
-    if (options & SnapshotOptionsExcludeSelectionHighlighting)
+    if (options.contains(SnapshotOption::ExcludeSelectionHighlighting))
         shouldPaintSelection = LocalFrameView::ExcludeSelection;
 
     auto paintBehavior = frameView->paintBehavior() | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting;
-    if (options & SnapshotOptionsForceBlackText)
+    if (options.contains(SnapshotOption::ForceBlackText))
         paintBehavior.add(PaintBehavior::ForceBlackText);
-    if (options & SnapshotOptionsForceWhiteText)
+    if (options.contains(SnapshotOption::ForceWhiteText))
         paintBehavior.add(PaintBehavior::ForceWhiteText);
 
     auto oldPaintBehavior = frameView->paintBehavior();

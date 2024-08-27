@@ -43,6 +43,7 @@
 #include "StorageAccessStatus.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebBackForwardCache.h"
+#include "WebFrameProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
@@ -1325,11 +1326,6 @@ void WebsiteDataStore::insertExpiredStatisticForTesting(const URL& url, unsigned
     protectedNetworkProcess()->insertExpiredStatisticForTesting(m_sessionID, WebCore::RegistrableDomain { url }, numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, CompletionHandler<void()>&& completionHandler)
-{
-    protectedNetworkProcess()->setNotifyPagesWhenDataRecordsWereScanned(m_sessionID, value, WTFMove(completionHandler));
-}
-
 void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds time, CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->setResourceLoadStatisticsTimeAdvanceForTesting(m_sessionID, time, WTFMove(completionHandler));
@@ -2429,7 +2425,14 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             return;
         }
 
-        newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(callback));
+        if (RefPtr mainFrame = newPage->mainFrame()) {
+            mainFrame->setNavigationCallback([callback = WTFMove(callback)](auto pageID, auto) mutable {
+                callback(pageID);
+            });
+            return;
+        }
+
+        callback(std::nullopt);
     };
 
     m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));

@@ -90,7 +90,7 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
                     return server ? server->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin) : nullptr;
                 });
             }
-            callback(fetch->information());
+            callback(std::optional { fetch->information() });
             break;
         };
     });
@@ -139,10 +139,10 @@ void BackgroundFetchEngine::backgroundFetchInformation(SWServerRegistration& reg
     auto& map = iterator->value;
     auto fetchIterator = map.find(backgroundFetchIdentifier);
     if (fetchIterator == map.end()) {
-        callback(BackgroundFetchInformation { });
+        callback(std::optional<BackgroundFetchInformation> { });
         return;
     }
-    callback(fetchIterator->value->information());
+    callback(std::optional { fetchIterator->value->information() });
 }
 
 // https://wicg.github.io/background-fetch/#dom-backgroundfetchmanager-getids

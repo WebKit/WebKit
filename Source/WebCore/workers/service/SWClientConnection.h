@@ -35,6 +35,7 @@
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -55,6 +56,7 @@ struct BackgroundFetchOptions;
 struct BackgroundFetchRecordInformation;
 struct BackgroundFetchRequest;
 struct CacheQueryOptions;
+struct CookieChangeSubscription;
 struct ClientOrigin;
 struct ExceptionData;
 struct MessageWithMessagePorts;
@@ -127,7 +129,7 @@ public:
     WEBCORE_EXPORT void registerServiceWorkerClients();
     bool isClosed() const { return m_isClosed; }
 
-    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<BackgroundFetchInformation>&&)>;
+    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<std::optional<BackgroundFetchInformation>>&&)>;
     virtual void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
     virtual void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
     using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;
@@ -140,6 +142,11 @@ public:
     virtual void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) = 0;
     using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
     virtual void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) = 0;
+
+    virtual void addCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) = 0;
+    virtual void removeCookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, Vector<CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) = 0;
+    using ExceptionOrCookieChangeSubscriptionsCallback = CompletionHandler<void(ExceptionOr<Vector<CookieChangeSubscription>>&&)>;
+    virtual void cookieChangeSubscriptions(ServiceWorkerRegistrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&&) = 0;
 
 protected:
     WEBCORE_EXPORT SWClientConnection();

@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class StorageNamespaceIdentifierType { };
-using StorageNamespaceIdentifier = ObjectIdentifier<StorageNamespaceIdentifierType>;
+using StorageNamespaceIdentifier = LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>;
 
 }

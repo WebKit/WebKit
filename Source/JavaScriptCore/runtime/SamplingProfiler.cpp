@@ -911,7 +911,7 @@ unsigned SamplingProfiler::StackFrame::functionStartColumn()
     return std::numeric_limits<unsigned>::max();
 }
 
-SourceID SamplingProfiler::StackFrame::sourceID()
+std::tuple<SourceProvider*, SourceID> SamplingProfiler::StackFrame::sourceProviderAndID()
 {
     switch (frameType) {
     case FrameType::Unknown:
@@ -919,16 +919,18 @@ SourceID SamplingProfiler::StackFrame::sourceID()
     case FrameType::RegExp:
     case FrameType::C:
     case FrameType::Wasm:
-        return internalSourceID;
+        return { nullptr, internalSourceID };
 
-    case FrameType::Executable:
+    case FrameType::Executable: {
         if (executable->isHostFunction())
-            return internalSourceID;
+            return { nullptr, internalSourceID };
 
-        return static_cast<ScriptExecutable*>(executable)->sourceID();
+        auto* provider = static_cast<ScriptExecutable*>(executable)->source().provider();
+        return { provider, provider->asID() };
+    }
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return internalSourceID;
+    return { nullptr, internalSourceID };
 }
 
 String SamplingProfiler::StackFrame::url()
@@ -1085,11 +1087,19 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         processUnverifiedStackTraces();
     }
 
+    HashMap<SourceID, Ref<SourceProvider>> sources;
+
     auto stackFrameAsJSON = [&](StackFrame& stackFrame) {
+        auto [provider, sourceID] = stackFrame.sourceProviderAndID();
+        if (provider)
+            sources.add(sourceID, Ref { *provider });
+
         auto result = JSON::Object::create();
-        result->setDouble("sourceID"_s, stackFrame.sourceID());
+        result->setDouble("sourceID"_s, sourceID);
         result->setString("name"_s, stackFrame.displayName(m_vm));
         result->setString("location"_s, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
+        result->setDouble("line"_s, stackFrame.semanticLocation.lineColumn.line);
+        result->setDouble("column"_s, stackFrame.semanticLocation.lineColumn.column);
         result->setString("category"_s, tierName(stackFrame));
         uint32_t flags = 0;
         if (stackFrame.frameType == SamplingProfiler::FrameType::Executable && stackFrame.executable) {
@@ -1102,6 +1112,8 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             auto inliner = JSON::Object::create();
             inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
             inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
+            inliner->setDouble("line"_s, machineLocation->first.lineColumn.line);
+            inliner->setDouble("column"_s, machineLocation->first.lineColumn.column);
             inliner->setString("category"_s, tierName(stackFrame));
             result->setValue("inliner"_s, WTFMove(inliner));
         }
@@ -1120,12 +1132,29 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         return result;
     };
 
+    auto sourceAsJSON = [&](SourceProvider& provider) {
+        auto result = JSON::Object::create();
+        result->setDouble("sourceID"_s, provider.asID());
+        if (!provider.sourceURL().isEmpty())
+            result->setString("url"_s, provider.sourceURL());
+        if (!provider.sourceURLDirective().isEmpty())
+            result->setString("sourceURL"_s, provider.sourceURLDirective());
+        if (!provider.sourceMappingURLDirective().isEmpty())
+            result->setString("sourceMappingURL"_s, provider.sourceMappingURLDirective());
+        return result;
+    };
+
     auto result = JSON::Object::create();
     result->setDouble("interval"_s, m_timingInterval.seconds());
     auto traces = JSON::Array::create();
     for (StackTrace& stackTrace : m_stackTraces)
         traces->pushValue(stackTraceAsJSON(stackTrace));
-    result->setValue("traces"_s, traces);
+    result->setValue("traces"_s, WTFMove(traces));
+
+    auto sourcesArray = JSON::Array::create();
+    for (auto& [ sourceID, sourceProvider ] : sources)
+        sourcesArray->pushValue(sourceAsJSON(sourceProvider.get()));
+    result->setValue("sources"_s, WTFMove(sourcesArray));
 
     clearData();
 
@@ -1195,7 +1224,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             hash = stream.toString();
         } else
             hash = "<nil>"_s;
-        SourceID sourceID = frame.sourceID();
+        SourceID sourceID = std::get<1>(frame.sourceProviderAndID());
         if (Options::samplingProfilerIgnoreExternalSourceID()) {
             if (sourceID != internalSourceID)
                 sourceID = aggregatedExternalSourceID;

@@ -171,7 +171,6 @@ public:
     void insertExpiredStatisticForTesting(PAL::SessionID, const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
     void setCacheMaxAgeCap(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setGrandfathered(PAL::SessionID, const RegistrableDomain&, bool isGrandfathered, CompletionHandler<void()>&&);
-    void setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameDomain(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void()>&&);
@@ -376,9 +375,6 @@ private:
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(WebPageProxyIdentifier, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logTestingEvent(PAL::SessionID, const String& event);
-    void notifyResourceLoadStatisticsProcessed();
-    void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
-    void notifyWebsiteDataScanForRegistrableDomainsFinished();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);

@@ -170,8 +170,9 @@ RefPtr<Document> MediaResourceLoader::protectedDocument()
 const String& MediaResourceLoader::crossOriginMode() const
 {
     assertIsMainThread();
-
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_crossOriginMode;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 Vector<ResourceResponse> MediaResourceLoader::responsesForTesting() const

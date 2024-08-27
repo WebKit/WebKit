@@ -31,6 +31,7 @@
 
 #include "APIPageConfiguration.h"
 #include "AcceleratedBackingStore.h"
+#include "Display.h"
 #include "DragSource.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "DropTarget.h"
@@ -69,7 +70,6 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PointerEvent.h>
@@ -572,7 +572,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
 #if ENABLE(DEVELOPER_MODE)
         // Xvfb doesn't support toplevel focus, so gtk_window_is_active() always returns false. We consider
         // toplevel window to be always active since it's the only one.
-        if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+        if (Display::singleton().isX11()) {
             if (!g_strcmp0(g_getenv("UNDER_XVFB"), "yes")) {
                 priv->activityState.add(ActivityState::WindowIsActive);
                 flagsToUpdate.add(ActivityState::WindowIsActive);
@@ -2583,7 +2583,9 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->pageProxy = processPool.createWebPage(*priv->pageClient, WTFMove(configuration));
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
-    priv->pageProxy->initializeWebPage();
+
+    auto& openerInfo = priv->pageProxy->configuration().openerInfo();
+    priv->pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 
     if (priv->displayID)
         priv->pageProxy->windowScreenDidChange(priv->displayID);
@@ -2882,7 +2884,7 @@ bool webkitWebViewBaseIsFocused(WebKitWebViewBase* webViewBase)
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support toplevel focus, so the view is never focused. We consider it to tbe focused when
     // its window is marked as active.
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+    if (Display::singleton().isX11()) {
         if (!g_strcmp0(g_getenv("UNDER_XVFB"), "yes") && webViewBase->priv->activityState.contains(ActivityState::WindowIsActive))
             return true;
     }

@@ -32,6 +32,7 @@
 #include "PageOverlay.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "PlatformCALayer.h"
@@ -48,7 +49,7 @@ class IntPoint;
 class IntRect;
 
 class ResourceUsageOverlay final : public PageOverlayClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ResourceUsageOverlay);
     WTF_MAKE_NONCOPYABLE(ResourceUsageOverlay);
 public:
     explicit ResourceUsageOverlay(Page&);

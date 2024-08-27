@@ -334,11 +334,6 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
         // <http://bugs.webkit.org/show_bug.cgi?id=16077>: XSLT processor <xsl:sort> algorithm only compares by code point.
         xsltSetCtxtSortFunc(transformContext, xsltUnicodeSortFunction);
 
-        // This is a workaround for a bug in libxslt.
-        // The bug has been fixed in version 1.1.13, so once we ship that this can be removed.
-        if (!transformContext->globalVars)
-           transformContext->globalVars = xmlHashCreate(20);
-
         const char** params = xsltParamArrayFromParameterMap(m_parameters);
         xsltQuoteUserParams(transformContext, params);
         xmlDocPtr resultDoc = xsltApplyStylesheetUser(sheet, sourceDoc, nullptr, nullptr, nullptr, transformContext);

@@ -64,9 +64,14 @@ struct RawResolverBase {
     template<typename IntType, IntegerValueRange integerRange>
     static std::optional<IntegerRaw<IntType, integerRange>> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> calc, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
     {
+        // FIXME: This should not be eagerly resolving the calc. Instead, callers
+        // should resolve and round at style resolution. This will be incorrect calc
+        // expressions that contain relative lengths (which can appear in any calc
+        // expression, not just length expressions).
+
         // https://drafts.csswg.org/css-values-4/#integers
         // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
-        return {{ clampTo<IntType>(std::floor(std::max(calc.calc->doubleValue(symbolTable), computeMinimumValue(integerRange)) + 0.5)) }};
+        return { { clampTo<IntType>(std::floor(std::max(calc.calc->doubleValueDeprecated(symbolTable), computeMinimumValue(integerRange)) + 0.5)) } };
     }
 };
 

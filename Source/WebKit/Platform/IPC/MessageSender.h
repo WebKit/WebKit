@@ -38,7 +38,7 @@ enum class SendSyncOption : uint8_t;
 struct AsyncReplyIDType;
 struct ConnectionAsyncReplyHandler;
 template<typename> class ConnectionSendSyncResult;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
 
 class MessageSender {
 public:

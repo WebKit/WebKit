@@ -5,9 +5,6 @@
 <script type="module">
   // @ts-check
   /**
-   *
-   * @typedef {import('./dc-types').ActionType} IframeActionType
-   * @typedef {import('./dc-types').AbortType} AbortType
    * @typedef {import('./dc-types').EventData} EventData
    * @typedef {import('./dc-types').PostData} PostData
    */
@@ -16,9 +13,13 @@
    * @param {MessageEvent<EventData>} event
    */
   async function messageListener(event) {
+    if (!event.data || typeof event.data !== "object") {
+      throw new Error(
+        `Message data must be an object in conforming to EventData (see dc-types.js): ${event.data}`
+      );
+    }
     /** @type {EventData} */
-    const data = event.data ? { ...event.data } : {};
-    /** @type {PostData} */
+    const { data } = event;
     const abortController = new AbortController();
     if (data.abort) {
       if (!data.options) {

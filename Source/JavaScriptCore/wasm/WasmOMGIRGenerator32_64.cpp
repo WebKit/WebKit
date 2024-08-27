@@ -109,9 +109,11 @@ class OMGIRGenerator {
 public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
+    using ArgumentList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
     using CallPatchpointData = std::tuple<B3::PatchpointValue*, Box<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
 
+    static constexpr bool shouldFuseBranchCompare = false;
     static constexpr bool tierSupportsSIMD = true;
 
     struct ControlData {
@@ -633,7 +635,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
@@ -643,7 +645,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
-    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, ArgumentList& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
@@ -679,7 +681,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
-    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&);
+    PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
 
     PartialResult WARN_UNUSED_RETURN addInlinedReturn(const Stack& returnValues);
@@ -693,17 +695,23 @@ public:
 
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
 
+    // Fused comparison stubs (B3 will do this for us later).
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
-    auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData;
-    auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition&, const ArgumentList& args, ResultList&, CallType = CallType::Call);
+    auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
+    auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
-    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
@@ -1650,7 +1658,7 @@ auto OMGIRGenerator::addCrash() -> PartialResult
     return { };
 }
 
-auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition& signature, const ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -2423,7 +2431,7 @@ Value* OMGIRGenerator::fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType op, Va
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), pointer, constant(pointerType(), sizeOfAtomicOpMemoryAccess(op) - 1)));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
+            this->emitExceptionCheck(jit, ExceptionType::UnalignedMemoryAccess);
         });
     }
     return pointer;
@@ -3046,7 +3054,7 @@ auto OMGIRGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentInd
     return { };
 }
 
-auto OMGIRGenerator::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto OMGIRGenerator::addArrayNewFixed(uint32_t typeIndex, ArgumentList& args, ExpressionType& result) -> PartialResult
 {
     // Get the result type for the array.new_fixed operation
     Type resultType;
@@ -3316,7 +3324,7 @@ auto OMGIRGenerator::addArrayInitData(uint32_t, ExpressionType dst, ExpressionTy
     return { };
 }
 
-auto OMGIRGenerator::addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+auto OMGIRGenerator::addStructNew(uint32_t typeIndex, ArgumentList& args, ExpressionType& result) -> PartialResult
 {
     const auto type = Type { TypeKind::Ref, m_info.typeSignatures[typeIndex]->index() };
 
@@ -4434,7 +4442,7 @@ auto OMGIRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
     return { };
 }
 
-auto OMGIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
+auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&) -> PartialResult
 {
     TRACE_CF("THROW");
 
@@ -4679,7 +4687,7 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 }
 
 
-auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs) -> CallPatchpointData
+auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
 {
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
     for (unsigned i = 0; i < tmpArgs.size(); ++i)
@@ -4713,7 +4721,7 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnch
     return { patchpoint, exceptionHandle, nullptr };
 }
 
-auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const Vector<ExpressionType>& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
+auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
 {
     // First slot here is the last argument to the caller, a.k.a the first stack slot that belongs to the caller.
     const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
@@ -4820,7 +4828,7 @@ bool OMGIRGenerator::canInline() const
         && (m_inlineDepth <= 1 || StackCheck().isSafeToRecurse());
 }
 
-auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const TypeDefinition& calleeSignature, Vector<ExpressionType>& args, ResultList& resultList) -> PartialResult
+auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const TypeDefinition& calleeSignature, ArgumentList& args, ResultList& resultList) -> PartialResult
 {
     Vector<Value*> getArgs;
 
@@ -4887,7 +4895,7 @@ auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Ty
     return { };
 }
 
-auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -5050,7 +5058,7 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     return { };
 }
 
-auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     Value* calleeIndex = get(args.takeLast());
     const TypeDefinition& signature = originalSignature.expand();
@@ -5173,7 +5181,7 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     return emitIndirectCall(calleeInstance, calleeCode, calleeCallee, jsCalleeAnchor, signature, args, results, callType);
 }
 
-auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results) -> PartialResult
 {
     Value* callee = get(args.takeLast());
     TRACE_VALUE(Wasm::Types::Void, callee, "call_ref: ", originalSignature);

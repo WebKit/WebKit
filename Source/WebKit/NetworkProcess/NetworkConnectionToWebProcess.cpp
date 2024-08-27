@@ -89,6 +89,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <optional>
 #include <wtf/HashSet.h>
@@ -263,13 +264,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
         RELEASE_ASSERT(RunLoop::isMain());
         MESSAGE_CHECK(decoder.destinationID());
-        if (auto* loader = m_networkResourceLoaders.get(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
+        if (auto* loader = m_networkResourceLoaders.get(LegacyNullableAtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             loader->didReceiveNetworkResourceLoaderMessage(connection, decoder);
         return;
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
-        if (auto* channel = m_networkSocketChannels.get(AtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
+        if (auto* channel = m_networkSocketChannels.get(LegacyNullableAtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             channel->didReceiveMessage(connection, decoder);
         return;
     }
@@ -887,7 +888,7 @@ void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, co
 
 void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, WebCore::Cookie&& cookie, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty));
+    MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(false));
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -1416,7 +1417,7 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
 {
     auto* session = networkSession();
     if (auto* swServer = session ? session->swServer() : nullptr) {
-        MESSAGE_CHECK(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain));
+        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain), completionHandler());
         m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *swServer);
     }
     completionHandler();
@@ -1647,7 +1648,9 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
         return;
     }
 
-    session->notificationManager().getPushPermissionState(WTFMove(scopeURL), WTFMove(completionHandler));
+    session->notificationManager().getPermissionState(SecurityOriginData::fromURL(scopeURL), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+        completionHandler(static_cast<uint8_t>(state));
+    });
 }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 

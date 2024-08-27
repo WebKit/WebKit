@@ -46,6 +46,7 @@
 #include "UniqueIDBDatabaseManager.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -137,6 +138,8 @@ static inline uint64_t estimateSize(const IDBObjectStoreInfo& info)
         size += estimateSize(*keyPath);
     return size;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UniqueIDBDatabase);
 
 UniqueIDBDatabase::UniqueIDBDatabase(UniqueIDBDatabaseManager& manager, const IDBDatabaseIdentifier& identifier)
     : m_manager(manager)

@@ -230,7 +230,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
                 return;
             }
 
-            auto page = this->page();
+            RefPtr page = this->page();
             if (!page || (this->document().hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow) || m_pendingFullscreenElement != element.ptr() || !element->isConnected()) {
                 handleError("Invalid state when requesting fullscreen."_s, EmitErrorEvent::Yes, WTFMove(element), WTFMove(promise), WTFMove(completionHandler));
                 return;
@@ -436,7 +436,7 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
         if (mode == ExitMode::Resize)
             unfullscreenDocument(exitDocument);
         else {
-            auto fullscreenElement = exitDocument->fullscreenManager().fullscreenElement();
+            RefPtr fullscreenElement = exitDocument->fullscreenManager().fullscreenElement();
             clearFullscreenFlags(*fullscreenElement);
             fullscreenElement->removeFromTopLayer();
         }

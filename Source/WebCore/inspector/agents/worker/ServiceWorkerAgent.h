@@ -27,6 +27,7 @@
 
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class ServiceWorkerGlobalScope;
 
 class ServiceWorkerAgent final : public InspectorAgentBase, public Inspector::ServiceWorkerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerAgent);
 public:
     ServiceWorkerAgent(WorkerAgentContext&);
     ~ServiceWorkerAgent();

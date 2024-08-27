@@ -25,7 +25,7 @@ messages -> VideoPresentationManagerProxy {
     SetHasVideo(WebKit::PlaybackSessionContextIdentifier contextId, bool hasVideo)
     SetDocumentVisibility(WebKit::PlaybackSessionContextIdentifier contextId, bool isDocumentVisible)
     SetVideoDimensions(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatSize videoDimensions)
-    SetupFullscreenWithID(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, WebCore::MediaPlayerEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool isSpatial)
+    SetupFullscreenWithID(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, WebCore::MediaPlayerEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, std::optional<WebCore::SpatialVideoMetadata> metadata)
     SetPlayerIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier)
 #if !PLATFORM(IOS_FAMILY)
     EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)

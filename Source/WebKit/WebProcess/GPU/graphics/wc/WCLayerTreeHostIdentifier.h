@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class WCLayerTreeHostIdentifierType { };
-using WCLayerTreeHostIdentifier = ObjectIdentifier<WCLayerTreeHostIdentifierType>;
+using WCLayerTreeHostIdentifier = LegacyNullableObjectIdentifier<WCLayerTreeHostIdentifierType>;
 
 } // namespace WebKit
 

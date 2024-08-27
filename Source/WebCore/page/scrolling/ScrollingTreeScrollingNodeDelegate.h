@@ -29,10 +29,12 @@
 
 #include "ScrollingTreeScrollingNode.h"
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 class ScrollingTreeScrollingNodeDelegate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeScrollingNodeDelegate);
 public:
     WEBCORE_EXPORT explicit ScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     WEBCORE_EXPORT virtual ~ScrollingTreeScrollingNodeDelegate();

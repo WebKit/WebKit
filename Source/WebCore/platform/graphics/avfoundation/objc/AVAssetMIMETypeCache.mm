@@ -123,11 +123,6 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& typeParamete
     if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw()])
         return true;
 
-#if ENABLE(WEBM_FORMAT_READER)
-    if (SourceBufferParserWebM::isContentTypeSupported(type) == MediaPlayerEnums::SupportsType::IsSupported)
-        return true;
-#endif
-
 #endif // ENABLE(VIDEO) && USE(AVFOUNDATION)
 
     return false;
@@ -205,13 +200,6 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
 
     for (NSString *type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
         cache.add(type);
-
-#if ENABLE(WEBM_FORMAT_READER)
-    if (SourceBufferParserWebM::isWebMFormatReaderAvailable()) {
-        auto types = SourceBufferParserWebM::supportedMIMETypes();
-        cache.add(types.begin(), types.end());
-    }
-#endif
 
     if (m_cacheTypeCallback)
         m_cacheTypeCallback(copyToVector(cache));

@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT void setName(const String&) override;
     WEBCORE_EXPORT String debugName() const override;
 
-    WEBCORE_EXPORT PlatformLayerIdentifier primaryLayerID() const override;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
@@ -161,7 +161,7 @@ public:
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
-    WEBCORE_EXPORT PlatformLayerIdentifier contentsLayerIDForModel() const override;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const override;
 #endif
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
     WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
@@ -219,7 +219,7 @@ private:
     bool isGraphicsLayerCA() const override { return true; }
 
     // PlatformCALayerClient overrides
-    PlatformLayerIdentifier platformCALayerIdentifier() const override { return primaryLayerID(); }
+    PlatformLayerIdentifier platformCALayerIdentifier() const override { return *primaryLayerID(); }
     void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
     bool platformCALayerRespondsToLayoutChanges() const override { return false; }
     WEBCORE_EXPORT void platformCALayerCustomSublayersChanged(PlatformCALayer*) override;

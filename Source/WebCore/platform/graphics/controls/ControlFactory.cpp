@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(THEME_ADWAITA)
 RefPtr<ControlFactory> ControlFactory::create()
 {
     return adoptRef(new EmptyControlFactory());

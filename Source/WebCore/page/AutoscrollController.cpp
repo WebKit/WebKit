@@ -39,8 +39,11 @@
 #include "RenderView.h"
 #include "ScrollView.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AutoscrollController);
 
 // Delay time in second for start autoscroll if pointer is in border edge of scrollable element.
 static const Seconds autoscrollDelay { 200_ms };

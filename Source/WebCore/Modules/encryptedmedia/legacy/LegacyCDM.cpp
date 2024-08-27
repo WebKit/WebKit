@@ -35,6 +35,7 @@
 #include "MediaPlayer.h"
 #include "WebKitMediaKeys.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
@@ -68,6 +69,8 @@ static Vector<LegacyCDMFactory>& installedCDMFactories()
     });
     return cdms;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCDM);
 
 void LegacyCDM::resetFactories()
 {

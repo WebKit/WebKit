@@ -27,57 +27,19 @@
 #pragma once
 
 #include "CSSParserContext.h"
-#include "CSSPropertyParserHelpers.h"
 #include "FilterOperations.h"
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-class CSSValue;
-class CSSValueList;
-class CSSValuePool;
 class Document;
 class RenderStyle;
-class ScriptExecutionContext;
 
-class CSSPropertyParserWorkerSafe {
-public:
-    static std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
+namespace CSSPropertyParserWorkerSafe {
 
-    static std::optional<FilterOperations> parseFilterString(const Document&, RenderStyle&, const String&, CSSParserMode = HTMLStandardMode);
+std::optional<FilterOperations> parseFilterString(const Document&, RenderStyle&, const String&, CSSParserMode = HTMLStandardMode);
 
-    static RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);
-    static RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceWeight(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceStretch(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSPrimitiveValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
-    static RefPtr<CSSValue> parseFontFaceSizeAdjust(const String&, ScriptExecutionContext&);
-};
-
-namespace CSSPropertyParserHelpersWorkerSafe {
-
-RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange&);
-RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&);
-
-#if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&);
-#endif
-
-#if !ENABLE(VARIATION_FONTS)
-RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange&);
-#endif
-
-} // namespace CSSPropertyParserHelpersWorkerSafe
+}
 
 } // namespace WebCore

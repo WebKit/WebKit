@@ -350,7 +350,7 @@ void LocalFrameView::prepareForDetach()
     // right now, otherwise it won't be able to reach the topDocument()'s axObject cache later.
     removeFromAXObjectCache();
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->willDestroyScrollableArea(*this);
 }
 
@@ -945,7 +945,7 @@ bool LocalFrameView::isScrollSnapInProgress() const
 
     // If the scrolling thread updates the scroll position for this FrameView, then we should return
     // ScrollingCoordinator::isScrollSnapInProgress().
-    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->isScrollSnapInProgress(scrollingNodeID()))
             return true;
     }
@@ -1453,7 +1453,7 @@ bool LocalFrameView::usesCompositedScrolling() const
 bool LocalFrameView::usesAsyncScrolling() const
 {
 #if ENABLE(ASYNC_SCROLLING)
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->coordinatesScrollingForFrameView(*this);
 #endif
     return false;
@@ -1597,7 +1597,7 @@ void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object
         if (platformWidget())
             updateCanBlitOnScrollRecursively();
 
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
+        if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
 
         if (RefPtr page = m_frame->page())
@@ -1608,7 +1608,7 @@ void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object
 void LocalFrameView::removeViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
+        if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
 
         // FIXME: In addFixedObject() we only call this if there's a platform widget,
@@ -2978,7 +2978,7 @@ bool LocalFrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (&page->mainFrame() != m_frame.ptr())
         return true;
 
-    auto scrollingCoordinator = this->scrollingCoordinator();
+    RefPtr scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator)
         return true;
 
@@ -3008,7 +3008,7 @@ void LocalFrameView::updateCompositingLayersAfterScrolling()
 
 bool LocalFrameView::isUserScrollInProgress() const
 {
-    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->isUserScrollInProgress(scrollingNodeID()))
             return true;
     }
@@ -3024,7 +3024,7 @@ bool LocalFrameView::isRubberBandInProgress() const
     if (scrollbarsSuppressed())
         return false;
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->isRubberBandInProgress(scrollingNodeID());
 
     if (auto scrollAnimator = existingScrollAnimator())
@@ -3042,7 +3042,7 @@ bool LocalFrameView::isInStableState() const
 
 bool LocalFrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
 {
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->requestStartKeyboardScrollAnimation(*this, scrollData);
 
     return false;
@@ -3050,7 +3050,7 @@ bool LocalFrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& s
 
 bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
 {
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->requestStopKeyboardScrollAnimation(*this, immediate);
 
     return false;
@@ -3072,7 +3072,7 @@ bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, con
 #endif
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->requestScrollToPosition(*this, position, options);
 #else
     UNUSED_PARAM(position);
@@ -3087,7 +3087,7 @@ void LocalFrameView::stopAsyncAnimatedScroll()
 #if ENABLE(ASYNC_SCROLLING)
     LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::stopAsyncAnimatedScroll");
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->stopAnimatedScroll(*this);
 #endif
 }
@@ -3248,7 +3248,7 @@ void LocalFrameView::layoutOrVisualViewportChanged()
         if (auto* window = m_frame->window())
             window->visualViewport().update();
 
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
+        if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewVisualViewportChanged(*this);
     }
 }
@@ -3814,7 +3814,7 @@ void LocalFrameView::performPostLayoutTasks()
 
     m_updateEmbeddedObjectsTimer.startOneShot(0_s);
 
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewLayoutUpdated(*this);
 
     if (RenderView* renderView = this->renderView()) {
@@ -5404,7 +5404,7 @@ bool LocalFrameView::containsScrollableArea(ScrollableArea* scrollableArea) cons
 
 void LocalFrameView::scrollableAreaSetChanged()
 {
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
 }
 
@@ -5460,7 +5460,7 @@ bool LocalFrameView::handleWheelEventForScrolling(const PlatformWheelEvent& whee
         return false;
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (auto scrollingCoordinator = this->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*this)) {
             auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
             if (!result.needsMainThreadProcessing())
@@ -5700,7 +5700,7 @@ void LocalFrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
     m_scrollPinningBehavior = pinning;
     
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->setScrollPinningBehavior(pinning);
     
     updateScrollbars(scrollPosition());
@@ -5989,6 +5989,11 @@ bool LocalFrameView::shouldPlaceVerticalScrollbarOnLeft() const
     return renderView() && renderView()->shouldPlaceVerticalScrollbarOnLeft();
 }
 
+bool LocalFrameView::isHorizontalWritingMode() const
+{
+    return renderView() && renderView()->style().isHorizontalWritingMode();
+}
+
 TextStream& operator<<(TextStream& ts, const LocalFrameView& view)
 {
     ts << view.debugDescription();
@@ -6186,6 +6191,42 @@ void LocalFrameView::scrollbarWidthChanged(ScrollbarWidth width)
 {
     scrollbarsController().scrollbarWidthChanged(width);
     m_needsDeferredScrollbarsUpdate = true;
+}
+
+int LocalFrameView::scrollbarGutterWidth(bool isHorizontalWritingMode) const
+{
+    if (verticalScrollbar() && verticalScrollbar()->isOverlayScrollbar())
+        return 0;
+
+    if (!verticalScrollbar() && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+
+    if (!verticalScrollbar())
+        return 0;
+
+    return verticalScrollbar()->width();
+}
+
+IntSize LocalFrameView::totalScrollbarSpace() const
+{
+    IntSize scrollbarGutter = { horizontalScrollbarIntrusion(), verticalScrollbarIntrusion() };
+
+    if (isHorizontalWritingMode()) {
+        if (scrollbarGutterStyle().bothEdges)
+            scrollbarGutter.setWidth(scrollbarGutterWidth() * 2);
+        else
+            scrollbarGutter.setWidth(scrollbarGutterWidth());
+    }
+    return scrollbarGutter;
+}
+
+int LocalFrameView::insetForLeftScrollbarSpace() const
+{
+    if (scrollbarGutterStyle().bothEdges)
+        return scrollbarGutterWidth();
+    if (shouldPlaceVerticalScrollbarOnLeft())
+        return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;
+    return 0;
 }
 
 } // namespace WebCore

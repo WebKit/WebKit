@@ -38,9 +38,10 @@ class CLPlatformCL : public CLPlatformImpl
     static void Initialize(CreateFuncs &createFuncs, bool isIcd);
 
   private:
-    CLPlatformCL(const cl::Platform &platform, cl_platform_id native);
+    CLPlatformCL(const cl::Platform &platform, cl_platform_id native, bool isIcd);
 
     const cl_platform_id mNative;
+    const bool mIsIcd;
 
     friend class CLContextCL;
 };

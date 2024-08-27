@@ -36,6 +36,7 @@
 #include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
 #include "DocumentInlines.h"
@@ -185,8 +186,8 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
-    // the "inherit" and "initial" values must be ignored. CSSPropertyParserWorkerSafe::parseFont() ignores these.
-    auto fontRaw = CSSPropertyParserWorkerSafe::parseFont(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseFont() ignores these.
+    auto fontRaw = CSSPropertyParserHelpers::parseFont(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!fontRaw)
         return;
 

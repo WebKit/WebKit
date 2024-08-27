@@ -389,15 +389,15 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
-void RenderText::removeAndDestroyTextBoxes()
+void RenderText::removeAndDestroyLegacyTextBoxes()
 {
     if (!renderTreeBeingDestroyed())
-        m_lineBoxes.removeAllFromParent(*this);
+        m_legacyLineBoxes.removeAllFromParent(*this);
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     else
-        m_lineBoxes.invalidateParentChildLists();
+        m_legacyLineBoxes.invalidateParentChildLists();
 #endif
-    deleteLineBoxes();
+    deleteLegacyLineBoxes();
 }
 
 void RenderText::willBeDestroyed()
@@ -405,7 +405,7 @@ void RenderText::willBeDestroyed()
     if (m_hasSecureTextTimer)
         secureTextTimers().remove(*this);
 
-    removeAndDestroyTextBoxes();
+    removeAndDestroyLegacyTextBoxes();
 
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
@@ -494,14 +494,6 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 }
 #endif
 
-static FloatRect boundariesForTextBox(const InlineIterator::TextBox& textBox)
-{
-    if (auto* svgInlineTextBox = dynamicDowncast<SVGInlineTextBox>(textBox.legacyInlineBox()))
-        return svgInlineTextBox->calculateBoundaries();
-
-    return textBox.visualRectIgnoringBlockDirection();
-}
-
 static std::optional<IntRect> ellipsisRectForTextBox(const InlineIterator::TextBox& textBox, unsigned start, unsigned end)
 {
     auto lineBox = textBox.lineBox();
@@ -530,7 +522,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
 {
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
-        auto boundaries = boundariesForTextBox(textBox);
+        auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
@@ -651,7 +643,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
         }
 
         if (start <= textBox.start() && textBox.end() <= end) {
-            auto boundaries = boundariesForTextBox(textBox);
+            auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);
@@ -1751,7 +1743,7 @@ void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsig
 
     int delta = newText.length() - text().length();
 
-    m_linesDirty = m_lineBoxes.dirtyForTextChange(*this);
+    m_linesDirty = m_legacyLineBoxes.dirtyForTextChange(*this);
 
     setTextInternal(newText, force || m_linesDirty);
     invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, delta);
@@ -1768,18 +1760,18 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
     return applyTextTransform(style(), originalText(), previousCharacter());
 }
 
-void RenderText::dirtyLineBoxes(bool fullLayout)
+void RenderText::dirtyLegacyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
-        deleteLineBoxes();
+        deleteLegacyLineBoxes();
     else if (!m_linesDirty)
-        m_lineBoxes.dirtyAll();
+        m_legacyLineBoxes.dirtyAll();
     m_linesDirty = false;
 }
 
-void RenderText::deleteLineBoxes()
+void RenderText::deleteLegacyLineBoxes()
 {
-    m_lineBoxes.deleteAll();
+    m_legacyLineBoxes.deleteAll();
 }
 
 std::unique_ptr<LegacyInlineTextBox> RenderText::createTextBox()

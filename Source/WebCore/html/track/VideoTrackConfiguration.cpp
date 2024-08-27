@@ -41,6 +41,7 @@ Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
     json->setObject("colorSpace"_s, colorSpace()->toJSON());
     json->setDouble("framerate"_s, framerate());
     json->setInteger("bitrate"_s, bitrate());
+    json->setBoolean("isSpatial"_s, !!spatialVideoMetadata());
     return json;
 }
 

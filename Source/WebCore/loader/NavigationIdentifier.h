@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct NavigationIdentifierType;
-using NavigationIdentifier = NonNullableObjectIdentifier<NavigationIdentifierType, uint64_t>;
+using NavigationIdentifier = ObjectIdentifier<NavigationIdentifierType, uint64_t>;
 
 }

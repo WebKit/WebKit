@@ -132,6 +132,7 @@ private:
     std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount() const;
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
     id<MTLBuffer> clampIndirectBufferToValidValues(Buffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);
+    void setCachedRenderPassState(id<MTLRenderCommandEncoder>);
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 

@@ -186,8 +186,14 @@ public:
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
     static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
+    static constexpr ptrdiff_t offsetOfDummyArrayProfile() { return OBJECT_OFFSETOF(JITData, m_dummyArrayProfile); }
 
     explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
+
+    void finalizeUnconditionally()
+    {
+        m_dummyArrayProfile.clear();
+    }
 
 private:
 
@@ -195,6 +201,7 @@ private:
 
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };
+    ArrayProfile m_dummyArrayProfile { };
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     ExitVector m_exits;

@@ -40,6 +40,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -86,7 +87,7 @@ enum class TimelineRecordType {
 
 class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public JSC::Debugger::Observer {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorTimelineAgent);
 public:
     InspectorTimelineAgent(PageAgentContext&);
     ~InspectorTimelineAgent();

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class Document;
 class Element;
 
 class ValidationMessageClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ValidationMessageClient);
 public:
     virtual ~ValidationMessageClient() = default;
 

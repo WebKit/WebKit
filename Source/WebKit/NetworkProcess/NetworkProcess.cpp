@@ -876,19 +876,6 @@ void NetworkProcess::statisticsDatabaseHasAllTables(PAL::SessionID sessionID, Co
     }
 }
 
-void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    if (auto* session = networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
-            resourceLoadStatistics->setNotifyPagesWhenDataRecordsWereScanned(value, WTFMove(completionHandler));
-        else
-            completionHandler();
-    } else {
-        ASSERT_NOT_REACHED();
-        completionHandler();
-    }
-}
-
 void NetworkProcess::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {
@@ -1890,7 +1877,7 @@ static Vector<WebCore::SecurityOriginData> filterForRegistrableDomains(const Has
     return originsDeleted;
 }
 
-void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     RELEASE_LOG(Storage, "NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains started to delete and restrict data for session %" PRIu64 " - %zu domainsToDeleteAllCookiesFor, %zu domainsToDeleteAllButHttpOnlyCookiesFor, %zu domainsToDeleteAllScriptWrittenStorageFor", sessionID.toUInt64(), domains.domainsToDeleteAllCookiesFor.size(), domains.domainsToDeleteAllButHttpOnlyCookiesFor.size(), domains.domainsToDeleteAllScriptWrittenStorageFor.size());
     auto* session = networkSession(sessionID);
@@ -1915,10 +1902,7 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         HashSet<RegistrableDomain> m_domains;
     };
     
-    auto callbackAggregator = adoptRef(*new CallbackAggregator([this, completionHandler = WTFMove(completionHandler), shouldNotifyPage] (HashSet<RegistrableDomain>&& domainsWithData) mutable {
-        if (shouldNotifyPage)
-            parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyWebsiteDataDeletionForRegistrableDomainsFinished(), 0);
-        
+    auto callbackAggregator = adoptRef(*new CallbackAggregator([completionHandler = WTFMove(completionHandler)] (HashSet<RegistrableDomain>&& domainsWithData) mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), domainsWithData = crossThreadCopy(WTFMove(domainsWithData))] () mutable {
             completionHandler(WTFMove(domainsWithData));
         });
@@ -2041,13 +2025,13 @@ void NetworkProcess::deleteCookiesForTesting(PAL::SessionID sessionID, Registrab
     else
         toDeleteFor.domainsToDeleteAllButHttpOnlyCookiesFor.append(domain);
 
-    deleteAndRestrictWebsiteDataForRegistrableDomains(sessionID, cookieType, WTFMove(toDeleteFor), true, [completionHandler = WTFMove(completionHandler)] (HashSet<RegistrableDomain>&& domainsDeletedFor) mutable {
+    deleteAndRestrictWebsiteDataForRegistrableDomains(sessionID, cookieType, WTFMove(toDeleteFor), [completionHandler = WTFMove(completionHandler)] (HashSet<RegistrableDomain>&& domainsDeletedFor) mutable {
         UNUSED_PARAM(domainsDeletedFor);
         completionHandler();
     });
 }
 
-void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     auto* session = networkSession(sessionID);
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
@@ -2077,10 +2061,7 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
         WebsiteData m_websiteData;
     };
     
-    auto callbackAggregator = adoptRef(*new CallbackAggregator([this, completionHandler = WTFMove(completionHandler), shouldNotifyPage] (HashSet<RegistrableDomain>&& domainsWithData) mutable {
-        if (shouldNotifyPage)
-            parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyWebsiteDataScanForRegistrableDomainsFinished(), 0);
-
+    auto callbackAggregator = adoptRef(*new CallbackAggregator([completionHandler = WTFMove(completionHandler)] (HashSet<RegistrableDomain>&& domainsWithData) mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), domainsWithData = crossThreadCopy(WTFMove(domainsWithData))] () mutable {
             completionHandler(WTFMove(domainsWithData));
         });
@@ -2174,12 +2155,10 @@ void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& u
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
-    uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
-
     String suggestedFilename = networkDataTask.suggestedFilename();
 
     downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite) mutable {
-        auto downloadID = networkDataTask->pendingDownloadID();
+        auto downloadID = *networkDataTask->pendingDownloadID();
         if (destination.isEmpty())
             return completionHandler(PolicyAction::Ignore);
         networkDataTask->setPendingDownloadLocation(destination, WTFMove(sandboxExtensionHandle), allowOverwrite == AllowOverwrite::Yes);
@@ -2193,7 +2172,7 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
         }
 
         downloadManager().downloadDestinationDecided(downloadID, WTFMove(networkDataTask));
-    }, destinationID);
+    }, *networkDataTask.pendingDownloadID());
 }
 
 void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&& httpBody, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)

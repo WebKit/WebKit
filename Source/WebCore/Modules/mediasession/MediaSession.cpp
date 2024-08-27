@@ -43,9 +43,11 @@
 #include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "UserMediaController.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -134,6 +136,8 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
 
     return std::make_pair(command, argument);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSession);
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {
@@ -488,6 +492,46 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
         info.metadata.album = m_metadata->album();
     }
 }
+
+#if ENABLE(MEDIA_STREAM)
+void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& promise, MediaProducerMediaCaptureKind kind)
+{
+    RefPtr document = this->document();
+    if (!document->isFullyActive()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
+        return;
+    }
+
+    if (isActive && (document->topDocument().hidden() || !UserGestureIndicator::currentUserGesture())) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Activating capture must be called from a user gesture handler."_s });
+        return;
+    }
+
+    auto* controller = UserMediaController::from(document->page());
+    if (!controller) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to proceed with the request."_s });
+        return;
+    }
+
+    if (!document->isCapturing()) {
+        promise.resolve();
+        return;
+    }
+
+    controller->updateCaptureState(isActive, kind, [weakDocument = WeakPtr { document.get() }, promise = WTFMove(promise)] (auto&& exception) mutable {
+        RefPtr protectedDocument = weakDocument.get();
+        if (!protectedDocument)
+            return;
+        protectedDocument->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTFMove(promise), exception = WTFMove(exception)] () mutable {
+            if (exception) {
+                promise.reject(WTFMove(*exception));
+                return;
+            }
+            promise.resolve();
+        });
+    });
+}
+#endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void MediaSession::notifyReadyStateObservers()

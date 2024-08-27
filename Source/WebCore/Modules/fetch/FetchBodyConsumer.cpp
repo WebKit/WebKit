@@ -281,23 +281,25 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
     if (!context)
         return;
 
-    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, promise = WTFMove(promise), contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
+    m_formDataConsumer = FormDataConsumer::create(formData, *context, [promise = WTFMove(promise), type = m_type, contentType, builder = SharedBufferBuilder { }](auto&& result) mutable {
         if (result.hasException()) {
             auto protectedPromise = WTFMove(promise);
             protectedPromise->reject(result.releaseException());
-            return;
+            return false;
         }
 
         auto& value = result.returnValue();
         if (value.empty()) {
             auto protectedPromise = WTFMove(promise);
             auto buffer = builder.takeAsContiguous();
-            resolveWithData(WTFMove(protectedPromise), contentType, buffer->span());
-            return;
+            resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->span());
+            return false;
         }
 
         builder.append(value);
+        return true;
     });
+    m_formDataConsumer->start();
 }
 
 void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchBodySource& source, ScriptExecutionContext* context)
@@ -311,22 +313,22 @@ void FetchBodyConsumer::consumeFormDataAsStream(const FormData& formData, FetchB
     if (!context)
         return;
 
-    m_formDataConsumer = makeUnique<FormDataConsumer>(formData, *context, [this, source = Ref { source }](auto&& result) {
+    m_formDataConsumer = FormDataConsumer::create(formData, *context, [source = Ref { source }](auto&& result) {
         auto protectedSource = source;
         if (result.hasException()) {
             source->error(result.releaseException());
-            return;
+            return false;
         }
 
         auto& value = result.returnValue();
         if (value.empty()) {
             source->close();
-            return;
+            return false;
         }
 
-        if (!source->enqueue(ArrayBuffer::tryCreate(value)))
-            m_formDataConsumer->cancel();
+        return source->enqueue(ArrayBuffer::tryCreate(value));
     });
+    m_formDataConsumer->start();
 }
 
 void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBufferSink::Callback&& callback)

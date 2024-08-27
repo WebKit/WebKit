@@ -35,8 +35,9 @@
 #import "NativeImage.h"
 #import "VisionUtilities.h"
 #import <optional>
-#import <pal/cocoa/VisionSoftLink.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
 
@@ -135,6 +136,8 @@ static std::optional<BarcodeDetectorImpl::BarcodeFormatSet> convertRequestedBarc
         result.add(format);
     return result;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BarcodeDetectorImpl);
 
 BarcodeDetectorImpl::BarcodeDetectorImpl(const BarcodeDetectorOptions& barcodeDetectorOptions)
     : m_requestedBarcodeFormatSet(convertRequestedBarcodeFormatSet(barcodeDetectorOptions.formats))

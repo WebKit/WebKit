@@ -33,6 +33,7 @@
 #include "TextBreakingPositionCache.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
+#include "platform/text/TextSpacing.h"
 #include <wtf/Scope.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -124,7 +125,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         else if (inlineItem.isInlineBoxEnd())
             ++inlineBoxEnd;
         else {
-            auto hasToBeUniqueLayoutBox = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak();
+            auto hasToBeUniqueLayoutBox = inlineItem.isAtomicInlineBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak();
             if (hasToBeUniqueLayoutBox)
                 ASSERT(inlineLevelItems.add(&inlineItem.layoutBox()).isNewEntry);
         }
@@ -272,7 +273,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
                 inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
             } else if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox.get()))
                 handleTextContent(*inlineTextBox, inlineItemList, partialContentOffset(*inlineTextBox));
-            else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
+            else if (layoutBox->isAtomicInlineBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItemList);
             else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItemList);
@@ -489,7 +490,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
                 handleBidiParagraphStart(paragraphContentBuilder, inlineItemOffsetList, bidiContextStack);
             else
                 ASSERT_NOT_REACHED();
-        } else if (inlineItem.isBox()) {
+        } else if (inlineItem.isAtomicInlineBox()) {
             inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
         } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
@@ -679,6 +680,7 @@ static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& in
 
 void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemList)
 {
+    TextSpacing::SpacingState spacingState;
     for (auto& inlineItem : inlineItemList) {
         auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
         if (!inlineTextItem)
@@ -690,7 +692,8 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
         auto needsMeasuring = length && !inlineTextItem->isZeroWidthSpaceSeparator();
         if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, inlineTextItem->isWhitespace()))
             continue;
-        inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }));
+        inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState));
+        spacingState.lastCharacterClassFromPreviousRun = inlineItem.style().textAutospace().isNoAutospace() ? TextSpacing::CharacterClass::Undefined : TextSpacing::characterClass(inlineTextBox.content().characterAt(start + length - 1));
     }
 }
 
@@ -866,11 +869,11 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItemList
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemList& inlineItemList)
 {
     if (layoutBox.isRubyAnnotationBox())
-        return;
+        return inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
 
-    if (layoutBox.isAtomicInlineLevelBox()) {
+    if (layoutBox.isAtomicInlineBox()) {
         m_isTextAndForcedLineBreakOnlyContent = false;
-        return inlineItemList.append({ layoutBox, InlineItem::Type::Box });
+        return inlineItemList.append({ layoutBox, InlineItem::Type::AtomicInlineBox });
     }
 
     if (layoutBox.isLineBreakBox()) {

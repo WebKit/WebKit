@@ -21,10 +21,12 @@
 
 #if USE(TEXTURE_MAPPER)
 
-#include "TextureMapper.h"
 #include "TransformationMatrix.h"
 
 namespace WebCore {
+
+class Color;
+class TextureMapper;
 
 class TextureMapperPlatformLayer {
 public:
@@ -39,10 +41,7 @@ public:
 
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) = 0;
 
-    virtual void drawBorder(TextureMapper& textureMapper, const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
-    {
-        textureMapper.drawBorder(color, borderWidth, targetRect, transform);
-    }
+    WEBCORE_EXPORT virtual void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&);
 
     void setClient(TextureMapperPlatformLayer::Client* client) { m_client = client; }
 

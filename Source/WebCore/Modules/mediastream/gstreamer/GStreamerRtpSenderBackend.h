@@ -25,6 +25,7 @@
 #include "RTCRtpSenderBackend.h"
 #include "RealtimeOutgoingAudioSourceGStreamer.h"
 #include "RealtimeOutgoingVideoSourceGStreamer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ namespace WebCore {
 class GStreamerPeerConnectionBackend;
 
 class GStreamerRtpSenderBackend final : public RTCRtpSenderBackend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerRtpSenderBackend);
 public:
     GStreamerRtpSenderBackend(GStreamerPeerConnectionBackend&, GRefPtr<GstWebRTCRTPSender>&&);
     using Source = std::variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSourceGStreamer>, Ref<RealtimeOutgoingVideoSourceGStreamer>>;

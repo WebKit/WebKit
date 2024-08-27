@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/Debugger.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class PageGroup;
 
 class PageDebugger final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(PageDebugger);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PageDebugger);
 public:
     PageDebugger(Page&);
     ~PageDebugger() override = default;

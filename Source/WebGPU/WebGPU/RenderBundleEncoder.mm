@@ -386,37 +386,41 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
 
             if (m_dynamicOffsetsVertexBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
+                auto dynamicOffsetsVertexBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents), maxBufferLength };
+
                 auto bufferOffset = vertexDynamicOffset;
-                uint8_t* vertexBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents) + bufferOffset;
+                auto vertexBufferContentsSpan = dynamicOffsetsVertexBuffer.subspan(bufferOffset);
                 auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
                 if (pvertexOffsets && pvertexOffsets->size()) {
                     auto& vertexOffsets = *pvertexOffsets;
+                    auto vertexOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(vertexOffsets.data()), vertexOffsets.sizeInBytes() };
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(vertexOffsets[0]), vertexOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
-                        makeInvalid(@"Incorrect data for fragmentBuffer");
+                        makeInvalid(@"Incorrect data for vertexBuffer");
                         return false;
                     }
-                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
-                    memcpy(&vertexBufferContents[startIndex.value()], &vertexOffsets[0], bytesToCopy.value());
+                    memcpySpan(vertexBufferContentsSpan.subspan(startIndex.value(), bytesToCopy.value()), vertexOffsetsSpan.subspan(0, bytesToCopy.value()));
                 }
             }
 
             if (m_dynamicOffsetsFragmentBuffer) {
                 auto maxBufferLength = m_dynamicOffsetsFragmentBuffer.length;
+                auto dynamicOffsetsFragmentBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents), maxBufferLength };
                 auto bufferOffset = fragmentDynamicOffset;
-                uint8_t* fragmentBufferContents = static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents) + bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float);
+                auto fragmentBufferContents = dynamicOffsetsFragmentBuffer.subspan(bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
+                    auto fragmentOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(fragmentOffsets.data()), fragmentOffsets.sizeInBytes() };
+
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(fragmentOffsets[0]), fragmentOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
                         makeInvalid(@"Incorrect data for fragmentBuffer");
                         return false;
                     }
-                    RELEASE_ASSERT(bytesToCopy.value() <= maxBufferLength - (startIndex.value() + bufferOffset));
-                    memcpy(&fragmentBufferContents[startIndex.value()], &fragmentOffsets[0], bytesToCopy.value());
+                    memcpySpan(fragmentBufferContents.subspan(startIndex.value(), bytesToCopy.value()), fragmentOffsetsSpan.subspan(0, bytesToCopy.value()));
                 }
             }
         }
@@ -569,14 +573,14 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
         Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
         switch (bufferData.stepMode) {
         case WGPUVertexStepMode_Vertex:
-            strideCount = checkedSum<uint64_t>(firstVertex, vertexCount);
+            strideCount = checkedSum<uint32_t>(firstVertex, vertexCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
             }
             break;
         case WGPUVertexStepMode_Instance:
-            strideCount = checkedSum<uint64_t>(firstInstance, instanceCount);
+            strideCount = checkedSum<uint32_t>(firstInstance, instanceCount);
             if (strideCount.hasOverflowed()) {
                 makeInvalid(@"StrideCount invalid");
                 return false;
@@ -683,7 +687,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
             return finalizeRenderCommand();
         }
 
-        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCount * indexSizeInBytes);
+        auto indexCountTimesSizeInBytes = checkedProduct<NSUInteger>(indexCount, indexSizeInBytes);
+        auto lastIndexOffset = checkedSum<NSUInteger>(firstIndexOffsetInBytes, indexCountTimesSizeInBytes);
         if (lastIndexOffset.hasOverflowed() || lastIndexOffset.value() > m_indexBufferSize) {
             makeInvalid(@"firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize");
             return finalizeRenderCommand();
@@ -700,8 +705,11 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
         if (m_renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {
             id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
             [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
-        } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip)
-            [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+        } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip) {
+            auto checkedAddition = checkedSum<NSUInteger>(indexBufferOffsetInBytes, indexCountTimesSizeInBytes);
+            if (!checkedAddition.hasOverflowed() && checkedAddition.value() <= indexBuffer.length)
+                [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:indexBufferOffsetInBytes instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+        }
     } else {
         recordCommand([indexCount, instanceCount, firstIndex, baseVertex, firstInstance, protectedThis = Ref { *this }] {
             protectedThis->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);

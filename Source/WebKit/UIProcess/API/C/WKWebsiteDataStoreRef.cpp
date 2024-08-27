@@ -351,11 +351,6 @@ void WKWebsiteDataStoreStatisticsUpdateCookieBlocking(WKWebsiteDataStoreRef data
     });
 }
 
-void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(WKWebsiteDataStoreRef dataStoreRef, bool value)
-{
-    WebKit::toImpl(dataStoreRef)->setNotifyPagesWhenDataRecordsWereScanned(value, [] { });
-}
-
 void WKWebsiteDataStoreSetResourceLoadStatisticsTimeAdvanceForTesting(WKWebsiteDataStoreRef dataStoreRef, double value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback)
 {
     WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsTimeAdvanceForTesting(Seconds { value }, [context, callback] {

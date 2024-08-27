@@ -1,0 +1,13 @@
+
+
+PASS navigator.identity.create() frame just returns null.
+PASS navigator.identity.create() same-origin iframe just returns null.
+PASS navigator.identity.create() cross-origin iframe results in null.
+PASS navigator.identity.create() ignores mediations.
+PASS navigator.identity.create() ignores mediations in same-origin iframe.
+PASS navigator.identity.create() ignores mediations in cross-origin iframe.
+PASS navigator.identity.create() rejects if called with an aborted signal.
+PASS navigator.identity.create() rejects if called with an aborted signal in same-origin iframe.
+PASS navigator.identity.create() rejects if called with an aborted signal in cross-origin iframe.
+PASS Adding mediations together with abort signal respects the abort signal.
+

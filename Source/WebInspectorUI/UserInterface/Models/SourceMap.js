@@ -25,8 +25,13 @@
 
 WI.SourceMap = class SourceMap
 {
-    constructor(sourceMappingURL, payload, originalSourceCode)
+    constructor(sourceMappingURL, originalSourceCode, payload)
     {
+        console.assert(typeof sourceMappingURL === "string", sourceMappingURL);
+        console.assert(originalSourceCode instanceof WI.SourceCode, originalSourceCode);
+
+        WI.SourceMap._instances.add(this);
+
         if (!WI.SourceMap._base64Map) {
             var base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
             WI.SourceMap._base64Map = {};
@@ -34,7 +39,7 @@ WI.SourceMap = class SourceMap
                 WI.SourceMap._base64Map[base64Digits.charAt(i)] = i;
         }
 
-        this._originalSourceCode = originalSourceCode || null;
+        this._originalSourceCode = originalSourceCode;
         this._sourceMapResources = {};
         this._sourceMapResourcesList = [];
 
@@ -47,7 +52,16 @@ WI.SourceMap = class SourceMap
         this._parseMappingPayload(payload);
     }
 
+    // Static
+
+    static get instances()
+    {
+        return Array.from(WI.SourceMap._instances);
+    }
+
     // Public
+
+    get sourceMappingURL() { return this._sourceMappingURL; }
 
     get originalSourceCode()
     {
@@ -108,6 +122,35 @@ WI.SourceMap = class SourceMap
     sourceContent(sourceURL)
     {
         return this._sourceContentByURL[sourceURL];
+    }
+
+    calculateBlackboxSourceRangesForProtocol()
+    {
+        console.assert(this._originalSourceCode instanceof WI.Script, this._originalSourceCode);
+
+        let blackboxedURLs = {};
+
+        let sourceRanges = [];
+
+        let startLine = undefined;
+        let startColumn = undefined;
+        for (let [lineNumber, columnNumber, url] of this._mappings) {
+            blackboxedURLs[url] ??= !!WI.debuggerManager.blackboxDataForSourceCode(this._sourceMapResources[url]);
+
+            if (blackboxedURLs[url]) {
+                startLine ??= lineNumber;
+                startColumn ??= columnNumber;
+            } else if (startLine !== undefined && startColumn !== undefined) {
+                sourceRanges.push(startLine, startColumn, lineNumber, columnNumber);
+
+                startLine = undefined;
+                startColumn = undefined;
+            }
+        }
+        if (startLine !== undefined && startColumn !== undefined)
+            sourceRanges.push(startLine, startColumn, this._originalSourceCode.range.endLine, this._originalSourceCode.range.endColumn);
+
+        return sourceRanges;
     }
 
     _parseMappingPayload(mappingPayload)
@@ -254,6 +297,8 @@ WI.SourceMap = class SourceMap
         return negative ? -result : result;
     }
 };
+
+WI.SourceMap._instances = new IterableWeakSet;
 
 WI.SourceMap.VLQ_BASE_SHIFT = 5;
 WI.SourceMap.VLQ_BASE_MASK = (1 << 5) - 1;

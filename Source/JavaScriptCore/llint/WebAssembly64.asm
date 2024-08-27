@@ -51,13 +51,16 @@ end
 
 macro emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(ctx, pointer, offset, size)
     leap size - 1[pointer, offset], t5
-    bpb t5, boundsCheckingSize, .continuation
-.throw:
+    bpb t5, boundsCheckingSize, .continuationInBounds
+.throwOOB:
     throwException(OutOfBoundsMemoryAccess)
-.continuation:
+.continuationInBounds:
     addp memoryBase, pointer
     addp offset, pointer
-    btpnz pointer, (size - 1), .throw
+    btpz pointer, (size - 1), .continuationAligned
+.throwUnaligned:
+    throwException(UnalignedMemoryAccess)
+.continuationAligned:
 end
 
 

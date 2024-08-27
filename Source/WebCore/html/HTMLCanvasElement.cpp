@@ -122,7 +122,7 @@ const int defaultHeight = 150;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
-    , CanvasBase(IntSize(defaultWidth, defaultHeight), document.noiseInjectionHashSalt())
+    , CanvasBase(IntSize(defaultWidth, defaultHeight), document)
     , ActiveDOMObject(document)
 {
     ASSERT(hasTagName(canvasTag));

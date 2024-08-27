@@ -58,9 +58,41 @@ void CommandBuffer::setPipeline(wgpu::RenderPipeline pipeline)
     setPiplelineCommand->pipeline = GetReferencedObject(mReferencedRenderPipelines, pipeline);
 }
 
+void CommandBuffer::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+{
+    SetScissorRectCommand *setScissorRectCommand = initCommand<CommandID::SetScissorRect>();
+    setScissorRectCommand->x                     = x;
+    setScissorRectCommand->y                     = y;
+    setScissorRectCommand->width                 = width;
+    setScissorRectCommand->height                = height;
+
+    mHasSetScissorCommand = true;
+}
+
+void CommandBuffer::setViewport(float x,
+                                float y,
+                                float width,
+                                float height,
+                                float minDepth,
+                                float maxDepth)
+{
+    SetViewportCommand *setViewportCommand = initCommand<CommandID::SetViewport>();
+    setViewportCommand->x                  = x;
+    setViewportCommand->y                  = y;
+    setViewportCommand->width              = width;
+    setViewportCommand->height             = height;
+    setViewportCommand->minDepth           = minDepth;
+    setViewportCommand->maxDepth           = maxDepth;
+
+    mHasSetViewportCommand = true;
+}
+
 void CommandBuffer::clear()
 {
     mCommandCount = 0;
+
+    mHasSetScissorCommand  = false;
+    mHasSetViewportCommand = false;
 
     if (!mCommandBlocks.empty())
     {
@@ -110,6 +142,26 @@ void CommandBuffer::recordCommands(wgpu::RenderPassEncoder encoder)
                     const SetPipelineCommand &setPiplelineCommand =
                         GetCommandAndIterate<CommandID::SetPipeline>(&currentCommand);
                     encoder.SetPipeline(*setPiplelineCommand.pipeline);
+                    break;
+                }
+
+                case CommandID::SetScissorRect:
+                {
+                    const SetScissorRectCommand &setScissorRectCommand =
+                        GetCommandAndIterate<CommandID::SetScissorRect>(&currentCommand);
+                    encoder.SetScissorRect(setScissorRectCommand.x, setScissorRectCommand.y,
+                                           setScissorRectCommand.width,
+                                           setScissorRectCommand.height);
+                    break;
+                }
+
+                case CommandID::SetViewport:
+                {
+                    const SetViewportCommand &setViewportCommand =
+                        GetCommandAndIterate<CommandID::SetViewport>(&currentCommand);
+                    encoder.SetViewport(setViewportCommand.x, setViewportCommand.y,
+                                        setViewportCommand.width, setViewportCommand.height,
+                                        setViewportCommand.minDepth, setViewportCommand.maxDepth);
                     break;
                 }
 

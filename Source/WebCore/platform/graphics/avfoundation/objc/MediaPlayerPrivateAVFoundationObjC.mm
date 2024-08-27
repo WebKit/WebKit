@@ -65,7 +65,6 @@
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
-#import "SourceBufferParserAVFObjC.h"
 #import "SourceBufferParserWebM.h"
 #import "TextTrack.h"
 #import "TextTrackRepresentation.h"
@@ -176,8 +175,6 @@ SOFT_LINK_CONSTANT(Celestial, AVController_RouteDescriptionKey_AVAudioRouteName,
 
 #endif // PLATFORM(IOS_FAMILY)
 
-OBJC_CLASS AVAssetPlaybackAssistant;
-
 using namespace WebCore;
 
 enum MediaPlayerAVFoundationObservationContext {
@@ -256,20 +253,6 @@ static dispatch_queue_t globalLoaderDelegateQueue()
         globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
     });
     return globalQueue;
-}
-
-static void registerFormatReaderIfNecessary()
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
-        // (which is already appropriately sandboxed) rather than in a separate MediaToolbox XPC service.
-        RELEASE_ASSERT(isInGPUProcess() || isInWebProcess());
-        MTRegisterPluginFormatReaderBundleDirectory((__bridge CFURLRef)NSBundle.mainBundle.builtInPlugInsURL);
-        MTPluginFormatReaderDisableSandboxing();
-    });
-#endif
 }
 
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
@@ -840,19 +823,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
 }
 
-static bool willUseWebMFormatReaderForType(const String& type)
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    if (!SourceBufferParserWebM::isWebMFormatReaderAvailable())
-        return false;
-
-    return equalLettersIgnoringASCIICase(type, "video/webm"_s) || equalLettersIgnoringASCIICase(type, "audio/webm"_s);
-#else
-    UNUSED_PARAM(type);
-    return false;
-#endif
-}
-
 static URL conformFragmentIdentifierForURL(const URL& url)
 {
 #if PLATFORM(MAC)
@@ -949,10 +919,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
     auto type = player->contentMIMEType();
 
-    // Don't advertise WebM MIME types or the format reader won't be loaded until rdar://72405127 is fixed.
-    auto willUseWebMFormatReader = willUseWebMFormatReaderForType(type);
-
-    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension() && !willUseWebMFormatReader) {
+    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension()) {
         auto codecs = player->contentTypeCodecs();
         if (!codecs.isEmpty()) {
             NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)type, (NSString *)codecs];
@@ -1024,9 +991,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
             [nsTypes addObject:@(type.value)];
         [options setObject:nsTypes.get() forKey:AVURLAssetAllowableCaptionFormatsKey];
     }
-
-    if (willUseWebMFormatReader)
-        registerFormatReaderIfNecessary();
 
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
     if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && PAL::canLoad_AVFoundation_AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests())
@@ -2312,20 +2276,8 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate s
 
 void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()
 {
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    ASSERT(m_avAsset);
-    SourceBufferParserAVFObjC::getVideoPlaybackConfiguration(m_avAsset.get())->whenSettled(RunLoop::main(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
-        if (RefPtr protectedThis = weakThis.get()) {
-            if (result)
-                protectedThis->m_cachedVideoPlaybackConfiguration = *result;
-            protectedThis->MediaPlayerPrivateAVFoundation::metadataLoaded();
-            protectedThis->processChapterTracks();
-        }
-    });
-#else
     MediaPlayerPrivateAVFoundation::metadataLoaded();
     processChapterTracks();
-#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::processChapterTracks()

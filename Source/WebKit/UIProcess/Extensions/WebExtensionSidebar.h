@@ -98,15 +98,15 @@ private:
     std::optional<RetainPtr<NSDictionary>> m_iconsOverride;
     std::optional<String> m_titleOverride;
     std::optional<String> m_sidebarPathOverride;
+    std::optional<bool> m_isEnabled;
 
-    WeakRef<WebExtensionContext> m_context;
+    WeakPtr<WebExtensionContext> m_extensionContext;
     const std::optional<Ref<WebExtensionTab>> m_tab;
     const std::optional<Ref<WebExtensionWindow>> m_window;
 
     bool m_isOpen { false };
     bool m_opensSidebarWhenReady { false };
     bool m_sidebarOpened { false };
-    bool m_isEnabled { false };
     const IsDefault m_isDefault { IsDefault::No };
 
     RetainPtr<WKWebView> m_webView;

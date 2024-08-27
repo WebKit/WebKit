@@ -86,7 +86,6 @@ public:
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
     static BaseAudioSharedUnit& singleton()  { return unit(); }
-    CoreAudioSharedUnit();
     ~CoreAudioSharedUnit();
 
     using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
@@ -117,6 +116,10 @@ public:
 #endif
 
 private:
+    CoreAudioSharedUnit();
+
+    friend class NeverDestroyed<CoreAudioSharedUnit>;
+
     static size_t preferredIOBufferSize();
 
     LongCapabilityRange sampleRateCapacities() const final { return m_sampleRateCapabilities; }

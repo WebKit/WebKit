@@ -177,7 +177,7 @@ void StyledElement::dirtyStyleAttribute()
 
 void StyledElement::invalidateStyleAttribute()
 {
-    if (auto* inlineStyle = this->inlineStyle()) {
+    if (RefPtr inlineStyle = this->inlineStyle()) {
         if (usesStyleBasedEditability(*inlineStyle))
             protectedDocument()->setHasElementUsingStyleBasedEditability();
     }

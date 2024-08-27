@@ -34,6 +34,7 @@
 #include <functional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
@@ -87,7 +88,7 @@ enum class AllowTrustedTypePolicy : uint8_t {
 };
 
 class ContentSecurityPolicy final : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentSecurityPolicy);
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);
@@ -121,7 +122,7 @@ public:
     bool allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*) const;
     bool allowInlineEventHandlers(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element&, const String& nonce, bool overrideContentSecurityPolicy = false) const;
-    bool allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber&, const String& nonce, const StringView&, ParserInserted) const;
+    bool allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber&, const String& nonce, const String& subResourceIntegrity, const StringView&, ParserInserted) const;
     bool allowInlineStyle(const String& contextURL, const OrdinalNumber& contextLine, StringView styleContent, CheckUnsafeHashes, Element&, const String&, bool overrideContentSecurityPolicy = false) const;
 
     bool allowEval(JSC::JSGlobalObject*, LogToConsole, StringView codeContent, bool overrideContentSecurityPolicy = false) const;

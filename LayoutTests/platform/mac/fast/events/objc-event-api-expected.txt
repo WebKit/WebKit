@@ -49,12 +49,6 @@ event type:      click
   cancelable:    1
   detail:        1
   view:          OK (document: OK)
-  button:        0
-  clientX:       100
-  clientY:       100
-  screenX:       -9900
-  screenY:       -9900
-  modifier keys: c:0 s:0 a:0 m:0
 event type:      mousemove
   target:        <div>
   eventPhase:    3
@@ -263,12 +257,6 @@ event type:      click
   cancelable:    1
   detail:        1
   view:          OK (document: OK)
-  button:        0
-  clientX:       400
-  clientY:       150
-  screenX:       -9600
-  screenY:       -9850
-  modifier keys: c:0 s:0 a:0 m:0
 event type:      mousemove
   target:        <div>
   eventPhase:    3

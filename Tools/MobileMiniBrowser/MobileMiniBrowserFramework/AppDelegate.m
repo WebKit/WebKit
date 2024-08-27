@@ -26,6 +26,9 @@
 #import "AppDelegate.h"
 
 #import "WebViewController.h"
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+
+#import <WebKit/WebKit.h>
 
 @interface AppDelegate ()
 @end
@@ -34,6 +37,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // Opt-in to supporting push for testing purposes.
+    id handler = ^(_WKWebPushAction *action) {
+        // FIXME: Make this callback do something useful by returning an appropriate WKWebsiteDataStore
+        return (WKWebsiteDataStore *)nil;
+    };
+
+    [WKWebsiteDataStore _setWebPushActionHandler:handler];
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UIStoryboard *frameworkMainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle bundleForClass:[AppDelegate class]]];
@@ -41,6 +52,10 @@
 #pragma clang diagnostic pop
     if (!viewController)
         return NO;
+
+    NSURL *url = launchOptions[UIApplicationLaunchOptionsURLKey];
+    if (url)
+        viewController.initialURL = url;
 
     if (!self.window)
         self.window = [[UIWindow alloc] init];
@@ -50,6 +65,12 @@
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
+{
+    WebViewController *controller = (WebViewController *)self.window.rootViewController;
+    [controller.currentWebView loadRequest:[NSURLRequest requestWithURL:url]];
+    return YES;
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

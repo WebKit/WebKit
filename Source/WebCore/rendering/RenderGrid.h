@@ -39,10 +39,6 @@ class GridLayoutState;
 class GridSpan;
 
 struct ContentAlignmentData {
-    WTF_MAKE_NONCOPYABLE(ContentAlignmentData); WTF_MAKE_FAST_ALLOCATED;
-public:
-    ContentAlignmentData() = default;
-
     LayoutUnit positionOffset;
     LayoutUnit distributionOffset;
 };
@@ -213,7 +209,7 @@ private:
     GridAxisPosition rowAxisPositionForGridItem(const RenderBox&) const;
     LayoutUnit columnAxisOffsetForGridItem(const RenderBox&) const;
     LayoutUnit rowAxisOffsetForGridItem(const RenderBox&) const;
-    void computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks);
+    ContentAlignmentData computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
     void setLogicalPositionForGridItem(RenderBox&) const;
     void setLogicalOffsetForGridItem(RenderBox&, GridTrackSizingDirection) const;
     LayoutUnit logicalOffsetForGridItem(const RenderBox&, GridTrackSizingDirection) const;

@@ -77,10 +77,7 @@ EXPECTED (internals.routeSharingPolicy() == 'Default') OK
 ** Check after MediaStream muting audio track.
 EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
 
-** Check 500ms after MediaStream stopping capture.
-EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
-
-** And check again after 3 seconds.
+** Check right after MediaStream stopping capture.
 EXPECTED (internals.audioSessionCategory() == 'None') OK
 END OF TEST
 

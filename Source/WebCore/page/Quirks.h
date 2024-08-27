@@ -28,6 +28,7 @@
 #include "Event.h"
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -49,7 +50,8 @@ enum class IsSyntheticClick : bool;
 enum class StorageAccessWasGranted : uint8_t;
 
 class Quirks {
-    WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Quirks);
+    WTF_MAKE_NONCOPYABLE(Quirks);
 public:
     Quirks(Document&);
     ~Quirks();
@@ -77,7 +79,6 @@ public:
 #endif
     bool shouldDisablePointerEventsQuirk() const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
-    bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
     bool shouldExposeShowModalDialog() const;
     bool shouldNavigatorPluginsBeEmpty() const;
@@ -100,7 +101,6 @@ public:
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
 
-    WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
     WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);

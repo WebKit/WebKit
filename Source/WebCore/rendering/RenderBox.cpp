@@ -28,6 +28,7 @@
 
 #include "BackgroundPainter.h"
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -146,10 +147,8 @@ RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionS
     ASSERT(isRenderBox());
 }
 
-RenderBox::~RenderBox()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderBox::~RenderBox() = default;
 
 void RenderBox::willBeDestroyed()
 {
@@ -787,30 +786,11 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
     return logicalHeight;
 }
 
-RoundedRect RenderBox::borderRoundedRect() const
-{
-    auto& style = this->style();
-    LayoutRect bounds = frameRect();
-    bounds.setLocation({ });
-
-    return style.getRoundedBorderFor(bounds);
-}
-
+// FIXME: Despite the name, this returns rounded borders based on the padding box, which seems wrong.
 RoundedRect::Radii RenderBox::borderRadii() const
 {
-    auto& style = this->style();
-    LayoutRect bounds = frameRect();
-
-    unsigned borderLeft = style.borderLeftWidth();
-    unsigned borderTop = style.borderTopWidth();
-    bounds.moveBy(LayoutPoint(borderLeft, borderTop));
-    bounds.contract(borderLeft + style.borderRightWidth(), borderTop + style.borderBottomWidth());
-    return style.getRoundedBorderFor(bounds).radii();
-}
-
-RoundedRect RenderBox::roundedBorderBoxRect() const
-{
-    return style().getRoundedInnerBorderFor(borderBoxRect());
+    auto borderShape = BorderShape::shapeForBorderRect(style(), paddingBoxRectIncludingScrollbar());
+    return borderShape.deprecatedRoundedRect().radii();
 }
 
 LayoutRect RenderBox::paddingBoxRect() const
@@ -1579,8 +1559,10 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, cons
     LayoutPoint adjustedLocation = accumulatedOffset + location();
     LayoutRect borderRect = borderBoxRect();
     borderRect.moveBy(adjustedLocation);
-    RoundedRect border = style().getRoundedBorderFor(borderRect);
-    return hitTestLocation.intersects(border);
+
+    auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
+    // To handle non-round corners, BorderShape should do the hit-testing.
+    return hitTestLocation.intersects(borderShape.deprecatedRoundedRect());
 }
 
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
@@ -1707,7 +1689,8 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         stateSaver.save();
-        paintInfo.context().clipRoundedRect(style().getRoundedBorderFor(paintRect).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor()));
+        auto borderShape = BorderShape::shapeForBorderRect(style(), paintRect);
+        borderShape.clipToOuterShape(paintInfo.context(), document().deviceScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
 
@@ -2139,10 +2122,16 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
     return false;
 }
 
-void RenderBox::clipContentForBorderRadius(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor)
+void RenderBox::clipToPaddingBoxShape(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor) const
 {
-    auto innerBorder = style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size()));
-    context.clipRoundedRect(innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+    auto borderShape = BorderShape::shapeForBorderRect(style(), LayoutRect(accumulatedOffset, size()));
+    borderShape.clipToInnerShape(context, deviceScaleFactor);
+}
+
+void RenderBox::clipToContentBoxShape(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor) const
+{
+    auto borderShape = borderShapeForContentClipping(LayoutRect { accumulatedOffset, size() });
+    borderShape.clipToInnerShape(context, deviceScaleFactor);
 }
 
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
@@ -2167,7 +2156,8 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
-        clipContentForBorderRadius(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
+        clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
+
     paintInfo.context().clip(clipRect);
 
     if (paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility)
@@ -2985,8 +2975,14 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     Length marginStartLength = style().marginStartUsing(&containingBlockStyle);
     Length marginEndLength = style().marginEndUsing(&containingBlockStyle);
 
-    if (isFloating() || isInline()) {
-        // Inline blocks/tables and floats don't have their margins increased.
+    if (isFloating()) {
+        marginStart = minimumValueForLength(marginStartLength, containerWidth);
+        marginEnd = minimumValueForLength(marginEndLength, containerWidth);
+        return;
+    }
+
+    if (isInline()) {
+        // Inline blocks/tables don't have their margins increased.
         marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
             return minimumValueForLength(marginStartLength, containerWidth);
         });

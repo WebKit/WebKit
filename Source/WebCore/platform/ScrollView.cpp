@@ -36,6 +36,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
+#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -295,7 +296,9 @@ IntSize ScrollView::sizeForVisibleContent(VisibleContentRectIncludesScrollbars s
 #endif
 
     IntSize scrollbarSpace;
-    if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
+    if (!scrollbarGutterStyle().isAuto && scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
+        scrollbarSpace = totalScrollbarSpace();
+    else if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::No)
         scrollbarSpace = scrollbarIntrusion();
 
     return IntSize(width() - scrollbarSpace.width(), height() - scrollbarSpace.height()).expandedTo(IntSize());
@@ -441,8 +444,7 @@ void ScrollView::cacheCurrentScrollState()
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
-    return scrollPosition() - IntSize(
-        shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+    return scrollPosition() - IntSize(insetForLeftScrollbarSpace(),
         headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
@@ -1617,8 +1619,7 @@ void ScrollView::styleAndRenderTreeDidChange()
 IntPoint ScrollView::locationOfContents() const
 {
     IntPoint result = location();
-    if (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar)
-        result.move(m_verticalScrollbar->occupiedWidth(), 0);
+    result.move(insetForLeftScrollbarSpace(), 0);
     return result;
 }
 

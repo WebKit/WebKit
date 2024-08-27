@@ -213,8 +213,8 @@ struct PerWebProcessState {
 
     std::optional<WebKit::TransactionID> firstTransactionIDAfterPageRestore;
 
-    WebCore::PlatformLayerIdentifier pendingFindLayerID;
-    WebCore::PlatformLayerIdentifier committedFindLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> pendingFindLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> committedFindLayerID;
 
     std::optional<LiveResizeParameters> liveResizeParameters;
 };
@@ -250,6 +250,9 @@ struct PerWebProcessState {
 #if ENABLE(WRITING_TOOLS)
     RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _writingToolsTextSuggestions;
     RetainPtr<WTSession> _activeWritingToolsSession;
+
+    NSUInteger _partialIntelligenceTextPonderingAnimationCount;
+    BOOL _writingToolsTextReplacementsFinished;
 #endif
 
 #if PLATFORM(MAC)
@@ -421,12 +424,12 @@ struct PerWebProcessState {
 - (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #endif
 
-#endif // ENABLE(WRITING_TOOLS)
+- (void)_didEndPartialIntelligenceTextPonderingAnimation;
+- (BOOL)_writingToolsTextReplacementsFinished;
 
-#if ENABLE(WRITING_TOOLS_UI)
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;
 - (void)_removeTextAnimationForAnimationID:(NSUUID *)uuid;
-- (void)_didEndPartialIntelligenceTextPonderingAnimation;
+
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

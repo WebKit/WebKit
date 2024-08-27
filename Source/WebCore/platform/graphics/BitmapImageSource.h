@@ -42,6 +42,8 @@ class BitmapImageSource : public ImageSource {
 public:
     static Ref<BitmapImageSource> create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
 
+    virtual ~BitmapImageSource();
+
     // State
     ImageDecoder* decoder(FragmentedSharedBuffer* = nullptr) const;
     ImageDecoder* decoderIfExists() const { return m_decoder.get(); }

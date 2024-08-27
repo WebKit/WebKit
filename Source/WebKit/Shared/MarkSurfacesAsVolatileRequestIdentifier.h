@@ -30,7 +30,7 @@
 namespace WebKit {
 
 struct MarkSurfacesAsVolatileRequestIdentifierType;
-using MarkSurfacesAsVolatileRequestIdentifier = ObjectIdentifier<MarkSurfacesAsVolatileRequestIdentifierType>;
+using MarkSurfacesAsVolatileRequestIdentifier = LegacyNullableObjectIdentifier<MarkSurfacesAsVolatileRequestIdentifierType>;
 
 }
 

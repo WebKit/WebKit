@@ -36,9 +36,12 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBServer);
 
 IDBServer::IDBServer(const String& databaseDirectoryPath, SpaceRequester&& spaceRequester, Lock& lock)
     : m_spaceRequester(WTFMove(spaceRequester))

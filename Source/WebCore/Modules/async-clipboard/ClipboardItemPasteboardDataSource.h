@@ -26,13 +26,14 @@
 #pragma once
 
 #include "ClipboardItemDataSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct PasteboardItemInfo;
 
 class ClipboardItemPasteboardDataSource : public ClipboardItemDataSource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ClipboardItemPasteboardDataSource);
 public:
     ClipboardItemPasteboardDataSource(ClipboardItem&, const PasteboardItemInfo&);
     ~ClipboardItemPasteboardDataSource();

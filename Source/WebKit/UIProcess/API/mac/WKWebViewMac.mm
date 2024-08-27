@@ -32,8 +32,6 @@
 #import "WKTextAnimationType.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import <WebCore/ScreenCaptureKitCaptureSource.h>
-#import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
@@ -42,6 +40,8 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKWarningView.h"
+#import <WebCore/CGWindowUtilities.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -1796,9 +1796,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end // WKWebView (WKPrivateMac)
 
 @implementation WKWebView (WKWindowSnapshot)
-- (NSImage *)_windowSnapshotInRect:(CGRect)rect
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options
 {
-    RetainPtr snapshot = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot((CGSWindowID)[[self window] windowNumber], rect, { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows });
+    RetainPtr snapshot = WebCore::cgWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, (CGSWindowID)[[self window] windowNumber], options);
     if (!snapshot)
         return nil;
 

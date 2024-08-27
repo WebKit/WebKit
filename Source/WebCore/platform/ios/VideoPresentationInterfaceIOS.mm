@@ -158,7 +158,7 @@ std::optional<MediaPlayerIdentifier>VideoPresentationInterfaceIOS::playerIdentif
     return m_playbackSessionInterface->playerIdentifier();
 }
 
-void VideoPresentationInterfaceIOS::setVideoSpatial(bool)
+void VideoPresentationInterfaceIOS::setSpatialVideoMetadata(const std::optional<SpatialVideoMetadata>&)
 {
 }
 

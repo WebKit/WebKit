@@ -33,6 +33,7 @@
 
 #include "FidoConstants.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace fido {
@@ -44,7 +45,7 @@ namespace fido {
 // FidoHidInitPacket cannot store the entire payload, further payload
 // information is stored in HidContinuationPackets.
 class WEBCORE_EXPORT FidoHidPacket {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FidoHidPacket);
     WTF_MAKE_NONCOPYABLE(FidoHidPacket);
 public:
     FidoHidPacket(Vector<uint8_t>&& data, uint32_t channelId);

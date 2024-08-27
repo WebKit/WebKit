@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct NetworkResourceLoadIdentifierType;
-using NetworkResourceLoadIdentifier = ObjectIdentifier<NetworkResourceLoadIdentifierType>;
+using NetworkResourceLoadIdentifier = LegacyNullableObjectIdentifier<NetworkResourceLoadIdentifierType>;
 
 }

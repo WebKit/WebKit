@@ -3067,12 +3067,10 @@ static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overl
 
     auto [foundElement, elementBounds] = *elementAndBounds;
     auto identifierValue = parseInteger<uint64_t>(foundElement->attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
-    if (!identifierValue)
+    if (!identifierValue || !*identifierValue)
         return;
 
     auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
-    if (!identifier.isValid())
-        return;
 
     auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
     if (!dataDetectionResults)
@@ -3323,7 +3321,7 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
 RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element)
 {
     // Ensure that the image contains at most 600K pixels, so that it is not too big.
-    if (auto snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
+    if (auto snapshot = snapshotNode(element, SnapshotOption::Shareable, 600 * 1024))
         return snapshot->bitmap();
     return nullptr;
 }
@@ -4908,7 +4906,7 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
         auto originalLayoutViewportOverrideRect = frameView.layoutViewportOverrideRect();
         frameView.setLayoutViewportOverrideRect(LayoutRect(snapshotRect));
 
-        auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
+        auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, { });
 
         frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
         reply(SharedBuffer::create(pdfData.get()));
@@ -4930,23 +4928,6 @@ void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 
 String WebPage::platformUserAgent(const URL&) const
 {
-    if (!m_page->settings().needsSiteSpecificQuirks())
-        return String();
-
-    auto* mainFrame = m_mainFrame->coreLocalFrame();
-    if (!mainFrame) {
-        // FIXME: Add a user agent for loads from iframe processes. <rdar://116201535>
-        return { };
-    }
-
-    auto document = mainFrame->document();
-    if (!document)
-        return String();
-
-    if (osNameForUserAgent() == "iPhone OS"_s) {
-        if (document->quirks().shouldAvoidUsingIOS13ForGmail())
-            return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
-    }
     return String();
 }
 

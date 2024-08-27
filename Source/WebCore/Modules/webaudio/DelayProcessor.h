@@ -28,13 +28,14 @@
 #include "AudioParam.h"
 #include <memory>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AudioDSPKernel;
     
 class DelayProcessor final : public AudioDSPKernelProcessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DelayProcessor);
 public:
     DelayProcessor(BaseAudioContext&, float sampleRate, unsigned numberOfChannels, double maxDelayTime);
     virtual ~DelayProcessor();

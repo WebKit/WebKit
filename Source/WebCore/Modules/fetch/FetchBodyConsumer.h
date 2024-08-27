@@ -97,7 +97,7 @@ private:
     RefPtr<FetchBodySource> m_source;
     bool m_isLoading { false };
     RefPtr<UserGestureToken> m_userGestureToken;
-    std::unique_ptr<FormDataConsumer> m_formDataConsumer;
+    RefPtr<FormDataConsumer> m_formDataConsumer;
 };
 
 } // namespace WebCore

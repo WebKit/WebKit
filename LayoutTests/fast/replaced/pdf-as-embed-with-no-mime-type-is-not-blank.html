@@ -1,2 +1,19 @@
-<!-- webkit-test-runner [ PluginsEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body onload="runTest()">
 <embed src="resources/image.pdf" style="margin:2px"></embed>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest()
+{
+    await UIHelper.waitForPDFFadeIn();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>

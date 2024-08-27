@@ -239,9 +239,12 @@ NSDictionary *WebExtension::manifest()
 
     m_parsedManifest = true;
 
-    NSData *manifestData = resourceDataForPath(@"manifest.json");
-    if (!manifestData)
+    NSError *error;
+    NSData *manifestData = resourceDataForPath(@"manifest.json", &error);
+    if (!manifestData) {
+        recordError(error);
         return nil;
+    }
 
     if (!parseManifest(manifestData))
         return nil;
@@ -488,7 +491,7 @@ UTType *WebExtension::resourceTypeForPath(NSString *path)
     return result;
 }
 
-NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+NSString *WebExtension::resourceStringForPath(NSString *path, NSError **outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(path);
 
@@ -506,7 +509,9 @@ NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheR
     if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
         return generatedBackgroundContent();
 
-    NSData *data = resourceDataForPath(path, CacheResult::No, suppressErrors);
+    NSData *data = resourceDataForPath(path, outError, CacheResult::No, suppressErrors);
+    if (!data)
+        return nil;
 
     NSString *string;
     [NSString stringEncodingForData:data encodingOptions:nil convertedString:&string usedLossyConversion:nil];
@@ -522,9 +527,12 @@ NSString *WebExtension::resourceStringForPath(NSString *path, CacheResult cacheR
     return string;
 }
 
-NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(path);
+
+    if (outError)
+        *outError = nil;
 
     if ([path hasPrefix:@"data:"]) {
         if (auto base64Range = [path rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
@@ -573,23 +581,24 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 
     NSURL *resourceURL = resourceFileURLForPath(path);
     if (!resourceURL) {
-        if (suppressErrors == SuppressNotFoundErrors::No)
-            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path)));
+        if (suppressErrors == SuppressNotFoundErrors::No && outError)
+            *outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path));
         return nil;
     }
 
     NSError *fileReadError;
     NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
     if (!resultData) {
-        if (suppressErrors == SuppressNotFoundErrors::No)
-            recordError(createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), fileReadError));
+        if (suppressErrors == SuppressNotFoundErrors::No && outError)
+            *outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), fileReadError);
         return nil;
     }
 
 #if PLATFORM(MAC)
     NSError *validationError;
     if (!validateResourceData(resourceURL, resultData, &validationError)) {
-        recordError(createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)path), validationError));
+        if (outError)
+            *outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)path), validationError);
         return nil;
     }
 #endif
@@ -781,31 +790,7 @@ ALLOW_NONLITERAL_FORMAT_END
     return [[NSError alloc] initWithDomain:WKWebExtensionErrorDomain code:errorCode userInfo:userInfo];
 }
 
-void WebExtension::removeError(Error error, SuppressNotification suppressNotification)
-{
-    if (!m_errors)
-        return;
-
-    auto errorCode = toAPI(error);
-
-    NSIndexSet *indexes = [m_errors indexesOfObjectsPassingTest:^BOOL(NSError *error, NSUInteger, BOOL *) {
-        return error.code == errorCode;
-    }];
-
-    if (!indexes.count)
-        return;
-
-    [m_errors removeObjectsAtIndexes:indexes];
-
-    if (suppressNotification == SuppressNotification::Yes)
-        return;
-
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
-    }).get());
-}
-
-void WebExtension::recordError(NSError *error, SuppressNotification suppressNotification)
+void WebExtension::recordError(NSError *error)
 {
     ASSERT(error);
 
@@ -814,20 +799,18 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
 
     RELEASE_LOG_ERROR(Extensions, "Error recorded: %{public}@", privacyPreservingDescription(error));
 
-    [m_errors addObject:error];
-
-    if (suppressNotification == SuppressNotification::Yes)
+    // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
+    // such as repeated "resource not found" errors, from being included multiple times.
+    if ([m_errors containsObject:error])
         return;
 
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }]() {
-        [NSNotificationCenter.defaultCenter postNotificationName:WKWebExtensionErrorsWereUpdatedNotification object:wrapper() userInfo:nil];
-    }).get());
+    [wrapper() willChangeValueForKey:@"errors"];
+    [m_errors addObject:error];
+    [wrapper() didChangeValueForKey:@"errors"];
 }
 
 NSArray *WebExtension::errors()
 {
-    // FIXME: <https://webkit.org/b/246493> Include runtime errors.
-
     populateDisplayStringsIfNeeded();
     populateActionPropertiesIfNeeded();
     populateBackgroundPropertiesIfNeeded();
@@ -1105,9 +1088,12 @@ void WebExtension::populateActionPropertiesIfNeeded()
     // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
     NSString *defaultIconPath = objectForKey<NSString>(m_actionDictionary, defaultIconManifestKey);
     if (defaultIconPath.length) {
-        m_actionIcon = imageForPath(defaultIconPath);
+        NSError *resourceError;
+        m_actionIcon = imageForPath(defaultIconPath, &resourceError);
 
         if (!m_actionIcon) {
+            recordError(resourceError);
+
             NSString *localizedErrorDescription;
             if (supportsManifestVersion(3))
                 localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action");
@@ -1181,11 +1167,11 @@ void WebExtension::populateSidePanelProperties(RetainPtr<NSDictionary> sidePanel
 }
 #endif
 
-CocoaImage *WebExtension::imageForPath(NSString *imagePath)
+CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError)
 {
     ASSERT(imagePath);
 
-    NSData *imageData = resourceDataForPath(imagePath, CacheResult::Yes);
+    NSData *imageData = resourceDataForPath(imagePath, outError, CacheResult::Yes);
     if (!imageData)
         return nil;
 
@@ -1269,21 +1255,21 @@ NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDic
     return iconsDictionary[@(bestSize).stringValue];
 }
 
-CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPointSize)
+CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPointSize, NSError **outError)
 {
     if (!iconsDictionary.count)
         return nil;
 
-    NSUInteger standardPixelSize = idealPointSize;
+    auto standardPixelSize = idealPointSize;
 #if PLATFORM(IOS) || PLATFORM(VISION)
     standardPixelSize *= UIScreen.mainScreen.scale;
 #endif
 
-    NSString *standardIconPath = pathForBestImageInIconsDictionary(iconsDictionary, standardPixelSize);
+    auto *standardIconPath = pathForBestImageInIconsDictionary(iconsDictionary, standardPixelSize);
     if (!standardIconPath.length)
         return nil;
 
-    CocoaImage *resultImage = imageForPath(standardIconPath);
+    auto *resultImage = imageForPath(standardIconPath, outError);
     if (!resultImage)
         return nil;
 
@@ -1298,10 +1284,10 @@ CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictiona
     if (isVectorImage)
         return resultImage;
 
-    NSUInteger retinaPixelSize = standardPixelSize * 2;
-    NSString *retinaIconPath = pathForBestImageInIconsDictionary(iconsDictionary, retinaPixelSize);
+    auto retinaPixelSize = standardPixelSize * 2;
+    auto *retinaIconPath = pathForBestImageInIconsDictionary(iconsDictionary, retinaPixelSize);
     if (retinaIconPath.length && ![retinaIconPath isEqualToString:standardIconPath]) {
-        if (CocoaImage *retinaImage = imageForPath(retinaIconPath))
+        if (auto *retinaImage = imageForPath(retinaIconPath, nullptr))
             [resultImage addRepresentations:retinaImage.representations];
     }
 #endif // PLATFORM(MAC)
@@ -1316,7 +1302,11 @@ CocoaImage *WebExtension::bestImageForIconsDictionaryManifestKey(NSDictionary *d
 
     CGFloat idealPointSize = idealSize.width > idealSize.height ? idealSize.width : idealSize.height;
     NSDictionary *iconDictionary = objectForKey<NSDictionary>(dictionary, manifestKey);
-    CocoaImage *result = bestImageInIconsDictionary(iconDictionary, idealPointSize);
+
+    NSError *resourceError;
+    auto *result = bestImageInIconsDictionary(iconDictionary, idealPointSize, &resourceError);
+    recordErrorIfNeeded(resourceError);
+
     if (!result) {
         if (iconDictionary.count) {
             // Record an error if the dictionary had values, meaning the likely failure is the images were missing on disk or bad format.

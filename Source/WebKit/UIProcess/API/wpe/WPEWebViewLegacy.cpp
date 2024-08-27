@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEWebViewLegacy.h"
 
+#include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebKeyboardEvent.h"
@@ -285,7 +286,8 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
 
     wpe_view_backend_initialize(m_backend);
 
-    m_pageProxy->initializeWebPage();
+    auto& openerInfo = m_pageProxy->configuration().openerInfo();
+    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 
     viewsVector().append(this);
 }

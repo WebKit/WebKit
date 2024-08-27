@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Media Session Standard (https://w3c.github.io/mediasession/)
+// Source: Media Session (https://w3c.github.io/mediasession/)
 
 [Exposed=Window]
 partial interface Navigator {
@@ -26,7 +26,11 @@ enum MediaSessionAction {
   "seekto",
   "togglemicrophone",
   "togglecamera",
-  "hangup"
+  "togglescreenshare",
+  "hangup",
+  "previousslide",
+  "nextslide",
+  "enterpictureinpicture"
 };
 
 callback MediaSessionActionHandler = undefined(MediaSessionActionDetails details);
@@ -41,9 +45,11 @@ interface MediaSession {
 
   undefined setPositionState(optional MediaPositionState state = {});
 
-  undefined setMicrophoneActive(boolean active);
+  Promise<undefined> setMicrophoneActive(boolean active);
 
-  undefined setCameraActive(boolean active);
+  Promise<undefined> setCameraActive(boolean active);
+
+  Promise<undefined> setScreenshareActive(boolean active);
 };
 
 [Exposed=Window]

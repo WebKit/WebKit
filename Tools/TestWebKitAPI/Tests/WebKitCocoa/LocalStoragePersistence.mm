@@ -467,7 +467,9 @@ TEST(WKWebView, LocalStorageDifferentPageGroupSameProcess)
 
     [configuration _setGroupIdentifier:@"testgroupidentifier2"];
     // Ensure two pages use the same web process.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [configuration _setRelatedWebView:webView1.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     // Network process would crash if the second page creates a new StorageArea.
     [webView2 synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];

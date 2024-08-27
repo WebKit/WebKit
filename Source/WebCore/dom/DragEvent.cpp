@@ -72,4 +72,6 @@ DragEvent::DragEvent()
 {
 }
 
+DragEvent::~DragEvent() = default;
+
 } // namespace WebCore

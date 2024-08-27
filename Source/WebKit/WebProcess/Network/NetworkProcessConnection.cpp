@@ -97,7 +97,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
+        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(LegacyNullableAtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         return;
     }
@@ -110,12 +110,12 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
-        if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto* webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->didReceiveWebPageMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
-        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(ObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
+        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(LegacyNullableObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
         return;
     }
@@ -141,7 +141,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
         auto& network = WebProcess::singleton().libWebRTCNetwork();
         if (network.isActive())
-            network.resolver(AtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
+            network.resolver(LegacyNullableAtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
         return;
@@ -177,7 +177,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
         return;
     }
@@ -197,7 +197,7 @@ bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return false;
     }

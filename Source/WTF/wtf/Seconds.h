@@ -97,6 +97,11 @@ public:
     {
         return Seconds(std::numeric_limits<double>::quiet_NaN());
     }
+
+    static constexpr Seconds highTimePrecision()
+    {
+        return Seconds::fromMicroseconds(20);
+    }
     
     bool isNaN() const { return std::isnan(m_value); }
     bool isInfinity() const { return std::isinf(m_value); }
@@ -219,6 +224,12 @@ public:
     Seconds isolatedCopy() const
     {
         return *this;
+    }
+
+    constexpr Seconds reduceTimeResolution(Seconds resolution)
+    {
+        double reduced = std::floor(seconds() / resolution.seconds()) * resolution.seconds();
+        return Seconds(reduced);
     }
 
     struct MarkableTraits;

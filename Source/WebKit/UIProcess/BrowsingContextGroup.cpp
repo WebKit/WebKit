@@ -149,7 +149,7 @@ void BrowsingContextGroup::removePage(WebPageProxy& page)
     m_remotePages.take(page);
 }
 
-void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function) const
+void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function)
 {
     auto it = m_remotePages.find(page);
     if (it == m_remotePages.end())

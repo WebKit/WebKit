@@ -64,6 +64,12 @@
             ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--gtest_filter=WKWebExtensionContext.LoadNonExistentImage"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

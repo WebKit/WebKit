@@ -1,0 +1,14 @@
+
+
+PASS Calling navigator.identity.get() without an digital member same origin.
+PASS navigator.identity.get() API rejects if there are no providers.
+FAIL navigator.identity.get() API rejects if there are no providers for same-origin iframe. promise_rejects_js: function "function() { throw e }" threw object "NotAllowedError: The document is not focused." ("NotAllowedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL navigator.identity.get() API rejects if there are no providers in cross-origin iframe. assert_equals: expected "TypeError" but got "DOMException"
+PASS navigator.identity.get() promise is rejected if called with an aborted signal.
+PASS navigator.identity.get() promise is rejected if called with an aborted signal in same-origin iframe.
+PASS navigator.identity.get() promise is rejected if called with an aborted signal in cross-origin iframe.
+FAIL navigator.identity.get() promise is rejected if abort controller is aborted after call to get(). promise_rejects_dom: function "function() { throw e }" threw object "NotSupportedError: Not implemented" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL navigator.identity.get() promise is rejected if abort controller is aborted after call to get() in cross-origin iframe. assert_equals: expected "AbortError" but got "NotAllowedError"
+

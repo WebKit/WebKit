@@ -156,7 +156,7 @@ struct WebsiteDataStoreParameters;
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
-using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
+using WebTransportSessionIdentifier = LegacyNullableObjectIdentifier<WebTransportSessionIdentifierType>;
 
 #if PLATFORM(IOS_FAMILY)
 class LayerHostingContext;
@@ -431,6 +431,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
+    void initializePlatformDisplayIfNeeded() const;
 #endif
 
     String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }

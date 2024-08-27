@@ -29,8 +29,11 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "NotificationClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationController);
 
 NotificationController::NotificationController(NotificationClient* client)
     : m_client(*client)

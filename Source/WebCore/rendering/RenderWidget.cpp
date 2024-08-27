@@ -327,8 +327,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context().save();
-        auto roundedInnerRect = FloatRoundedRect(roundedContentBoxRect(borderRect));
-        BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
+        clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, document().deviceScaleFactor());
     }
 
     if (m_widget && !isSkippedContentRoot())

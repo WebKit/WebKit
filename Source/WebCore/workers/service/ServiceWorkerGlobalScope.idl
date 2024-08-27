@@ -37,9 +37,9 @@
 
     [NewObject] Promise<undefined> skipWaiting();
 
-    [EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled] readonly attribute CookieStore cookieStore;
+    [EnabledBySetting=CookieStoreAPIEnabled] readonly attribute CookieStore cookieStore;
 
-    [EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled] attribute EventHandler oncookiechange;
+    [EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled] attribute EventHandler oncookiechange;
     attribute EventHandler oninstall;
     attribute EventHandler onactivate;
     attribute EventHandler onfetch;

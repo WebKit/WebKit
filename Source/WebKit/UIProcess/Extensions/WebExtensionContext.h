@@ -272,6 +272,11 @@ public:
     bool operator==(const WebExtensionContext& other) const { return (this == &other); }
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+    void recordErrorIfNeeded(NSError *error) { if (error) recordError(error); }
+    void recordError(NSError *);
+    void clearError(Error);
+
+    NSArray *errors();
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     const String& storageDirectory() const { return m_storageDirectory; }
@@ -321,10 +326,10 @@ public:
     void setDeniedPermissions(PermissionsMap&&);
 
     const PermissionMatchPatternsMap& grantedPermissionMatchPatterns();
-    void setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&&);
+    void setGrantedPermissionMatchPatterns(PermissionMatchPatternsMap&&, EqualityOnly = EqualityOnly::Yes);
 
     const PermissionMatchPatternsMap& deniedPermissionMatchPatterns();
-    void setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&&);
+    void setDeniedPermissionMatchPatterns(PermissionMatchPatternsMap&&, EqualityOnly = EqualityOnly::Yes);
 
     bool requestedOptionalAccessToAllHosts() const { return m_requestedOptionalAccessToAllHosts; }
     void setRequestedOptionalAccessToAllHosts(bool requested) { m_requestedOptionalAccessToAllHosts = requested; }
@@ -580,10 +585,8 @@ private:
     void determineInstallReasonDuringLoad();
     void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
 
-    void permissionsDidChange(const PermissionsSet&);
-
-    void postAsyncNotification(NSString *notificationName, const PermissionsSet&);
-    void postAsyncNotification(NSString *notificationName, const MatchPatternSet&);
+    void permissionsDidChange(NSString *notificationName, const PermissionsSet&);
+    void permissionsDidChange(NSString *notificationName, const MatchPatternSet&);
 
     bool removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, NSString *notificationName);
     bool removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, NSString *notificationName);
@@ -642,13 +645,13 @@ private:
 
     void addInjectedContent() { addInjectedContent(injectedContents()); }
     void addInjectedContent(const InjectedContentVector&);
-    void addInjectedContent(const InjectedContentVector&, MatchPatternSet&);
+    void addInjectedContent(const InjectedContentVector&, const MatchPatternSet&);
     void addInjectedContent(const InjectedContentVector&, WebExtensionMatchPattern&);
 
     void updateInjectedContent() { removeInjectedContent(); addInjectedContent(); }
 
     void removeInjectedContent();
-    void removeInjectedContent(MatchPatternSet&);
+    void removeInjectedContent(const MatchPatternSet&);
     void removeInjectedContent(WebExtensionMatchPattern&);
 
     // DeclarativeNetRequest methods.
@@ -898,6 +901,7 @@ private:
     String m_storageDirectory;
 
     RetainPtr<NSMutableDictionary> m_state;
+    RetainPtr<NSMutableArray> m_errors;
 
     RefPtr<WebExtension> m_extension;
     WeakPtr<WebExtensionController> m_extensionController;

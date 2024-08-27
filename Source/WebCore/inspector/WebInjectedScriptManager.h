@@ -28,6 +28,7 @@
 #include "CommandLineAPIHost.h"
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class LocalDOMWindow;
 
 class WebInjectedScriptManager final : public Inspector::InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(WebInjectedScriptManager);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebInjectedScriptManager);
 public:
     WebInjectedScriptManager(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
     ~WebInjectedScriptManager() override = default;

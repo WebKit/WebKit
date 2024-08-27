@@ -74,7 +74,6 @@ public:
 
     RawValue toUInt64() const { return toRawValue(); } // Use `toRawValue` instead.
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
@@ -107,7 +106,6 @@ public:
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
 
     RawValue toRawValue() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
 
     String loggingString() const
     {
@@ -138,7 +136,7 @@ public:
     static ObjectIdentifierGeneric generate()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal() };
+        return ObjectIdentifierGeneric { ThreadSafety::generateIdentifierInternal(), AssumeValidIdValue };
     }
 
     static void enableGenerationProtection()
@@ -149,27 +147,31 @@ public:
     explicit constexpr ObjectIdentifierGeneric(RawValue identifier)
         : ObjectIdentifierGenericBase<RawValue>(identifier)
     {
+        RELEASE_ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
     }
 
     bool isValid() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::isValidIdentifier(ObjectIdentifierGenericBase<RawValue>::toRawValue()); }
+    explicit operator bool() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::toRawValue(); }
 
     ObjectIdentifierGeneric() requires (supportsNullState == SupportsObjectIdentifierNullState::Yes) = default;
 
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase<RawValue>(HashTableDeletedValue) { }
 
-    std::optional<ObjectIdentifierGeneric> asOptional() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes)
-    {
-        return *this ? std::optional { *this } : std::nullopt;
-    }
-
     struct MarkableTraits {
-        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier; }
+        static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier.toRawValue(); }
         static constexpr ObjectIdentifierGeneric emptyValue() { return ObjectIdentifierGeneric(InvalidIdValue); }
     };
 
 private:
     friend struct HashTraits<ObjectIdentifierGeneric>;
     template<typename U, typename V> friend struct ObjectIdentifierGenericHash;
+
+    enum AssumeValidId { AssumeValidIdValue };
+    explicit constexpr ObjectIdentifierGeneric(RawValue identifier, AssumeValidId)
+        : ObjectIdentifierGenericBase<RawValue>(identifier)
+    {
+        ASSERT(supportsNullState == SupportsObjectIdentifierNullState::Yes || !!identifier);
+    }
 
     enum InvalidId { InvalidIdValue };
     ObjectIdentifierGeneric(InvalidId)
@@ -179,11 +181,10 @@ private:
     inline static bool m_generationProtected { false };
 };
 
-// FIXME: We should probably make NonNullable the default and rename the others to Legacy* during the transition.
-template<typename T, typename RawValue> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
-template<typename T, typename RawValue> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
-template<typename T, typename RawValue> using NonNullableObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
-template<typename T, typename RawValue> using NonNullableAtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
+template<typename T, typename RawValue> using LegacyNullableObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
+template<typename T, typename RawValue> using LegacyNullableAtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
+template<typename T, typename RawValue> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
+template<typename T, typename RawValue> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
 
 inline void add(Hasher& hasher, const ObjectIdentifierGenericBase<uint64_t>& identifier)
 {
@@ -293,8 +294,8 @@ bool operator<=(const ObjectIdentifierGeneric<T, ThreadSafety, uint64_t, support
 } // namespace WTF
 
 using WTF::AtomicObjectIdentifier;
-using WTF::NonNullableAtomicObjectIdentifier;
-using WTF::NonNullableObjectIdentifier;
+using WTF::LegacyNullableAtomicObjectIdentifier;
+using WTF::LegacyNullableObjectIdentifier;
 using WTF::ObjectIdentifierGenericBase;
 using WTF::ObjectIdentifierGeneric;
 using WTF::ObjectIdentifier;

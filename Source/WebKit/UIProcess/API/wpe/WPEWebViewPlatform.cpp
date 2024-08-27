@@ -27,6 +27,7 @@
 #include "WPEWebViewPlatform.h"
 
 #if ENABLE(WPE_PLATFORM)
+#include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "NativeWebKeyboardEvent.h"
@@ -126,7 +127,9 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     m_pageProxy->setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
     m_pageProxy->windowScreenDidChange(m_displayID);
     m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
-    m_pageProxy->initializeWebPage();
+
+    auto& openerInfo = m_pageProxy->configuration().openerInfo();
+    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
 }
 
 ViewPlatform::~ViewPlatform()
@@ -572,6 +575,20 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
 #endif
 }
+
+#if ENABLE(POINTER_LOCK)
+void ViewPlatform::requestPointerLock()
+{
+    if (wpe_view_lock_pointer(m_wpeView.get()))
+        setCursor(WebCore::noneCursor());
+}
+
+void ViewPlatform::didLosePointerLock()
+{
+    if (wpe_view_unlock_pointer(m_wpeView.get()))
+        setCursor(WebCore::pointerCursor());
+}
+#endif
 
 void ViewPlatform::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "Site.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
@@ -102,8 +103,14 @@ public:
     WebKit::BrowsingContextGroup& browsingContextGroup() const;
     void setBrowsingContextGroup(RefPtr<WebKit::BrowsingContextGroup>&&);
 
-    RefPtr<WebKit::WebProcessProxy> openerProcess() const;
-    void setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&&);
+    struct OpenerInfo {
+        Ref<WebKit::WebProcessProxy> process;
+        WebKit::Site site;
+        WebCore::FrameIdentifier frameID;
+        bool operator==(const OpenerInfo&) const;
+    };
+    const std::optional<OpenerInfo>& openerInfo() const;
+    void setOpenerInfo(std::optional<OpenerInfo>&&);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
@@ -420,10 +427,19 @@ public:
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
 
-#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#if PLATFORM(VISION)
+
+#if ENABLE(GAMEPAD)
     WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent() const { return m_data.gamepadAccessRequiresExplicitConsent; }
     void setGamepadAccessRequiresExplicitConsent(WebCore::ShouldRequireExplicitConsentForGamepadAccess value) { m_data.gamepadAccessRequiresExplicitConsent = value; }
-#endif
+#endif // ENABLE(GAMEPAD)
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    bool overlayRegionsEnabled() const { return m_data.overlayRegionsEnabled; }
+    void setOverlayRegionsEnabled(bool value) { m_data.overlayRegionsEnabled = value; }
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+
+#endif // PLATFORM(VISION)
 
 private:
     struct Data {
@@ -471,7 +487,7 @@ private:
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
-        RefPtr<WebKit::WebProcessProxy> openerProcess;
+        std::optional<OpenerInfo> openerInfo;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
         WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;
 
@@ -586,9 +602,17 @@ private:
         bool allowsInlinePredictions { false };
         bool scrollToTextFragmentIndicatorEnabled { true };
         bool scrollToTextFragmentMarkingEnabled { true };
-#if PLATFORM(VISION) && ENABLE(GAMEPAD)
+#if PLATFORM(VISION)
+
+#if ENABLE(GAMEPAD)
         WebCore::ShouldRequireExplicitConsentForGamepadAccess gamepadAccessRequiresExplicitConsent { WebCore::ShouldRequireExplicitConsentForGamepadAccess::No };
+#endif // ENABLE(GAMEPAD)
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+        bool overlayRegionsEnabled { false };
 #endif
+
+#endif // PLATFORM(VISION)
 
 #if ENABLE(WRITING_TOOLS)
         WebCore::WritingTools::Behavior writingToolsBehavior { WebCore::WritingTools::Behavior::Default };

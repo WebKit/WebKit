@@ -26,12 +26,13 @@
 #pragma once
 
 #include "InspectorNetworkAgent.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WorkerNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(WorkerNetworkAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerNetworkAgent);
 public:
     WorkerNetworkAgent(WorkerAgentContext&);
     ~WorkerNetworkAgent();

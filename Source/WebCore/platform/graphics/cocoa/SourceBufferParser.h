@@ -66,14 +66,10 @@ public:
 
     class Segment {
     public:
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-        Segment(RetainPtr<MTPluginByteSourceRef>&&);
-#endif
         Segment(Ref<SharedBuffer>&&);
         Segment(Segment&&) = default;
         Ref<SharedBuffer> takeSharedBuffer();
-        // Will return nullptr if Segment's backend isn't a SharedBuffer.
-        RefPtr<SharedBuffer> getSharedBuffer() const;
+        Ref<SharedBuffer> getData(size_t offset, size_t length) const;
 
         size_t size() const;
 
@@ -83,12 +79,7 @@ public:
         ReadResult read(std::span<uint8_t> destination, size_t position = 0) const;
 
     private:
-        std::variant<
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-            RetainPtr<MTPluginByteSourceRef>,
-#endif
-            Ref<SharedBuffer>
-        > m_segment;
+        Ref<SharedBuffer> m_segment;
     };
 
     using CallOnClientThreadCallback = Function<void(Function<void()>&&)>;
@@ -111,14 +102,6 @@ public:
     void setDidParseInitializationDataCallback(DidParseInitializationDataCallback&& callback)
     {
         m_didParseInitializationDataCallback = WTFMove(callback);
-    }
-
-    // Will be called on the main thread.
-    using VideoPlaybackConfiguration = MediaPlayerVideoPlaybackConfiguration;
-    using DidParseVideoPlaybackConfigurationCallback = Function<void(VideoPlaybackConfiguration)>;
-    void setDidParseVideoPlaybackConfigurationCallback(DidParseVideoPlaybackConfigurationCallback&& callback)
-    {
-        m_didParseVideoPlaybackConfigurationCallback = WTFMove(callback);
     }
 
     // Will be called on the main thread.
@@ -161,7 +144,6 @@ protected:
 
     CallOnClientThreadCallback m_callOnClientThreadCallback;
     DidParseInitializationDataCallback m_didParseInitializationDataCallback;
-    DidParseVideoPlaybackConfigurationCallback m_didParseVideoPlaybackConfigurationCallback;
     DidProvideMediaDataCallback m_didProvideMediaDataCallback;
     WillProvideContentKeyRequestInitializationDataForTrackIDCallback m_willProvideContentKeyRequestInitializationDataForTrackIDCallback;
     DidProvideContentKeyRequestInitializationDataForTrackIDCallback m_didProvideContentKeyRequestInitializationDataForTrackIDCallback;

@@ -98,6 +98,18 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uin
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, size_t);
 
 template<typename U>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, LegacyNullableObjectIdentifier<U>&& value)
+{
+    return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
+}
+
+template<typename U>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, LegacyNullableAtomicObjectIdentifier<U>&& value)
+{
+    return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
+}
+
+template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, ObjectIdentifier<U>&& value)
 {
     return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());

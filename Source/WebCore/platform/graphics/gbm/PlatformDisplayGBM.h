@@ -38,7 +38,7 @@ public:
 
     virtual ~PlatformDisplayGBM();
 private:
-    explicit PlatformDisplayGBM(struct gbm_device*);
+    PlatformDisplayGBM(std::unique_ptr<GLDisplay>&&, struct gbm_device*);
 
     Type type() const override { return PlatformDisplay::Type::GBM; }
 };

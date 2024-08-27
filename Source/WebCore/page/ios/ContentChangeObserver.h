@@ -37,6 +37,7 @@
 #include "WebAnimationTypes.h"
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -55,7 +56,7 @@ class DOMTimer;
 class Element;
 
 class ContentChangeObserver : public CanMakeWeakPtr<ContentChangeObserver> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContentChangeObserver);
 public:
     ContentChangeObserver(Document&);
 

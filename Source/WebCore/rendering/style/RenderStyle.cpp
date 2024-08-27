@@ -2521,17 +2521,6 @@ void RenderStyle::setVerticalBorderSpacing(float v)
     SET_VAR(m_inheritedData, verticalBorderSpacing, v);
 }
 
-RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
-{
-    RoundedRect roundedRect(borderRect);
-    if (hasBorderRadius()) {
-        RoundedRect::Radii radii = calcRadiiFor(m_nonInheritedData->surroundData->border.m_radii, borderRect.size());
-        radii.scale(calcBorderRadiiConstraintScaleFor(borderRect, radii));
-        roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
-    }
-    return roundedRect;
-}
-
 RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     bool horizontal = isHorizontalWritingMode();

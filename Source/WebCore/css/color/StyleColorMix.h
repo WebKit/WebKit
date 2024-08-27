@@ -59,7 +59,6 @@ inline bool operator==(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleC
     return a.get() == b.get();
 }
 
-std::optional<Color> resolveAbsoluteComponents(const StyleColorMix&);
 Color resolveColor(const StyleColorMix&, const Color& currentColor);
 
 bool containsNonAbsoluteColor(const StyleColorMix&);

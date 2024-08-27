@@ -40,12 +40,16 @@
 
 #else
 
+@class NSTextPlaceholder;
+
 @protocol NSTextInputClient_Async
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandler;
 - (void)markedRangeWithCompletionHandler:(void(^)(NSRange markedRange))completionHandler;
 - (void)hasMarkedTextWithCompletionHandler:(void(^)(BOOL hasMarkedText))completionHandler;
 - (void)attributedSubstringForProposedRange:(NSRange)range completionHandler:(void(^)(NSAttributedString *, NSRange actualRange))completionHandler;
 - (void)firstRectForCharacterRange:(NSRange)range completionHandler:(void(^)(NSRect firstRect, NSRange actualRange))completionHandler;
+- (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(NSTextPlaceholder *))completionHandler;
+- (void)removeTextPlaceholder:(NSTextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 @end
 
 @protocol NSInspectorBarClient <NSObject>

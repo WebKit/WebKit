@@ -47,6 +47,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 NSErrorDomain const WKWebExtensionContextErrorDomain = @"WKWebExtensionContextErrorDomain";
+NSNotificationName const WKWebExtensionContextErrorsDidUpdateNotification = @"WKWebExtensionContextErrorsDidUpdate";
 
 NSNotificationName const WKWebExtensionContextPermissionsWereGrantedNotification = @"WKWebExtensionContextPermissionsWereGranted";
 NSNotificationName const WKWebExtensionContextPermissionsWereDeniedNotification = @"WKWebExtensionContextPermissionsWereDenied";
@@ -105,6 +106,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
 - (BOOL)isLoaded
 {
     return _webExtensionContext->isLoaded();
+}
+
+-(NSArray<NSError *> *)errors
+{
+    return _webExtensionContext->errors();
 }
 
 - (NSURL *)baseURL
@@ -873,6 +879,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 - (BOOL)isLoaded
 {
     return NO;
+}
+
+-(NSArray<NSError *> *)errors
+{
+    return nil;
 }
 
 - (NSURL *)baseURL

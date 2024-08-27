@@ -68,11 +68,6 @@ shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30+01:00[Etc/GMT+20]')
 shouldBe(String(Temporal.PlainDate.from('2007-01-09T03:24:30+01:00[Etc/GMT-20]')), `2007-01-09`); // TimeZone error should be ignored.
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.123]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.12345]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.12345678]')), `2007-01-09`);
-shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[+01:00:00.123456789]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[-01:00]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[u-ca=japanese]')), `2007-01-09`);
 shouldBe(String(Temporal.PlainDate.from('2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `2007-01-09`);
@@ -170,6 +165,11 @@ let failures = [
     "2007-01-09 03:24:30+01:00[\u221201:00]",
     "2007-01-09Z",
     "2007-01-09+01:00",
+    '2007-01-09 03:24:30+01:00[+01:00:00]',
+    '2007-01-09 03:24:30+01:00[+01:00:00.123]',
+    '2007-01-09 03:24:30+01:00[+01:00:00.12345]',
+    '2007-01-09 03:24:30+01:00[+01:00:00.12345678]',
+    '2007-01-09 03:24:30+01:00[+01:00:00.123456789]',
 ];
 
 for (let text of failures) {

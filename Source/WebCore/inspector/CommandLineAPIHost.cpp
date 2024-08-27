@@ -51,6 +51,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_RTC)
 #include "JSRTCPeerConnection.h"
@@ -61,6 +62,8 @@ namespace WebCore {
 
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(CommandLineAPIHostInspectableObject, CommandLineAPIHost::InspectableObject);
 
 Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 {

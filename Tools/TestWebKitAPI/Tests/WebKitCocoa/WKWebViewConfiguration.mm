@@ -118,7 +118,9 @@ TEST(WebKit, InvalidConfiguration)
     configurationForEphemeralView.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForEphemeralView.get()]);
     shouldThrowExceptionWhenUsed([&](WKWebViewConfiguration *configuration) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [configuration _setRelatedWebView:ephemeralWebView.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }, true);
 }
 

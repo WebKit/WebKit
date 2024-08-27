@@ -27,13 +27,14 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore::WebGPU {
 
-class ExternalTexture : public RefCounted<ExternalTexture> {
+class ExternalTexture : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ExternalTexture> {
 public:
     virtual ~ExternalTexture() = default;
 

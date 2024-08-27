@@ -82,6 +82,7 @@
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "PageDebuggable.h"
@@ -91,6 +92,8 @@ namespace WebCore {
 
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorController);
 
 InspectorController::InspectorController(Page& page, std::unique_ptr<InspectorClient>&& inspectorClient)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))

@@ -168,7 +168,7 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data, UseCryptoKit)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
     auto output = gcryptSign(key.platformKey().get(), data, parameters.hashIdentifier, (key.keySizeInBits() + 7) / 8);
     if (!output)
@@ -176,7 +176,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
     return WTFMove(*output);
 }
 
-ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data, UseCryptoKit)
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
     auto output = gcryptVerify(key.platformKey().get(), signature, data, parameters.hashIdentifier, (key.keySizeInBits() + 7)/ 8);
     if (!output)

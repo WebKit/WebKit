@@ -153,7 +153,7 @@ public:
         String displayName(VM&);
         int functionStartLine();
         unsigned functionStartColumn();
-        SourceID sourceID();
+        std::tuple<SourceProvider*, SourceID> sourceProviderAndID();
         String url();
     };
 

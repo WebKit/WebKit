@@ -43,7 +43,6 @@ namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(std::span<const uint8_t> data)
-    : m_size(data.size())
 {
     uint8_t* copiedData = static_cast<uint8_t*>(fastMalloc(data.size()));
     memcpy(copiedData, data.data(), data.size());
@@ -53,8 +52,7 @@ Data::Data(std::span<const uint8_t> data)
 Data::Data(GRefPtr<GBytes>&& buffer, FileSystem::PlatformFileHandle fd)
     : m_buffer(WTFMove(buffer))
     , m_fileDescriptor(fd)
-    , m_size(m_buffer ? g_bytes_get_size(m_buffer.get()) : 0)
-    , m_isMap(m_size && FileSystem::isHandleValid(fd))
+    , m_isMap(m_buffer && g_bytes_get_size(m_buffer.get()) && FileSystem::isHandleValid(fd))
 {
 }
 
@@ -67,7 +65,12 @@ std::span<const uint8_t> Data::span() const
 {
     if (!m_buffer)
         return { };
-    return { reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)), m_size };
+    return { reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)), g_bytes_get_size(m_buffer.get()) };
+}
+
+size_t Data::size() const
+{
+    return m_buffer ? g_bytes_get_size(m_buffer.get()) : 0;
 }
 
 bool Data::isNull() const
@@ -77,7 +80,7 @@ bool Data::isNull() const
 
 bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 {
-    if (!m_size)
+    if (!size())
         return false;
 
     gsize length;

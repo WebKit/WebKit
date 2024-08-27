@@ -117,9 +117,6 @@ using namespace WebKit;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsolatedSession);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSessionCocoa);
 
-CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
-CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
-
 constexpr unsigned maxNumberOfIsolatedSessions { 10 };
 
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
@@ -732,8 +729,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     if (!_sessionWrapper)
         return nullptr;
 
-    if (auto downloadID = _sessionWrapper->downloadMap.get(task.taskIdentifier)) {
-        if (auto download = _session->networkProcess().downloadManager().download(downloadID))
+    if (auto downloadID = _sessionWrapper->downloadMap.getOptional(task.taskIdentifier)) {
+        if (auto download = _session->networkProcess().downloadManager().download(*downloadID))
             return static_cast<NetworkSessionCocoa*>(_session->networkProcess().networkSession(download->sessionID()));
         return nullptr;
     }
@@ -926,12 +923,12 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     } else if (error) {
         if (!_sessionWrapper)
             return;
-        auto downloadID = _sessionWrapper->downloadMap.take(task.taskIdentifier);
+        auto downloadID = _sessionWrapper->downloadMap.takeOptional(task.taskIdentifier);
         if (!downloadID)
             return;
         if (!_session)
             return;
-        auto* download = _session->networkProcess().downloadManager().download(downloadID);
+        auto* download = _session->networkProcess().downloadManager().download(*downloadID);
         if (!download)
             return;
 
@@ -1148,12 +1145,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_sessionWrapper)
         return;
-    auto downloadID = _sessionWrapper->downloadMap.take([downloadTask taskIdentifier]);
+    auto downloadID = _sessionWrapper->downloadMap.takeOptional([downloadTask taskIdentifier]);
     if (!downloadID)
         return;
     if (!_session)
         return;
-    auto* download = _session->networkProcess().downloadManager().download(downloadID);
+    auto* download = _session->networkProcess().downloadManager().download(*downloadID);
     if (!download)
         return;
     download->didFinish();
@@ -1165,12 +1162,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!_sessionWrapper)
         return;
-    auto downloadID = _sessionWrapper->downloadMap.get([downloadTask taskIdentifier]);
+    auto downloadID = _sessionWrapper->downloadMap.getOptional([downloadTask taskIdentifier]);
     if (!downloadID)
         return;
     if (!_session)
         return;
-    auto* download = _session->networkProcess().downloadManager().download(downloadID);
+    auto* download = _session->networkProcess().downloadManager().download(*downloadID);
     if (!download)
         return;
     download->didReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
@@ -1186,7 +1183,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
-    auto downloadID = networkDataTask->pendingDownloadID();
+    auto downloadID = *networkDataTask->pendingDownloadID();
     auto& downloadManager = sessionCocoa->networkProcess().downloadManager();
     auto download = makeUnique<WebKit::Download>(downloadManager, downloadID, downloadTask, *sessionCocoa, networkDataTask->suggestedFilename());
     networkDataTask->transferSandboxExtensionToDownload(*download);
@@ -1841,9 +1838,8 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
             networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webProxyPageID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
             return;
         }
-        auto downloadID = sessionWrapper.downloadMap.get(taskIdentifier);
-        if (downloadID) {
-            if (auto* download = networkProcess().downloadManager().download(downloadID)) {
+        if (auto downloadID = sessionWrapper.downloadMap.getOptional(taskIdentifier)) {
+            if (auto* download = networkProcess().downloadManager().download(*downloadID)) {
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 // Received an authentication challenge for a download being resumed.
                 download->didReceiveChallenge(authenticationChallenge, WTFMove(completionHandler));

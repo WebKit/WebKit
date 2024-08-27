@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,7 +67,7 @@ class WebGLRenderingContextBase;
 
 class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver {
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorCanvasAgent);
 public:
     ~InspectorCanvasAgent();
 

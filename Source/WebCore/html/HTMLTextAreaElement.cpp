@@ -263,7 +263,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
         frame->editor().textDidChangeInTextArea(*this);
     // When typing in a textarea, childrenChanged is not called, so we need to force the directionality check.
     if (selfOrPrecedingNodesAffectDirAuto())
-        updateEffectiveDirectionalityOfDirAuto();
+        updateEffectiveTextDirection();
 }
 
 void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& event) const
@@ -379,7 +379,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     updatePlaceholderVisibility();
     invalidateStyleForSubtree();
     if (selfOrPrecedingNodesAffectDirAuto())
-        updateEffectiveDirectionalityOfDirAuto();
+        updateEffectiveTextDirection();
     setFormControlValueMatchesRenderer(true);
 
     auto endOfString = m_value.length();

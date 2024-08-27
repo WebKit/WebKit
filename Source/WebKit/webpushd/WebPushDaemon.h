@@ -111,6 +111,7 @@ private:
     void setPushService(std::unique_ptr<PushService>&&);
     void runAfterStartingPushService(Function<void()>&&);
 
+    void handleIncomingPushImpl(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
     void ensureIncomingPushTransaction();
     void releaseIncomingPushTransaction();
     void incomingPushTransactionTimerFired();
@@ -119,6 +120,10 @@ private:
     void rescheduleSilentPushTimer();
     void silentPushTimerFired();
     void didShowNotification(const WebCore::PushSubscriptionSetIdentifier&, const String& scope);
+
+#if PLATFORM(IOS)
+    void updateSubscriptionSetState();
+#endif
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashSet<xpc_connection_t> m_pendingConnectionSet;

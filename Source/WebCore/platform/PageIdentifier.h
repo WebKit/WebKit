@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct PageIdentifierType;
-using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
+using PageIdentifier = LegacyNullableObjectIdentifier<PageIdentifierType>;
 
 }

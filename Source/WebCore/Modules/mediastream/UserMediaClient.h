@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaProducer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
 
@@ -40,6 +41,7 @@ namespace WebCore {
 
 struct CaptureDeviceWithCapabilities;
 class Document;
+class Exception;
 class Page;
 class UserMediaRequest;
 
@@ -56,9 +58,11 @@ public:
     virtual void enumerateMediaDevices(Document&, EnumerateDevicesCallback&&) = 0;
 
     enum DeviceChangeObserverTokenType { };
-    using DeviceChangeObserverToken = ObjectIdentifier<DeviceChangeObserverTokenType>;
+    using DeviceChangeObserverToken = LegacyNullableObjectIdentifier<DeviceChangeObserverTokenType>;
     virtual DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&) = 0;
     virtual void removeDeviceChangeObserver(DeviceChangeObserverToken) = 0;
+
+    virtual void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
 
 protected:
     virtual ~UserMediaClient() = default;

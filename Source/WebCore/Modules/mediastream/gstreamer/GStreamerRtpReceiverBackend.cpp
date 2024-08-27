@@ -28,9 +28,12 @@
 #include "NotImplemented.h"
 #include "RealtimeIncomingAudioSourceGStreamer.h"
 #include "RealtimeIncomingVideoSourceGStreamer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpReceiverBackend);
 
 RTCRtpParameters GStreamerRtpReceiverBackend::getParameters()
 {

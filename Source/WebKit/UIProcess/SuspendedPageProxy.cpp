@@ -100,7 +100,6 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add(IPC::MessageName::WebPageProxy_EditorStateChanged);
         messageNames.get().add(IPC::MessageName::WebPageProxy_PageExtendedBackgroundColorDidChange);
         messageNames.get().add(IPC::MessageName::WebPageProxy_SetRenderTreeSize);
-        messageNames.get().add(IPC::MessageName::WebPageProxy_SetStatusText);
         messageNames.get().add(IPC::MessageName::WebPageProxy_SetNetworkRequestsInProgress);
     });
 

@@ -29,17 +29,14 @@
 
 namespace WebCore {
 
-namespace Style {
-enum class ForVisitedLink : bool;
-}
-
 class CSSUnresolvedColor;
-class Document;
-class RenderStyle;
+class Color;
 class StyleColor;
-enum class BlendMode : uint8_t;
 
-struct CSSUnresolvedColorResolutionContext;
+struct CSSUnresolvedColorResolutionState;
+struct CSSUnresolvedStyleColorResolutionState;
+
+enum class BlendMode : uint8_t;
 
 struct CSSUnresolvedColorLayers {
     bool operator==(const CSSUnresolvedColorLayers&) const = default;
@@ -51,8 +48,8 @@ struct CSSUnresolvedColorLayers {
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorLayers&);
 String serializationForCSS(const CSSUnresolvedColorLayers&);
 
-StyleColor createStyleColor(const CSSUnresolvedColorLayers&, const Document&, RenderStyle&, Style::ForVisitedLink);
-Color createColor(const CSSUnresolvedColorLayers&, const CSSUnresolvedColorResolutionContext&);
+StyleColor createStyleColor(const CSSUnresolvedColorLayers&, CSSUnresolvedStyleColorResolutionState&);
+Color createColor(const CSSUnresolvedColorLayers&, CSSUnresolvedColorResolutionState&);
 
 bool containsCurrentColor(const CSSUnresolvedColorLayers&);
 bool containsColorSchemeDependentColor(const CSSUnresolvedColorLayers&);

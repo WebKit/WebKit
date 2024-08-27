@@ -159,7 +159,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
     auto* rootNode = nodeForID(transaction.rootLayerID());
     
     if (!rootNode)
-        REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID().object().toUInt64());
+        REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID() ? transaction.rootLayerID()->object().toUInt64() : 0);
 
     if (m_rootNode != rootNode && transaction.isMainFrameProcessTransaction()) {
         m_rootNode = rootNode;
@@ -194,7 +194,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
             return HashSet<WebCore::PlatformLayerIdentifier>();
         }).iterator->value.add(rootNode->layerID());
         rootNode->setRemoteContextHostedIdentifier(*contextHostedID);
-        if (auto* remoteRootNode = nodeForID(m_hostingLayers.get(*contextHostedID)))
+        if (auto* remoteRootNode = nodeForID(m_hostingLayers.getOptional(*contextHostedID)))
             rootNode->addToHostingNode(*remoteRootNode);
     }
 
@@ -259,12 +259,12 @@ void RemoteLayerTreeHost::asyncSetLayerContents(PlatformLayerIdentifier layerID,
     node->setAsyncContentsIdentifier(identifier);
 }
 
-RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(PlatformLayerIdentifier layerID) const
+RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(std::optional<PlatformLayerIdentifier> layerID) const
 {
     if (!layerID)
         return nullptr;
 
-    return m_nodes.get(layerID);
+    return m_nodes.get(*layerID);
 }
 
 void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processIdentifier, WebCore::PlatformLayerIdentifier layerID)
@@ -280,10 +280,10 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
         if (auto hostingIdentifier = node->remoteContextHostingIdentifier())
             m_hostingLayers.remove(*hostingIdentifier);
         if (auto hostedIdentifier = node->remoteContextHostedIdentifier()) {
-            if (auto layerID = m_hostedLayers.take(*hostedIdentifier)) {
+            if (auto layerID = m_hostedLayers.takeOptional(*hostedIdentifier)) {
                 auto it = m_hostedLayersInProcess.find(processIdentifier);
                 if (it != m_hostedLayersInProcess.end()) {
-                    it->value.remove(layerID);
+                    it->value.remove(*layerID);
                     if (it->value.isEmpty())
                         m_hostedLayersInProcess.remove(it);
                 }
@@ -301,7 +301,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 #endif
 }
 
-void RemoteLayerTreeHost::animationDidStart(WebCore::PlatformLayerIdentifier layerID, CAAnimation *animation, MonotonicTime startTime)
+void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayerIdentifier> layerID, CAAnimation *animation, MonotonicTime startTime)
 {
     if (!m_drawingArea)
         return;
@@ -319,10 +319,10 @@ void RemoteLayerTreeHost::animationDidStart(WebCore::PlatformLayerIdentifier lay
     }
 
     if (!animationKey.isEmpty())
-        m_drawingArea->acceleratedAnimationDidStart(layerID, animationKey, startTime);
+        m_drawingArea->acceleratedAnimationDidStart(*layerID, animationKey, startTime);
 }
 
-void RemoteLayerTreeHost::animationDidEnd(WebCore::PlatformLayerIdentifier layerID, CAAnimation *animation)
+void RemoteLayerTreeHost::animationDidEnd(std::optional<WebCore::PlatformLayerIdentifier> layerID, CAAnimation *animation)
 {
     if (!m_drawingArea)
         return;
@@ -340,7 +340,7 @@ void RemoteLayerTreeHost::animationDidEnd(WebCore::PlatformLayerIdentifier layer
     }
 
     if (!animationKey.isEmpty())
-        m_drawingArea->acceleratedAnimationDidEnd(layerID, animationKey);
+        m_drawingArea->acceleratedAnimationDidEnd(*layerID, animationKey);
 }
 
 void RemoteLayerTreeHost::detachFromDrawingArea()
@@ -364,7 +364,7 @@ CALayer *RemoteLayerTreeHost::layerWithIDForTesting(WebCore::PlatformLayerIdenti
     return layerForID(layerID);
 }
 
-CALayer *RemoteLayerTreeHost::layerForID(WebCore::PlatformLayerIdentifier layerID) const
+CALayer *RemoteLayerTreeHost::layerForID(std::optional<WebCore::PlatformLayerIdentifier> layerID) const
 {
     auto* node = nodeForID(layerID);
     if (!node)
@@ -381,7 +381,7 @@ CALayer *RemoteLayerTreeHost::rootLayer() const
 
 void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    ASSERT(!m_nodes.contains(properties.layerID));
+    ASSERT(!m_nodes.contains(*properties.layerID));
 
     auto node = makeNode(properties);
 
@@ -394,19 +394,19 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
     }
 
     if (auto* hostIdentifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&properties.additionalData)) {
-        m_hostingLayers.set(*hostIdentifier, properties.layerID);
-        if (auto* hostedNode = nodeForID(m_hostedLayers.get(*hostIdentifier)))
+        m_hostingLayers.set(*hostIdentifier, *properties.layerID);
+        if (auto* hostedNode = nodeForID(m_hostedLayers.getOptional(*hostIdentifier)))
             hostedNode->addToHostingNode(*node);
     }
 
-    m_nodes.add(properties.layerID, WTFMove(node));
+    m_nodes.add(*properties.layerID, WTFMove(node));
 }
 
 #if !PLATFORM(IOS_FAMILY)
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithLayer = [&] (RetainPtr<CALayer>&& layer) {
-        return makeUnique<RemoteLayerTreeNode>(properties.layerID, properties.hostIdentifier(), WTFMove(layer));
+        return makeUnique<RemoteLayerTreeNode>(*properties.layerID, properties.hostIdentifier(), WTFMove(layer));
     };
 
     switch (properties.type) {
@@ -423,7 +423,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #endif
     case PlatformCALayer::LayerType::LayerTypeHost:
     case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer: {
-        auto layer = RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
+        auto layer = RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
         // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
         if (properties.type == PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer)
             [layer->layer() setValue:@YES forKey:@"isTile"];
@@ -438,12 +438,12 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerType::LayerTypeCustom:
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
         if (m_isDebugLayerTreeHost)
-            return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
+            return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
             if (auto videoManager = m_drawingArea->page().videoPresentationManager()) {
-                m_videoLayers.add(properties.layerID, properties.videoElementData->playerIdentifier);
+                m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithLayer(videoManager->createLayerWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }
         }

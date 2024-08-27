@@ -19,8 +19,6 @@
     }
 
     async function runTestRunnerTest() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-    
         var availTop = screen.availTop;
         var colorDepth = screen.colorDepth;
         var pixelDepth = screen.pixelDepth;
@@ -30,6 +28,7 @@
         var availHeight = screen.availHeight;
         var availWidth = screen.availWidth;
         await testRunner.statisticsNotifyObserver();
+        completeTest();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

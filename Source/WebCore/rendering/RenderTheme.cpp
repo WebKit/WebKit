@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "BorderShape.h"
 #include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
@@ -771,11 +772,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
 
     float deviceScaleFactor = box.document().deviceScaleFactor();
     auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-    auto borderRect = FloatRoundedRect(box.style().getRoundedBorderFor(LayoutRect(zoomedRect)));
+    auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(zoomedRect));
     auto controlStyle = extractControlStyleForRenderer(box);
     auto& context = paintInfo.context();
 
-    context.drawControlPart(part, borderRect, deviceScaleFactor, controlStyle);
+    context.drawControlPart(part, borderShape.deprecatedPixelSnappedRoundedRect(deviceScaleFactor), deviceScaleFactor, controlStyle);
     return false;
 }
 
@@ -802,22 +803,6 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
     switch (appearance) {
-#if USE(THEME_ADWAITA)
-    case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio:
-    case StyleAppearance::PushButton:
-    case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case StyleAppearance::ColorWell:
-#endif
-    case StyleAppearance::DefaultButton:
-    case StyleAppearance::Button:
-    case StyleAppearance::InnerSpinButton: {
-        auto states = extractControlStyleStatesForRenderer(box);
-        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().usedAccentColor(box.styleColorOptions()));
-        return false;
-    }
-#else // !USE(THEME_ADWAITA)
     case StyleAppearance::Checkbox:
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Radio:
@@ -831,7 +816,6 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
         return paintButton(box, paintInfo, integralSnappedRect);
-#endif // !USE(THEME_ADWAITA)
     case StyleAppearance::Menulist:
         return paintMenuList(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Meter:

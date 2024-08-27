@@ -42,7 +42,7 @@ messages -> PlaybackSessionManagerProxy {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     SupportsLinearMediaPlayerChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
 #endif
-    SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId)
+    SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId, bool isVideo)
     ClearPlaybackControlsManager()
 
     HandleControlledElementIDResponse(WebKit::PlaybackSessionContextIdentifier contextId, String id)

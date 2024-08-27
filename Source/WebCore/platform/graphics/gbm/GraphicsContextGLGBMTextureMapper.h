@@ -31,10 +31,6 @@
 #include "GraphicsContextGLGBM.h"
 #include <memory>
 
-namespace Nicosia {
-class GCGLANGLELayer;
-}
-
 namespace WebCore {
 
 class GraphicsContextGLGBMTextureMapper final : public GraphicsContextGLGBM {
@@ -51,7 +47,6 @@ public:
 private:
     GraphicsContextGLGBMTextureMapper(GraphicsContextGLAttributes&&);
 
-    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 };
 

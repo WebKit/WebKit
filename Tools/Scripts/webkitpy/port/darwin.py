@@ -187,10 +187,6 @@ class DarwinPort(ApplePort):
             ]
             try:
                 exit_code = host.executive.run_command(spindump_command + ['-noBulkSymbolication'], return_exit_code=True)
-
-                # FIXME: Remove the fallback when we no longer support Catalina.
-                if exit_code:
-                    host.executive.run_command(spindump_command)
                 host.filesystem.move_to_base_host(DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
                                                   DarwinPort.tailspin_file_path(self.host, name, pid, self.results_directory()))
             except (IOError, ScriptError, OSError) as e:

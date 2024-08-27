@@ -56,6 +56,8 @@ static RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPD
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
+        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"])
+            [[configuration preferences] _setEnabled:NO forFeature:feature];
     }
 
     return configuration;
@@ -115,6 +117,51 @@ TEST(UnifiedPDF, KeyboardScrollingInSinglePageMode)
             break;
     }
 }
+
+TEST(UnifiedPDF, SnapshotsPaintPageContent)
+{
+    if (!shouldEnableUnifiedPDFForTesting())
+        return;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    [webView setForceWindowToBecomeKey:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<embed src='multiple-pages.pdf' width='600' height='600'>"];
+    [[webView window] makeFirstResponder:webView.get()];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+    [webView waitForNextPresentationUpdate];
+
+    __block bool done = false;
+
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(100, 100, 100, 100)];
+
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        RetainPtr cgImage = Util::convertToCGImage(snapshotImage);
+
+        CGImagePixelReader reader { cgImage.get() };
+
+        bool foundNonWhitePixel = false;
+
+        for (unsigned x = 0; x < reader.width(); x++) {
+            for (unsigned y = 0; y < reader.height(); y++) {
+                if (reader.at(x, y) != WebCore::Color::white) {
+                    foundNonWhitePixel = true;
+                    break;
+                }
+            }
+        }
+
+        EXPECT_TRUE(foundNonWhitePixel);
+
+        done = true;
+    }];
+
+    Util::run(&done);
+}
+
 
 TEST(UnifiedPDF, CopyEditingCommandOnEmptySelectionShouldNotCrash)
 {

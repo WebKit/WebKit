@@ -46,7 +46,7 @@ static auto *dataRecordTestTwoManifest = @{
     @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 };
 
-static auto *allDataTypesSet = [NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSync ]];
+static auto *allDataTypesSet = [NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession, WKWebExtensionDataTypeSynchronized ]];
 
 TEST(WKWebExtensionDataRecord, GetDataRecords)
 {
@@ -78,14 +78,14 @@ TEST(WKWebExtensionDataRecord, GetDataRecords)
         EXPECT_NS_EQUAL(dataRecord.displayName, @"DataRecord");
         EXPECT_NS_EQUAL(dataRecord.uniqueIdentifier, @"org.webkit.test.extension (76C788B8)");
 
-        EXPECT_EQ(dataRecord.dataTypes.count, 3UL);
-        EXPECT_EQ(dataRecord.totalSize, 237UL);
+        EXPECT_EQ(dataRecord.containedDataTypes.count, 3UL);
+        EXPECT_EQ(dataRecord.totalSizeInBytes, 237UL);
 
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
-        EXPECT_EQ([dataRecord sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 79UL);
+        EXPECT_EQ([dataRecord sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
+        EXPECT_EQ([dataRecord sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
+        EXPECT_EQ([dataRecord sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSynchronized]], 79UL);
 
-        unsigned long long sizeOfDataTypes = [dataRecord sizeOfDataTypes:allDataTypesSet];
+        unsigned long long sizeOfDataTypes = [dataRecord sizeInBytesOfTypes:allDataTypesSet];
         EXPECT_EQ(sizeOfDataTypes, 237UL);
 
         fetchComplete = true;
@@ -150,16 +150,16 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
         EXPECT_NS_EQUAL(dataRecordOne.displayName, @"DataRecord");
         EXPECT_NS_EQUAL(dataRecordTwo.displayName, @"DataRecordTwo");
 
-        EXPECT_EQ(dataRecordOne.totalSize, 79UL);
-        EXPECT_EQ(dataRecordTwo.totalSize, 158UL);
+        EXPECT_EQ(dataRecordOne.totalSizeInBytes, 79UL);
+        EXPECT_EQ(dataRecordTwo.totalSizeInBytes, 158UL);
 
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 0UL);
-        EXPECT_EQ([dataRecordOne sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 0UL);
+        EXPECT_EQ([dataRecordOne sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 79UL);
+        EXPECT_EQ([dataRecordOne sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 0UL);
+        EXPECT_EQ([dataRecordOne sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSynchronized]], 0UL);
 
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 0UL);
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
-        EXPECT_EQ([dataRecordTwo sizeOfDataTypes:[NSSet setWithObject:WKWebExtensionDataTypeSync]], 79UL);
+        EXPECT_EQ([dataRecordTwo sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeLocal]], 0UL);
+        EXPECT_EQ([dataRecordTwo sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSession]], 79UL);
+        EXPECT_EQ([dataRecordTwo sizeInBytesOfTypes:[NSSet setWithObject:WKWebExtensionDataTypeSynchronized]], 79UL);
 
         fetchComplete = true;
     }];
@@ -193,16 +193,16 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
     __block bool removalComplete = false;
     [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 1UL);
-        EXPECT_EQ(dataRecords.firstObject.totalSize, 237UL);
+        EXPECT_EQ(dataRecords.firstObject.totalSizeInBytes, 237UL);
 
-        [testController removeDataOfTypes:[NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession ]] forDataRecords:dataRecords completionHandler:^{
+        [testController removeDataOfTypes:[NSSet setWithArray:@[ WKWebExtensionDataTypeLocal, WKWebExtensionDataTypeSession ]] fromDataRecords:dataRecords completionHandler:^{
             [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *updatedRecords) {
                 EXPECT_EQ(updatedRecords.count, 1UL);
 
                 EXPECT_EQ(updatedRecords[0].errors.count, 0UL);
 
                 // Sync storage should still have data.
-                EXPECT_EQ(updatedRecords.firstObject.totalSize, 79UL);
+                EXPECT_EQ(updatedRecords.firstObject.totalSizeInBytes, 79UL);
                 removalComplete = true;
             }];
         }];
@@ -244,9 +244,9 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
     __block bool removalComplete = false;
     [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
-        EXPECT_EQ(dataRecords[0].totalSize + dataRecords[1].totalSize, 237UL);
+        EXPECT_EQ(dataRecords[0].totalSizeInBytes + dataRecords[1].totalSizeInBytes, 237UL);
 
-        [testController removeDataOfTypes:allDataTypesSet forDataRecords:dataRecords completionHandler:^{
+        [testController removeDataOfTypes:allDataTypesSet fromDataRecords:dataRecords completionHandler:^{
             EXPECT_EQ(dataRecords[0].errors.count, 0UL);
             EXPECT_EQ(dataRecords[1].errors.count, 0UL);
             [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *updatedDataRecords) {
@@ -254,8 +254,8 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
                 EXPECT_EQ(updatedDataRecords[1].errors.count, 0UL);
 
                 EXPECT_EQ(updatedDataRecords.count, 2UL);
-                EXPECT_EQ(updatedDataRecords[0].totalSize, 0UL);
-                EXPECT_EQ(updatedDataRecords[1].totalSize, 0UL);
+                EXPECT_EQ(updatedDataRecords[0].totalSizeInBytes, 0UL);
+                EXPECT_EQ(updatedDataRecords[1].totalSizeInBytes, 0UL);
 
                 removalComplete = true;
             }];

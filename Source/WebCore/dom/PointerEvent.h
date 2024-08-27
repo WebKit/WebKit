@@ -44,7 +44,7 @@ namespace WebCore {
 
 class Node;
 
-class PointerEvent final : public MouseEvent {
+class PointerEvent : public MouseEvent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
@@ -86,6 +86,8 @@ public:
     {
         return adoptRef(*new PointerEvent);
     }
+
+    static AtomString typeFromMouseEventType(const AtomString&);
 
     static RefPtr<PointerEvent> create(MouseButton, const MouseEvent&, PointerID, const String& pointerType);
     static Ref<PointerEvent> create(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType);
@@ -129,14 +131,18 @@ public:
     RefPtr<Node> toElement() const final { return nullptr; }
     RefPtr<Node> fromElement() const final { return nullptr; }
 
-    static bool typeIsUpOrDown(const AtomString& type);
-    static MouseButton buttonForType(const AtomString& type) { return !typeIsUpOrDown(type) ? MouseButton::PointerHasNotChanged : MouseButton::Left; }
+    static bool typeRequiresResolvedButton(const AtomString& type);
+    static MouseButton buttonForType(const AtomString& type) { return !typeRequiresResolvedButton(type) ? MouseButton::PointerHasNotChanged : MouseButton::Left; }
 
-private:
-    static bool typeIsEnterOrLeave(const AtomString& type);
+protected:
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
+
+    PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable, IsComposed);
+
+private:
+    static bool typeIsEnterOrLeave(const AtomString& type);
     static unsigned short buttonsForType(const AtomString& type)
     {
         // We have contact with the touch surface for most events except when we've released the touch or canceled it.
@@ -166,7 +172,6 @@ private:
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&, IsTrusted);
-    PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
     PointerEvent(const AtomString& type, const PlatformTouchEvent&, const Vector<Ref<PointerEvent>>& coalescedEvents, const Vector<Ref<PointerEvent>>& predictedEvents, CanBubble canBubble, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
@@ -194,10 +199,14 @@ inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
     return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
 }
 
-inline bool PointerEvent::typeIsUpOrDown(const AtomString& type)
+inline bool PointerEvent::typeRequiresResolvedButton(const AtomString& type)
 {
     auto& eventNames = WebCore::eventNames();
-    return type == eventNames.pointerupEvent || type == eventNames.pointerdownEvent;
+    return type == eventNames.pointerupEvent
+        || type == eventNames.pointerdownEvent
+        || type == eventNames.clickEvent
+        || type == eventNames.auxclickEvent
+        || type == eventNames.contextmenuEvent;
 }
 
 } // namespace WebCore

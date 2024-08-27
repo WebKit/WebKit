@@ -48,6 +48,7 @@ private:
 
     RefPtr<JSON::Object> createJSONObject(const String&);
     URL parseStartURL(const JSON::Object&, const URL&);
+    ApplicationManifest::Direction parseDir(const JSON::Object&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
     String parseName(const JSON::Object&);

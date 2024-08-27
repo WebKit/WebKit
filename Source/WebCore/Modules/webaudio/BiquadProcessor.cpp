@@ -30,9 +30,12 @@
 
 #include "AudioUtilities.h"
 #include "BiquadDSPKernel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-    
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BiquadProcessor);
+
 BiquadProcessor::BiquadProcessor(BaseAudioContext& context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
     , m_parameter1(AudioParam::create(context, "frequency"_s, 350.0, 0.0, 0.5 * sampleRate, AutomationRate::ARate))

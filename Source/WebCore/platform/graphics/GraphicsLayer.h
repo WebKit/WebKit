@@ -297,7 +297,7 @@ public:
 
     virtual void initialize(Type) { }
 
-    virtual PlatformLayerIdentifier primaryLayerID() const { return { }; }
+    virtual std::optional<PlatformLayerIdentifier> primaryLayerID() const { return std::nullopt; }
 
     GraphicsLayerClient& client() const { return *m_client; }
 
@@ -556,7 +556,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
-    virtual PlatformLayerIdentifier contentsLayerIDForModel() const { return { }; }
+    virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const { return std::nullopt; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
 

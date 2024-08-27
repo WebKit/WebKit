@@ -331,7 +331,11 @@ CocoaImage *WebExtensionMenuItem::icon(CGSize idealSize) const
 {
     ASSERT(extensionContext());
 
-    return extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height);
+    NSError *error;
+    auto *result = extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height, &error);
+    extensionContext()->recordErrorIfNeeded(error);
+
+    return result;
 }
 
 } // namespace WebKit

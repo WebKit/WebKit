@@ -275,8 +275,12 @@ void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedEleme
 
 bool HTMLFormControlElement::shouldAutocorrect() const
 {
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*this); input
+        && (input->isPasswordField() || input->isEmailField() || input->isURLField())) {
+        return false;
+    }
     const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
-    if (!autocorrectValue.isEmpty())
+    if (!autocorrectValue.isNull())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
     if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();

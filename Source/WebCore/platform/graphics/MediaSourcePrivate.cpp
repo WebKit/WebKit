@@ -262,7 +262,9 @@ const PlatformTimeRanges& MediaSourcePrivate::liveSeekableRange() const
 {
     Locker locker { m_lock };
 
+    IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_liveSeekable;
+    IGNORE_CLANG_WARNINGS_END
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

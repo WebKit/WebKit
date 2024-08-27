@@ -34,9 +34,8 @@
         testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin3);
         testRunner.setStatisticsTopFrameUniqueRedirectTo(statisticsUrl, topFrameOrigin4);
 
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        completeTest();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

@@ -28,10 +28,12 @@
 
 #if ENABLE(MODEL_PROCESS)
 
+#include "ModelProcessModelPlayerManager.h"
 #include "ModelProcessModelPlayerProxy.h"
 #include "ModelProcessModelPlayerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/TransformationMatrix.h>
 
 namespace WebKit {
@@ -63,7 +65,7 @@ ALWAYS_INLINE void ModelProcessModelPlayer::send(T&& message)
 
 // MARK: - Messages
 
-void ModelProcessModelPlayer::didCreateLayer(LayerHostingContextIdentifier identifier)
+void ModelProcessModelPlayer::didCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer obtained new layerHostingContextIdentifier id=%" PRIu64, this, m_id.toUInt64());
     m_layerHostingContextIdentifier = identifier;

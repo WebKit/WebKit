@@ -27,7 +27,7 @@
 namespace WebCore {
 
 enum class TextManipulationTokenIdentifierType { };
-using TextManipulationTokenIdentifier = ObjectIdentifier<TextManipulationTokenIdentifierType>;
+using TextManipulationTokenIdentifier = LegacyNullableObjectIdentifier<TextManipulationTokenIdentifierType>;
 
 struct TextManipulationTokenInfo {
     String tagName;

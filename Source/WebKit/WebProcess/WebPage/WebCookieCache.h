@@ -43,9 +43,10 @@ namespace WebKit {
 enum PendingCookieUpdateCounterType { };
 using PendingCookieUpdateCounter = RefCounter<PendingCookieUpdateCounterType>;
 
-class WebCookieCache : public WebCore::CookieChangeListener {
+class WebCookieCache final : public WebCore::CookieChangeListener {
 public:
     WebCookieCache() = default;
+    virtual ~WebCookieCache();
 
     bool isSupported();
 

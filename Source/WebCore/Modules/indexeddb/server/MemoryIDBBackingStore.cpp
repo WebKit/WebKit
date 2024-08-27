@@ -37,12 +37,15 @@
 #include "MemoryIndexCursor.h"
 #include "MemoryObjectStore.h"
 #include "MemoryObjectStoreCursor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
 
 // The IndexedDB spec states the maximum value you can get from the key generator is 2^53.
 constexpr uint64_t maxGeneratedKeyValue = 0x20000000000000;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryIDBBackingStore);
 
 MemoryIDBBackingStore::MemoryIDBBackingStore(const IDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)

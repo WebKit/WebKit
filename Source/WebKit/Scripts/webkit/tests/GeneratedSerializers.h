@@ -91,6 +91,7 @@ class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
 #if USE(APPKIT)
 class AppKitControlSystemImage;
 #endif
+template<typename> class RectEdges;
 struct Amazing;
 }
 
@@ -397,6 +398,11 @@ template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
     static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
+    static void encode(Encoder&, const WebCore::RectEdges<bool>&);
+    static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
+};
 
 } // namespace IPC
 

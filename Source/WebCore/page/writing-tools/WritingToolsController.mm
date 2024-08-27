@@ -46,8 +46,12 @@
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
 #import <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WritingToolsController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WritingToolsControllerEditingScope, WritingToolsController::EditingScope);
 
 #pragma mark - EditingScope
 
@@ -361,19 +365,28 @@ void WritingToolsController::showSelection() const
         return;
     }
 
-    auto* state = std::get_if<CompositionState>(&m_state);
+    CheckedPtr state = std::get_if<CompositionState>(&m_state);
     if (!state) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto currentRange = state->currentRange;
-    if (!currentRange) {
+    if (state->reappliedCommands.isEmpty()) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    document->selection().setSelection(*currentRange);
+    auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
+    if (!selectionRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto visibleSelection = VisibleSelection { *selectionRange };
+    if (visibleSelection.isNoneOrOrphaned())
+        return;
+
+    document->selection().setSelection(visibleSelection);
 }
 
 void WritingToolsController::compositionSessionDidFinishReplacement()
@@ -428,6 +441,26 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     Ref currentCommand = state->reappliedCommands.takeLast();
 
+    // Save all the existing transparent document markers before the command is undone, since such
+    // operation is not guaranteed to persist all the markers; some may be discarded if the nodes end
+    // up changing.
+    //
+    // The character ranges are relative to the range of the document, since the document node is the
+    // only guaranteed common ancestor node before the undo and after the replace.
+
+    Vector<std::tuple<CharacterRange, WTF::UUID>> existingTransparentContentDocumentMarkers;
+
+    auto documentRange = makeRangeSelectingNodeContents(*document);
+    document->markers().forEach(documentRange, { DocumentMarker::Type::TransparentContent }, [&](auto& node, auto& marker) mutable {
+        auto markerRange = makeSimpleRange(node, marker);
+        auto data = std::get<DocumentMarker::TransparentContentData>(marker.data());
+
+        auto resolvedCharacterRange = characterRange(documentRange, markerRange);
+        existingTransparentContentDocumentMarkers.append({ resolvedCharacterRange, data.uuid });
+
+        return false;
+    });
+
     // The prior replacement command must be undone in such a way as to not have it be added to the undo stack
     currentCommand->ensureComposition().unapply(EditCommandComposition::AddToUndoStack::No);
 
@@ -464,6 +497,20 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
     replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
+    // Restore the transparent content document markers after the undo + replace is complete.
+    // Since only some markers may have been discarded, all transparent content markers are first
+    // removed, and then the saved ones are re-added. This ensures that there are not duplicate
+    // markers added.
+    //
+    // This methodology is valid since subsequent replacements always have a prefix that is their prior replacement.
+
+    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent });
+
+    for (const auto& [characterRange, markerIdentifier] : existingTransparentContentDocumentMarkers) {
+        auto resolvedRange = resolveCharacterRange(documentRange, characterRange);
+        document->markers().addTransparentContentMarker(resolvedRange, markerIdentifier);
+    }
+
     if (runMode == TextAnimationRunMode::OnlyReplaceText) {
         compositionSessionDidFinishReplacement();
         return;
@@ -477,8 +524,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         ASSERT_NOT_REACHED();
         return;
     }
-
-    state->currentRange = selectionRange;
 
     auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
@@ -761,13 +806,11 @@ void WritingToolsController::respondToReappliedEditing(EditCommandComposition* c
 
 std::optional<SimpleRange> WritingToolsController::activeSessionRange() const
 {
-    auto range = WTF::switchOn(m_state,
-        [](std::monostate) -> SimpleRange { RELEASE_ASSERT_NOT_REACHED(); },
-        [](const ProofreadingState& state) { return makeSimpleRange(state.contextRange); },
-        [](const CompositionState& state) { return state.reappliedCommands.last()->currentContextRange(); }
+    return WTF::switchOn(m_state,
+        [](std::monostate) -> std::optional<SimpleRange> { return std::nullopt; },
+        [](const ProofreadingState& state) -> std::optional<SimpleRange> { return makeSimpleRange(state.contextRange); },
+        [](const CompositionState& state) -> std::optional<SimpleRange> { return state.reappliedCommands.last()->currentContextRange(); }
     );
-
-    return range;
 }
 
 template<WritingTools::Session::Type Type>
@@ -871,7 +914,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
     RefPtr<Node> targetNode;
     WeakPtr<DocumentMarker> targetMarker;
 
-    document->markers().forEach(outerRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&textSuggestionID, &targetNode, &targetMarker] (auto& node, auto& marker) mutable {
+    document->markers().forEach(outerRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&textSuggestionID, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
         if (data.suggestionID != textSuggestionID)
             return false;
@@ -899,7 +942,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
     RefPtr<Node> targetNode;
     WeakPtr<DocumentMarker> targetMarker;
 
-    document->markers().forEach(range, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&range, &targetNode, &targetMarker] (auto& node, auto& marker) mutable {
+    document->markers().forEach(range, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&range, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto markerRange = makeSimpleRange(node, marker);

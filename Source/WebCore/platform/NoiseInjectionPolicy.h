@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebCore {
 
-enum class NoiseInjectionPolicy : bool {
-    None,
-    Minimal
+enum class NoiseInjectionPolicy : uint8_t {
+    Minimal     = 1 << 0,
+    Enhanced    = 1 << 1,
 };
 
 } // namespace WebCore

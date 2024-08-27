@@ -56,7 +56,7 @@ private:
     void drawBoxSideFromPath(const LayoutRect& borderRect, const Path& borderPath, const BorderEdges&, std::optional<BorderDataRadii>, float thickness, float drawThickness, BoxSide, Color, BorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool isHorizontal) const;
     void clipBorderSidePolygon(const RoundedRect& outerBorder, const RoundedRect& innerBorder, BoxSide, bool firstEdgeMatches, bool secondEdgeMatches) const;
 
-    LayoutRect borderInnerRectAdjustedForBleedAvoidance(const LayoutRect&, BackgroundBleedAvoidance) const;
+    LayoutRect borderRectAdjustedForBleedAvoidance(const LayoutRect&, BackgroundBleedAvoidance) const;
 
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 

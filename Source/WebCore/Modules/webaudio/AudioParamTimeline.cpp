@@ -35,6 +35,7 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -71,6 +72,8 @@ static bool hasSetTargetConverged(float value, float target, Seconds currentTime
 
     return false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioParamTimeline);
 
 ExceptionOr<void> AudioParamTimeline::setValueAtTime(float value, Seconds time)
 {
@@ -919,6 +922,8 @@ void AudioParamTimeline::handleCancelValues(ParamEvent& event, ParamEvent* nextE
         break;
     }
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(AudioParamTimelineParamEvent, AudioParamTimeline::ParamEvent);
 
 auto AudioParamTimeline::ParamEvent::createSetValueEvent(float value, Seconds time) -> ParamEvent
 {

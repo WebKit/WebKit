@@ -40,19 +40,7 @@ void PlatformWebView::initialize(WKPageConfigurationRef pageConfiguration)
 {
     NSRect rect = NSMakeRect(0, 0, 800, 600);
 
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-    if (auto* context = WKPageConfigurationGetContext(pageConfiguration))
-        configuration.get().processPool = (WKProcessPool *)context;
-    if (auto* controller = WKPageConfigurationGetUserContentController(pageConfiguration))
-        configuration.get().userContentController = (WKUserContentController *)controller;
-    if (auto* dataStore = WKPageConfigurationGetWebsiteDataStore(pageConfiguration))
-        configuration.get().websiteDataStore = (WKWebsiteDataStore *)dataStore;
-    if (auto* relatedPage = WKPageConfigurationGetRelatedPage(pageConfiguration))
-        configuration.get()._relatedWebView = WKPageGetWebView(relatedPage);
-    if (auto* preferences = WKPageConfigurationGetPreferences(pageConfiguration))
-        configuration.get().preferences = (WKPreferences *)preferences;
-
-    m_view = [[WKWebView alloc] initWithFrame:rect configuration:configuration.get()];
+    m_view = [[WKWebView alloc] initWithFrame:rect configuration:(__bridge WKWebViewConfiguration *)pageConfiguration];
     [m_view _setWindowOcclusionDetectionEnabled:NO];
 
     m_window = [[OffscreenWindow alloc] initWithSize:NSSizeToCGSize(rect.size)];
@@ -78,7 +66,9 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     
     WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto relatedConfiguration = adoptWK(WKPageCopyPageConfiguration(relatedPage));
     if (auto* preferences = WKPageConfigurationGetPreferences(relatedConfiguration.get()))

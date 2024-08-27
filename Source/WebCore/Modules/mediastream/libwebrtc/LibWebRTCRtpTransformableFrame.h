@@ -28,6 +28,7 @@
 
 #include "RTCRtpTransformableFrame.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace webrtc {
 class TransformableFrameInterface;
@@ -36,7 +37,7 @@ class TransformableFrameInterface;
 namespace WebCore {
 
 class LibWebRTCRtpTransformableFrame final : public RTCRtpTransformableFrame {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCRtpTransformableFrame);
 public:
     static Ref<LibWebRTCRtpTransformableFrame> create(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame, bool isAudioSenderFrame) { return adoptRef(*new LibWebRTCRtpTransformableFrame(WTFMove(frame), isAudioSenderFrame)); }
     ~LibWebRTCRtpTransformableFrame();

@@ -37,8 +37,11 @@
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandEncoderImpl);
 
 CommandEncoderImpl::CommandEncoderImpl(WebGPUPtr<WGPUCommandEncoder>&& commandEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(commandEncoder))

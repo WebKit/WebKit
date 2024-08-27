@@ -43,9 +43,13 @@
 #include "UserStyleSheetTypes.h"
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/Collator.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CaptionUserPreferences);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CaptionUserPreferencesTestingModeToken);
 
 Ref<CaptionUserPreferences> CaptionUserPreferences::create(PageGroup& group)
 {

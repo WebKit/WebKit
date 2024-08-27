@@ -59,7 +59,7 @@ static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
 
 - (BOOL)hasFeature:(NSString *)feature version:(NSString *)version
 {
-    return WebCore::SVGTests::hasFeatureForLegacyBindings(feature, version);
+    return YES;
 }
 
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName publicId:(NSString *)publicId systemId:(NSString *)systemId

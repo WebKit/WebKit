@@ -32,52 +32,58 @@ namespace WebCore {
 
 class TextUnderlineOffset {
 public:
-    static constexpr TextUnderlineOffset createWithAuto()
+    static TextUnderlineOffset createWithAuto()
     {
-        return { std::nullopt };
+        return TextUnderlineOffset();
     }
 
-    static constexpr TextUnderlineOffset createWithLength(float length)
+    static TextUnderlineOffset createWithLength(Length&& length)
     {
-        return { length };
+        return TextUnderlineOffset(WTFMove(length));
     }
 
-    constexpr bool isAuto() const
+    bool isAuto() const
     {
-        return !isLength();
+        return m_length.type() == LengthType::Auto;
     }
 
-    constexpr bool isLength() const
+    bool isLength() const
     {
-        return static_cast<bool>(m_length);
+        return !isAuto();
     }
 
-    void setLengthValue(float length)
-    {
-        ASSERT(isLength());
-        m_length = length;
-    }
-
-    constexpr float lengthValue() const
+    const Length& length() const
     {
         ASSERT(isLength());
-        return *m_length;
+        return m_length;
     }
 
-    constexpr float lengthOr(float defaultValue) const
+    float resolve(float fontSize, float defaultValue = 0.f) const
     {
-        return m_length.value_or(defaultValue);
+        if (isAuto())
+            return defaultValue;
+
+        ASSERT(isLength());
+        if (m_length.isPercent())
+            return fontSize * (m_length.percent() / 100.0f);
+        if (m_length.isCalculated())
+            return m_length.nonNanCalculatedValue(fontSize);
+        return m_length.value();
     }
 
-    friend constexpr bool operator==(TextUnderlineOffset, TextUnderlineOffset) = default;
-
+    bool operator==(const TextUnderlineOffset& other) const = default;
 private:
-    constexpr TextUnderlineOffset(std::optional<float> length)
-        : m_length(length)
+    Length m_length;
+
+    TextUnderlineOffset()
+        : m_length(Length(LengthType::Auto))
     {
     }
 
-    std::optional<float> m_length;
+    TextUnderlineOffset(Length&& lengthValue)
+        : m_length(WTFMove(lengthValue))
+    {
+    }
 };
 
 inline TextStream& operator<<(TextStream& ts, const TextUnderlineOffset& offset)
@@ -85,7 +91,7 @@ inline TextStream& operator<<(TextStream& ts, const TextUnderlineOffset& offset)
     if (offset.isAuto())
         ts << "auto";
     else
-        ts << TextStream::FormatNumberRespectingIntegers(offset.lengthValue());
+        ts << offset.length();
     return ts;
 }
 

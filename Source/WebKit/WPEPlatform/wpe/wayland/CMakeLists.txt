@@ -19,6 +19,8 @@ set(WPEPlatformWayland_SOURCES
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v1-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-protocol.c
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/xdg-shell-protocol.c
+    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-protocol.c
+    ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-protocol.c
 )
 
 set(WPEPlatformWayland_INSTALLED_HEADERS
@@ -108,6 +110,32 @@ add_custom_command(
     OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-client-protocol.h
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/text-input/text-input-unstable-v3.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/text-input-unstable-v3-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
+    DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/pointer-constraints-unstable-v1-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
+    DEPENDS ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/relative-pointer-unstable-v1-client-protocol.h
     VERBATIM)
 
 add_custom_command(

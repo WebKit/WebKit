@@ -33,9 +33,12 @@
 #include "MemoryCursor.h"
 #include "MemoryIndex.h"
 #include "MemoryObjectStore.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryIndexCursor);
 
 MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& info)
     : MemoryCursor(info)

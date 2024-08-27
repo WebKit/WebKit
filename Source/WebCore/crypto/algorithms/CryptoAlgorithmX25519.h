@@ -37,10 +37,10 @@ private:
 
     void generateKey(const CryptoAlgorithmParameters& , bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& , ExceptionCallback&& , ScriptExecutionContext&);
     void deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, std::optional<size_t> length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
-    void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&, UseCryptoKit) final;
-    void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&, UseCryptoKit) final;
+    void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
+    void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&, UseCryptoKit);
+    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyOKP&, const CryptoKeyOKP&);
 };
 
 } // namespace WebCore

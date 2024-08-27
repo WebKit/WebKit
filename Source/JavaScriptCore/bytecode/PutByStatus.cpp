@@ -171,7 +171,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
 PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin)
 {
-    StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
+    StubInfoSummary summary = StructureStubInfo::summary(locker, profiledBlock->vm(), stubInfo);
     if (!isInlineable(summary))
         return PutByStatus(summary, *stubInfo);
     
@@ -192,13 +192,13 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
     }
         
     case CacheType::Stub: {
-        PolymorphicAccess* list = stubInfo->m_stub.get();
+        auto list = stubInfo->listedAccessCases(locker);
 
         PutByStatus result;
         result.m_state = Simple;
 
-        if (list->size() == 1) {
-            const AccessCase& access = list->at(0);
+        if (list.size() == 1) {
+            const AccessCase& access = *list.at(0);
             switch (access.type()) {
             case AccessCase::StoreMegamorphic:
             case AccessCase::IndexedMegamorphicStore: {
@@ -223,8 +223,8 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
             }
         }
 
-        for (unsigned i = 0; i < list->size(); ++i) {
-            const AccessCase& access = list->at(i);
+        for (unsigned i = 0; i < list.size(); ++i) {
+            const AccessCase& access = *list.at(i);
             bool viaGlobalProxy = access.viaGlobalProxy();
 
             if (access.usesPolyProto())

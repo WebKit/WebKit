@@ -387,7 +387,6 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return true; }
 #endif
-    VideoPlaybackConfiguration videoPlaybackConfiguration() const { return m_cachedVideoPlaybackConfiguration; }
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
@@ -522,7 +521,6 @@ private:
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
-    VideoPlaybackConfiguration m_cachedVideoPlaybackConfiguration;
 };
 
 }

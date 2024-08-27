@@ -34,6 +34,7 @@ list(APPEND WTF_SOURCES
     cocoa/NSURLExtras.mm
     cocoa/ResourceUsageCocoa.cpp
     cocoa/RuntimeApplicationChecksCocoa.cpp
+    cocoa/SchedulePairCocoa.mm
     cocoa/SystemTracingCocoa.cpp
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
@@ -41,7 +42,6 @@ list(APPEND WTF_SOURCES
     darwin/LibraryPathDiagnostics.mm
 
     mac/FileSystemMac.mm
-    mac/SchedulePairMac.mm
 
     posix/CPUTimePOSIX.cpp
     posix/FileSystemPOSIX.cpp

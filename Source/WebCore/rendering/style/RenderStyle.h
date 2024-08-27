@@ -1201,7 +1201,6 @@ public:
     inline void setHasExplicitlySetBorderTopLeftRadius(bool);
     inline void setHasExplicitlySetBorderTopRightRadius(bool);
 
-    RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
 
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
@@ -1919,7 +1918,7 @@ public:
     static constexpr TextDecorationStyle initialTextDecorationStyle();
     static constexpr TextDecorationSkipInk initialTextDecorationSkipInk();
     static constexpr OptionSet<TextUnderlinePosition> initialTextUnderlinePosition();
-    static constexpr TextUnderlineOffset initialTextUnderlineOffset();
+    static inline TextUnderlineOffset initialTextUnderlineOffset();
     static inline TextDecorationThickness initialTextDecorationThickness();
     static float initialZoom() { return 1.0f; }
     static constexpr TextZoom initialTextZoom();

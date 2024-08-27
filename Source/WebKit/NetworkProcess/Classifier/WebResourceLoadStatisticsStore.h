@@ -124,7 +124,6 @@ public:
     SuspendableWorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
 
     void populateMemoryStoreFromDisk(CompletionHandler<void()>&&);
-    void setNotifyPagesWhenDataRecordsWereScanned(bool);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
 
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
@@ -135,11 +134,11 @@ public:
     void clearUserInteraction(TopFrameDomain&&, CompletionHandler<void()>&&);
     void setTimeAdvanceForTesting(Seconds, CompletionHandler<void()>&&);
     void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);
-    void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
+    void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     void registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&&);
     void registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&&);
     void registrableDomainsExemptFromWebsiteDataDeletion(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
+    void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
     void hasHadUserInteraction(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
@@ -162,7 +161,6 @@ public:
     void clearPrevalentResource(RegistrableDomain&&, CompletionHandler<void()>&&);
     void setGrandfathered(RegistrableDomain&&, bool, CompletionHandler<void()>&&);
     void isGrandfathered(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
-    void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
     void setIsRunningTest(bool, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameDomain(SubFrameDomain&&, TopFrameDomain&&, CompletionHandler<void()>&&);
     void setSubresourceUnderTopFrameDomain(SubResourceDomain&&, TopFrameDomain&&, CompletionHandler<void()>&&);
@@ -211,8 +209,6 @@ public:
 #endif
     void setPersistedDomains(const HashSet<RegistrableDomain>&);
     void didCreateNetworkProcess();
-
-    void notifyResourceLoadStatisticsProcessed();
 
     NetworkSession* networkSession();
     void invalidateAndCancel();

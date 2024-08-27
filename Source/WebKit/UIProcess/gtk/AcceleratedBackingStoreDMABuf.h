@@ -87,7 +87,7 @@ private:
     void frame(uint64_t id, WebCore::Region&&, WTF::UnixFileDescriptor&&);
     void frameDone();
     void ensureGLContext();
-    bool prepareForRendering();
+    bool swapBuffersIfNeeded();
 
 #if USE(GTK4)
     void snapshot(GtkSnapshot*) override;

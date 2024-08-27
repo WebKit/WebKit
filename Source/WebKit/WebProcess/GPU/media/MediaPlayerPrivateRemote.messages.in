@@ -36,11 +36,10 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     PlaybackStateChanged(bool paused, struct WebKit::MediaTimeUpdateData timeData)
     EngineFailedToLoad(int64_t platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
-    UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics);
+    UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics)
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
-    VideoPlaybackConfigurationChanged(WebCore::MediaPlayer::VideoPlaybackConfiguration configuration);
 
     CurrentTimeChanged(struct WebKit::MediaTimeUpdateData timeData)
 

@@ -33,6 +33,7 @@
 
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -45,7 +46,7 @@ class Page;
 
 class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorIndexedDBAgent);
 public:
     InspectorIndexedDBAgent(PageAgentContext&);
     ~InspectorIndexedDBAgent();

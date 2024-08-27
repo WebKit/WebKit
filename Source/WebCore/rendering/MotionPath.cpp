@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MotionPath.h"
 
+#include "BorderShape.h"
 #include "GeometryUtilities.h"
 #include "PathOperation.h"
 #include "PathTraversalState.h"
@@ -44,10 +45,14 @@ static FloatPoint offsetFromContainer(const RenderObject& renderer, RenderBlock&
 
 static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, RenderBlock& container, const PathOperation& operation)
 {
-    auto referenceRect = snapRectToDevicePixelsIfNeeded(container.referenceBoxRect(operation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
-    if (is<BoxPathOperation>(operation))
-        return FloatRoundedRect(container.style().getRoundedBorderFor(LayoutRect(referenceRect)));
-    return FloatRoundedRect(referenceRect);
+    auto referenceRect = container.referenceBoxRect(operation.referenceBox());
+    if (is<BoxPathOperation>(operation)) {
+        auto borderShape = BorderShape::shapeForBorderRect(container.style(), LayoutRect(referenceRect));
+        return borderShape.deprecatedPixelSnappedRoundedRect(container.document().deviceScaleFactor());
+    }
+
+    auto snappedRect = snapRectToDevicePixelsIfNeeded(container.referenceBoxRect(operation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
+    return FloatRoundedRect(snappedRect);
 }
 
 static FloatPoint normalPositionForOffsetPath(PathOperation* operation, const FloatRect& referenceRect)

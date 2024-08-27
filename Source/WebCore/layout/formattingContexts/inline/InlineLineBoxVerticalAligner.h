@@ -56,14 +56,13 @@ private:
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
     InlineLevelBox::AscentAndDescent layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
 
-    const InlineFormattingUtils& formattingUtils() const { return m_inlineFormattingUtils; }
+    const InlineFormattingUtils& formattingUtils() const { return formattingContext().formattingUtils(); }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
     const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    const InlineFormattingUtils m_inlineFormattingUtils;
 };
 
 }

@@ -475,14 +475,25 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
 
     if (!parent.normalChildNeedsLayout()) {
         if (isOutOfFlowBox) {
-            // setNeedsLayoutAndPrefWidthsRecalc above already takes care of propagating dirty bits on the ancestor chain, but
-            // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
-            // FIXME: Introduce a dirty bit to bridge the gap between parent and containing block which would
-            // not trigger layout but a simple traversal all the way to the direct parent and also expand it non-direct parent cases.
-            // FIXME: RenderVideo's setNeedsLayout pattern does not play well with this optimization: see webkit.org/b/276253
-            if (newChild->containingBlock() == &parent && !is<RenderVideo>(*newChild))
+            auto isEligibleForStaticPositionLayoutOnly = [&] {
+                // setNeedsLayoutAndPrefWidthsRecalc above already takes care of propagating dirty bits on the ancestor chain, but
+                // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
+                if (newChild->containingBlock() != &parent)
+                    return false;
+                // FIXME: RenderVideo's setNeedsLayout pattern does not play well with this optimization: see webkit.org/b/276253
+                if (is<RenderVideo>(*newChild))
+                    return false;
+                // Since we can't actually run static position only layout for a block container (RenderBlockFlow::layoutBlock() does not have such fine grained layout flow)
+                // floats get rebuilt which assumes (see intruding floats) parent block containers do the same.
+                if (auto* renderBlock = dynamicDowncast<RenderBlock>(parent))
+                    return !renderBlock->containsFloats();
+                return true;
+            };
+            if (isEligibleForStaticPositionLayoutOnly()) {
+                // FIXME: Introduce a dirty bit to bridge the gap between parent and containing block which would
+                // not trigger layout but a simple traversal all the way to the direct parent and also expand it non-direct parent cases.
                 parent.setOutOfFlowChildNeedsStaticPositionLayout();
-            else
+            } else
                 parent.setChildNeedsLayout();
         } else
             parent.setChildNeedsLayout();
@@ -988,7 +999,7 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
 
     // If we have a line box wrapper, delete it.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
-        textRenderer->removeAndDestroyTextBoxes();
+        textRenderer->removeAndDestroyLegacyTextBoxes();
 
     if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && isInternalMove == RenderTreeBuilder::IsInternalMove::No)
         listItemRenderer->updateListMarkerNumbers();

@@ -101,14 +101,13 @@ private:
 
     ResponseCallback m_onResponse;
 
-    FetchIdentifier m_navigationPreloadIdentifier;
+    Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     std::unique_ptr<PreloadResponsePromise> m_preloadResponsePromise;
 };
 
 inline void FetchEvent::setNavigationPreloadIdentifier(FetchIdentifier identifier)
 {
     ASSERT(!m_navigationPreloadIdentifier);
-    ASSERT(identifier);
     m_navigationPreloadIdentifier = identifier;
 }
 

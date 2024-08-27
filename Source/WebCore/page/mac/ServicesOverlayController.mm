@@ -48,9 +48,12 @@
 #import "Settings.h"
 #import "TextIterator.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServicesOverlayController);
 
 ServicesOverlayController::ServicesOverlayController(Page& page)
     : m_page(page)

@@ -64,6 +64,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
@@ -71,6 +72,8 @@
 
 namespace WebCore {
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicy);
 
 static String consoleMessageForViolation(const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, ASCIILiteral prefix, ASCIILiteral subject = "it"_s)
 {
@@ -477,7 +480,7 @@ bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
     return false;
 }
 
-bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber& contextLine, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber& contextLine, const String& nonce, const String& subResourceIntegrity, const StringView& scriptContent, ParserInserted parserInserted) const
 {
     if (!shouldPerformEarlyCSPCheck() || m_policies.isEmpty())
         return true;
@@ -489,9 +492,10 @@ bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, 
         reportViolation(violatedDirective, sourceURL.isEmpty() ? "inline"_s : sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
     };
 
+    auto subResourceIntegrityDigests = parseSubResourceIntegrityIntoDigests(subResourceIntegrity);
     auto contentHashes = generateHashesForContent(scriptContent, m_hashAlgorithmsForInlineScripts);
     auto trimmedNonce = nonce.trim(isASCIIWhitespace);
-    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts, trimmedNonce, contentHashes, sourceURL, parserInserted);
+    return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForNonParserInsertedScripts, trimmedNonce, contentHashes, subResourceIntegrityDigests, sourceURL, parserInserted);
 }
 
 bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element& element, const String& nonce, bool overrideContentSecurityPolicy) const

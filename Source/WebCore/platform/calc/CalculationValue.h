@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "CalculationTree.h"
 #include "Length.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -37,26 +38,25 @@
 
 namespace WebCore {
 
-class CalcExpressionNode;
-
 class CalculationValue : public RefCounted<CalculationValue> {
 public:
-    WEBCORE_EXPORT static Ref<CalculationValue> create(std::unique_ptr<CalcExpressionNode>, ValueRange);
+    WEBCORE_EXPORT static Ref<CalculationValue> create(Calculation::Tree&&);
     WEBCORE_EXPORT ~CalculationValue();
 
-    float evaluate(float maxValue) const;
+    Calculation::NumericValue evaluate(Calculation::NumericValue percentResolutionLength) const;
 
-    bool shouldClampToNonNegative() const { return m_shouldClampToNonNegative; }
-    const CalcExpressionNode& expression() const { return *m_expression; }
+    ValueRange range() const { return m_tree.range; }
+
+    const Calculation::Tree& tree() const { return m_tree; }
+    Calculation::Tree copyTree() const;
+
+    bool operator==(const CalculationValue&) const;
 
 private:
-    CalculationValue(std::unique_ptr<CalcExpressionNode>, ValueRange);
+    CalculationValue(Calculation::Tree&&);
 
-    std::unique_ptr<CalcExpressionNode> m_expression;
-    bool m_shouldClampToNonNegative;
+    Calculation::Tree m_tree;
 };
-
-bool operator==(const CalculationValue&, const CalculationValue&);
 
 TextStream& operator<<(TextStream&, const CalculationValue&);
 

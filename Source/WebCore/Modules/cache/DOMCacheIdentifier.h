@@ -31,6 +31,6 @@
 namespace WebCore {
 
 enum class DOMCacheIdentifierType { };
-using DOMCacheIdentifier = ProcessQualified<AtomicObjectIdentifier<DOMCacheIdentifierType>>;
+using DOMCacheIdentifier = ProcessQualified<LegacyNullableAtomicObjectIdentifier<DOMCacheIdentifierType>>;
 
 }

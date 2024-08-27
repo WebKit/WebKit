@@ -32,6 +32,7 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/SharedMemory.h>
+#include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 
 namespace IPC {
@@ -39,6 +40,7 @@ class SharedBufferReference;
 }
 
 namespace WebCore {
+struct CookieChangeSubscription;
 struct ExceptionData;
 class ResourceLoader;
 }
@@ -112,6 +114,10 @@ private:
     void matchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier, const String&, WebCore::RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
     void retrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) final;
     void retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) final;
+
+    void addCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) final;
+    void removeCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, Vector<WebCore::CookieChangeSubscription>&&, ExceptionOrVoidCallback&&) final;
+    void cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&&) final;
 
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
     void notifyRecordResponseBodyChunk(RetrieveRecordResponseBodyCallbackIdentifier, IPC::SharedBufferReference&&);

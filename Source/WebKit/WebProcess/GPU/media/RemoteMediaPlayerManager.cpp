@@ -238,7 +238,7 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
 
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (RefPtr player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())).get())
+    if (RefPtr player = m_players.get(LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())).get())
         player->didReceiveMessage(connection, decoder);
 }
 

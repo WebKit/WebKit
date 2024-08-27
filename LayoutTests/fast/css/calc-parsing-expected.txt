@@ -207,10 +207,6 @@ element.style["width"] = "calc(sqrt(100px)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
 
-element.style["width"] = "hypot(2px, 40%)"
-PASS element.style['width'] is "999px"
-PASS getComputedStyle(element).getPropertyValue('width') is "999px"
-
 element.style["width"] = "hypot(2px, 3)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
@@ -491,10 +487,6 @@ PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 
 element.style["min-width"] = "calc(sqrt(100px)"
-PASS element.style['min-width'] is "999px"
-PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
-
-element.style["min-width"] = "hypot(2px, 40%)"
 PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 

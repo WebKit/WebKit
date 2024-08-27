@@ -1340,7 +1340,7 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
                                                  GL_STATIC_DRAW));
 
     VertexArrayStateGL *defaultVAOState = mStateManager->getDefaultVAOState();
-    if (!mFeatures.syncVertexArraysToDefault.enabled)
+    if (!mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         ANGLE_GL_TRY(context, mFunctions->genVertexArrays(1, &mVAO));
         mVAOState     = new VertexArrayStateGL(defaultVAOState->attributes.size(),
@@ -1436,7 +1436,7 @@ angle::Result BlitGL::setScratchTextureParameter(const gl::Context *context,
 angle::Result BlitGL::setVAOState(const gl::Context *context)
 {
     mStateManager->bindVertexArray(mVAO, mVAOState);
-    if (mFeatures.syncVertexArraysToDefault.enabled)
+    if (mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         ANGLE_TRY(initializeVAOState(context));
     }
@@ -1462,7 +1462,7 @@ angle::Result BlitGL::initializeVAOState(const gl::Context *context)
     binding.offset           = 0;
     binding.buffer           = mVertexBuffer;
 
-    if (mFeatures.syncVertexArraysToDefault.enabled)
+    if (mFeatures.syncAllVertexArraysToDefault.enabled)
     {
         mStateManager->setDefaultVAOStateDirty();
     }

@@ -130,6 +130,7 @@ class Heap;
     v(numberObjectSpace, cellHeapCellType, NumberObject) \
     v(plainObjectSpace, cellHeapCellType, JSNonFinalObject) \
     v(promiseSpace, cellHeapCellType, JSPromise) \
+    v(iteratorSpace, cellHeapCellType, JSIterator) \
     v(propertyNameEnumeratorSpace, cellHeapCellType, JSPropertyNameEnumerator) \
     v(propertyTableSpace, destructibleCellHeapCellType, PropertyTable) \
     v(regExpSpace, destructibleCellHeapCellType, RegExp) \

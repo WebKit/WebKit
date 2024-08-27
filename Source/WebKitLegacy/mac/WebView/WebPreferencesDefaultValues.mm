@@ -202,12 +202,6 @@ bool defaultPopoverAttributeEnabled()
     return newSDK;
 }
 
-bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
-{
-    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoSearchInputIncrementalAttributeAndSearchEvent);
-    return !newSDK;
-}
-
 #if PLATFORM(MAC)
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()

@@ -28,7 +28,6 @@
 #include <WebCore/NicosiaBackingStore.h>
 #include <WebCore/NicosiaBuffer.h>
 #include <WebCore/NicosiaCompositionLayer.h>
-#include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/TextureMapperLayer.h>
@@ -165,7 +164,7 @@ void removeLayer(Nicosia::CompositionLayer& layer)
             }
 
             if (committed.contentLayer)
-                committed.contentLayer->proxy().invalidate();
+                committed.contentLayer->invalidate();
         });
 
     auto& compositionState = layer.compositionState();
@@ -245,7 +244,7 @@ void CoordinatedGraphicsScene::updateSceneState()
                         [&replacedProxiesToInvalidate](const Nicosia::CompositionLayer::LayerState& committed)
                         {
                             if (committed.contentLayer)
-                                replacedProxiesToInvalidate.add(Ref { committed.contentLayer->proxy() });
+                                replacedProxiesToInvalidate.add(Ref { *committed.contentLayer });
                         });
                 }
             }
@@ -344,8 +343,8 @@ void CoordinatedGraphicsScene::updateSceneState()
 
                         if (layerState.contentLayer) {
                             layersByBacking.contentLayer.append(
-                                { std::ref(layer), std::ref(layerState.contentLayer->proxy()), layerState.delta.contentLayerChanged });
-                            replacedProxiesToInvalidate.remove(Ref { layerState.contentLayer->proxy() });
+                                { std::ref(layer), std::ref(*layerState.contentLayer), layerState.delta.contentLayerChanged });
+                            replacedProxiesToInvalidate.remove(Ref { *layerState.contentLayer });
                         } else if (layerState.imageBacking) {
                             layersByBacking.imageBacking.append(
                                 { std::ref(layer), std::ref(*layerState.imageBacking), layerState.imageBacking->takeUpdate() });

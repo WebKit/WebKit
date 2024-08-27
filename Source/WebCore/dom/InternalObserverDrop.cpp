@@ -54,7 +54,7 @@ public:
 
         CallbackResult<void> handleEvent(Subscriber& subscriber) final
         {
-            auto context = scriptExecutionContext();
+            RefPtr context = scriptExecutionContext();
 
             if (!context) {
                 subscriber.complete();

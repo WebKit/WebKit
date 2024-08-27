@@ -57,8 +57,11 @@
 #include "WebGPUVertexStepMode.h"
 #include "WebGPUXREye.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConvertToBackingContext);
 
 WGPUAddressMode ConvertToBackingContext::convertToBacking(AddressMode addressMode)
 {

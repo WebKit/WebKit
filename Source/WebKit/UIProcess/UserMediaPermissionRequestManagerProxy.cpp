@@ -740,7 +740,7 @@ void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRe
 
     // We use UserMediaRequestIdentifierType of 0 because this does not correspond to a UserMediaPermissionRequest in web process.
     // We create the RequestProxy only to check the media permission for speech.
-    Ref request = UserMediaPermissionRequestProxy::create(*this, ObjectIdentifier<WebCore::UserMediaRequestIdentifierType>(0), frameIdentifier, frameIdentifier, requestingOrigin.isolatedCopy(), topOrigin.isolatedCopy(), Vector<WebCore::CaptureDevice> { device }, { }, { }, WTFMove(completionHandler));
+    Ref request = UserMediaPermissionRequestProxy::create(*this, LegacyNullableObjectIdentifier<WebCore::UserMediaRequestIdentifierType>(0), frameIdentifier, frameIdentifier, requestingOrigin.isolatedCopy(), topOrigin.isolatedCopy(), Vector<WebCore::CaptureDevice> { device }, { }, { }, WTFMove(completionHandler));
 
     // FIXME: Use switch on action.
     auto action = getRequestAction(request.get());

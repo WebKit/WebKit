@@ -30,13 +30,14 @@
 #include "WebGPUPtr.h"
 #include "WebGPUShaderModule.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class ShaderModuleImpl final : public ShaderModule {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShaderModuleImpl);
 public:
     static Ref<ShaderModuleImpl> create(WebGPUPtr<WGPUShaderModule>&& shaderModule, ConvertToBackingContext& convertToBackingContext)
     {

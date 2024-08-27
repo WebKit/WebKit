@@ -109,6 +109,9 @@ WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(Node);
 using namespace HTMLNames;
 
 struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsNode);
+public:
 #if ASSERT_ENABLED
     uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;
@@ -886,7 +889,7 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingS
             return incomingStyle;
         if (isDocumentNode())
             return renderStyle();
-        auto* element = dynamicDowncast<Element>(*this);
+        RefPtr element = dynamicDowncast<Element>(*this);
         if (!element)
             element = parentElementInComposedTree();
         return element ? const_cast<Element&>(*element).computedStyleForEditability() : nullptr;

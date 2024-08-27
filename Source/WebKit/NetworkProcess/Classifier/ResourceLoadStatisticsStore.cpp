@@ -382,12 +382,6 @@ void ResourceLoadStatisticsStore::openITPDatabase()
     m_isNewResourceLoadStatisticsDatabaseFile = openDatabaseAndCreateSchemaIfNecessary() == CreatedNewFile::Yes;
 }
 
-void ResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    ASSERT(!RunLoop::isMain());
-    m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned = value;
-}
-
 bool ResourceLoadStatisticsStore::shouldSkip(const RegistrableDomain& domain) const
 {
     ASSERT(!RunLoop::isMain());
@@ -429,8 +423,8 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTFMove(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue] () mutable {
-        store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
+    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTFMove(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
+        store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(WTFMove(domainsWithDeletedWebsiteData)), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
                     completionHandler();
@@ -459,9 +453,6 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     ASSERT(!RunLoop::isMain());
 
-    if (parameters().isRunningTest && !m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
-        return;
-
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval)
         classifyPrevalentResources();
     
@@ -473,13 +464,6 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         pruneStatisticsIfNeeded();
 
         logTestingEvent("Storage Synced"_s);
-
-        if (!m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
-            return;
-
-        RunLoop::main().dispatch([store = Ref { m_store }] {
-            store->notifyResourceLoadStatisticsProcessed();
-        });
     });
 }
 
@@ -487,8 +471,8 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue, store = Ref { m_store }] () mutable {
-        store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), shouldNotifyPagesWhenDataRecordsWereScanned, [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), workQueue = m_workQueue, store = Ref { m_store }] () mutable {
+        store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
             workQueue->dispatch([weakThis = WTFMove(weakThis), domainsWithWebsiteData = crossThreadCopy(WTFMove(domainsWithWebsiteData)), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
                     callback();

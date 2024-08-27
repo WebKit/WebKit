@@ -43,6 +43,7 @@
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/BackgroundFetchInformation.h>
 #include <WebCore/BackgroundFetchRequest.h>
+#include <WebCore/CookieChangeSubscription.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
@@ -59,6 +60,7 @@
 #include <WebCore/ServiceWorkerRegistrationKey.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerScriptLoader.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -427,6 +429,31 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
         }
         page->focusController().setFocusedFrame(frame.get());
         callback(ServiceWorkerClientData::from(*client));
+    });
+}
+
+void WebSWClientConnection::addCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::AddCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTFMove(callback)](auto&& error) mutable {
+        if (error)
+            return callback(error->toException());
+        callback({ });
+    });
+}
+
+void WebSWClientConnection::removeCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::RemoveCookieChangeSubscriptions { registrationIdentifier, subscriptions }, [callback = WTFMove(callback)](auto&& error) mutable {
+        if (error)
+            return callback(error->toException());
+        callback({ });
+    });
+}
+
+void WebSWClientConnection::cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::CookieChangeSubscriptions { registrationIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {
+        callExceptionOrResultCallback(WTFMove(callback), WTFMove(result));
     });
 }
 

@@ -789,7 +789,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (m_parsingFragment && uri.isNull()) {
         if (!prefix.isNull())
             uri = m_prefixToNamespaceMap.get(prefix);
-        else if (is<SVGElement>(m_currentNode) || localName == SVGNames::svgTag->localName())
+        else if (is<SVGElement>(m_currentNode.get()) || localName == SVGNames::svgTag->localName())
             uri = SVGNames::svgNamespaceURI;
         else
             uri = m_defaultNamespaceURI;
@@ -873,7 +873,7 @@ void XMLDocumentParser::endElementNs()
     if (!updateLeafTextNode())
         return;
 
-    RefPtr<ContainerNode> node = m_currentNode;
+    RefPtr node = m_currentNode.get();
     auto* element = dynamicDowncast<Element>(*node);
 
     if (element)

@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,6 +106,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSGeneratorType)
     CASE(JSAsyncGeneratorType)
     CASE(JSArrayIteratorType)
+    CASE(JSIteratorType)
     CASE(JSMapIteratorType)
     CASE(JSSetIteratorType)
     CASE(JSStringIteratorType)

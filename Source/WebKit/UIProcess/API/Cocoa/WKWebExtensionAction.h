@@ -44,7 +44,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionAction has changed properties. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-WK_EXTERN NSNotificationName const WKWebExtensionActionPropertiesDidChangeNotification NS_SWIFT_NAME(WKWebExtensionAction.propertiesDidChangeNotification);
+WK_EXTERN NSNotificationName const WKWebExtensionActionPropertiesDidChangeNotification NS_SWIFT_NAME(WKWebExtensionAction.propertiesDidChangeNotification) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract A ``WKWebExtensionAction`` object encapsulates the properties for an individual web extension action.

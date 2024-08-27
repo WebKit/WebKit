@@ -34,11 +34,12 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/SourceProvider.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class WebAssemblyCachedScriptSourceProvider final : public JSC::BaseWebAssemblySourceProvider, public CachedResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebAssemblyCachedScriptSourceProvider);
 public:
     static Ref<WebAssemblyCachedScriptSourceProvider> create(CachedScript* cachedScript, Ref<CachedScriptFetcher>&& scriptFetcher)
     {

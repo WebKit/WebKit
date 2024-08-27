@@ -32,6 +32,7 @@
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"

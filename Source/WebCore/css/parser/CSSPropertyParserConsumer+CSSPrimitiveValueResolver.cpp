@@ -78,7 +78,7 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(NoneRaw, const 
 RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(SymbolRaw value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions)
 {
     if (auto variable = symbolTable.get(value.value))
-        return CSSPrimitiveValue::create(variable->value, variable->type);
+        return CSSPrimitiveValue::create(variable->value, variable->unit);
 
     // We should only get here if the symbol was previously looked up in the symbol table.
     ASSERT_NOT_REACHED();

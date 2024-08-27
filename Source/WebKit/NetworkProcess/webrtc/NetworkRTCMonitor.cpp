@@ -406,7 +406,7 @@ void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork
     auto networkList = copyToVector(m_networkMap.values());
     std::sort(networkList.begin(), networkList.end(), sortNetworks);
 
-    int preference = std::max(127ul, networkList.size());
+    int preference = std::max(127zu, networkList.size());
     for (auto& network : networkList)
         network.preference = preference--;
 

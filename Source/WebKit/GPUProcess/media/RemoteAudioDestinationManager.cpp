@@ -45,6 +45,7 @@
 #endif
 
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection->connection(), completion)
 
 namespace WebKit {
 
@@ -223,7 +224,7 @@ void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestination
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return completionHandler(false);
-    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a startAudioDestination() message from a webpage in Lockdown mode.");
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false));
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {
@@ -238,7 +239,7 @@ void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationI
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return completionHandler(false);
-    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a stopAudioDestination() message from a webpage in Lockdown mode.");
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false));
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {

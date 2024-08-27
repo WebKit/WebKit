@@ -4980,6 +4980,11 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (!m_catchBlock && m_finallyBlock)
         finallyTryData = tryData;
 
+    unsigned localScopeCountBeforeTryBlock = generator.localScopeCount();
+    auto scopeRegisterMayBeClobbered = [&]() {
+        return generator.localScopeCount() > localScopeCountBeforeTryBlock;
+    };
+
     if (tryCatchDst == generator.ignoredResult())
         generator.emitNodeInIgnoreResultPosition(m_tryBlock);
     else
@@ -5001,7 +5006,8 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         RefPtr<RegisterID> thrownValueRegister = generator.newTemporary();
         RegisterID* completionTypeRegister = m_finallyBlock ? finallyContext->completionTypeRegister() : nullptr;
         generator.emitOutOfLineCatchHandler(thrownValueRegister.get(), completionTypeRegister, tryData);
-        generator.restoreScopeRegister();
+        if (scopeRegisterMayBeClobbered())
+            generator.restoreScopeRegister();
 
         if (m_finallyBlock) {
             // If the catch block throws an exception and we have a finally block, then the finally
@@ -5047,7 +5053,8 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         // Entry to the finally block for CompletionTypes other than Throw.
         generator.emitLabel(*finallyLabel);
-        generator.restoreScopeRegister();
+        if (scopeRegisterMayBeClobbered())
+            generator.restoreScopeRegister();
 
         int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() + 1 : m_tryBlock->endOffset() + 1;
         

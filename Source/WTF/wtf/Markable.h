@@ -131,15 +131,19 @@ public:
 
     void reset() { m_value = Traits::emptyValue(); }
 
-    constexpr const T& value() const& { return m_value; }
-    constexpr T& value() & { return m_value; }
-    constexpr T&& value() && { return WTFMove(m_value); }
+    constexpr const T& value() const& { RELEASE_ASSERT(bool(*this)); return m_value; }
+    constexpr T& value() & { RELEASE_ASSERT(bool(*this)); return m_value; }
+    constexpr T&& value() && { RELEASE_ASSERT(bool(*this)); return WTFMove(m_value); }
 
-    constexpr const T* operator->() const { return std::addressof(m_value); }
-    constexpr T* operator->() { return std::addressof(m_value); }
+    constexpr const T& unsafeValue() const& { return m_value; }
+    constexpr T& unsafeValue() & { return m_value; }
+    constexpr T&& unsafeValue() && { return WTFMove(m_value); }
 
-    constexpr const T& operator*() const& { return m_value; }
-    constexpr T& operator*() & { return m_value; }
+    constexpr const T* operator->() const { RELEASE_ASSERT(bool(*this)); return std::addressof(m_value); }
+    constexpr T* operator->() { RELEASE_ASSERT(bool(*this)); return std::addressof(m_value); }
+
+    constexpr const T& operator*() const& { RELEASE_ASSERT(bool(*this)); return m_value; }
+    constexpr T& operator*() & { RELEASE_ASSERT(bool(*this)); return m_value; }
 
     template <class U> constexpr T value_or(U&& fallback) const
     {

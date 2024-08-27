@@ -28,8 +28,10 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "BitmapTexture.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
+#include "TextureMapper.h"
 
 namespace WebCore {
 

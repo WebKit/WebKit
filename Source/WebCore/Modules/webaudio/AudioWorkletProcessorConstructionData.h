@@ -32,12 +32,13 @@
 
 #include "MessagePort.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class AudioWorkletProcessorConstructionData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioWorkletProcessorConstructionData);
 public:
     AudioWorkletProcessorConstructionData(String&& name, Ref<MessagePort>&& port)
         : m_name(WTFMove(name))

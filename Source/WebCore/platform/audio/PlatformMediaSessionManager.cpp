@@ -39,10 +39,6 @@ namespace WebCore {
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
-#if ENABLE(WEBM_FORMAT_READER)
-bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
-#endif
-
 #if ENABLE(VORBIS)
 bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 #endif
@@ -708,24 +704,6 @@ bool PlatformMediaSessionManager::shouldDeactivateAudioSession()
 void PlatformMediaSessionManager::setShouldDeactivateAudioSession(bool deactivate)
 {
     deactivateAudioSession() = deactivate;
-}
-
-bool PlatformMediaSessionManager::webMFormatReaderEnabled()
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    return m_webMFormatReaderEnabled;
-#else
-    return false;
-#endif
-}
-
-void PlatformMediaSessionManager::setWebMFormatReaderEnabled(bool enabled)
-{
-#if ENABLE(WEBM_FORMAT_READER)
-    m_webMFormatReaderEnabled = enabled;
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 bool PlatformMediaSessionManager::vorbisDecoderEnabled()

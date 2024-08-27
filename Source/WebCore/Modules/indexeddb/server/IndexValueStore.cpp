@@ -30,10 +30,13 @@
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryIndex.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueStore);
 
 IndexValueStore::IndexValueStore(bool unique)
     : m_unique(unique)

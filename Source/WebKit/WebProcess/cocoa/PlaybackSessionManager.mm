@@ -292,7 +292,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     addClientForContext(m_controlsManagerContextId);
 
     m_page->videoControlsManagerDidChange();
-    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId));
+    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId, mediaElement.isVideo()));
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()

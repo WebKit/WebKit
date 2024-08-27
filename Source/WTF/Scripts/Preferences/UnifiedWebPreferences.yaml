@@ -161,10 +161,10 @@ AccentColorEnabled:
       "PLATFORM(COCOA)" : true
       default: false
     WebKit:
-      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      "PLATFORM(COCOA) || USE(THEME_ADWAITA)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      "PLATFORM(COCOA) || USE(THEME_ADWAITA)": true
       default: false
 
 AccessHandleEnabled:
@@ -1317,7 +1317,7 @@ CSSScrollbarColorEnabled:
 
 CSSScrollbarGutterEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS scrollbar-gutter property"
   humanReadableDescription: "Enable scrollbar-gutter CSS property"
@@ -1325,9 +1325,9 @@ CSSScrollbarGutterEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScrollbarWidthEnabled:
   type: bool
@@ -1926,12 +1926,12 @@ CookieStoreAPIExtendedAttributesEnabled:
     WebCore:
       default: false
 
-CookieStoreAPIServiceWorkerEnabled:
+CookieStoreManagerEnabled:
   type: bool
   category: dom
   status: testable
-  humanReadableName: "Cookie Store API for Service Workers"
-  humanReadableDescription: "Enable Cookie Store API for Service Workers"
+  humanReadableName: "Cookie Store API CookieStoreManager"
+  humanReadableDescription: "Enable Cookie Store API CookieStoreManager which controls cookie change subscriptions for Service Workers"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1939,6 +1939,7 @@ CookieStoreAPIServiceWorkerEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 CoreMathMLEnabled:
   type: bool
@@ -1997,20 +1998,6 @@ CrossOriginOpenerPolicyEnabled:
       default: true
     WebCore:
       default: false
-
-CryptoKitEnabled:
-  type: bool
-  status: internal
-  category: security
-  humanReadableName: "Enable CryptoKit for supported Algorithms."
-  humanReadableDescription: "Enable CryptoKit for supported Algorithms."
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 CursiveFontFamily:
   type: String
@@ -6056,7 +6043,7 @@ ScrollToTextFragmentFeatureDetectionEnabled:
 
 ScrollToTextFragmentGenerationEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: dom
   humanReadableName: "Scroll To Text Fragment Generation"
   humanReadableDescription: "Enable Scroll To Text Fragment Generation Menu"
@@ -6064,9 +6051,9 @@ ScrollToTextFragmentGenerationEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ScrollToTextFragmentIndicatorEnabled:
   type: bool
@@ -6106,20 +6093,6 @@ ScrollingPerformanceTestingEnabled:
       default: false
     WebKit:
       default: false
-    WebCore:
-      default: false
-
-SearchInputIncrementalAttributeAndSearchEventEnabled:
-  type: bool
-  status: embedder
-  category: html
-  humanReadableName: "Search control incremental attribute and search event"
-  humanReadableDescription: "Enable search control incremental attribute and search event support"
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
-    WebKit:
-      default: WebKit::defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
     WebCore:
       default: false
 
@@ -6898,7 +6871,7 @@ TextAnimationsEnabled:
   status: internal
   humanReadableName: "Text Animations"
   humanReadableDescription: "Text Animations"
-  condition: ENABLE(WRITING_TOOLS_UI)
+  condition: ENABLE(WRITING_TOOLS)
   defaultValue:
     WebKitLegacy:
       default: true
@@ -7555,16 +7528,16 @@ ViewGestureDebuggingEnabled:
 ViewTransitionClassesEnabled:
   type: bool
   category: animation
-  status: testable
+  status: stable
   humanReadableName: "View Transition Classes"
   humanReadableDescription: "Support specifying classes for view transitions"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ViewTransitionTypesEnabled:
   type: bool
@@ -8031,15 +8004,6 @@ WebLocksAPIEnabled:
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
-WebMFormatReaderEnabled:
-  type: bool
-  status: embedder
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(WEBM_FORMAT_READER)
-  defaultValue:
-    WebKit:
-      default: true
-
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebMParserEnabled:
   type: bool
@@ -8109,10 +8073,12 @@ WebRTCEncodedTransformEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(LIBWEBRTC) && (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE))": WebKit::defaultPeerConnectionEnabledAvailable()
+      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
+      "USE(GSTREAMER_WEBRTC)": true
       default: false
     WebCore:
       "USE(LIBWEBRTC)": true
+      "USE(GSTREAMER_WEBRTC)": true
       default: false
   disableInLockdownMode: true
 
@@ -8437,6 +8403,8 @@ WebXRWebGPUBindingsEnabled:
     WebCore:
       "PLATFORM(VISION) && ENABLE(WEBXR_WEBGPU_BY_DEFAULT)": true
       default: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 WheelEventGesturesBecomeNonBlocking:
   type: bool

@@ -47,6 +47,7 @@
 #include "VoidCallback.h"
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -54,6 +55,8 @@ namespace WebCore {
 using namespace Inspector;
 
 using ExecuteSQLCallback = Inspector::DatabaseBackendDispatcherHandler::ExecuteSQLCallback;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDatabaseAgent);
 
 namespace {
 

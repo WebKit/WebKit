@@ -195,6 +195,8 @@ void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
     AudioSession::sharedSession().endInterruptionForTesting();
 }
 
-}
+} // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif

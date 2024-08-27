@@ -33,8 +33,11 @@
 #include "WebGPUTextureViewDescriptor.h"
 #include "WebGPUTextureViewImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureImpl);
 
 TextureImpl::TextureImpl(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     : m_format(format)

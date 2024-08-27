@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct SharedWorkerObjectIdentifierType;
-using SharedWorkerObjectIdentifier = ProcessQualified<ObjectIdentifier<SharedWorkerObjectIdentifierType>>;
+using SharedWorkerObjectIdentifier = ProcessQualified<LegacyNullableObjectIdentifier<SharedWorkerObjectIdentifierType>>;
 
 } // namespace WebCore

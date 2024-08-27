@@ -283,12 +283,6 @@
     return nil;
 }
 
-- (NSImage *)windowSnapshotInRect:(CGRect)rect
-{
-    [self doesNotRecognizeSelector:_cmd];
-    return nil;
-}
-
 - (IBAction)toggleEditable:(id)sender
 {
     self.editable = !self.isEditable;
@@ -312,6 +306,12 @@
 - (BOOL)mainThreadStallsEnabled
 {
     return !!_mainThreadStallTimer;
+}
+
+- (NSImage *)windowSnapshotInRect:(CGRect)rect
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
 }
 
 #pragma mark -

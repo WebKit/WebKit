@@ -1,3 +1,5 @@
 
-FAIL cookiechange dispatched with cookie change that matches subscription to cookiechange event handler registered with addEventListener promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT cookiechange dispatched with cookie change that matches subscription to cookiechange event handler registered with addEventListener Test timed out
 

@@ -31,8 +31,11 @@
 #include "MediaSession.h"
 #include "Navigator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorMediaSession);
 
 NavigatorMediaSession::NavigatorMediaSession(Navigator& navigator)
     : m_navigator(navigator)

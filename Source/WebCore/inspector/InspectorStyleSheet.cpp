@@ -69,6 +69,7 @@
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/NotFound.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -215,7 +216,7 @@ static std::optional<Inspector::Protocol::CSS::Grouping::Type> protocolGroupingT
 }
 
 class ParsedStyleSheet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ParsedStyleSheet);
 public:
     ParsedStyleSheet();
 

@@ -33,6 +33,7 @@
 #include "SharedBuffer.h"
 #include <wtf/Lock.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -56,7 +57,7 @@ struct RTCDataChannelInit;
 class ScriptExecutionContext;
 
 class LibWebRTCDataChannelHandler final : public RTCDataChannelHandler, private webrtc::DataChannelObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCDataChannelHandler);
 public:
     explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
     ~LibWebRTCDataChannelHandler();

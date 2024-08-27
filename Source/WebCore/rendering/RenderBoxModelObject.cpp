@@ -29,6 +29,7 @@
 #include "BitmapImage.h"
 #include "BorderEdge.h"
 #include "BorderPainter.h"
+#include "BorderShape.h"
 #include "CachedImage.h"
 #include "ColorBlending.h"
 #include "Document.h"
@@ -867,14 +868,19 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
-RoundedRect RenderBoxModelObject::roundedContentBoxRect(const LayoutRect& borderBoxRect, bool includeLeftEdge, bool includeRightEdge) const
+BorderShape RenderBoxModelObject::borderShapeForContentClipping(const LayoutRect& borderBoxRect, bool includeLeftEdge, bool includeRightEdge) const
 {
     auto borderWidths = this->borderWidths();
     auto padding = this->padding();
-    return style().getRoundedInnerBorderFor(borderBoxRect,
-        borderWidths.top() + padding.top(), borderWidths.bottom() + padding.bottom(),
-        borderWidths.left() + padding.left(), borderWidths.right() + padding.right(),
-        includeLeftEdge, includeRightEdge);
+
+    auto contentBoxInsets = RectEdges<LayoutUnit> {
+        borderWidths.top() + padding.top(),
+        borderWidths.right() + padding.right(),
+        borderWidths.bottom() + padding.bottom(),
+        borderWidths.left() + padding.left(),
+    };
+
+    return BorderShape::shapeForBorderRect(style(), borderBoxRect, contentBoxInsets, includeLeftEdge, includeRightEdge);
 }
 
 LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const

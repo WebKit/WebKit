@@ -40,6 +40,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
@@ -54,6 +55,8 @@ static constexpr Seconds minIntervalForRepeatingTimers { 1_ms };
 static constexpr int maxTimerNestingLevel = 10;
 static constexpr int maxTimerNestingLevelForOneShotTimers = 10;
 static constexpr int maxTimerNestingLevelForRepeatingTimers = 5;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMTimer);
 
 class DOMTimerFireState {
 public:

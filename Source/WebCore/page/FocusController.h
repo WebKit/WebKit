@@ -33,6 +33,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ class TreeScope;
 struct FocusCandidate;
 
 class FocusController final : public CanMakeCheckedPtr<FocusController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FocusController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FocusController);
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);

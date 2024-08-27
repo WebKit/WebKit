@@ -40,8 +40,6 @@
     </font-face>
   </defs>
   <g id="test-body-content" font-size="18">
-    <rect width="100" height="100" fill="blue" />
-    <rect width="100" height="100" requiredFeatures="" />
     <rect y="120" width="100" height="100" fill="blue" />
     <rect y="120" width="100" height="100" requiredExtensions="" />
     <rect y="240" width="100" height="100" fill="blue" />

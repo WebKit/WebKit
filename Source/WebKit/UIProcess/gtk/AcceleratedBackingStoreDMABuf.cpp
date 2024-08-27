@@ -30,6 +30,7 @@
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "DMABufRendererBufferMode.h"
 #include "DRMDevice.h"
+#include "Display.h"
 #include "LayerTreeContext.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -44,9 +45,12 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if USE(LIBDRM)
+#include <drm_fourcc.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/DRMDeviceManager.h>
-#include <drm_fourcc.h>
 #include <gbm.h>
 
 static constexpr uint64_t s_dmabufInvalidModifier = DRM_FORMAT_MOD_INVALID;
@@ -83,9 +87,11 @@ OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBuffe
         if (forceSHM && strcmp(forceSHM, "0"))
             return;
 
-        const auto& eglExtensions = WebCore::PlatformDisplay::sharedDisplay().eglExtensions();
-        if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
-            mode.add(DMABufRendererBufferMode::Hardware);
+        if (auto* glDisplay = Display::singleton().glDisplay()) {
+            const auto& eglExtensions = glDisplay->extensions();
+            if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
+                mode.add(DMABufRendererBufferMode::Hardware);
+        }
     });
     return mode;
 }
@@ -101,13 +107,13 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
     if (!mode.contains(DMABufRendererBufferMode::Hardware))
         return { };
 
-    auto& display = WebCore::PlatformDisplay::sharedDisplay();
+    auto& display = Display::singleton();
     const char* formatString = getenv("WEBKIT_DMABUF_RENDERER_BUFFER_FORMAT");
     if (formatString && *formatString) {
         auto tokens = String::fromUTF8(formatString).split(':');
         if (!tokens.isEmpty() && tokens[0].length() >= 2 && tokens[0].length() <= 4) {
             DMABufRendererBufferFormat format;
-            format.usage = display.gtkEGLDisplay() ? DMABufRendererBufferFormat::Usage::Rendering : DMABufRendererBufferFormat::Usage::Mapping;
+            format.usage = display.glDisplayIsSharedWithGtk() ? DMABufRendererBufferFormat::Usage::Rendering : DMABufRendererBufferFormat::Usage::Mapping;
             format.drmDevice = drmRenderNodeDevice().utf8();
             uint32_t fourcc = fourcc_code(tokens[0][0], tokens[0][1], tokens[0].length() > 2 ? tokens[0][2] : ' ', tokens[0].length() > 3 ? tokens[0][3] : ' ');
             char* endptr = nullptr;
@@ -121,7 +127,7 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
         WTFLogAlways("Invalid format %s set in WEBKIT_DMABUF_RENDERER_BUFFER_FORMAT, ignoring...", formatString);
     }
 
-    if (!display.gtkEGLDisplay()) {
+    if (!display.glDisplayIsSharedWithGtk()) {
         DMABufRendererBufferFormat format;
         format.usage = DMABufRendererBufferFormat::Usage::Mapping;
         format.drmDevice = drmRenderNodeDevice().utf8();
@@ -130,10 +136,12 @@ Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBuffe
         return { WTFMove(format) };
     }
 
+    RELEASE_ASSERT(display.glDisplay());
+
     DMABufRendererBufferFormat format;
     format.usage = DMABufRendererBufferFormat::Usage::Rendering;
     format.drmDevice = drmRenderNodeDevice().utf8();
-    format.formats = display.dmabufFormats().map([](const auto& format) -> DMABufRendererBufferFormat::Format {
+    format.formats = display.glDisplay()->dmabufFormats().map([](const auto& format) -> DMABufRendererBufferFormat::Format {
         return { format.fourcc, format.modifiers };
     });
     return { WTFMove(format) };
@@ -297,7 +305,10 @@ void AcceleratedBackingStoreDMABuf::BufferDMABuf::release()
 
 RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::BufferEGLImage::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const WebCore::IntSize& size, DMABufRendererBufferFormat::Usage usage, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
 {
-    auto& display = WebCore::PlatformDisplay::sharedDisplay();
+    auto* glDisplay = Display::singleton().glDisplay();
+    if (!glDisplay)
+        return nullptr;
+
     Vector<EGLAttrib> attributes = {
         EGL_WIDTH, size.width(),
         EGL_HEIGHT, size.height(),
@@ -311,7 +322,7 @@ RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::Buf
         EGL_DMA_BUF_PLANE##planeIndex##_PITCH_EXT, static_cast<EGLAttrib>(strides[planeIndex]) \
     }; \
     attributes.append(std::span<const EGLAttrib> { planeAttributes }); \
-    if (modifier != s_dmabufInvalidModifier && display.eglExtensions().EXT_image_dma_buf_import_modifiers) { \
+    if (modifier != s_dmabufInvalidModifier && glDisplay->extensions().EXT_image_dma_buf_import_modifiers) { \
         std::array<EGLAttrib, 4> modifierAttributes { \
             EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32), \
             EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff) \
@@ -334,7 +345,7 @@ RefPtr<AcceleratedBackingStoreDMABuf::Buffer> AcceleratedBackingStoreDMABuf::Buf
 
     attributes.append(EGL_NONE);
 
-    auto* image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
+    auto* image = glDisplay->createImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
     if (!image) {
         WTFLogAlways("Failed to create EGL image from DMABuf of size %dx%d", size.width(), size.height());
         return nullptr;
@@ -354,7 +365,9 @@ AcceleratedBackingStoreDMABuf::BufferEGLImage::BufferEGLImage(WebPageProxy& webP
 
 AcceleratedBackingStoreDMABuf::BufferEGLImage::~BufferEGLImage()
 {
-    WebCore::PlatformDisplay::sharedDisplay().destroyEGLImage(m_image);
+    if (auto* glDisplay = Display::singleton().glDisplay())
+        glDisplay->destroyImage(m_image);
+
 #if !USE(GTK4)
     if (m_textureID)
         glDeleteTextures(1, &m_textureID);
@@ -540,7 +553,7 @@ void AcceleratedBackingStoreDMABuf::BufferSHM::release()
 void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, DMABufRendererBufferFormat::Usage usage)
 {
 #if USE(GBM)
-    if (!WebCore::PlatformDisplay::sharedDisplay().gtkEGLDisplay()) {
+    if (!Display::singleton().glDisplayIsSharedWithGtk()) {
         ASSERT(fds.size() == 1 && strides.size() == 1);
         if (auto buffer = BufferGBM::create(m_webPage, id, m_surfaceID, size, usage, format, WTFMove(fds[0]), strides[0]))
             m_buffers.add(id, WTFMove(buffer));
@@ -643,45 +656,45 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
         m_webPage.legacyMainFrameProcess().addMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID, *this);
 }
 
-bool AcceleratedBackingStoreDMABuf::prepareForRendering()
+bool AcceleratedBackingStoreDMABuf::swapBuffersIfNeeded()
 {
-    if (m_pendingBuffer && !m_fenceMonitor.hasFileDescriptor()) {
-        if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
-            ensureGLContext();
-            gdk_gl_context_make_current(m_gdkGLContext.get());
-        }
-        m_pendingBuffer->didUpdateContents(m_committedBuffer.get(), m_pendingDamageRegion);
-        m_pendingDamageRegion = { };
+    if (!m_pendingBuffer || m_fenceMonitor.hasFileDescriptor())
+        return false;
 
-        if (m_committedBuffer)
-            m_committedBuffer->release();
-
-        m_committedBuffer = WTFMove(m_pendingBuffer);
+    if (m_pendingBuffer->type() == Buffer::Type::EglImage) {
+        ensureGLContext();
+        gdk_gl_context_make_current(m_gdkGLContext.get());
     }
+    m_pendingBuffer->didUpdateContents(m_committedBuffer.get(), m_pendingDamageRegion);
+    m_pendingDamageRegion = { };
 
-    return !!m_committedBuffer;
+    if (m_committedBuffer)
+        m_committedBuffer->release();
+
+    m_committedBuffer = WTFMove(m_pendingBuffer);
+    return true;
 }
 
 #if USE(GTK4)
 void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 {
-    bool framePending = !!m_pendingBuffer;
-    if (!prepareForRendering())
+    bool didSwapBuffers = swapBuffersIfNeeded();
+    if (!m_committedBuffer)
         return;
 
     m_committedBuffer->snapshot(gtkSnapshot);
-    if (framePending)
+    if (didSwapBuffers)
         frameDone();
 }
 #else
 bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& clipRect)
 {
-    bool framePending = !!m_pendingBuffer;
-    if (!prepareForRendering())
+    bool didSwapBuffers = swapBuffersIfNeeded();
+    if (!m_committedBuffer)
         return false;
 
     m_committedBuffer->paint(cr, clipRect);
-    if (framePending)
+    if (didSwapBuffers)
         frameDone();
 
     return true;

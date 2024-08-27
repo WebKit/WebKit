@@ -30,6 +30,7 @@
 #include "ScrollingStateNode.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
  
 namespace WebCore {
 
@@ -42,7 +43,7 @@ class ScrollingStateFrameScrollingNode;
 // the scrolling thread, avoiding locking. 
 
 class ScrollingStateTree final : public CanMakeCheckedPtr<ScrollingStateTree> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingStateTree);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollingStateTree);
     friend class ScrollingStateNode;
 public:

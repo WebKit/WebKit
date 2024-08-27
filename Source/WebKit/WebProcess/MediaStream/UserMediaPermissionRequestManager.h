@@ -69,6 +69,7 @@ public:
 
     WebCore::UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(WebCore::UserMediaClient::DeviceChangeObserverToken);
+    void updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
 
     void captureDevicesChanged();
 

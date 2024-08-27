@@ -47,7 +47,6 @@ inline bool operator==(const UniqueRef<StyleColorLayers>& a, const UniqueRef<Sty
     return a.get() == b.get();
 }
 
-std::optional<Color> resolveAbsoluteComponents(const StyleColorLayers&);
 Color resolveColor(const StyleColorLayers&, const Color& currentColor);
 
 bool containsNonAbsoluteColor(const StyleColorLayers&);

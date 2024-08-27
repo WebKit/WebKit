@@ -35,7 +35,6 @@
 #include "TransformFunctions.h"
 
 namespace WebCore {
-
 namespace Style {
 
 static FilterOperation::Type filterOperationForType(CSSValueID type)
@@ -181,7 +180,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             int y = item->y->computeLength<int>(cssToLengthConversionData);
             IntPoint location(x, y);
             int blur = item->blur ? item->blur->computeLength<int>(cssToLengthConversionData) : 0;
-            auto color = item->color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, *item->color) : style.color();
+            auto color = item->color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, cssToLengthConversionData, *item->color) : style.color();
 
             operations.append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;
@@ -198,5 +197,4 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
 }
 
 } // namespace Style
-
 } // namespace WebCore

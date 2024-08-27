@@ -66,7 +66,14 @@ TEST_F(SequenceLockedTest, Works)
         thread->waitForCompletion();
     });
     unsigned maxValue = 0;
-    for (int i = 0; i < 100000; ++i) {
+
+#ifndef NDEBUG
+    constexpr int iterations = 100000;
+#else
+    constexpr int iterations = 1000;
+#endif
+
+    for (int i = 0; i < iterations; ++i) {
         auto t = tester.load();
         EXPECT_EQ(t.a, t.b);
         EXPECT_EQ(t.b, t.c);

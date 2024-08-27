@@ -64,7 +64,7 @@ private:
     void visitField(DateTimeFormat::FieldType, int);
     void visitLiteral(String&&);
 
-    DateTimeEditElement& m_editElement;
+    Ref<DateTimeEditElement> m_editElement;
     const DateTimeEditElement::LayoutParameters& m_parameters;
 };
 
@@ -76,47 +76,47 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& element, const Dat
 
 bool DateTimeEditBuilder::build(const String& formatString)
 {
-    m_editElement.resetFields();
+    m_editElement->resetFields();
     return DateTimeFormat::parse(formatString, *this);
 }
 
 void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int count)
 {
-    Document& document = m_editElement.document();
+    Document& document = m_editElement->document();
 
     switch (fieldType) {
     case DateTimeFormat::FieldTypeDayOfMonth: {
-        m_editElement.addField(DateTimeDayFieldElement::create(document, m_editElement));
+        m_editElement->addField(DateTimeDayFieldElement::create(document, m_editElement));
         return;
     }
 
     case DateTimeFormat::FieldTypeFractionalSecond: {
-        m_editElement.addField(DateTimeMillisecondFieldElement::create(document, m_editElement));
+        m_editElement->addField(DateTimeMillisecondFieldElement::create(document, m_editElement));
         return;
     }
 
     case DateTimeFormat::FieldTypeHour11: {
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 11));
+        m_editElement->addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 11));
         return;
     }
 
     case DateTimeFormat::FieldTypeHour12: {
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 12));
+        m_editElement->addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 12));
         return;
     }
 
     case DateTimeFormat::FieldTypeHour23: {
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 23));
+        m_editElement->addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 23));
         return;
     }
 
     case DateTimeFormat::FieldTypeHour24: {
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 24));
+        m_editElement->addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 24));
         return;
     }
 
     case DateTimeFormat::FieldTypeMinute: {
-        m_editElement.addField(DateTimeMinuteFieldElement::create(document, m_editElement));
+        m_editElement->addField(DateTimeMinuteFieldElement::create(document, m_editElement));
         return;
     }
 
@@ -130,27 +130,27 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         case countForNarrowMonth:
         case countForAbbreviatedMonth: {
             auto field = DateTimeSymbolicMonthFieldElement::create(document, m_editElement, fieldType == DateTimeFormat::FieldTypeMonth ? m_parameters.locale.shortMonthLabels() : m_parameters.locale.shortStandAloneMonthLabels());
-            m_editElement.addField(field);
+            m_editElement->addField(field);
             return;
         }
         case countForFullMonth: {
             auto field = DateTimeSymbolicMonthFieldElement::create(document, m_editElement, fieldType == DateTimeFormat::FieldTypeMonth ? m_parameters.locale.monthLabels() : m_parameters.locale.standAloneMonthLabels());
-            m_editElement.addField(field);
+            m_editElement->addField(field);
             return;
         }
         default:
-            m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement));
+            m_editElement->addField(DateTimeMonthFieldElement::create(document, m_editElement));
             return;
         }
     }
 
     case DateTimeFormat::FieldTypePeriod: {
-        m_editElement.addField(DateTimeMeridiemFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels()));
+        m_editElement->addField(DateTimeMeridiemFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels()));
         return;
     }
 
     case DateTimeFormat::FieldTypeSecond: {
-        m_editElement.addField(DateTimeSecondFieldElement::create(document, m_editElement));
+        m_editElement->addField(DateTimeSecondFieldElement::create(document, m_editElement));
 
         if (m_parameters.shouldHaveMillisecondField) {
             visitLiteral(m_parameters.locale.localizedDecimalSeparator());
@@ -160,7 +160,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeYear: {
-        m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement));
+        m_editElement->addField(DateTimeYearFieldElement::create(document, m_editElement));
         return;
     }
 
@@ -173,7 +173,7 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
 {
     ASSERT(text.length());
 
-    auto element = HTMLDivElement::create(m_editElement.document());
+    auto element = HTMLDivElement::create(m_editElement->document());
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditText());
 
@@ -187,8 +187,8 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
     if (text.endsWith(' '))
         element->setInlineStyleProperty(CSSPropertyMarginInlineEnd, -1, CSSUnitType::CSS_PX);
 
-    element->appendChild(Text::create(m_editElement.document(), WTFMove(text)));
-    m_editElement.fieldsWrapperElement().appendChild(element);
+    element->appendChild(Text::create(m_editElement->document(), WTFMove(text)));
+    m_editElement->fieldsWrapperElement().appendChild(element);
 }
 
 DateTimeEditElementEditControlOwner::~DateTimeEditElementEditControlOwner() = default;

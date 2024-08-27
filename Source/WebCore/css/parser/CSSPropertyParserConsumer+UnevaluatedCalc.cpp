@@ -41,34 +41,74 @@ void unevaluatedCalcSerialization(StringBuilder& builder, const Ref<CSSCalcValue
     builder.append(calc->customCSSText());
 }
 
-AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+bool unevaluatedCalcRequiresConversionData(const Ref<CSSCalcValue>& calc)
 {
-    return { calc.calc->primitiveType(), calc.calc->doubleValue(symbolTable) };
+    return calc->requiresConversionData();
 }
 
-NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+Ref<CSSCalcValue> unevaluatedCalcSimplify(const Ref<CSSCalcValue>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return { calc.calc->doubleValue(symbolTable) };
+    return calc->copySimplified(conversionData, symbolTable);
 }
 
-PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return { calc.calc->doubleValue(symbolTable) };
+    return calc.calc->angleValue(conversionData, symbolTable);
 }
 
-LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+AngleRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<AngleRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return { calc.calc->primitiveType(), calc.calc->doubleValue(symbolTable) };
+    return calc.calc->angleValueDeprecated(symbolTable);
 }
 
-ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return { calc.calc->primitiveType(), calc.calc->doubleValue(symbolTable) };
+    return calc.calc->numberValue(conversionData, symbolTable);
 }
 
-TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+NumberRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<NumberRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return { calc.calc->primitiveType(), calc.calc->doubleValue(symbolTable) };
+    return calc.calc->numberValueDeprecated(symbolTable);
+}
+
+PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->percentValue(conversionData, symbolTable);
+}
+
+PercentRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->percentValueDeprecated(symbolTable);
+}
+
+LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->lengthValue(conversionData, symbolTable);
+}
+
+LengthRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<LengthRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->lengthValueDeprecated(symbolTable);
+}
+
+ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->resolutionValue(conversionData, symbolTable);
+}
+
+ResolutionRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<ResolutionRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->resolutionValueDeprecated(symbolTable);
+}
+
+TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->timeValue(conversionData, symbolTable);
+}
+
+TimeRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<TimeRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+{
+    return calc.calc->timeValueDeprecated(symbolTable);
 }
 
 } // namespace WebCore

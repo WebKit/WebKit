@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MediaRecorderProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_RECORDER)
 
@@ -39,7 +40,13 @@
 #include "MediaRecorderPrivateGStreamer.h"
 #endif
 
+#endif
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderProvider);
+
+#if ENABLE(MEDIA_RECORDER)
 
 std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
@@ -79,6 +86,6 @@ bool MediaRecorderProvider::isSupported(const String& value)
     return false;
 #endif
 }
-}
 
 #endif
+}

@@ -32,11 +32,14 @@
 #include "ResourceUsageThread.h"
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMemoryAgent);
 
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
     : InspectorAgentBase("Memory"_s, context)

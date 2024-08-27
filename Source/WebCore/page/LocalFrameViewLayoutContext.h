@@ -29,6 +29,7 @@
 #include "RenderLayerModelObject.h"
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,7 +61,7 @@ struct UpdateScrollInfoAfterLayoutTransaction {
 };
 
 class LocalFrameViewLayoutContext final : public CanMakeCheckedPtr<LocalFrameViewLayoutContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LocalFrameViewLayoutContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocalFrameViewLayoutContext);
 public:
     LocalFrameViewLayoutContext(LocalFrameView&);

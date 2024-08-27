@@ -5348,6 +5348,9 @@
     "imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.https.optional.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html": [
         "slow"
     ],

@@ -27,11 +27,12 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
-class Sampler : public RefCounted<Sampler> {
+class Sampler : public RefCounted<Sampler>, public CanMakeWeakPtr<Sampler> {
 public:
     virtual ~Sampler() = default;
 

@@ -161,7 +161,6 @@ http-equiv
 id
 imagesizes
 imagesrcset
-incremental
 inert
 inputmode
 integrity
@@ -307,7 +306,6 @@ onrejectionhandled
 onreset
 onresize
 onscroll
-onsearch
 onsecuritypolicyviolation
 onseeked
 onseeking

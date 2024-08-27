@@ -31,11 +31,11 @@
 namespace WebKit {
 
 enum class ContentWorldIdentifierType { };
-using ContentWorldIdentifier = ObjectIdentifier<ContentWorldIdentifierType>;
+using ContentWorldIdentifier = LegacyNullableObjectIdentifier<ContentWorldIdentifierType>;
 
 inline ContentWorldIdentifier pageContentWorldIdentifier()
 {
-    static NeverDestroyed<ContentWorldIdentifier> identifier(ObjectIdentifier<ContentWorldIdentifierType>(1));
+    static NeverDestroyed<ContentWorldIdentifier> identifier(LegacyNullableObjectIdentifier<ContentWorldIdentifierType>(1));
     return identifier;
 }
 

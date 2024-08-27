@@ -80,36 +80,6 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
     return dataTypes;
 }
 
-void WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (isEphemeral())
-        return;
-
-    postTask([this, value] {
-        if (m_statisticsStore)
-            m_statisticsStore->setNotifyPagesWhenDataRecordsWereScanned(value);
-    });
-}
-
-void WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    
-    if (isEphemeral()) {
-        completionHandler();
-        return;
-    }
-
-    postTask([this, value, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_statisticsStore)
-            m_statisticsStore->setNotifyPagesWhenDataRecordsWereScanned(value);
-
-        postTaskReply(WTFMove(completionHandler));
-    });
-}
-
 void WebResourceLoadStatisticsStore::setIsRunningTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1444,14 +1414,6 @@ void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
         m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::LogTestingEvent(m_networkSession->sessionID(), event), 0);
 }
 
-void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
-{
-    ASSERT(RunLoop::isMain());
-    
-    if (m_networkSession)
-        m_networkSession->notifyResourceLoadStatisticsProcessed();
-}
-
 NetworkSession* WebResourceLoadStatisticsStore::networkSession()
 {
     ASSERT(RunLoop::isMain());
@@ -1530,24 +1492,24 @@ void WebResourceLoadStatisticsStore::registrableDomainsExemptFromWebsiteDataDele
     });
 }
 
-void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     if (m_networkSession) {
-        m_networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToDeleteAndRestrictWebsiteDataFor), shouldNotifyPage, WTFMove(completionHandler));
+        m_networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToDeleteAndRestrictWebsiteDataFor), WTFMove(completionHandler));
         return;
     }
 
     completionHandler({ });
 }
 
-void WebResourceLoadStatisticsStore::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     if (m_networkSession) {
-        m_networkSession->registrableDomainsWithWebsiteData(dataTypes, shouldNotifyPage, WTFMove(completionHandler));
+        m_networkSession->registrableDomainsWithWebsiteData(dataTypes, WTFMove(completionHandler));
         return;
     }
 

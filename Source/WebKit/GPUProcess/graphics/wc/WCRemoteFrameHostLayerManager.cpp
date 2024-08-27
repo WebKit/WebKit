@@ -29,6 +29,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include <WebCore/BitmapTexture.h>
+#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>

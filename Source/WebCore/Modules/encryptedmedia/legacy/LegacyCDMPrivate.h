@@ -27,6 +27,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class LegacyCDMSession;
 class LegacyCDMSessionClient;
 
 class CDMPrivateInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CDMPrivateInterface);
 public:
     CDMPrivateInterface() = default;
     virtual ~CDMPrivateInterface() = default;

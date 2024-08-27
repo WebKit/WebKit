@@ -56,12 +56,6 @@ void InjectedBundlePageUIClient::willAddMessageWithArgumentsToConsole(WebPage* p
         m_client.willAddMessageWithDetailsToConsole(toAPI(page), toAPI(message.impl()), toAPI(&API::Array::createStringArray(messageArguments).leakRef()), lineNumber, columnNumber, toAPI(sourceID.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageUIClient::willSetStatusbarText(WebPage* page, const String& statusbarText)
-{
-    if (m_client.willSetStatusbarText)
-        m_client.willSetStatusbarText(toAPI(page), toAPI(statusbarText.impl()), m_client.base.clientInfo);
-}
-
 void InjectedBundlePageUIClient::willRunJavaScriptAlert(WebPage* page, const String& alertText, WebFrame* frame)
 {
     if (m_client.willRunJavaScriptAlert)

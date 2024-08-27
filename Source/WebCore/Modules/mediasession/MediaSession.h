@@ -30,12 +30,14 @@
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
 #include "MediaPositionState.h"
+#include "MediaProducer.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -75,7 +77,7 @@ public:
 };
 
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSession);
 public:
     static Ref<MediaSession> create(Navigator&);
     ~MediaSession();
@@ -138,6 +140,12 @@ public:
 
     void updateNowPlayingInfo(NowPlayingInfo&);
 
+#if ENABLE(MEDIA_STREAM)
+    void setMicrophoneActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTFMove(promise), MediaProducerMediaCaptureKind::Microphone); }
+    void setCameraActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTFMove(promise), MediaProducerMediaCaptureKind::Camera); }
+    void setScreenshareActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTFMove(promise), MediaProducerMediaCaptureKind::Display); }
+#endif
+
 private:
     explicit MediaSession(Navigator&);
 
@@ -151,6 +159,10 @@ private:
     void notifyPlaybackStateObservers();
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
+
+#if ENABLE(MEDIA_STREAM)
+    void updateCaptureState(bool, DOMPromiseDeferred<void>&&, MediaProducerMediaCaptureKind);
+#endif
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;

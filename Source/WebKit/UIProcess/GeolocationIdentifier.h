@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct GeolocationIdentifierType;
-using GeolocationIdentifier = ObjectIdentifier<GeolocationIdentifierType>;
+using GeolocationIdentifier = LegacyNullableObjectIdentifier<GeolocationIdentifierType>;
 
 }

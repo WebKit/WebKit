@@ -107,11 +107,11 @@ enum LinearMediaPlayerErrors: Error {
     var allowPip = true
     var allowFullScreenFromInline = true
     var isLiveStream = false
-    var isSpatial = true
     var recommendedViewingRatio: NSNumber?
     var fullscreenSceneBehaviors: WKSLinearMediaFullscreenBehaviors = []
     var startTime: Double = .nan
     var endTime: Double = .nan
+    var spatialVideoMetadata: WKSLinearMediaSpatialVideoMetadata?
 
     // FIXME: These should be stored properties on WKSLinearMediaPlayer, but a bug prevents that from compiling (rdar://121877511).
     var startDate: Date? {

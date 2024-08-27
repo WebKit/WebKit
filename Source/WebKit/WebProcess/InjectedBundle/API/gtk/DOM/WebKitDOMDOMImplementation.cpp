@@ -32,7 +32,6 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/JSExecState.h>
-#include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -112,9 +111,7 @@ gboolean webkit_dom_dom_implementation_has_feature(WebKitDOMDOMImplementation* s
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_IMPLEMENTATION(self), FALSE);
     g_return_val_if_fail(feature, FALSE);
     g_return_val_if_fail(version, FALSE);
-    WTF::String convertedFeature = WTF::String::fromUTF8(feature);
-    WTF::String convertedVersion = WTF::String::fromUTF8(version);
-    return WebCore::SVGTests::hasFeatureForLegacyBindings(convertedFeature, convertedVersion);
+    return TRUE;
 }
 
 WebKitDOMDocumentType* webkit_dom_dom_implementation_create_document_type(WebKitDOMDOMImplementation* self, const gchar* qualifiedName, const gchar* publicId, const gchar* systemId, GError** error)

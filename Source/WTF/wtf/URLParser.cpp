@@ -330,7 +330,7 @@ template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
-template<typename CharacterType> ALWAYS_INLINE static bool isSpecialCharacterForFragmentDirective(CharacterType character) { return character == ',' || character == '-'; }
+template<typename CharacterType> ALWAYS_INLINE static bool isSpecialCharacterForFragmentDirective(CharacterType character) { return !isASCII(character) || character == ',' || character == '-'; }
 
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)

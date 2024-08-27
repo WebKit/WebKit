@@ -154,19 +154,19 @@ private:
 
 class DelayedUpdateValidityScope {
 public:
-    DelayedUpdateValidityScope(ValidatedFormListedElement& element)
+    explicit DelayedUpdateValidityScope(ValidatedFormListedElement& element)
         : m_element { element }
     {
-        m_element.startDelayingUpdateValidity();
+        m_element->startDelayingUpdateValidity();
     }
     
     ~DelayedUpdateValidityScope()
     {
-        m_element.endDelayingUpdateValidity();
+        m_element->endDelayingUpdateValidity();
     }
 
 private:
-    ValidatedFormListedElement& m_element;
+    Ref<ValidatedFormListedElement> m_element;
 };
 
 } // namespace WebCore

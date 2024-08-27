@@ -57,6 +57,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -320,7 +321,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 
 class Page : public RefCounted<Page>, public Supplementable<Page>, public CanMakeWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Page);
     friend class SettingsBase;
 
 public:
@@ -932,6 +933,9 @@ public:
     WEBCORE_EXPORT void setMuted(MediaProducerMutedStateFlags);
 
     WEBCORE_EXPORT void stopMediaCapture(MediaProducerMediaCaptureKind);
+#if ENABLE(MEDIA_STREAM)
+    WEBCORE_EXPORT void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind);
+#endif
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();

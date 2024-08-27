@@ -51,6 +51,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     , m_glyphCount(hb_buffer_get_length(buffer))
     , m_stringLocation(stringLocation)
     , m_isLTR(HB_DIRECTION_IS_FORWARD(hb_buffer_get_direction(buffer)))
+    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
     if (!m_glyphCount)
         return;

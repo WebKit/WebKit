@@ -35,7 +35,7 @@
 
 WKWebExtensionDataType const WKWebExtensionDataTypeLocal = @"local";
 WKWebExtensionDataType const WKWebExtensionDataTypeSession = @"session";
-WKWebExtensionDataType const WKWebExtensionDataTypeSync = @"sync";
+WKWebExtensionDataType const WKWebExtensionDataTypeSynchronized = @"synchronized";
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -51,7 +51,7 @@ OptionSet<WebExtensionDataType> toWebExtensionDataTypes(NSSet *types)
     if ([types containsObject:WKWebExtensionDataTypeSession])
         result.add(WebExtensionDataType::Session);
 
-    if ([types containsObject:WKWebExtensionDataTypeSync])
+    if ([types containsObject:WKWebExtensionDataTypeSynchronized])
         result.add(WebExtensionDataType::Sync);
 
     return result;
@@ -68,7 +68,7 @@ NSSet *toAPI(OptionSet<WebExtensionDataType> types)
         [result addObject:WKWebExtensionDataTypeSession];
 
     if (types.contains(WebExtensionDataType::Sync))
-        [result addObject:WKWebExtensionDataTypeSync];
+        [result addObject:WKWebExtensionDataTypeSynchronized];
 
     return [result copy];
 }

@@ -150,12 +150,10 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
         return false;
 
     auto identifierValue = parseInteger<uint64_t>(element.attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
-    if (!identifierValue)
+    if (!identifierValue || !*identifierValue)
         return false;
 
     auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
-    if (!identifier.isValid())
-        return false;
 
     auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
     if (!dataDetectionResults)

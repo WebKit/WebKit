@@ -38,9 +38,12 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceUserTiming);
 
 using NavigationTimingFunction = unsigned long long (PerformanceTiming::*)() const;
 

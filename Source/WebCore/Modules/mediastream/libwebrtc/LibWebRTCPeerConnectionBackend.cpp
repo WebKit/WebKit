@@ -49,6 +49,7 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -70,6 +71,8 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCPeerConnectionBackend);
 
 LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection, LibWebRTCProvider& provider)
     : PeerConnectionBackend(peerConnection)

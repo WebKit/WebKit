@@ -49,7 +49,6 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/MakeString.h>
 
@@ -287,18 +286,6 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, const void* n
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, asset);
-
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    getVideoPlaybackConfiguration(asset)->whenSettled(RunLoop::current(), [protectedThis = Ref { *this }](auto&& result) mutable {
-        if (!result)
-            return;
-        protectedThis->m_callOnClientThreadCallback([protectedThis, value = *result] {
-            if (protectedThis->m_didParseVideoPlaybackConfigurationCallback)
-                protectedThis->m_didParseVideoPlaybackConfigurationCallback(value);
-        });
-    });
-#endif
-
     m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, asset = retainPtr(asset)] {
         if (!m_didParseInitializationDataCallback)
             return;
@@ -331,6 +318,7 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
             // FIXME(125161)    : Add TextTrack support
         }
+
         m_didParseInitializationDataCallback(WTFMove(segment));
     });
 }
@@ -381,30 +369,6 @@ void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(N
     });
 }
 
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-Ref<SourceBufferParserAVFObjC::VideoPlaybackConfigurationPromise> SourceBufferParserAVFObjC::getVideoPlaybackConfiguration(AVAsset* asset)
-{
-    if (!asset || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionStereoMultiviewVideo() || !PAL::canLoad_AVFoundation_AVAssetPlaybackConfigurationOptionSpatialVideo())
-        return VideoPlaybackConfigurationPromise::createAndReject(PlatformMediaError::NotSupportedError);
-    RetainPtr<AVAssetPlaybackAssistant> assistant = [PAL::getAVAssetPlaybackAssistantClass() assetPlaybackAssistantWithAsset:asset];
-    VideoPlaybackConfigurationPromise::Producer producer;
-    Ref promise = producer.promise();
-    [assistant loadPlaybackConfigurationOptionsWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)](NSArray<AVAssetPlaybackConfigurationOption>* playbackConfigurationOptions) mutable {
-        MediaPlayerVideoPlaybackConfiguration configuration;
-        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionStereoVideo])
-            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Stereo);
-        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionStereoMultiviewVideo])
-            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::StereoMultiview);
-        if ([playbackConfigurationOptions containsObject:AVAssetPlaybackConfigurationOptionSpatialVideo])
-            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Spatial);
-        if (configuration.isEmpty())
-            configuration.add(MediaPlayerVideoPlaybackConfigurationOption::Mono);
-        producer.resolve(configuration);
-    }).get()];
-    return promise;
 }
-#endif
-
-} // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

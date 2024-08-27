@@ -30,6 +30,7 @@
 #include "DragItem.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
@@ -44,7 +45,7 @@ struct PromisedAttachmentInfo;
 #endif
 
 class DragClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DragClient);
 public:
     virtual bool useLegacyDragClient() { return true; }
 

@@ -178,16 +178,17 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
     
-    if (!m_client || m_wasCanceled)
+    CheckedPtr client = this->client();
+    if (!client || m_wasCanceled)
         return;
     
-    m_client->valueChangedForPopupMenu(this, [m_popup indexOfSelectedItem]);
+    client->valueChangedForPopupMenu(this, [m_popup indexOfSelectedItem]);
     
     // <https://bugs.webkit.org/show_bug.cgi?id=57904> This code is adopted from EventHandler::sendFakeEventsAfterWidgetTracking().
-    if (!m_client->currentlyProcessedMouseDownEvent())
+    if (!client->currentlyProcessedMouseDownEvent())
         return;
     
-    NSEvent* initiatingNSEvent = m_client->currentlyProcessedMouseDownEvent()->nativeEvent();
+    NSEvent* initiatingNSEvent = client->currentlyProcessedMouseDownEvent()->nativeEvent();
     if ([initiatingNSEvent type] != NSEventTypeLeftMouseDown)
         return;
 

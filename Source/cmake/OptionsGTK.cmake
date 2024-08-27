@@ -303,7 +303,7 @@ if (ENABLE_GAMEPAD)
 endif ()
 
 if (ENABLE_XSLT)
-    find_package(LibXslt 1.1.7 REQUIRED)
+    find_package(LibXslt 1.1.13 REQUIRED)
 endif ()
 
 if (USE_LIBSECRET)

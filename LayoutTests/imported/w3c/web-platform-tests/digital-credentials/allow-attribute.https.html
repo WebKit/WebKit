@@ -14,66 +14,66 @@
                 {
                     policy: null,
                     crossOrigin: false,
-                    isAllowed: true,
+                    expectIsAllowed: true,
                 },
                 {
                     policy: null,
                     crossOrigin: true,
-                    isAllowed: false,
+                    expectIsAllowed: false,
                 },
                 {
                     policy: "digital-credentials-get",
                     crossOrigin: false,
-                    isAllowed: true,
+                    expectIsAllowed: true,
                 },
                 {
                     policy: "digital-credentials-get",
                     crossOrigin: true,
-                    isAllowed: true,
-                },
-                {
-                    policy: "digital-credentials-get *",
-                    crossOrigin: true,
-                    isAllowed: true,
+                    expectIsAllowed: true,
                 },
                 {
                     policy: "digital-credentials-get *",
                     crossOrigin: false,
-                    isAllowed: true,
+                    expectIsAllowed: true,
+                },
+                {
+                    policy: "digital-credentials-get *",
+                    crossOrigin: true,
+                    expectIsAllowed: true,
+                },
+                {
+                    policy: "digital-credentials-get 'none'",
+                    crossOrigin: false,
+                    expectIsAllowed: false,
                 },
                 {
                     policy: "digital-credentials-get 'none'",
                     crossOrigin: true,
-                    isAllowed: false,
-                },
-                {
-                    policy: "digital-credentials-get 'none'",
-                    crossOrigin: false,
-                    isAllowed: false,
-                },
-                {
-                    policy: "digital-credentials-get 'self'",
-                    crossOrigin: true,
-                    isAllowed: false,
+                    expectIsAllowed: false,
                 },
                 {
                     policy: "digital-credentials-get 'self'",
                     crossOrigin: false,
-                    isAllowed: true,
+                    expectIsAllowed: true,
                 },
                 {
-                    policy: `digital-credentials-get ${hostInfo.HTTPS_REMOTE_ORIGIN}`,
+                    policy: "digital-credentials-get 'self'",
                     crossOrigin: true,
-                    isAllowed: true,
+                    expectIsAllowed: false,
                 },
                 {
                     policy: `digital-credentials-get ${hostInfo.HTTPS_REMOTE_ORIGIN}`,
                     crossOrigin: false,
-                    isAllowed: false,
+                    expectIsAllowed: false,
+                },
+                {
+                    policy: `digital-credentials-get ${hostInfo.HTTPS_REMOTE_ORIGIN}`,
+                    crossOrigin: true,
+                    expectIsAllowed: true,
                 },
             ];
 
-            async function loadIframe({ policy, crossOrigin, isAllowed }) {
+            async function loadIframe({ policy, crossOrigin, expectIsAllowed }) {
                 const iframe = document.createElement("iframe");
                 if (policy !== null) {
                     iframe.allow = policy;
@@ -87,7 +87,7 @@
                             ? hostInfo.HTTPS_REMOTE_ORIGIN
                             : location.origin
                     ).href;
-                    iframe.dataset.isAllowed = isAllowed;
+                    iframe.dataset.expectIsAllowed = expectIsAllowed;
                     document.body.appendChild(iframe);
                 });
                 iframe.focus();
@@ -98,7 +98,7 @@
                 for (const details of iframeDetails) {
                     promise_test(async (test) => {
                         const iframe = await loadIframe(details);
-                        const { isAllowed } = details;
+                        const { expectIsAllowed } = details;
                         const action = "get";
                         const options = {
                             digital: {
@@ -115,14 +115,14 @@
                                 "*"
                             );
                         });
-                        const { name, messsage } = data;
+                        const { name, message } = data;
                         assert_equals(
                             name,
-                            isAllowed ? "TypeError" : "NotAllowedError",
-                            `${iframe.outerHTML} - ${messsage}`
+                            expectIsAllowed ? "TypeError" : "NotAllowedError",
+                            `${iframe.outerHTML} - ${message}`
                         );
                         iframe.remove();
-                    }, `Policy to use: ${details.policy}, is cross-origin: ${details.crossOrigin}, is allowed by policy: ${details.isAllowed}`);
+                    }, `Policy to use: ${details.policy}, is cross-origin: ${details.crossOrigin}, is allowed by policy: ${details.expectIsAllowed}`);
                 }
             }
         </script>

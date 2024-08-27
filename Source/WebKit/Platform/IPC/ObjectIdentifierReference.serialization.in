@@ -24,8 +24,8 @@
 additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierReference; }
 additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
 additional_forward_declaration: namespace IPC { template<typename> struct ObjectIdentifierReadReference; }
-additional_forward_declaration: namespace WebCore { using RenderingResourceIdentifier = AtomicObjectIdentifier<RenderingResourceIdentifierType>; }
-additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using RenderingResourceIdentifier = LegacyNullableAtomicObjectIdentifier<RenderingResourceIdentifierType>; }
+additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = LegacyNullableAtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
 additional_forward_declaration: namespace WebKit { using RemoteSerializedImageBufferIdentifier = WebCore::RenderingResourceIdentifier; }
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

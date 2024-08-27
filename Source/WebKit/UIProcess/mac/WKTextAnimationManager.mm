@@ -24,7 +24,7 @@
  */
 
 
-#if ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
+#if ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 
 #import "config.h"
 #import "WKTextAnimationManager.h"
@@ -80,13 +80,21 @@
     _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
 
     _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
-    [_effectView setFrame:webView.view().frame];
+    [_effectView setFrame:webView.view().bounds];
     [_webView->view() addSubview:_effectView.get()];
     return self;
 }
 
 - (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data
 {
+    if (data.style == WebCore::TextAnimationType::Initial && _webView->page().writingToolsTextReplacementsFinished()) {
+        // When the session has finished sending all of the partial replacements, the `TextAnimationController` may still
+        // request an initial text animation for the remaining "unreplaced" range of the context range (which may or may
+        // not actually end up getting replaced for a given partial replacement). However, this "unreplaced" range will
+        // never end up ever getting replaced if the replacement is finished.
+        return;
+    }
+
     RetainPtr<id<_WTTextEffect>> effect;
     RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
 
@@ -123,13 +131,7 @@
             if (!strongWebView || !animationID)
                 return;
 
-            strongWebView->didEndPartialIntelligenceTextPonderingAnimation();
-
-            if (strongWebView->isIntelligenceTextPonderingAnimationFinished() && strongWebView->isWritingToolsTextReplacementsFinished()) {
-                // If the entire replacement has already been completed, and this is the end of the last animation,
-                // then reveal the selection.
-                strongWebView->page().showSelectionForActiveWritingToolsSession();
-            }
+            strongWebView->page().didEndPartialIntelligenceTextPonderingAnimationImpl();
 
             strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
@@ -137,6 +139,8 @@
 
         break;
     }
+
+    ASSERT(effect);
 
     RetainPtr effectID = [_effectView addEffect:effect.get()];
     RetainPtr effectData = adoptNS([[WKTextAnimationTypeEffectData alloc] initWithEffectID:effectID.get() type:data.style]);
@@ -227,7 +231,7 @@
     WebCore::IntSize bitmapSize(rect.size.width, rect.size.height);
     bitmapSize.scale(deviceScale, deviceScale);
 
-    _webView->page().takeSnapshot(WebCore::IntRect(rect), bitmapSize, WebKit::SnapshotOptionsShareable, [rect, completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+    _webView->page().takeSnapshot(WebCore::IntRect(rect), bitmapSize, WebKit::SnapshotOption::Shareable, [rect, completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
         if (!imageHandle) {
             completionHandler(nil);
             return;
@@ -256,5 +260,5 @@
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS_UI) && PLATFORM(MAC)
+#endif // ENABLE(WRITING_TOOLS) && PLATFORM(MAC)
 

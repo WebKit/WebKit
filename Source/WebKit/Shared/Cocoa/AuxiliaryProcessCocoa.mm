@@ -208,7 +208,7 @@ void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& ke
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 #if ASSERT_ENABLED
         id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages"_s);
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages"_s || key == "PayloadUUID"_s);
 #endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);

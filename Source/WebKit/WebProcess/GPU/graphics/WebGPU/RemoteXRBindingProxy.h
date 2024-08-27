@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
 #include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"

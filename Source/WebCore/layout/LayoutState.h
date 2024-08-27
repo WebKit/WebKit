@@ -62,7 +62,10 @@ public:
     // Primary layout state has a direct geometry cache in layout boxes.
     enum class Type { Primary, Secondary };
 
-    LayoutState(const Document&, const ElementBox& rootContainer, Type, Function<void(const ElementBox&, LayoutState&)>&& formattingContextLayoutFunction);
+    using FormattingContextLayoutFunction = Function<void(const ElementBox&, std::optional<LayoutUnit>, LayoutState&)>;
+    using FormattingContextPreferredWidthsFunction = Function<std::pair<LayoutUnit, LayoutUnit>(const ElementBox&)>;
+
+    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextPreferredWidthsFunction&&);
     ~LayoutState();
 
     Type type() const { return m_type; }
@@ -103,7 +106,8 @@ public:
 
     const ElementBox& root() const { return m_rootContainer; }
 
-    void layoutWithFormattingContextForBox(const ElementBox&);
+    void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint) const;
+    std::pair<LayoutUnit, LayoutUnit> preferredWidthWithFormattingContextForBox(const ElementBox&) const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
@@ -125,7 +129,8 @@ private:
     CheckedRef<const ElementBox> m_rootContainer;
     Ref<SecurityOrigin> m_securityOrigin;
 
-    Function<void(const ElementBox&, LayoutState&)> m_formattingContextLayoutFunction;
+    FormattingContextLayoutFunction m_formattingContextLayoutFunction;
+    FormattingContextPreferredWidthsFunction m_formattingContextPreferredWidthsFunction;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

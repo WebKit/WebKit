@@ -27,10 +27,14 @@
 
 #if HAVE(CORE_TELEPHONY)
 
+namespace WTF {
+class URL;
+}
+
 namespace WebKit {
 
 #if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
-bool shouldAllowAutoFillForCellularIdentifiers(const URL&);
+bool shouldAllowAutoFillForCellularIdentifiers(const WTF::URL&);
 #endif
 
 } // namespace WebKit

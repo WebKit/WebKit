@@ -117,7 +117,6 @@ private:
     void runJavaScriptAlert(WebCore::LocalFrame&, const String&) final;
     bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) final;
     bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) final;
-    void setStatusbarText(const String&) final;
 
     WebCore::KeyboardUIMode keyboardUIMode() final;
 
@@ -518,9 +517,7 @@ private:
     void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView) final;
 
     void proofreadingSessionUpdateStateForSuggestionWithID(WebCore::WritingTools::TextSuggestionState, const WebCore::WritingTools::TextSuggestionID&) final;
-#endif
 
-#if ENABLE(WRITING_TOOLS_UI)
     void removeTextAnimationForAnimationID(const WTF::UUID&) final;
 
     void removeInitialTextAnimationForActiveWritingToolsSession() final;

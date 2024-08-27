@@ -105,8 +105,8 @@ private:
     void removeUserScripts(const String& identifier);
 };
 
-std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension>);
-SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, RefPtr<WebExtension>);
+std::optional<SourcePair> sourcePairForResource(String path, WebExtensionContext&);
+SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, WebExtensionContext&);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
 void executeScript(const SourcePairs&, WKWebView *, API::ContentWorld&, WebExtensionTab&, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResults&&)>&&);

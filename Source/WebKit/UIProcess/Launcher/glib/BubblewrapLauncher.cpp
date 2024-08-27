@@ -21,7 +21,6 @@
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
 #include "XDGDBusProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
 #include <glib.h>
 #include <seccomp.h>
@@ -36,6 +35,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/MakeString.h>
+
+#if PLATFORM(GTK)
+#include "Display.h"
+#endif
 
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 #include <linux/memfd.h>
@@ -674,11 +677,11 @@ static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType, char*
     if (processType == ProcessLauncher::ProcessType::DBusProxy)
         return false;
 
-#if PLATFORM(X11)
+#if PLATFORM(GTK)
     // Also, the web process needs access to host networking if the X server is running over TCP or
     // on a different host's Unix socket; this is likely the case if the first character of DISPLAY
     // is not a colon.
-    if (processType == ProcessLauncher::ProcessType::Web && PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
+    if (processType == ProcessLauncher::ProcessType::Web && Display::singleton().isX11()) {
         const char* display = g_getenv("DISPLAY");
         if (display && display[0] != ':')
             return false;
@@ -862,15 +865,17 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     createBwrapInfo(launcher, sandboxArgs, instanceID.get());
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+#if PLATFORM(GTK)
 #if PLATFORM(WAYLAND)
-        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
+        if (Display::singleton().isWayland()) {
             bindWayland(sandboxArgs);
             sandboxArgs.append("--unshare-ipc");
         }
 #endif
 #if PLATFORM(X11)
-        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+        if (Display::singleton().isX11())
             bindX11(sandboxArgs);
+#endif
 #endif
 
         Vector<String> extraPaths = { "mediaKeysDirectory"_s, "waylandSocket"_s };

@@ -331,6 +331,21 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
     return { };
 }
 
+static Vector<AtomString> effectiveViewTransitionClassList(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
+{
+    auto classList = renderer.style().viewTransitionClasses();
+    if (classList.isEmpty())
+        return { };
+
+    auto scope = Style::Scope::forOrdinal(originatingElement, classList.first().scopeOrdinal);
+    if (!scope || scope != &documentScope)
+        return { };
+
+    return WTF::map(classList, [&](auto& item) {
+        return item.name;
+    });
+}
+
 static LayoutRect captureOverflowRect(RenderLayerModelObject& renderer)
 {
     if (!renderer.hasLayer())
@@ -465,6 +480,10 @@ ExceptionOr<void> ViewTransition::captureOldState()
             capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldOverflowRect);
         capture.oldLayerToLayoutOffset = layerToLayoutOffset(renderer.get());
 
+        auto styleable = Styleable::fromRenderer(renderer);
+        ASSERT(styleable);
+        capture.classList = effectiveViewTransitionClassList(renderer, styleable->element, document()->styleScope());
+
         auto transitionName = renderer->style().viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
     }
@@ -495,7 +514,9 @@ ExceptionOr<void> ViewTransition::captureNewState()
                     CapturedElement capturedElement;
                     m_namedElements.add(name, capturedElement);
                 }
-                m_namedElements.find(name)->newElement = *styleable;
+                auto namedElement = m_namedElements.find(name);
+                namedElement->classList = effectiveViewTransitionClassList(renderer, styleable->element, document()->styleScope());
+                namedElement->newElement = *styleable;
             }
             return { };
         }, *view->layer());

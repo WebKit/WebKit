@@ -110,6 +110,7 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
 namespace WebKit {
 using namespace WebCore;
@@ -330,7 +331,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         reply(NetworkProcessConnectionInfo { WTFMove(*identifier), cookieAcceptPolicy });
         UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
-        MESSAGE_CHECK(*identifier);
+        MESSAGE_CHECK_COMPLETION(*identifier, reply({ }));
         reply(NetworkProcessConnectionInfo { WTFMove(*identifier) , cookieAcceptPolicy, connection().getAuditToken() });
 #else
         notImplemented();
@@ -374,7 +375,7 @@ void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID
 
 void NetworkProcessProxy::dataTaskReceivedChallenge(DataTaskIdentifier identifier, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(AuthenticationChallengeDisposition, WebCore::Credential&&)>&& completionHandler)
 {
-    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    MESSAGE_CHECK_COMPLETION(decltype(m_dataTasks)::isValidKey(identifier), completionHandler({ }, { }));
     if (auto task = m_dataTasks.get(identifier))
         task->client().didReceiveChallenge(*task, WTFMove(challenge), WTFMove(completionHandler));
     else
@@ -383,14 +384,14 @@ void NetworkProcessProxy::dataTaskReceivedChallenge(DataTaskIdentifier identifie
 
 void NetworkProcessProxy::dataTaskWillPerformHTTPRedirection(DataTaskIdentifier identifier, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    MESSAGE_CHECK_COMPLETION(decltype(m_dataTasks)::isValidKey(identifier), completionHandler(false));
     if (auto task = m_dataTasks.get(identifier))
         task->client().willPerformHTTPRedirection(*task, WTFMove(response), WTFMove(request), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::dataTaskDidReceiveResponse(DataTaskIdentifier identifier, WebCore::ResourceResponse&& response, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    MESSAGE_CHECK_COMPLETION(decltype(m_dataTasks)::isValidKey(identifier), completionHandler(false));
     if (auto task = m_dataTasks.get(identifier))
         task->client().didReceiveResponse(*task, WTFMove(response), WTFMove(completionHandler));
     else
@@ -576,7 +577,6 @@ void NetworkProcessProxy::didBlockLoadToKnownTracker(WebPageProxyIdentifier page
 
 void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
 {
-    ASSERT(navigationID);
     RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation: pageID=%" PRIu64 ", navigationID=%" PRIu64 ", browsingContextGroupSwitchDecision=%u, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, this, pageID.toUInt64(), navigationID.toUInt64(), (unsigned)browsingContextGroupSwitchDecision, existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (auto page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
         page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume, WTFMove(completionHandler));
@@ -903,16 +903,6 @@ void NetworkProcessProxy::setTimeToLiveUserInteraction(PAL::SessionID sessionID,
     sendWithAsyncReply(Messages::NetworkProcess::SetTimeToLiveUserInteraction(sessionID, seconds), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler();
-        return;
-    }
-    
-    sendWithAsyncReply(Messages::NetworkProcess::SetNotifyPagesWhenDataRecordsWereScanned(sessionID, value), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID sessionID, Seconds time, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {
@@ -1204,21 +1194,6 @@ void NetworkProcessProxy::logTestingEvent(PAL::SessionID sessionID, const String
 {
     if (auto* websiteDataStore = websiteDataStoreFromSessionID(sessionID))
         websiteDataStore->logTestingEvent(event);
-}
-
-void NetworkProcessProxy::notifyResourceLoadStatisticsProcessed()
-{
-    WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
-}
-
-void NetworkProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished()
-{
-    WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished();
-}
-
-void NetworkProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
-{
-    WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished();
 }
 
 void NetworkProcessProxy::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebPageProxyIdentifier webPageProxyID, PageIdentifier webPageID, DidFilterKnownLinkDecoration didFilterKnownLinkDecoration)
@@ -2036,4 +2011,5 @@ void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::o
 
 } // namespace WebKit
 
+#undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK

@@ -4256,6 +4256,14 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return terminality == NonTerminal ? CallOptimizationResult::Inlined : CallOptimizationResult::InlinedTerminal;
         }
 
+        case AsyncIteratorIntrinsic:
+        case IteratorIntrinsic: {
+            insertChecks();
+            Node* thisNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            setResult(addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(prediction), thisNode));
+            return CallOptimizationResult::Inlined;
+        }
+
         default:
             return CallOptimizationResult::DidNothing;
         }

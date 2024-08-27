@@ -89,7 +89,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalTimeZone, (JSGlobalObject* globalObjec
     auto timeZoneString = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    std::optional<int64_t> utcOffset = ISO8601::parseTimeZoneNumericUTCOffset(timeZoneString);
+    std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
     if (utcOffset)
         return JSValue::encode(TemporalTimeZone::createFromUTCOffset(vm, structure, utcOffset.value()));
 

@@ -60,6 +60,8 @@ public:
         return adoptRef(new AudioTrackPrivateAVFObjC(option));
     }
 
+    virtual ~AudioTrackPrivateAVFObjC();
+
     virtual void setEnabled(bool);
 
     void setPlayerItemTrack(AVPlayerItemTrack*);

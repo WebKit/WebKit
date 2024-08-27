@@ -41,11 +41,6 @@ namespace WebCore {
 class BaseAudioSharedUnit;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BaseAudioSharedUnit> : std::true_type { };
-}
-
 namespace WebCore {
 
 class AudioStreamDescription;
@@ -53,9 +48,8 @@ class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
-class BaseAudioSharedUnit : public RealtimeMediaSourceCenterObserver {
+class BaseAudioSharedUnit : public RefCounted<BaseAudioSharedUnit>, public RealtimeMediaSourceCenterObserver {
 public:
-    BaseAudioSharedUnit();
     virtual ~BaseAudioSharedUnit();
 
     void startProducingData();
@@ -100,6 +94,8 @@ public:
     void handleNewCurrentMicrophoneDevice(CaptureDevice&&);
 
 protected:
+    BaseAudioSharedUnit();
+
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();
     void continueStartProducingData();

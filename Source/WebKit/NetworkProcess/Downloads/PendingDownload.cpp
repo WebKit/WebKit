@@ -65,6 +65,8 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, std::
     m_networkLoad->convertTaskToDownload(*this, request, response, WTFMove(completionHandler));
 }
 
+PendingDownload::~PendingDownload() = default;
+
 void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
@@ -123,7 +125,7 @@ void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, P
 
 uint64_t PendingDownload::messageSenderDestinationID() const
 {
-    return m_networkLoad->pendingDownloadID().toUInt64();
+    return m_networkLoad->pendingDownloadID()->toUInt64();
 }
     
 }

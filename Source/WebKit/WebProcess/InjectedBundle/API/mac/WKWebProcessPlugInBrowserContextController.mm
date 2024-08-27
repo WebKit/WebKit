@@ -440,7 +440,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle
 {
-    return wrapper(WebKit::WebProcess::singleton().webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle.webPageID)));
+    return wrapper(WebKit::WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<WebCore::PageIdentifierType>(handle.webPageID)));
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
@@ -615,6 +615,12 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
         bool shouldChangeSelectedRange(WebKit::WebPage&, const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity affinity, bool stillSelecting) final
         {
             if (!m_delegateMethods.shouldChangeSelectedRange)
+                return true;
+
+            if (!fromRange && !toRange)
+                return false;
+
+            if (!fromRange || !toRange)
                 return true;
 
             auto apiFromRange = adoptNS([[WKDOMRange alloc] _initWithImpl:createLiveRange(fromRange).get()]);

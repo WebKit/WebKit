@@ -215,10 +215,8 @@ void WebLocalFrameLoaderClient::detachedFromParent3()
 
 void WebLocalFrameLoaderClient::documentLoaderDetached(WebCore::NavigationIdentifier navigationID, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
-    if (RefPtr page = m_frame->page(); page && loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No) {
-        ASSERT(navigationID);
+    if (RefPtr page = m_frame->page(); page && loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No)
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
-    }
 }
 
 void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)

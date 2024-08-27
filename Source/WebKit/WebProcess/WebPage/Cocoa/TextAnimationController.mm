@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
 
 #include "config.h"
 #include "TextAnimationController.h"
@@ -84,10 +84,8 @@ RefPtr<WebCore::Document> TextAnimationController::document() const
 std::optional<WebCore::SimpleRange> TextAnimationController::unreplacedRangeForActiveWritingToolsSession() const
 {
     auto sessionRange = contextRangeForActiveWritingToolsSession();
-    if (!sessionRange) {
-        ASSERT_NOT_REACHED();
+    if (!sessionRange)
         return std::nullopt;
-    }
 
     auto previouslyReplacedRange = m_alreadyReplacedRange;
     if (!previouslyReplacedRange)
@@ -221,7 +219,6 @@ void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession
 
     auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
-        ASSERT_NOT_REACHED();
         completionHandler(WebCore::TextAnimationRunMode::RunAnimation);
         return;
     }
@@ -253,7 +250,6 @@ void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSe
     auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
         m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
-        ASSERT_NOT_REACHED();
         return;
     }
 

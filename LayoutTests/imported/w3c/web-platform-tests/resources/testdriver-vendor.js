@@ -655,7 +655,6 @@ window.test_driver_internal.get_computed_label = async function (element, contex
         return "";
     context = context ?? window;
 
-    await waitFor(() => context.internals.readyToRetrieveComputedRoleOrLabel(element));
     return context.internals.getComputedLabel(element);
 }
 
@@ -669,6 +668,5 @@ window.test_driver_internal.get_computed_role = async function (element, context
         return "";
     context = context ?? window;
 
-    await waitFor(() => context.internals.readyToRetrieveComputedRoleOrLabel(element));
     return context.internals.getComputedRole(element);
 }

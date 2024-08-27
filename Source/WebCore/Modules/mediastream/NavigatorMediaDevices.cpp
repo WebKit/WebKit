@@ -37,8 +37,11 @@
 #include "LocalFrame.h"
 #include "MediaDevices.h"
 #include "Navigator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorMediaDevices);
 
 NavigatorMediaDevices::NavigatorMediaDevices(LocalDOMWindow* window)
     : LocalDOMWindowProperty(window)

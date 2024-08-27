@@ -28,6 +28,7 @@
 
 #include "BorderData.h"
 #include "BorderEdge.h"
+#include "BorderShape.h"
 #include "CachedImage.h"
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
@@ -178,23 +179,8 @@ std::optional<Path> BorderPainter::pathForBorderArea(const LayoutRect& rect, con
     if (!decorationHasAllSimpleEdges(edges))
         return std::nullopt;
 
-    auto outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    auto innerBorder = style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-
-    Path path;
-    auto pixelSnappedOuterBorder = outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    if (pixelSnappedOuterBorder.isRounded())
-        path.addRoundedRect(pixelSnappedOuterBorder);
-    else
-        path.addRect(pixelSnappedOuterBorder.rect());
-
-    auto pixelSnappedInnerBorder = innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-    if (pixelSnappedInnerBorder.isRounded())
-        path.addRoundedRect(pixelSnappedInnerBorder);
-    else
-        path.addRect(pixelSnappedInnerBorder.rect());
-
-    return path;
+    auto borderShape = BorderShape::shapeForBorderRect(style, rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    return borderShape.pathForBorderArea(deviceScaleFactor);
 }
 
 static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdges& edges, BoxSide side)
@@ -279,9 +265,26 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (paintNinePieceImage(rect, style, style.borderImage()))
         return;
 
-    RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect unadjustedInnerBorder = (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge) : innerBorder;
+    auto borderShape = BorderShape::shapeForBorderRect(style, rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+
+    // To handle corner styles other than `round`, we'll have to plumb the borderShape through all the border painting functions.
+    auto outerBorder = borderShape.deprecatedRoundedRect();
+    auto innerBorder = borderShape.deprecatedInnerRoundedRect();
+    auto unadjustedInnerBorder = innerBorder;
+
+    switch (bleedAvoidance) {
+    case BackgroundBleedNone:
+    case BackgroundBleedShrinkBackground:
+    case BackgroundBleedUseTransparencyLayer:
+        break;
+    case BackgroundBleedBackgroundOverBorder: {
+        auto shrunkBorderRect = borderRectAdjustedForBleedAvoidance(rect, bleedAvoidance);
+        auto shrunkBorderShape = BorderShape::shapeForBorderRect(style, shrunkBorderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+        innerBorder = shrunkBorderShape.deprecatedInnerRoundedRect();
+        break;
+    }
+    }
+
     auto edges = borderEdges(style, document().deviceScaleFactor(), m_paintInfo.paintBehavior.contains(PaintBehavior::ForceBlackBorder), includeLogicalLeftEdge, includeLogicalRightEdge);
     bool haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
@@ -477,8 +480,7 @@ void BorderPainter::paintSides(const Sides& sides) const
     }
 
     auto deviceScaleFactor = document().deviceScaleFactor();
-    // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
-    if ((sides.haveAllSolidEdges || haveAllDoubleEdges) && allEdgesShareColor && sides.innerBorder.isRenderable()) {
+    if ((sides.haveAllSolidEdges || haveAllDoubleEdges) && allEdgesShareColor) {
         // Fast path for drawing all solid edges and all unrounded double edges
         if (numEdgesVisible == 4 && (sides.outerBorder.isRounded() || haveAlphaColor)
             && (sides.haveAllSolidEdges || (!sides.outerBorder.isRounded() && !sides.innerBorder.isRounded()))) {
@@ -568,10 +570,7 @@ void BorderPainter::paintSides(const Sides& sides) const
         // Clip to the inner and outer radii rects.
         if (sides.bleedAvoidance != BackgroundBleedUseTransparencyLayer)
             graphicsContext.clipRoundedRect(sides.outerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
-        // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
-        // The inside will be clipped out later (in clipBorderSideForComplexInnerPath)
-        if (sides.innerBorder.isRenderable())
-            graphicsContext.clipOutRoundedRect(sides.innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
+        graphicsContext.clipOutRoundedRect(sides.innerBorder.pixelSnappedRoundedRectForPainting(deviceScaleFactor));
     }
 
     // If only one edge visible antialiasing doesn't create seams
@@ -773,86 +772,6 @@ static bool joinRequiresMitre(BoxSide side, BoxSide adjacentSide, const BorderEd
     return false;
 }
 
-static RoundedRect calculateAdjustedInnerBorder(const RoundedRect&innerBorder, BoxSide side)
-{
-    // Expand the inner border as necessary to make it a rounded rect (i.e. radii contained within each edge).
-    // This function relies on the fact we only get radii not contained within each edge if one of the radii
-    // for an edge is zero, so we can shift the arc towards the zero radius corner.
-    RoundedRect::Radii newRadii = innerBorder.radii();
-    LayoutRect newRect = innerBorder.rect();
-
-    float overshoot;
-    float maxRadii;
-
-    switch (side) {
-    case BoxSide::Top:
-        overshoot = newRadii.topLeft().width() + newRadii.topRight().width() - newRect.width();
-        if (overshoot > 0) {
-            ASSERT(!(newRadii.topLeft().width() && newRadii.topRight().width()));
-            newRect.setWidth(newRect.width() + overshoot);
-            if (!newRadii.topLeft().width())
-                newRect.move(-overshoot, 0);
-        }
-        newRadii.setBottomLeft({ });
-        newRadii.setBottomRight({ });
-        maxRadii = std::max(newRadii.topLeft().height(), newRadii.topRight().height());
-        if (maxRadii > newRect.height())
-            newRect.setHeight(maxRadii);
-        break;
-
-    case BoxSide::Bottom:
-        overshoot = newRadii.bottomLeft().width() + newRadii.bottomRight().width() - newRect.width();
-        if (overshoot > 0) {
-            ASSERT(!(newRadii.bottomLeft().width() && newRadii.bottomRight().width()));
-            newRect.setWidth(newRect.width() + overshoot);
-            if (!newRadii.bottomLeft().width())
-                newRect.move(-overshoot, 0);
-        }
-        newRadii.setTopLeft({ });
-        newRadii.setTopRight({ });
-        maxRadii = std::max(newRadii.bottomLeft().height(), newRadii.bottomRight().height());
-        if (maxRadii > newRect.height()) {
-            newRect.move(0, newRect.height() - maxRadii);
-            newRect.setHeight(maxRadii);
-        }
-        break;
-
-    case BoxSide::Left:
-        overshoot = newRadii.topLeft().height() + newRadii.bottomLeft().height() - newRect.height();
-        if (overshoot > 0) {
-            ASSERT(!(newRadii.topLeft().height() && newRadii.bottomLeft().height()));
-            newRect.setHeight(newRect.height() + overshoot);
-            if (!newRadii.topLeft().height())
-                newRect.move(0, -overshoot);
-        }
-        newRadii.setTopRight({ });
-        newRadii.setBottomRight({ });
-        maxRadii = std::max(newRadii.topLeft().width(), newRadii.bottomLeft().width());
-        if (maxRadii > newRect.width())
-            newRect.setWidth(maxRadii);
-        break;
-
-    case BoxSide::Right:
-        overshoot = newRadii.topRight().height() + newRadii.bottomRight().height() - newRect.height();
-        if (overshoot > 0) {
-            ASSERT(!(newRadii.topRight().height() && newRadii.bottomRight().height()));
-            newRect.setHeight(newRect.height() + overshoot);
-            if (!newRadii.topRight().height())
-                newRect.move(0, -overshoot);
-        }
-        newRadii.setTopLeft({ });
-        newRadii.setBottomLeft({ });
-        maxRadii = std::max(newRadii.topRight().width(), newRadii.bottomRight().width());
-        if (maxRadii > newRect.width()) {
-            newRect.move(newRect.width() - maxRadii, 0);
-            newRect.setWidth(maxRadii);
-        }
-        break;
-    }
-
-    return RoundedRect(newRect, newRadii);
-}
-
 void BorderPainter::paintBorderSides(const RoundedRect& outerBorder, const RoundedRect& innerBorder,
     const IntPoint& innerBorderAdjustment, const BorderEdges& edges, BoxSideSet edgeSet, std::optional<BorderData::Radii> radii, BackgroundBleedAvoidance bleedAvoidance,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, bool isHorizontal, const Color* overrideColor) const
@@ -933,11 +852,6 @@ void BorderPainter::paintOneBorderSide(const RoundedRect& outerBorder, const Rou
         GraphicsContextStateSaver stateSaver(graphicsContext);
 
         clipBorderSidePolygon(outerBorder, innerBorder, side, adjacentSide1StylesMatch, adjacentSide2StylesMatch);
-
-        if (!innerBorder.isRenderable())  {
-            auto adjustedInnerBorder = FloatRoundedRect(calculateAdjustedInnerBorder(innerBorder, side));
-            graphicsContext.clipOutRoundedRect(adjustedInnerBorder);
-        }
 
         float thickness = std::max(std::max(edgeToRender.widthForPainting(), adjacentEdge1.widthForPainting()), adjacentEdge2.widthForPainting());
         drawBoxSideFromPath(outerBorder.rect(), *path, edges, radii, edgeToRender.widthForPainting(), thickness, side,
@@ -1480,7 +1394,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
     }
 }
 
-LayoutRect BorderPainter::borderInnerRectAdjustedForBleedAvoidance(const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
+LayoutRect BorderPainter::borderRectAdjustedForBleedAvoidance(const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
 {
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder)
         return rect;

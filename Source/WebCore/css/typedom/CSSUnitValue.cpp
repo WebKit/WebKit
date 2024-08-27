@@ -30,12 +30,13 @@
 #include "config.h"
 #include "CSSUnitValue.h"
 
-#include "CSSCalcOperationNode.h"
-#include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSUnits.h"
+#include "CalculationCategory.h"
 #include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -94,45 +95,6 @@ CSSUnitValue::CSSUnitValue(double value, CSSUnitType unit)
     , m_value(value)
     , m_unit(unit)
 {
-}
-
-static double conversionToCanonicalUnitsScaleFactor(CSSUnitType unit)
-{
-    constexpr double pixelsPerInch = 96;
-    constexpr double pixelsPerCentimeter = pixelsPerInch / 2.54;
-    constexpr double pointsPerInch = 72;
-    constexpr double picasPerInch = 6;
-
-    switch (unit) {
-    case CSSUnitType::CSS_MS:
-        return 0.001;
-    case CSSUnitType::CSS_CM:
-        return pixelsPerCentimeter;
-    case CSSUnitType::CSS_DPCM:
-        return 1.0 / pixelsPerCentimeter;
-    case CSSUnitType::CSS_MM:
-        return pixelsPerCentimeter / 10;
-    case CSSUnitType::CSS_Q:
-        return pixelsPerCentimeter / 40;
-    case CSSUnitType::CSS_IN:
-        return pixelsPerInch;
-    case CSSUnitType::CSS_DPI:
-        return 1.0 / pixelsPerInch;
-    case CSSUnitType::CSS_PT:
-        return pixelsPerInch / pointsPerInch;
-    case CSSUnitType::CSS_PC:
-        return pixelsPerInch / picasPerInch;
-    case CSSUnitType::CSS_RAD:
-        return 180 / piDouble;
-    case CSSUnitType::CSS_GRAD:
-        return 0.9;
-    case CSSUnitType::CSS_TURN:
-        return 360;
-    case CSSUnitType::CSS_KHZ:
-        return 1000;
-    default:
-        return 1.0;
-    }
 }
 
 RefPtr<CSSUnitValue> CSSUnitValue::convertTo(CSSUnitType unit) const
@@ -255,23 +217,207 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     }
 }
 
+static ValueRange rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
+{
+    // FIXME: Merge with isValueOutOfRangeForProperty.
+    ValueRange valueRange = ValueRange::All;
+    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange))
+        return valueRange;
+
+    switch (propertyID) {
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyBackgroundSize:
+    case CSSPropertyBlockSize:
+    case CSSPropertyBorderBlockEndWidth:
+    case CSSPropertyBorderBlockStartWidth:
+    case CSSPropertyBorderBottomLeftRadius:
+    case CSSPropertyBorderBottomRightRadius:
+    case CSSPropertyBorderBottomWidth:
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyBorderImageWidth:
+    case CSSPropertyBorderInlineEndWidth:
+    case CSSPropertyBorderInlineStartWidth:
+    case CSSPropertyBorderLeftWidth:
+    case CSSPropertyBorderRightWidth:
+    case CSSPropertyBorderTopLeftRadius:
+    case CSSPropertyBorderTopRightRadius:
+    case CSSPropertyBorderTopWidth:
+    case CSSPropertyColumnGap:
+    case CSSPropertyColumnRuleWidth:
+    case CSSPropertyColumnWidth:
+    case CSSPropertyFlexBasis:
+    case CSSPropertyFlexGrow:
+    case CSSPropertyFlexShrink:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontSizeAdjust:
+    case CSSPropertyFontStretch:
+    case CSSPropertyGridAutoColumns:
+    case CSSPropertyGridAutoRows:
+    case CSSPropertyGridTemplateColumns:
+    case CSSPropertyGridTemplateRows:
+    case CSSPropertyInlineSize:
+    case CSSPropertyLineHeight:
+    case CSSPropertyMaxBlockSize:
+    case CSSPropertyMaxInlineSize:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyOutlineWidth:
+    case CSSPropertyPerspective:
+    case CSSPropertyR:
+    case CSSPropertyRowGap:
+    case CSSPropertyRx:
+    case CSSPropertyRy:
+    case CSSPropertyScrollPaddingBlockEnd:
+    case CSSPropertyScrollPaddingBlockStart:
+    case CSSPropertyScrollPaddingBottom:
+    case CSSPropertyScrollPaddingInlineEnd:
+    case CSSPropertyScrollPaddingInlineStart:
+    case CSSPropertyScrollPaddingLeft:
+    case CSSPropertyScrollPaddingRight:
+    case CSSPropertyScrollPaddingTop:
+    case CSSPropertyStrokeDasharray:
+    case CSSPropertyStrokeMiterlimit:
+    case CSSPropertyStrokeWidth:
+    case CSSPropertyTransitionDuration:
+    case CSSPropertyTabSize:
+    case CSSPropertyFontWeight:     // FIXME: Support more fine-grain ranges: `<number [1,1000]>`
+    case CSSPropertyOrphans:        // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
+    case CSSPropertyWidows:         // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
+    case CSSPropertyColumnCount:    // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
+        return ValueRange::NonNegative;
+
+    case CSSPropertyOrder:          // FIXME: Support more fine-grain ranges: `<integer>`
+    case CSSPropertyZIndex:         // FIXME: Support more fine-grain ranges: `<integer>`
+    default:
+        return ValueRange::All;
+    }
+}
+
+static Calculation::Category calculationCategoryForProperty(CSSPropertyID, CSSUnitType unit)
+{
+    // FIXME: This should be looking up the supported calculation categories for the CSSPropertyID and picking the one that best matches the unit.
+
+    switch (unit) {
+    case CSSUnitType::CSS_NUMBER:
+    case CSSUnitType::CSS_INTEGER:
+        return Calculation::Category::Number;
+    case CSSUnitType::CSS_EM:
+    case CSSUnitType::CSS_EX:
+    case CSSUnitType::CSS_PX:
+    case CSSUnitType::CSS_CM:
+    case CSSUnitType::CSS_MM:
+    case CSSUnitType::CSS_IN:
+    case CSSUnitType::CSS_PT:
+    case CSSUnitType::CSS_PC:
+    case CSSUnitType::CSS_Q:
+    case CSSUnitType::CSS_LH:
+    case CSSUnitType::CSS_CAP:
+    case CSSUnitType::CSS_CH:
+    case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
+    case CSSUnitType::CSS_RLH:
+    case CSSUnitType::CSS_VW:
+    case CSSUnitType::CSS_VH:
+    case CSSUnitType::CSS_VMIN:
+    case CSSUnitType::CSS_VMAX:
+    case CSSUnitType::CSS_VB:
+    case CSSUnitType::CSS_VI:
+    case CSSUnitType::CSS_SVW:
+    case CSSUnitType::CSS_SVH:
+    case CSSUnitType::CSS_SVMIN:
+    case CSSUnitType::CSS_SVMAX:
+    case CSSUnitType::CSS_SVB:
+    case CSSUnitType::CSS_SVI:
+    case CSSUnitType::CSS_LVW:
+    case CSSUnitType::CSS_LVH:
+    case CSSUnitType::CSS_LVMIN:
+    case CSSUnitType::CSS_LVMAX:
+    case CSSUnitType::CSS_LVB:
+    case CSSUnitType::CSS_LVI:
+    case CSSUnitType::CSS_DVW:
+    case CSSUnitType::CSS_DVH:
+    case CSSUnitType::CSS_DVMIN:
+    case CSSUnitType::CSS_DVMAX:
+    case CSSUnitType::CSS_DVB:
+    case CSSUnitType::CSS_DVI:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
+        return Calculation::Category::Length;
+    case CSSUnitType::CSS_PERCENTAGE:
+        return Calculation::Category::Percent;
+    case CSSUnitType::CSS_DEG:
+    case CSSUnitType::CSS_RAD:
+    case CSSUnitType::CSS_GRAD:
+    case CSSUnitType::CSS_TURN:
+        return Calculation::Category::Angle;
+    case CSSUnitType::CSS_MS:
+    case CSSUnitType::CSS_S:
+        return Calculation::Category::Time;
+    case CSSUnitType::CSS_HZ:
+    case CSSUnitType::CSS_KHZ:
+        return Calculation::Category::Frequency;
+    case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
+    case CSSUnitType::CSS_DPI:
+    case CSSUnitType::CSS_DPCM:
+        return Calculation::Category::Resolution;
+    case CSSUnitType::CSS_FR:
+        return Calculation::Category::Flex;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Calculation::Category::Number;
+}
+
 RefPtr<CSSValue> CSSUnitValue::toCSSValueWithProperty(CSSPropertyID propertyID) const
 {
     if (isValueOutOfRangeForProperty(propertyID, m_value, m_unit)) {
         // Wrap out of range values with a calc.
-        auto node = toCalcExpressionNode();
+
+        auto node = toCalcTreeNode();
         ASSERT(node);
-        auto sumNode = CSSCalcOperationNode::createSum(Vector { node.releaseNonNull() });
-        if (!sumNode)
+        auto type = CSSCalc::getType(*node);
+
+        auto range = rangeForProperty(propertyID, m_unit);
+        auto category = calculationCategoryForProperty(propertyID, m_unit);
+
+        if (!type.matches(category)) {
+            ALWAYS_LOG_WITH_STREAM(stream << "calc() type '" << type << "' is not valid for category '" << category << "'");
             return nullptr;
-        return CSSPrimitiveValue::create(CSSCalcValue::create(sumNode.releaseNonNull()));
+        }
+
+        CSSCalc::Children sumChildren;
+        sumChildren.append(WTFMove(*node));
+        auto sum = CSSCalc::makeChild(CSSCalc::Sum { .children = WTFMove(sumChildren) }, type);
+
+        return CSSPrimitiveValue::create(CSSCalcValue::create(CSSCalc::Tree {
+            .root = WTFMove(sum),
+            .type = type,
+            .category = category,
+            .stage = CSSCalc::Stage::Specified,
+            .range = range
+        }));
     }
     return toCSSValue();
 }
 
-RefPtr<CSSCalcExpressionNode> CSSUnitValue::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSUnitValue::toCalcTreeNode() const
 {
-    return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(m_value, m_unit));
+    return CSSCalc::makeNumeric(m_value, m_unit);
 }
 
 } // namespace WebCore

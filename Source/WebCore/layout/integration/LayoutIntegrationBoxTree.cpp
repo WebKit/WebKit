@@ -481,7 +481,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                     runStream << "Word separator";
                 else if (box.isLineBreak())
                     runStream << "Line break";
-                else if (box.isAtomicInlineLevelBox())
+                else if (box.isAtomicInlineBox())
                     runStream << "Atomic box";
                 else if (box.isGenericInlineLevelBox())
                     runStream << "Generic inline level box";

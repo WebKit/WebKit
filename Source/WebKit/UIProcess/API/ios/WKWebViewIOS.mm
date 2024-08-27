@@ -1133,13 +1133,14 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         scrollPerfData->didCommitLayerTree([self visibleRectInViewCoordinates]);
 
     if (_perProcessState.pendingFindLayerID) {
-        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_perProcessState.pendingFindLayerID);
+        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(*_perProcessState.pendingFindLayerID);
         if (layer.superlayer)
             [self _didAddLayerForFindOverlay:layer];
     }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    [self _updateOverlayRegions:layerTreeTransaction.changedLayerProperties() destroyedLayers:layerTreeTransaction.destroyedLayers()];
+    if ([_configuration _overlayRegionsEnabled])
+        [self _updateOverlayRegions:layerTreeTransaction.changedLayerProperties() destroyedLayers:layerTreeTransaction.destroyedLayers()];
 #endif
 }
 
@@ -1363,6 +1364,9 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
 
 - (void)_updateOverlayRegionsForCustomContentView
 {
+    if (![_configuration _overlayRegionsEnabled])
+        return;
+
     if (![self _scrollViewCanHaveOverlayRegions:_scrollView.get()]) {
         [_scrollView _updateOverlayRegionsBehavior:NO];
         return;
@@ -3731,7 +3735,7 @@ static bool isLockdownModeWarningNeeded()
 
 - (void)_didAddLayerForFindOverlay:(CALayer *)layer
 {
-    _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, { });
+    _perProcessState.committedFindLayerID = std::exchange(_perProcessState.pendingFindLayerID, std::nullopt);
     _page->findClient().didAddLayerForFindOverlay(_page.get(), layer);
 
 #if HAVE(UIFINDINTERACTION)
@@ -4442,7 +4446,7 @@ static bool isLockdownModeWarningNeeded()
         return;
     }
 
-    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
+    _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOption::ExcludeDeviceScaleFactor, [completionHandler = makeBlockPtr(completionHandler)](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
         if (!imageHandle)
             return completionHandler(nil);
 
@@ -4741,7 +4745,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || _perProcessState.pendingFindLayerID || _perProcessState.committedFindLayerID)
         return;
 
-    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::PlatformLayerIdentifier layerID) {
+    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (std::optional<WebCore::PlatformLayerIdentifier> layerID) {
         auto strongSelf = weakSelf.get();
         if (strongSelf)
             strongSelf->_perProcessState.pendingFindLayerID = layerID;
@@ -4756,8 +4760,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_perProcessState.pendingFindLayerID && !_perProcessState.committedFindLayerID)
         return;
 
-    _perProcessState.pendingFindLayerID = { };
-    _perProcessState.committedFindLayerID = { };
+    _perProcessState.pendingFindLayerID = std::nullopt;
+    _perProcessState.committedFindLayerID = std::nullopt;
 
     _page->removeLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
@@ -4774,7 +4778,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
 
     if (auto* drawingArea = _page->drawingArea())
-        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(*_perProcessState.committedFindLayerID);
 
     return nil;
 }

@@ -29,8 +29,8 @@
 #include <variant>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ struct DiagnosticLoggingDictionary {
 };
 
 class DiagnosticLoggingClient : public CanMakeCheckedPtr<DiagnosticLoggingClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DiagnosticLoggingClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DiagnosticLoggingClient);
 public:
     virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;

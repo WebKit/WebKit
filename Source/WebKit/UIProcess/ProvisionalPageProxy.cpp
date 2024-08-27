@@ -105,14 +105,40 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     if (m_websiteDataStore && m_websiteDataStore != &m_page->websiteDataStore())
         process().processPool().pageBeginUsingWebsiteDataStore(protectedPage(), *m_websiteDataStore);
 
+    RefPtr previousMainFrame = m_page->mainFrame();
+
     // If we are reattaching to a SuspendedPage, then the WebProcess' WebPage already exists and
-    // WebPageProxy::didCreateMainFrame() will not be called to initialize m_mainFrame. In such
-    // case, we need to initialize m_mainFrame to reflect the fact the the WebProcess' WebPage
+    // we need to initialize m_mainFrame to reflect the fact the the WebProcess' WebPage
     // already exists and already has a main frame.
     if (suspendedPage) {
         ASSERT(&suspendedPage->process() == &process());
         suspendedPage->unsuspend();
         m_mainFrame = &suspendedPage->mainFrame();
+    } else if (m_page->preferences().siteIsolationEnabled())
+        m_mainFrame = m_page->mainFrame();
+    else {
+        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, FrameIdentifier::generate(), WebFrameProxy::IsMainFrame::Yes);
+
+        // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
+        m_mainFrame->frameLoadState().setURL(previousMainFrame->url());
+        previousMainFrame->transferNavigationCallbackToFrame(*m_mainFrame);
+    }
+
+    // Normally, notification of a server redirect comes from the WebContent process.
+    // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
+    // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
+    if (m_isServerRedirect) {
+        // FIXME: When <rdar://116203552> is fixed we should not need this case here
+        // because main frame redirect messages won't come from the web content process.
+        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+            m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(m_request.url());
+        else
+            m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
+        m_page->didReceiveServerRedirectForProvisionalLoadForFrameShared(protectedProcess(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
+    } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty()) {
+        // In case of a process swap after response policy, the didStartProvisionalLoad already happened but the new main frame doesn't know about it
+        // so we need to tell it so it can update its provisional URL.
+        m_mainFrame->didStartProvisionalLoad(previousMainFrame->provisionalURL());
     }
 
     initializeWebPage(websitePolicies);
@@ -213,12 +239,10 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     bool registerWithInspectorController { true };
     if (websitePolicies)
         m_mainFrameWebsitePoliciesData = makeUnique<WebsitePoliciesData>(websitePolicies->data());
-    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
     Ref protectedProcess = this->protectedProcess();
     if (page().preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(m_request.url());
-        mainFrameIdentifier = m_page->mainFrame()->frameID();
         if (auto existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page(), protectedProcess)) {
             m_webPageID = existingRemotePageProxy->pageID();
             m_mainFrame = existingRemotePageProxy->page()->mainFrame();
@@ -231,7 +255,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         m_needsDidStartProvisionalLoad = false;
     }
 
-    protectedProcess->send(Messages::WebProcess::CreateWebPage(m_webPageID, m_page->creationParametersForProvisionalPage(process(), *m_drawingArea, WTFMove(websitePolicies), WTFMove(mainFrameIdentifier))), 0);
+    protectedProcess->send(Messages::WebProcess::CreateWebPage(m_webPageID, m_page->creationParametersForProvisionalPage(process(), *m_drawingArea, WTFMove(websitePolicies), m_mainFrame->frameID())), 0);
     protectedProcess->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
 
     if (m_page->isLayerTreeFrozenDueToSwipeAnimation())
@@ -241,12 +265,12 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         m_page->inspectorController().didCreateProvisionalPage(*this);
 }
 
-void ProvisionalPageProxy::loadData(API::Navigation& navigation, std::span<const uint8_t> data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
+void ProvisionalPageProxy::loadData(API::Navigation& navigation, Ref<WebCore::SharedBuffer>&& data, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadData:");
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
 
-    m_page->loadDataWithNavigationShared(protectedProcess(), m_webPageID, navigation, data, mimeType, encoding, baseURL, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, sessionHistoryVisibility);
+    m_page->loadDataWithNavigationShared(protectedProcess(), m_webPageID, navigation, WTFMove(data), mimeType, encoding, baseURL, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTFMove(websitePolicies), navigation.lastNavigationAction().shouldOpenExternalURLsPolicy, sessionHistoryVisibility);
 }
 
 void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, std::optional<WebsitePoliciesData>&& websitePolicies, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume)
@@ -305,47 +329,7 @@ inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const s
     if (!m_mainFrame || m_mainFrame->frameID() != frameID)
         return false;
 
-    return !navigationID || !*navigationID || *navigationID == m_navigationID;
-}
-
-void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
-{
-    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCreateMainFrame: frameID=%" PRIu64, frameID.object().toUInt64());
-    ASSERT(!m_mainFrame);
-
-    RefPtr<WebFrameProxy> previousMainFrame = m_page->mainFrame();
-    if (page().preferences().siteIsolationEnabled()) {
-        ASSERT(m_page->mainFrame()->frameID() == frameID);
-        m_mainFrame = m_page->mainFrame();
-    } else
-        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, frameID);
-
-    // This navigation was destroyed so no need to notify of redirect.
-    if (!m_page->navigationState().hasNavigation(m_navigationID))
-        return;
-
-    // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
-    if (auto mainFrame = protectedMainFrame()) {
-        mainFrame->frameLoadState().setURL(previousMainFrame->url());
-        previousMainFrame->transferNavigationCallbackToFrame(*mainFrame);
-    }
-
-    // Normally, notification of a server redirect comes from the WebContent process.
-    // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
-    // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
-    if (m_isServerRedirect) {
-        // FIXME: When <rdar://116203552> is fixed we should not need this case here
-        // because main frame redirect messages won't come from the web content process.
-        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
-            m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(m_request.url());
-        else
-            m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
-        m_page->didReceiveServerRedirectForProvisionalLoadForFrameShared(protectedProcess(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
-    } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty()) {
-        // In case of a process swap after response policy, the didStartProvisionalLoad already happened but the new main frame doesn't know about it
-        // so we need to tell it so it can update its provisional URL.
-        m_mainFrame->didStartProvisionalLoad(previousMainFrame->provisionalURL());
-    }
+    return !navigationID || *navigationID == m_navigationID;
 }
 
 void ProvisionalPageProxy::didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, FrameIdentifier frameID)
@@ -492,10 +476,6 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(NavigationActionD
         return;
     }
 
-    if (!m_mainFrame) {
-        // This synchronous IPC message was processed before the asynchronous DidCreateMainFrame one so we do not know about this frameID yet.
-        didCreateMainFrame(frameInfo.frameID);
-    }
     ASSERT(m_mainFrame);
 
     m_page->decidePolicyForNavigationActionSyncShared(protectedProcess(), WTFMove(data), WTFMove(reply));
@@ -682,11 +662,6 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebPageProxy::DidPerformClientRedirect::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DidPerformClientRedirect>(connection, decoder, this, &ProvisionalPageProxy::didPerformClientRedirect);
-        return;
-    }
-
-    if (decoder.messageName() == Messages::WebPageProxy::DidCreateMainFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCreateMainFrame>(connection, decoder, this, &ProvisionalPageProxy::didCreateMainFrame);
         return;
     }
 

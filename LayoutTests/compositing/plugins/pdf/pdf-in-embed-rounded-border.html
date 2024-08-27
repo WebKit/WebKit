@@ -38,8 +38,9 @@
             testRunner.waitUntilDone();
 
         window.addEventListener('load', async () => {
-            await UIHelper.renderingUpdate();
-            testRunner.notifyDone();
+            await UIHelper.waitForPDFFadeIn();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
     </script>
 </head>

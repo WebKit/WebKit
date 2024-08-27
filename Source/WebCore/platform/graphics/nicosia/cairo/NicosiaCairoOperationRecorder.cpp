@@ -42,7 +42,7 @@
 #include <wtf/text/TextStream.h>
 
 #if USE(THEME_ADWAITA)
-#include "ThemeAdwaita.h"
+#include "Adwaita.h"
 #endif
 
 namespace Nicosia {
@@ -774,7 +774,7 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
 void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
 #if USE(THEME_ADWAITA)
-    ThemeAdwaita::paintFocus(*this, path, color);
+    Adwaita::paintFocus(*this, path, color);
     UNUSED_PARAM(outlineWidth);
 #else
     struct DrawFocusRing final : PaintingOperation, OperationData<Path, float, Color> {
@@ -798,7 +798,7 @@ void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth,
 void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
 #if USE(THEME_ADWAITA)
-    ThemeAdwaita::paintFocus(*this, rects, color);
+    Adwaita::paintFocus(*this, rects, color);
     UNUSED_PARAM(outlineWidth);
 #else
     struct DrawFocusRing final : PaintingOperation, OperationData<Vector<FloatRect>, float, Color> {

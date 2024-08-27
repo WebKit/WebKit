@@ -29,22 +29,37 @@
 #include "CSSColorMixResolver.h"
 #include "CSSColorMixSerialization.h"
 #include "CSSUnresolvedColor.h"
-#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {
 
-PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage)
+PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
 {
-    return evaluateCalc(percentage, { });
+    return evaluateCalc(percentage, conversionData, CSSCalcSymbolTable { });
 }
 
-static std::optional<PercentRaw> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
+PercentRaw resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
+{
+    ASSERT(!requiresConversionData(percentage));
+
+    return evaluateCalcNoConversionDataRequired(percentage, CSSCalcSymbolTable { });
+}
+
+static std::optional<PercentRaw> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)
 {
     if (!percentage)
         return std::nullopt;
-    return resolveComponentPercentage(*percentage);
+    return resolveComponentPercentage(*percentage, conversionData);
+}
+
+static std::optional<PercentRaw> resolveComponentPercentageNoConversionDataRequired(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
+{
+    if (!percentage)
+        return std::nullopt;
+    return resolveComponentPercentageNoConversionDataRequired(*percentage);
 }
 
 void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix& colorMix)
@@ -64,43 +79,81 @@ bool CSSUnresolvedColorMix::Component::operator==(const CSSUnresolvedColorMix::C
     return color->equals(color.get()) && percentage == other.percentage;
 }
 
-StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
+StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, CSSUnresolvedStyleColorResolutionState& state)
 {
-    return StyleColor {
-        StyleColorMix {
+    CSSUnresolvedStyleColorResolutionNester nester { state };
+
+    auto component1Color = unresolved.mixComponents1.color->createStyleColor(state);
+    auto component2Color = unresolved.mixComponents2.color->createStyleColor(state);
+
+    auto percentage1 = resolveComponentPercentage(unresolved.mixComponents1.percentage, state.conversionData);
+    auto percentage2 = resolveComponentPercentage(unresolved.mixComponents2.percentage, state.conversionData);
+
+    if (!component1Color.isAbsoluteColor() || !component2Color.isAbsoluteColor()) {
+        // If the either component is not absolute, we cannot fully resolve the color yet. Instead, we resolve the calc values using the conversion data, and return a StyleColorMix to be resolved at use time.
+        return StyleColor {
+            StyleColorMix {
+                unresolved.colorInterpolationMethod,
+                StyleColorMix::Component {
+                    WTFMove(component1Color),
+                    WTFMove(percentage1)
+                },
+                StyleColorMix::Component {
+                    WTFMove(component2Color),
+                    WTFMove(percentage2)
+                }
+            }
+        };
+    }
+
+    return mix(
+        CSSColorMixResolver {
             unresolved.colorInterpolationMethod,
-            StyleColorMix::Component {
-                unresolved.mixComponents1.color->createStyleColor(document, style, forVisitedLink),
-                resolveComponentPercentage(unresolved.mixComponents1.percentage)
+            CSSColorMixResolver::Component {
+                component1Color.absoluteColor(),
+                WTFMove(percentage1)
             },
-            StyleColorMix::Component {
-                unresolved.mixComponents2.color->createStyleColor(document, style, forVisitedLink),
-                resolveComponentPercentage(unresolved.mixComponents2.percentage)
+            CSSColorMixResolver::Component {
+                component2Color.absoluteColor(),
+                WTFMove(percentage2)
             }
         }
-    };
+    );
 }
 
-Color createColor(const CSSUnresolvedColorMix& unresolved, const CSSUnresolvedColorResolutionContext& context)
+Color createColor(const CSSUnresolvedColorMix& unresolved, CSSUnresolvedColorResolutionState& state)
 {
-    auto component1Color = unresolved.mixComponents1.color->createColor(context);
+    auto component1Color = unresolved.mixComponents1.color->createColor(state);
     if (!component1Color.isValid())
         return { };
 
-    auto component2Color = unresolved.mixComponents2.color->createColor(context);
+    auto component2Color = unresolved.mixComponents2.color->createColor(state);
     if (!component2Color.isValid())
         return { };
+
+    std::optional<PercentRaw> percentage1;
+    std::optional<PercentRaw> percentage2;
+    if (requiresConversionData(unresolved.mixComponents1.percentage) || requiresConversionData(unresolved.mixComponents2.percentage)) {
+        if (!state.conversionData)
+            return { };
+
+        percentage1 = resolveComponentPercentage(unresolved.mixComponents1.percentage, *state.conversionData);
+        percentage2 = resolveComponentPercentage(unresolved.mixComponents2.percentage, *state.conversionData);
+    } else {
+        percentage1 = resolveComponentPercentageNoConversionDataRequired(unresolved.mixComponents1.percentage);
+        percentage2 = resolveComponentPercentageNoConversionDataRequired(unresolved.mixComponents2.percentage);
+    }
 
     return mix(
         CSSColorMixResolver {
             unresolved.colorInterpolationMethod,
             CSSColorMixResolver::Component {
                 WTFMove(component1Color),
-                resolveComponentPercentage(unresolved.mixComponents1.percentage)
+                WTFMove(percentage1),
             },
             CSSColorMixResolver::Component {
                 WTFMove(component2Color),
-                resolveComponentPercentage(unresolved.mixComponents2.percentage)
+                WTFMove(percentage2),
             }
         }
     );

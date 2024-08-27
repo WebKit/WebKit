@@ -4538,6 +4538,39 @@ void main()
     ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
 }
 
+// Test that uniform block variables work as comma expression results.
+TEST_P(GLSLTest_ES3, UniformBlockCommaExpressionResult)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout (std140) uniform C {
+    float u;
+    float v;
+};
+out vec4 o;
+void main() {
+    vec2 z = vec2(1.0 - u, v);
+    vec2 b = vec2((z=z, u)); // Being tested.
+    o = vec4(b.x, z.x, b.x, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    constexpr GLfloat kInput1Data[2] = {1.f, 0.f};
+    GLBuffer input1;
+    glBindBuffer(GL_UNIFORM_BUFFER, input1);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat) * 2, &kInput1Data, GL_STATIC_COPY);
+    const GLuint kInput1Index = glGetUniformBlockIndex(program, "C");
+    glUniformBlockBinding(program, kInput1Index, 1);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, input1);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that the length() method is correctly translated in Vulkan atomic counter buffer emulation.
 TEST_P(GLSLTest_ES31, AtomicCounterArrayLength)
 {

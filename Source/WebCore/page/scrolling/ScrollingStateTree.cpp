@@ -39,10 +39,13 @@
 #include "ScrollingStatePluginScrollingNode.h"
 #include "ScrollingStatePositionedNode.h"
 #include "ScrollingStateStickyNode.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateTree);
 
 static bool nodeTypeAndParentMatch(ScrollingStateNode& node, ScrollingNodeType nodeType, ScrollingStateNode* parentNode)
 {

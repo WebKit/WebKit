@@ -46,7 +46,7 @@ std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(con
 
 std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
 {
-    auto* device = convertDeviceFromBacking(canvasConfiguration.device);
+    WeakPtr device = convertDeviceFromBacking(canvasConfiguration.device);
     if (!device)
         return std::nullopt;
 

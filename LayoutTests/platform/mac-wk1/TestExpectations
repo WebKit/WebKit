@@ -30,6 +30,8 @@ http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.
 
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html [ Pass ]
+
 # rdar://problem/61793884 : Enabling this test for WK1 only.
 fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Pass ]
 
@@ -860,6 +862,7 @@ accessibility/dynamic-colspan.html [ Skip ]
 accessibility/dynamic-table-descendants.html [ Skip ]
 
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
+accessibility/indeterminate-progressbar-custom-element.html [ Skip ]
 accessibility/progress-indeterminate-value.html [ Skip ]
 
 # Missing AccessibilityUIElement::brailleLabel and AccessibilityUIElement::brailleRoleDescription implementations.
@@ -1080,6 +1083,7 @@ http/tests/media/cross-origin-webm-video.html [ Skip ]
 http/tests/media/video-webm-stall.html
 http/tests/media/video-src-webm-blob.html [ Failure ]
 http/tests/media/video-srcobject-webm-blob.html [ Failure ]
+media/media-vp8-hiddenframes.html [ Skip ]
 media/media-vp8-webm-error.html [ Failure ]
 media/media-vp8-webm.html [ Skip ]
 media/media-vp8-webm-seek-to-start.html [ Skip ]
@@ -2674,6 +2678,9 @@ fast/forms/select/select-show-picker.html [ Skip ]
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
 
+# rdar://134449564 REGRESSION (internal build): [ macOS wk1 ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html is a consistent timeout
+[ Sequoia+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Skip ]
+
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ Pass ImageOnlyFailure ]
@@ -2888,3 +2895,16 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-007.svg [ Ski
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg [ Skip ]
+
+# webkit.org/b/278316
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_normal_wrapped.html
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_nowrap_wrapped.html
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_pre.html
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_root_selector.html
+
+[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+
+# webkit.org/b/278293 [MacOS WK1] imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html is a flakey failure
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html [ Pass Failure ]
+

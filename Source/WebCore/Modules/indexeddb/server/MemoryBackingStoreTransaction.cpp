@@ -33,9 +33,12 @@
 #include "MemoryIDBBackingStore.h"
 #include "MemoryObjectStore.h"
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace IDBServer {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryBackingStoreTransaction);
 
 std::unique_ptr<MemoryBackingStoreTransaction> MemoryBackingStoreTransaction::create(MemoryIDBBackingStore& backingStore, const IDBTransactionInfo& info)
 {

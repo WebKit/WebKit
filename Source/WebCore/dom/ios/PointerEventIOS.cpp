@@ -83,7 +83,7 @@ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& eve
     , m_predictedEvents(predictedEvents)
 {
     m_azimuthAngle = event.azimuthAngleAtIndex(index);
-    m_altitudeAngle = event.altitudeAngleAtIndex(index);
+    m_altitudeAngle = m_pointerType == penPointerEventType() ? event.altitudeAngleAtIndex(index) : piOverTwoDouble;
     auto tilt = tiltFromAngle(m_altitudeAngle, m_azimuthAngle);
     m_tiltX = tilt.tiltX;
     m_tiltY = tilt.tiltY;

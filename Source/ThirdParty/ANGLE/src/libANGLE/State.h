@@ -228,7 +228,8 @@ class PrivateState : angle::NonCopyable
                  bool bindGeneratesResourceCHROMIUM,
                  bool clientArraysEnabled,
                  bool robustResourceInit,
-                 bool programBinaryCacheEnabled);
+                 bool programBinaryCacheEnabled,
+                 bool isExternal);
     ~PrivateState();
 
     void initialize(Context *context);
@@ -250,6 +251,8 @@ class PrivateState : angle::NonCopyable
     const TextureCapsMap &getTextureCaps() const { return mTextureCaps; }
     const Extensions &getExtensions() const { return mExtensions; }
     const Limitations &getLimitations() const { return mLimitations; }
+
+    bool isExternal() const { return mIsExternal; }
 
     Caps *getMutableCaps() { return &mCaps; }
     TextureCapsMap *getMutableTextureCaps() { return &mTextureCaps; }
@@ -627,6 +630,7 @@ class PrivateState : angle::NonCopyable
     TextureCapsMap mTextureCaps;
     Extensions mExtensions;
     Limitations mLimitations;
+    const bool mIsExternal;
 
     ColorF mColorClearValue;
     GLfloat mDepthClearValue;
@@ -785,7 +789,8 @@ class State : angle::NonCopyable
           bool programBinaryCacheEnabled,
           EGLenum contextPriority,
           bool hasRobustAccess,
-          bool hasProtectedContent);
+          bool hasProtectedContent,
+          bool isExternal);
     ~State();
 
     void initialize(Context *context);
@@ -812,6 +817,8 @@ class State : angle::NonCopyable
     const TextureCapsMap &getTextureCaps() const { return mPrivateState.getTextureCaps(); }
     const Extensions &getExtensions() const { return mPrivateState.getExtensions(); }
     const Limitations &getLimitations() const { return mPrivateState.getLimitations(); }
+
+    bool isExternal() const { return mPrivateState.isExternal(); }
 
     Caps *getMutableCaps() { return mPrivateState.getMutableCaps(); }
     TextureCapsMap *getMutableTextureCaps() { return mPrivateState.getMutableTextureCaps(); }

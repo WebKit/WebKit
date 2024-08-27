@@ -438,10 +438,8 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
     view().addCounterNeedingUpdate(*this);
 }
 
-RenderCounter::~RenderCounter()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderCounter::~RenderCounter() = default;
 
 void RenderCounter::willBeDestroyed()
 {

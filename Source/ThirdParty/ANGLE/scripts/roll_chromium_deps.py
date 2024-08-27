@@ -42,6 +42,8 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/android_build_tools/aapt2',
     'third_party/android_build_tools/art',
     'third_party/android_build_tools/bundletool',
+    'third_party/android_build_tools/error_prone/cipd',
+    'third_party/android_build_tools/error_prone_javac/cipd',
     'third_party/android_build_tools/lint',
     'third_party/android_build_tools/manifest_merger',
     'third_party/android_deps',

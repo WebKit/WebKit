@@ -44,9 +44,11 @@ namespace WebCore {
 class TextureMapper;
 
 class TextureMapperPlatformLayerProxyDMABuf final : public TextureMapperPlatformLayerProxy {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TextureMapperPlatformLayerProxyDMABuf(ContentType);
+    static Ref<TextureMapperPlatformLayerProxy> create(ContentType contentType)
+    {
+        return adoptRef(*new TextureMapperPlatformLayerProxyDMABuf(contentType));
+    }
     virtual ~TextureMapperPlatformLayerProxyDMABuf();
 
     bool isDMABufBased() const override { return true; }
@@ -98,6 +100,8 @@ public:
     }
 
 private:
+    explicit TextureMapperPlatformLayerProxyDMABuf(ContentType);
+
     void pushDMABuf(Ref<DMABufLayer>&&);
 
 #if ASSERT_ENABLED

@@ -45,7 +45,16 @@ struct CSSRelativeColorResolver {
 };
 
 template<typename Descriptor>
-Color resolve(const CSSRelativeColorResolver<Descriptor>& relative)
+bool requiresConversionData(const CSSRelativeColorResolver<Descriptor>& relative)
+{
+    return requiresConversionData(std::get<0>(relative.components))
+        || requiresConversionData(std::get<1>(relative.components))
+        || requiresConversionData(std::get<2>(relative.components))
+        || requiresConversionData(std::get<3>(relative.components));
+}
+
+template<typename Descriptor>
+Color resolve(const CSSRelativeColorResolver<Descriptor>& relative, const CSSToLengthConversionData& conversionData)
 {
     auto originColor = relative.origin;
     auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
@@ -68,10 +77,50 @@ Color resolve(const CSSRelativeColorResolver<Descriptor>& relative)
 
     // Evaluated any calc values to their corresponding channel value.
     auto components = CSSColorParseType<Descriptor> {
-        evaluateCalc(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
-        evaluateCalc(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
-        evaluateCalc(std::get<2>(componentsWithUnevaluatedCalc), symbolTable),
-        evaluateCalc(std::get<3>(componentsWithUnevaluatedCalc), symbolTable)
+        evaluateCalc(std::get<0>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        evaluateCalc(std::get<1>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        evaluateCalc(std::get<2>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        evaluateCalc(std::get<3>(componentsWithUnevaluatedCalc), conversionData, symbolTable)
+    };
+
+    // Normalize values into their numeric form, forming a validated typed color.
+    auto typedColor = convertToTypedColor<Descriptor>(components, originColorAsColorType.unresolved().alpha);
+
+    // Convert the validated typed color into a `Color`,
+    return convertToColor<Descriptor, CSSColorFunctionForm::Relative>(typedColor);
+}
+
+// This resolve function should only be called if the components have been checked and don't require conversion data to be resolved.
+template<typename Descriptor>
+Color resolveNoConversionDataRequired(const CSSRelativeColorResolver<Descriptor>& relative)
+{
+    ASSERT(!requiresConversionData(relative));
+
+    auto originColor = relative.origin;
+    auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
+    auto originComponents = asColorComponents(originColorAsColorType.resolved());
+
+    const CSSCalcSymbolTable symbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
+    };
+
+    // Replace any symbol value (e.g. CSSValueR) to their corresponding channel value.
+    auto componentsWithUnevaluatedCalc = CSSColorParseTypeWithCalc<Descriptor> {
+        replaceSymbol(std::get<0>(relative.components), symbolTable),
+        replaceSymbol(std::get<1>(relative.components), symbolTable),
+        replaceSymbol(std::get<2>(relative.components), symbolTable),
+        replaceSymbol(std::get<3>(relative.components), symbolTable)
+    };
+
+    // Evaluated any calc values to their corresponding channel value.
+    auto components = CSSColorParseType<Descriptor> {
+        evaluateCalcNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
+        evaluateCalcNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
+        evaluateCalcNoConversionDataRequired(std::get<2>(componentsWithUnevaluatedCalc), symbolTable),
+        evaluateCalcNoConversionDataRequired(std::get<3>(componentsWithUnevaluatedCalc), symbolTable)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.

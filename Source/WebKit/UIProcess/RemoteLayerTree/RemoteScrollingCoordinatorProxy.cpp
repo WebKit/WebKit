@@ -447,6 +447,8 @@ bool RemoteScrollingCoordinatorProxy::isMonitoringWheelEvents()
     return false;
 }
 
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

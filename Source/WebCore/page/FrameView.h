@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ScrollView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class Frame;
 enum class RenderAsTextFlag : uint16_t;
 
 class FrameView : public ScrollView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FrameView);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameView);
 public:
     enum class Type : bool { Local, Remote };

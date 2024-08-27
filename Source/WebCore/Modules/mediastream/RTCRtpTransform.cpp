@@ -30,8 +30,11 @@
 
 #include "RTCRtpReceiver.h"
 #include "RTCRtpSender.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpTransform);
 
 std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(std::optional<Internal>&& internal)
 {

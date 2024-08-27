@@ -37,9 +37,12 @@
 #include <WebCore/NativeImage.h>
 #include <WebGPU/WebGPUExt.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CompositorIntegrationImpl);
 
 CompositorIntegrationImpl::CompositorIntegrationImpl(ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)
@@ -103,10 +106,14 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
         return completion(nullptr);
 
     RefPtr<NativeImage> displayImage;
+    bool isIOSurfaceSupportedFormat = false;
     if (auto* presentationContextPtr = m_presentationContext.get())
-        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex);
+        displayImage = presentationContextPtr->getMetalTextureAsNativeImage(bufferIndex, isIOSurfaceSupportedFormat);
 
     if (!displayImage) {
+        if (!isIOSurfaceSupportedFormat)
+            return completion(nullptr);
+
         auto& renderBuffer = m_renderBuffers[bufferIndex];
         RetainPtr<CGContextRef> cgContext = renderBuffer->createPlatformContext();
         if (cgContext)

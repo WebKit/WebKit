@@ -1336,6 +1336,12 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 };
 
 #if ENABLE(APPLICATION_MANIFEST)
+[Nested] enum class WebCore::ApplicationManifest::Direction : uint8_t {
+    Auto
+    LTR
+    RTL
+};
+
 [Nested] enum class WebCore::ApplicationManifest::Display : uint8_t {
     Browser
     MinimalUI
@@ -1364,6 +1370,7 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 
 struct WebCore::ApplicationManifest {
     String rawJSON
+    WebCore::ApplicationManifest::Direction dir
     String name
     String shortName
     String description
@@ -1919,7 +1926,7 @@ header: <WebCore/RectEdges.h>
     float left()
 };
 
-[Alias=class RectEdges<bool>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BoolBoxExtent {
+[CustomHeader] class WebCore::RectEdges<bool> {
     bool top();
     bool right();
     bool bottom();
@@ -1977,7 +1984,7 @@ struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
     WebCore::PageIdentifier webPageIdentifier;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
-    WebCore::ElementIdentifier elementIdentifier;
+    Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
 
 struct WebCore::ElementAnimationContext {
@@ -4154,7 +4161,7 @@ enum class WebCore::ScrollSnapStop : bool;
     float offset;
     WebCore::ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    WebCore::ElementIdentifier snapTargetID;
+    Markable<WebCore::ElementIdentifier> snapTargetID;
     bool isFocused;
     Vector<size_t> snapAreaIndices;
 };
@@ -4447,14 +4454,6 @@ enum class WebCore::MediaPlayerPitchCorrectionAlgorithm : uint8_t {
     BestForMusic,
     BestForSpeech,
 };
-
-[OptionSet] enum class WebCore::MediaPlayerVideoPlaybackConfigurationOption : uint8_t {
-    Stereo,
-    StereoMultiview,
-    Spatial
-};
-using WebCore::MediaPlayerVideoPlaybackConfiguration = OptionSet<WebCore::MediaPlayerVideoPlaybackConfigurationOption>;
-using WebCore::MediaPlayer::VideoPlaybackConfiguration = WebCore::MediaPlayerVideoPlaybackConfiguration;
 
 class WebCore::GeolocationPositionData {
     double timestamp;
@@ -4886,7 +4885,7 @@ class WebCore::SocketStreamError {
 
 header: <WebCore/InbandGenericCue.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GenericCueData {
-    WebCore::InbandGenericCueIdentifier m_uniqueId;
+    Markable<WebCore::InbandGenericCueIdentifier> m_uniqueId;
     MediaTime m_startTime;
     MediaTime m_endTime;
     AtomString m_id;
@@ -5524,6 +5523,14 @@ enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
 
 #if ENABLE(VIDEO)
 
+header: <WebCore/SpatialVideoMetadata.h>
+struct WebCore::SpatialVideoMetadata {
+    WebCore::IntSize size;
+    float horizontalFOVDegrees;
+    float baseline;
+    float disparityAdjustment;
+};
+
 struct WebCore::PlatformTrackConfiguration {
     String codec;
 };
@@ -5540,6 +5547,7 @@ struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfigur
     WebCore::PlatformVideoColorSpace colorSpace;
     double framerate;
     uint64_t bitrate;
+    std::optional<WebCore::SpatialVideoMetadata> spatialVideoMetadata;
 };
 
 #endif
@@ -6085,6 +6093,22 @@ struct WebCore::MockWebAuthenticationConfiguration {
     std::optional<WebCore::MockWebAuthenticationConfiguration::HidConfiguration> hid;
     std::optional<WebCore::MockWebAuthenticationConfiguration::NfcConfiguration> nfc;
     std::optional<WebCore::MockWebAuthenticationConfiguration::CcidConfiguration> ccid;
+};
+
+struct WebCore::OpenID4VPRequest {
+};
+
+[Nested] struct WebCore::IdentityRequestProvider {
+    WebCore::IdentityCredentialProtocol protocol;
+    WebCore::OpenID4VPRequest request;
+};
+
+struct WebCore::DigitalCredentialRequestOptions {
+    Vector<WebCore::IdentityRequestProvider> providers;
+};
+
+enum class WebCore::IdentityCredentialProtocol : uint8_t {
+    Openid4vp
 };
 
 #endif // ENABLE(WEB_AUTHN)
@@ -6672,6 +6696,11 @@ enum class WebCore::WebGPU::PredefinedColorSpace : uint8_t {
 };
 
 struct WebCore::CookieStoreGetOptions {
+    String name;
+    String url;
+};
+
+struct WebCore::CookieChangeSubscription {
     String name;
     String url;
 };

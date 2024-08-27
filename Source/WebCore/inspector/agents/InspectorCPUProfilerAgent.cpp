@@ -32,10 +32,13 @@
 #include "ResourceUsageThread.h"
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCPUProfilerAgent);
 
 InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
     : InspectorAgentBase("CPUProfiler"_s, context)

@@ -211,7 +211,11 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
         jit.setupArguments<decltype(operationAllocateResultsArray)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
         JIT_COMMENT(jit, "operationAllocateResultsArray");
         jit.callOperation<OperationPtrTag>(operationAllocateResultsArray);
+#if USE(JSVALUE64)
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::returnValueGPR2));
+#else
+        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2));
+#endif
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
@@ -232,12 +236,8 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreterCrashForSIMDParame
         JIT_COMMENT(jit, "Throw an exception because this function uses v128");
         emitThrowWasmToJSException(jit, GPRInfo::wasmContextInstancePointer, ExceptionType::TypeErrorInvalidV128Use);
 
-        LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate()))
-            RELEASE_ASSERT(false);
-        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(
-            FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted error entrypoint"),
-            nullptr);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted error entrypoint"), nullptr);
     });
     return thunk;
 }
@@ -373,6 +373,15 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 5) * 8 }, FPRInfo::argumentFPR5);
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 6) * 8 }, FPRInfo::argumentFPR6);
         jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters + 7) * 8 }, FPRInfo::argumentFPR7);
+#elif CPU(ARM_THUMB2)
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 0 * 8 }, FPRInfo::argumentFPR0);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 1 * 8 }, FPRInfo::argumentFPR1);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 2 * 8 }, FPRInfo::argumentFPR2);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 3 * 8 }, FPRInfo::argumentFPR3);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 4 * 8 }, FPRInfo::argumentFPR4);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 5 * 8 }, FPRInfo::argumentFPR5);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 6 * 8 }, FPRInfo::argumentFPR6);
+        jit.loadDouble(CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 + 7 * 8 }, FPRInfo::argumentFPR7);
 #endif
 
         // Pop argument space values
@@ -468,12 +477,25 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.storeDouble(FPRInfo::argumentFPR5, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  5) * 8 });
         jit.storeDouble(FPRInfo::argumentFPR6, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  6) * 8 });
         jit.storeDouble(FPRInfo::argumentFPR7, CCallHelpers::Address { CCallHelpers::stackPointerRegister, (GPRInfo::numberOfArgumentRegisters +  7) * 8 });
+#elif CPU(ARM_THUMB2)
+        jit.storeDouble(FPRInfo::argumentFPR0, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  0 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR1, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  1 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR2, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  2 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR3, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  3 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR4, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  4 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR5, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  5 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR6, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  6 * 8 });
+        jit.storeDouble(FPRInfo::argumentFPR7, CCallHelpers::Address { CCallHelpers::stackPointerRegister, GPRInfo::numberOfArgumentRegisters * 4 +  7 * 8 });
 #endif
 
         // Prepare frame
         jit.setupArguments<decltype(operationJSToWasmEntryWrapperBuildReturnFrame)>(CCallHelpers::stackPointerRegister, GPRInfo::callFrameRegister);
         jit.callOperation<OperationPtrTag>(operationJSToWasmEntryWrapperBuildReturnFrame);
+#if USE(JSVALUE64)
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::returnValueGPR2));
+#else
+        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2));
+#endif
 
         // restoreJSEntrypointInterpreterRegisters
 
@@ -496,12 +518,8 @@ std::shared_ptr<InternalFunction> createJSToWasmJITInterpreter()
         jit.callOperation<OperationPtrTag>(operationWasmUnwind);
         jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
 
-        LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate()))
-            RELEASE_ASSERT(false);
-        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(
-            FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted entrypoint"),
-            nullptr);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+        thunk->get()->entrypoint.compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly interpreted entrypoint"), nullptr);
     });
     return thunk;
 }

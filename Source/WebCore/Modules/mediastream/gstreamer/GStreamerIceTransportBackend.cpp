@@ -32,6 +32,8 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_ice_transport_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_ice_transport_debug
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerIceTransportBackend);
+
 GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
     : m_backend(WTFMove(transport))
 {

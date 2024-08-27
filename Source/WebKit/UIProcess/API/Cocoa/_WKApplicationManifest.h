@@ -36,6 +36,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, _WKApplicationManifestDirection) {
+    _WKApplicationManifestDirectionAuto,
+    _WKApplicationManifestDirectionLTR,
+    _WKApplicationManifestDirectionRTL,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
     _WKApplicationManifestDisplayModeBrowser,
     _WKApplicationManifestDisplayModeMinimalUI,
@@ -67,6 +73,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 - (nullable instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL WK_API_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2));
 
 @property (nonatomic, readonly, nullable, copy) NSString *rawJSON;
+@property (nonatomic, readonly) _WKApplicationManifestDirection dir;
 @property (nonatomic, readonly, nullable, copy) NSString *name;
 @property (nonatomic, readonly, nullable, copy) NSString *shortName;
 @property (nonatomic, readonly, nullable, copy) NSString *applicationDescription;

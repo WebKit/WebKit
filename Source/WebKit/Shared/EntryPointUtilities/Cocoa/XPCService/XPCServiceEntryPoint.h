@@ -90,9 +90,9 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 
 enum class EnableLockdownMode: bool { No, Yes };
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode);
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, bool isWebContentProcess);
 
-template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
+template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
@@ -104,12 +104,22 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     setOSTransaction(adoptOSObject(os_transaction_create("WebKit XPC Service")));
 #endif
 
+    AuxiliaryProcessInitializationParameters parameters;
+
+    if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
+        exitProcess(EXIT_FAILURE);
+
+    if (isWebContentProcess)
+        JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
+    if (initializerMessage) {
+        bool enableLockdownMode = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
+        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, isWebContentProcess);
+    }
+
     InitializeWebKit2();
 
     if (!delegate.checkEntitlements())
         exitProcess(EXIT_FAILURE);
-
-    AuxiliaryProcessInitializationParameters parameters;
 
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
         exitProcess(EXIT_FAILURE);
@@ -130,9 +140,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (!delegate.getClientProcessName(parameters.uiProcessName))
         exitProcess(EXIT_FAILURE);
 
-    if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
-        exitProcess(EXIT_FAILURE);
-
     // Set the task default voucher to the current value (as propagated by XPC).
     voucher_replace_default_voucher();
 
@@ -142,11 +149,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 #endif
 
     parameters.processType = XPCServiceType::processType;
-
-    if (initializerMessage) {
-        bool enableLockdownMode = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
-        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No);
-    }
 
     initializeAuxiliaryProcess<XPCServiceType>(WTFMove(parameters));
 }

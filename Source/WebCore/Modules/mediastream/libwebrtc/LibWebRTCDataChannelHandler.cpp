@@ -32,8 +32,11 @@
 #include "RTCDataChannel.h"
 #include "RTCError.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCDataChannelHandler);
 
 webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(const RTCDataChannelInit& options)
 {

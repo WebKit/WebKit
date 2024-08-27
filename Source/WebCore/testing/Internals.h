@@ -331,6 +331,7 @@ public:
     ExceptionOr<Ref<DOMRect>> absoluteLineRectFromPoint(int x, int y);
 
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
+    ExceptionOr<bool> isCaretVisible();
     ExceptionOr<bool> isCaretBlinkingSuspended();
     ExceptionOr<bool> isCaretBlinkingSuspended(Document&);
 
@@ -405,6 +406,8 @@ public:
     };
     Vector<TextIteratorState> statesOfTextIterator(const Range&);
 
+    String textFragmentDirectiveForRange(const Range&);
+
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
     ExceptionOr<uint64_t> lastSpellCheckRequestSequence();
@@ -449,6 +452,7 @@ public:
 #if ENABLE(WRITING_TOOLS)
     bool hasWritingToolsTextSuggestionMarker(int from, int length);
 #endif
+    bool hasTransparentContentMarker(int from, int length);
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);
     void setAutomaticLinkDetectionEnabled(bool);
@@ -676,7 +680,7 @@ public:
 
     ExceptionOr<void> setAllowAnimationControlsOverride(bool);
 
-    void updateLayoutAndStyleForAllFrames();
+    void updateLayoutAndStyleForAllFrames() const;
     ExceptionOr<void> updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*);
     unsigned layoutCount() const;
 
@@ -1243,6 +1247,7 @@ public:
     using AV1CodecConfigurationRecord = WebCore::AV1CodecConfigurationRecord;
     std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(const String&);
     String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
+    bool validateAV1ConfigurationRecord(const String&);
     bool validateAV1PerLevelConstraints(const String&, const VideoConfiguration&);
 
     struct CookieData {
@@ -1458,7 +1463,6 @@ public:
         
     bool isUsingUISideCompositing() const;
 
-    bool readyToRetrieveComputedRoleOrLabel(Element&) const;
     String getComputedLabel(Element&) const;
     String getComputedRole(Element&) const;
 

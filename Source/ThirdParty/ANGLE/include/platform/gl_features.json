@@ -563,12 +563,20 @@
             "issue": "http://crbug.com/1144207"
         },
         {
-            "name": "sync_vertex_arrays_to_default",
+            "name": "sync_all_vertex_arrays_to_default",
             "category": "Workarounds",
             "description": [
                 "Only use the default VAO because of missing support or driver bugs"
             ],
             "issue": "http://anglebug.com/40096758"
+        },
+        {
+            "name": "sync_default_vertex_arrays_to_default",
+            "category": "Workarounds",
+            "description": [
+                "Sync all frontend vertex array objects to the driver default vertex array"
+            ],
+            "issue": "http://anglebug.com/355034686"
         },
         {
             "name": "sanitize_AMDGPU_renderer_string",

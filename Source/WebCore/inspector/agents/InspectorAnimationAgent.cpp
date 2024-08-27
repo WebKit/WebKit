@@ -60,6 +60,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -68,6 +69,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAnimationAgent);
 
 static std::optional<double> protocolValueForSeconds(const Seconds& seconds)
 {

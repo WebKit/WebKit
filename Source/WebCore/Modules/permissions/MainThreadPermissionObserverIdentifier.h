@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum class  MainThreadPermissionObserverIdentifierType { };
-using MainThreadPermissionObserverIdentifier = AtomicObjectIdentifier<MainThreadPermissionObserverIdentifierType>;
+using MainThreadPermissionObserverIdentifier = LegacyNullableAtomicObjectIdentifier<MainThreadPermissionObserverIdentifierType>;
 
 } // namespace WebCore

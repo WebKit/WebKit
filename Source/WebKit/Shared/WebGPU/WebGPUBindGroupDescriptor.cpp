@@ -63,7 +63,7 @@ std::optional<WebCore::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::c
     if (!base)
         return std::nullopt;
 
-    auto* bindGroupLayout = convertBindGroupLayoutFromBacking(bindGroupDescriptor.bindGroupLayout);
+    WeakPtr bindGroupLayout = convertBindGroupLayoutFromBacking(bindGroupDescriptor.bindGroupLayout);
     if (!bindGroupLayout)
         return std::nullopt;
 

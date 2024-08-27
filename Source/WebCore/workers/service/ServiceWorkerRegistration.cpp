@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ServiceWorkerRegistration.h"
 
+#include "CookieChangeSubscription.h"
+#include "CookieStoreGetOptions.h"
 #include "CookieStoreManager.h"
 #include "Document.h"
 #include "Event.h"
@@ -48,6 +50,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 
 #define REGISTRATION_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
 #define REGISTRATION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
@@ -352,8 +355,79 @@ void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& f
 CookieStoreManager& ServiceWorkerRegistration::cookies()
 {
     if (!m_cookieStoreManager)
-        m_cookieStoreManager = CookieStoreManager::create();
+        m_cookieStoreManager = CookieStoreManager::create(*this);
     return *m_cookieStoreManager;
+}
+
+void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
+{
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
+    Vector<CookieChangeSubscription> cookieChangeSubscriptions;
+    cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
+    for (auto& subscription : subscriptions) {
+        // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
+        String url;
+        if (subscription.url.isNull())
+            url = scope();
+        else {
+            url = scriptExecutionContext()->completeURL(subscription.url).string();
+            if (!url.startsWith(scope())) {
+                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot subcribe to cookie changes for URLs outside of its scope"_s });
+                return;
+            }
+        }
+
+        cookieChangeSubscriptions.append({ WTFMove(subscription.name), WTFMove(url) });
+    }
+
+    protectedContainer()->addCookieChangeSubscriptions(identifier(), WTFMove(cookieChangeSubscriptions), WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
+{
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
+    Vector<CookieChangeSubscription> cookieChangeSubscriptions;
+    cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
+    for (auto& subscription : subscriptions) {
+        // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
+        String url;
+        if (subscription.url.isNull())
+            url = scope();
+        else {
+            url = scriptExecutionContext()->completeURL(subscription.url).string();
+            if (!url.startsWith(scope())) {
+                promise->reject(Exception { ExceptionCode::TypeError, "The service worker cannot unsubcribe from cookie changes for URLs outside of its scope"_s });
+                return;
+            }
+        }
+
+        cookieChangeSubscriptions.append({ WTFMove(subscription.name), WTFMove(url) });
+    }
+
+    protectedContainer()->removeCookieChangeSubscriptions(identifier(), WTFMove(cookieChangeSubscriptions), WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::cookieChangeSubscriptions(Ref<DeferredPromise>&& promise)
+{
+    if (isContextStopped()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "The script execution context is not currently running"_s });
+        return;
+    }
+
+    protectedContainer()->cookieChangeSubscriptions(identifier(), WTFMove(promise));
+}
+
+Ref<ServiceWorkerContainer> ServiceWorkerRegistration::protectedContainer() const
+{
+    return m_container;
 }
 
 } // namespace WebCore

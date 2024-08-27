@@ -72,6 +72,7 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/StackVisitor.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -83,6 +84,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
 
 static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
 {
@@ -232,19 +235,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// covid.cdc.gov https://bugs.webkit.org/show_bug.cgi?id=223620
-bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element) const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!isDomain("covid.cdc.gov"_s))
-        return false;
-
-    static MainThreadNeverDestroyed<const AtomString> tooltipClass("tooltip"_s);
-    return element.hasClassName(tooltipClass.get());
-}
-
 // google.com https://bugs.webkit.org/show_bug.cgi?id=223700
 // FIXME: Remove after the site is fixed, <rdar://problem/75792913>
 bool Quirks::shouldHideSearchFieldResultsButton() const
@@ -347,20 +337,6 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
         return false;
 
     return m_document->url().host() == "www.youtube.com"_s;
-#else
-    return false;
-#endif
-}
-
-// mail.google.com https://bugs.webkit.org/show_bug.cgi?id=200605
-bool Quirks::shouldAvoidUsingIOS13ForGmail() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    auto& url = m_document->topDocument().url();
-    return url.host() == "mail.google.com"_s;
 #else
     return false;
 #endif

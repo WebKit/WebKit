@@ -28,33 +28,53 @@
 
 #include "CookieStoreGetOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "ServiceWorkerRegistration.h"
 #include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-Ref<CookieStoreManager> CookieStoreManager::create()
+Ref<CookieStoreManager> CookieStoreManager::create(ServiceWorkerRegistration& serviceWorkerRegistration)
 {
-    return adoptRef(*new CookieStoreManager);
+    return adoptRef(*new CookieStoreManager(serviceWorkerRegistration));
 }
 
-CookieStoreManager::CookieStoreManager() = default;
+CookieStoreManager::CookieStoreManager(ServiceWorkerRegistration& serviceWorkerRegistration)
+    : m_serviceWorkerRegistration(serviceWorkerRegistration)
+{
+}
 
 CookieStoreManager::~CookieStoreManager() = default;
 
-void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
+void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(ExceptionCode::NotSupportedError);
+    if (RefPtr registration = m_serviceWorkerRegistration.get()) {
+        registration->addCookieChangeSubscriptions(WTFMove(subscriptions), WTFMove(promise));
+        return;
+    }
+
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
+}
+
+void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&& subscriptions, Ref<DeferredPromise>&& promise)
+{
+    if (RefPtr registration = m_serviceWorkerRegistration.get()) {
+        registration->removeCookieChangeSubscriptions(WTFMove(subscriptions), WTFMove(promise));
+        return;
+    }
+
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
 }
 
 void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(ExceptionCode::NotSupportedError);
-}
+    if (RefPtr registration = m_serviceWorkerRegistration.get()) {
+        registration->cookieChangeSubscriptions(WTFMove(promise));
+        return;
+    }
 
-void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
-{
-    promise->reject(ExceptionCode::NotSupportedError);
+    promise->reject(Exception { ExceptionCode::InvalidStateError, "There is no service worker registration"_s });
 }
 
 } // namespace WebCore

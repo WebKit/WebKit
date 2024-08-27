@@ -28,12 +28,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
-#if USE(NICOSIA)
-#include "NicosiaContentLayer.h"
-#else
-#include "TextureMapperPlatformLayerProxyProvider.h"
-#endif
-
 namespace WebCore {
 
 class TextureMapperPlatformLayerProxy;
@@ -42,11 +36,6 @@ class MediaPlayerPrivateHolePunch
     : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
     , public RefCounted<MediaPlayerPrivateHolePunch>
-#if USE(NICOSIA)
-    , public Nicosia::ContentLayer::Client
-#else
-    , public PlatformLayer
-#endif
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -102,11 +91,7 @@ public:
     bool shouldIgnoreIntrinsicSize() final { return true; }
 
     void pushNextHolePunchBuffer();
-    void swapBuffersIfNeeded() final;
     void setNetworkState(MediaPlayer::NetworkState);
-#if !USE(NICOSIA)
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const final;
-#endif
 
     static void getSupportedTypes(HashSet<String>&);
 
@@ -121,11 +106,7 @@ private:
     RunLoop::Timer m_readyTimer;
     MediaPlayer::NetworkState m_networkState;
 #if USE(TEXTURE_MAPPER)
-#if USE(NICOSIA)
-    Ref<Nicosia::ContentLayer> m_nicosiaLayer;
-#else
-    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
-#endif
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayer;
 #endif
 
 };

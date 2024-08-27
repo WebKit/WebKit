@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBDatabaseIdentifier.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ class UniqueIDBDatabaseConnection;
 class UniqueIDBDatabaseTransaction;
 
 class UniqueIDBDatabaseManager : public CanMakeWeakPtr<UniqueIDBDatabaseManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UniqueIDBDatabaseManager);
 public:
     virtual ~UniqueIDBDatabaseManager() { }
     virtual void registerConnection(UniqueIDBDatabaseConnection&) = 0;

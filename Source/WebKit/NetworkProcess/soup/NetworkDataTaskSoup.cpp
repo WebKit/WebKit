@@ -1396,9 +1396,9 @@ void NetworkDataTaskSoup::download()
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
     auto& downloadManager = m_session->networkProcess().downloadManager();
-    auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
+    auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
     auto* downloadPtr = download.get();
-    downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
+    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 
     ASSERT(!m_client);
@@ -1433,7 +1433,7 @@ void NetworkDataTaskSoup::writeDownload()
 void NetworkDataTaskSoup::didWriteDownload(gsize bytesWritten)
 {
     ASSERT(bytesWritten == m_readBuffer.size());
-    auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+    auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
     ASSERT(download);
     download->didReceiveData(bytesWritten, 0, 0);
     read();
@@ -1461,7 +1461,7 @@ void NetworkDataTaskSoup::didFinishDownload()
     g_file_set_attributes_async(m_downloadDestinationFile.get(), info.get(), G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, nullptr, nullptr, nullptr);
 
     clearRequest();
-    auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+    auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
     ASSERT(download);
     download->didFinish();
 }
@@ -1473,7 +1473,7 @@ void NetworkDataTaskSoup::didFailDownload(const ResourceError& error)
     if (m_client)
         dispatchDidCompleteWithError(error);
     else {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         ASSERT(download);
         download->didFail(error, { });
     }

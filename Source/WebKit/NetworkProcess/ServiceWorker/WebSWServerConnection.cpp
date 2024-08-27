@@ -37,6 +37,7 @@
 #include "NetworkSession.h"
 #include "RemoteWorkerType.h"
 #include "SharedBufferReference.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
@@ -45,6 +46,7 @@
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
+#include <WebCore/CookieChangeSubscription.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/NotImplemented.h>
@@ -59,6 +61,7 @@
 #include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 using namespace PAL;
@@ -94,6 +97,11 @@ WebSWServerConnection::~WebSWServerConnection()
 NetworkProcess& WebSWServerConnection::networkProcess()
 {
     return m_networkConnectionToWebProcess->networkProcess();
+}
+
+const SharedPreferencesForWebProcess& WebSWServerConnection::sharedPreferencesForWebProcess() const
+{
+    return m_networkConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
 
 void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
@@ -623,7 +631,9 @@ void WebSWServerConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
         return;
     }
 
-    session()->notificationManager().getPushPermissionState(registration->scopeURLWithoutFragment(), WTFMove(completionHandler));
+    session()->notificationManager().getPermissionState(SecurityOriginData::fromURL( registration->scopeURLWithoutFragment()), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+        completionHandler(static_cast<uint8_t>(state));
+    });
 #endif
 }
 
@@ -754,6 +764,47 @@ void WebSWServerConnection::retrieveRecordResponseBody(WebCore::BackgroundFetchR
         }
         checkedThis->send(Messages::WebSWClientConnection::NotifyRecordResponseBodyChunk(callbackIdentifier, IPC::SharedBufferReference(WTFMove(result.value()))));
     });
+}
+
+void WebSWServerConnection::addCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    RefPtr registration = protectedServer()->getRegistration(registrationIdentifier);
+    if (!registration) {
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR("AddCookieChangeSubscriptions: Did not handle because no valid registration for registration identifier %" PRIu64, registrationIdentifier.toUInt64());
+        // FIXME: Spec is not clear about this case at this point and wpt test expects no error (https://github.com/WICG/cookie-store/issues/237).
+        callback({ });
+        return;
+    }
+
+    registration->addCookieChangeSubscriptions(WTFMove(subscriptions));
+    callback({ });
+}
+
+void WebSWServerConnection::removeCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, Vector<WebCore::CookieChangeSubscription>&& subscriptions, ExceptionOrVoidCallback&& callback)
+{
+    RefPtr registration = protectedServer()->getRegistration(registrationIdentifier);
+    if (!registration) {
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR("RemoveCookieChangeSubscriptions: Did not handle because no valid registration for registration identifier %" PRIu64, registrationIdentifier.toUInt64());
+        // FIXME: Spec is not clear about this case at this point and wpt test expects no error (https://github.com/WICG/cookie-store/issues/237).
+        callback({ });
+        return;
+    }
+
+    registration->removeCookieChangeSubscriptions(WTFMove(subscriptions));
+    callback({ });
+}
+
+void WebSWServerConnection::cookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrCookieChangeSubscriptionsCallback&& callback)
+{
+    RefPtr registration = protectedServer()->getRegistration(registrationIdentifier);
+    if (!registration) {
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR("CookieChangeSubscriptions: Did not handle because no valid registration for registration identifier %" PRIu64, registrationIdentifier.toUInt64());
+        // FIXME: Spec is not clear about this case at this point and wpt test expects no error (https://github.com/WICG/cookie-store/issues/237).
+        callback({ });
+        return;
+    }
+
+    callback(registration->cookieChangeSubscriptions());
 }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)

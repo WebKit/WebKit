@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKSLinearMediaPlayer;
 @class WKSLinearMediaTimeRange;
 @class WKSLinearMediaTrack;
+@class WKSLinearMediaSpatialVideoMetadata;
 
 typedef NS_ENUM(NSInteger, WKSLinearMediaContentMode);
 typedef NS_ENUM(NSInteger, WKSLinearMediaContentType);
@@ -150,13 +151,13 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic) BOOL allowPip;
 @property (nonatomic) BOOL allowFullScreenFromInline;
 @property (nonatomic) BOOL isLiveStream;
-@property (nonatomic) BOOL isSpatial;
 @property (nonatomic, strong, nullable) NSNumber *recommendedViewingRatio;
 @property (nonatomic) WKSLinearMediaFullscreenBehaviors fullscreenSceneBehaviors;
 @property (nonatomic) double startTime;
 @property (nonatomic) double endTime;
 @property (nonatomic, strong, nullable) NSDate *startDate;
 @property (nonatomic, strong, nullable) NSDate *endDate;
+@property (nonatomic, strong, nullable) WKSLinearMediaSpatialVideoMetadata *spatialVideoMetadata;
 
 - (LMPlayableViewController *)makeViewController;
 - (void)enterFullscreenWithCompletionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler;

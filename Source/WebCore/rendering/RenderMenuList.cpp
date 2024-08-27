@@ -95,10 +95,8 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     ASSERT(isRenderMenuList());
 }
 
-RenderMenuList::~RenderMenuList()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderMenuList::~RenderMenuList() = default;
 
 void RenderMenuList::willBeDestroyed()
 {
@@ -180,7 +178,7 @@ void RenderMenuList::adjustInnerStyle()
         if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
             inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, innerStyle);
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
-            lineLayout->styleWillChange(*m_innerBlock, innerStyle);
+            lineLayout->styleWillChange(*m_innerBlock, innerStyle, StyleDifference::Layout);
         LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);
         for (auto& child : childrenOfType<RenderText>(*m_innerBlock))
             LayoutIntegration::LineLayout::updateStyle(child);
@@ -300,7 +298,7 @@ void RenderMenuList::setText(const String& s)
 
     if (m_buttonText) {
         m_buttonText->setText(textToUse.impl(), true);
-        m_buttonText->dirtyLineBoxes(false);
+        m_buttonText->dirtyLegacyLineBoxes(false);
     } else {
         auto newButtonText = createRenderer<RenderText>(Type::Text, document(), textToUse);
         m_buttonText = *newButtonText;

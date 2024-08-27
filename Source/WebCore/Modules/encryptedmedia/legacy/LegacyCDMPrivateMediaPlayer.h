@@ -29,11 +29,14 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 class LegacyCDM;
 
 class CDMPrivateMediaPlayer : public CDMPrivateInterface {
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateMediaPlayer);
 public:
     explicit CDMPrivateMediaPlayer(LegacyCDM* cdm)
         : m_cdm(cdm)

@@ -349,6 +349,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/cookie-consent/CookieConsentDecisionResult.h
 
+    Modules/cookie-store/CookieChangeSubscription.h
     Modules/cookie-store/CookieStoreGetOptions.h
 
     Modules/credentialmanagement/CredentialRequestOptions.h
@@ -897,6 +898,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/StyleSheetList.h
 
     css/calc/CSSCalcSymbolsAllowed.h
+    css/calc/CSSCalcTree.h
+    css/calc/CSSCalcType.h
     css/calc/CSSCalcValue.h
 
     css/color/CSSColorDescriptors.h
@@ -1665,6 +1668,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ScrollingCoordinator.h
     page/scrolling/ScrollingCoordinatorTypes.h
     page/scrolling/ScrollingNodeID.h
+    page/scrolling/ScrollingPlatformLayer.h
     page/scrolling/ScrollingStateFixedNode.h
     page/scrolling/ScrollingStateFrameHostingNode.h
     page/scrolling/ScrollingStateFrameScrollingNode.h
@@ -1825,6 +1829,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h
+    platform/SpatialVideoMetadata.h
     platform/StyleAppearance.h
     platform/SuddenTermination.h
     platform/Supplementable.h
@@ -1880,7 +1885,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/PushPullFIFO.h
     platform/audio/SharedAudioDestination.h
 
-    platform/calc/CalcExpressionNode.h
+    platform/calc/CalculationOperator.h
+    platform/calc/CalculationTree.h
     platform/calc/CalculationValue.h
 
     platform/encryptedmedia/CDMEncryptionScheme.h
@@ -2161,6 +2167,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/egl/GLContext.h
     platform/graphics/egl/GLContextWrapper.h
+    platform/graphics/egl/GLDisplay.h
     platform/graphics/egl/GLFence.h
 
     platform/graphics/filters/DistantLightSource.h

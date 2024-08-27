@@ -49,6 +49,7 @@ class SecurityOrigin;
 
 enum class NewLoadInProgress : bool { No, Yes };
 enum class ScheduleLocationChangeResult : uint8_t { Stopped, Completed, Started };
+enum class ScheduleHistoryNavigationResult : bool { Completed, Aborted };
 
 class NavigationScheduler final : public CanMakeCheckedPtr<NavigationScheduler> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
@@ -65,6 +66,7 @@ public:
     void scheduleFormSubmission(Ref<FormSubmission>&&);
     void scheduleRefresh(Document& initiatingDocument);
     void scheduleHistoryNavigation(int steps);
+    void scheduleHistoryNavigationByKey(const String&key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&&);
     void schedulePageBlock(Document& originDocument);
 
     void startTimer();

@@ -41,10 +41,13 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorLayerTreeAgent);
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
     : InspectorAgentBase("LayerTree"_s, context)

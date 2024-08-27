@@ -54,7 +54,7 @@ class WebProcessPool;
 class WebsiteDataStore;
 
 enum class WebNotificationIdentifierType;
-using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
+using WebNotificationIdentifier = LegacyNullableObjectIdentifier<WebNotificationIdentifierType>;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
@@ -63,6 +63,8 @@ public:
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
     static WebNotificationManagerProxy& sharedServiceWorkerManager();
+
+    virtual ~WebNotificationManagerProxy();
 
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();

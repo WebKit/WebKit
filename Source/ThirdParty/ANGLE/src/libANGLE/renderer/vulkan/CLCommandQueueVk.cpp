@@ -233,8 +233,27 @@ angle::Result CLCommandQueueVk::enqueueCopyBuffer(const cl::Buffer &srcBuffer,
                                                   const cl::EventPtrs &waitEvents,
                                                   CLEventImpl::CreateFunc *eventCreateFunc)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    std::scoped_lock<std::mutex> sl(mCommandQueueMutex);
+
+    ANGLE_TRY(processWaitlist(waitEvents));
+
+    CLMemoryVk *srcBufferVk = &srcBuffer.getImpl<CLMemoryVk>();
+    CLMemoryVk *dstBufferVk = &dstBuffer.getImpl<CLMemoryVk>();
+
+    vk::CommandBufferAccess access;
+    access.onBufferTransferRead(&srcBufferVk->getBuffer());
+    access.onBufferTransferWrite(&dstBufferVk->getBuffer());
+
+    vk::OutsideRenderPassCommandBuffer *commandBuffer;
+    ANGLE_TRY(getCommandBuffer(access, &commandBuffer));
+
+    const VkBufferCopy copyRegion = {srcOffset, dstOffset, size};
+    commandBuffer->copyBuffer(srcBufferVk->getBuffer().getBuffer(),
+                              dstBufferVk->getBuffer().getBuffer(), 1, &copyRegion);
+
+    ANGLE_TRY(createEvent(eventCreateFunc));
+
+    return angle::Result::Continue;
 }
 
 angle::Result CLCommandQueueVk::enqueueCopyBufferRect(const cl::Buffer &srcBuffer,
@@ -854,6 +873,53 @@ angle::Result CLCommandQueueVk::finishInternal()
     mAssociatedEvents.clear();
     mDependencyTracker.clear();
     mKernelCaptures.clear();
+
+    return angle::Result::Continue;
+}
+
+// Helper function to insert appropriate memory barriers before accessing the resources in the
+// command buffer.
+angle::Result CLCommandQueueVk::onResourceAccess(const vk::CommandBufferAccess &access)
+{
+    // Buffers
+    for (const vk::CommandBufferBufferAccess &bufferAccess : access.getReadBuffers())
+    {
+        if (mComputePassCommands->usesBufferForWrite(*bufferAccess.buffer))
+        {
+            // read buffers only need a new command buffer if previously used for write
+            ANGLE_TRY(flushComputePassCommands());
+        }
+
+        mComputePassCommands->bufferRead(bufferAccess.accessType, bufferAccess.stage,
+                                         bufferAccess.buffer);
+    }
+
+    for (const vk::CommandBufferBufferAccess &bufferAccess : access.getWriteBuffers())
+    {
+        if (mComputePassCommands->usesBuffer(*bufferAccess.buffer))
+        {
+            // write buffers always need a new command buffer
+            ANGLE_TRY(flushComputePassCommands());
+        }
+
+        mComputePassCommands->bufferWrite(bufferAccess.accessType, bufferAccess.stage,
+                                          bufferAccess.buffer);
+        if (bufferAccess.buffer->isHostVisible())
+        {
+            // currently all are host visible so nothing to do
+        }
+    }
+
+    for (const vk::CommandBufferBufferExternalAcquireRelease &bufferAcquireRelease :
+         access.getExternalAcquireReleaseBuffers())
+    {
+        mComputePassCommands->retainResourceForWrite(bufferAcquireRelease.buffer);
+    }
+
+    for (const vk::CommandBufferResourceAccess &resourceAccess : access.getAccessResources())
+    {
+        mComputePassCommands->retainResource(resourceAccess.resource);
+    }
 
     return angle::Result::Continue;
 }

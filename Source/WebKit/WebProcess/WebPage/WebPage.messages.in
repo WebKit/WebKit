@@ -349,7 +349,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidBeginTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
-    AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
+    AddLayerForFindOverlay() -> (std::optional<WebCore::PlatformLayerIdentifier> findLayerID)
     RemoveLayerForFindOverlay() -> ()
 
     # Drag and drop.
@@ -377,16 +377,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     InsertTextPlaceholder(WebCore::IntSize size) -> (std::optional<WebCore::ElementContext> placeholder)
     RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
 #endif
-    
-#if ENABLE(WRITING_TOOLS_UI)
-    CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
-    UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 
-    EnableSourceTextAnimationAfterElementWithID(String elementID);
-    EnableTextAnimationTypeForElementWithID(String elementID);
-
-    ShowSelectionForActiveWritingToolsSession();
-#endif
 
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
@@ -460,8 +451,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     EndPrinting() -> ()
     EndPrintingDuringDOMPrintOperation() -> () AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
-    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
-    ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::FloatBoxExtent computedPageMargin)
+    ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::FloatBoxExtent computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
     DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
@@ -570,7 +561,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     GetSamplingProfilerOutput() -> (String string)
     
-    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, OptionSet<WebKit::SnapshotOption> options) -> (std::optional<WebCore::ShareableBitmapHandle> image)
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint location)
     ImmediateActionDidUpdate()
@@ -798,6 +789,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CompositionSessionDidReceiveTextWithReplacementRange(struct WebCore::WritingTools::Session session, struct WebCore::AttributedString attributedText, struct WebCore::CharacterRange range, struct WebCore::WritingTools::Context context, bool finished);
 
     WritingToolsSessionDidReceiveAction(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::Action action);
+
+    CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
+    UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
+
+    EnableSourceTextAnimationAfterElementWithID(String elementID);
+    EnableTextAnimationTypeForElementWithID(String elementID);
+
+    ShowSelectionForActiveWritingToolsSession();
 #endif
 
     TakeSnapshotForTargetedElement(WebCore::ElementIdentifier elementID, WebCore::ScriptExecutionContextIdentifier documentID) -> (std::optional<WebCore::ShareableBitmapHandle> image)

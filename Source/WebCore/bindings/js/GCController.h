@@ -29,6 +29,7 @@
 #include <JavaScriptCore/DeleteAllCodeEffort.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class VM;
@@ -37,7 +38,7 @@ class VM;
 namespace WebCore {
 
 class GCController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GCController);
     WTF_MAKE_NONCOPYABLE(GCController);
     friend class WTF::NeverDestroyed<GCController>;
 public:

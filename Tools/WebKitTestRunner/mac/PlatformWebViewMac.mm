@@ -222,7 +222,8 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     if ([m_window backingScaleFactor] == 1)
         options |= kCGWindowImageNominalResolution;
 
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [m_window windowNumber], options));
+    RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
+    return adoptCF([image CGImageForProposedRect:nil context:nil hints:nil]);
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float newScale)

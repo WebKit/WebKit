@@ -4422,7 +4422,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'])
@@ -4435,7 +4435,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'])
@@ -4448,7 +4448,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/fast/table/037.xml'
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), ['LayoutTests/fast/table/037.xml'])
@@ -4460,7 +4460,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.html'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4472,7 +4472,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.svg'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4484,7 +4484,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.xml'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4495,7 +4495,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/http/tests/events/device-motion-expected-mismatch.html'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4506,7 +4506,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4517,7 +4517,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
         self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4528,7 +4528,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         FindModifiedLayoutTests._get_patch = lambda x: b''
         self.expectOutcome(result=WARNINGS, state_string='Patch could not be accessed')
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir', logEnviron=True, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
+            ExpectShell(workdir='wkdir', logEnviron=False, command=['diff', '-u', 'base-expectations.txt', 'new-expectations.txt']) + 0
         )
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
@@ -5642,107 +5642,110 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-        def test_success_mac(self):
-            self.setupStep(PrintConfiguration())
-            self.setProperty('buildername', 'macOS-Monterey-Release-WK2-Tests-EWS')
-            self.setProperty('platform', 'mac-monterey')
+    def test_success_mac(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('buildername', 'macOS-Monterey-Release-WK2-Tests-EWS')
+        self.setProperty('platform', 'mac-monterey')
 
-            self.expectRemoteCommands(
-                ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='ews150.apple.com'),
-                ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
-    /dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
-    /dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
-    /dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
-                ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
-                ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-    ProductVersion:	12.0.1
-    BuildVersion:	21A558'''),
-                ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
-                ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-                + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
-    SDKVersion: 12.0
-    Path: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk
-    PlatformVersion: 12.0
-    PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform
-    ProductBuildVersion: 21A344
-    ProductCopyright: 1983-2021 Apple Inc.
-    ProductName: macOS
-    ProductUserVisibleVersion: 12.0
-    ProductVersion: 12.0
-    iOSSupportVersion: 15.0
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='ews150.apple.com'),
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
+/dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
+/dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
+/dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	macOS
+ProductVersion:	12.0.1
+BuildVersion:	21A558'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
+            + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
+SDKVersion: 12.0
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk
+PlatformVersion: 12.0
+PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform
+ProductBuildVersion: 21A344
+ProductCopyright: 1983-2021 Apple Inc.
+ProductName: macOS
+ProductUserVisibleVersion: 12.0
+ProductVersion: 12.0
+iOSSupportVersion: 15.0
 
-    Xcode 13.1
-    Build version 13A1030d''')
-                + 0,
-            )
-            self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
-            return self.runStep()
+Xcode 13.1
+Build version 13A1030d''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
+        return self.runStep()
 
-        def test_success_ios_simulator(self):
-            self.setupStep(PrintConfiguration())
-            self.setProperty('buildername', 'Apple-iOS-15-Simulator-Release-WK2-Tests')
-            self.setProperty('platform', 'ios-simulator-15')
+    def test_success_ios_simulator(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('buildername', 'Apple-iOS-15-Simulator-Release-WK2-Tests')
+        self.setProperty('platform', 'ios-simulator-15')
 
-            self.expectRemoteCommands(
-                ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='ews152.apple.com'),
-                ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
-    /dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
-    /dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
-    /dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
-                ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
-                ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-    ProductVersion:	11.6
-    BuildVersion:	20G165'''),
-                ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='Sample system information'),
-                ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-                + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
-    SDKVersion: 15.0
-    Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk
-    PlatformVersion: 15.0
-    PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
-    BuildID: 84856584-0587-11EC-B99C-6807972BB3D4
-    ProductBuildVersion: 19A339
-    ProductCopyright: 1983-2021 Apple Inc.
-    ProductName: iPhone OS
-    ProductVersion: 15.0
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='ews152.apple.com'),
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
+/dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
+/dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
+/dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	macOS
+ProductVersion:	11.6
+BuildVersion:	20G165'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Sample system information'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
+            + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
+SDKVersion: 15.0
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk
+PlatformVersion: 15.0
+PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
+BuildID: 84856584-0587-11EC-B99C-6807972BB3D4
+ProductBuildVersion: 19A339
+ProductCopyright: 1983-2021 Apple Inc.
+ProductName: iPhone OS
+ProductVersion: 15.0
 
-    Xcode 13.0
-    Build version 13A233''')
-                + 0,
-            )
-            self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
-            return self.runStep()
+Xcode 13.0
+Build version 13A233''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
+        return self.runStep()
 
-        def test_success_webkitpy(self):
-            self.setupStep(PrintConfiguration())
-            self.setProperty('platform', '*')
+    def test_success_webkitpy(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', '*')
 
-            self.expectRemoteCommands(
-                ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-                ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-                ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-                ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-    ProductVersion:	11.6
-    BuildVersion:	20G165'''),
-                ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='Sample system information'),
-                ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60,
-                            logEnviron=False) + 0
-                + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
-            )
-            self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
-            return self.runStep()
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	macOS
+ProductVersion:	11.6
+BuildVersion:	20G165'''),
+            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Sample system information'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60,
+                        logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
+        return self.runStep()
 
     def test_success_linux_wpe(self):
         self.setupStep(PrintConfiguration())
@@ -8085,6 +8088,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         return self.setUpBuildStep()
 
     def setUpCommonProperties(self):
+        self.setProperty('buildnumber', '2345')
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -8188,7 +8192,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!) and no valid reviewer found')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!) and no valid reviewer found, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'Commit message contains \(OOPS!\) and no valid reviewer found, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_unoffical_reviewers(self):
@@ -8214,7 +8218,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\nFailed to access https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json\n')
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'No reviewer information in commit message, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_failure_no_reviewer(self):
@@ -8224,7 +8228,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\n')
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        self.assertRegex(self.getProperty('comment_text'), r'No reviewer information in commit message, blocking PR #1234. Details: \[Build #2345\]\(http.*/#/builders/1/builds/13\)')
         return rc
 
     def test_failure_no_changelog(self):

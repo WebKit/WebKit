@@ -39,7 +39,7 @@ class ResourceResponse;
 class WebSocketChannel;
 class WebSocketChannelInspector;
 
-using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketChannel>;
 
 class WEBCORE_EXPORT WebSocketChannelInspector {
 public:

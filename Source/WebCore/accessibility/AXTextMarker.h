@@ -92,12 +92,12 @@ struct TextMarkerData {
 
     AXID axTreeID() const
     {
-        return ObjectIdentifier<AXIDType>(treeID);
+        return LegacyNullableObjectIdentifier<AXIDType>(treeID);
     }
 
     AXID axObjectID() const
     {
-        return ObjectIdentifier<AXIDType>(objectID);
+        return LegacyNullableObjectIdentifier<AXIDType>(objectID);
     }
 };
 

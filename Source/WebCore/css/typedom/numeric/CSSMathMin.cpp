@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSMathMin.h"
 
-#include "CSSCalcOperationNode.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/FixedVector.h>
@@ -98,17 +97,20 @@ auto CSSMathMin::toSumValue() const -> std::optional<SumValue>
     return currentMax;
 }
 
-RefPtr<CSSCalcExpressionNode> CSSMathMin::toCalcExpressionNode() const
+std::optional<CSSCalc::Child> CSSMathMin::toCalcTreeNode() const
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(m_values->length());
-    for (auto& value : m_values->array()) {
-        if (auto valueNode = value->toCalcExpressionNode())
-            values.append(valueNode.releaseNonNull());
-    }
-    if (values.isEmpty())
-        return nullptr;
-    return CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Min, WTFMove(values), CalculationCategory::Length);
+    CSSCalc::Children children = WTF::compactMap(m_values->array(), [](auto& child) {
+        return child->toCalcTreeNode();
+    });
+    if (children.isEmpty())
+        return std::nullopt;
+
+    auto min = CSSCalc::Min { .children = WTFMove(children) };
+    auto type = CSSCalc::toType(min);
+    if (!type)
+        return std::nullopt;
+
+    return CSSCalc::makeChild(WTFMove(min), *type);
 }
 
 } // namespace WebCore

@@ -238,9 +238,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithLargeBlob)
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
     AuthenticationExtensionsClientInputs extensionInputs = {
+        .appid = WTF::nullString(),
+        .credProps = false,
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
-            .support = "required"_s
-        }
+            .support = "required"_s,
+            .read = std::nullopt,
+            .write = std::nullopt,
+        },
+        .prf = std::nullopt,
     };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
@@ -267,9 +272,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithUnsupportedLargeBlob
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
     AuthenticationExtensionsClientInputs extensionInputs = {
+        .appid = WTF::nullString(),
+        .credProps = false,
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
-            .support = "required"_s
-        }
+            .support = "required"_s,
+            .read = std::nullopt,
+            .write = std::nullopt,
+        },
+        .prf = std::nullopt,
     };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
@@ -484,9 +494,14 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobRead)
     descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
     options.extensions = AuthenticationExtensionsClientInputs {
+        .appid = WTF::nullString(),
+        .credProps = false,
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
+            .support = WTF::nullString(),
             .read = true,
-        }
+            .write = std::nullopt,
+        },
+        .prf = std::nullopt,
     };
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -527,9 +542,14 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUnsupportedLargeBlobRead)
     descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
     options.extensions = AuthenticationExtensionsClientInputs {
+        .appid = WTF::nullString(),
+        .credProps = false,
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
+            .support = WTF::nullString(),
             .read = true,
-        }
+            .write = std::nullopt,
+        },
+        .prf = std::nullopt,
     };
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -574,9 +594,14 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
         0xAB, 0xCD, 0xEF
     };
     options.extensions = AuthenticationExtensionsClientInputs {
+        .appid = WTF::nullString(),
+        .credProps = false,
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
+            .support = WTF::nullString(),
+            .read = std::nullopt,
             .write = WebCore::toBufferSource(blob),
-        }
+        },
+        .prf = std::nullopt,
     };
 
     options.userVerification = UserVerificationRequirement::Required;

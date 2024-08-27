@@ -57,7 +57,7 @@ public:
     virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
     virtual void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) = 0;
 #endif
-    virtual PlatformLayerIdentifier platformLayerID() = 0;
+    virtual std::optional<PlatformLayerIdentifier> platformLayerID() = 0;
 };
 
 }

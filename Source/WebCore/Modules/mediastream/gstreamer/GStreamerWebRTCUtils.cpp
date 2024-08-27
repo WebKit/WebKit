@@ -31,6 +31,7 @@
 #include <openssl/rsa.h>
 #include <openssl/ssl.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/text/Base64.h>
@@ -470,6 +471,8 @@ bool sdpMediaHasAttributeKey(const GstSDPMedia* media, const char* key)
 
     return false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UniqueSSRCGenerator);
 
 uint32_t UniqueSSRCGenerator::generateSSRC()
 {

@@ -28,6 +28,6 @@ assert.sameValue(nf.format(100000), '1,00,000', '"min2"');
 nf = new Intl.NumberFormat('en-IN', {notation: 'compact'});
 
 assert.sameValue(nf.format(100), '100', 'notation: "compact"');
-assert.sameValue(nf.format(1000), '1T', 'notation: "compact"');
-assert.sameValue(nf.format(10000), '10T', 'notation: "compact"');
+assert.sameValue(nf.format(1000), '1K', 'notation: "compact"');
+assert.sameValue(nf.format(10000), '10K', 'notation: "compact"');
 assert.sameValue(nf.format(100000), '1L', 'notation: "compact"');

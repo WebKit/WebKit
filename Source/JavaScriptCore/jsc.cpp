@@ -423,6 +423,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionAsDoubleNumber);
 
 static JSC_DECLARE_HOST_FUNCTION(functionDropAllLocks);
 
+static JSC_DECLARE_HOST_FUNCTION(functionPerformanceNow);
+
 #if ENABLE(FUZZILLI)
 static JSC_DECLARE_HOST_FUNCTION(functionFuzzilli);
 #endif
@@ -795,6 +797,11 @@ private:
         addFunction(vm, "asDoubleNumber"_s, functionAsDoubleNumber, 1);
 
         addFunction(vm, "dropAllLocks"_s, functionDropAllLocks, 1);
+
+        // We'll probably have to make this a real class if we want to add performance.mark in the future.
+        JSObject* performance = JSFinalObject::create(vm, plainObjectStructure);
+        putDirect(vm, Identifier::fromString(vm, "performance"_s), performance, DontEnum);
+        addFunctionToObject(vm, performance, "now"_s, functionPerformanceNow, 0);
 
 #if ENABLE(FUZZILLI)
         addFunction(vm, "fuzzilli"_s, functionFuzzilli, 2);
@@ -1929,7 +1936,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRunString, (JSGlobalObject* globalObject, CallF
         return JSValue::encode(jsUndefined());
     }
     
-    return JSValue::encode(realm);
+    return JSValue::encode(realm->globalThis());
 }
 
 static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -3279,6 +3286,13 @@ JSC_DEFINE_HOST_FUNCTION(functionDropAllLocks, (JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsUndefined());
 }
 
+// This is intended to match the resolution of WebCore's Performance::now when we're using a high resolution time.
+JSC_DEFINE_HOST_FUNCTION(functionPerformanceNow, (JSGlobalObject*, CallFrame*))
+{
+    static const MonotonicTime timeOrigin = MonotonicTime::now();
+    return JSValue::encode(jsNumber((MonotonicTime::now() - timeOrigin).reduceTimeResolution(Seconds::highTimePrecision()).milliseconds()));
+}
+
 #if ENABLE(FUZZILLI)
 
 // We have to assume that the fuzzer will be able to call this function e.g. by
@@ -3956,7 +3970,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::initialize();
     Options::useSharedArrayBuffer() = true;
     
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV) && !PLATFORM(WATCHOS)
     Options::crashIfCantAllocateJITMemory() = true;
 #endif
 
@@ -4353,6 +4367,7 @@ int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
     JSC::Config::enableRestrictedOptions();
+    JSC::Options::machExceptionHandlerSandboxPolicy = JSC::Options::SandboxPolicy::Allow;
 
     WTF::initializeMainThread();
 

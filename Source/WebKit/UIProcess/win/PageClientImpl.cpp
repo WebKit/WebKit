@@ -202,7 +202,7 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&)
 {
     return nullptr;
 }

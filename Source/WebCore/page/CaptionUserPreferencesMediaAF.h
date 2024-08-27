@@ -31,6 +31,7 @@
 #include "CaptionPreferencesDelegate.h"
 #include "CaptionUserPreferences.h"
 #include "Color.h"
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS WebCaptionUserPreferencesMediaAFWeakObserver;
@@ -39,7 +40,7 @@ OBJC_CLASS WebCaptionUserPreferencesMediaAFWeakObserver;
 namespace WebCore {
 
 class CaptionUserPreferencesMediaAF : public CaptionUserPreferences {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferencesMediaAF);
 public:
     static Ref<CaptionUserPreferencesMediaAF> create(PageGroup&);
     virtual ~CaptionUserPreferencesMediaAF();

@@ -98,7 +98,7 @@ public:
         WEBCORE_EXPORT RefPtr<SWServerRegistration> doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
         void resolveRegistrationReadyRequests(SWServerRegistration&);
 
-        using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<BackgroundFetchInformation, ExceptionData>&&)>;
+        using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
         WEBCORE_EXPORT void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
         WEBCORE_EXPORT void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&);
         using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;

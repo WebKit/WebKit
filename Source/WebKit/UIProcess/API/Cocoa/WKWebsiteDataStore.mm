@@ -30,6 +30,7 @@
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "BackgroundFetchChange.h"
 #import "BackgroundFetchState.h"
+#import "BaseBoardSPI.h"
 #import "CompletionHandlerCallChecker.h"
 #import "NetworkProcessProxy.h"
 #import "RestrictedOpenerType.h"
@@ -44,11 +45,13 @@
 #import "WebNotification.h"
 #import "WebNotificationManagerProxy.h"
 #import "WebPageProxy.h"
+#import "WebPushDaemonConstants.h"
 #import "WebPushMessage.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKNotificationDataInternal.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
+#import "_WKWebPushAction.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
@@ -347,6 +350,15 @@ private:
     bool m_hasDidExceedMemoryFootprintThresholdSelector { false };
     bool m_hasWebCryptoMasterKeySelector { false };
 };
+
+#if PLATFORM(IOS)
+
+@interface _WKWebsiteDataStoreBSActionHandler : NSObject <_UIApplicationBSActionHandler>
++ (_WKWebsiteDataStoreBSActionHandler *)shared;
+- (void)setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *action))handler;
+@end
+
+#endif
 
 @implementation WKWebsiteDataStore {
     RetainPtr<NSArray> _proxyConfigurations;
@@ -1294,4 +1306,64 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
++ (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler
+{
+#if PLATFORM(IOS)
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        [UIApplication.sharedApplication _registerBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
+    });
+    [_WKWebsiteDataStoreBSActionHandler.shared setWebPushActionHandler:handler];
+#else
+    // FIXME: Implement for macOS
+    UNUSED_PARAM(handler);
+#endif
+}
+
 @end
+
+#if PLATFORM(IOS)
+
+@implementation _WKWebsiteDataStoreBSActionHandler {
+    BlockPtr<WKWebsiteDataStore *(_WKWebPushAction *)> _webPushActionHandler;
+}
+
++ (_WKWebsiteDataStoreBSActionHandler *)shared
+{
+    static NeverDestroyed<RetainPtr<_WKWebsiteDataStoreBSActionHandler>> shared = adoptNS([[_WKWebsiteDataStoreBSActionHandler alloc] init]);
+    return shared.get().get();
+}
+
+- (void)setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler
+{
+    RELEASE_ASSERT(handler);
+    _webPushActionHandler = handler;
+}
+
+- (NSSet<BSAction *> *)_respondToApplicationActions:(NSSet<BSAction *> *)applicationActions fromTransitionContext:(FBSSceneTransitionContext *)transitionContext
+{
+    RetainPtr unhandled = adoptNS([[NSMutableSet alloc] init]);
+
+    for (BSAction *action in applicationActions) {
+        NSDictionary *object = [action.info objectForSetting:WebKit::WebPushD::pushActionSetting];
+        _WKWebPushAction *pushAction = [_WKWebPushAction webPushActionWithDictionary:object];
+        if (!pushAction) {
+            [unhandled addObject:action];
+            continue;
+        }
+
+        WKWebsiteDataStore *dataStoreForPushAction = _webPushActionHandler.get()(pushAction);
+        UNUSED_PARAM(dataStoreForPushAction);
+
+        // FIXME: Use the WKWebsiteDataStore to handle pending push messages
+        // FIXME: If no WKWebsiteDataStore is provided, respond to the BSAction with an error
+
+        [action sendResponse:[BSActionResponse response]];
+    }
+
+    return unhandled.autorelease();
+}
+
+@end
+
+#endif // PLATFORM(IOS)

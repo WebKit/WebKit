@@ -99,6 +99,48 @@ void StructureStubInfo::aboutToDie()
     }
 }
 
+AccessGenerationResult StructureStubInfo::upgradeForPolyProtoIfNecessary(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, const Vector<AccessCase*, 16>& list, AccessCase& caseToAdd)
+{
+    // This method will add the casesToAdd to the list one at a time while preserving the
+    // invariants:
+    // - If a newly added case canReplace() any existing case, then the existing case is removed before
+    //   the new case is added. Removal doesn't change order of the list. Any number of existing cases
+    //   can be removed via the canReplace() rule.
+    // - Cases in the list always appear in ascending order of time of addition. Therefore, if you
+    //   cascade through the cases in reverse order, you will get the most recent cases first.
+    // - If this method fails (returns null, doesn't add the cases), then both the previous case list
+    //   and the previous stub are kept intact and the new cases are destroyed. It's OK to attempt to
+    //   add more things after failure.
+
+    if (accessType != AccessType::InstanceOf) {
+        bool shouldReset = false;
+        AccessGenerationResult resetResult(AccessGenerationResult::ResetStubAndFireWatchpoints);
+        auto considerPolyProtoReset = [&] (Structure* a, Structure* b) {
+            if (Structure::shouldConvertToPolyProto(a, b)) {
+                // For now, we only reset if this is our first time invalidating this watchpoint.
+                // The reason we don't immediately fire this watchpoint is that we may be already
+                // watching the poly proto watchpoint, which if fired, would destroy us. We let
+                // the person handling the result to do a delayed fire.
+                ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+                    shouldReset = true;
+                    resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+                }
+            }
+        };
+
+        for (auto& existingCase : list) {
+            Structure* a = caseToAdd.structure();
+            Structure* b = existingCase->structure();
+            considerPolyProtoReset(a, b);
+        }
+
+        if (shouldReset)
+            return resetResult;
+    }
+    return AccessGenerationResult::Buffered;
+}
+
 AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJSLocker& locker, JSGlobalObject* globalObject, CodeBlock* codeBlock, ECMAMode ecmaMode, CacheableIdentifier ident, RefPtr<AccessCase> accessCase)
 {
     checkConsistency();
@@ -112,15 +154,36 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
     AccessGenerationResult result = ([&](Ref<AccessCase>&& accessCase) -> AccessGenerationResult {
         dataLogLnIf(StructureStubInfoInternal::verbose, "Adding access case: ", accessCase);
 
-        AccessGenerationResult result;
-
         if (useHandlerIC()) {
-            if (!m_stub) {
-                setCacheType(locker, CacheType::Stub);
-                m_stub = makeUnique<PolymorphicAccess>();
+            auto list = listedAccessCases(locker);
+            auto result = upgradeForPolyProtoIfNecessary(locker, vm, codeBlock, list, accessCase.get());
+            dataLogLnIf(StructureStubInfoInternal::verbose, "Had stub, result: ", result);
+
+            if (result.shouldResetStubAndFireWatchpoints())
+                return result;
+
+            if (!result.buffered()) {
+                clearBufferedStructures();
+                return result;
             }
+            setCacheType(locker, CacheType::Stub);
+
+            RELEASE_ASSERT(!result.generatedSomeCode());
+
+            // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
+            // subject to cool-down.
+            if (!result.buffered()) {
+                dataLogLnIf(StructureStubInfoInternal::verbose, "Didn't buffer anything, bailing.");
+                clearBufferedStructures();
+                return result;
+            }
+
+            InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
+            return compiler.compileHandler(locker, WTFMove(list), codeBlock, accessCase.get());
         }
 
+        ASSERT(!useHandlerIC());
+        AccessGenerationResult result;
         if (m_stub) {
             result = m_stub->addCases(locker, vm, codeBlock, *this, nullptr, accessCase);
             dataLogLnIf(StructureStubInfoInternal::verbose, "Had stub, result: ", result);
@@ -159,11 +222,6 @@ AccessGenerationResult StructureStubInfo::addAccessCase(const GCSafeConcurrentJS
             dataLogLnIf(StructureStubInfoInternal::verbose, "Didn't buffer anything, bailing.");
             clearBufferedStructures();
             return result;
-        }
-
-        if (useHandlerIC()) {
-            InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
-            return compiler.compileHandler(locker, *m_stub, codeBlock, WTFMove(accessCase));
         }
 
         // The buffering countdown tells us if we should be repatching now.
@@ -323,7 +381,7 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
         resetSetPrivateBrand(codeBlock, *this);
         break;
     }
-    
+
     deref();
     setCacheType(locker, CacheType::Unset);
 }
@@ -342,6 +400,15 @@ void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
             });
     } else
         m_identifier.visitAggregate(visitor);
+
+    if (m_inlinedHandler)
+        m_inlinedHandler->visitAggregate(visitor);
+    if (auto* cursor = m_handler.get()) {
+        while (cursor) {
+            cursor->visitAggregate(visitor);
+            cursor = cursor->next();
+        }
+    }
 
     if (m_stub)
         m_stub->visitAggregate(visitor);
@@ -371,17 +438,18 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
     bool isValid = true;
     if (Structure* structure = inlineAccessBaseStructure())
         isValid &= vm.heap.isMarked(structure);
-    if (m_stub)
-        isValid &= m_stub->visitWeak(vm);
+
     if (m_inlinedHandler)
         isValid &= m_inlinedHandler->visitWeak(vm);
-    if (m_handler) {
-        RefPtr cursor = m_handler.get();
+    if (auto* cursor = m_handler.get()) {
         while (cursor) {
             isValid &= cursor->visitWeak(vm);
             cursor = cursor->next();
         }
     }
+
+    if (m_stub)
+        isValid &= m_stub->visitWeak(vm);
 
     if (isValid)
         return;
@@ -396,8 +464,19 @@ void StructureStubInfo::propagateTransitions(Visitor& visitor)
     if (Structure* structure = inlineAccessBaseStructure())
         structure->markIfCheap(visitor);
 
-    if (m_stub)
-        m_stub->propagateTransitions(visitor);
+    if (useHandlerIC()) {
+        if (m_inlinedHandler)
+            m_inlinedHandler->propagateTransitions(visitor);
+        if (auto* cursor = m_handler.get()) {
+            while (cursor) {
+                cursor->propagateTransitions(visitor);
+                cursor = cursor->next();
+            }
+        }
+    } else {
+        if (m_stub)
+            m_stub->propagateTransitions(visitor);
+    }
 }
 
 template void StructureStubInfo::propagateTransitions(AbstractSlotVisitor&);
@@ -426,34 +505,33 @@ CallLinkInfo* StructureStubInfo::callLinkInfoAt(const ConcurrentJSLocker& locker
     return nullptr;
 }
 
-StubInfoSummary StructureStubInfo::summary(VM& vm) const
+StubInfoSummary StructureStubInfo::summary(const ConcurrentJSLocker& locker, VM& vm) const
 {
     StubInfoSummary takesSlowPath = StubInfoSummary::TakesSlowPath;
     StubInfoSummary simple = StubInfoSummary::Simple;
-    if (auto* list = m_stub.get()) {
-        for (unsigned i = 0; i < list->size(); ++i) {
-            const AccessCase& access = list->at(i);
-            if (access.doesCalls(vm)) {
-                takesSlowPath = StubInfoSummary::TakesSlowPathAndMakesCalls;
-                simple = StubInfoSummary::MakesCalls;
-                break;
-            }
-        }
-        if (list->size() == 1) {
-            switch (list->at(0).type()) {
-            case AccessCase::LoadMegamorphic:
-            case AccessCase::IndexedMegamorphicLoad:
-            case AccessCase::StoreMegamorphic:
-            case AccessCase::IndexedMegamorphicStore:
-            case AccessCase::InMegamorphic:
-            case AccessCase::IndexedMegamorphicIn:
-                return StubInfoSummary::Megamorphic;
-            default:
-                break;
-            }
+    auto list = listedAccessCases(locker);
+    for (unsigned i = 0; i < list.size(); ++i) {
+        AccessCase& access = *list.at(i);
+        if (access.doesCalls(vm)) {
+            takesSlowPath = StubInfoSummary::TakesSlowPathAndMakesCalls;
+            simple = StubInfoSummary::MakesCalls;
+            break;
         }
     }
-    
+    if (list.size() == 1) {
+        switch (list.at(0)->type()) {
+        case AccessCase::LoadMegamorphic:
+        case AccessCase::IndexedMegamorphicLoad:
+        case AccessCase::StoreMegamorphic:
+        case AccessCase::IndexedMegamorphicStore:
+        case AccessCase::InMegamorphic:
+        case AccessCase::IndexedMegamorphicIn:
+            return StubInfoSummary::Megamorphic;
+        default:
+            break;
+        }
+    }
+
     if (tookSlowPath || sawNonCell)
         return takesSlowPath;
     
@@ -463,25 +541,23 @@ StubInfoSummary StructureStubInfo::summary(VM& vm) const
     return simple;
 }
 
-StubInfoSummary StructureStubInfo::summary(VM& vm, const StructureStubInfo* stubInfo)
+StubInfoSummary StructureStubInfo::summary(const ConcurrentJSLocker& locker, VM& vm, const StructureStubInfo* stubInfo)
 {
     if (!stubInfo)
         return StubInfoSummary::NoInformation;
     
-    return stubInfo->summary(vm);
+    return stubInfo->summary(locker, vm);
 }
 
 bool StructureStubInfo::containsPC(void* pc) const
 {
     // m_inlinedHandler is not having special out-of-inline code, so we do not care.
-    if (!m_handler)
-        return false;
-
-    auto* cursor = m_handler.get();
-    while (cursor) {
-        if (cursor->containsPC(pc))
-            return true;
-        cursor = cursor->next();
+    if (auto* cursor = m_handler.get()) {
+        while (cursor) {
+            if (cursor->containsPC(pc))
+                return true;
+            cursor = cursor->next();
+        }
     }
     return false;
 }
@@ -913,6 +989,31 @@ void StructureStubInfo::resetStubAsJumpInAccess(CodeBlock* codeBlock)
     if (useDataIC)
         m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
     rewireStubAsJumpInAccess(codeBlock, InlineCacheHandler::createNonHandlerSlowPath(slowPathStartLocation));
+}
+
+Vector<AccessCase*, 16> StructureStubInfo::listedAccessCases(const AbstractLocker&) const
+{
+    Vector<AccessCase*, 16> cases;
+    if (m_stub) {
+        for (unsigned i = 0; i < m_stub->size(); ++i)
+            cases.append(&m_stub->at(i));
+        return cases;
+    }
+
+    if (m_inlinedHandler) {
+        if (auto* access = m_inlinedHandler->accessCase())
+            cases.append(access);
+    }
+
+    if (auto* cursor = m_handler.get()) {
+        while (cursor) {
+            if (auto* access = cursor->accessCase())
+                cases.append(access);
+            cursor = cursor->next();
+        }
+    }
+
+    return cases;
 }
 
 #if ASSERT_ENABLED

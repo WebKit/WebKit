@@ -192,6 +192,15 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
 {
     ASSERT(isMainRunLoop());
 
+    auto scrollingTree = this->scrollingTree();
+    if (scrollingTree->scrollingPerformanceTestingEnabled()) {
+        if (wheelEvent.phase() == WebWheelEvent::PhaseBegan)
+            startFingerDownSignpostInterval();
+
+        if (wheelEvent.phase() == WebWheelEvent::PhaseEnded)
+            endFingerDownSignpostInterval();
+    }
+
     willHandleWheelEvent(wheelEvent);
 
     ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
@@ -649,10 +658,51 @@ void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID dis
     // FIXME: Restart the displayLink if necessary.
 }
 
+void RemoteLayerTreeEventDispatcher::startFingerDownSignpostInterval()
+{
+    if (!m_fingerDownIntervalIsActive) {
+        WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+        m_fingerDownIntervalIsActive = true;
+    }
+}
+
+void RemoteLayerTreeEventDispatcher::endFingerDownSignpostInterval()
+{
+    if (m_fingerDownIntervalIsActive) {
+        WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
+        m_fingerDownIntervalIsActive = false;
+    }
+}
+
+void RemoteLayerTreeEventDispatcher::startMomentumSignpostInterval()
+{
+    if (!m_momentumIntervalIsActive) {
+        WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+        m_momentumIntervalIsActive = true;
+    }
+}
+
+void RemoteLayerTreeEventDispatcher::endMomentumSignpostInterval()
+{
+    if (m_momentumIntervalIsActive) {
+        WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
+        m_momentumIntervalIsActive = false;
+    }
+}
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pageID, const WebWheelEvent& event, RectEdges<bool> rubberBandableEdges)
 {
     ASSERT_UNUSED(pageID, m_pageIdentifier == pageID);
+
+    auto scrollingTree = this->scrollingTree();
+    if (scrollingTree->scrollingPerformanceTestingEnabled()) {
+        if (event.momentumPhase() == WebWheelEvent::PhaseBegan)
+            startMomentumSignpostInterval();
+
+        if (m_momentumIntervalIsActive && (!std::abs(event.delta().height()) || event.momentumPhase() == WebWheelEvent::PhaseEnded))
+            endMomentumSignpostInterval();
+    }
 
     auto platformWheelEvent = platform(event);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
@@ -660,6 +710,12 @@ void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pa
         return;
 
     internalHandleWheelEvent(platformWheelEvent, processingSteps);
+}
+
+void RemoteLayerTreeEventDispatcher::didStartRubberbanding()
+{
+    endFingerDownSignpostInterval();
+    endMomentumSignpostInterval();
 }
 
 void RemoteLayerTreeEventDispatcher::startDisplayDidRefreshCallbacks(PlatformDisplayID)

@@ -70,12 +70,6 @@ static inline bool parentElementPreventsSharing(const Element& parentElement)
     return parentElement.hasFlagsSetDuringStylingOfChildren();
 }
 
-static inline bool elementHasDirectionAuto(const Element& element)
-{
-    auto* htmlElement = dynamicDowncast<HTMLElement>(element);
-    return htmlElement && htmlElement->hasDirectionAuto();
-}
-
 std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchStyleable, const Update& update)
 {
     auto* element = dynamicDowncast<StyledElement>(searchStyleable.element);
@@ -101,7 +95,7 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
         return nullptr;
     if (element == m_document.cssTarget())
         return nullptr;
-    if (elementHasDirectionAuto(*element))
+    if (is<HTMLElement>(*element) && element->hasAutoTextDirectionState())
         return nullptr;
     if (element->shadowRoot() && element->shadowRoot()->styleScope().resolver().ruleSets().hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.hostPseudoClassRules().isEmpty(); }))
         return nullptr;
@@ -259,7 +253,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.hasTagName(HTMLNames::embedTag) || candidateElement.hasTagName(HTMLNames::objectTag) || candidateElement.hasTagName(HTMLNames::appletTag) || candidateElement.hasTagName(HTMLNames::canvasTag))
         return false;
 
-    if (elementHasDirectionAuto(candidateElement))
+    if (is<HTMLElement>(candidateElement) && candidateElement.hasAutoTextDirectionState())
         return false;
 
     if (candidateElement.isRelevantToUser() != element.isRelevantToUser())

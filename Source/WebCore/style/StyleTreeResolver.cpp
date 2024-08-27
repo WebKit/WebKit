@@ -1172,7 +1172,6 @@ std::unique_ptr<Update> TreeResolver::resolve()
 {
     m_hasUnresolvedQueryContainers = false;
 
-    m_document.styleScope().anchorsForAnchorName().clear();
     m_hasUnresolvedAnchorPositionedElements = false;
     m_canFindAnchorsForNextAnchorPositionedElement = true;
 
@@ -1208,14 +1207,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
     }
 
     if (m_hasUnresolvedAnchorPositionedElements) {
-        // During each style resolution, we need to iterate through all anchors
-        // to efficiently find the most recent anchor element in DOM tree order
-        // at any point in time during style resolution.
-        for (auto& anchorElement : m_document.styleScope().anchorElements())
-            anchorElement.invalidateAncestorsForAnchor();
-
-        // We also need to ensure that style resolution visits any unresolved
-        // anchor-positioned elements.
+        // We need to ensure that style resolution visits any unresolved anchor-positioned elements.
         for (auto elementAndState : m_document.styleScope().anchorPositionedStates()) {
             if (elementAndState.value->stage < AnchorPositionResolutionStage::Resolved)
                 elementAndState.key.invalidateForResumingAnchorPositionedElementResolution();
@@ -1313,27 +1305,23 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     if (!isAnchor && !isAnchorPositioned)
         return AnchorPositionedElementAction::None;
 
-    // Maintain the list of anchors (in tree order) used for anchor-positioned elements
-    if (!style->anchorNames().isEmpty()) {
+    // Mark anchor as eligible target for anchor-positioned elements
+    if (isAnchor) {
         for (auto& anchorName : style->anchorNames()) {
             if (m_document.styleScope().anchorElements().add(element).isNewEntry) {
+                m_document.styleScope().anchorsForAnchorName().ensure(anchorName, [&] {
+                    return Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> { };
+                }).iterator->value.append(element);
+
                 // We do not have up-to-date RenderTree information for this anchor.
                 // This means we cannot check if this is an acceptable anchor for an
                 // anchor-positioned element (we need containing block information).
                 m_canFindAnchorsForNextAnchorPositionedElement = false;
             }
-
-            m_document.styleScope().anchorsForAnchorName().ensure(anchorName, [&] {
-                return Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> { };
-            }).iterator->value.append(element);
         }
     }
 
-    // Check if this element is anchor-positioned
-    if (!anchorPositionedState)
-        return AnchorPositionedElementAction::None;
-
-    if (anchorPositionedState->stage == AnchorPositionResolutionStage::Resolved)
+    if (!isAnchorPositioned || anchorPositionedState->stage == AnchorPositionResolutionStage::Resolved)
         return AnchorPositionedElementAction::None;
 
     m_hasUnresolvedAnchorPositionedElements = true;

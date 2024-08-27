@@ -157,7 +157,7 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param context The context within which the web extension is running.
  @param completionHandler A block to be called once the popup display operation is completed.
  @discussion This method is called in response to the extension's scripts or when invoking ``performActionForTab:`` if the action has a popup.
- The associated tab, if applicable, can be located through the ``associatedTab`` property of the `action` parameter. This delegate method is
+ The associated tab, if applicable, can be located through the ``associatedTab`` property of the ``action`` parameter. This delegate method is
  called when the web view for the popup is fully loaded and ready to display. Implementing this method is needed if the app intends to support
  programmatically showing the popup by the extension, although it is recommended for handling both programmatic and user-initiated cases.
  */
@@ -182,8 +182,8 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
  @param controller The web extension controller that is managing the extension.
  @param extensionContext The context in which the web extension is running.
  @param port A port object for handling the message exchange.
- @param completionHandler A block to be called when the connection is ready to use, taking an optional error object
- as a parameter. If the connection is successfully established, the error parameter should be \c nil.
+ @param completionHandler A block to be called when the connection is ready to use, taking an optional error.
+ If the connection is successfully established, the error should be \c nil.
  @discussion This method should be implemented by the app to handle establishing connections to applications.
  The provided ``WKWebExtensionPort`` object can be used to handle message sending, receiving, and disconnection.
  You should retain the port object for as long as the connection remains active. Releasing the port will disconnect it.

@@ -45,6 +45,8 @@ public:
         return adoptRef(*new WebServiceWorkerFetchTaskClient(WTFMove(connection), serviceWorkerIdentifier, serverConnectionIdentifier, fetchTaskIdentifier, needsContinueDidReceiveResponseMessage));
     }
 
+    virtual ~WebServiceWorkerFetchTaskClient();
+
     void continueDidReceiveResponse();
     void convertFetchToDownload();
 

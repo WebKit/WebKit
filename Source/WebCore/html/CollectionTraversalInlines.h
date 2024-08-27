@@ -27,6 +27,7 @@
 
 #include "CollectionTraversal.h"
 #include "ElementChildIteratorInlines.h"
+#include "HTMLOptionsCollectionInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {

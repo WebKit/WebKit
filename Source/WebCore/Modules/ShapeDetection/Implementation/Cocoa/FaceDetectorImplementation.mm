@@ -34,9 +34,12 @@
 #import "LandmarkInterface.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FaceDetectorImpl);
 
 FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions& faceDetectorOptions)
     : m_maxDetectedFaces(faceDetectorOptions.maxDetectedFaces)

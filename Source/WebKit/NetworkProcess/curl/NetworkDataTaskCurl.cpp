@@ -195,7 +195,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
@@ -220,7 +220,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         FileSystem::closeFile(m_downloadDestinationFile);
         m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
@@ -245,7 +245,7 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
 
     if (isDownload()) {
         deleteDownloadFile();
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         download->didFail(resourceError, { });
         return;
@@ -314,9 +314,9 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             }
 
             auto& downloadManager = m_session->networkProcess().downloadManager();
-            auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
+            auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
             auto* downloadPtr = download.get();
-            downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
+            downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
             downloadPtr->didCreateDestination(m_pendingDownloadLocation);
             if (m_curlRequest)
                 m_curlRequest->completeDidReceiveResponse();

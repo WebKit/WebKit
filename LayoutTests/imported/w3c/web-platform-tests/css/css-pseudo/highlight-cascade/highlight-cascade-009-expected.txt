@@ -1,0 +1,7 @@
+Some text
+
+PASS body ::selection uses the originating custom property
+FAIL body ::selection does not use its own custom property assert_equals: expected "green" but got "purple"
+FAIL div::selection uses the originating element custom property assert_equals: expected "green" but got "purple"
+FAIL div::selection does not use its own custom property assert_equals: expected "green" but got "blue"
+

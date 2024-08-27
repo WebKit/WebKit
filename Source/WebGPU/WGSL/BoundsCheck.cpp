@@ -91,7 +91,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
 
         auto& minTarget = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
-            AST::Identifier::make("min"_s)
+            AST::Identifier::make("__wgslMin"_s)
         );
         minTarget.m_inferredType = m_shaderModule.types().bottomType();
 
@@ -125,6 +125,7 @@ void BoundsCheckVisitor::visit(AST::IndexAccessExpression& access)
         newAccess.m_inferredType = access.inferredType();
 
         m_shaderModule.replace(access, newAccess);
+        m_shaderModule.setUsesMin();
     };
 
     auto* base = access.base().inferredType();

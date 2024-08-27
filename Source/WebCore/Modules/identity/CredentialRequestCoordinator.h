@@ -31,6 +31,7 @@
 #include "IDLTypes.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class CredentialRequestCoordinator final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CredentialRequestCoordinator, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(CredentialRequestCoordinator);
 
 public:

@@ -49,6 +49,30 @@ enum class MessageType : uint8_t {
     EchoTwice
 };
 
+static constexpr unsigned long pushActionSetting = 0x8054000;
+
+#ifdef __OBJC__
+inline NSString *pushActionVersionKey()
+{
+    return @"WebPushActionVersion";
+}
+
+inline NSNumber *currentPushActionVersion()
+{
+    return @1;
+}
+
+inline NSString *pushActionPartitionKey()
+{
+    return @"WebPushActionPartition";
+}
+
+inline NSString *pushActionTypeKey()
+{
+    return @"WebPushActionType";
+}
+#endif // __OBJC__
+
 } // namespace WebKit::WebPushD
 
-#endif
+#endif // __cplusplus

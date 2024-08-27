@@ -53,7 +53,7 @@
             verticalScrollbarStateForScroll = await UIHelper.verticalScrollbarState(scrollScroller);
             horizontalScrollbarStateForScroll = await UIHelper.horizontalScrollbarState(scrollScroller);
             shouldBeEqualToString('verticalScrollbarStateForScroll', 'enabled');
-            shouldBeEqualToString('horizontalScrollbarStateForScroll', 'none');
+            shouldBeEqualToString('horizontalScrollbarStateForScroll', 'disabled');
 
             finishJSTest();
         }, false);

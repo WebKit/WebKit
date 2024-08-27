@@ -32,23 +32,25 @@
 
 // This is a standalone check of additional requirements in this implementation,
 // avoiding having to place an overwhelming amount of build guards over the rest of the code.
-#if !USE(NICOSIA) || !USE(TEXTURE_MAPPER_DMABUF)
-#error RemoteGraphicsContextGLProxyGBM implementation also depends on USE_NICOSIA and USE_TEXTURE_MAPPER_DMABUF
+#if !USE(TEXTURE_MAPPER_DMABUF)
+#error RemoteGraphicsContextGLProxyGBM implementation also depends on USE_TEXTURE_MAPPER_DMABUF
 #endif
 
 #include "WebProcess.h"
 #include <WebCore/DMABufObject.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
-#include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/TextureMapperFlags.h>
 #include <WebCore/TextureMapperPlatformLayerProxyDMABuf.h>
 
 namespace WebKit {
 
-class NicosiaDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate, public Nicosia::ContentLayer::Client {
+class DisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
-    explicit NicosiaDisplayDelegate(bool isOpaque);
-    virtual ~NicosiaDisplayDelegate();
+    static Ref<DisplayDelegate> create(bool isOpaque)
+    {
+        return adoptRef(*new DisplayDelegate(isOpaque));
+    }
+    virtual ~DisplayDelegate();
 
     void present(WebCore::DMABufObject&& dmabufObject)
     {
@@ -56,47 +58,38 @@ public:
     }
 
 private:
-    // WebCore::GraphicsLayerContentsDisplayDelegate
-    Nicosia::PlatformLayer* platformLayer() const final;
+    explicit DisplayDelegate(bool isOpaque);
 
-    // Nicosia::ContentLayer::Client
-    void swapBuffersIfNeeded() final;
+    // WebCore::GraphicsLayerContentsDisplayDelegate
+    PlatformLayer* platformLayer() const final { return m_contentLayer.get(); }
 
     bool m_isOpaque { false };
-    RefPtr<Nicosia::ContentLayer> m_contentLayer;
+    RefPtr<WebCore::TextureMapperPlatformLayerProxy> m_contentLayer;
     WebCore::DMABufObject m_pending { WebCore::DMABufObject(0) };
 };
 
-NicosiaDisplayDelegate::NicosiaDisplayDelegate(bool isOpaque)
+DisplayDelegate::DisplayDelegate(bool isOpaque)
     : m_isOpaque(isOpaque)
 {
-    m_contentLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyDMABuf(WebCore::TextureMapperPlatformLayerProxy::ContentType::WebGL)));
+    m_contentLayer = WebCore::TextureMapperPlatformLayerProxyDMABuf::create(WebCore::TextureMapperPlatformLayerProxy::ContentType::WebGL);
+    m_contentLayer->setSwapBuffersFunction([this](WebCore::TextureMapperPlatformLayerProxy& proxy) mutable {
+        if (!!m_pending.handle) {
+            Locker locker { proxy.lock() };
+
+            OptionSet<WebCore::TextureMapperFlags> flags = WebCore::TextureMapperFlags::ShouldFlipTexture;
+            if (!m_isOpaque)
+                flags.add(WebCore::TextureMapperFlags::ShouldBlend);
+
+            downcast<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(WTFMove(m_pending),
+                [](auto&& object) { return object; }, flags);
+        }
+        m_pending = WebCore::DMABufObject(0);
+    });
 }
 
-NicosiaDisplayDelegate::~NicosiaDisplayDelegate()
-{ }
-
-Nicosia::PlatformLayer* NicosiaDisplayDelegate::platformLayer() const
+DisplayDelegate::~DisplayDelegate()
 {
-    return m_contentLayer.get();
-}
-
-void NicosiaDisplayDelegate::swapBuffersIfNeeded()
-{
-    auto& proxy = m_contentLayer->proxy();
-    ASSERT(is<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy));
-
-    if (!!m_pending.handle) {
-        Locker locker { proxy.lock() };
-
-        OptionSet<WebCore::TextureMapperFlags> flags = WebCore::TextureMapperFlags::ShouldFlipTexture;
-        if (!m_isOpaque)
-            flags.add(WebCore::TextureMapperFlags::ShouldBlend);
-
-        downcast<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(WTFMove(m_pending),
-            [](auto&& object) { return object; }, flags);
-    }
-    m_pending = WebCore::DMABufObject(0);
+    m_contentLayer->setSwapBuffersFunction(nullptr);
 }
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
@@ -109,12 +102,12 @@ private:
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
     void prepareForDisplay() final;
 
-    Ref<NicosiaDisplayDelegate> m_layerContentsDisplayDelegate;
+    Ref<DisplayDelegate> m_layerContentsDisplayDelegate;
 };
 
 RemoteGraphicsContextGLProxyGBM::RemoteGraphicsContextGLProxyGBM(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
     : RemoteGraphicsContextGLProxy(attributes, dispatcher)
-    , m_layerContentsDisplayDelegate(adoptRef(*new NicosiaDisplayDelegate(!attributes.alpha)))
+    , m_layerContentsDisplayDelegate(DisplayDelegate::create(!attributes.alpha))
 { }
 
 RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> RemoteGraphicsContextGLProxyGBM::layerContentsDisplayDelegate()

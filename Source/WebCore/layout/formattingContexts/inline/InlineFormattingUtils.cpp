@@ -120,8 +120,8 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
     if (inlineLevelBox.isListMarker())
         return true;
     if (inlineLevelBox.isInlineBox())
-        return layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
-    if (inlineLevelBox.isAtomicInlineLevelBox())
+        return formattingContext().layoutState().inStandardsMode() ? true : formattingContext().quirks().inlineBoxAffectsLineBox(inlineLevelBox);
+    if (inlineLevelBox.isAtomicInlineBox())
         return !inlineLevelBox.layoutBox().isRubyAnnotationBox();
     return false;
 }
@@ -188,7 +188,7 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
 
 InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const
 {
-    if (layoutState().inStandardsMode())
+    if (formattingContext().layoutState().inStandardsMode())
         return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
     return formattingContext().quirks().initialLineHeight();
 }
@@ -406,8 +406,8 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
-    ASSERT(previous.isText() || previous.isBox() || previous.layoutBox().isRubyInlineBox());
-    ASSERT(next.isText() || next.isBox() || next.layoutBox().isRubyInlineBox());
+    ASSERT(previous.isText() || previous.isAtomicInlineBox() || previous.layoutBox().isRubyInlineBox());
+    ASSERT(next.isText() || next.isAtomicInlineBox() || next.layoutBox().isRubyInlineBox());
 
     if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
         return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
@@ -458,7 +458,7 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
         // FIXME: SHould this ever be the case?
         return true;
     }
-    if (previous.isBox() || next.isBox()) {
+    if (previous.isAtomicInlineBox() || next.isAtomicInlineBox()) {
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
@@ -497,7 +497,7 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             // This item is invisible to line breaking. Need to pretend it's not here.
             continue;
         }
-        ASSERT(currentItem.isText() || currentItem.isBox() || currentItem.isFloat() || currentItem.layoutBox().isRubyInlineBox());
+        ASSERT(currentItem.isText() || currentItem.isAtomicInlineBox() || currentItem.isFloat() || currentItem.layoutBox().isRubyInlineBox());
         if (currentItem.isFloat()) {
             // While floats are not part of the inline content and they are not supposed to introduce soft wrap opportunities,
             // e.g. [text][float box][float box][text][float box][text] is essentially just [text][text][text]
@@ -606,11 +606,6 @@ LineEndingEllipsisPolicy InlineFormattingUtils::lineEndingEllipsisPolicy(const R
     if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
         return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
     return LineEndingEllipsisPolicy::NoEllipsis;
-}
-
-const InlineLayoutState& InlineFormattingUtils::layoutState() const
-{
-    return formattingContext().layoutState();
 }
 
 }

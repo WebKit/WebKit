@@ -172,6 +172,7 @@ struct VideoInfo;
 WEBCORE_EXPORT std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView codecString);
 WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
 
+WEBCORE_EXPORT bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
 WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
 
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(const SharedBuffer&);

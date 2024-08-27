@@ -33,6 +33,7 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
+#include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -49,7 +50,7 @@ std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::Number, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }

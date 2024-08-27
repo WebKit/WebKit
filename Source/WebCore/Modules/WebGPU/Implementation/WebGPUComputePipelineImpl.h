@@ -31,6 +31,7 @@
 #include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
@@ -38,7 +39,7 @@ class BindGroupLayoutImpl;
 class ConvertToBackingContext;
 
 class ComputePipelineImpl final : public ComputePipeline {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ComputePipelineImpl);
 public:
     static Ref<ComputePipelineImpl> create(WebGPUPtr<WGPUComputePipeline>&& computePipeline, ConvertToBackingContext& convertToBackingContext)
     {

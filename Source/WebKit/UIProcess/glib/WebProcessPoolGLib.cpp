@@ -57,6 +57,7 @@
 
 #if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
+#include "Display.h"
 #include "GtkSettingsManager.h"
 #endif
 
@@ -258,7 +259,7 @@ const String& WebProcessPool::accessibilityBusAddress() const
     }
 
 #if PLATFORM(GTK)
-    auto address = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+    auto address = Display::singleton().accessibilityBusAddress();
     if (!address.isEmpty()) {
         m_accessibilityBusAddress = WTFMove(address);
         return m_accessibilityBusAddress.value();

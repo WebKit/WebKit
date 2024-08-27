@@ -54,7 +54,7 @@ std::optional<WebCore::WebGPU::ImageCopyBuffer> ConvertFromBackingContext::conve
     if (!base)
         return std::nullopt;
 
-    auto* buffer = convertBufferFromBacking(imageCopyBuffer.buffer);
+    WeakPtr buffer = convertBufferFromBacking(imageCopyBuffer.buffer);
     if (!buffer)
         return std::nullopt;
 

@@ -76,6 +76,9 @@ http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 
+imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ Pass ]
+
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
 [ Debug ] ipc/restrictedendpoints/mac/deny-access-modelElement.html [ Skip ]
@@ -572,9 +575,7 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip/clip-rect-scroll.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ ImageOnlyFailure ]
@@ -832,6 +833,12 @@ http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip 
 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.https.html [ Skip ]
+
+# rdar://134525355 
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
 
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
@@ -1575,9 +1582,6 @@ editing/text-iterator/backwards-text-iterator-basic.html [ Crash ]
 # rdar://107460005 ([UI Side Compositing] fast/text/web-font-load-invisible-during-loading.html fails)
 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
 
-# rdar://107460054 ([UI-side compositing] imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html fails)
-imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
-
 # rdar://107460135 ([UI-side compositing] svg/compositing/outermost-svg-with-border-padding.html fails)
 svg/compositing/outermost-svg-with-border-padding.html
 
@@ -1658,10 +1662,6 @@ webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ Pass Im
 webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
-
-# rdar://118901410 (NEW TEST (271087@main): [ macOS x86_64 wk2 ] 2 tests in http/wpt/webcodecs are a constant failure)
-http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
-http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
 
 webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
 
@@ -1788,17 +1788,19 @@ webkit.org/b/275913 [ Debug ] imported/w3c/web-platform-tests/media-source/dedic
 
 webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
 
-# rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
-# Some of these tests have expectations set elsewhere (marked with inline comment). Please uncomment those when this issue is resolved.
-[ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
-[ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
-[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-[ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure Timeout ]
-[ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
+webkit.org/b/278353 [ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+
+# rdar://125587489
 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
-[ Sequoia+ ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-[ Sequoia+ ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+[ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 
 webkit.org/b/276389 media/video-transformed.html [ Pass Failure ] 
 
@@ -1816,3 +1818,35 @@ tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass 
 
 # webkit.org/b/278178  [macOS Debug] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html is a flaky failure
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Pass Failure ]
+
+# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
+
+# webkit.org/b/278124 REGRESSION (281461@main): [ Sonoma wk2 x86_64 ] 5x imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3* are a constant image only failure.
+[ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3a.html [ ImageOnlyFailure ]
+[ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3b.html [ ImageOnlyFailure ]
+[ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3c.html [ ImageOnlyFailure ]
+[ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3d.html [ ImageOnlyFailure ]
+[ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3e.html [ ImageOnlyFailure ]
+
+# webkit.org/b/278365 REGRESSION (279617@main): [ macOS wk2 ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html is a flaky faliure
+imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
+
+# rdar://134449564 
+# add test expectation as flaky because we have no VM modifier for VM only failures
+[ Sequoia+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Timeout ]
+
+# webkit.org/b/278588 [macOS wk2] imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss is a flaky failure (failure in EWS)
+imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
+
+# webkit.org/b/278659 [ Sonoma Debug arm64]: ASSERTION FAILED: m_clients.contains(client) in imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html
+[ Sonoma Debug arm64 ] imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html [ Pass Crash ]
+
+# webkit.org/b/278683 [macOS wk2] imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html is a flaky failure
+imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html [ Pass Failure ]
+
+# webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim and macOS
+[ Ventura ] imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
+
+# webkit.org/b/278738 [ Sonoma wk2 x86_64]: fast/canvas/image-buffer-backend-variants.html is a flaky crash.
+[ Sonoma x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Crash ]

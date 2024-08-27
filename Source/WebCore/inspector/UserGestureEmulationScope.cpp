@@ -36,8 +36,11 @@
 #include "Document.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureEmulationScope);
 
 UserGestureEmulationScope::UserGestureEmulationScope(Page& inspectedPage, bool emulateUserGesture, Document* document)
     : m_pageChromeClient(inspectedPage.chrome().client())

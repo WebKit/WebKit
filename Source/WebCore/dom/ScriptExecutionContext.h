@@ -88,6 +88,7 @@ class SocketProvider;
 class WebCoreOpaqueRoot;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class LoadedFromOpaqueSource : bool;
+enum class NoiseInjectionPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 
 #if ENABLE(NOTIFICATIONS)
@@ -147,6 +148,7 @@ public:
 
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
     virtual std::optional<uint64_t> noiseInjectionHashSalt() const = 0;
+    virtual OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const = 0;
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
@@ -341,7 +343,7 @@ public:
     WEBCORE_EXPORT HasResourceAccess canAccessResource(ResourceType) const;
 
     enum NotificationCallbackIdentifierType { };
-    using NotificationCallbackIdentifier = AtomicObjectIdentifier<NotificationCallbackIdentifierType>;
+    using NotificationCallbackIdentifier = LegacyNullableAtomicObjectIdentifier<NotificationCallbackIdentifierType>;
 
     WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
     WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);

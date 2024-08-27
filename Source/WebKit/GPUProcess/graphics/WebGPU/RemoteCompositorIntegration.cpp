@@ -36,7 +36,7 @@
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, *connection(), completion)
 
 namespace WebKit {
 
@@ -86,7 +86,7 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
     auto convertedDevice = m_objectHeap->convertDeviceFromBacking(deviceIdentifier);
-    MESSAGE_CHECK(convertedDevice);
+    MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
     callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
 }

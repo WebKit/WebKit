@@ -27,6 +27,7 @@
 
 #include "LegacyCDMSession.h"
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -34,7 +35,7 @@
 namespace WebCore {
 
 class CDMSessionClearKey final : public LegacyCDMSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMSessionClearKey);
 public:
     CDMSessionClearKey(LegacyCDMSessionClient&);
     virtual ~CDMSessionClearKey();

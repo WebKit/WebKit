@@ -60,6 +60,8 @@ ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, Display
 {
     mNewRenderPassDirtyBits = DirtyBits{
         DIRTY_BIT_RENDER_PIPELINE_BINDING,  // The pipeline needs to be bound for each renderpass
+        DIRTY_BIT_VIEWPORT,
+        DIRTY_BIT_SCISSOR,
     };
 }
 
@@ -522,12 +524,16 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING:
                 break;
             case gl::state::DIRTY_BIT_SCISSOR_TEST_ENABLED:
+                mDirtyBits.set(DIRTY_BIT_SCISSOR);
                 break;
             case gl::state::DIRTY_BIT_SCISSOR:
+                mDirtyBits.set(DIRTY_BIT_SCISSOR);
                 break;
             case gl::state::DIRTY_BIT_VIEWPORT:
+                mDirtyBits.set(DIRTY_BIT_VIEWPORT);
                 break;
             case gl::state::DIRTY_BIT_DEPTH_RANGE:
+                mDirtyBits.set(DIRTY_BIT_VIEWPORT);
                 break;
             case gl::state::DIRTY_BIT_BLEND_ENABLED:
                 break;
@@ -996,6 +1002,14 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
                     ANGLE_TRY(handleDirtyRenderPipelineBinding(&dirtyBitIter));
                     break;
 
+                case DIRTY_BIT_VIEWPORT:
+                    ANGLE_TRY(handleDirtyViewport(&dirtyBitIter));
+                    break;
+
+                case DIRTY_BIT_SCISSOR:
+                    ANGLE_TRY(handleDirtyScissor(&dirtyBitIter));
+                    break;
+
                 default:
                     UNREACHABLE();
                     break;
@@ -1028,6 +1042,77 @@ angle::Result ContextWgpu::handleDirtyRenderPipelineBinding(DirtyBits::Iterator 
 {
     ASSERT(mCurrentGraphicsPipeline);
     mCommandBuffer.setPipeline(mCurrentGraphicsPipeline);
+    return angle::Result::Continue;
+}
+
+angle::Result ContextWgpu::handleDirtyViewport(DirtyBits::Iterator *dirtyBitsIterator)
+{
+    const gl::Framebuffer *framebuffer = mState.getDrawFramebuffer();
+    const gl::Extents &framebufferSize = framebuffer->getExtents();
+    const gl::Rectangle framebufferRect(0, 0, framebufferSize.width, framebufferSize.height);
+
+    gl::Rectangle clampedViewport;
+    if (!ClipRectangle(mState.getViewport(), framebufferRect, &clampedViewport))
+    {
+        clampedViewport = gl::Rectangle(0, 0, 1, 1);
+    }
+
+    float depthMin = mState.getNearPlane();
+    float depthMax = mState.getFarPlane();
+
+    // This clamping should be done by the front end. WebGPU requires values in this range.
+    ASSERT(depthMin >= 0 && depthMin <= 1);
+    ASSERT(depthMin >= 0 && depthMin <= 1);
+
+    // WebGPU requires that the maxDepth is at least minDepth. WebGL requires the same but core GL
+    // ES does not.
+    if (depthMin > depthMax)
+    {
+        UNIMPLEMENTED();
+    }
+
+    bool isDefaultViewport = (clampedViewport == framebufferRect) && depthMin == 0 && depthMax == 1;
+    if (isDefaultViewport && !mCommandBuffer.hasSetViewportCommand())
+    {
+        // Each render pass has a default viewport set equal to the size of the render targets. We
+        // can skip setting the viewport.
+        return angle::Result::Continue;
+    }
+
+    ASSERT(mCurrentGraphicsPipeline);
+    mCommandBuffer.setViewport(clampedViewport.x, clampedViewport.y, clampedViewport.width,
+                               clampedViewport.height, depthMin, depthMax);
+    return angle::Result::Continue;
+}
+
+angle::Result ContextWgpu::handleDirtyScissor(DirtyBits::Iterator *dirtyBitsIterator)
+{
+    const gl::Framebuffer *framebuffer = mState.getDrawFramebuffer();
+    const gl::Extents &framebufferSize = framebuffer->getExtents();
+    const gl::Rectangle framebufferRect(0, 0, framebufferSize.width, framebufferSize.height);
+
+    gl::Rectangle clampedScissor = framebufferRect;
+
+    // When the GL scissor test is disabled, set the scissor to the entire size of the framebuffer
+    if (mState.isScissorTestEnabled())
+    {
+        if (!ClipRectangle(mState.getScissor(), framebufferRect, &clampedScissor))
+        {
+            clampedScissor = gl::Rectangle(0, 0, 0, 0);
+        }
+    }
+
+    bool isDefaultScissor = clampedScissor == framebufferRect;
+    if (isDefaultScissor && !mCommandBuffer.hasSetScissorCommand())
+    {
+        // Each render pass has a default scissor set equal to the size of the render targets. We
+        // can skip setting the scissor.
+        return angle::Result::Continue;
+    }
+
+    ASSERT(mCurrentGraphicsPipeline);
+    mCommandBuffer.setScissorRect(clampedScissor.x, clampedScissor.y, clampedScissor.width,
+                                  clampedScissor.height);
     return angle::Result::Continue;
 }
 

@@ -1456,6 +1456,37 @@ std::optional<Ref<WebCore::AppKitControlSystemImage>> ArgumentCoder<WebCore::App
 
 #endif
 
+void ArgumentCoder<WebCore::RectEdges<bool>>::encode(Encoder& encoder, const WebCore::RectEdges<bool>& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.top())>, bool>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.right())>, bool>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.bottom())>, bool>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.left())>, bool>);
+
+    encoder << instance.top();
+    encoder << instance.right();
+    encoder << instance.bottom();
+    encoder << instance.left();
+}
+
+std::optional<WebCore::RectEdges<bool>> ArgumentCoder<WebCore::RectEdges<bool>>::decode(Decoder& decoder)
+{
+    auto top = decoder.decode<bool>();
+    auto right = decoder.decode<bool>();
+    auto bottom = decoder.decode<bool>();
+    auto left = decoder.decode<bool>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebCore::RectEdges<bool> {
+            WTFMove(*top),
+            WTFMove(*right),
+            WTFMove(*bottom),
+            WTFMove(*left)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {

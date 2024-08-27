@@ -31,6 +31,7 @@
 #include "InlineLayoutState.h"
 #include "InlineQuirks.h"
 #include "IntrinsicWidthHandler.h"
+#include "LayoutIntegrationUtils.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -71,13 +72,13 @@ public:
     InlineLayoutState& layoutState() { return m_inlineLayoutState; }
     const InlineLayoutState& layoutState() const { return m_inlineLayoutState; }
 
-    void layoutWithFormattingContextForBox(const ElementBox&);
-
     enum class EscapeReason {
         InkOverflowNeedsInitialContiningBlockForStrokeWidth
     };
     const BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt) const;
-    BoxGeometry& geometryForBox(const Box&, std::optional<EscapeReason> = std::nullopt);
+    BoxGeometry& geometryForBox(const Box&);
+
+    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
@@ -101,6 +102,7 @@ private:
     const FloatingContext m_floatingContext;
     const InlineFormattingUtils m_inlineFormattingUtils;
     const InlineQuirks m_inlineQuirks;
+    const IntegrationUtils m_integrationUtils;
     InlineContentCache& m_inlineContentCache;
     InlineLayoutState m_inlineLayoutState;
 };

@@ -41,10 +41,13 @@
 #include "Page.h"
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageConsoleAgent);
 
 PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
     : WebConsoleAgent(context)

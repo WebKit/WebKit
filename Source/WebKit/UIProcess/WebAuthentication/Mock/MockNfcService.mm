@@ -108,7 +108,7 @@ uint8_t tagID2[] = { 0x02 };
 
 - (instancetype)initWithType:(NFTagType)type
 {
-    return [self initWithType:type tagID:adoptNS([[NSData alloc] initWithBytes:tagID1 length:sizeof(tagID1)]).get()];
+    return [self initWithType:type tagID:adoptNS([[NSData alloc] initWithBytesNoCopy:tagID1 length:sizeof(tagID1) freeWhenDone:NO]).get()];
 }
 
 - (instancetype)initWithType:(NFTagType)type tagID:(NSData *)tagID
@@ -256,7 +256,7 @@ void MockNfcService::detectTags() const
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]).get()];
 
         if (configuration.nfc->multiplePhysicalTags)
-            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytes:tagID2 length:sizeof(tagID2)]).get()]).get()];
+            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytesNoCopy:tagID2 length:sizeof(tagID2) freeWhenDone:NO]).get()]).get()];
 
         auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
         [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];

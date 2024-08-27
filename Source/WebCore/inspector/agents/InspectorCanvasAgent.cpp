@@ -76,6 +76,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,6 +88,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCanvasAgent);
 
 InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
     : InspectorAgentBase("Canvas"_s, context)

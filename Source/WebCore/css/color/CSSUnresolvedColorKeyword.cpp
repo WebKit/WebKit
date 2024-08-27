@@ -26,7 +26,8 @@
 #include "config.h"
 #include "CSSUnresolvedColorKeyword.h"
 
-#include "CSSUnresolvedColorResolutionContext.h"
+#include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedStyleColorResolutionState.h"
 #include "CSSValueKeywords.h"
 #include "ColorFromPrimitiveValue.h"
 #include "StyleBuilderState.h"
@@ -43,26 +44,26 @@ String serializationForCSS(const CSSUnresolvedColorKeyword& unresolved)
     return nameStringForSerialization(unresolved.valueID);
 }
 
-StyleColor createStyleColor(const CSSUnresolvedColorKeyword& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
+StyleColor createStyleColor(const CSSUnresolvedColorKeyword& unresolved, CSSUnresolvedStyleColorResolutionState& state)
 {
-    return Style::colorFromValueID(document, style, unresolved.valueID, forVisitedLink);
+    return Style::colorFromValueID(state.document, state.style, unresolved.valueID, state.forVisitedLink);
 }
 
-Color createColor(const CSSUnresolvedColorKeyword& unresolved, const CSSUnresolvedColorResolutionContext& context)
+Color createColor(const CSSUnresolvedColorKeyword& unresolved, CSSUnresolvedColorResolutionState& state)
 {
     switch (unresolved.valueID) {
     case CSSValueInternalDocumentTextColor:
-        return context.internalDocumentTextColor();
+        return state.internalDocumentTextColor();
     case CSSValueWebkitLink:
-        return context.forVisitedLink == Style::ForVisitedLink::Yes ? context.webkitLinkVisited() : context.webkitLink();
+        return state.forVisitedLink == Style::ForVisitedLink::Yes ? state.webkitLinkVisited() : state.webkitLink();
     case CSSValueWebkitActivelink:
-        return context.webkitActiveLink();
+        return state.webkitActiveLink();
     case CSSValueWebkitFocusRingColor:
-        return context.webkitFocusRingColor();
+        return state.webkitFocusRingColor();
     case CSSValueCurrentcolor:
-        return context.currentColor();
+        return state.currentColor();
     default:
-        return StyleColor::colorFromKeyword(unresolved.valueID, context.keywordOptions);
+        return StyleColor::colorFromKeyword(unresolved.valueID, state.keywordOptions);
     }
 }
 

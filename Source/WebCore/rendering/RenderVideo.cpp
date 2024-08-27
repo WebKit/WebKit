@@ -58,10 +58,8 @@ RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
     ASSERT(isRenderVideo());
 }
 
-RenderVideo::~RenderVideo()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderVideo::~RenderVideo() = default;
 
 void RenderVideo::willBeDestroyed()
 {

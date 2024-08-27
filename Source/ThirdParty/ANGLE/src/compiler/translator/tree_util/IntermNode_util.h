@@ -34,7 +34,11 @@ TIntermConstantUnion *CreateIndexNode(int index);
 TIntermConstantUnion *CreateUIntNode(unsigned int value);
 TIntermConstantUnion *CreateBoolNode(bool value);
 
+// Create temporary variable of known type |type|.
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type);
+
+// Create temporary variable compatible with user-provide type |type|.
+// Possibly creates a new type. The qualifer of the new type of the new variable is |qualifier|.
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type, TQualifier qualifier);
 
 TIntermSymbol *CreateTempSymbolNode(const TVariable *tempVariable);

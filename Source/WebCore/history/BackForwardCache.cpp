@@ -185,8 +185,8 @@ static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnostic
         isCacheable = false;
     }
 
-    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        RefPtr localChild = dynamicDowncast<LocalFrame>(child);
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child.get());
         if (!localChild)
             continue;
         if (!canCacheFrame(*localChild, diagnosticLoggingClient, indentLevel + 1))
@@ -447,8 +447,8 @@ static void firePageHideEventRecursively(LocalFrame& frame)
 
     frame.loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
 
-    for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (RefPtr localChild = dynamicDowncast<LocalFrame>(*child))
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
             firePageHideEventRecursively(*localChild);
     }
 }

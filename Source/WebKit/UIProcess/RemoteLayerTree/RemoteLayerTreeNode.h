@@ -98,16 +98,16 @@ public:
     void setEventRegion(const WebCore::EventRegion&);
 
     // Non-ancestor scroller that controls positioning of the layer.
-    WebCore::PlatformLayerIdentifier actingScrollContainerID() const { return m_actingScrollContainerID; }
+    std::optional<WebCore::PlatformLayerIdentifier >actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
     // Ancestor scrollers that don't affect positioning of the layer.
     const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const { return m_stationaryScrollContainerIDs; }
 
-    void setActingScrollContainerID(WebCore::PlatformLayerIdentifier value) { m_actingScrollContainerID = value; }
+    void setActingScrollContainerID(std::optional<WebCore::PlatformLayerIdentifier> value) { m_actingScrollContainerID = value; }
     void setStationaryScrollContainerIDs(Vector<WebCore::PlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTFMove(value); }
 
     void detachFromParent();
 
-    static WebCore::PlatformLayerIdentifier layerID(CALayer *);
+    static std::optional<WebCore::PlatformLayerIdentifier> layerID(CALayer *);
     static RemoteLayerTreeNode* forCALayer(CALayer *);
 
     static NSString *appendLayerDescription(NSString *description, CALayer *);
@@ -186,7 +186,7 @@ private:
     WebCore::ScrollingNodeID m_scrollingNodeID;
 #endif
 
-    WebCore::PlatformLayerIdentifier m_actingScrollContainerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_actingScrollContainerID;
     Vector<WebCore::PlatformLayerIdentifier> m_stationaryScrollContainerIDs;
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;

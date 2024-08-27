@@ -32,6 +32,7 @@
 #import "APIHitTestResult.h"
 #import "APIInspectorConfiguration.h"
 #import "CompletionHandlerCallChecker.h"
+#import "FrameProcess.h"
 #import "MediaPermissionUtilities.h"
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
@@ -332,25 +333,26 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
     ASSERT(delegate);
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
-    RefPtr openerProcess = configuration->openerProcess();
+    auto openerInfo = configuration->openerInfo();
 
     if (m_uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:));
 
-        [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get(), openerProcess] (WKWebView *webView) mutable {
+        [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get(), openerInfo] (WKWebView *webView) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
 
-            if (!webView) {
-                completionHandler(nullptr);
-                return;
-            }
+            if (!webView)
+                return completionHandler(nullptr);
 
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if ([webView->_configuration _relatedWebView] != relatedWebView.get())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
+            ALLOW_DEPRECATED_DECLARATIONS_END
 
-            if (openerProcess != webView->_configuration->_pageConfiguration->openerProcess())
+            // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
+            if (openerInfo != webView->_configuration->_pageConfiguration->openerInfo())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
             completionHandler(webView->_page.get());
@@ -364,9 +366,13 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
     if (!webView)
         return completionHandler(nullptr);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([webView.get()->_configuration _relatedWebView] != m_uiDelegate->m_webView.get().get())
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
-    if (openerProcess != webView.get()->_configuration->_pageConfiguration->openerProcess())
+    ALLOW_DEPRECATED_DECLARATIONS_END
+
+    // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
+    if (openerInfo != webView.get()->_configuration->_pageConfiguration->openerInfo())
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
     completionHandler(webView->_page.get());
 }

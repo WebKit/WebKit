@@ -56,6 +56,8 @@ struct _WPEViewClass
                                         const WPERectangle *damage_rects,
                                         guint               n_damage_rects,
                                         GError            **error);
+    gboolean (* lock_pointer)          (WPEView            *view);
+    gboolean (* unlock_pointer)        (WPEView            *view);
     void     (* set_cursor_from_name)  (WPEView            *view,
                                         const char         *name);
     void     (* set_cursor_from_bytes) (WPEView            *view,
@@ -105,6 +107,8 @@ WPE_API void                    wpe_view_set_visible                   (WPEView 
 WPE_API gboolean                wpe_view_get_mapped                    (WPEView            *view);
 WPE_API void                    wpe_view_map                           (WPEView            *view);
 WPE_API void                    wpe_view_unmap                         (WPEView            *view);
+WPE_API gboolean                wpe_view_lock_pointer                  (WPEView            *view);
+WPE_API gboolean                wpe_view_unlock_pointer                (WPEView            *view);
 WPE_API void                    wpe_view_set_cursor_from_name          (WPEView            *view,
                                                                         const char         *name);
 WPE_API void                    wpe_view_set_cursor_from_bytes         (WPEView            *view,

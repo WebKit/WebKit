@@ -129,7 +129,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
     , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_listener(AudioListener::create(*this))
-    , m_noiseInjectionPolicy(document.noiseInjectionPolicy())
+    , m_noiseInjectionPolicies(document.noiseInjectionPolicies())
 {
     liveAudioContexts().add(m_contextID);
 

@@ -3987,11 +3987,6 @@ void TestController::statisticsUpdateCookieBlocking(CompletionHandler<void(WKTyp
     WKWebsiteDataStoreStatisticsUpdateCookieBlocking(websiteDataStore(), completionHandler.leak(), adoptAndCallCompletionHandler);
 }
 
-void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(websiteDataStore(), value);
-}
-
 void TestController::setStatisticsTimeAdvanceForTesting(double value)
 {
     ResourceStatisticsCallbackContext context(*this);
@@ -4169,6 +4164,13 @@ void TestController::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, 
 void TestController::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
     WKPageTriggerMockCaptureConfigurationChange(m_mainWebView->page(), forMicrophone, forDisplay);
+}
+
+void TestController::setCaptureState(bool cameraState, bool microphoneState, bool displayState)
+{
+    WKPageSetMuted(m_mainWebView->page(), (cameraState ? kWKMediaCameraCaptureUnmuted : kWKMediaCameraCaptureMuted)
+                   | (microphoneState ? kWKMediaMicrophoneCaptureUnmuted : kWKMediaMicrophoneCaptureMuted)
+                   | (displayState ? kWKMediaScreenCaptureUnmuted : kWKMediaScreenCaptureMuted));
 }
 
 struct InAppBrowserPrivacyCallbackContext {

@@ -737,9 +737,9 @@ const BaseAudioContext& AudioNode::context() const
     });
 }
 
-NoiseInjectionPolicy AudioNode::noiseInjectionPolicy() const
+OptionSet<NoiseInjectionPolicy> AudioNode::noiseInjectionPolicies() const
 {
-    return context().noiseInjectionPolicy();
+    return context().noiseInjectionPolicies();
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

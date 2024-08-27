@@ -38,6 +38,7 @@ class CachedSVGFont final : public CachedFont {
 public:
     CachedSVGFont(CachedResourceRequest&&, PAL::SessionID, const CookieJar*, const Settings&);
     CachedSVGFont(CachedResourceRequest&&, CachedSVGFont&);
+    virtual ~CachedSVGFont();
 
     bool ensureCustomFontData() final;
     RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) final;

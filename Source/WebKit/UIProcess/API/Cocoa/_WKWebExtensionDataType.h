@@ -25,6 +25,7 @@
 
 #import <WebKit/WKWebExtensionDataType.h>
 
+#define _WKWebExtensionDataType WKWebExtensionDataType
 #define _WKWebExtensionDataTypeLocal WKWebExtensionDataTypeLocal
 #define _WKWebExtensionDataTypeSession WKWebExtensionDataTypeSession
-#define _WKWebExtensionDataTypeSync WKWebExtensionDataTypeSync
+#define _WKWebExtensionDataTypeSync WKWebExtensionDataTypeSynchronized

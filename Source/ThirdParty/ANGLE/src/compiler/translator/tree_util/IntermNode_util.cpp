@@ -189,21 +189,20 @@ TIntermConstantUnion *CreateBoolNode(bool value)
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type)
 {
     ASSERT(symbolTable != nullptr);
-    // TODO(oetuaho): Might be useful to sanitize layout qualifier etc. on the type of the created
-    // variable. This might need to be done in other places as well.
     return new TVariable(symbolTable, kEmptyImmutableString, type, SymbolType::AngleInternal);
 }
 
 TVariable *CreateTempVariable(TSymbolTable *symbolTable, const TType *type, TQualifier qualifier)
 {
     ASSERT(symbolTable != nullptr);
-    if (type->getQualifier() == qualifier)
+    if (type->getQualifier() != qualifier || type->getInterfaceBlock() != nullptr)
     {
-        return CreateTempVariable(symbolTable, type);
+        TType *newType = new TType(*type);
+        newType->setQualifier(qualifier);
+        newType->setInterfaceBlock(nullptr);
+        type = newType;
     }
-    TType *typeWithQualifier = new TType(*type);
-    typeWithQualifier->setQualifier(qualifier);
-    return CreateTempVariable(symbolTable, typeWithQualifier);
+    return new TVariable(symbolTable, kEmptyImmutableString, type, SymbolType::AngleInternal);
 }
 
 TIntermSymbol *CreateTempSymbolNode(const TVariable *tempVariable)

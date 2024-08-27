@@ -34,8 +34,11 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUQuerySetImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePassEncoderImpl);
 
 ComputePassEncoderImpl::ComputePassEncoderImpl(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(computePassEncoder))

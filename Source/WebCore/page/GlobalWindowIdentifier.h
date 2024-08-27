@@ -59,7 +59,7 @@ struct GlobalWindowIdentifierHash {
 };
 
 template<> struct HashTraits<WebCore::GlobalWindowIdentifier> : GenericHashTraits<WebCore::GlobalWindowIdentifier> {
-    static WebCore::GlobalWindowIdentifier emptyValue() { return { }; }
+    static WebCore::GlobalWindowIdentifier emptyValue() { return { { }, HashTraits<WebCore::WindowIdentifier>::emptyValue() }; }
 
     static void constructDeletedValue(WebCore::GlobalWindowIdentifier& slot)
     {

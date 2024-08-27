@@ -62,9 +62,11 @@ platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextWrapper.cpp @no-unify
+platform/graphics/egl/GLDisplay.cpp @no-unify
 platform/graphics/egl/GLFence.cpp @no-unify
 platform/graphics/egl/GLFenceEGL.cpp @no-unify
 platform/graphics/egl/GLFenceGL.cpp @no-unify
+platform/graphics/egl/PlatformDisplayDefault.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/DRMDeviceManager.cpp
@@ -81,9 +83,6 @@ platform/graphics/gtk/SystemFontDatabaseGTK.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 
-platform/graphics/wayland/PlatformDisplayWayland.cpp
-
-platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp
@@ -112,5 +111,3 @@ platform/unix/LoggingUnix.cpp
 platform/unix/SharedMemoryUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
-
-Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp

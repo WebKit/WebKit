@@ -39,6 +39,8 @@ struct PossiblyQuotedIdentifier {
     bool isNull() const { return identifier.isNull(); }
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, PossiblyQuotedIdentifier);
+
 enum class SelectorSpecificityIncrement {
     ClassA = 0x10000,
     ClassB = 0x100,

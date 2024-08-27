@@ -28,13 +28,14 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "LegacyCDMPrivate.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LegacyCDM;
 
 class LegacyCDMPrivateClearKey : public CDMPrivateInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyCDMPrivateClearKey);
 public:
     explicit LegacyCDMPrivateClearKey(LegacyCDM* cdm)
         : m_cdm(cdm)

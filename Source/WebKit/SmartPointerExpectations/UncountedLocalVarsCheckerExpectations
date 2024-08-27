@@ -26,7 +26,6 @@ Platform/IPC/MessageSenderInlines.h
 Shared/API/APIArray.cpp
 Shared/API/APIObject.h
 Shared/API/c/cg/WKImageCG.cpp
-Shared/API/c/mac/WKMediaFormatReader.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
@@ -49,9 +48,6 @@ Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDescriptor.cpp
 Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
 Shared/WebHitTestResultData.cpp
-Shared/mac/MediaFormatReader/MediaFormatReader.cpp
-Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
-Shared/mac/MediaFormatReader/MediaTrackReader.cpp
 UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/C/WKContext.cpp
 UIProcess/API/C/WKContextMenuListener.cpp

@@ -61,15 +61,18 @@ if ARMv7
     # Not enough registers on arm to keep the memory base and size in pinned
     # registers, so load them on each access instead. FIXME: improve this.
     addps offset, pointer
-    bcs .throw
+    bcs .throwOOB
     addps size - 1, pointer, offset # Use offset as scratch register
-    bcs .throw
-    bpb offset, JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], .continuation
-.throw:
+    bcs .throwOOB
+    bpb offset, JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], .continuationInBounds
+.throwOOB:
     throwException(OutOfBoundsMemoryAccess)
-.continuation:
+.continuationInBounds:
     addp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], pointer
-    btpnz pointer, (size - 1), .throw
+    btpz pointer, (size - 1), .continuationAligned
+.throwUnaligned:
+    throwException(UnalignedMemoryAccess)
+.continuationAligned:
 else
     crash()
 end

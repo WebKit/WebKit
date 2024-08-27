@@ -36,6 +36,7 @@
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -64,7 +65,7 @@ struct PageAgentContext;
 
 class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(InspectorController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorController);
 public:
     InspectorController(Page&, std::unique_ptr<InspectorClient>&&);
     ~InspectorController() override;

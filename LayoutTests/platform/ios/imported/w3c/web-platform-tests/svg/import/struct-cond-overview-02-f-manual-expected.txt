@@ -3,10 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0,0) size 500x567
-      RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGRect {rect} at (333,0) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
+    RenderSVGContainer {g} at (0,200) size 500x367
       RenderSVGRect {rect} at (0,200) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=120.00] [width=100.00] [height=100.00]
       RenderSVGRect {rect} at (333,200) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=120.00] [width=100.00] [height=100.00]
       RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]

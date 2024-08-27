@@ -377,7 +377,7 @@ int wpe_monitor_get_height(WPEMonitor* monitor)
  * wpe_monitor_set_size:
  * @monitor: a #WPEMonitor
  * @width: the width, or -1
- * @height: the height, o -1
+ * @height: the height, or -1
  *
  * Set the size of @monitor in logical coordinates.
  */
@@ -387,6 +387,7 @@ void wpe_monitor_set_size(WPEMonitor* monitor, int width, int height)
     g_return_if_fail(width == -1 || width >= 0);
     g_return_if_fail(height == -1 || height >= 0);
 
+    g_object_freeze_notify(G_OBJECT(monitor));
     if (width != -1 && width != monitor->priv->width) {
         monitor->priv->width = width;
         g_object_notify_by_pspec(G_OBJECT(monitor), sObjProperties[PROP_WIDTH]);
@@ -396,6 +397,7 @@ void wpe_monitor_set_size(WPEMonitor* monitor, int width, int height)
         monitor->priv->height = height;
         g_object_notify_by_pspec(G_OBJECT(monitor), sObjProperties[PROP_HEIGHT]);
     }
+    g_object_thaw_notify(G_OBJECT(monitor));
 }
 
 /**

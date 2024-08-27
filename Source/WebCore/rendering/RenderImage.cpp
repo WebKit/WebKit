@@ -176,10 +176,8 @@ RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, Sty
 {
 }
 
-RenderImage::~RenderImage()
-{
-    // Do not add any code here. Add it to willBeDestroyed() instead.
-}
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderImage::~RenderImage() = default;
 
 void RenderImage::willBeDestroyed()
 {
@@ -746,7 +744,10 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         imageOrientation(),
         image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationQuality::Default,
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
-        settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
+        settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
+#if USE(SKIA)
+        StrictImageClamping::No,
+#endif
     };
 
     auto drawResult = ImageDrawResult::DidNothing;

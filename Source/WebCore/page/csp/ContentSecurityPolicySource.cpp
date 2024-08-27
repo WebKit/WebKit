@@ -30,9 +30,12 @@
 #include "ContentSecurityPolicy.h"
 #include "SecurityOriginData.h"
 #include <pal/text/TextEncoding.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicySource);
 
 ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPolicy& policy, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource isSelfSource)
     : m_policy(policy)

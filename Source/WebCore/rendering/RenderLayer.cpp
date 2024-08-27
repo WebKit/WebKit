@@ -49,6 +49,7 @@
 
 #include "AccessibilityRegionContext.h"
 #include "BitmapImage.h"
+#include "BorderShape.h"
 #include "BoxShape.h"
 #include "CSSFilter.h"
 #include "CSSPropertyNames.h"
@@ -2877,11 +2878,11 @@ void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver
             if (layer->renderer().hasNonVisibleOverflow() && layer->renderer().style().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
                 LayoutRect adjustedClipRect = LayoutRect(toLayoutPoint(layer->offsetFromAncestor(paintingInfo.rootLayer, AdjustForColumns)), layer->size());
                 adjustedClipRect.move(paintingInfo.subpixelOffset);
-                FloatRoundedRect roundedRect = layer->renderer().style().getRoundedInnerBorderFor(adjustedClipRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-                if (roundedRect.intersectionIsRectangular(paintingInfo.paintDirtyRect))
+                auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().style(), adjustedClipRect);
+                if (borderShape.innerShapeContains(paintingInfo.paintDirtyRect))
                     context.clip(snapRectToDevicePixels(intersection(paintingInfo.paintDirtyRect, adjustedClipRect), deviceScaleFactor));
                 else
-                    context.clipRoundedRect(roundedRect);
+                    borderShape.clipToInnerShape(context, deviceScaleFactor);
             }
             
             if (layer == paintingInfo.rootLayer)
@@ -3093,7 +3094,7 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
 
     bool scrollingOnMainThread = true;
 #if ENABLE(ASYNC_SCROLLING)
-    if (auto* scrollingCoordinator = page().scrollingCoordinator())
+    if (RefPtr scrollingCoordinator = page().scrollingCoordinator())
         scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(renderer().view().frameView());
 #endif
 
@@ -6114,7 +6115,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
 
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
-        stream << " (layerID "_s << backing.graphicsLayer()->primaryLayerID().object() << ")"_s;
+        stream << " (layerID "_s << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->object().toUInt64() : 0) << ")"_s;
         
         if (layer.indirectCompositingReason() != WebCore::IndirectCompositingReason::None)
             stream << " "_s << layer.indirectCompositingReason();

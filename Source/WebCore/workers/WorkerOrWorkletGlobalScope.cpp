@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
+#include "NoiseInjectionPolicy.h"
 #include "ScriptModuleLoader.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WorkerEventLoop.h"
@@ -135,6 +136,14 @@ void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode
 {
     ASSERT(workerOrWorkletThread());
     workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+}
+
+OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolicies() const
+{
+    OptionSet<NoiseInjectionPolicy> policies;
+    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections))
+        policies.add(NoiseInjectionPolicy::Minimal);
+    return policies;
 }
 
 } // namespace WebCore

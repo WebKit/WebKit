@@ -38,6 +38,8 @@ class WorkerNavigator final : public NavigatorBase, public Supplementable<Worker
 public:
     static Ref<WorkerNavigator> create(ScriptExecutionContext& context, const String& userAgent, bool isOnline) { return adoptRef(*new WorkerNavigator(context, userAgent, isOnline)); }
 
+    virtual ~WorkerNavigator();
+
     const String& userAgent() const final;
     bool onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }

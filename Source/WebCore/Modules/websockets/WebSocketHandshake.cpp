@@ -51,6 +51,7 @@
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -98,6 +99,8 @@ static String generateSecWebSocketKey()
     cryptographicallyRandomValues(key);
     return base64EncodeToString(key);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketHandshake);
 
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
 {

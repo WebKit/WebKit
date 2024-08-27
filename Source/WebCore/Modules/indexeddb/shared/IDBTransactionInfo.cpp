@@ -27,9 +27,12 @@
 #include "IDBTransactionInfo.h"
 
 #include "IDBTransaction.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBTransactionInfo);
 
 IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
     : m_identifier(identifier)

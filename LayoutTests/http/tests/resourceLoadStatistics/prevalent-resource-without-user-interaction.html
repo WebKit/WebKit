@@ -38,12 +38,10 @@
                 if (testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
                     testFailed("Host did not get cleared of user interaction.");
 
-                testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
-                    setTimeout("finishTest()", 1000);
-                });
                 testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
                 testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
                 await testRunner.statisticsProcessStatisticsAndDataRecords();
+                setTimeout("finishTest()", 1000);
             });
         });
     }

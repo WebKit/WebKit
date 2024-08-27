@@ -30,6 +30,7 @@
 #include "CredentialsContainer.h"
 #include "IdentityCredentialsContainer.h"
 #include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ class WeakPtrImplWithEventTargetData;
 class Navigator;
 
 class NavigatorIdentity final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorIdentity);
 public:
     NavigatorIdentity();
     virtual ~NavigatorIdentity();

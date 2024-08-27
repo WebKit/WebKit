@@ -82,6 +82,7 @@
 #include "WindowFeatures.h"
 #include "markup.h"
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -98,6 +99,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContextMenuController);
 
 using namespace WTF::Unicode;
 

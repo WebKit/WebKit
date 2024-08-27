@@ -34,8 +34,11 @@
 #include "WebGPUTextureImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QueueImpl);
 
 QueueImpl::QueueImpl(WebGPUPtr<WGPUQueue>&& queue, ConvertToBackingContext& convertToBackingContext)
     : m_backing(WTFMove(queue))

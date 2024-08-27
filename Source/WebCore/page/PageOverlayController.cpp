@@ -37,10 +37,13 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "TiledBacking.h"
+#include <wtf/TZoneMallocInlines.h>
 
 // FIXME: Someone needs to call didChangeSettings() if we want dynamic updates of layer border/repaint counter settings.
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageOverlayController);
 
 PageOverlayController::PageOverlayController(Page& page)
     :  m_page(page)

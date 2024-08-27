@@ -104,9 +104,6 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
         result = WTF::Unicode::convert(string->span8(), target);
     else
         result = WTF::Unicode::convert(string->span16(), target);
-    if (result.code == WTF::Unicode::ConversionResultCode::SourceInvalid)
-        return 0;
-
     buffer[result.buffer.size()] = '\0';
     return result.buffer.size() + 1;
 }

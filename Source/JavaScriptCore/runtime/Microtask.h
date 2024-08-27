@@ -34,7 +34,7 @@ class CallFrame;
 class JSGlobalObject;
 
 enum class MicrotaskIdentifierType { };
-using MicrotaskIdentifier = AtomicObjectIdentifier<MicrotaskIdentifierType>;
+using MicrotaskIdentifier = LegacyNullableAtomicObjectIdentifier<MicrotaskIdentifierType>;
 
 class Microtask : public RefCounted<Microtask> {
 public:

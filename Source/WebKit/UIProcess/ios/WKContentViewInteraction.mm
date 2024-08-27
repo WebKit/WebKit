@@ -11925,35 +11925,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
-#if ENABLE(WRITING_TOOLS_UI)
-
-- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
-{
-    if (!_page->preferences().textAnimationsEnabled())
-        return;
-
-    if (!_textAnimationManager)
-        _textAnimationManager = adoptNS([WebKit::allocWKSTextAnimationManagerInstance() initWithDelegate:self]);
-
-    [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:styleType];
-}
-
-- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid
-{
-    if (!uuid)
-        return;
-
-    if (!_page->preferences().textAnimationsEnabled())
-        return;
-
-    if (!_textAnimationManager)
-        return;
-
-    [_textAnimationManager removeTextAnimationForAnimationID:uuid];
-}
-
-#endif
-
 #if HAVE(UIFINDINTERACTION)
 
 - (void)find:(id)sender
@@ -13309,7 +13280,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 #pragma mark - WKSTextAnimationSourceDelegate
 
-#if ENABLE(WRITING_TOOLS_UI)
+#if ENABLE(WRITING_TOOLS)
 - (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
 {
     auto textUUID = WTF::UUID::fromNSUUID(uuid);
@@ -13357,6 +13328,11 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 {
     auto animationUUID = WTF::UUID::fromNSUUID(uuid);
     _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
+}
+
+- (void)replacementEffectDidComplete
+{
+    _page->didEndPartialIntelligenceTextPonderingAnimationImpl();
 }
 
 #endif
@@ -13428,6 +13404,31 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action
 {
     [_webView writingToolsSession:session didReceiveAction:action];
+}
+
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
+{
+    if (!_page->preferences().textAnimationsEnabled())
+        return;
+
+    if (!_textAnimationManager)
+        _textAnimationManager = adoptNS([WebKit::allocWKSTextAnimationManagerInstance() initWithDelegate:self]);
+
+    [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:styleType];
+}
+
+- (void)removeTextAnimationForAnimationID:(NSUUID *)uuid
+{
+    if (!uuid)
+        return;
+
+    if (!_page->preferences().textAnimationsEnabled())
+        return;
+
+    if (!_textAnimationManager)
+        return;
+
+    [_textAnimationManager removeTextAnimationForAnimationID:uuid];
 }
 
 #endif

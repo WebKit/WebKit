@@ -81,7 +81,7 @@
       "nicks" : [
          "chanada"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -496,6 +496,16 @@
       "name" : "Alexis Menard",
       "nicks" : [
          "darktears"
+      ]
+   },
+   {
+      "emails" : [
+         "alexbdamac@gmail.com"
+      ],
+      "github" : "AlexsanderDamaceno",
+      "name" : "Alexsander Borges Damaceno",
+      "nicks" : [
+         "alexbdamac"
       ]
    },
    {
@@ -1135,7 +1145,7 @@
    },
    {
       "emails" : [
-         "basuke.suzuki@sony.com"
+         "basuke@apple.com"
       ],
       "github" : "basuke",
       "name" : "Basuke Suzuki",
@@ -2301,6 +2311,16 @@
       "name" : "Dean Johnson",
       "nicks" : [
          "deanj"
+      ]
+   },
+   {
+      "emails" : [
+         "codesculptures@gmail.com"
+      ],
+      "github" : "codesculpture",
+      "name" : "Deepak Aravind",
+      "nicks" : [
+         "codesculpture"
       ]
    },
    {
@@ -3562,10 +3582,12 @@
    },
    {
       "emails" : [
-         "ian.grunert@gmail.com"
+         "ian.grunert@gmail.com",
+         "ian@andromeda.net"
       ],
       "github" : "iangrunert",
-      "name" : "Ian Grunert"
+      "name" : "Ian Grunert",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -5642,6 +5664,14 @@
    },
    {
       "emails" : [
+         "maximilian@igalia.com"
+      ],
+      "github" : "eugeneia",
+      "name" : "Max Rottenkolber",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "mvujovic@adobe.com",
          "maxvujovic@gmail.com"
       ],
@@ -6049,6 +6079,16 @@
    },
    {
       "emails" : [
+         "nathan_solomon@apple.com"
+      ],
+      "github" : "NathanSolomon733",
+      "name" : "Nathan Solomon",
+      "nicks" : [
+         "NathanSolomon733"
+      ]
+   },
+   {
+      "emails" : [
          "nayankk@motorola.com",
          "nayankk@gmail.com"
       ],
@@ -6360,7 +6400,8 @@
       "nicks" : [
          "Scony",
          "plampe"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -7280,7 +7321,8 @@
       "name" : "Sosuke Suzuki",
       "nicks" : [
          "sosukesuzuki"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

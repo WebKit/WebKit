@@ -136,6 +136,12 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     }
     auto& configuration = *maybeConfiguration;
 
+    // This is to handle webpushtool, which is a direct peer that has the injection entitlement but no host app.
+    audit_token_t peerAuditToken;
+    xpc_connection_get_audit_token(connection, &peerAuditToken);
+    if (bool peerHasPushInjectEntitlement = WTF::hasEntitlement(peerAuditToken, "com.apple.private.webkit.webpush.inject"_s))
+        return adoptRef(new PushClientConnection(connection, WTFMove(configuration.bundleIdentifierOverride), peerHasPushInjectEntitlement, WTFMove(configuration.pushPartitionString), WTFMove(configuration.dataStoreIdentifier)));
+
 #if USE(EXTENSIONKIT)
     pid_t pid = xpc_connection_get_pid(connection);
     NSError *error = nil;

@@ -45,7 +45,7 @@ std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToB
 
 std::optional<WebCore::WebGPU::PresentationContextDescriptor> ConvertFromBackingContext::convertFromBacking(const PresentationContextDescriptor& presentationContextDescriptor)
 {
-    auto* compositorIntegration = convertCompositorIntegrationFromBacking(presentationContextDescriptor.compositorIntegration);
+    WeakPtr compositorIntegration = convertCompositorIntegrationFromBacking(presentationContextDescriptor.compositorIntegration);
     if (!compositorIntegration)
         return std::nullopt;
 

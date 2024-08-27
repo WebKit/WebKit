@@ -342,12 +342,22 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
     return result;
 }
 
-RegisterSet RegisterSetBuilder::argumentGPRS()
+RegisterSet RegisterSetBuilder::argumentGPRs()
 {
     RegisterSet result;
 #if NUMBER_OF_ARGUMENT_REGISTERS
     for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; i++)
         result.add(GPRInfo::toArgumentRegister(i), IgnoreVectors);
+#endif
+    return result;
+}
+
+RegisterSet RegisterSetBuilder::argumentFPRs()
+{
+    RegisterSet result;
+#if NUMBER_OF_ARGUMENT_REGISTERS
+    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; i++)
+        result.add(FPRInfo::toArgumentRegister(i), IgnoreVectors);
 #endif
     return result;
 }

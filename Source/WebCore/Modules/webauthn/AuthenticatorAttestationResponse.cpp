@@ -35,7 +35,6 @@
 #include "WebAuthenticationUtils.h"
 
 namespace WebCore {
-static constexpr auto useCryptoKit = UseCryptoKit::Yes;
 
 static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffer> attObj)
 {
@@ -170,11 +169,11 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
             return nullptr;
         }
         auto y = it->second.getByteString();
-        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits, useCryptoKit);
+        auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
 
         if (!peerKey)
             return nullptr;
-        auto keySpki = peerKey->exportSpki(useCryptoKit).releaseReturnValue();
+        auto keySpki = peerKey->exportSpki().releaseReturnValue();
         return ArrayBuffer::tryCreate(keySpki);
     }
     default:

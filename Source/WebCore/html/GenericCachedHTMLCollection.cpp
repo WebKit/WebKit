@@ -51,6 +51,11 @@ template GenericCachedHTMLCollection<CollectionTraversalType::Descendants>::Gene
 template GenericCachedHTMLCollection<CollectionTraversalType::ChildrenOnly>::GenericCachedHTMLCollection(ContainerNode&, CollectionType);
 
 template <CollectionTraversalType traversalType>
+GenericCachedHTMLCollection<traversalType>::~GenericCachedHTMLCollection() = default;
+template GenericCachedHTMLCollection<CollectionTraversalType::Descendants>::~GenericCachedHTMLCollection();
+template GenericCachedHTMLCollection<CollectionTraversalType::ChildrenOnly>::~GenericCachedHTMLCollection();
+
+template <CollectionTraversalType traversalType>
 bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element) const
 {
     switch (this->type()) {

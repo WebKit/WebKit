@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class WebGPUIdentifierType { };
-using WebGPUIdentifier = AtomicObjectIdentifier<WebGPUIdentifierType>;
+using WebGPUIdentifier = LegacyNullableAtomicObjectIdentifier<WebGPUIdentifierType>;
 
 } // namespace WebKit
 

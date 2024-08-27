@@ -121,12 +121,11 @@ public:
     NetworkDataTaskClient* client() const { return m_client.get(); }
     void clearClient() { m_client = nullptr; }
 
-    DownloadID pendingDownloadID() const { return m_pendingDownloadID; }
+    std::optional<DownloadID> pendingDownloadID() const { return m_pendingDownloadID.asOptional(); }
     PendingDownload* pendingDownload() const;
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID);
-        ASSERT(downloadID);
         m_pendingDownloadID = downloadID;
     }
     void setPendingDownload(PendingDownload&);
@@ -175,7 +174,7 @@ protected:
     WeakPtr<NetworkSession> m_session;
     WeakPtr<NetworkDataTaskClient> m_client;
     WeakPtr<PendingDownload> m_pendingDownload;
-    DownloadID m_pendingDownloadID;
+    Markable<DownloadID> m_pendingDownloadID;
     String m_user;
     String m_password;
     String m_partition;

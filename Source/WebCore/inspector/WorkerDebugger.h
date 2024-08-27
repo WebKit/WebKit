@@ -32,6 +32,7 @@
 #pragma once
 
 #include <JavaScriptCore/Debugger.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class WorkerOrWorkletGlobalScope;
 
 class WorkerDebugger final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(WorkerDebugger);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerDebugger);
 public:
     WorkerDebugger(WorkerOrWorkletGlobalScope&);
     ~WorkerDebugger() override = default;

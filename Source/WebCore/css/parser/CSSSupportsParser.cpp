@@ -31,6 +31,7 @@
 #include "CSSSupportsParser.h"
 
 #include "CSSParserImpl.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSSelectorParser.h"
 #include "CSSTokenizer.h"
@@ -56,7 +57,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParser
     return supportsParser.consumeSupportsFeatureOrGeneralEnclosed(range);
 }
 
-enum ClauseType { Unresolved, Conjunction, Disjunction };
+enum class ClauseType { Unresolved, Conjunction, Disjunction };
 
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserTokenRange range)
 {
@@ -66,7 +67,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
     }
 
     bool result = false;
-    ClauseType clauseType = Unresolved;
+    auto clauseType = ClauseType::Unresolved;
 
     auto previousTokenType = IdentToken;
 
@@ -75,9 +76,9 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
         if (nextResult == Invalid)
             return Invalid;
         bool nextSupported = nextResult;
-        if (clauseType == Unresolved)
+        if (clauseType == ClauseType::Unresolved)
             result = nextSupported;
-        else if (clauseType == Conjunction)
+        else if (clauseType == ClauseType::Conjunction)
             result &= nextSupported;
         else
             result |= nextSupported;
@@ -94,10 +95,10 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
 
         previousTokenType = token.type();
 
-        if (clauseType == Unresolved)
-            clauseType = token.value().length() == 3 ? Conjunction : Disjunction;
-        if ((clauseType == Conjunction && !equalLettersIgnoringASCIICase(token.value(), "and"_s))
-            || (clauseType == Disjunction && !equalLettersIgnoringASCIICase(token.value(), "or"_s)))
+        if (clauseType == ClauseType::Unresolved)
+            clauseType = token.value().length() == 3 ? ClauseType::Conjunction : ClauseType::Disjunction;
+        if ((clauseType == ClauseType::Conjunction && !equalLettersIgnoringASCIICase(token.value(), "and"_s))
+            || (clauseType == ClauseType::Disjunction && !equalLettersIgnoringASCIICase(token.value(), "or"_s)))
             return Invalid;
 
         range.consume();
@@ -164,7 +165,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
     auto block = range.consumeBlock();
     block.consumeWhitespace();
 
-    return CSSSelectorParser::supportsComplexSelector(block, m_parser.context(), m_isNestedContext) ? Supported : Unsupported;
+    return CSSSelectorParser::supportsComplexSelector(block, m_parser.context()) ? Supported : Unsupported;
 }
 
 // <supports-font-format-fn>

@@ -73,6 +73,7 @@ public:
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return { }; }
     std::optional<uint64_t> noiseInjectionHashSalt() const { return std::nullopt; }
+    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const { return { }; }
 
     void postTask(Task&&) final { ASSERT_NOT_REACHED(); }
     EventTarget* errorEventTarget() final { return nullptr; };

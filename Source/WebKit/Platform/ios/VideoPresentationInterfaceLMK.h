@@ -60,7 +60,6 @@ private:
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
     void setupFullscreen(UIView&, const WebCore::FloatRect&, const WebCore::FloatSize&, UIView*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
-    void setVideoSpatial(bool) final;
     void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
     void setupPlayerViewController() final;
@@ -79,6 +78,7 @@ private:
     CALayer *captionsLayer() final;
     void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
     LMPlayableViewController *playableViewController() final;
+    void setSpatialVideoMetadata(const std::optional<WebCore::SpatialVideoMetadata>&) final;
 
     WKSLinearMediaPlayer *linearMediaPlayer() const;
     void ensurePlayableViewController();

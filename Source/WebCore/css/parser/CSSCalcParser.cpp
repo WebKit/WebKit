@@ -26,65 +26,19 @@
 #include "CSSCalcParser.h"
 
 #include "CSSCalcValue.h"
-#include "CSSParserMode.h"
-#include "Logging.h"
+#include "CSSParserTokenRange.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-CalcParser::CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-    : m_sourceRange(range)
-    , m_range(range)
-{
-    auto functionId = range.peek().functionId();
-    if (CSSCalcValue::isCalcFunction(functionId))
-        m_value = CSSCalcValue::create(functionId, consumeFunction(m_range), destinationCategory, options.valueRange, WTFMove(symbolsAllowed), options.negativePercentage == NegativePercentagePolicy::Allow);
-}
-
-RefPtr<CSSPrimitiveValue> CalcParser::consumeValue()
-{
-    if (!m_value)
-        return nullptr;
-    m_sourceRange = m_range;
-    return CSSPrimitiveValue::create(m_value.releaseNonNull());
-}
-
-RefPtr<CSSPrimitiveValue> CalcParser::consumeValueIfCategory(CalculationCategory category)
-{
-    if (m_value && m_value->category() != category) {
-        LOG_WITH_STREAM(Calc, stream << "CalcParser::consumeValueIfCategory - failing because calc category " << m_value->category() << " does not match requested category " << category);
-        return nullptr;
-    }
-    return consumeValue();
-}
-
-bool canConsumeCalcValue(CalculationCategory category, CSSPropertyParserOptions options)
-{
-    if (category == CalculationCategory::Length || category == CalculationCategory::Percent || category == CalculationCategory::PercentLength)
-        return true;
-
-    if (options.parserMode != SVGAttributeMode)
-        return false;
-
-    if (category == CalculationCategory::Number || category == CalculationCategory::PercentNumber)
-        return true;
-
-    return false;
-}
-
-RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange& range, CalculationCategory category, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTokenRange& range, Calculation::Category category, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
-
     auto functionId = range.peek().functionId();
     if (!CSSCalcValue::isCalcFunction(functionId))
         return nullptr;
 
-    RefPtr calcValue = CSSCalcValue::create(functionId, consumeFunction(range), category, options.valueRange, WTFMove(symbolsAllowed));
-    if (calcValue && calcValue->category() == category)
-        return calcValue;
-
-    return nullptr;
+    return CSSCalcValue::parse(functionId, consumeFunction(range), category, options.valueRange, WTFMove(symbolsAllowed));
 }
 
 } // namespace CSSPropertyParserHelpers

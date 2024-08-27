@@ -44,7 +44,7 @@ PASS SVGElement.prototype.xmllang must be removed
 PASS SVGElement.prototype.xmlspace must be removed
 PASS SVGGraphicsElement.prototype.getTransformToElement must be removed
 PASS SVGGraphicsElement.prototype.hasExtension must be removed
-FAIL SVGGraphicsElement.prototype.requiredFeatures must be removed assert_false: expected false got true
+PASS SVGGraphicsElement.prototype.requiredFeatures must be removed
 FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterY must be removed

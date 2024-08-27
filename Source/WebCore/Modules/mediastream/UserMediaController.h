@@ -30,13 +30,15 @@
 #include "Page.h"
 #include "UserMediaClient.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
+class Exception;
 class UserMediaRequest;
 
 class UserMediaController : public Supplement<Page> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UserMediaController);
 public:
     explicit UserMediaController(UserMediaClient*);
     ~UserMediaController();
@@ -50,6 +52,8 @@ public:
 
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
+
+    void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
     void logGetUserMediaDenial(Document&);
     void logGetDisplayMediaDenial(Document&);
@@ -86,6 +90,11 @@ inline UserMediaClient::DeviceChangeObserverToken UserMediaController::addDevice
 inline void UserMediaController::removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken token)
 {
     m_client->removeDeviceChangeObserver(token);
+}
+
+inline void UserMediaController::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
+{
+    m_client->updateCaptureState(isActive, kind, WTFMove(completionHandler));
 }
 
 } // namespace WebCore

@@ -81,6 +81,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
     });
 }
 
+- (void)disconnect
+{
+    [self disconnectWithError:nil];
+}
+
 - (void)disconnectWithError:(NSError *)error
 {
     _webExtensionMessagePort->disconnect(WebKit::toWebExtensionMessagePortError(error));
@@ -113,6 +118,10 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
 - (void)sendMessage:(id)message completionHandler:(void (^)(NSError *))completionHandler
 {
     completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil]);
+}
+
+- (void)disconnect
+{
 }
 
 - (void)disconnectWithError:(NSError *)error

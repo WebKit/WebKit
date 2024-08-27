@@ -52,7 +52,7 @@ public:
 
     RefPtr<CSSValue> toCSSValue() const final;
     RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const final;
-    RefPtr<CSSCalcExpressionNode> toCalcExpressionNode() const final;
+    std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 
 private:
     CSSUnitValue(double, CSSUnitType);

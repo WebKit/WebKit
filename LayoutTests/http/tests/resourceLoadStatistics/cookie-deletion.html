@@ -38,12 +38,10 @@
 
     async function fireDataModificationHandlerAndContinue() {
         console.log("In fireDataModificationHandlerAndContinue")
-        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
-            console.log("In callback function for installStatisticsDidScanDataRecordsCallback")
-            setTimeout(runTest, 500);
-        });
         console.log("Calling await statisticsProcessStatisticsAndDataRecords")
         await testRunner.statisticsProcessStatisticsAndDataRecords();
+        console.log("awaited fireDataModificationHandlerAndContinue")
+        setTimeout(runTest, 500);
     }
 
     function setAsNonPrevalentAndContinue() {

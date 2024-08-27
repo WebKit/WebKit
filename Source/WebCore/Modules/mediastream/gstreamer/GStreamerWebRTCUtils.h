@@ -43,6 +43,7 @@
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -270,7 +271,7 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&&, co
 bool sdpMediaHasAttributeKey(const GstSDPMedia*, const char* key);
 
 class UniqueSSRCGenerator : public ThreadSafeRefCounted<UniqueSSRCGenerator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UniqueSSRCGenerator);
 public:
     static Ref<UniqueSSRCGenerator> create() { return adoptRef(*new UniqueSSRCGenerator()); }
 

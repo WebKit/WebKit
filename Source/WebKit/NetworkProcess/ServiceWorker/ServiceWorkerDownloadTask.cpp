@@ -202,7 +202,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, bytesWritten] {
         m_downloadBytesWritten += bytesWritten;
-        if (auto* download = m_networkProcess->downloadManager().download(m_pendingDownloadID))
+        if (auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
             download->didReceiveData(bytesWritten, m_downloadBytesWritten, std::max(m_expectedContentLength.value_or(0), m_downloadBytesWritten));
     });
 }
@@ -230,7 +230,7 @@ void ServiceWorkerDownloadTask::didFinish()
         if (RefPtr sandboxExtension = std::exchange(m_sandboxExtension, nullptr))
             sandboxExtension->revoke();
 
-        if (auto download = m_networkProcess->downloadManager().download(m_pendingDownloadID))
+        if (auto download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
             download->didFinish();
 
         if (m_client)
@@ -265,7 +265,7 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (auto download = m_networkProcess->downloadManager().download(m_pendingDownloadID))
+        if (auto download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
         if (m_client)

@@ -137,6 +137,7 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/BroadcastChannelRegistry.h>
+#import <WebCore/CGWindowUtilities.h>
 #import <WebCore/CacheStorageProvider.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -218,7 +219,6 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteFileSystem.h>
-#import <WebCore/ScreenCaptureKitCaptureSource.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
@@ -260,6 +260,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/Atomics.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
@@ -330,7 +331,6 @@
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
-#import <libkern/OSAtomic.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
@@ -2304,10 +2304,8 @@ static NSMutableSet *knownPluginMIMETypes()
         return;
     }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!OSAtomicCompareAndSwap32(0, 1, &_private->didDrawTiles))
+    if (!WTF::atomicCompareExchangeStrong(&_private->didDrawTiles, NO, YES))
         return;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebThreadLock();
 
@@ -3468,7 +3466,7 @@ IGNORE_WARNINGS_END
 - (void)_didCommitLoadForFrame:(WebFrame *)frame
 {
     if (frame == [self mainFrame])
-        _private->didDrawTiles = 0;
+        WTF::atomicStore(&_private->didDrawTiles, NO);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -9844,9 +9842,9 @@ void WebInstallMemoryPressureHandler(void)
 
 #if !TARGET_OS_IPHONE
 @implementation WebView (WKWindowSnapshot)
-- (NSImage *)_windowSnapshotInRect:(CGRect)rect
+- (NSImage *)_windowSnapshotInRect:(CGRect)rect withOptions:(CGWindowImageOption)options
 {
-    RetainPtr snapshot = WebCore::ScreenCaptureKitCaptureSource::captureWindowSnapshot((CGSWindowID)[[self window] windowNumber], rect, { WebCore::ScreenCaptureKitCaptureSource::SnapshotOptions::IgnoreShadows });
+    RetainPtr snapshot = WebCore::cgWindowListCreateImage(rect, kCGWindowListOptionIncludingWindow, (CGSWindowID)[[self window] windowNumber], options);
     if (!snapshot)
         return nil;
 

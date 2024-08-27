@@ -56,6 +56,7 @@ MouseRelatedEvent::MouseRelatedEvent(enum EventInterfaceType eventInterface, con
     , m_screenLocation(screenLocation)
     , m_movementX(movementX)
     , m_movementY(movementY)
+    , m_windowLocation(windowLocation)
     , m_isSimulated(isSimulated == IsSimulated::Yes)
 {
     init(m_isSimulated, windowLocation);

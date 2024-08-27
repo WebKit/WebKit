@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,7 @@
 #include "GridTrackSize.h"
 #include "LayoutSize.h"
 #include "RenderBoxInlines.h"
+#include <wtf/StdMap.h>
 
 namespace WebCore {
 class GridTrack;
@@ -163,28 +165,18 @@ public:
 #endif
 
 private:
+    using SpanLength = unsigned;
+
     void setup(GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace);
+    struct MasonryMinMaxTrackSize {
+        LayoutUnit minContentSize;
+        LayoutUnit maxContentSize;
+        LayoutUnit minSize;
+    };
 
-    struct MasonryIndefiniteItems {
-        // Optimization: Masonry Indefinite Items
-        // Indefinite items need to be considered in each track; this causes a runtime of O(N_track * M_items).
-        // We can simplfiy this to O(N_tracks) if we add some constraints.
-        //
-        // We will precompute the min-content, max-content and min-size for all indefinite items if they meet the below requirements:
-        // - item has a span length of 1
-        // - item is not a sub-grid
-        // - track is not 'fr'
-        //
-        // In case we hit an 'fr' track we will fallback to computing all indefinte items in the track.
-        //
-        // FIXME: Add support for multi-track items.
-        // FIXME: Add support for flex items.
-        SingleThreadWeakListHashSet<RenderBox> indefiniteItems;
-        SingleThreadWeakListHashSet<RenderBox> singleTrackIndefiniteItems;
-
-        LayoutUnit largestMinContentSizeForSingleTrackItems;
-        LayoutUnit largestMaxContentSizeForSingleTrackItems;
-        LayoutUnit largestMinSizeForSingleTrackItems;
+    struct MasonryMinMaxTrackSizeWithGridSpan {
+        MasonryMinMaxTrackSize trackSize;
+        GridSpan gridSpan;
     };
 
     std::optional<LayoutUnit> availableSpace() const;
@@ -198,13 +190,52 @@ private:
 
     // Helper methods for step 2. resolveIntrinsicTrackSizes().
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, GridLayoutState&);
-    void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryIndefiniteItems&, GridTrack&);
+    void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryMinMaxTrackSize&, GridTrack&);
 
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
+
     typedef struct GridItemsSpanGroupRange GridItemsSpanGroupRange;
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState&);
     template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState&);
+
+    // 12.5 Resolve Intrinsic Track Sizing : Step 3
+    // https://drafts.csswg.org/css-grid-2/#algo-spanning-items
+    //
+    // Take all grid items (definite and indefinite) that span 2 or more tracks, and distribute space to intrinsic tracks (non-flex).
+    // The implementation diverges from increaseSizesToAccommodateSpanningItems(), because we are grouping items together that are the same span length.
+    // This function is divided into two main sections:
+    //
+    // 1. Constructing the track items
+    // This step takes the definite and indefinite items, and merges them into one large map to send over to the second step.
+    // Since the indefinite items are grouped together from a prior computation, this step also need to create "fake" grid items that
+    // will be considered in each track.
+    //
+    // 2. Distribute space to intrinsic tracks
+    // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we start at the lowest span length and distribute space to the tracks.
+    // Then look at the next smallest span length, and repeat step 2 until we exhaust all grid items.
+    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonry(StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&);
+
+    // 12.5 Resolve Intrinsic Track Sizing : Step 4
+    // https://drafts.csswg.org/css-grid-2/#algo-spanning-items
+    //
+    // Take all grid items (definite and indefinite) that span 1 or tracks, and distribute space to only flex tracks.
+    // The implementation diverges from increaseSizesToAccommodateSpanningItems(), because we are grouping items together that are the same span length.
+    // This function is divided into two main sections:
+    //
+    // 1. Constructing the track items
+    // This step takes the definite and indefinite items, and merges them into one large map to send over to the second step.
+    // Since the indefinite items are grouped together from a prior computation, this step also need to create "fake" grid items that
+    // will be considered in each track.
+    //
+    // 2. Distribute space to intrinsic tracks
+    // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we consider all track items at once instead of per span length.
+    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonryWithFlex(Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
+
+    void convertIndefiniteItemsToDefiniteMasonry(const StdMap<SpanLength, MasonryMinMaxTrackSize>& gridTrackSpans, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
+
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&, GridLayoutState&) const;
+    LayoutUnit itemSizeForTrackSizeComputationPhaseMasonry(TrackSizeComputationPhase, const MasonryMinMaxTrackSize&) const;
+
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, Vector<WeakPtr<GridTrack>>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
 
     void computeBaselineAlignmentContext();
@@ -223,19 +254,30 @@ private:
 
 
     void handleInfinityGrowthLimit();
-    void computeIndefiniteItemsForMasonry(MasonryIndefiniteItems&, GridLayoutState&) const;
+
+    // Build up a map of min/max sizes for each span length for use during resolving intrinsic track sizes.
+    // We also need to keep track of definite items separately, since they do not contribute to every track like indefinite items do.
+    void computeDefiniteAndIndefiniteItemsForMasonry(StdMap<SpanLength, MasonryMinMaxTrackSize>&, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&, GridLayoutState&);
     bool shouldExcludeGridItemForMasonryTrackSizing(const RenderBox& gridItem, unsigned trackIndex, GridSpan itemSpan) const;
     // Track sizing algorithm steps. Note that the "Maximize Tracks" step is done
     // entirely inside the strategies, that's why we don't need an additional
     // method at this level.
     void initializeTrackSizes();
     void resolveIntrinsicTrackSizes(GridLayoutState&);
+
+    // Masonry Implementation of https://drafts.csswg.org/css-grid-2/#algo-content.
+    // To implement Masonry performanently, we need to abandon the traditional Grid approach of treating
+    // each item individually and start grouping items based on their span. A grid item has 3 major values we care about
+    // the minContentSize, maxContentSize, and minSize. These values can be aggregated together and then the max will be chosen.
+    // The main three scenarios we need to focus on are items that only span 1 track, items that span multiple tracks without crossing a flex track,
+    // and items that span multiple tracks with crossing a flex track.
+    //
+    // Further details on the optimization can be found at https://fantasai.inkedblade.net/style/specs/masonry/performance.
     void resolveIntrinsicTrackSizesMasonry(GridLayoutState&);
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace, GridLayoutState&);
     void stretchAutoTracks();
 
     void accumulateIntrinsicSizesForTrack(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp, GridLayoutState&);
-    void accumulateIntrinsicSizesForTrackMasonry(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, MasonryIndefiniteItems&, LayoutUnit currentAccumulatedMbp, GridLayoutState&);
 
     bool copyUsedTrackSizesForSubgrid();
 
@@ -313,9 +355,9 @@ private:
 class GridTrackSizingAlgorithmStrategy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual LayoutUnit minContentForGridItem(RenderBox&, GridLayoutState&) const;
-    LayoutUnit maxContentForGridItem(RenderBox&, GridLayoutState&) const;
-    LayoutUnit minSizeForGridItem(RenderBox&, GridLayoutState&) const;
+    virtual LayoutUnit minContentContributionForGridItem(RenderBox&, GridLayoutState&) const;
+    LayoutUnit maxContentContributionForGridItem(RenderBox&, GridLayoutState&) const;
+    LayoutUnit minContributionForGridItem(RenderBox&, GridLayoutState&) const;
 
     virtual ~GridTrackSizingAlgorithmStrategy() = default;
 

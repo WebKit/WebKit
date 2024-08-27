@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/AtomString.h>
@@ -82,7 +83,7 @@ struct Styleable;
 
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorDOMAgent);
 public:
     InspectorDOMAgent(PageAgentContext&, InspectorOverlay*);
     ~InspectorDOMAgent();

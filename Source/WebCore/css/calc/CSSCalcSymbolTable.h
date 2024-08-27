@@ -36,7 +36,7 @@ enum class CSSUnitType : uint8_t;
 class CSSCalcSymbolTable {
 public:
     struct Value {
-        CSSUnitType type;
+        CSSUnitType unit;
         double value;
     };
 

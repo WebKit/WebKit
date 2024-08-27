@@ -28,6 +28,7 @@
 
 #import "WebPushDaemon.h"
 
+#import "BaseBoardSPI.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
@@ -43,6 +44,7 @@
 #import <WebCore/NotificationPayload.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
+#import <notify.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <span>
 #import <wtf/BlockPtr.h>
@@ -59,6 +61,53 @@
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPushDaemonAdditions.mm>)
+#import <WebKitAdditions/WebPushDaemonAdditions.mm>
+#endif
+
+#if !defined(GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS)
+#define GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS
+#endif
+
+#if PLATFORM(IOS)
+
+static Vector<String> getAllowedBundleIdentifiers()
+{
+    Vector<String> result = { "com.apple.SafariViewService"_s };
+    GET_ALLOWED_BUNDLE_IDENTIFIER_ADDITIONS;
+    return result;
+}
+
+static HashSet<String> getInstalledWebClipIdentifiers()
+{
+    HashSet<String> webClipIdentifiers;
+
+    @autoreleasepool {
+        NSArray *webClips = [UIWebClip webClips];
+        webClipIdentifiers.reserveInitialCapacity(webClips.count);
+
+        for (UIWebClip *webClip in webClips) {
+            if (NSString *identifier = [webClip identifier])
+                webClipIdentifiers.add(identifier);
+        }
+    }
+
+    RELEASE_LOG(Push, "Found %u web clips", webClipIdentifiers.size());
+    return webClipIdentifiers;
+}
+
+static bool webClipExists(String webClipIdentifier)
+{
+    @autoreleasepool {
+        NSString *path = [UIWebClip pathForWebClipWithIdentifier:(NSString *)webClipIdentifier];
+        if (!path)
+            return false;
+        return [[NSFileManager defaultManager] fileExistsAtPath:path];
+    }
+}
+
 #endif
 
 #define WEBPUSHDAEMON_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%{public}s [connection=%p, app=%{public}s]: " fmt, __func__, &connection, connection.subscriptionSetIdentifier().debugDescription().utf8().data(), ##__VA_ARGS__)
@@ -93,6 +142,13 @@ static NSString *platformDefaultActionBundleIdentifier()
     return nil;
 #endif
 }
+
+#if PLATFORM(IOS)
+static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(String webClipIdentifier)
+{
+    return [NSString stringWithFormat:@"com.apple.WebKit.PushBundle.%@", (NSString *)webClipIdentifier];
+}
+#endif
 
 static RetainPtr<NSString> platformNotificationCenterBundleIdentifier(PushClientConnection& connection)
 {
@@ -130,6 +186,12 @@ WebPushDaemon::WebPushDaemon()
     , m_userNotificationCenterClass { [UNUserNotificationCenter class] }
 #endif
 {
+#if PLATFORM(IOS)
+    int token;
+    notify_register_dispatch("com.apple.webclip.uninstalled", &token, dispatch_get_main_queue(), ^(int) {
+        updateSubscriptionSetState();
+    });
+#endif
 }
 
 void WebPushDaemon::startMockPushService()
@@ -154,7 +216,19 @@ void WebPushDaemon::startPushService(const String& incomingPushServiceName, cons
         handleIncomingPush(identifier, WTFMove(message));
     };
     PushService::create(incomingPushServiceName, databasePath, WTFMove(messageHandler), [this](auto&& pushService) mutable {
+#if PLATFORM(IOS)
+        if (!pushService) {
+            setPushService(nullptr);
+            return;
+        }
+
+        auto& pushServiceRef = *pushService;
+        pushServiceRef.updateSubscriptionSetState(getAllowedBundleIdentifiers(), getInstalledWebClipIdentifiers(), [this, pushService = WTFMove(pushService)]() mutable {
+            setPushService(WTFMove(pushService));
+        });
+#else
         setPushService(WTFMove(pushService));
+#endif
     });
 }
 
@@ -260,6 +334,17 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
     }
 
+#if PLATFORM(IOS)
+    auto bundleIdentifier = pushConnection->subscriptionSetIdentifier().bundleIdentifier;
+    auto webClipIdentifier = pushConnection->subscriptionSetIdentifier().pushPartition;
+    if (!getAllowedBundleIdentifiers().contains(bundleIdentifier) || !webClipExists(webClipIdentifier)) {
+        RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Got message from unexpected app %{public}s", pushConnection->subscriptionSetIdentifier().debugDescription().utf8().data());
+        updateSubscriptionSetState();
+        tryCloseRequestConnection(request);
+        return;
+    }
+#endif
+
     auto reply = adoptOSObject(xpc_dictionary_create_reply(request));
     auto replyHandler = [xpcConnection = WTFMove(xpcConnection), reply = WTFMove(reply)] (UniqueRef<IPC::Encoder>&& encoder) {
         RELEASE_ASSERT(RunLoop::isMain());
@@ -297,6 +382,32 @@ void WebPushDaemon::connectionRemoved(xpc_connection_t connection)
     auto clientConnection = m_connectionMap.take(it);
     clientConnection->connectionClosed();
 }
+
+#if PLATFORM(IOS)
+
+void WebPushDaemon::updateSubscriptionSetState()
+{
+    runAfterStartingPushService([this] {
+        if (!m_pushService)
+            return;
+
+        auto allowedBundleIdentifiers = getAllowedBundleIdentifiers();
+        auto installedWebClipIdentifiers = getInstalledWebClipIdentifiers();
+
+        m_pushService->updateSubscriptionSetState(allowedBundleIdentifiers, installedWebClipIdentifiers, []() { });
+
+        for (auto& [xpcConnection, pushClientConnection] : m_connectionMap) {
+            auto bundleIdentifier = pushClientConnection->subscriptionSetIdentifier().bundleIdentifier;
+            auto webClipIdentifier = pushClientConnection->subscriptionSetIdentifier().pushPartition;
+            if (!allowedBundleIdentifiers.contains(bundleIdentifier) || !installedWebClipIdentifiers.contains(webClipIdentifier)) {
+                RELEASE_LOG(Push, "WebPushDaemon::updateSubscriptionSetState: killing obsolete connection %p associated with %{public}s", xpcConnection, pushClientConnection->subscriptionSetIdentifier().debugDescription().utf8().data());
+                xpc_connection_cancel(xpcConnection);
+            }
+        }
+    });
+}
+
+#endif
 
 void WebPushDaemon::setPushAndNotificationsEnabledForOrigin(PushClientConnection& connection, const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
 {
@@ -385,6 +496,36 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
 
 void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
 {
+#if PLATFORM(IOS)
+    if (!getAllowedBundleIdentifiers().contains(identifier.bundleIdentifier) || !webClipExists(identifier.pushPartition)) {
+        RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", identifier.debugDescription().utf8().data());
+        updateSubscriptionSetState();
+        return;
+    }
+
+    // FIXME(rdar://134509619): Move APNS topics to appropriate enabled/ignored list so that we
+    // don't get push events for web clips without the appropriate permissions.
+    RetainPtr notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
+    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+    auto blockPtr = makeBlockPtr([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)](UNNotificationSettings *settings) mutable {
+        auto status = settings.authorizationStatus;
+        if (status != UNAuthorizationStatusAuthorized) {
+            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), identifier.debugDescription().utf8().data());
+            return;
+        }
+
+        WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)] mutable {
+            handleIncomingPushImpl(identifier, WTFMove(message));
+        });
+    });
+    [center getNotificationSettingsWithCompletionHandler:blockPtr.get()];
+#else
+    handleIncomingPushImpl(identifier, WTFMove(message));
+#endif
+}
+
+void WebPushDaemon::handleIncomingPushImpl(const PushSubscriptionSetIdentifier& identifier, WebKit::WebPushMessage&& message)
+{
     ensureIncomingPushTransaction();
 
     auto addResult = m_pushMessages.ensure(identifier, [] {
@@ -416,21 +557,58 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
         RELEASE_LOG_ERROR_IF(cfError, Push, "Failed to launch process in response to push: %{public}@", (__bridge NSError *)cfError);
     });
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    const NSString *URLPrefix = @"webapp://web-push/";
-    NSURL *launchURL = [NSURL URLWithString:[URLPrefix stringByAppendingFormat:@"%@", (NSString *)subscriptionSetIdentifier.pushPartition]];
+    if (subscriptionSetIdentifier.pushPartition.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Cannot notify client app about web push action with empty pushPartition string");
+        return;
+    }
 
-    NSDictionary *options = @{
-        FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
-        FBSOpenApplicationOptionKeyPayloadURL : launchURL,
-        FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
+    if (bundleIdentifier == "com.apple.SafariViewService"_s) {
+        const NSString *URLPrefix = @"webapp://web-push/";
+        NSURL *launchURL = [NSURL URLWithString:[URLPrefix stringByAppendingFormat:@"%@", (NSString *)subscriptionSetIdentifier.pushPartition]];
+
+        NSDictionary *options = @{
+            FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
+            FBSOpenApplicationOptionKeyPayloadURL : launchURL,
+            FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
+        };
+
+        RetainPtr configuration = adoptNS([[_LSOpenConfiguration alloc] init]);
+        configuration.get().sensitive = YES;
+        configuration.get().frontBoardOptions = options;
+        configuration.get().allowURLOverrides = NO;
+
+        [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration.get() completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
+            if (error)
+                RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
+        }];
+
+        return;
+    }
+
+    NSDictionary *settingsInfo = @{
+        pushActionVersionKey(): currentPushActionVersion(),
+        pushActionPartitionKey(): (NSString *)subscriptionSetIdentifier.pushPartition,
+        pushActionTypeKey(): @"PushEvent"
     };
+    RetainPtr<BSMutableSettings> bsSettings = adoptNS([[BSMutableSettings alloc] init]);
+    [bsSettings setObject:settingsInfo forSetting:WebKit::WebPushD::pushActionSetting];
 
-    _LSOpenConfiguration *configuration = [[_LSOpenConfiguration alloc] init];
-    configuration.sensitive = YES;
-    configuration.frontBoardOptions = options;
-    configuration.allowURLOverrides = NO;
+    RetainPtr bsResponder = [BSActionResponder responderWithHandler:^void (BSActionResponse *response) {
+        if (response.error)
+            RELEASE_LOG_ERROR(Push, "Client app failed to response to web push action: %{public}@", response.error);
+    }];
 
-    [[LSApplicationWorkspace defaultWorkspace] openURL:launchURL configuration:configuration completionHandler:^(NSDictionary<NSString *, id> *result, NSError *error) {
+    RetainPtr action = adoptNS([[BSAction alloc] initWithInfo:bsSettings.get() responder:bsResponder.get()]);
+
+    FBSOpenApplicationOptions *options = [FBSOpenApplicationOptions optionsWithDictionary:@{
+        FBSOpenApplicationOptionKeyActivateForEvent: @{ FBSActivateForEventOptionTypeBackgroundContentFetching: @{ } },
+        FBSOpenApplicationOptionKeyActivateSuspended : @YES,
+        FBSOpenApplicationOptionKeyActions : @[ action.get() ],
+        FBSOpenApplicationOptionKeyPayloadOptions : @{ UIApplicationLaunchOptionsSourceApplicationKey : @"com.apple.WebKit.webpushd" },
+    }];
+
+    RetainPtr<FBSOpenApplicationService> openService = adoptNS(SBSCreateOpenApplicationService());
+    [openService openApplication:(NSString *)bundleIdentifier withOptions:options completion:^(BSProcessHandle *process, NSError *error) {
         if (error)
             RELEASE_LOG_ERROR(Push, "Failed to open app to handle push: %{public}@", error);
     }];

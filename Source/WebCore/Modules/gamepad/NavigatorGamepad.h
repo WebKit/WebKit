@@ -29,6 +29,7 @@
 
 #include "Supplementable.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,7 +51,7 @@ class PlatformGamepad;
 template<typename> class ExceptionOr;
 
 class NavigatorGamepad : public Supplement<Navigator>, public CanMakeWeakPtr<NavigatorGamepad> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorGamepad);
 public:
     explicit NavigatorGamepad(Navigator&);
     virtual ~NavigatorGamepad();

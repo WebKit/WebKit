@@ -59,7 +59,7 @@ public:
     MutableCSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
     MutableCSSSelectorList consumeNestedComplexForgivingSelectorList(CSSParserTokenRange&);
 
-    static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
+    static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
     static std::pair<bool, std::optional<Style::PseudoElementIdentifier>> parsePseudoElement(const String&, const CSSSelectorParserContext&);
 

@@ -104,15 +104,6 @@ cl_int ValidateContextProperties(const cl_context_properties *properties, const 
             }
         }
     }
-    if (platform == nullptr)
-    {
-        platform = Platform::GetDefault();
-        // CL_INVALID_PLATFORM if properties is NULL and no platform could be selected.
-        if (platform == nullptr)
-        {
-            return CL_INVALID_PLATFORM;
-        }
-    }
     return CL_SUCCESS;
 }
 
@@ -712,9 +703,6 @@ cl_int ValidateCreateContext(const cl_context_properties *properties,
                                                            void *user_data),
                              const void *user_data)
 {
-    const Platform *platform = nullptr;
-    ANGLE_VALIDATE(ValidateContextProperties(properties, platform));
-
     // CL_INVALID_VALUE if devices is NULL or if num_devices is equal to zero
     // or if pfn_notify is NULL but user_data is not NULL.
     if (devices == nullptr || num_devices == 0u || (pfn_notify == nullptr && user_data != nullptr))
@@ -723,13 +711,33 @@ cl_int ValidateCreateContext(const cl_context_properties *properties,
     }
 
     // CL_INVALID_DEVICE if any device in devices is not a valid device.
-    while (num_devices-- > 0u)
+    for (cl_uint i = 0; i < num_devices; ++i)
     {
-        if (!Device::IsValid(*devices) || &(*devices)->cast<Device>().getPlatform() != platform)
+        if (!Device::IsValid(devices[i]))
         {
             return CL_INVALID_DEVICE;
         }
-        ++devices;
+    }
+
+    // Because ANGLE can have one or more platforms here (e.g. passthrough, Vulkan, etc.), if a
+    // context platform is not explicitly specified in the properties, spec says to default to an
+    // implementation-defined platform. In ANGLE's case, we can derive the platform from the device
+    // object.
+    const Platform *platform = nullptr;
+    ANGLE_VALIDATE(ValidateContextProperties(properties, platform));
+    if (platform == nullptr)
+    {
+        // Just use/pick the first device's platform object here
+        platform = &(devices[0])->cast<Device>().getPlatform();
+    }
+
+    // Ensure that each device in device list is derived from the same platform object
+    for (cl_uint i = 0; i < num_devices; ++i)
+    {
+        if (platform != &(devices[i])->cast<Device>().getPlatform())
+        {
+            return CL_INVALID_PLATFORM;
+        }
     }
 
     return CL_SUCCESS;

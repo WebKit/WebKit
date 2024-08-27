@@ -31,6 +31,7 @@
 #include "ContextMenuItem.h"
 #include "HitTestRequest.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
 
@@ -43,7 +44,7 @@ class HitTestResult;
 class Page;
 
 class ContextMenuController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContextMenuController);
 public:
     ContextMenuController(Page&, UniqueRef<ContextMenuClient>&&);
     ~ContextMenuController();

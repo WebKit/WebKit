@@ -27,6 +27,7 @@
 
 #if ENABLE(WRITING_TOOLS)
 
+#import <WebCore/WritingToolsTypes.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -40,6 +41,7 @@ enum class ReplacementState : uint8_t;
 enum class RequestedTool : uint16_t;
 enum class SessionCompositionType : uint8_t;
 enum class SessionType : uint8_t;
+enum class TextSuggestionState : uint8_t;
 
 struct Context;
 struct Replacement;

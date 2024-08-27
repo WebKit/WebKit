@@ -36,6 +36,10 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita();
 
+    bool canCreateControlPartForRenderer(const RenderObject&) const final;
+    bool canCreateControlPartForBorderOnly(const RenderObject&) const final;
+    bool canCreateControlPartForDecorations(const RenderObject&) const final;
+
     bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const final;
 
     void setAccentColor(const Color&);
@@ -71,30 +75,19 @@ private:
     Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
     void platformColorsDidChange() final;
 
-    bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
-
-    bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
-
-    bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const final;
 
     bool popsMenuBySpaceOrReturn() const final { return true; }
     void adjustMenuListStyle(RenderStyle&, const Element*) const override;
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
-    bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-    void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
-    Seconds animationDurationForProgressBar() const final;
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
-    bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
-    bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
-    bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 

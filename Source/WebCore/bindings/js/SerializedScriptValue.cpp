@@ -2378,7 +2378,14 @@ private:
         write(file.url().string());
         write(file.type());
         write(file.name());
-        write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
+        if (m_forStorage == SerializationForStorage::No)
+            write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
+        else {
+            if (auto lastModifiedOverride = file.lastModifiedOverride())
+                write(static_cast<double>(*lastModifiedOverride));
+            else
+                write(static_cast<double>(file.lastModified()));
+        }
     }
 
     void write(PredefinedColorSpace colorSpace)
@@ -2618,7 +2625,7 @@ private:
             switch (key->type()) {
             case CryptoKey::Type::Public: {
                 write(CryptoKeyAsymmetricTypeSubtag::Public);
-                auto result = downcast<CryptoKeyEC>(*key).exportRaw(isUsingCryptoKit());
+                auto result = downcast<CryptoKeyEC>(*key).exportRaw();
                 ASSERT(!result.hasException());
                 write(result.releaseReturnValue());
                 break;
@@ -2626,7 +2633,7 @@ private:
             case CryptoKey::Type::Private: {
                 write(CryptoKeyAsymmetricTypeSubtag::Private);
                 // Use the standard complied method is not very efficient, but simple/reliable.
-                auto result = downcast<CryptoKeyEC>(*key).exportPkcs8(isUsingCryptoKit());
+                auto result = downcast<CryptoKeyEC>(*key).exportPkcs8();
                 ASSERT(!result.hasException());
                 write(result.releaseReturnValue());
                 break;
@@ -2658,11 +2665,6 @@ private:
             write(downcast<CryptoKeyOKP>(*key).platformKey());
             break;
         }
-    }
-
-    UseCryptoKit isUsingCryptoKit()
-    {
-        return executionContext(m_lexicalGlobalObject)->settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
     }
 
     void write(std::span<const uint8_t> data)
@@ -3305,11 +3307,6 @@ private:
     }
 
     enum class VisitNamedMemberResult : uint8_t { Error, Break, Start, Unknown };
-
-    UseCryptoKit isUsingCryptoKit()
-    {
-        return executionContext(m_lexicalGlobalObject)->settingsValues().cryptoKitEnabled ? UseCryptoKit::Yes : UseCryptoKit::No;
-    }
 
     template<WalkerState endState>
     ALWAYS_INLINE VisitNamedMemberResult startVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, Vector<WalkerState, 16>& stateStack, JSValue& outValue)
@@ -4189,10 +4186,10 @@ private:
 
         switch (type) {
         case CryptoKeyAsymmetricTypeSubtag::Public:
-            result = CryptoKeyEC::importRaw(algorithm, curve->string(), WTFMove(keyData), extractable, usages, isUsingCryptoKit());
+            result = CryptoKeyEC::importRaw(algorithm, curve->string(), WTFMove(keyData), extractable, usages);
             break;
         case CryptoKeyAsymmetricTypeSubtag::Private:
-            result = CryptoKeyEC::importPkcs8(algorithm, curve->string(), WTFMove(keyData), extractable, usages, isUsingCryptoKit());
+            result = CryptoKeyEC::importPkcs8(algorithm, curve->string(), WTFMove(keyData), extractable, usages);
             break;
         }
 

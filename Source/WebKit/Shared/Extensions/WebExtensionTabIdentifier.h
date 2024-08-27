@@ -30,7 +30,7 @@
 namespace WebKit {
 
 struct WebExtensionTabIdentifierType;
-using WebExtensionTabIdentifier = ObjectIdentifier<WebExtensionTabIdentifierType>;
+using WebExtensionTabIdentifier = LegacyNullableObjectIdentifier<WebExtensionTabIdentifierType>;
 
 namespace WebExtensionTabConstants {
 

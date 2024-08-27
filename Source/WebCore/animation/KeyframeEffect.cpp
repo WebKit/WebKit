@@ -61,6 +61,7 @@
 #include "StyleAdjuster.h"
 #include "StylePendingResources.h"
 #include "StyleProperties.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
@@ -253,22 +254,53 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     PropertyNameArray inputProperties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     JSObject::getOwnPropertyNames(keyframesInput.get(), &lexicalGlobalObject, inputProperties, DontEnumPropertiesMode::Exclude);
 
+    auto isDirectionAwareShorthand = [](CSSPropertyID property) {
+        for (auto longhand : shorthandForProperty(property)) {
+            if (CSSProperty::isDirectionAwareProperty(longhand))
+                return true;
+        }
+        return false;
+    };
+
     // 4. Make up a new list animation properties that consists of all of the properties that are in both input properties and animatable
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
-    Vector<JSC::Identifier> animationProperties;
+    Vector<JSC::Identifier> logicalShorthands;
+    Vector<JSC::Identifier> physicalShorthands;
+    Vector<JSC::Identifier> logicalLonghands;
+    Vector<JSC::Identifier> physicalLonghands;
     for (auto& inputProperty : inputProperties) {
         auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
         if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyInvalid;
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
-        if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty))
-            animationProperties.append(inputProperty);
+        if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty)) {
+            if (isDirectionAwareShorthand(cssProperty))
+                logicalShorthands.append(inputProperty);
+            else if (isShorthand(cssProperty))
+                physicalShorthands.append(inputProperty);
+            else if (resolvedCSSProperty != cssProperty)
+                logicalLonghands.append(inputProperty);
+            else
+                physicalLonghands.append(inputProperty);
+        }
     }
 
     // 5. Sort animation properties in ascending order by the Unicode codepoints that define each property name.
-    std::sort(animationProperties.begin(), animationProperties.end(), [](auto& lhs, auto& rhs) {
-        return codePointCompareLessThan(lhs.string().string(), rhs.string().string());
-    });
+    auto sortPropertiesInAscendingOrder = [](auto& properties) {
+        std::sort(properties.begin(), properties.end(), [](auto& lhs, auto& rhs) {
+            return codePointCompareLessThan(lhs.string().string(), rhs.string().string());
+        });
+    };
+    sortPropertiesInAscendingOrder(logicalShorthands);
+    sortPropertiesInAscendingOrder(physicalShorthands);
+    sortPropertiesInAscendingOrder(logicalLonghands);
+    sortPropertiesInAscendingOrder(physicalLonghands);
+
+    Vector<JSC::Identifier> animationProperties;
+    animationProperties.appendVector(logicalShorthands);
+    animationProperties.appendVector(physicalShorthands);
+    animationProperties.appendVector(logicalLonghands);
+    animationProperties.appendVector(physicalLonghands);
 
     // 6. For each property name in animation properties,
     size_t numberOfAnimationProperties = animationProperties.size();

@@ -39,7 +39,6 @@
 #include "ModelProcessConnectionParameters.h"
 #include "ModelProcessProxy.h"
 #include "NetworkProcessConnectionInfo.h"
-#include "NetworkProcessMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "PlatformXRSystem.h"
@@ -73,7 +72,6 @@
 #include "WebPermissionControllerProxy.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebPreferencesKeys.h"
-#include "WebProcessActivityState.h"
 #include "WebProcessCache.h"
 #include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
@@ -331,7 +329,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 #if ENABLE(ROUTING_ARBITRATION)
     , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
 #endif
-    , m_activityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
@@ -754,24 +751,6 @@ RefPtr<WebPageProxy> WebProcessProxy::webPageWithActiveXRSession()
     return nullptr;
 }
 #endif
-
-void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
-}
-
-void WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
-}
-
-void WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished()
-{
-    for (Ref page : globalPages())
-        page->postMessageToInjectedBundle("WebsiteDataDeletionForRegistrableDomainsFinished"_s, nullptr);
-}
 
 void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {

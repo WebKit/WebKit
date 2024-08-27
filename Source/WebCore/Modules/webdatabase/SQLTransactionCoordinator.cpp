@@ -38,6 +38,7 @@
 #include "SecurityOriginData.h"
 #include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -45,6 +46,8 @@ static String getDatabaseIdentifier(SQLTransaction& transaction)
 {
     return transaction.database().securityOrigin().databaseIdentifier();
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLTransactionCoordinator);
 
 SQLTransactionCoordinator::SQLTransactionCoordinator()
     : m_isShuttingDown(false)

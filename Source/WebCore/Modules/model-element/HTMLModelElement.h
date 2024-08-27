@@ -176,7 +176,7 @@ private:
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
     void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
 #endif
-    PlatformLayerIdentifier platformLayerID() final;
+    std::optional<PlatformLayerIdentifier> platformLayerID() final;
 
     void defaultEventHandler(Event&) final;
     void dragDidStart(MouseEvent&);

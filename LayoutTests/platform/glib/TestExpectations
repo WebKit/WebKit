@@ -530,6 +530,7 @@ accessibility/aria-table-selection-support.html [ Skip ]
 
 # AccessibilityUIElement::customContent is not implemented.
 accessibility/dynamic-aria-describedby-subtree.html [ Skip ]
+accessibility/dynamic-aria-describedby-text.html [ Skip ]
 
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=263715
 accessibility/focus-inside-modal.html [ Skip ]
@@ -1261,12 +1262,6 @@ webkit.org/b/264667 media/track/track-cue-left-align.html [ Pass ImageOnlyFailur
 webkit.org/b/264667 media/track/track-cue-line-position.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Pass Timeout ]
-
-webkit.org/b/264708 media/media-source/media-source-error-crash.html [ Pass Crash ]
-webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Pass Crash ]
-webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Pass Crash ]
-
-webkit.org/b/264708 media/media-source/media-webm-opus-partial-abort.html [ Pass Crash Failure ]
 
 webkit.org/b/265205 imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Crash ]
 
@@ -2380,8 +2375,8 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 # Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
 
-# webrtcbin doesn't emit "outbound-rtp" stats until it's in connected state
-webrtc/audio-muted-stats.html [ Failure ]
+# Lack of AudioSession category
+http/wpt/mediasession/setCaptureState-audio-category.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2863,10 +2858,6 @@ webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers
 media/media-allowed-codecs.html [ Skip ]
 media/media-allowed-containers.html [ Skip ]
 media/media-source/media-source-allowed-codecs.html [ Skip ]
-
-# These tests require touch support
-fast/events/touch [ Skip ]
-imported/w3c/web-platform-tests/touch-events [ Skip ]
 
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
@@ -4123,6 +4114,54 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] 
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash Pass ]
+
+# Fails when cookies are not SameSite=Lax by default
+imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+# Touch events related layout tests failing
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/document-create-touch.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/document-create-touch-list.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/document-create-touch-list-ios.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/force-press-event.html [ Crash ]
+webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture-event-basic.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/gesture-click.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/gesture-dblclick.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/gesture-scroll.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/gesture-tap-active-state-iframe.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/long-press-on-draggable-element-in-iframe-triggers-drag.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/long-press-on-draggable-element-in-nested-iframes-triggers-drag.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/gesture/pad-gesture-cancel.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-not-propagated.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-propagated.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-twice-propagated.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-iframe-editable.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-not-propagated.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-sideways.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/multi-touch-grouped-targets.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/page-scaled-touch-gesture-click.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/prevent-default-touchmove-prevents-scrolling.html [ Crash ]
+webkit.org/b/278719 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/touch-constructor.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/touch-event-pageXY.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/touch-scaled-scrolled.html [ Failure ]
+webkit.org/b/278719 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Timeout ]
+webkit.org/b/278719 fast/events/touch/zoomed-touch-event-pageXY.html [ Timeout ]
+webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/historical.html [ Failure ]
+webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Failure ]
+webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

@@ -28,6 +28,7 @@
 #include "PlatformMouseEvent.h"
 #include "PointerID.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ class WindowProxy;
 
 class PointerCaptureController {
     WTF_MAKE_NONCOPYABLE(PointerCaptureController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PointerCaptureController);
 public:
     explicit PointerCaptureController(Page&);
 

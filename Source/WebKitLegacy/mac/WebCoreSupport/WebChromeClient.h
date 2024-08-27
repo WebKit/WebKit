@@ -117,7 +117,6 @@ private:
     void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final { }
 
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final;
-    void setStatusbarText(const String&) override;
 
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;

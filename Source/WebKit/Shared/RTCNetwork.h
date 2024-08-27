@@ -43,6 +43,14 @@ namespace WebKit {
 
 namespace RTC::Network {
 
+// This enums corresponds to rtc::EcnMarking.
+enum class EcnMarking : int {
+    kNotEct = 0, // Not ECN-Capable Transport
+    kEct1 = 1, // ECN-Capable Transport
+    kEct0 = 2, // Not used by L4s (or webrtc.)
+    kCe = 3, // Congestion experienced
+};
+
 struct IPAddress {
     struct UnspecifiedFamily { };
 

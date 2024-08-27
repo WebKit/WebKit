@@ -34,9 +34,12 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollLatchingController);
 
 // See also ScrollTreeLatchingController.cpp
 static const Seconds resetLatchedStateTimeout { 100_ms };

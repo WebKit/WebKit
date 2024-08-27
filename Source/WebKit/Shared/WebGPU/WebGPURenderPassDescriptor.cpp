@@ -97,7 +97,7 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
     if (renderPassDescriptor.depthStencilAttachment && !depthStencilAttachment)
         return std::nullopt;
 
-    WebCore::WebGPU::QuerySet* occlusionQuerySet = nullptr;
+    WeakPtr<WebCore::WebGPU::QuerySet> occlusionQuerySet;
     if (renderPassDescriptor.occlusionQuerySet) {
         occlusionQuerySet = convertQuerySetFromBacking(renderPassDescriptor.occlusionQuerySet.value());
         if (!occlusionQuerySet)

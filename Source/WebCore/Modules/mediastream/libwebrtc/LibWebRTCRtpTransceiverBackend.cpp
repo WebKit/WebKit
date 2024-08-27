@@ -32,8 +32,11 @@
 #include "LibWebRTCRtpSenderBackend.h"
 #include "LibWebRTCUtils.h"
 #include "RTCRtpCodecCapability.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpTransceiverBackend);
 
 std::unique_ptr<LibWebRTCRtpReceiverBackend> LibWebRTCRtpTransceiverBackend::createReceiverBackend()
 {

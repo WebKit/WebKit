@@ -63,7 +63,9 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
-    FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates();
+    // FIXME: This needs to be bounding box and should not use repaint rect.
+    // https://bugs.webkit.org/show_bug.cgi?id=278551
+    FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
 
     // Ignore 2D rotation, as it doesn't affect the size of the mask.
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
@@ -90,7 +92,9 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<Im
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
 
-    targetRect = textRootBlock->repaintRectInLocalCoordinates();
+    // FIXME: This needs to be bounding box and should not use repaint rect.
+    // https://bugs.webkit.org/show_bug.cgi?id=278551
+    targetRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
     
     // Ignore 2D rotation, as it doesn't affect the size of the mask.
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());

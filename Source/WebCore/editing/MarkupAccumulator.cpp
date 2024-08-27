@@ -289,7 +289,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
         if (shouldAppendNode)
             startAppendingNode(*current, &namespaceStack.last());
 
-        bool shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+        bool shouldEmitCloseTag = m_serializationSyntax == SerializationSyntax::XML || !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
         shouldSkipNode = shouldSkipNode || !shouldEmitCloseTag;
         if (!shouldSkipNode) {
             if (shouldIncludeShadowRoots()) {
@@ -342,7 +342,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
                 break;
 
             shouldAppendNode = !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
-            shouldEmitCloseTag = !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
+            shouldEmitCloseTag = m_serializationSyntax == SerializationSyntax::XML || !(targetNode.document().isHTMLDocument() && elementCannotHaveEndTag(*current));
             if (shouldAppendNode && shouldEmitCloseTag)
                 endAppendingNode(*current);
         }

@@ -124,6 +124,7 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     , m_expansion(run.expansion())
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
     , m_forTextEmphasis(forTextEmphasis)
+    , m_textSpacingState(run.textSpacingState())
 {
     computeExpansionOpportunity();
 
@@ -554,7 +555,10 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                 return;
 
             if (glyphBuffer && !m_characterInCurrentGlyph) {
+                ASSERT(m_textAutoSpaceSpacings.isEmpty() || m_textAutoSpaceSpacings.size() == m_adjustedBaseAdvances.size());
+                auto textAutoSpaceSpacing = m_textAutoSpaceSpacings.isEmpty() ? 0.0 : m_textAutoSpaceSpacings[glyphIndexIntoComplexTextController];
                 auto currentGlyphOrigin = glyphOrigin(glyphIndexIntoComplexTextController);
+                currentGlyphOrigin.move(textAutoSpaceSpacing, 0);
                 GlyphBufferAdvance paintAdvance = makeGlyphBufferAdvance(adjustedBaseAdvance);
                 if (!glyphIndexIntoCurrentRun) {
                     // The first layout advance of every run includes the "initial layout advance." However, here, we need
@@ -572,7 +576,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                     setHeight(paintAdvance, height(paintAdvance) - glyphOrigin(glyphIndexIntoComplexTextController + 1).y() + m_complexTextRuns[currentRunIndex + 1]->initialAdvance().height());
                 }
                 setHeight(paintAdvance, -height(paintAdvance)); // Increasing y points down
-                glyphBuffer->add(m_adjustedGlyphs[glyphIndexIntoComplexTextController], complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
+                glyphBuffer->add(m_adjustedGlyphs[glyphIndexIntoComplexTextController], complexTextRun.font(), paintAdvance, complexTextRun.indexAt(m_glyphInCurrentRun), FloatPoint(textAutoSpaceSpacing, 0));
             }
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
@@ -633,6 +637,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     bool runForbidsLeftExpansion = m_run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid;
     bool runForbidsRightExpansion = m_run.expansionBehavior().right == ExpansionBehavior::Behavior::Forbid;
 
+    TextSpacing::CharacterClass previousCharacterClass = m_textSpacingState.lastCharacterClassFromPreviousRun;
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
         ComplexTextRun& complexTextRun = *m_complexTextRuns[runIndex];
@@ -748,6 +753,18 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     afterExpansion = false;
             }
 
+            const auto& textAutoSpace =  m_font.textAutospace();
+            float textAutoSpaceSpacing = 0;
+            auto characterClass = TextSpacing::CharacterClass::Undefined;
+            if (!textAutoSpace.isNoAutospace())
+                characterClass = TextSpacing::characterClass(character);
+            if (textAutoSpace.shouldApplySpacing(previousCharacterClass, characterClass)) {
+                textAutoSpaceSpacing = complexTextRun.textAutospaceSize();
+                advance.expand(textAutoSpaceSpacing, 0);
+            }
+            if (!textAutoSpace.isNoAutospace())
+                m_textAutoSpaceSpacings.append(textAutoSpaceSpacing);
+
             m_totalAdvance += advance;
 
             if (m_forTextEmphasis) {
@@ -763,7 +780,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             if (auto* origins = complexTextRun.glyphOrigins()) {
                 ASSERT(m_glyphOrigins.size() < m_adjustedBaseAdvances.size());
                 m_glyphOrigins.grow(m_adjustedBaseAdvances.size());
-                m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[glyphIndex];
+                m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[glyphIndex] + FloatSize(textAutoSpaceSpacing, 0);
                 ASSERT(m_glyphOrigins.size() == m_adjustedBaseAdvances.size());
             }
             m_adjustedGlyphs.append(glyph);
@@ -777,6 +794,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             glyphOrigin.move(advance);
 
             previousCharacterIndex = characterIndex;
+            previousCharacterClass = characterClass;
         }
         if (!isMonotonic)
             complexTextRun.setIsNonMonotonic();
@@ -793,6 +811,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     , m_indexEnd(indexEnd)
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
+    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
     auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
     m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
@@ -832,6 +851,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& a
     , m_glyphCount(glyphs.size())
     , m_stringLocation(stringLocation)
     , m_isLTR(ltr)
+    , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
 }
 

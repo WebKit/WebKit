@@ -75,6 +75,7 @@
 #include "StyleResolver.h"
 #include "TextDirection.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -82,6 +83,8 @@
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorOverlay);
 
 static constexpr float rulerSize = 15;
 static constexpr float rulerLabelSize = 13;

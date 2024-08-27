@@ -35,11 +35,12 @@
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class DOMWindowCaches : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DOMWindowCaches);
 public:
     explicit DOMWindowCaches(LocalDOMWindow&);
     virtual ~DOMWindowCaches() = default;
@@ -54,7 +55,7 @@ private:
 };
 
 class WorkerGlobalScopeCaches : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerGlobalScopeCaches);
 public:
     explicit WorkerGlobalScopeCaches(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeCaches() = default;
@@ -70,6 +71,8 @@ private:
 };
 
 // DOMWindowCaches supplement.
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowCaches);
 
 DOMWindowCaches::DOMWindowCaches(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
@@ -97,6 +100,8 @@ DOMCacheStorage* DOMWindowCaches::caches() const
 }
 
 // WorkerGlobalScope supplement.
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScopeCaches);
 
 WorkerGlobalScopeCaches::WorkerGlobalScopeCaches(WorkerGlobalScope& scope)
     : m_scope(scope)

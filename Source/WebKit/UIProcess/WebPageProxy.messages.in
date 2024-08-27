@@ -35,7 +35,6 @@ messages -> WebPageProxy {
     DidReceiveEvent(enum:uint8_t WebKit::WebEventType eventType, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     SetCursor(WebCore::Cursor cursor)
     SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
-    SetStatusText(String statusText)
     SetFocus(bool focused)
     TakeFocus(enum:uint8_t WebCore::FocusDirection direction)
     FocusFromServiceWorker() -> ()
@@ -115,7 +114,6 @@ messages -> WebPageProxy {
     SetNetworkRequestsInProgress(bool networkRequestsInProgress)
 
     # Frame lifetime messages
-    DidCreateMainFrame(WebCore::FrameIdentifier frameID)
     DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
 
     # Frame load messages
@@ -237,6 +235,11 @@ messages -> WebPageProxy {
     ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
     ProofreadingSessionUpdateStateForSuggestionWithID(enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
+
+    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
+    AddTextAnimationForAnimationIDWithCompletionHandler(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
+    RemoveTextAnimationForAnimationID(WTF::UUID uuid)
+    DidEndPartialIntelligenceTextPonderingAnimation()
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -278,6 +281,7 @@ messages -> WebPageProxy {
     RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
     EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDeviceWithCapabilities> devices, struct WebCore::MediaDeviceHashSalts mediaDeviceIdentifierHashSalts)
     BeginMonitoringCaptureDevices()
+    ValidateCaptureStateUpdate(bool isActive, enum:uint8_t WebCore::MediaProducerMediaCaptureKind kind) -> (std::optional<WebCore::Exception> result)
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -373,7 +377,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(IOS_FAMILY)
     CouldNotRestorePageState()
-    RestorePageState(std::optional<WebCore::FloatPoint> scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::RectEdges<float> obscuredInsetsOnSave, double scale)
+    RestorePageState(std::optional<WebCore::FloatPoint> scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::FloatBoxExtent obscuredInsetsOnSave, double scale)
     RestorePageCenterAndScale(std::optional<WebCore::FloatPoint> unobscuredCenter, double scale)
     DidGetTapHighlightGeometries(WebKit::TapIdentifier requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius, bool nodeHasBuiltInClickHandling)
 
@@ -512,12 +516,6 @@ messages -> WebPageProxy {
     [EnabledBy=AttachmentElementEnabled] WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
 #endif
     [EnabledBy=AttachmentElementEnabled] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
-#endif
-
-#if ENABLE(WRITING_TOOLS_UI)
-    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
-    RemoveTextAnimationForAnimationID(WTF::UUID uuid)
-    DidEndPartialIntelligenceTextPonderingAnimation()
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)

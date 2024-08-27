@@ -30,13 +30,14 @@
 #include "WebGPUPtr.h"
 #include "WebGPUQuerySet.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::WebGPU {
 
 class ConvertToBackingContext;
 
 class QuerySetImpl final : public QuerySet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QuerySetImpl);
 public:
     static Ref<QuerySetImpl> create(WebGPUPtr<WGPUQuerySet>&& querySet, ConvertToBackingContext& convertToBackingContext)
     {

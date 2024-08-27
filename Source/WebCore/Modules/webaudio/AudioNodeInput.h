@@ -28,6 +28,7 @@
 #include "AudioNode.h"
 #include "AudioSummingJunction.h"
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class AudioNodeOutput;
 
 class AudioNodeInput final : public AudioSummingJunction {
     WTF_MAKE_NONCOPYABLE(AudioNodeInput);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioNodeInput);
 public:
     explicit AudioNodeInput(AudioNode*);
 

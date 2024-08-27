@@ -229,7 +229,7 @@ WI.CallFrame = class CallFrame
             scopeChain,
             programCode: WI.CallFrame.programCodeFromPayload(payload),
             isTailDeleted: payload.isTailDeleted,
-            blackboxed: sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.sourceCode),
+            blackboxed: sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.displaySourceCode),
         });
     }
 
@@ -273,7 +273,7 @@ WI.CallFrame = class CallFrame
             functionName: WI.CallFrame.functionNameFromPayload(payload),
             nativeCode,
             programCode: WI.CallFrame.programCodeFromPayload(payload),
-            blackboxed: sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.sourceCode),
+            blackboxed: sourceCodeLocation && !!WI.debuggerManager.blackboxDataForSourceCode(sourceCodeLocation.displaySourceCode),
         });
     }
 };

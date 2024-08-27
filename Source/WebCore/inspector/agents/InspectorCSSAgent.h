@@ -37,6 +37,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -66,7 +67,7 @@ class Resolver;
 
 class InspectorCSSAgent final : public InspectorAgentBase , public Inspector::CSSBackendDispatcherHandler , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorCSSAgent);
 public:
     explicit InspectorCSSAgent(PageAgentContext&);
     ~InspectorCSSAgent();

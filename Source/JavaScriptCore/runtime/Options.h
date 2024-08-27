@@ -43,6 +43,12 @@ namespace JSC {
 
 class Options {
 public:
+    enum class SandboxPolicy : uint8_t {
+        Unknown,
+        Allow,
+        Block,
+    };
+
     enum class DumpLevel : uint8_t {
         None = 0,
         Overridden,
@@ -134,6 +140,7 @@ public: \
 #undef DECLARE_OPTION_ACCESSORS
 
     static bool isAvailable(ID, Availability);
+    JS_EXPORT_PRIVATE static SandboxPolicy machExceptionHandlerSandboxPolicy;
 
 private:
     Options();

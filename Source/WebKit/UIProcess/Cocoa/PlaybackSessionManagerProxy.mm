@@ -582,7 +582,7 @@ void PlaybackSessionManagerProxy::removeClientForContext(PlaybackSessionContextI
 
 #pragma mark Messages from PlaybackSessionManager
 
-void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier contextId)
+void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier contextId, bool isVideo)
 {
     if (m_controlsManagerContextId == contextId)
         return;
@@ -591,6 +591,7 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSes
         removeClientForContext(m_controlsManagerContextId);
 
     m_controlsManagerContextId = contextId;
+    m_controlsManagerContextIsVideo = isVideo;
     ensureInterface(m_controlsManagerContextId)->ensureControlsManager();
     addClientForContext(m_controlsManagerContextId);
 
@@ -605,6 +606,7 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 
     removeClientForContext(m_controlsManagerContextId);
     m_controlsManagerContextId = { };
+    m_controlsManagerContextIsVideo = false;
 
     if (RefPtr page = m_page.get())
         page->videoControlsManagerDidChange();

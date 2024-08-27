@@ -64,8 +64,6 @@ struct ServiceWorkerJobData {
     ServiceWorkerJobData isolatedCopy() const;
 
 private:
-    ServiceWorkerJobData() = default;
-
     Identifier m_identifier;
 };
 

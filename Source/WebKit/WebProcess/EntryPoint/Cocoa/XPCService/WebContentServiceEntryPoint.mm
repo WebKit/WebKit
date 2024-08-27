@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,5 +50,5 @@ void WEBCONTENT_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t in
     InitWebCoreThreadSystemInterface();
 #endif // PLATFORM(IOS_FAMILY)
 
-    WebKit::XPCServiceInitializer<WebKit::WebProcess, WebKit::XPCServiceInitializerDelegate>(connection, initializerMessage);
+    WebKit::XPCServiceInitializer<WebKit::WebProcess, WebKit::XPCServiceInitializerDelegate, true>(connection, initializerMessage);
 }

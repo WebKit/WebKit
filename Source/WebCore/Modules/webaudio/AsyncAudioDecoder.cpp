@@ -32,8 +32,11 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AsyncAudioDecoder);
 
 AsyncAudioDecoder::AsyncAudioDecoder()
     : m_runLoop(RunLoop::create("Audio Decoder"_s, ThreadType::Audio))

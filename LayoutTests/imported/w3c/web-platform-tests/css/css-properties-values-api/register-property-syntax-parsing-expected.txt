@@ -188,7 +188,7 @@ PASS syntax:'<length>', initialValue:'var(--moo)' is invalid
 PASS syntax:'<length>', initialValue:'10' is invalid
 PASS syntax:'<length>', initialValue:'10%' is invalid
 PASS syntax:'<length>', initialValue:'calc(5px + 10%)' is invalid
-PASS syntax:'<length>', initialValue:'calc(5px * 3px / 6px)' is invalid
+FAIL syntax:'<length>', initialValue:'calc(5px * 3px / 6px)' is invalid assert_throws_dom: function "() => CSS.registerProperty({name: name, syntax: syntax, initialValue: initialValue, inherits: false})" did not throw
 PASS syntax:'<length>', initialValue:'10em' is invalid
 PASS syntax:'<length>', initialValue:'calc(4px + 3em)' is invalid
 PASS syntax:'<length>', initialValue:'calc(4px + calc(8 * 2em))' is invalid

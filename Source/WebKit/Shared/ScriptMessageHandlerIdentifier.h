@@ -28,6 +28,6 @@
 namespace WebKit {
 
 enum class ScriptMessageHandlerIdentifierType { };
-using ScriptMessageHandlerIdentifier = ObjectIdentifier<ScriptMessageHandlerIdentifierType>;
+using ScriptMessageHandlerIdentifier = LegacyNullableObjectIdentifier<ScriptMessageHandlerIdentifierType>;
 
 } // namespace WebKit

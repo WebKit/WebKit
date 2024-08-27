@@ -72,6 +72,11 @@ private:
     bool activityStateChanged(WebCore::ActivityState, bool);
     void toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState);
 
+#if ENABLE(POINTER_LOCK)
+    void requestPointerLock() override;
+    void didLosePointerLock() override;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     Vector<WebKit::WebPlatformTouchPoint> touchPointsForEvent(WPEEvent*);
 #endif

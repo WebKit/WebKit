@@ -28,8 +28,11 @@
 
 #include "MediaCapabilities.h"
 #include "WorkerNavigator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNavigatorMediaCapabilities);
 
 WorkerNavigatorMediaCapabilities::WorkerNavigatorMediaCapabilities()
     : m_mediaCapabilities(MediaCapabilities::create())

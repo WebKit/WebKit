@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "LayoutUnit.h"
+#include <optional>
+
 namespace WebCore {
 
 namespace Layout {
@@ -35,7 +38,8 @@ class LayoutState;
 
 namespace LayoutIntegration {
 
-void layoutWithFormattingContextForBox(const Layout::ElementBox&, Layout::LayoutState&);
+void layoutWithFormattingContextForBox(const Layout::ElementBox&, std::optional<LayoutUnit> widthConstraint, Layout::LayoutState&);
+std::pair<LayoutUnit, LayoutUnit> preferredLogicalWidths(const Layout::ElementBox&);
 
 }
 }

@@ -42,10 +42,13 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingCoordinator);
 
 #if PLATFORM(IOS_FAMILY) || !ENABLE(ASYNC_SCROLLING)
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
@@ -156,8 +159,8 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     EventTrackingRegions eventTrackingRegions;
 
     // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
-    for (auto* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
-        auto* localSubframe = dynamicDowncast<LocalFrame>(subframe);
+    for (RefPtr subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
+        auto* localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
         if (!localSubframe)
             continue;
         auto* subframeView = localSubframe->view();

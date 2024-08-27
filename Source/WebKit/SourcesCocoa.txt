@@ -112,7 +112,6 @@ Shared/API/c/cf/WKURLCF.mm
 Shared/API/c/cg/WKImageCG.cpp
 
 Shared/API/c/mac/WKCertificateInfoMac.mm
-Shared/API/c/mac/WKMediaFormatReader.cpp
 Shared/API/c/mac/WKObjCTypeWrapperRef.mm
 Shared/API/c/mac/WKURLRequestNS.mm
 Shared/API/c/mac/WKURLResponseNS.mm
@@ -220,12 +219,6 @@ Shared/mac/WebEventFactory.mm
 Shared/mac/WebGestureEvent.cpp
 Shared/mac/WebMemorySampler.mac.mm
 
-Shared/mac/MediaFormatReader/CoreMediaWrapped.cpp
-Shared/mac/MediaFormatReader/MediaFormatReader.cpp
-Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp
-Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
-Shared/mac/MediaFormatReader/MediaTrackReader.cpp
-
 Shared/RemoteLayerTree/DynamicContentScalingBifurcatedImageBuffer.mm
 Shared/RemoteLayerTree/DynamicContentScalingImageBufferBackend.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
@@ -313,6 +306,7 @@ UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
 UIProcess/API/Cocoa/_WKWebExtension.mm
+UIProcess/API/Cocoa/_WKWebPushAction.mm
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm

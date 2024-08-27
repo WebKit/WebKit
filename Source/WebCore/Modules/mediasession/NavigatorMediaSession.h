@@ -29,6 +29,7 @@
 
 #include "Supplementable.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class MediaSession;
 class Navigator;
 
 class NavigatorMediaSession final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorMediaSession);
 public:
     explicit NavigatorMediaSession(Navigator&);
     ~NavigatorMediaSession();

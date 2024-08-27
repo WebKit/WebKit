@@ -40,7 +40,7 @@ static void menuCloseCallback(WebKitPopupMenu* popupMenu)
 void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& platformData, int32_t selectedIndex)
 {
     GRefPtr<WebKitOptionMenu> menu = adoptGRef(webkitOptionMenuCreate(*this, items, selectedIndex));
-    const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
+    const GdkEvent* event = client()->currentlyProcessedMouseDownEvent() ? client()->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     webkitOptionMenuSetEvent(menu.get(), const_cast<GdkEvent*>(event));
     if (webkitWebViewShowOptionMenu(WEBKIT_WEB_VIEW(m_webView), rect, menu.get())) {
         m_menu = WTFMove(menu);

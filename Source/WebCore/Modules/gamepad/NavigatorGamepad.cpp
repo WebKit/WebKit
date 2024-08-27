@@ -39,8 +39,11 @@
 #include "Page.h"
 #include "PermissionsPolicy.h"
 #include "PlatformGamepad.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorGamepad);
 
 NavigatorGamepad::NavigatorGamepad(Navigator& navigator)
     : m_navigator(navigator)

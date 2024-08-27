@@ -135,7 +135,7 @@ static EmulatedAlphaPremultiplicationAnalysisResult analyzeColorStopsForEmulated
 static GradientColorStops alphaTransformStopsToEmulateAlphaPremultiplication(const GradientColorStops& stops)
 {
     // The following is the set of transforms that can be performed on a color stop list to transform it from one used with a premuliplied alpha gradient
-    // implmentation to one used by with an un-premultiplied gradient implementation.
+    // implementation to one used by with an un-premultiplied gradient implementation.
 
     // ... Opaque  -> Transparent -> Opaque  ...                                  ==>    ... Opaque  -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Opaque  ...
     // ... Partial -> Transparent -> Partial ...                                  ==>    ... Partial -> TRANSFORM{Transparent(PreviousChannels)} | ADDITION{Transparent(NextChannels)} -> Partial ...

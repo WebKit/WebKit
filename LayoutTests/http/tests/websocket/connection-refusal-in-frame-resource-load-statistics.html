@@ -21,11 +21,16 @@
                 testFailed("localhost not registered as subresource under 127.0.0.1.");
                 setEnableFeature(false, finishJSTest);
             } else {
-                testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
                 await testRunner.statisticsNotifyObserver();
+                completeTest();
             }
         }
     }
+
+    window.addEventListener('message', async (event) => {
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        completeTest();
+    }, false);
 
     function runTest() {
         setEnableFeature(true, function() {
@@ -36,8 +41,6 @@
             iframeElement.src = "resources/localhost-websocket-connect.html";
             iframeElement.id = "testIframe";
             document.body.appendChild(iframeElement);
-
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
         });
     }
 </script>

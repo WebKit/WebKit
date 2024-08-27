@@ -31,7 +31,8 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 @class WKWebExtension;
 
 /*! @abstract Indicates a ``WKWebExtensionMatchPattern`` error. */
-WK_EXTERN NSErrorDomain const WKWebExtensionMatchPatternErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_EXTERN NSErrorDomain const WKWebExtensionMatchPatternErrorDomain NS_SWIFT_NAME(WKWebExtensionMatchPattern.errorDomain) NS_SWIFT_NONISOLATED;
 
 /*!
  @abstract Constants used by ``NSError`` to indicate errors in the ``WKWebExtensionMatchPattern`` domain.
@@ -41,7 +42,7 @@ WK_EXTERN NSErrorDomain const WKWebExtensionMatchPatternErrorDomain WK_API_AVAIL
  @constant WKWebExtensionMatchPatternErrorInvalidPath  Indicates that the path component was invalid.
  */
 typedef NS_ERROR_ENUM(WKWebExtensionMatchPatternErrorDomain, WKWebExtensionMatchPatternError) {
-    WKWebExtensionMatchPatternErrorUnknown,
+    WKWebExtensionMatchPatternErrorUnknown = 1,
     WKWebExtensionMatchPatternErrorInvalidScheme,
     WKWebExtensionMatchPatternErrorInvalidHost,
     WKWebExtensionMatchPatternErrorInvalidPath,

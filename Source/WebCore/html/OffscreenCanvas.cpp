@@ -119,7 +119,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
     : ActiveDOMObject(&scriptExecutionContext)
-    , CanvasBase(WTFMove(size), scriptExecutionContext.noiseInjectionHashSalt())
+    , CanvasBase(WTFMove(size), scriptExecutionContext)
     , m_placeholderSource(WTFMove(placeholderSource))
 {
 }

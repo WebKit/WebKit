@@ -27,6 +27,7 @@
 #include "JSInjectedScriptHost.h"
 
 #include "ArrayPrototype.h"
+#include "BuiltinNames.h"
 #include "Completion.h"
 #include "DateInstance.h"
 #include "DeferGCInlines.h"
@@ -381,6 +382,18 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             return array;
         }
         return array;
+    }
+    if (JSArrowFunction* arrowFunction = jsDynamicCast<JSArrowFunction*>(value)) {
+        if (JSScope* jsScope = arrowFunction->scope()) {
+            unsigned index = 0;
+            JSArray* array = constructEmptyArray(globalObject, nullptr);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            JSValue thisObject = jsScope->get(globalObject, vm.propertyNames->builtinNames().thisPrivateName());
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundThis"_s, thisObject));
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            return array;
+        }
     }
     if (JSRemoteFunction* remoteFunction = jsDynamicCast<JSRemoteFunction*>(value)) {
         unsigned index = 0;

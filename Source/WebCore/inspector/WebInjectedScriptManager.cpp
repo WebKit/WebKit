@@ -29,10 +29,13 @@
 #include "CommandLineAPIModule.h"
 #include "JSExecState.h"
 #include "LocalDOMWindow.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInjectedScriptManager);
 
 WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
     : InjectedScriptManager(environment, WTFMove(host))

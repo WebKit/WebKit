@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Download.h"
 
+#import "Logging.h"
 #import "NetworkSessionCocoa.h"
 #import "WKDownloadProgress.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -91,14 +92,20 @@ void Download::platformDestroyDownload()
 #if HAVE(MODERN_DOWNLOADPROGRESS)
 void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData)
 {
+    if (m_progress) {
+        RELEASE_LOG(Network, "Progress is already being published for download.");
+        return;
+    }
+
     RetainPtr bookmark = toNSData(bookmarkData);
     m_bookmarkData = bookmark;
 
     BOOL bookmarkIsStale = NO;
     NSError* error = nil;
-    m_bookmarkURL = adoptNS([NSURL URLByResolvingBookmarkData:m_bookmarkData.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error]);
+    m_bookmarkURL = [NSURL URLByResolvingBookmarkData:m_bookmarkData.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error];
+    ASSERT(m_bookmarkURL);
     if (!m_bookmarkURL)
-        NSLog(@"Unable to create bookmark URL, error = %@", error);
+        RELEASE_LOG(Network, "Unable to create bookmark URL, error = %@", error);
 
     bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), NULL);
 

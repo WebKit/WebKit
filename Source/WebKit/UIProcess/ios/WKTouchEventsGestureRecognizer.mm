@@ -339,7 +339,7 @@ static unsigned nextTouchIdentifier()
             touchPoint.azimuthAngle = [touch azimuthAngleInView:self.view.window];
         } else {
             touchPoint.touchType = WebKit::WKTouchPointType::Direct;
-            touchPoint.altitudeAngle = piOverTwoDouble;
+            touchPoint.altitudeAngle = 0;
             touchPoint.azimuthAngle = 0;
         }
 

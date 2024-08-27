@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - ensure that we don't emit an empty prefix at the start of a document</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.setStart(document.body.childNodes[0], 0);
+    range.setEnd(document.body.childNodes[0], 4);
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>This is a very simple document. There is no text before 'this'.</body>
+</html>
+

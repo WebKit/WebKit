@@ -5405,7 +5405,6 @@ void Document::pageMutedStateDidChange()
 static void updateCaptureSourceToPageMutedState(Document& document, Page& page, RealtimeMediaSource& source)
 {
     ASSERT(source.isCaptureSource());
-
     switch (source.deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
 #if PLATFORM(IOS_FAMILY)
@@ -5418,8 +5417,10 @@ static void updateCaptureSourceToPageMutedState(Document& document, Page& page, 
         source.setMuted(page.mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted) || (document.hidden() && document.settings().interruptVideoOnPageVisibilityChangeEnabled()));
         break;
     case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Window:
         source.setMuted(page.mutedState().contains(MediaProducerMutedState::ScreenCaptureIsMuted));
+        break;
+    case CaptureDevice::DeviceType::Window:
+        source.setMuted(page.mutedState().contains(MediaProducerMutedState::WindowCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::SystemAudio:
     case CaptureDevice::DeviceType::Speaker:
@@ -10449,7 +10450,7 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 #if USE(SYSTEM_PREVIEW)
 void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
 {
-    RefPtr element = Element::fromIdentifier(systemPreviewInfo.element.elementIdentifier);
+    RefPtr element = systemPreviewInfo.element.elementIdentifier ? Element::fromIdentifier(*systemPreviewInfo.element.elementIdentifier) : nullptr;
     if (!is<HTMLAnchorElement>(element))
         return;
 
@@ -10703,11 +10704,12 @@ void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
         resizeObserverForContainIntrinsicSize->resetObservationSize(target);
 }
 
-NoiseInjectionPolicy Document::noiseInjectionPolicy() const
+OptionSet<NoiseInjectionPolicy> Document::noiseInjectionPolicies() const
 {
+    OptionSet<NoiseInjectionPolicy> policies;
     if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
-        return NoiseInjectionPolicy::Minimal;
-    return NoiseInjectionPolicy::None;
+        policies.add(NoiseInjectionPolicy::Minimal);
+    return policies;
 }
 
 OptionSet<AdvancedPrivacyProtections> Document::advancedPrivacyProtections() const
@@ -10719,7 +10721,7 @@ OptionSet<AdvancedPrivacyProtections> Document::advancedPrivacyProtections() con
 
 std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 {
-    if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
+    if (!page() || !noiseInjectionPolicies())
         return std::nullopt;
     return protectedPage()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
 }

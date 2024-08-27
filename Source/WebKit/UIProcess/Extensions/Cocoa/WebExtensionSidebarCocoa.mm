@@ -45,7 +45,8 @@ static NSString * const fallbackTitle = @"";
 
 static std::optional<String> getDefaultSidebarTitleFromExtension(WebExtension& extension)
 {
-    return toOptional(extension.sidebarTitle());
+    return toOptional(extension.sidebarTitle())
+        .value_or(extension.displayName());
 }
 
 static std::optional<String> getDefaultSidebarPathFromExtension(WebExtension& extension)
@@ -66,7 +67,7 @@ WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, WebExtens
 WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, WebExtensionWindow& window) : WebExtensionSidebar(context, std::nullopt, window, IsDefault::No) { };
 
 WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, std::optional<Ref<WebExtensionTab>> tab, std::optional<Ref<WebExtensionWindow>> window, IsDefault isDefault)
-    : m_context(context), m_tab(tab), m_window(window), m_isDefault(isDefault)
+    : m_extensionContext(context), m_tab(tab), m_window(window), m_isDefault(isDefault)
 {
     ASSERT(!(m_tab && m_window));
 
@@ -81,8 +82,8 @@ WebExtensionSidebar::WebExtensionSidebar(WebExtensionContext& context, std::opti
 
 std::optional<Ref<WebExtensionContext>> WebExtensionSidebar::extensionContext() const
 {
-    if (m_context.ptr())
-        return m_context.get();
+    if (auto *context = m_extensionContext.get())
+        return *context;
     return std::nullopt;
 }
 
@@ -98,11 +99,12 @@ const std::optional<Ref<WebExtensionWindow>> WebExtensionSidebar::window() const
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionSidebar::parent() const
 {
-    if (!m_context.ptr() || isDefaultSidebar())
+    if (!extensionContext() || isDefaultSidebar())
         return std::nullopt;
 
-    return m_tab.and_then([this](auto const& tab) { return m_context->getSidebar(*tab->window()); })
-        .value_or(m_context->defaultSidebar());
+    return m_tab.and_then([this](auto const& tab) -> std::optional<Ref<WebExtensionSidebar>> {
+        return tab->window() ? m_extensionContext->getSidebar(*(tab->window())) : std::nullopt;
+    }).value_or(m_extensionContext->defaultSidebar());
 }
 
 void WebExtensionSidebar::propertiesDidChange()
@@ -127,7 +129,11 @@ RetainPtr<CocoaImage> WebExtensionSidebar::icon(CGSize size)
         .or_else([&] -> std::optional<RetainPtr<CocoaImage>> {
             return parent().transform([&](auto const& parent) { return parent.get().icon(size); });
         })
-        .value_or(context.extension().actionIcon(size));
+        // using .or_else(..).value() is more efficient than value_or, since value_or will evaluate its argument
+        // regardless of whether or not it's used. by switching to or_else(..).value() we instead lazily evaluate
+        // the fallback value
+        .or_else([&] { return std::optional { RetainPtr(context.extension().actionIcon(size)) }; })
+        .value();
 }
 
 void WebExtensionSidebar::setIconsDictionary(NSDictionary *icons)
@@ -146,20 +152,26 @@ void WebExtensionSidebar::setIconsDictionary(NSDictionary *icons)
 
 String WebExtensionSidebar::title() const
 {
-    return m_titleOverride.value_or(
-        parent().transform([](auto const& parent) { return parent.get().title(); }).value_or(fallbackTitle)
-    );
+    return m_titleOverride
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->title(); }); })
+        .value_or(fallbackTitle);
 }
 
 void WebExtensionSidebar::setTitle(std::optional<String> titleOverride)
 {
-    m_titleOverride = titleOverride;
+    if (!titleOverride && isDefaultSidebar() && extensionContext())
+        m_titleOverride = getDefaultSidebarTitleFromExtension(extensionContext().value()->extension());
+    else
+        m_titleOverride = titleOverride;
+
     propertiesDidChange();
 }
 
 bool WebExtensionSidebar::isEnabled() const
 {
-    return m_isEnabled;
+    return m_isEnabled
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->isEnabled(); }); })
+        .value_or(false);
 }
 
 void WebExtensionSidebar::setEnabled(bool enabled)
@@ -196,14 +208,18 @@ void WebExtensionSidebar::closeSidebarWhenReady()
 
 String WebExtensionSidebar::sidebarPath() const
 {
-    return m_sidebarPathOverride.value_or(
-        parent().transform([](auto const& parent) { return parent.get().sidebarPath(); }).value_or(fallbackPath)
-    );
+    return m_sidebarPathOverride
+        .or_else([this] { return parent().transform([](auto const& parent) { return parent->sidebarPath(); }); })
+        .value_or(fallbackPath);
 }
 
 void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)
 {
-    m_sidebarPathOverride = sidebarPath;
+    if (!sidebarPath && isDefaultSidebar() && extensionContext())
+        m_sidebarPathOverride = getDefaultSidebarPathFromExtension(extensionContext().value()->extension());
+    else
+        m_sidebarPathOverride = sidebarPath;
+
     propertiesDidChange();
 }
 

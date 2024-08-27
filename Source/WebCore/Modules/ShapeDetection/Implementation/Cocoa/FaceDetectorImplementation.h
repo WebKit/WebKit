@@ -28,13 +28,14 @@
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #include "FaceDetectorInterface.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore::ShapeDetection {
 
 struct FaceDetectorOptions;
 
 class FaceDetectorImpl final : public FaceDetector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FaceDetectorImpl, WEBCORE_EXPORT);
 public:
     static Ref<FaceDetectorImpl> create(const FaceDetectorOptions& faceDetectorOptions)
     {

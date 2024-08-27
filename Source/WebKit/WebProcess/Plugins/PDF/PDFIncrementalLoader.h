@@ -48,7 +48,7 @@ class PDFPluginBase;
 class PDFPluginStreamLoaderClient;
 
 enum class ByteRangeRequestIdentifierType { };
-using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
+using ByteRangeRequestIdentifier = LegacyNullableObjectIdentifier<ByteRangeRequestIdentifierType>;
 using DataRequestCompletionHandler = Function<void(std::span<const uint8_t>)>;
 
 enum class CheckValidRanges : bool;

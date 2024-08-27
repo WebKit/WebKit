@@ -74,7 +74,7 @@
 
 - (NSUInteger)hash
 {
-    return _textInputContext.elementIdentifier.toUInt64();
+    return _textInputContext.elementIdentifier ? _textInputContext.elementIdentifier->toUInt64() : 0;
 }
 
 - (id)copyWithZone:(NSZone *)zone

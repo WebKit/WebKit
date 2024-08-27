@@ -32,9 +32,12 @@
 #import "ImageBuffer.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextDetectorImpl);
 
 TextDetectorImpl::TextDetectorImpl() = default;
 

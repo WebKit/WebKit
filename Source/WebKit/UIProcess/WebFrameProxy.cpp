@@ -87,11 +87,12 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
         && !allFrames().contains(frameID);
 }
 
-WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID)
+WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, IsMainFrame isMainFrame)
     : m_page(page)
     , m_frameProcess(process)
     , m_frameID(frameID)
     , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
+    , m_isMainFrame(isMainFrame)
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
@@ -156,10 +157,7 @@ void WebFrameProxy::webProcessWillShutDown()
 
 bool WebFrameProxy::isMainFrame() const
 {
-    if (!m_page)
-        return false;
-
-    return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
+    return m_isMainFrame == IsMainFrame::Yes;
 }
 
 WebProcessProxy& WebFrameProxy::process() const
@@ -416,7 +414,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     MESSAGE_CHECK(WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(frameID.processIdentifier() == process().coreProcessIdentifier());
 
-    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID);
+    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, WebFrameProxy::IsMainFrame::No);
     child->m_parentFrame = *this;
     child->m_frameName = frameName;
     page->createRemoteSubframesInOtherProcesses(child, frameName);

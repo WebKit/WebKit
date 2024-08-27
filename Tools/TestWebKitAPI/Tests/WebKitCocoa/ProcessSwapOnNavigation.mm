@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
@@ -5425,7 +5426,9 @@ static void runProcessSwapDueToRelatedWebViewTest(NSURL* relatedViewURL, NSURL* 
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5472,7 +5475,9 @@ TEST(ProcessSwap, RelatedWebViewBeforeWebProcessLaunch)
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5521,7 +5526,9 @@ TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
 
@@ -5580,7 +5587,9 @@ TEST(ProcessSwap, TerminatedSuspendedPageProcess)
     @autoreleasepool {
         auto webViewConfiguration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
         [webViewConfiguration2 setProcessPool:processPool.get()];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [webViewConfiguration2 _setRelatedWebView:webView.get()]; // Make sure it uses the same process.
+        ALLOW_DEPRECATED_DECLARATIONS_END
         auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
         [webView2 setNavigationDelegate:delegate.get()];
 
@@ -6033,7 +6042,9 @@ TEST(ProcessSwap, ProcessSwapInRelatedView)
 
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [webView2Configuration _setRelatedWebView:webView1.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
@@ -8195,6 +8206,37 @@ TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginToCOOPAndCOEPSame
 {
     // We expect a swap because the redirect doesn't have COOP=same-origin and COEP=require-corp.
     runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
+}
+
+TEST(ProcessSwap, ClientRedirectAfterCOOPIframeIgnored)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/main.html"_s, { "<script>window.open('opened.html')</script>"_s } },
+        { "/opened.html"_s, { "<iframe src='iframe.html'></iframe><script> onload = ()=>{ window.location = 'https://webkit.org/navigate-back-to-example.html' } </script>"_s } },
+        { "/iframe.html"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "hi"_s } },
+        { "/navigate-back-to-example.html"_s, { "<script> window.location = 'https://example.com/check-opener.html' </script>"_s } },
+        { "/check-opener.html"_s, { "<script>try { alert(window.opener) } catch (e) { alert(e) }</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    __block RetainPtr<WKWebView> opened;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        [opened setNavigationDelegate:navigationDelegate.get()];
+        return opened.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main.html"]]];
+    while (!opened)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ([opened _test_waitForAlert], "[object Window]");
 }
 
 TEST(ProcessSwap, NavigatingSameOriginWithoutCOOPWithRedirect)

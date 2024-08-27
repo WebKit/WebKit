@@ -29,6 +29,7 @@
 #include <variant>
 #include <wtf/Hasher.h>
 #include <wtf/StdSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 class IDBKeyData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBKeyData, WEBCORE_EXPORT);
 public:
     struct Date {
         double value { 0.0 };

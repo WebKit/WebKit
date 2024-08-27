@@ -253,7 +253,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     RequestPriority fetchPriorityHint : bitWidthOfFetchPriorityHint;
     ShouldEnableContentExtensionsCheck shouldEnableContentExtensionsCheck : bitWidthOfShouldEnableContentExtensionsCheck;
 
-    FetchIdentifier navigationPreloadIdentifier;
+    Markable<FetchIdentifier> navigationPreloadIdentifier;
     String nonce;
 };
 

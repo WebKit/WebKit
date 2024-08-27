@@ -32,6 +32,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 
@@ -43,7 +44,7 @@ class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 
 class ScrollingTreeNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingTreeNode> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeNode);
     friend class ScrollingTree;
 public:
     virtual ~ScrollingTreeNode();

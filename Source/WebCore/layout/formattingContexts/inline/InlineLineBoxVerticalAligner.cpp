@@ -36,7 +36,6 @@ namespace Layout {
 
 LineBoxVerticalAligner::LineBoxVerticalAligner(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineFormattingUtils(inlineFormattingContext)
 {
 }
 
@@ -63,7 +62,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
                 if (&layoutBox.parent() != &rootInlineBox.layoutBox() || inlineLevelBox.verticalAlign().type != VerticalAlign::Baseline)
                     return false;
 
-                if (inlineLevelBox.isAtomicInlineLevelBox()) {
+                if (inlineLevelBox.isAtomicInlineBox()) {
                     auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
                     return !inlineLevelBoxGeometry.marginBefore() && !inlineLevelBoxGeometry.marginAfter() && inlineLevelBoxGeometry.marginBoxHeight() <= rootInlineBox.layoutBounds().ascent;
                 }
@@ -485,7 +484,7 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
     // At this point we have a properly aligned set of inline level boxes. Let's find out if annotation marks have enough space.
     auto adjustLineBoxHeightIfNeeded = [&] {
         auto adjustLineBoxTopAndBottomForInlineBox = [&](const InlineLevelBox& inlineLevelBox) {
-            ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineLevelBox());
+            ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineBox());
             auto inlineBoxTop = lineBox.inlineLevelBoxAbsoluteTop(inlineLevelBox);
             auto inlineBoxBottom = inlineBoxTop + inlineLevelBox.logicalHeight();
 
@@ -518,7 +517,7 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
 
         adjustLineBoxTopAndBottomForInlineBox(lineBox.rootInlineBox());
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineLevelBox())
+            if (inlineLevelBox.isInlineBox() || inlineLevelBox.isAtomicInlineBox())
                 adjustLineBoxTopAndBottomForInlineBox(inlineLevelBox);
         }
 

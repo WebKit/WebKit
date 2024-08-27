@@ -29,7 +29,7 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSPropertyParserWorkerSafe.h"
+#include "CSSPropertyParserConsumer+Font.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "DOMPromiseProxy.h"
@@ -79,7 +79,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
             auto* document = dynamicDowncast<Document>(context);
-            auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, document ? CSSParserContext(*document) : HTMLStandardMode);
+            auto value = CSSPropertyParserHelpers::parseFontFaceSrc(string, document ? CSSParserContext(*document) : HTMLStandardMode);
             if (!value)
                 return Exception { ExceptionCode::SyntaxError };
             CSSFontFace::appendSources(result->backing(), *value, &context, false);
@@ -193,7 +193,7 @@ ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const Str
 
 ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const String& style)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceStyle(style, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceStyle(style, context)) {
         m_backing->setStyle(*value);
         return { };
     }
@@ -202,7 +202,7 @@ ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const Stri
 
 ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const String& weight)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceWeight(weight, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceWeight(weight, context)) {
         m_backing->setWeight(*value);
         return { };
     }
@@ -211,7 +211,7 @@ ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const Str
 
 ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const String& stretch)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceStretch(stretch, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceStretch(stretch, context)) {
         m_backing->setStretch(*value);
         return { };
     }
@@ -220,7 +220,7 @@ ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const St
 
 ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, const String& unicodeRange)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange(unicodeRange, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceUnicodeRange(unicodeRange, context)) {
         m_backing->setUnicodeRange(*value);
         return { };
     }
@@ -229,7 +229,7 @@ ExceptionOr<void> FontFace::setUnicodeRange(ScriptExecutionContext& context, con
 
 ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, const String& featureSettings)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings(featureSettings, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceFeatureSettings(featureSettings, context)) {
         m_backing->setFeatureSettings(*value);
         return { };
     }
@@ -238,7 +238,7 @@ ExceptionOr<void> FontFace::setFeatureSettings(ScriptExecutionContext& context, 
 
 ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const String& display)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceDisplay(display, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceDisplay(display, context)) {
         m_backing->setDisplay(*value);
         return { };
     }
@@ -247,7 +247,7 @@ ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const St
 
 ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const String& sizeAdjust)
 {
-    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceSizeAdjust(sizeAdjust, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceSizeAdjust(sizeAdjust, context)) {
         m_backing->setSizeAdjust(*value);
         return { };
     }

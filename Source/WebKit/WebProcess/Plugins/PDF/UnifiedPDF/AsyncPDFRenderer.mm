@@ -97,10 +97,10 @@ void AsyncPDFRenderer::startTrackingLayer(GraphicsLayer& layer)
     Ref layerRef = layer;
     if (auto* tiledBacking = layerRef->tiledBacking()) {
         tiledBacking->setClient(this);
-        m_tileGridToLayerIDMap.set(tiledBacking->primaryGridIdentifier(), layer.primaryLayerID());
+        m_tileGridToLayerIDMap.set(tiledBacking->primaryGridIdentifier(), *layer.primaryLayerID());
     }
 
-    m_layerIDtoLayerMap.set(layer.primaryLayerID(), WTFMove(layerRef));
+    m_layerIDtoLayerMap.set(*layer.primaryLayerID(), WTFMove(layerRef));
 }
 
 void AsyncPDFRenderer::stopTrackingLayer(GraphicsLayer& layer)
@@ -110,7 +110,7 @@ void AsyncPDFRenderer::stopTrackingLayer(GraphicsLayer& layer)
         tiledBacking->setClient(nullptr);
     }
 
-    m_layerIDtoLayerMap.remove(layer.primaryLayerID());
+    m_layerIDtoLayerMap.remove(*layer.primaryLayerID());
 }
 
 GraphicsLayer* AsyncPDFRenderer::layerForTileGrid(TileGridIdentifier identifier) const
