@@ -5026,7 +5026,9 @@ bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCo
 
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+#if !PLATFORM(COCOA)
     WTFBeginSignpost(this, FinalizeRenderingUpdate);
+#endif
 
     m_page->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
@@ -5035,7 +5037,9 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 #endif
     flushDeferredDidReceiveMouseEvent();
 
+#if !PLATFORM(COCOA)
     WTFEndSignpost(this, FinalizeRenderingUpdate);
+#endif
 }
 
 void WebPage::willStartRenderingUpdateDisplay()

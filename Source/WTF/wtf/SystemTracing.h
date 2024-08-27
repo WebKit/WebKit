@@ -266,7 +266,6 @@ WTF_EXTERN_C_END
     M(StreamClientConnection) \
     M(ScrollingPerformanceTestFingerDownInterval) \
     M(ScrollingPerformanceTestMomentumInterval) \
-    M(FinalizeRenderingUpdate) \
 
 #define DECLARE_WTF_SIGNPOST_NAME_ENUM(name) WTFOSSignpostName ## name,
 
@@ -284,7 +283,16 @@ enum WTFOSSignpostType {
 
 #endif
 
+#if HAVE(OS_SIGNPOST)
+
 #if HAVE(KDEBUG_H)
+// By default, os_signpost always emits signpost data to logd. We want to avoid that for WebKit
+// signposts. Instead, we use kdebug_is_enabled to make WebKit's os_signposts behave like kdebug
+// trace points (i.e. we only enable them if a tracing tool is active).
+#define WTFSignpostsEnabled() UNLIKELY(kdebug_is_enabled(KDBG_EVENTID(DBG_APPS, DBG_APPS_WEBKIT_MISC, 0)))
+#else
+#define WTFSignpostsEnabled() true
+#endif
 
 // The first argument to WTF{Emit,Begin,End}Signpost is a pointer that can be used to disambiguate
 // nested intervals with the same name (i.e. used to create an os_signpost_id). If you don't care
@@ -330,7 +338,7 @@ enum WTFOSSignpostType {
 
 #define WTFEmitSignpostWithType(type, emitMacro, pointer, name, timeDelta, timeFormat, format, ...) \
     do { \
-        if (UNLIKELY(kdebug_is_enabled(KDBG_EVENTID(DBG_APPS, DBG_APPS_WEBKIT_MISC, 0)))) \
+        if (WTFSignpostsEnabled()) \
             WTFEmitSignpostAlwaysWithType(type, emitMacro, pointer, name, timeDelta, timeFormat, format, ##__VA_ARGS__); \
     } while (0)
 
