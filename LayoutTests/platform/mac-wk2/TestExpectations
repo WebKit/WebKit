@@ -1844,3 +1844,6 @@ imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss
 
 # webkit.org/b/278683 [macOS wk2] imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html is a flaky failure
 imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html [ Pass Failure ]
+
+# webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim and macOS
+[ Ventura ] imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
