@@ -494,14 +494,6 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 }
 #endif
 
-static FloatRect boundariesForTextBox(const InlineIterator::TextBox& textBox)
-{
-    if (auto* svgInlineTextBox = dynamicDowncast<SVGInlineTextBox>(textBox.legacyInlineBox()))
-        return svgInlineTextBox->calculateBoundaries();
-
-    return textBox.visualRectIgnoringBlockDirection();
-}
-
 static std::optional<IntRect> ellipsisRectForTextBox(const InlineIterator::TextBox& textBox, unsigned start, unsigned end)
 {
     auto lineBox = textBox.lineBox();
@@ -530,7 +522,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
 {
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
-        auto boundaries = boundariesForTextBox(textBox);
+        auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
@@ -651,7 +643,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
         }
 
         if (start <= textBox.start() && textBox.end() <= end) {
-            auto boundaries = boundariesForTextBox(textBox);
+            auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);
