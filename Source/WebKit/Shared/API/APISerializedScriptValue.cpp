@@ -97,7 +97,7 @@ static WKRetainPtr<WKTypeRef> valueToWKObject(JSContextRef context, JSValueRef v
         size_t bufferSize = JSStringGetMaximumUTF8CStringSize(input);
         Vector<char> buffer(bufferSize);
         size_t utf8Length = JSStringGetUTF8CString(input, buffer.data(), bufferSize);
-        ASSERT(buffer[utf8Length] == '\0');
+        ASSERT(buffer[utf8Length - 1] == '\0');
         return adoptWK(WKStringCreateWithUTF8CStringWithLength(buffer.data(), utf8Length - 1));
     };
 
