@@ -169,20 +169,26 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     m_page.updateRendering();
     m_page.flushPendingEditorStateUpdate();
 
+    WTFBeginSignpost(this, FlushRootCompositingLayer);
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_client.didFlushRootLayer(m_visibleContentsRect);
+    WTFEndSignpost(this, FlushRootCompositingLayer);
 
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
     m_page.finalizeRenderingUpdate(flags);
 
+    WTFBeginSignpost(this, FinalizeCompositingStateFlush);
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     auto [performLayerSync, platformLayerUpdated] = coordinatedLayer.finalizeCompositingStateFlush();
     shouldSyncFrame |= performLayerSync;
     shouldSyncFrame |= m_forceFrameSync;
+    WTFEndSignpost(this, FinalizeCompositingStateFlush);
 
     if (shouldSyncFrame) {
+        WTFBeginSignpost(this, SyncFrame);
+
         m_nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
@@ -203,6 +209,8 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
         m_client.commitSceneState(m_nicosia.scene);
         m_forceFrameSync = false;
+
+        WTFEndSignpost(this, SyncFrame);
     }
 #if HAVE(DISPLAY_LINK)
     else if (platformLayerUpdated)

@@ -149,6 +149,7 @@ public:
         case RenderServerSnapshotStart:
         case TakeSnapshotStart:
         case SyntheticMomentumStart:
+        case UpdateLayerContentBuffersStart:
         case CommitLayerTreeStart:
         case ProcessLaunchStart:
         case InitializeSandboxStart:
@@ -207,6 +208,7 @@ public:
         case RenderServerSnapshotEnd:
         case TakeSnapshotEnd:
         case SyntheticMomentumEnd:
+        case UpdateLayerContentBuffersEnd:
         case CommitLayerTreeEnd:
         case ProcessLaunchEnd:
         case InitializeSandboxEnd:
@@ -409,6 +411,9 @@ private:
             return "RemoteLayerTreeScheduleRenderingUpdate"_s;
         case DisplayLinkUpdate:
             return "DisplayLinkUpdate"_s;
+        case UpdateLayerContentBuffersStart:
+        case UpdateLayerContentBuffersEnd:
+            return "UpdateLayerContentBuffers"_s;
 
         case CommitLayerTreeStart:
         case CommitLayerTreeEnd:

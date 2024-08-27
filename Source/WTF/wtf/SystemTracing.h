@@ -178,6 +178,8 @@ enum TracePointCode {
     FrameCompositionEnd,
     LayerFlushStart,
     LayerFlushEnd,
+    UpdateLayerContentBuffersStart,
+    UpdateLayerContentBuffersEnd,
 #endif
 
 };
