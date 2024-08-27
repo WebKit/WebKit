@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<link rel=author href="mailto:jarhar@chromium.org">
+<link rel=author href="mailto:lwarlow@igalia.com">
+<link rel=help href="https://issues.chromium.org/issues/329118508">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id=mypopover popover=auto>popover</div>
+
+<iframe name=foo></iframe>
+<form target=foo action="about:blank">
+  <button id=reset-in-form type=reset popovertarget=mypopover>reset</button>
+  <button id=submit-in-form type=submit popovertarget=mypopover>submit</button>
+  <button id=button-in-form type=button popovertarget=mypopover>type=button</button>
+  <input id=reset-in-form-input type=reset popovertarget=mypopover value="reset input">
+  <input id=submit-in-form-input type=submit popovertarget=mypopover value="submit input">
+  <input id=button-in-form-input type=button popovertarget=mypopover value="type=button input">
+</form>
+
+<button id=reset-outside-form type=reset popovertarget=mypopover>reset</button>
+<button id=submit-outside-form type=submit popovertarget=mypopover>submit</button>
+<button id=button-outside-form type=button popovertarget=mypopover>type=button</button>
+<input id=reset-outside-form-input type=reset popovertarget=mypopover value="reset input">
+<input id=submit-outside-form-input type=submit popovertarget=mypopover value="submit input">
+<input id=button-outside-form-input type=button popovertarget=mypopover value="type=button input">
+
+<script>
+const testButton = (id, expectedToToggle) => {
+  document.getElementById(id).click();
+  if (expectedToToggle) {
+    assert_true(mypopover.matches(':popover-open'),
+      `${id}: button should open the popover.`);
+  } else {
+    assert_false(mypopover.matches(':popover-open'),
+      `${id}: button should not open the popover.`);
+  }
+  if (mypopover.matches(':popover-open')) {
+    mypopover.hidePopover();
+  }
+};
+
+const testInput = (id, expectedToToggle) => {
+  document.getElementById(id+"-input").click();
+  if (expectedToToggle) {
+    assert_true(mypopover.matches(':popover-open'),
+      `${id}: input should open the popover.`);
+  } else {
+    assert_false(mypopover.matches(':popover-open'),
+      `${id}: input should not open the popover.`);
+  }
+  if (mypopover.matches(':popover-open')) {
+    mypopover.hidePopover();
+  }
+};
+
+test(() => {
+  testButton('reset-in-form', true);
+}, 'Button type=reset should run popover algorithms when in a form.');
+
+test(() => {
+  testButton('submit-in-form', false);
+}, 'Button type=submit should not run popover algorithms when in a form.');
+
+test(() => {
+  testButton('button-in-form', true);
+}, 'Button type=button should run popover algorithms when in a form.');
+
+test(() => {
+  testButton('reset-outside-form', true);
+}, 'Button type=reset should run popover algorithms when not in a form.');
+
+test(() => {
+  testButton('submit-outside-form', true);
+}, 'Button type=submit should run popover algorithms when not in a form.');
+
+test(() => {
+  testButton('button-outside-form', true);
+}, 'Button type=button should run popover algorithms when not in a form.');
+
+test(() => {
+  testInput('reset-in-form', true);
+}, 'input type=reset should run popover algorithms when in a form.');
+
+test(() => {
+  testInput('submit-in-form', false);
+}, 'input type=submit should not run popover algorithms when in a form.');
+
+test(() => {
+  testInput('button-in-form', true);
+}, 'input type=button should run popover algorithms when in a form.');
+
+test(() => {
+  testInput('reset-outside-form', true);
+}, 'input type=reset should run popover algorithms when not in a form.');
+
+test(() => {
+  testInput('submit-outside-form', true);
+}, 'input type=submit should not run popover algorithms when not in a form.');
+
+test(() => {
+  testInput('button-outside-form', true);
+}, 'input type=button should run popover algorithms when not in a form.');
+</script>

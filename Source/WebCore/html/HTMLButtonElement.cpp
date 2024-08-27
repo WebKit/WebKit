@@ -161,8 +161,11 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        } else
+        }
+
+        if (!(protectedForm && m_type == SUBMIT))
             handlePopoverTargetAction();
+
     }
 
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {

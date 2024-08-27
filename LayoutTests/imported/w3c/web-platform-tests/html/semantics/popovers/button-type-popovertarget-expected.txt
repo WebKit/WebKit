@@ -1,0 +1,17 @@
+
+reset  submit  type=button
+reset submit type=button
+
+PASS Button type=reset should run popover algorithms when in a form.
+PASS Button type=submit should not run popover algorithms when in a form.
+PASS Button type=button should run popover algorithms when in a form.
+PASS Button type=reset should run popover algorithms when not in a form.
+PASS Button type=submit should run popover algorithms when not in a form.
+PASS Button type=button should run popover algorithms when not in a form.
+PASS input type=reset should run popover algorithms when in a form.
+PASS input type=submit should not run popover algorithms when in a form.
+PASS input type=button should run popover algorithms when in a form.
+PASS input type=reset should run popover algorithms when not in a form.
+PASS input type=submit should not run popover algorithms when not in a form.
+PASS input type=button should run popover algorithms when not in a form.
+
