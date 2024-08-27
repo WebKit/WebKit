@@ -90,6 +90,7 @@ imported/w3c/web-platform-tests/css/css-content/quotes-026.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ Pass ]
+fast/text/text-underline-position-under.html [ Pass ]
 
 # Fails when cookies are not SameSite=Lax by default
 http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
