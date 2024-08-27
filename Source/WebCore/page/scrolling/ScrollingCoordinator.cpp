@@ -159,8 +159,8 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     EventTrackingRegions eventTrackingRegions;
 
     // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
-    for (auto* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
-        auto* localSubframe = dynamicDowncast<LocalFrame>(subframe);
+    for (RefPtr subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
+        auto* localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
         if (!localSubframe)
             continue;
         auto* subframeView = localSubframe->view();

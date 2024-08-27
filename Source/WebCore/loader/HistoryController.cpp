@@ -588,8 +588,8 @@ void HistoryController::recursiveUpdateForCommit()
     }
 
     // Iterate over the rest of the tree
-    for (auto* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
+    for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
             localChild->checkedHistory()->recursiveUpdateForCommit();
     }
 }
@@ -639,8 +639,8 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     }
 
     // Iterate over the rest of the tree.
-    for (auto* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
+    for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
             localChild->checkedHistory()->recursiveUpdateForSameDocumentNavigation();
     }
 }
@@ -678,8 +678,8 @@ bool HistoryController::currentItemShouldBeReplaced() const
 void HistoryController::clearPreviousItem()
 {
     m_previousItem = nullptr;
-    for (auto* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
+    for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child.get()))
             localChild->checkedHistory()->clearPreviousItem();
     }
 }

@@ -709,8 +709,8 @@ VisibleSelection LocalFrame::rangedSelectionInitialExtent() const
 void LocalFrame::recursiveSetUpdateAppearanceEnabled(bool enabled)
 {
     selection().setUpdateAppearanceEnabled(enabled);
-    for (auto* child = tree().firstChild(); child; child = child->tree().nextSibling()) {
-        auto* localChild = dynamicDowncast<LocalFrame>(child);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child.get());
         if (!localChild)
             continue;
         localChild->recursiveSetUpdateAppearanceEnabled(enabled);
@@ -838,8 +838,8 @@ void LocalFrame::resetAllGeolocationPermission()
     if (document()->domWindow())
         document()->domWindow()->resetAllGeolocationPermission();
 
-    for (auto* child = tree().firstChild(); child; child = child->tree().nextSibling()) {
-        auto* localChild = dynamicDowncast<LocalFrame>(child);
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* localChild = dynamicDowncast<LocalFrame>(child.get());
         if (!localChild)
             continue;
         localChild->resetAllGeolocationPermission();
