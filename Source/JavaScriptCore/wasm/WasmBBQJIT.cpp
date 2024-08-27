@@ -3189,11 +3189,11 @@ B3::Type BBQJIT::toB3Type(Type type)
 B3::Type BBQJIT::toB3Type(TypeKind kind)
 {
     switch (kind) {
-    case TypeKind::I31ref:
     case TypeKind::I32:
         return B3::Type(B3::Int32);
     case TypeKind::I64:
         return B3::Type(B3::Int64);
+    case TypeKind::I31ref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
     case TypeKind::Structref:
