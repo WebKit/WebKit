@@ -2,17 +2,17 @@
    bison -d -p xpathyy XPathGrammar.y -o XPathGrammar.cpp
  */
 
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
-/* Skeleton implementation for Bison's Yacc-like parsers in C
+/* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,9 +20,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -40,6 +38,10 @@
 /* C LALR(1) parser skeleton written by Richard Stallman, by
    simplifying the original so-called "semantic" parser.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 /* All symbols defined below should begin with yy or YY, to avoid
    infringing on user name space.  This should be done even for local
    variables, as they might otherwise be expanded by user macros.
@@ -47,86 +49,32 @@
    define necessary library symbols; they are noted "INFRINGES ON
    USER NAME SPACE" below.  */
 
-/* Identify Bison output.  */
-#define YYBISON 1
+/* Identify Bison output, and Bison version.  */
+#define YYBISON 30802
 
-/* Bison version.  */
-#define YYBISON_VERSION "2.3"
+/* Bison version string.  */
+#define YYBISON_VERSION "3.8.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
 
 /* Pure parsers.  */
-#define YYPURE 1
+#define YYPURE 2
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
+/* Push parsers.  */
+#define YYPUSH 0
+
+/* Pull parsers.  */
+#define YYPULL 1
+
 
 /* Substitute the variable and function names.  */
-#define yyparse xpathyyparse
-#define yylex   xpathyylex
-#define yyerror xpathyyerror
-#define yylval  xpathyylval
-#define yychar  xpathyychar
-#define yydebug xpathyydebug
+#define yyparse         xpathyyparse
+#define yylex           xpathyylex
+#define yyerror         xpathyyerror
+#define yydebug         xpathyydebug
 
-
-/* Tokens.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     MULOP = 258,
-     RELOP = 259,
-     EQOP = 260,
-     MINUS = 261,
-     PLUS = 262,
-     AND = 263,
-     OR = 264,
-     FUNCTIONNAME = 265,
-     LITERAL = 266,
-     NAMETEST = 267,
-     NUMBER = 268,
-     NODETYPE = 269,
-     VARIABLEREFERENCE = 270,
-     AXISNAME = 271,
-     COMMENT = 272,
-     DOTDOT = 273,
-     PI = 274,
-     NODE = 275,
-     SLASHSLASH = 276,
-     TEXT_ = 277,
-     XPATH_ERROR = 278
-   };
-#endif
-/* Tokens.  */
-#define MULOP 258
-#define RELOP 259
-#define EQOP 260
-#define MINUS 261
-#define PLUS 262
-#define AND 263
-#define OR 264
-#define FUNCTIONNAME 265
-#define LITERAL 266
-#define NAMETEST 267
-#define NUMBER 268
-#define NODETYPE 269
-#define VARIABLEREFERENCE 270
-#define AXISNAME 271
-#define COMMENT 272
-#define DOTDOT 273
-#define PI 274
-#define NODE 275
-#define SLASHSLASH 276
-#define TEXT_ 277
-#define XPATH_ERROR 278
-
-
-
-
-/* Copy the first part of user declarations.  */
+/* First part of user prologue.  */
 #line 28 "XPathGrammar.y"
 
 
@@ -152,50 +100,100 @@
 #define YYMAXDEPTH 10000
 
 
+#line 101 "XPathGrammar.cpp"
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
+# ifndef YY_CAST
+#  ifdef __cplusplus
+#   define YY_CAST(Type, Val) static_cast<Type> (Val)
+#   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
+#  else
+#   define YY_CAST(Type, Val) ((Type) (Val))
+#   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
+#  endif
+# endif
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
 
-/* Enabling verbose error messages.  */
-#ifdef YYERROR_VERBOSE
-# undef YYERROR_VERBOSE
-# define YYERROR_VERBOSE 1
-#else
-# define YYERROR_VERBOSE 0
-#endif
+#include "XPathGrammar.h"
+/* Symbol kind.  */
+enum yysymbol_kind_t
+{
+  YYSYMBOL_YYEMPTY = -2,
+  YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
+  YYSYMBOL_YYerror = 1,                    /* error  */
+  YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
+  YYSYMBOL_MULOP = 3,                      /* MULOP  */
+  YYSYMBOL_EQOP = 4,                       /* EQOP  */
+  YYSYMBOL_RELOP = 5,                      /* RELOP  */
+  YYSYMBOL_PLUS = 6,                       /* PLUS  */
+  YYSYMBOL_MINUS = 7,                      /* MINUS  */
+  YYSYMBOL_OR = 8,                         /* OR  */
+  YYSYMBOL_AND = 9,                        /* AND  */
+  YYSYMBOL_FUNCTIONNAME = 10,              /* FUNCTIONNAME  */
+  YYSYMBOL_LITERAL = 11,                   /* LITERAL  */
+  YYSYMBOL_NAMETEST = 12,                  /* NAMETEST  */
+  YYSYMBOL_NUMBER = 13,                    /* NUMBER  */
+  YYSYMBOL_NODETYPE = 14,                  /* NODETYPE  */
+  YYSYMBOL_VARIABLEREFERENCE = 15,         /* VARIABLEREFERENCE  */
+  YYSYMBOL_AXISNAME = 16,                  /* AXISNAME  */
+  YYSYMBOL_COMMENT = 17,                   /* COMMENT  */
+  YYSYMBOL_DOTDOT = 18,                    /* DOTDOT  */
+  YYSYMBOL_PI = 19,                        /* PI  */
+  YYSYMBOL_NODE = 20,                      /* NODE  */
+  YYSYMBOL_SLASHSLASH = 21,                /* SLASHSLASH  */
+  YYSYMBOL_TEXT_ = 22,                     /* TEXT_  */
+  YYSYMBOL_XPATH_ERROR = 23,               /* XPATH_ERROR  */
+  YYSYMBOL_24_ = 24,                       /* '/'  */
+  YYSYMBOL_25_ = 25,                       /* '@'  */
+  YYSYMBOL_26_ = 26,                       /* '('  */
+  YYSYMBOL_27_ = 27,                       /* ')'  */
+  YYSYMBOL_28_ = 28,                       /* '['  */
+  YYSYMBOL_29_ = 29,                       /* ']'  */
+  YYSYMBOL_30_ = 30,                       /* '.'  */
+  YYSYMBOL_31_ = 31,                       /* ','  */
+  YYSYMBOL_32_ = 32,                       /* '|'  */
+  YYSYMBOL_YYACCEPT = 33,                  /* $accept  */
+  YYSYMBOL_Top = 34,                       /* Top  */
+  YYSYMBOL_Expr = 35,                      /* Expr  */
+  YYSYMBOL_LocationPath = 36,              /* LocationPath  */
+  YYSYMBOL_AbsoluteLocationPath = 37,      /* AbsoluteLocationPath  */
+  YYSYMBOL_RelativeLocationPath = 38,      /* RelativeLocationPath  */
+  YYSYMBOL_Step = 39,                      /* Step  */
+  YYSYMBOL_AxisSpecifier = 40,             /* AxisSpecifier  */
+  YYSYMBOL_NodeTest = 41,                  /* NodeTest  */
+  YYSYMBOL_OptionalPredicateList = 42,     /* OptionalPredicateList  */
+  YYSYMBOL_PredicateList = 43,             /* PredicateList  */
+  YYSYMBOL_Predicate = 44,                 /* Predicate  */
+  YYSYMBOL_DescendantOrSelf = 45,          /* DescendantOrSelf  */
+  YYSYMBOL_AbbreviatedStep = 46,           /* AbbreviatedStep  */
+  YYSYMBOL_PrimaryExpr = 47,               /* PrimaryExpr  */
+  YYSYMBOL_FunctionCall = 48,              /* FunctionCall  */
+  YYSYMBOL_ArgumentList = 49,              /* ArgumentList  */
+  YYSYMBOL_Argument = 50,                  /* Argument  */
+  YYSYMBOL_UnionExpr = 51,                 /* UnionExpr  */
+  YYSYMBOL_PathExpr = 52,                  /* PathExpr  */
+  YYSYMBOL_FilterExpr = 53,                /* FilterExpr  */
+  YYSYMBOL_OrExpr = 54,                    /* OrExpr  */
+  YYSYMBOL_AndExpr = 55,                   /* AndExpr  */
+  YYSYMBOL_EqualityExpr = 56,              /* EqualityExpr  */
+  YYSYMBOL_RelationalExpr = 57,            /* RelationalExpr  */
+  YYSYMBOL_AdditiveExpr = 58,              /* AdditiveExpr  */
+  YYSYMBOL_MultiplicativeExpr = 59,        /* MultiplicativeExpr  */
+  YYSYMBOL_UnaryExpr = 60                  /* UnaryExpr  */
+};
+typedef enum yysymbol_kind_t yysymbol_kind_t;
 
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
-#endif
 
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
-#line 57 "XPathGrammar.y"
-{ 
-    WebCore::XPath::NumericOp::Opcode numericOpcode;
-    WebCore::XPath::EqTestOp::Opcode equalityTestOpcode;
-    StringImpl* string;
-    WebCore::XPath::Step::Axis axis;
-    WebCore::XPath::LocationPath* locationPath;
-    WebCore::XPath::Step::NodeTest* nodeTest;
-    Vector<std::unique_ptr<WebCore::XPath::Expression>>* expressionVector;
-    WebCore::XPath::Step* step;
-    WebCore::XPath::Expression* expression;
-}
-/* Line 193 of yacc.c.  */
-#line 187 "XPathGrammar.cpp"
-	YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
-#endif
-
-
-
-/* Copy the second part of user declarations.  */
+/* Second part of user prologue.  */
 #line 101 "XPathGrammar.y"
 
 
@@ -203,39 +201,94 @@ static int xpathyylex(YYSTYPE* yylval, WebCore::XPath::Parser& parser) { return 
 static void xpathyyerror(WebCore::XPath::Parser&, const char*) { }
 
 
+#line 202 "XPathGrammar.cpp"
 
-/* Line 216 of yacc.c.  */
-#line 206 "XPathGrammar.cpp"
 
 #ifdef short
 # undef short
 #endif
 
-#ifdef YYTYPE_UINT8
-typedef YYTYPE_UINT8 yytype_uint8;
-#else
-typedef unsigned char yytype_uint8;
+/* On compilers that do not define __PTRDIFF_MAX__ etc., make sure
+   <limits.h> and (if available) <stdint.h> are included
+   so that the code can choose integer types of a good width.  */
+
+#ifndef __PTRDIFF_MAX__
+# include <limits.h> /* INFRINGES ON USER NAME SPACE */
+# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+#  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
+#  define YY_STDINT_H
+# endif
 #endif
 
-#ifdef YYTYPE_INT8
-typedef YYTYPE_INT8 yytype_int8;
-#elif (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+/* Narrow types that promote to a signed type and that can represent a
+   signed or unsigned integer of at least N bits.  In tables they can
+   save space and decrease cache pressure.  Promoting to a signed type
+   helps avoid bugs in integer arithmetic.  */
+
+#ifdef __INT_LEAST8_MAX__
+typedef __INT_LEAST8_TYPE__ yytype_int8;
+#elif defined YY_STDINT_H
+typedef int_least8_t yytype_int8;
+#else
 typedef signed char yytype_int8;
-#else
-typedef short int yytype_int8;
 #endif
 
-#ifdef YYTYPE_UINT16
-typedef YYTYPE_UINT16 yytype_uint16;
+#ifdef __INT_LEAST16_MAX__
+typedef __INT_LEAST16_TYPE__ yytype_int16;
+#elif defined YY_STDINT_H
+typedef int_least16_t yytype_int16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef short yytype_int16;
 #endif
 
-#ifdef YYTYPE_INT16
-typedef YYTYPE_INT16 yytype_int16;
+/* Work around bug in HP-UX 11.23, which defines these macros
+   incorrectly for preprocessor constants.  This workaround can likely
+   be removed in 2023, as HPE has promised support for HP-UX 11.23
+   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
+   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
+#ifdef __hpux
+# undef UINT_LEAST8_MAX
+# undef UINT_LEAST16_MAX
+# define UINT_LEAST8_MAX 255
+# define UINT_LEAST16_MAX 65535
+#endif
+
+#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST8_TYPE__ yytype_uint8;
+#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST8_MAX <= INT_MAX)
+typedef uint_least8_t yytype_uint8;
+#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
+typedef unsigned char yytype_uint8;
 #else
-typedef short int yytype_int16;
+typedef short yytype_uint8;
+#endif
+
+#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST16_TYPE__ yytype_uint16;
+#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST16_MAX <= INT_MAX)
+typedef uint_least16_t yytype_uint16;
+#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
+typedef unsigned short yytype_uint16;
+#else
+typedef int yytype_uint16;
+#endif
+
+#ifndef YYPTRDIFF_T
+# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+#  define YYPTRDIFF_T __PTRDIFF_TYPE__
+#  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
+# elif defined PTRDIFF_MAX
+#  ifndef ptrdiff_t
+#   include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  endif
+#  define YYPTRDIFF_T ptrdiff_t
+#  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
+# else
+#  define YYPTRDIFF_T long
+#  define YYPTRDIFF_MAXIMUM LONG_MAX
+# endif
 #endif
 
 #ifndef YYSIZE_T
@@ -243,55 +296,106 @@ typedef short int yytype_int16;
 #  define YYSIZE_T __SIZE_TYPE__
 # elif defined size_t
 #  define YYSIZE_T size_t
-# elif ! defined YYSIZE_T && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+# elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
 # else
-#  define YYSIZE_T unsigned int
+#  define YYSIZE_T unsigned
 # endif
 #endif
 
-#define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
+#define YYSIZE_MAXIMUM                                  \
+  YY_CAST (YYPTRDIFF_T,                                 \
+           (YYPTRDIFF_MAXIMUM < YY_CAST (YYSIZE_T, -1)  \
+            ? YYPTRDIFF_MAXIMUM                         \
+            : YY_CAST (YYSIZE_T, -1)))
+
+#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+
+
+/* Stored state numbers (used for stacks). */
+typedef yytype_int8 yy_state_t;
+
+/* State numbers in computations.  */
+typedef int yy_state_fast_t;
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(msgid) dgettext ("bison-runtime", msgid)
+#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
 # endif
 # ifndef YY_
-#  define YY_(msgid) msgid
+#  define YY_(Msgid) Msgid
+# endif
+#endif
+
+
+#ifndef YY_ATTRIBUTE_PURE
+# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
+# else
+#  define YY_ATTRIBUTE_PURE
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
+# else
+#  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(e) ((void) (e))
+# define YY_USE(E) ((void) (E))
 #else
-# define YYUSE(e) /* empty */
+# define YY_USE(E) /* empty */
 #endif
 
-/* Identity function, used to suppress warnings about constant conditions.  */
-#ifndef lint
-# define YYID(n) (n)
+/* Suppress an incorrect diagnostic about yylval being uninitialized.  */
+#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
+# else
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
+    _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# endif
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
+    _Pragma ("GCC diagnostic pop")
 #else
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static int
-YYID (int i)
-#else
-static int
-YYID (i)
-    int i;
+# define YY_INITIAL_VALUE(Value) Value
 #endif
-{
-  return i;
-}
+#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END
+#endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
 #endif
 
-#if ! defined yyoverflow || YYERROR_VERBOSE
+#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+# define YY_IGNORE_USELESS_CAST_BEGIN                          \
+    _Pragma ("GCC diagnostic push")                            \
+    _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
+# define YY_IGNORE_USELESS_CAST_END            \
+    _Pragma ("GCC diagnostic pop")
+#endif
+#ifndef YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_END
+#endif
+
+
+#define YY_ASSERT(E) ((void) (0 && (E)))
+
+#if !defined yyoverflow
 
 /* The parser invokes alloca or malloc; define the necessary symbols.  */
 
@@ -308,11 +412,11 @@ YYID (i)
 #    define alloca _alloca
 #   else
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-#     ifndef _STDLIB_H
-#      define _STDLIB_H 1
+      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
+#     ifndef EXIT_SUCCESS
+#      define EXIT_SUCCESS 0
 #     endif
 #    endif
 #   endif
@@ -320,8 +424,8 @@ YYID (i)
 # endif
 
 # ifdef YYSTACK_ALLOC
-   /* Pacify GCC's `empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (YYID (0))
+   /* Pacify GCC's 'empty if-body' warning.  */
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
@@ -335,92 +439,93 @@ YYID (i)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
 #   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
 #  endif
-#  if (defined __cplusplus && ! defined _STDLIB_H \
+#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
-	     && (defined YYFREE || defined free)))
+             && (defined YYFREE || defined free)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-#   ifndef _STDLIB_H
-#    define _STDLIB_H 1
+#   ifndef EXIT_SUCCESS
+#    define EXIT_SUCCESS 0
 #   endif
 #  endif
 #  ifndef YYMALLOC
 #   define YYMALLOC malloc
-#   if ! defined malloc && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined malloc && ! defined EXIT_SUCCESS
 void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
 #   define YYFREE free
-#   if ! defined free && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined free && ! defined EXIT_SUCCESS
 void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 # endif
-#endif /* ! defined yyoverflow || YYERROR_VERBOSE */
-
+#endif /* !defined yyoverflow */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-	 || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
-  yytype_int16 yyss;
-  YYSTYPE yyvs;
-  };
+  yy_state_t yyss_alloc;
+  YYSTYPE yyvs_alloc;
+};
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
+# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE)) \
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
       + YYSTACK_GAP_MAXIMUM)
 
-/* Copy COUNT objects from FROM to TO.  The source and destination do
-   not overlap.  */
-# ifndef YYCOPY
-#  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(To, From, Count) \
-      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
-#  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
-      while (YYID (0))
-#  endif
-# endif
+# define YYCOPY_NEEDED 1
 
 /* Relocate STACK from its old location to the new one.  The
    local variables YYSIZE and YYSTACKSIZE give the old and new number of
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack)					\
-    do									\
-      {									\
-	YYSIZE_T yynewbytes;						\
-	YYCOPY (&yyptr->Stack, Stack, yysize);				\
-	Stack = &yyptr->Stack;						\
-	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-	yyptr += yynewbytes / sizeof (*yyptr);				\
-      }									\
-    while (YYID (0))
+# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
+    do                                                                  \
+      {                                                                 \
+        YYPTRDIFF_T yynewbytes;                                         \
+        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
+        Stack = &yyptr->Stack_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
+      }                                                                 \
+    while (0)
 
 #endif
+
+#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
+/* Copy COUNT objects from SRC to DST.  The source and destination do
+   not overlap.  */
+# ifndef YYCOPY
+#  if defined __GNUC__ && 1 < __GNUC__
+#   define YYCOPY(Dst, Src, Count) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
+#  else
+#   define YYCOPY(Dst, Src, Count)              \
+      do                                        \
+        {                                       \
+          YYPTRDIFF_T yyi;                      \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (Dst)[yyi] = (Src)[yyi];            \
+        }                                       \
+      while (0)
+#  endif
+# endif
+#endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  52
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   132
+#define YYLAST   134
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  33
@@ -428,18 +533,23 @@ union yyalloc
 #define YYNNTS  28
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  64
-/* YYNRULES -- Number of states.  */
+/* YYNSTATES -- Number of states.  */
 #define YYNSTATES  101
 
-/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
-#define YYUNDEFTOK  2
+/* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   278
 
-#define YYTRANSLATE(YYX)						\
-  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
-/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
-static const yytype_uint8 yytranslate[] =
+/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex, with out-of-bounds checking.  */
+#define YYTRANSLATE(YYX)                                \
+  (0 <= (YYX) && (YYX) <= YYMAXUTOK                     \
+   ? YY_CAST (yysymbol_kind_t, yytranslate[YYX])        \
+   : YYSYMBOL_YYUNDEF)
+
+/* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex.  */
+static const yytype_int8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -472,115 +582,83 @@ static const yytype_uint8 yytranslate[] =
 };
 
 #if YYDEBUG
-/* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
-   YYRHS.  */
-static const yytype_uint8 yyprhs[] =
-{
-       0,     0,     3,     5,     7,     9,    11,    13,    16,    19,
-      21,    25,    29,    32,    35,    39,    43,    45,    47,    49,
-      53,    57,    61,    65,    70,    71,    73,    75,    78,    82,
-      84,    86,    88,    90,    94,    96,    98,   100,   104,   109,
-     111,   115,   117,   119,   123,   125,   127,   131,   135,   137,
-     140,   142,   146,   148,   152,   154,   158,   160,   164,   166,
-     170,   174,   176,   180,   182
-};
-
-/* YYRHS -- A `-1'-separated list of the rules' RHS.  */
-static const yytype_int8 yyrhs[] =
-{
-      34,     0,    -1,    35,    -1,    54,    -1,    37,    -1,    38,
-      -1,    24,    -1,    24,    38,    -1,    45,    38,    -1,    39,
-      -1,    38,    24,    39,    -1,    38,    45,    39,    -1,    41,
-      42,    -1,    12,    42,    -1,    40,    41,    42,    -1,    40,
-      12,    42,    -1,    46,    -1,    16,    -1,    25,    -1,    20,
-      26,    27,    -1,    22,    26,    27,    -1,    17,    26,    27,
-      -1,    19,    26,    27,    -1,    19,    26,    11,    27,    -1,
-      -1,    43,    -1,    44,    -1,    43,    44,    -1,    28,    35,
-      29,    -1,    21,    -1,    30,    -1,    18,    -1,    15,    -1,
-      26,    35,    27,    -1,    11,    -1,    13,    -1,    48,    -1,
-      10,    26,    27,    -1,    10,    26,    49,    27,    -1,    50,
-      -1,    49,    31,    50,    -1,    35,    -1,    52,    -1,    51,
-      32,    52,    -1,    36,    -1,    53,    -1,    53,    24,    38,
-      -1,    53,    45,    38,    -1,    47,    -1,    47,    43,    -1,
-      55,    -1,    54,     9,    55,    -1,    56,    -1,    55,     8,
-      56,    -1,    57,    -1,    56,     5,    57,    -1,    58,    -1,
-      57,     4,    58,    -1,    59,    -1,    58,     7,    59,    -1,
-      58,     6,    59,    -1,    60,    -1,    59,     3,    60,    -1,
-      51,    -1,     6,    60,    -1
-};
-
-/* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+/* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+static const yytype_int16 yyrline[] =
 {
        0,   111,   111,   118,   122,   128,   132,   137,   142,   150,
      156,   162,   171,   181,   199,   210,   228,   232,   234,   241,
-     246,   251,   256,   261,   270,   274,   278,   284,   292,   299,
-     306,   311,   318,   324,   329,   335,   341,   345,   353,   364,
-     370,   378,   382,   384,   391,   396,   398,   404,   413,   415,
-     423,   425,   432,   434,   441,   443,   450,   452,   459,   461,
-     466,   473,   475,   482,   484
+     246,   251,   256,   261,   272,   276,   280,   286,   294,   301,
+     308,   313,   320,   326,   331,   337,   343,   347,   355,   366,
+     372,   380,   384,   386,   393,   398,   400,   406,   415,   417,
+     425,   427,   434,   436,   443,   445,   452,   454,   461,   463,
+     468,   475,   477,   484,   486
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+/** Accessing symbol of state STATE.  */
+#define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
+
+#if YYDEBUG || 0
+/* The user-facing name of the symbol whose (internal) number is
+   YYSYMBOL.  No bounds checking.  */
+static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
+
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "MULOP", "RELOP", "EQOP", "MINUS",
-  "PLUS", "AND", "OR", "FUNCTIONNAME", "LITERAL", "NAMETEST", "NUMBER",
-  "NODETYPE", "VARIABLEREFERENCE", "AXISNAME", "COMMENT", "DOTDOT", "PI",
-  "NODE", "SLASHSLASH", "TEXT_", "XPATH_ERROR", "'/'", "'@'", "'('", "')'",
-  "'['", "']'", "'.'", "','", "'|'", "$accept", "Top", "Expr",
-  "LocationPath", "AbsoluteLocationPath", "RelativeLocationPath", "Step",
-  "AxisSpecifier", "NodeTest", "OptionalPredicateList", "PredicateList",
-  "Predicate", "DescendantOrSelf", "AbbreviatedStep", "PrimaryExpr",
-  "FunctionCall", "ArgumentList", "Argument", "UnionExpr", "PathExpr",
-  "FilterExpr", "OrExpr", "AndExpr", "EqualityExpr", "RelationalExpr",
-  "AdditiveExpr", "MultiplicativeExpr", "UnaryExpr", 0
+  "\"end of file\"", "error", "\"invalid token\"", "MULOP", "EQOP",
+  "RELOP", "PLUS", "MINUS", "OR", "AND", "FUNCTIONNAME", "LITERAL",
+  "NAMETEST", "NUMBER", "NODETYPE", "VARIABLEREFERENCE", "AXISNAME",
+  "COMMENT", "DOTDOT", "PI", "NODE", "SLASHSLASH", "TEXT_", "XPATH_ERROR",
+  "'/'", "'@'", "'('", "')'", "'['", "']'", "'.'", "','", "'|'", "$accept",
+  "Top", "Expr", "LocationPath", "AbsoluteLocationPath",
+  "RelativeLocationPath", "Step", "AxisSpecifier", "NodeTest",
+  "OptionalPredicateList", "PredicateList", "Predicate",
+  "DescendantOrSelf", "AbbreviatedStep", "PrimaryExpr", "FunctionCall",
+  "ArgumentList", "Argument", "UnionExpr", "PathExpr", "FilterExpr",
+  "OrExpr", "AndExpr", "EqualityExpr", "RelationalExpr", "AdditiveExpr",
+  "MultiplicativeExpr", "UnaryExpr", YY_NULLPTR
 };
+
+static const char *
+yysymbol_name (yysymbol_kind_t yysymbol)
+{
+  return yytname[yysymbol];
+}
 #endif
 
-# ifdef YYPRINT
-/* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
-   token YYLEX-NUM.  */
-static const yytype_uint16 yytoknum[] =
-{
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,    47,    64,    40,    41,    91,    93,
-      46,    44,   124
-};
-# endif
+#define YYPACT_NINF (-37)
 
-/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
-{
-       0,    33,    34,    35,    36,    36,    37,    37,    37,    38,
-      38,    38,    39,    39,    39,    39,    39,    40,    40,    41,
-      41,    41,    41,    41,    42,    42,    43,    43,    44,    45,
-      46,    46,    47,    47,    47,    47,    47,    48,    48,    49,
-      49,    50,    51,    51,    52,    52,    52,    52,    53,    53,
-      54,    54,    55,    55,    56,    56,    57,    57,    58,    58,
-      58,    59,    59,    60,    60
-};
+#define yypact_value_is_default(Yyn) \
+  ((Yyn) == YYPACT_NINF)
 
-/* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
+#define YYTABLE_NINF (-1)
+
+#define yytable_value_is_error(Yyn) \
+  0
+
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
+static const yytype_int8 yypact[] =
 {
-       0,     2,     1,     1,     1,     1,     1,     2,     2,     1,
-       3,     3,     2,     2,     3,     3,     1,     1,     1,     3,
-       3,     3,     3,     4,     0,     1,     1,     2,     3,     1,
-       1,     1,     1,     3,     1,     1,     1,     3,     4,     1,
-       3,     1,     1,     3,     1,     1,     3,     3,     1,     2,
-       1,     3,     1,     3,     1,     3,     1,     3,     1,     3,
-       3,     1,     3,     1,     2
+      83,    83,    -8,   -37,    -7,   -37,   -37,   -37,    14,   -37,
+      17,    20,   -37,    21,     8,   -37,    83,   -37,    48,   -37,
+     -37,   -37,   -17,   -37,    22,    -7,     8,   -37,    -7,   -37,
+      23,   -37,    -9,     2,    44,    50,    51,    10,    54,   -37,
+     -37,    62,    83,   -37,    -7,   -37,    31,    -5,    32,    33,
+     -17,    34,   -37,     8,     8,    -7,    -7,   -37,   -17,    -7,
+     104,     8,     8,    83,    83,    83,    83,    83,    83,    83,
+     -37,   -37,   -18,   -37,    35,   -37,   -37,    36,   -37,   -37,
+     -37,   -37,   -37,   -37,   -37,   -37,   -37,   -17,   -17,    44,
+      50,    51,    10,    54,    54,   -37,   -37,    83,   -37,   -37,
+     -37
 };
 
-/* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
-   STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
+/* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+   Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-static const yytype_uint8 yydefact[] =
+static const yytype_int8 yydefact[] =
 {
        0,     0,     0,    34,    24,    35,    32,    17,     0,    31,
        0,     0,    29,     0,     6,    18,     0,    30,     0,     2,
@@ -591,50 +669,30 @@ static const yytype_uint8 yydefact[] =
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
       37,    41,     0,    39,     0,    27,    21,     0,    22,    19,
       20,    33,    10,    11,    15,    14,    43,    46,    47,    51,
-      53,    55,    57,    60,    59,    62,    38,     0,    28,    23,
+      53,    55,    57,    59,    60,    62,    38,     0,    28,    23,
       40
-};
-
-/* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int8 yydefgoto[] =
-{
-      -1,    18,    71,    20,    21,    22,    23,    24,    25,    43,
-      44,    45,    26,    27,    28,    29,    72,    73,    30,    31,
-      32,    33,    34,    35,    36,    37,    38,    39
-};
-
-/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-   STATE-NUM.  */
-#define YYPACT_NINF -37
-static const yytype_int8 yypact[] =
-{
-      81,    81,    -8,   -37,    -7,   -37,   -37,   -37,    14,   -37,
-      17,    20,   -37,    21,     8,   -37,    81,   -37,    48,   -37,
-     -37,   -37,   -17,   -37,    22,    -7,     8,   -37,    -7,   -37,
-      23,   -37,    -9,     1,    45,    49,    52,    10,    54,   -37,
-     -37,    59,    81,   -37,    -7,   -37,    31,    -5,    32,    33,
-     -17,    34,   -37,     8,     8,    -7,    -7,   -37,   -17,    -7,
-     102,     8,     8,    81,    81,    81,    81,    81,    81,    81,
-     -37,   -37,   -18,   -37,    35,   -37,   -37,    36,   -37,   -37,
-     -37,   -37,   -37,   -37,   -37,   -37,   -37,   -17,   -17,    45,
-      49,    52,    10,    54,    54,   -37,   -37,    81,   -37,   -37,
-     -37
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -37,   -37,     3,   -37,   -37,   -12,   -22,   -37,    38,   -20,
-      60,   -36,   -21,   -37,   -37,   -37,   -37,   -24,   -37,    30,
-     -37,   -37,    19,    40,    43,    29,   -16,    -1
+      37,   -36,   -21,   -37,   -37,   -37,   -37,   -27,   -37,    11,
+     -37,   -37,    13,    27,    41,    19,   -16,    -1
 };
 
-/* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
-   positive, shift that token.  If negative, reduce the rule which
-   number is the opposite.  If zero, do what YYDEFACT says.
-   If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -1
-static const yytype_uint8 yytable[] =
+/* YYDEFGOTO[NTERM-NUM].  */
+static const yytype_int8 yydefgoto[] =
+{
+       0,    18,    71,    20,    21,    22,    23,    24,    25,    43,
+      44,    45,    26,    27,    28,    29,    72,    73,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39
+};
+
+/* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule whose
+   number is the opposite.  If YYTABLE_NINF, syntax error.  */
+static const yytype_int8 yytable[] =
 {
       40,    54,    50,    19,    12,    57,    77,    53,    75,    96,
       63,    62,    12,    97,    58,    61,    67,    68,    41,    51,
@@ -642,140 +700,110 @@ static const yytype_uint8 yytable[] =
       13,    82,    83,    15,    55,    84,    85,    54,    17,     8,
       46,    10,    11,    47,    13,    74,    48,    49,    52,    87,
       88,    93,    94,    64,    65,    60,    66,    69,    76,    79,
-      80,    81,    56,    99,    98,     1,    54,    54,    95,     2,
-       3,     4,     5,   100,     6,     7,     8,     9,    10,    11,
-      12,    13,    89,    14,    15,    16,    70,     1,    59,    17,
-      86,     2,     3,     4,     5,    92,     6,     7,     8,     9,
-      10,    11,    12,    13,    90,    14,    15,    16,    91,     0,
-       0,    17,     2,     3,     4,     5,     0,     6,     7,     8,
-       9,    10,    11,    12,    13,     0,    14,    15,    16,     0,
-       0,     0,    17
+      80,    81,    56,    99,    98,    59,    54,    54,    95,     1,
+     100,    86,     2,     3,     4,     5,    89,     6,     7,     8,
+       9,    10,    11,    12,    13,    92,    14,    15,    16,    70,
+       1,    90,    17,     2,     3,     4,     5,     0,     6,     7,
+       8,     9,    10,    11,    12,    13,    91,    14,    15,    16,
+       0,     0,     0,    17,     2,     3,     4,     5,     0,     6,
+       7,     8,     9,    10,    11,    12,    13,     0,    14,    15,
+      16,     0,     0,     0,    17
 };
 
 static const yytype_int8 yycheck[] =
 {
        1,    22,    14,     0,    21,    25,    11,    24,    44,    27,
-       9,    32,    21,    31,    26,    24,     6,     7,    26,    16,
+       8,    32,    21,    31,    26,    24,     6,     7,    26,    16,
       12,    28,    27,    59,    16,    17,    18,    19,    20,    50,
       22,    53,    54,    25,    12,    55,    56,    58,    30,    17,
       26,    19,    20,    26,    22,    42,    26,    26,     0,    61,
-      62,    67,    68,     8,     5,    32,     4,     3,    27,    27,
-      27,    27,    24,    27,    29,     6,    87,    88,    69,    10,
-      11,    12,    13,    97,    15,    16,    17,    18,    19,    20,
-      21,    22,    63,    24,    25,    26,    27,     6,    28,    30,
-      60,    10,    11,    12,    13,    66,    15,    16,    17,    18,
-      19,    20,    21,    22,    64,    24,    25,    26,    65,    -1,
-      -1,    30,    10,    11,    12,    13,    -1,    15,    16,    17,
-      18,    19,    20,    21,    22,    -1,    24,    25,    26,    -1,
-      -1,    -1,    30
+      62,    67,    68,     9,     4,    32,     5,     3,    27,    27,
+      27,    27,    24,    27,    29,    28,    87,    88,    69,     7,
+      97,    60,    10,    11,    12,    13,    63,    15,    16,    17,
+      18,    19,    20,    21,    22,    66,    24,    25,    26,    27,
+       7,    64,    30,    10,    11,    12,    13,    -1,    15,    16,
+      17,    18,    19,    20,    21,    22,    65,    24,    25,    26,
+      -1,    -1,    -1,    30,    10,    11,    12,    13,    -1,    15,
+      16,    17,    18,    19,    20,    21,    22,    -1,    24,    25,
+      26,    -1,    -1,    -1,    30
 };
 
-/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-   symbol of state STATE-NUM.  */
-static const yytype_uint8 yystos[] =
+/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+   state STATE-NUM.  */
+static const yytype_int8 yystos[] =
 {
-       0,     6,    10,    11,    12,    13,    15,    16,    17,    18,
+       0,     7,    10,    11,    12,    13,    15,    16,    17,    18,
       19,    20,    21,    22,    24,    25,    26,    30,    34,    35,
       36,    37,    38,    39,    40,    41,    45,    46,    47,    48,
       51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
       60,    26,    28,    42,    43,    44,    26,    26,    26,    26,
       38,    35,     0,    24,    45,    12,    41,    42,    38,    43,
-      32,    24,    45,     9,     8,     5,     4,     6,     7,     3,
+      32,    24,    45,     8,     9,     4,     5,     6,     7,     3,
       27,    35,    49,    50,    35,    44,    27,    11,    27,    27,
       27,    27,    39,    39,    42,    42,    52,    38,    38,    55,
       56,    57,    58,    59,    59,    60,    27,    31,    29,    27,
       50
 };
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		(-2)
-#define YYEOF		0
+/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
+static const yytype_int8 yyr1[] =
+{
+       0,    33,    34,    35,    36,    36,    37,    37,    37,    38,
+      38,    38,    39,    39,    39,    39,    39,    40,    40,    41,
+      41,    41,    41,    41,    42,    42,    43,    43,    44,    45,
+      46,    46,    47,    47,    47,    47,    47,    48,    48,    49,
+      49,    50,    51,    51,    52,    52,    52,    52,    53,    53,
+      54,    54,    55,    55,    56,    56,    57,    57,    58,    58,
+      58,    59,    59,    60,    60
+};
 
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT		goto yyabortlab
-#define YYERROR		goto yyerrorlab
+/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
+static const yytype_int8 yyr2[] =
+{
+       0,     2,     1,     1,     1,     1,     1,     2,     2,     1,
+       3,     3,     2,     2,     3,     3,     1,     1,     1,     3,
+       3,     3,     3,     4,     0,     1,     1,     2,     3,     1,
+       1,     1,     1,     3,     1,     1,     1,     3,     4,     1,
+       3,     1,     1,     3,     1,     1,     3,     3,     1,     2,
+       1,     3,     1,     3,     1,     3,     1,     3,     1,     3,
+       3,     1,     3,     1,     2
+};
 
 
-/* Like YYERROR except do call yyerror.  This remains here temporarily
-   to ease the transition to the new meaning of YYERROR, for GCC.
-   Once GCC version 2 has supplanted version 1, this can go.  */
+enum { YYENOMEM = -2 };
 
-#define YYFAIL		goto yyerrlab
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrorlab
+#define YYNOMEM         goto yyexhaustedlab
+
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      yytoken = YYTRANSLATE (yychar);				\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
-      yyerror (parser, YY_("syntax error: cannot back up")); \
-      YYERROR;							\
-    }								\
-while (YYID (0))
+#define YYBACKUP(Token, Value)                                    \
+  do                                                              \
+    if (yychar == YYEMPTY)                                        \
+      {                                                           \
+        yychar = (Token);                                         \
+        yylval = (Value);                                         \
+        YYPOPSTACK (yylen);                                       \
+        yystate = *yyssp;                                         \
+        goto yybackup;                                            \
+      }                                                           \
+    else                                                          \
+      {                                                           \
+        yyerror (parser, YY_("syntax error: cannot back up")); \
+        YYERROR;                                                  \
+      }                                                           \
+  while (0)
 
+/* Backward compatibility with an undocumented macro.
+   Use YYerror or YYUNDEF. */
+#define YYERRCODE YYUNDEF
 
-#define YYTERROR	1
-#define YYERRCODE	256
-
-
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
-    while (YYID (0))
-#endif
-
-
-/* YY_LOCATION_PRINT -- Print the location on the stream.
-   This macro was not mandated originally: define only if we know
-   we won't break user code: when these are the locations we know.  */
-
-#ifndef YY_LOCATION_PRINT
-# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
-#  define YY_LOCATION_PRINT(File, Loc)			\
-     fprintf (File, "%d.%d-%d.%d",			\
-	      (Loc).first_line, (Loc).first_column,	\
-	      (Loc).last_line,  (Loc).last_column)
-# else
-#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
-# endif
-#endif
-
-
-/* YYLEX -- calling `yylex' with the right arguments.  */
-
-#ifdef YYLEX_PARAM
-# define YYLEX yylex (&yylval, YYLEX_PARAM)
-#else
-# define YYLEX yylex (&yylval, parser)
-#endif
 
 /* Enable debugging if requested.  */
 #if YYDEBUG
@@ -785,83 +813,59 @@ while (YYID (0))
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)			\
-do {						\
-  if (yydebug)					\
-    YYFPRINTF Args;				\
-} while (YYID (0))
-
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)			  \
-do {									  \
-  if (yydebug)								  \
-    {									  \
-      YYFPRINTF (stderr, "%s ", Title);					  \
-      yy_symbol_print (stderr,						  \
-		  Type, Value, parser); \
-      YYFPRINTF (stderr, "\n");						  \
-    }									  \
-} while (YYID (0))
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (yydebug)                                  \
+    YYFPRINTF Args;                             \
+} while (0)
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
 
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)                    \
+do {                                                                      \
+  if (yydebug)                                                            \
+    {                                                                     \
+      YYFPRINTF (stderr, "%s ", Title);                                   \
+      yy_symbol_print (stderr,                                            \
+                  Kind, Value, parser); \
+      YYFPRINTF (stderr, "\n");                                           \
+    }                                                                     \
+} while (0)
+
+
+/*-----------------------------------.
+| Print this symbol's value on YYO.  |
+`-----------------------------------*/
+
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, WebCore::XPath::Parser& parser)
-#else
-static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, parser)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
-    WebCore::XPath::Parser& parser;
-#endif
+yy_symbol_value_print (FILE *yyo,
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, WebCore::XPath::Parser& parser)
 {
+  FILE *yyoutput = yyo;
+  YY_USE (yyoutput);
+  YY_USE (parser);
   if (!yyvaluep)
     return;
-  YYUSE (parser);
-# ifdef YYPRINT
-  if (yytype < YYNTOKENS)
-    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
-# else
-  YYUSE (yyoutput);
-# endif
-  switch (yytype)
-    {
-      default:
-	break;
-    }
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YY_USE (yykind);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
+/*---------------------------.
+| Print this symbol on YYO.  |
+`---------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, WebCore::XPath::Parser& parser)
-#else
-static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, parser)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
-    WebCore::XPath::Parser& parser;
-#endif
+yy_symbol_print (FILE *yyo,
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, WebCore::XPath::Parser& parser)
 {
-  if (yytype < YYNTOKENS)
-    YYFPRINTF (yyoutput, "token %s (", yytname[yytype]);
-  else
-    YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
+  YYFPRINTF (yyo, "%s %s (",
+             yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, parser);
-  YYFPRINTF (yyoutput, ")");
+  yy_symbol_value_print (yyo, yykind, yyvaluep, parser);
+  YYFPRINTF (yyo, ")");
 }
 
 /*------------------------------------------------------------------.
@@ -869,81 +873,68 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, parser)
 | TOP (included).                                                   |
 `------------------------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_stack_print (yytype_int16 *bottom, yytype_int16 *top)
-#else
-static void
-yy_stack_print (bottom, top)
-    yytype_int16 *bottom;
-    yytype_int16 *top;
-#endif
+yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
-  for (; bottom <= top; ++bottom)
-    YYFPRINTF (stderr, " %d", *bottom);
+  for (; yybottom <= yytop; yybottom++)
+    {
+      int yybot = *yybottom;
+      YYFPRINTF (stderr, " %d", yybot);
+    }
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)				\
-do {								\
-  if (yydebug)							\
-    yy_stack_print ((Bottom), (Top));				\
-} while (YYID (0))
+# define YY_STACK_PRINT(Bottom, Top)                            \
+do {                                                            \
+  if (yydebug)                                                  \
+    yy_stack_print ((Bottom), (Top));                           \
+} while (0)
 
 
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, WebCore::XPath::Parser& parser)
-#else
-static void
-yy_reduce_print (yyvsp, yyrule, parser)
-    YYSTYPE *yyvsp;
-    int yyrule;
-    WebCore::XPath::Parser& parser;
-#endif
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
+                 int yyrule, WebCore::XPath::Parser& parser)
 {
+  int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
   int yyi;
-  unsigned long int yylno = yyrline[yyrule];
-  YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
-	     yyrule - 1, yylno);
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
+             yyrule - 1, yylno);
   /* The symbols being reduced.  */
   for (yyi = 0; yyi < yynrhs; yyi++)
     {
-      fprintf (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
-		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       , parser);
-      fprintf (stderr, "\n");
+      YYFPRINTF (stderr, "   $%d = ", yyi + 1);
+      yy_symbol_print (stderr,
+                       YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
+                       &yyvsp[(yyi + 1) - (yynrhs)], parser);
+      YYFPRINTF (stderr, "\n");
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)		\
-do {					\
-  if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule, parser); \
-} while (YYID (0))
+# define YY_REDUCE_PRINT(Rule)          \
+do {                                    \
+  if (yydebug)                          \
+    yy_reduce_print (yyssp, yyvsp, Rule, parser); \
+} while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
 int yydebug;
 #else /* !YYDEBUG */
-# define YYDPRINTF(Args)
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)
+# define YYDPRINTF(Args) ((void) 0)
+# define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
 # define YY_REDUCE_PRINT(Rule)
 #endif /* !YYDEBUG */
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -958,423 +949,219 @@ int yydebug;
 # define YYMAXDEPTH 10000
 #endif
 
-
 
-#if YYERROR_VERBOSE
 
-# ifndef yystrlen
-#  if defined __GLIBC__ && defined _STRING_H
-#   define yystrlen strlen
-#  else
-/* Return the length of YYSTR.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static YYSIZE_T
-yystrlen (const char *yystr)
-#else
-static YYSIZE_T
-yystrlen (yystr)
-    const char *yystr;
-#endif
-{
-  YYSIZE_T yylen;
-  for (yylen = 0; yystr[yylen]; yylen++)
-    continue;
-  return yylen;
-}
-#  endif
-# endif
 
-# ifndef yystpcpy
-#  if defined __GLIBC__ && defined _STRING_H && defined _GNU_SOURCE
-#   define yystpcpy stpcpy
-#  else
-/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
-   YYDEST.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static char *
-yystpcpy (char *yydest, const char *yysrc)
-#else
-static char *
-yystpcpy (yydest, yysrc)
-    char *yydest;
-    const char *yysrc;
-#endif
-{
-  char *yyd = yydest;
-  const char *yys = yysrc;
 
-  while ((*yyd++ = *yys++) != '\0')
-    continue;
-
-  return yyd - 1;
-}
-#  endif
-# endif
-
-# ifndef yytnamerr
-/* Copy to YYRES the contents of YYSTR after stripping away unnecessary
-   quotes and backslashes, so that it's suitable for yyerror.  The
-   heuristic is that double-quoting is unnecessary unless the string
-   contains an apostrophe, a comma, or backslash (other than
-   backslash-backslash).  YYSTR is taken from yytname.  If YYRES is
-   null, do not copy; instead, return the length of what the result
-   would have been.  */
-static YYSIZE_T
-yytnamerr (char *yyres, const char *yystr)
-{
-  if (*yystr == '"')
-    {
-      YYSIZE_T yyn = 0;
-      char const *yyp = yystr;
-
-      for (;;)
-	switch (*++yyp)
-	  {
-	  case '\'':
-	  case ',':
-	    goto do_not_strip_quotes;
-
-	  case '\\':
-	    if (*++yyp != '\\')
-	      goto do_not_strip_quotes;
-	    /* Fall through.  */
-	  default:
-	    if (yyres)
-	      yyres[yyn] = *yyp;
-	    yyn++;
-	    break;
-
-	  case '"':
-	    if (yyres)
-	      yyres[yyn] = '\0';
-	    return yyn;
-	  }
-    do_not_strip_quotes: ;
-    }
-
-  if (! yyres)
-    return yystrlen (yystr);
-
-  return yystpcpy (yyres, yystr) - yyres;
-}
-# endif
-
-/* Copy into YYRESULT an error message about the unexpected token
-   YYCHAR while in state YYSTATE.  Return the number of bytes copied,
-   including the terminating null byte.  If YYRESULT is null, do not
-   copy anything; just return the number of bytes that would be
-   copied.  As a special case, return 0 if an ordinary "syntax error"
-   message will do.  Return YYSIZE_MAXIMUM if overflow occurs during
-   size calculation.  */
-static YYSIZE_T
-yysyntax_error (char *yyresult, int yystate, int yychar)
-{
-  int yyn = yypact[yystate];
-
-  if (! (YYPACT_NINF < yyn && yyn <= YYLAST))
-    return 0;
-  else
-    {
-      int yytype = YYTRANSLATE (yychar);
-      YYSIZE_T yysize0 = yytnamerr (0, yytname[yytype]);
-      YYSIZE_T yysize = yysize0;
-      YYSIZE_T yysize1;
-      int yysize_overflow = 0;
-      enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-      char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-      int yyx;
-
-# if 0
-      /* This is so xgettext sees the translatable formats that are
-	 constructed on the fly.  */
-      YY_("syntax error, unexpected %s");
-      YY_("syntax error, unexpected %s, expecting %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s");
-# endif
-      char *yyfmt;
-      char const *yyf;
-      static char const yyunexpected[] = "syntax error, unexpected %s";
-      static char const yyexpecting[] = ", expecting %s";
-      static char const yyor[] = " or %s";
-      char yyformat[sizeof yyunexpected
-		    + sizeof yyexpecting - 1
-		    + ((YYERROR_VERBOSE_ARGS_MAXIMUM - 2)
-		       * (sizeof yyor - 1))];
-      char const *yyprefix = yyexpecting;
-
-      /* Start YYX at -YYN if negative to avoid negative indexes in
-	 YYCHECK.  */
-      int yyxbegin = yyn < 0 ? -yyn : 0;
-
-      /* Stay within bounds of both yycheck and yytname.  */
-      int yychecklim = YYLAST - yyn + 1;
-      int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-      int yycount = 1;
-
-      yyarg[0] = yytname[yytype];
-      yyfmt = yystpcpy (yyformat, yyunexpected);
-
-      for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-	if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-	  {
-	    if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-	      {
-		yycount = 1;
-		yysize = yysize0;
-		yyformat[sizeof yyunexpected - 1] = '\0';
-		break;
-	      }
-	    yyarg[yycount++] = yytname[yyx];
-	    yysize1 = yysize + yytnamerr (0, yytname[yyx]);
-	    yysize_overflow |= (yysize1 < yysize);
-	    yysize = yysize1;
-	    yyfmt = yystpcpy (yyfmt, yyprefix);
-	    yyprefix = yyor;
-	  }
-
-      yyf = YY_(yyformat);
-      yysize1 = yysize + yystrlen (yyf);
-      yysize_overflow |= (yysize1 < yysize);
-      yysize = yysize1;
-
-      if (yysize_overflow)
-	return YYSIZE_MAXIMUM;
-
-      if (yyresult)
-	{
-	  /* Avoid sprintf, as that infringes on the user's name space.
-	     Don't have undefined behavior even if the translation
-	     produced a string with the wrong number of "%s"s.  */
-	  char *yyp = yyresult;
-	  int yyi = 0;
-	  while ((*yyp = *yyf) != '\0')
-	    {
-	      if (*yyp == '%' && yyf[1] == 's' && yyi < yycount)
-		{
-		  yyp += yytnamerr (yyp, yyarg[yyi++]);
-		  yyf += 2;
-		}
-	      else
-		{
-		  yyp++;
-		  yyf++;
-		}
-	    }
-	}
-      return yysize;
-    }
-}
-#endif /* YYERROR_VERBOSE */
-
 
 /*-----------------------------------------------.
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, WebCore::XPath::Parser& parser)
-#else
-static void
-yydestruct (yymsg, yytype, yyvaluep, parser)
-    const char *yymsg;
-    int yytype;
-    YYSTYPE *yyvaluep;
-    WebCore::XPath::Parser& parser;
-#endif
+yydestruct (const char *yymsg,
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, WebCore::XPath::Parser& parser)
 {
-  YYUSE (yyvaluep);
-  YYUSE (parser);
-
+  YY_USE (yyvaluep);
+  YY_USE (parser);
   if (!yymsg)
     yymsg = "Deleting";
-  YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+  YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
-  switch (yytype)
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  switch (yykind)
     {
-      case 10: /* "FUNCTIONNAME" */
+    case YYSYMBOL_FUNCTIONNAME: /* FUNCTIONNAME  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1202 "XPathGrammar.cpp"
-	break;
-      case 11: /* "LITERAL" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 975 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_LITERAL: /* LITERAL  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1207 "XPathGrammar.cpp"
-	break;
-      case 12: /* "NAMETEST" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 981 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_NAMETEST: /* NAMETEST  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1212 "XPathGrammar.cpp"
-	break;
-      case 13: /* "NUMBER" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 987 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_NUMBER: /* NUMBER  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1217 "XPathGrammar.cpp"
-	break;
-      case 14: /* "NODETYPE" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 993 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_NODETYPE: /* NODETYPE  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1222 "XPathGrammar.cpp"
-	break;
-      case 15: /* "VARIABLEREFERENCE" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 999 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_VARIABLEREFERENCE: /* VARIABLEREFERENCE  */
 #line 77 "XPathGrammar.y"
-	{ if ((yyvaluep->string)) (yyvaluep->string)->deref(); };
-#line 1227 "XPathGrammar.cpp"
-	break;
-      case 35: /* "Expr" */
+            { if (((*yyvaluep).string)) ((*yyvaluep).string)->deref(); }
+#line 1005 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_Expr: /* Expr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1232 "XPathGrammar.cpp"
-	break;
-      case 36: /* "LocationPath" */
+            { delete ((*yyvaluep).expression); }
+#line 1011 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_LocationPath: /* LocationPath  */
 #line 85 "XPathGrammar.y"
-	{ delete (yyvaluep->locationPath); };
-#line 1237 "XPathGrammar.cpp"
-	break;
-      case 37: /* "AbsoluteLocationPath" */
+            { delete ((*yyvaluep).locationPath); }
+#line 1017 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_AbsoluteLocationPath: /* AbsoluteLocationPath  */
 #line 85 "XPathGrammar.y"
-	{ delete (yyvaluep->locationPath); };
-#line 1242 "XPathGrammar.cpp"
-	break;
-      case 38: /* "RelativeLocationPath" */
+            { delete ((*yyvaluep).locationPath); }
+#line 1023 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_RelativeLocationPath: /* RelativeLocationPath  */
 #line 85 "XPathGrammar.y"
-	{ delete (yyvaluep->locationPath); };
-#line 1247 "XPathGrammar.cpp"
-	break;
-      case 39: /* "Step" */
+            { delete ((*yyvaluep).locationPath); }
+#line 1029 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_Step: /* Step  */
 #line 94 "XPathGrammar.y"
-	{ delete (yyvaluep->step); };
-#line 1252 "XPathGrammar.cpp"
-	break;
-      case 41: /* "NodeTest" */
+            { delete ((*yyvaluep).step); }
+#line 1035 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_NodeTest: /* NodeTest  */
 #line 88 "XPathGrammar.y"
-	{ delete (yyvaluep->nodeTest); };
-#line 1257 "XPathGrammar.cpp"
-	break;
-      case 42: /* "OptionalPredicateList" */
+            { delete ((*yyvaluep).nodeTest); }
+#line 1041 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_OptionalPredicateList: /* OptionalPredicateList  */
 #line 91 "XPathGrammar.y"
-	{ delete (yyvaluep->expressionVector); };
-#line 1262 "XPathGrammar.cpp"
-	break;
-      case 43: /* "PredicateList" */
+            { delete ((*yyvaluep).expressionVector); }
+#line 1047 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_PredicateList: /* PredicateList  */
 #line 91 "XPathGrammar.y"
-	{ delete (yyvaluep->expressionVector); };
-#line 1267 "XPathGrammar.cpp"
-	break;
-      case 44: /* "Predicate" */
+            { delete ((*yyvaluep).expressionVector); }
+#line 1053 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_Predicate: /* Predicate  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1272 "XPathGrammar.cpp"
-	break;
-      case 45: /* "DescendantOrSelf" */
+            { delete ((*yyvaluep).expression); }
+#line 1059 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_DescendantOrSelf: /* DescendantOrSelf  */
 #line 94 "XPathGrammar.y"
-	{ delete (yyvaluep->step); };
-#line 1277 "XPathGrammar.cpp"
-	break;
-      case 46: /* "AbbreviatedStep" */
+            { delete ((*yyvaluep).step); }
+#line 1065 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_AbbreviatedStep: /* AbbreviatedStep  */
 #line 94 "XPathGrammar.y"
-	{ delete (yyvaluep->step); };
-#line 1282 "XPathGrammar.cpp"
-	break;
-      case 47: /* "PrimaryExpr" */
+            { delete ((*yyvaluep).step); }
+#line 1071 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_PrimaryExpr: /* PrimaryExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1287 "XPathGrammar.cpp"
-	break;
-      case 48: /* "FunctionCall" */
+            { delete ((*yyvaluep).expression); }
+#line 1077 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_FunctionCall: /* FunctionCall  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1292 "XPathGrammar.cpp"
-	break;
-      case 49: /* "ArgumentList" */
+            { delete ((*yyvaluep).expression); }
+#line 1083 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_ArgumentList: /* ArgumentList  */
 #line 91 "XPathGrammar.y"
-	{ delete (yyvaluep->expressionVector); };
-#line 1297 "XPathGrammar.cpp"
-	break;
-      case 50: /* "Argument" */
+            { delete ((*yyvaluep).expressionVector); }
+#line 1089 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_Argument: /* Argument  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1302 "XPathGrammar.cpp"
-	break;
-      case 51: /* "UnionExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1095 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_UnionExpr: /* UnionExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1307 "XPathGrammar.cpp"
-	break;
-      case 52: /* "PathExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1101 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_PathExpr: /* PathExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1312 "XPathGrammar.cpp"
-	break;
-      case 53: /* "FilterExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1107 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_FilterExpr: /* FilterExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1317 "XPathGrammar.cpp"
-	break;
-      case 54: /* "OrExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1113 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_OrExpr: /* OrExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1322 "XPathGrammar.cpp"
-	break;
-      case 55: /* "AndExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1119 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_AndExpr: /* AndExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1327 "XPathGrammar.cpp"
-	break;
-      case 56: /* "EqualityExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1125 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_EqualityExpr: /* EqualityExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1332 "XPathGrammar.cpp"
-	break;
-      case 57: /* "RelationalExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1131 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_RelationalExpr: /* RelationalExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1337 "XPathGrammar.cpp"
-	break;
-      case 58: /* "AdditiveExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1137 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_AdditiveExpr: /* AdditiveExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1342 "XPathGrammar.cpp"
-	break;
-      case 59: /* "MultiplicativeExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1143 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_MultiplicativeExpr: /* MultiplicativeExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1347 "XPathGrammar.cpp"
-	break;
-      case 60: /* "UnaryExpr" */
+            { delete ((*yyvaluep).expression); }
+#line 1149 "XPathGrammar.cpp"
+        break;
+
+    case YYSYMBOL_UnaryExpr: /* UnaryExpr  */
 #line 97 "XPathGrammar.y"
-	{ delete (yyvaluep->expression); };
-#line 1352 "XPathGrammar.cpp"
-	break;
+            { delete ((*yyvaluep).expression); }
+#line 1155 "XPathGrammar.cpp"
+        break;
 
       default:
-	break;
+        break;
     }
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
-
-
-/* Prevent warnings from -Wmissing-prototypes.  */
-
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (WebCore::XPath::Parser& parser);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 
 
@@ -1385,76 +1172,51 @@ int yyparse ();
 | yyparse.  |
 `----------*/
 
-#ifdef YYPARSE_PARAM
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-int
-yyparse (void *YYPARSE_PARAM)
-#else
-int
-yyparse (YYPARSE_PARAM)
-    void *YYPARSE_PARAM;
-#endif
-#else /* ! YYPARSE_PARAM */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 int
 yyparse (WebCore::XPath::Parser& parser)
-#else
-int
-yyparse (parser)
-    WebCore::XPath::Parser& parser;
-#endif
-#endif
 {
-  /* The look-ahead symbol.  */
+/* Lookahead token kind.  */
 int yychar;
 
-/* The semantic value of the look-ahead symbol.  */
-YYSTYPE yylval;
 
-  int yystate;
+/* The semantic value of the lookahead symbol.  */
+/* Default value used for initialization, for pacifying older GCCs
+   or non-GCC compilers.  */
+YY_INITIAL_VALUE (static YYSTYPE yyval_default;)
+YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
+
+    yy_state_fast_t yystate = 0;
+    /* Number of tokens to shift before error messages enabled.  */
+    int yyerrstatus = 0;
+
+    /* Refer to the stacks through separate pointers, to allow yyoverflow
+       to reallocate them elsewhere.  */
+
+    /* Their size.  */
+    YYPTRDIFF_T yystacksize = YYINITDEPTH;
+
+    /* The state stack: array, bottom, top.  */
+    yy_state_t yyssa[YYINITDEPTH];
+    yy_state_t *yyss = yyssa;
+    yy_state_t *yyssp = yyss;
+
+    /* The semantic value stack: array, bottom, top.  */
+    YYSTYPE yyvsa[YYINITDEPTH];
+    YYSTYPE *yyvs = yyvsa;
+    YYSTYPE *yyvsp = yyvs;
+
   int yyn;
+  /* The return value of yyparse.  */
   int yyresult;
-  /* Number of tokens to shift before error messages enabled.  */
-  int yyerrstatus;
-  /* Look-ahead token as an internal (translated) token number.  */
-  int yytoken = 0;
-#if YYERROR_VERBOSE
-  /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
-#endif
-
-  /* Three stacks and their tools:
-     `yyss': related to states,
-     `yyvs': related to semantic values,
-     `yyls': related to locations.
-
-     Refer to the stacks thru separate pointers, to allow yyoverflow
-     to reallocate them elsewhere.  */
-
-  /* The state stack.  */
-  yytype_int16 yyssa[YYINITDEPTH];
-  yytype_int16 *yyss = yyssa;
-  yytype_int16 *yyssp;
-
-  /* The semantic value stack.  */
-  YYSTYPE yyvsa[YYINITDEPTH];
-  YYSTYPE *yyvs = yyvsa;
-  YYSTYPE *yyvsp;
-
-
-
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
-
-  YYSIZE_T yystacksize = YYINITDEPTH;
-
+  /* Lookahead symbol kind.  */
+  yysymbol_kind_t yytoken = YYSYMBOL_YYEMPTY;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
 
+
+
+#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
@@ -1462,126 +1224,137 @@ YYSTYPE yylval;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yystate = 0;
-  yyerrstatus = 0;
-  yychar = YYEMPTY;		/* Cause a token to be read.  */
-
-  /* Initialize stack pointers.
-     Waste one element of value and location stack
-     so that they stay on the same level as the state stack.
-     The wasted elements are never initialized.  */
-
-  yyssp = yyss;
-  yyvsp = yyvs;
+  yychar = YYEMPTY; /* Cause a token to be read.  */
 
   goto yysetstate;
 
+
 /*------------------------------------------------------------.
-| yynewstate -- Push a new state, which is found in yystate.  |
+| yynewstate -- push a new state, which is found in yystate.  |
 `------------------------------------------------------------*/
- yynewstate:
+yynewstate:
   /* In all cases, when you get here, the value and location stacks
      have just been pushed.  So pushing a state here evens the stacks.  */
   yyssp++;
 
- yysetstate:
-  *yyssp = yystate;
+
+/*--------------------------------------------------------------------.
+| yysetstate -- set current state (the top of the stack) to yystate.  |
+`--------------------------------------------------------------------*/
+yysetstate:
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+  YY_ASSERT (0 <= yystate && yystate < YYNSTATES);
+  YY_IGNORE_USELESS_CAST_BEGIN
+  *yyssp = YY_CAST (yy_state_t, yystate);
+  YY_IGNORE_USELESS_CAST_END
+  YY_STACK_PRINT (yyss, yyssp);
 
   if (yyss + yystacksize - 1 <= yyssp)
+#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+    YYNOMEM;
+#else
     {
       /* Get the current used size of the three stacks, in elements.  */
-      YYSIZE_T yysize = yyssp - yyss + 1;
+      YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-#ifdef yyoverflow
+# if defined yyoverflow
       {
-	/* Give user a chance to reallocate the stack.  Use copies of
-	   these so that the &'s don't force the real ones into
-	   memory.  */
-	YYSTYPE *yyvs1 = yyvs;
-	yytype_int16 *yyss1 = yyss;
+        /* Give user a chance to reallocate the stack.  Use copies of
+           these so that the &'s don't force the real ones into
+           memory.  */
+        yy_state_t *yyss1 = yyss;
+        YYSTYPE *yyvs1 = yyvs;
 
-
-	/* Each stack pointer address is followed by the size of the
-	   data in use in that stack, in bytes.  This used to be a
-	   conditional around just the two extra args, but that might
-	   be undefined if yyoverflow is a macro.  */
-	yyoverflow (YY_("memory exhausted"),
-		    &yyss1, yysize * sizeof (*yyssp),
-		    &yyvs1, yysize * sizeof (*yyvsp),
-
-		    &yystacksize);
-
-	yyss = yyss1;
-	yyvs = yyvs1;
+        /* Each stack pointer address is followed by the size of the
+           data in use in that stack, in bytes.  This used to be a
+           conditional around just the two extra args, but that might
+           be undefined if yyoverflow is a macro.  */
+        yyoverflow (YY_("memory exhausted"),
+                    &yyss1, yysize * YYSIZEOF (*yyssp),
+                    &yyvs1, yysize * YYSIZEOF (*yyvsp),
+                    &yystacksize);
+        yyss = yyss1;
+        yyvs = yyvs1;
       }
-#else /* no yyoverflow */
-# ifndef YYSTACK_RELOCATE
-      goto yyexhaustedlab;
-# else
+# else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-	goto yyexhaustedlab;
+        YYNOMEM;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 
       {
-	yytype_int16 *yyss1 = yyss;
-	union yyalloc *yyptr =
-	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-	if (! yyptr)
-	  goto yyexhaustedlab;
-	YYSTACK_RELOCATE (yyss);
-	YYSTACK_RELOCATE (yyvs);
-
+        yy_state_t *yyss1 = yyss;
+        union yyalloc *yyptr =
+          YY_CAST (union yyalloc *,
+                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
+        if (! yyptr)
+          YYNOMEM;
+        YYSTACK_RELOCATE (yyss_alloc, yyss);
+        YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
-	  YYSTACK_FREE (yyss1);
+        if (yyss1 != yyssa)
+          YYSTACK_FREE (yyss1);
       }
 # endif
-#endif /* no yyoverflow */
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
 
-
-      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-		  (unsigned long int) yystacksize));
+      YY_IGNORE_USELESS_CAST_BEGIN
+      YYDPRINTF ((stderr, "Stack size increased to %ld\n",
+                  YY_CAST (long, yystacksize)));
+      YY_IGNORE_USELESS_CAST_END
 
       if (yyss + yystacksize - 1 <= yyssp)
-	YYABORT;
+        YYABORT;
     }
+#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
-  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+
+  if (yystate == YYFINAL)
+    YYACCEPT;
 
   goto yybackup;
+
 
 /*-----------.
 | yybackup.  |
 `-----------*/
 yybackup:
-
   /* Do appropriate processing given the current state.  Read a
-     look-ahead token if we need one and don't already have one.  */
+     lookahead token if we need one and don't already have one.  */
 
-  /* First try to decide what to do without reference to look-ahead token.  */
+  /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yyn == YYPACT_NINF)
+  if (yypact_value_is_default (yyn))
     goto yydefault;
 
-  /* Not known => get a look-ahead token if don't already have one.  */
+  /* Not known => get a lookahead token if don't already have one.  */
 
-  /* YYCHAR is either YYEMPTY or YYEOF or a valid look-ahead symbol.  */
+  /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
   if (yychar == YYEMPTY)
     {
-      YYDPRINTF ((stderr, "Reading a token: "));
-      yychar = YYLEX;
+      YYDPRINTF ((stderr, "Reading a token\n"));
+      yychar = yylex (&yylval, parser);
     }
 
   if (yychar <= YYEOF)
     {
-      yychar = yytoken = YYEOF;
+      yychar = YYEOF;
+      yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
+    }
+  else if (yychar == YYerror)
+    {
+      /* The scanner already issued an error message, process directly
+         to error recovery.  But do not keep the error token as
+         lookahead, it is too special and may lead us to an endless
+         loop in error recovery. */
+      yychar = YYUNDEF;
+      yytoken = YYSYMBOL_YYerror;
+      goto yyerrlab1;
     }
   else
     {
@@ -1597,30 +1370,26 @@ yybackup:
   yyn = yytable[yyn];
   if (yyn <= 0)
     {
-      if (yyn == 0 || yyn == YYTABLE_NINF)
-	goto yyerrlab;
+      if (yytable_value_is_error (yyn))
+        goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
-
-  if (yyn == YYFINAL)
-    YYACCEPT;
 
   /* Count tokens shifted since error; after three, turn off error
      status.  */
   if (yyerrstatus)
     yyerrstatus--;
 
-  /* Shift the look-ahead token.  */
+  /* Shift the lookahead token.  */
   YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
-
-  /* Discard the shifted token unless it is eof.  */
-  if (yychar != YYEOF)
-    yychar = YYEMPTY;
-
   yystate = yyn;
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
+  /* Discard the shifted token.  */
+  yychar = YYEMPTY;
   goto yynewstate;
 
 
@@ -1635,14 +1404,14 @@ yydefault:
 
 
 /*-----------------------------.
-| yyreduce -- Do a reduction.  |
+| yyreduce -- do a reduction.  |
 `-----------------------------*/
 yyreduce:
   /* yyn is the number of a rule to reduce with.  */
   yylen = yyr2[yyn];
 
   /* If YYLEN is nonzero, implement the default value of the action:
-     `$$ = $1'.
+     '$$ = $1'.
 
      Otherwise, the following line sets YYVAL to garbage.
      This behavior is undocumented and Bison
@@ -1655,85 +1424,94 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
+  case 2: /* Top: Expr  */
 #line 112 "XPathGrammar.y"
     {
-        parser.setParseResult(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (1)].expression)));
-    ;}
+        parser.setParseResult(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1433 "XPathGrammar.cpp"
     break;
 
-  case 4:
+  case 4: /* LocationPath: AbsoluteLocationPath  */
 #line 123 "XPathGrammar.y"
     {
-        (yyval.locationPath) = (yyvsp[(1) - (1)].locationPath);
+        (yyval.locationPath) = (yyvsp[0].locationPath);
         (yyval.locationPath)->setAbsolute();
-    ;}
+    }
+#line 1442 "XPathGrammar.cpp"
     break;
 
-  case 6:
+  case 6: /* AbsoluteLocationPath: '/'  */
 #line 133 "XPathGrammar.y"
     {
         (yyval.locationPath) = new WebCore::XPath::LocationPath;
-    ;}
+    }
+#line 1450 "XPathGrammar.cpp"
     break;
 
-  case 7:
+  case 7: /* AbsoluteLocationPath: '/' RelativeLocationPath  */
 #line 138 "XPathGrammar.y"
     {
-        (yyval.locationPath) = (yyvsp[(2) - (2)].locationPath);
-    ;}
+        (yyval.locationPath) = (yyvsp[0].locationPath);
+    }
+#line 1458 "XPathGrammar.cpp"
     break;
 
-  case 8:
+  case 8: /* AbsoluteLocationPath: DescendantOrSelf RelativeLocationPath  */
 #line 143 "XPathGrammar.y"
     {
-        (yyval.locationPath) = (yyvsp[(2) - (2)].locationPath);
-        (yyval.locationPath)->prependStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(1) - (2)].step)));
-    ;}
+        (yyval.locationPath) = (yyvsp[0].locationPath);
+        (yyval.locationPath)->prependStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[-1].step)));
+    }
+#line 1467 "XPathGrammar.cpp"
     break;
 
-  case 9:
+  case 9: /* RelativeLocationPath: Step  */
 #line 151 "XPathGrammar.y"
     {
         (yyval.locationPath) = new WebCore::XPath::LocationPath;
-        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(1) - (1)].step)));
-    ;}
+        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[0].step)));
+    }
+#line 1476 "XPathGrammar.cpp"
     break;
 
-  case 10:
+  case 10: /* RelativeLocationPath: RelativeLocationPath '/' Step  */
 #line 157 "XPathGrammar.y"
     {
-        (yyval.locationPath) = (yyvsp[(1) - (3)].locationPath);
-        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(3) - (3)].step)));
-    ;}
+        (yyval.locationPath) = (yyvsp[-2].locationPath);
+        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[0].step)));
+    }
+#line 1485 "XPathGrammar.cpp"
     break;
 
-  case 11:
+  case 11: /* RelativeLocationPath: RelativeLocationPath DescendantOrSelf Step  */
 #line 163 "XPathGrammar.y"
     {
-        (yyval.locationPath) = (yyvsp[(1) - (3)].locationPath);
-        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(2) - (3)].step)));
-        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(3) - (3)].step)));
-    ;}
+        (yyval.locationPath) = (yyvsp[-2].locationPath);
+        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[-1].step)));
+        (yyval.locationPath)->appendStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[0].step)));
+    }
+#line 1495 "XPathGrammar.cpp"
     break;
 
-  case 12:
+  case 12: /* Step: NodeTest OptionalPredicateList  */
 #line 172 "XPathGrammar.y"
     {
-        std::unique_ptr<WebCore::XPath::Step::NodeTest> nodeTest((yyvsp[(1) - (2)].nodeTest));
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
+        std::unique_ptr<WebCore::XPath::Step::NodeTest> nodeTest((yyvsp[-1].nodeTest));
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[0].expressionVector));
         if (predicateList)
             (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTFMove(*nodeTest), WTFMove(*predicateList));
         else
             (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WTFMove(*nodeTest));
-    ;}
+    }
+#line 1508 "XPathGrammar.cpp"
     break;
 
-  case 13:
+  case 13: /* Step: NAMETEST OptionalPredicateList  */
 #line 182 "XPathGrammar.y"
     {
-        String nametest = adoptRef((yyvsp[(1) - (2)].string));
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
+        String nametest = adoptRef((yyvsp[-1].string));
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[0].expressionVector));
 
         AtomString localName;
         AtomString namespaceURI;
@@ -1746,27 +1524,29 @@ yyreduce:
             (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTFMove(*predicateList));
         else
             (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ChildAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI));
-    ;}
+    }
+#line 1529 "XPathGrammar.cpp"
     break;
 
-  case 14:
+  case 14: /* Step: AxisSpecifier NodeTest OptionalPredicateList  */
 #line 200 "XPathGrammar.y"
     {
-        std::unique_ptr<WebCore::XPath::Step::NodeTest> nodeTest((yyvsp[(2) - (3)].nodeTest));
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
+        std::unique_ptr<WebCore::XPath::Step::NodeTest> nodeTest((yyvsp[-1].nodeTest));
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[0].expressionVector));
 
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTFMove(*nodeTest), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[-2].axis), WTFMove(*nodeTest), WTFMove(*predicateList));
         else
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WTFMove(*nodeTest));
-    ;}
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[-2].axis), WTFMove(*nodeTest));
+    }
+#line 1543 "XPathGrammar.cpp"
     break;
 
-  case 15:
+  case 15: /* Step: AxisSpecifier NAMETEST OptionalPredicateList  */
 #line 211 "XPathGrammar.y"
     {
-        String nametest = adoptRef((yyvsp[(2) - (3)].string));
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
+        String nametest = adoptRef((yyvsp[-1].string));
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[0].expressionVector));
 
         AtomString localName;
         AtomString namespaceURI;
@@ -1776,366 +1556,376 @@ yyreduce:
         }
 
         if (predicateList)
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTFMove(*predicateList));
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[-2].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI), WTFMove(*predicateList));
         else
-            (yyval.step) = new WebCore::XPath::Step((yyvsp[(1) - (3)].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI));
-    ;}
+            (yyval.step) = new WebCore::XPath::Step((yyvsp[-2].axis), WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::NameTest, localName, namespaceURI));
+    }
+#line 1564 "XPathGrammar.cpp"
     break;
 
-  case 18:
+  case 18: /* AxisSpecifier: '@'  */
 #line 235 "XPathGrammar.y"
     {
         (yyval.axis) = WebCore::XPath::Step::AttributeAxis;
-    ;}
+    }
+#line 1572 "XPathGrammar.cpp"
     break;
 
-  case 19:
+  case 19: /* NodeTest: NODE '(' ')'  */
 #line 242 "XPathGrammar.y"
     {
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::AnyNodeTest);
-    ;}
+    }
+#line 1580 "XPathGrammar.cpp"
     break;
 
-  case 20:
+  case 20: /* NodeTest: TEXT_ '(' ')'  */
 #line 247 "XPathGrammar.y"
     {
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::TextNodeTest);
-    ;}
+    }
+#line 1588 "XPathGrammar.cpp"
     break;
 
-  case 21:
+  case 21: /* NodeTest: COMMENT '(' ')'  */
 #line 252 "XPathGrammar.y"
     {
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::CommentNodeTest);
-    ;}
+    }
+#line 1596 "XPathGrammar.cpp"
     break;
 
-  case 22:
+  case 22: /* NodeTest: PI '(' ')'  */
 #line 257 "XPathGrammar.y"
     {
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest);
-    ;}
+    }
+#line 1604 "XPathGrammar.cpp"
     break;
 
-  case 23:
+  case 23: /* NodeTest: PI '(' LITERAL ')'  */
 #line 262 "XPathGrammar.y"
     {
-        auto stringImpl = adoptRef((yyvsp[(3) - (4)].string));
+        auto stringImpl = adoptRef((yyvsp[-1].string));
         if (stringImpl)
             stringImpl = stringImpl->trim(deprecatedIsSpaceOrNewline);
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
-    ;}
+    }
+#line 1615 "XPathGrammar.cpp"
     break;
 
-  case 24:
-#line 270 "XPathGrammar.y"
+  case 24: /* OptionalPredicateList: %empty  */
+#line 272 "XPathGrammar.y"
     {
         (yyval.expressionVector) = nullptr;
-    ;}
+    }
+#line 1623 "XPathGrammar.cpp"
     break;
 
-  case 26:
-#line 279 "XPathGrammar.y"
+  case 26: /* PredicateList: Predicate  */
+#line 281 "XPathGrammar.y"
     {
         (yyval.expressionVector) = new Vector<std::unique_ptr<WebCore::XPath::Expression>>;
-        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (1)].expression)));
-    ;}
+        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1632 "XPathGrammar.cpp"
     break;
 
-  case 27:
-#line 285 "XPathGrammar.y"
+  case 27: /* PredicateList: PredicateList Predicate  */
+#line 287 "XPathGrammar.y"
     {
-        (yyval.expressionVector) = (yyvsp[(1) - (2)].expressionVector);
-        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(2) - (2)].expression)));
-    ;}
+        (yyval.expressionVector) = (yyvsp[-1].expressionVector);
+        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1641 "XPathGrammar.cpp"
     break;
 
-  case 28:
-#line 293 "XPathGrammar.y"
+  case 28: /* Predicate: '[' Expr ']'  */
+#line 295 "XPathGrammar.y"
     {
-        (yyval.expression) = (yyvsp[(2) - (3)].expression);
-    ;}
+        (yyval.expression) = (yyvsp[-1].expression);
+    }
+#line 1649 "XPathGrammar.cpp"
     break;
 
-  case 29:
-#line 300 "XPathGrammar.y"
+  case 29: /* DescendantOrSelf: SLASHSLASH  */
+#line 302 "XPathGrammar.y"
     {
         (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::DescendantOrSelfAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::AnyNodeTest));
-    ;}
+    }
+#line 1657 "XPathGrammar.cpp"
     break;
 
-  case 30:
-#line 307 "XPathGrammar.y"
+  case 30: /* AbbreviatedStep: '.'  */
+#line 309 "XPathGrammar.y"
     {
         (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::SelfAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::AnyNodeTest));
-    ;}
+    }
+#line 1665 "XPathGrammar.cpp"
     break;
 
-  case 31:
-#line 312 "XPathGrammar.y"
+  case 31: /* AbbreviatedStep: DOTDOT  */
+#line 314 "XPathGrammar.y"
     {
         (yyval.step) = new WebCore::XPath::Step(WebCore::XPath::Step::ParentAxis, WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::AnyNodeTest));
-    ;}
+    }
+#line 1673 "XPathGrammar.cpp"
     break;
 
-  case 32:
-#line 319 "XPathGrammar.y"
+  case 32: /* PrimaryExpr: VARIABLEREFERENCE  */
+#line 321 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (1)].string));
+        String name = adoptRef((yyvsp[0].string));
         (yyval.expression) = new WebCore::XPath::VariableReference(name);
-    ;}
+    }
+#line 1682 "XPathGrammar.cpp"
     break;
 
-  case 33:
-#line 325 "XPathGrammar.y"
+  case 33: /* PrimaryExpr: '(' Expr ')'  */
+#line 327 "XPathGrammar.y"
     {
-        (yyval.expression) = (yyvsp[(2) - (3)].expression);
-    ;}
+        (yyval.expression) = (yyvsp[-1].expression);
+    }
+#line 1690 "XPathGrammar.cpp"
     break;
 
-  case 34:
-#line 330 "XPathGrammar.y"
+  case 34: /* PrimaryExpr: LITERAL  */
+#line 332 "XPathGrammar.y"
     {
-        String literal = adoptRef((yyvsp[(1) - (1)].string));
+        String literal = adoptRef((yyvsp[0].string));
         (yyval.expression) = new WebCore::XPath::StringExpression(WTFMove(literal));
-    ;}
+    }
+#line 1699 "XPathGrammar.cpp"
     break;
 
-  case 35:
-#line 336 "XPathGrammar.y"
+  case 35: /* PrimaryExpr: NUMBER  */
+#line 338 "XPathGrammar.y"
     {
-        String numeral = adoptRef((yyvsp[(1) - (1)].string));
+        String numeral = adoptRef((yyvsp[0].string));
         (yyval.expression) = new WebCore::XPath::Number(numeral.toDouble());
-    ;}
+    }
+#line 1708 "XPathGrammar.cpp"
     break;
 
-  case 37:
-#line 346 "XPathGrammar.y"
+  case 37: /* FunctionCall: FUNCTIONNAME '(' ')'  */
+#line 348 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (3)].string));
+        String name = adoptRef((yyvsp[-2].string));
         (yyval.expression) = WebCore::XPath::Function::create(name).release();
         if (!(yyval.expression))
             YYABORT;
-    ;}
+    }
+#line 1719 "XPathGrammar.cpp"
     break;
 
-  case 38:
-#line 354 "XPathGrammar.y"
+  case 38: /* FunctionCall: FUNCTIONNAME '(' ArgumentList ')'  */
+#line 356 "XPathGrammar.y"
     {
-        String name = adoptRef((yyvsp[(1) - (4)].string));
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> argumentList((yyvsp[(3) - (4)].expressionVector));
+        String name = adoptRef((yyvsp[-3].string));
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> argumentList((yyvsp[-1].expressionVector));
         (yyval.expression) = WebCore::XPath::Function::create(name, WTFMove(*argumentList)).release();
         if (!(yyval.expression))
             YYABORT;
-    ;}
+    }
+#line 1731 "XPathGrammar.cpp"
     break;
 
-  case 39:
-#line 365 "XPathGrammar.y"
+  case 39: /* ArgumentList: Argument  */
+#line 367 "XPathGrammar.y"
     {
         (yyval.expressionVector) = new Vector<std::unique_ptr<WebCore::XPath::Expression>>;
-        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (1)].expression)));
-    ;}
+        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1740 "XPathGrammar.cpp"
     break;
 
-  case 40:
-#line 371 "XPathGrammar.y"
+  case 40: /* ArgumentList: ArgumentList ',' Argument  */
+#line 373 "XPathGrammar.y"
     {
-        (yyval.expressionVector) = (yyvsp[(1) - (3)].expressionVector);
-        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expressionVector) = (yyvsp[-2].expressionVector);
+        (yyval.expressionVector)->append(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1749 "XPathGrammar.cpp"
     break;
 
-  case 43:
-#line 385 "XPathGrammar.y"
+  case 43: /* UnionExpr: UnionExpr '|' PathExpr  */
+#line 387 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::Union(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::Union(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1757 "XPathGrammar.cpp"
     break;
 
-  case 44:
-#line 392 "XPathGrammar.y"
+  case 44: /* PathExpr: LocationPath  */
+#line 394 "XPathGrammar.y"
     {
-        (yyval.expression) = (yyvsp[(1) - (1)].locationPath);
-    ;}
+        (yyval.expression) = (yyvsp[0].locationPath);
+    }
+#line 1765 "XPathGrammar.cpp"
     break;
 
-  case 46:
-#line 399 "XPathGrammar.y"
+  case 46: /* PathExpr: FilterExpr '/' RelativeLocationPath  */
+#line 401 "XPathGrammar.y"
     {
-        (yyvsp[(3) - (3)].locationPath)->setAbsolute();
-        (yyval.expression) = new WebCore::XPath::Path(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::LocationPath>((yyvsp[(3) - (3)].locationPath)));
-    ;}
+        (yyvsp[0].locationPath)->setAbsolute();
+        (yyval.expression) = new WebCore::XPath::Path(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::LocationPath>((yyvsp[0].locationPath)));
+    }
+#line 1774 "XPathGrammar.cpp"
     break;
 
-  case 47:
-#line 405 "XPathGrammar.y"
+  case 47: /* PathExpr: FilterExpr DescendantOrSelf RelativeLocationPath  */
+#line 407 "XPathGrammar.y"
     {
-        (yyvsp[(3) - (3)].locationPath)->prependStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[(2) - (3)].step)));
-        (yyvsp[(3) - (3)].locationPath)->setAbsolute();
-        (yyval.expression) = new WebCore::XPath::Path(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::LocationPath>((yyvsp[(3) - (3)].locationPath)));
-    ;}
+        (yyvsp[0].locationPath)->prependStep(std::unique_ptr<WebCore::XPath::Step>((yyvsp[-1].step)));
+        (yyvsp[0].locationPath)->setAbsolute();
+        (yyval.expression) = new WebCore::XPath::Path(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::LocationPath>((yyvsp[0].locationPath)));
+    }
+#line 1784 "XPathGrammar.cpp"
     break;
 
-  case 49:
-#line 416 "XPathGrammar.y"
+  case 49: /* FilterExpr: PrimaryExpr PredicateList  */
+#line 418 "XPathGrammar.y"
     {
-        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
-        (yyval.expression) = new WebCore::XPath::Filter(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (2)].expression)), WTFMove(*predicateList));
-    ;}
+        std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[0].expressionVector));
+        (yyval.expression) = new WebCore::XPath::Filter(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-1].expression)), WTFMove(*predicateList));
+    }
+#line 1793 "XPathGrammar.cpp"
     break;
 
-  case 51:
-#line 426 "XPathGrammar.y"
+  case 51: /* OrExpr: OrExpr OR AndExpr  */
+#line 428 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_Or, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_Or, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1801 "XPathGrammar.cpp"
     break;
 
-  case 53:
-#line 435 "XPathGrammar.y"
+  case 53: /* AndExpr: AndExpr AND EqualityExpr  */
+#line 437 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_And, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_And, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1809 "XPathGrammar.cpp"
     break;
 
-  case 55:
-#line 444 "XPathGrammar.y"
+  case 55: /* EqualityExpr: EqualityExpr EQOP RelationalExpr  */
+#line 446 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::EqTestOp((yyvsp[(2) - (3)].equalityTestOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::EqTestOp((yyvsp[-1].equalityTestOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1817 "XPathGrammar.cpp"
     break;
 
-  case 57:
-#line 453 "XPathGrammar.y"
+  case 57: /* RelationalExpr: RelationalExpr RELOP AdditiveExpr  */
+#line 455 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::EqTestOp((yyvsp[(2) - (3)].equalityTestOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::EqTestOp((yyvsp[-1].equalityTestOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1825 "XPathGrammar.cpp"
     break;
 
-  case 59:
-#line 462 "XPathGrammar.y"
+  case 59: /* AdditiveExpr: AdditiveExpr PLUS MultiplicativeExpr  */
+#line 464 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Add, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Add, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1833 "XPathGrammar.cpp"
     break;
 
-  case 60:
-#line 467 "XPathGrammar.y"
+  case 60: /* AdditiveExpr: AdditiveExpr MINUS MultiplicativeExpr  */
+#line 469 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Sub, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Sub, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1841 "XPathGrammar.cpp"
     break;
 
-  case 62:
-#line 476 "XPathGrammar.y"
+  case 62: /* MultiplicativeExpr: MultiplicativeExpr MULOP UnaryExpr  */
+#line 478 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::NumericOp((yyvsp[(2) - (3)].numericOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::NumericOp((yyvsp[-1].numericOpcode), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[-2].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1849 "XPathGrammar.cpp"
     break;
 
-  case 64:
-#line 485 "XPathGrammar.y"
+  case 64: /* UnaryExpr: MINUS UnaryExpr  */
+#line 487 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::Negative(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(2) - (2)].expression)));
-    ;}
+        (yyval.expression) = new WebCore::XPath::Negative(std::unique_ptr<WebCore::XPath::Expression>((yyvsp[0].expression)));
+    }
+#line 1857 "XPathGrammar.cpp"
     break;
 
 
-/* Line 1267 of yacc.c.  */
-#line 2046 "XPathGrammar.cpp"
+#line 1861 "XPathGrammar.cpp"
+
       default: break;
     }
-  YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
+  /* User semantic actions sometimes alter yychar, and that requires
+     that yytoken be updated with the new translation.  We take the
+     approach of translating immediately before every use of yytoken.
+     One alternative is translating here after every semantic action,
+     but that translation would be missed if the semantic action invokes
+     YYABORT, YYACCEPT, or YYERROR immediately after altering yychar or
+     if it invokes YYBACKUP.  In the case of YYABORT or YYACCEPT, an
+     incorrect destructor might then be invoked immediately.  In the
+     case of YYERROR or YYBACKUP, subsequent parser actions might lead
+     to an incorrect destructor call or verbose syntax error message
+     before the lookahead is translated.  */
+  YY_SYMBOL_PRINT ("-> $$ =", YY_CAST (yysymbol_kind_t, yyr1[yyn]), &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
   yylen = 0;
-  YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
 
-
-  /* Now `shift' the result of the reduction.  Determine what state
+  /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
-
-  yyn = yyr1[yyn];
-
-  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
-  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
-    yystate = yytable[yystate];
-  else
-    yystate = yydefgoto[yyn - YYNTOKENS];
+  {
+    const int yylhs = yyr1[yyn] - YYNTOKENS;
+    const int yyi = yypgoto[yylhs] + *yyssp;
+    yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
+               ? yytable[yyi]
+               : yydefgoto[yylhs]);
+  }
 
   goto yynewstate;
 
 
-/*------------------------------------.
-| yyerrlab -- here on detecting error |
-`------------------------------------*/
+/*--------------------------------------.
+| yyerrlab -- here on detecting error.  |
+`--------------------------------------*/
 yyerrlab:
+  /* Make sure we have latest lookahead translation.  See comments at
+     user semantic actions for why this is necessary.  */
+  yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
-#if ! YYERROR_VERBOSE
       yyerror (parser, YY_("syntax error"));
-#else
-      {
-	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
-	if (yymsg_alloc < yysize && yymsg_alloc < YYSTACK_ALLOC_MAXIMUM)
-	  {
-	    YYSIZE_T yyalloc = 2 * yysize;
-	    if (! (yysize <= yyalloc && yyalloc <= YYSTACK_ALLOC_MAXIMUM))
-	      yyalloc = YYSTACK_ALLOC_MAXIMUM;
-	    if (yymsg != yymsgbuf)
-	      YYSTACK_FREE (yymsg);
-	    yymsg = (char *) YYSTACK_ALLOC (yyalloc);
-	    if (yymsg)
-	      yymsg_alloc = yyalloc;
-	    else
-	      {
-		yymsg = yymsgbuf;
-		yymsg_alloc = sizeof yymsgbuf;
-	      }
-	  }
-
-	if (0 < yysize && yysize <= yymsg_alloc)
-	  {
-	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (parser, yymsg);
-	  }
-	else
-	  {
-	    yyerror (parser, YY_("syntax error"));
-	    if (yysize != 0)
-	      goto yyexhaustedlab;
-	  }
-      }
-#endif
     }
-
-
 
   if (yyerrstatus == 3)
     {
-      /* If just tried and failed to reuse look-ahead token after an
-	 error, discard it.  */
+      /* If just tried and failed to reuse lookahead token after an
+         error, discard it.  */
 
       if (yychar <= YYEOF)
-	{
-	  /* Return failure if at end of input.  */
-	  if (yychar == YYEOF)
-	    YYABORT;
-	}
+        {
+          /* Return failure if at end of input.  */
+          if (yychar == YYEOF)
+            YYABORT;
+        }
       else
-	{
-	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, parser);
-	  yychar = YYEMPTY;
-	}
+        {
+          yydestruct ("Error: discarding",
+                      yytoken, &yylval, parser);
+          yychar = YYEMPTY;
+        }
     }
 
-  /* Else will try to reuse look-ahead token after shifting the error
+  /* Else will try to reuse lookahead token after shifting the error
      token.  */
   goto yyerrlab1;
 
@@ -2144,16 +1934,12 @@ yyerrlab:
 | yyerrorlab -- error raised explicitly by YYERROR.  |
 `---------------------------------------------------*/
 yyerrorlab:
+  /* Pacify compilers when the user code never invokes YYERROR and the
+     label yyerrorlab therefore never appears in user code.  */
+  if (0)
+    YYERROR;
 
-  /* Pacify compilers like GCC when the user code never invokes
-     YYERROR and the label yyerrorlab therefore never appears in user
-     code.  */
-  IGNORE_CLANG_WARNINGS_BEGIN("unreachable-code")
-  if (/*CONSTCOND*/ 0)
-     goto yyerrorlab;
-  IGNORE_CLANG_WARNINGS_END
-
-  /* Do not reclaim the symbols of the rule which action triggered
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -2166,42 +1952,42 @@ yyerrorlab:
 | yyerrlab1 -- common code for both syntax error and YYERROR.  |
 `-------------------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
+  /* Pop stack until we find a state that shifts the error token.  */
   for (;;)
     {
       yyn = yypact[yystate];
-      if (yyn != YYPACT_NINF)
-	{
-	  yyn += YYTERROR;
-	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-	    {
-	      yyn = yytable[yyn];
-	      if (0 < yyn)
-		break;
-	    }
-	}
+      if (!yypact_value_is_default (yyn))
+        {
+          yyn += YYSYMBOL_YYerror;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYSYMBOL_YYerror)
+            {
+              yyn = yytable[yyn];
+              if (0 < yyn)
+                break;
+            }
+        }
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-	YYABORT;
+        YYABORT;
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, parser);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp, parser);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
     }
 
-  if (yyn == YYFINAL)
-    YYACCEPT;
-
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
 
   /* Shift the error token.  */
-  YY_SYMBOL_PRINT ("Shifting", yystos[yyn], yyvsp, yylsp);
+  YY_SYMBOL_PRINT ("Shifting", YY_ACCESSING_SYMBOL (yyn), yyvsp, yylsp);
 
   yystate = yyn;
   goto yynewstate;
@@ -2212,52 +1998,55 @@ yyerrlab1:
 `-------------------------------------*/
 yyacceptlab:
   yyresult = 0;
-  goto yyreturn;
+  goto yyreturnlab;
+
 
 /*-----------------------------------.
 | yyabortlab -- YYABORT comes here.  |
 `-----------------------------------*/
 yyabortlab:
   yyresult = 1;
-  goto yyreturn;
+  goto yyreturnlab;
 
-#ifndef yyoverflow
-/*-------------------------------------------------.
-| yyexhaustedlab -- memory exhaustion comes here.  |
-`-------------------------------------------------*/
+
+/*-----------------------------------------------------------.
+| yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
+`-----------------------------------------------------------*/
 yyexhaustedlab:
   yyerror (parser, YY_("memory exhausted"));
   yyresult = 2;
-  /* Fall through.  */
-#endif
+  goto yyreturnlab;
 
-yyreturn:
-  if (yychar != YYEOF && yychar != YYEMPTY)
-     yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, parser);
-  /* Do not reclaim the symbols of the rule which action triggered
+
+/*----------------------------------------------------------.
+| yyreturnlab -- parsing is finished, clean up and return.  |
+`----------------------------------------------------------*/
+yyreturnlab:
+  if (yychar != YYEMPTY)
+    {
+      /* Make sure we have latest lookahead translation.  See comments at
+         user semantic actions for why this is necessary.  */
+      yytoken = YYTRANSLATE (yychar);
+      yydestruct ("Cleanup: discarding lookahead",
+                  yytoken, &yylval, parser);
+    }
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
   YY_STACK_PRINT (yyss, yyssp);
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, parser);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, parser);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
   if (yyss != yyssa)
     YYSTACK_FREE (yyss);
 #endif
-#if YYERROR_VERBOSE
-  if (yymsg != yymsgbuf)
-    YYSTACK_FREE (yymsg);
-#endif
-  /* Make sure YYID is used.  */
-  return YYID (yyresult);
+
+  return yyresult;
 }
 
-
-#line 490 "XPathGrammar.y"
-
+#line 492 "XPathGrammar.y"
 

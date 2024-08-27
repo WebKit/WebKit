@@ -1,16 +1,14 @@
-#ifndef CSSGRAMMAR_H
-#define CSSGRAMMAR_H
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,9 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -35,65 +31,60 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Tokens.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
+#ifndef YY_XPATHYY_XPATHGRAMMAR_HPP_INCLUDED
+# define YY_XPATHYY_XPATHGRAMMAR_HPP_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+#if YYDEBUG
+extern int xpathyydebug;
+#endif
+
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     MULOP = 258,
-     RELOP = 259,
-     EQOP = 260,
-     MINUS = 261,
-     PLUS = 262,
-     AND = 263,
-     OR = 264,
-     FUNCTIONNAME = 265,
-     LITERAL = 266,
-     NAMETEST = 267,
-     NUMBER = 268,
-     NODETYPE = 269,
-     VARIABLEREFERENCE = 270,
-     AXISNAME = 271,
-     COMMENT = 272,
-     DOTDOT = 273,
-     PI = 274,
-     NODE = 275,
-     SLASHSLASH = 276,
-     TEXT_ = 277,
-     XPATH_ERROR = 278
-   };
+  enum yytokentype
+  {
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    MULOP = 258,                   /* MULOP  */
+    EQOP = 259,                    /* EQOP  */
+    RELOP = 260,                   /* RELOP  */
+    PLUS = 261,                    /* PLUS  */
+    MINUS = 262,                   /* MINUS  */
+    OR = 263,                      /* OR  */
+    AND = 264,                     /* AND  */
+    FUNCTIONNAME = 265,            /* FUNCTIONNAME  */
+    LITERAL = 266,                 /* LITERAL  */
+    NAMETEST = 267,                /* NAMETEST  */
+    NUMBER = 268,                  /* NUMBER  */
+    NODETYPE = 269,                /* NODETYPE  */
+    VARIABLEREFERENCE = 270,       /* VARIABLEREFERENCE  */
+    AXISNAME = 271,                /* AXISNAME  */
+    COMMENT = 272,                 /* COMMENT  */
+    DOTDOT = 273,                  /* DOTDOT  */
+    PI = 274,                      /* PI  */
+    NODE = 275,                    /* NODE  */
+    SLASHSLASH = 276,              /* SLASHSLASH  */
+    TEXT_ = 277,                   /* TEXT_  */
+    XPATH_ERROR = 278              /* XPATH_ERROR  */
+  };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
-#define MULOP 258
-#define RELOP 259
-#define EQOP 260
-#define MINUS 261
-#define PLUS 262
-#define AND 263
-#define OR 264
-#define FUNCTIONNAME 265
-#define LITERAL 266
-#define NAMETEST 267
-#define NUMBER 268
-#define NODETYPE 269
-#define VARIABLEREFERENCE 270
-#define AXISNAME 271
-#define COMMENT 272
-#define DOTDOT 273
-#define PI 274
-#define NODE 275
-#define SLASHSLASH 276
-#define TEXT_ 277
-#define XPATH_ERROR 278
 
-
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
-#line 60 "WebCore/xml/XPathGrammar.y"
-{ 
+union YYSTYPE
+{
+#line 57 "XPathGrammar.y"
+ 
     WebCore::XPath::NumericOp::Opcode numericOpcode;
     WebCore::XPath::EqTestOp::Opcode equalityTestOpcode;
     StringImpl* string;
@@ -103,15 +94,19 @@ typedef union YYSTYPE
     Vector<std::unique_ptr<WebCore::XPath::Expression>>* expressionVector;
     WebCore::XPath::Step* step;
     WebCore::XPath::Expression* expression;
-}
-/* Line 1529 of yacc.c.  */
-#line 107 "./XPathGrammar.hpp"
-    YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
+
+#line 99 "XPathGrammar.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
 
 
 
-#endif
+
+int xpathyyparse (WebCore::XPath::Parser& parser);
+
+
+#endif /* !YY_XPATHYY_XPATHGRAMMAR_HPP_INCLUDED  */

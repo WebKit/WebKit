@@ -50,7 +50,7 @@
 
 %}
 
-%pure-parser
+%define api.pure full
 %lex-param { parser }
 %parse-param { WebCore::XPath::Parser& parser }
 
