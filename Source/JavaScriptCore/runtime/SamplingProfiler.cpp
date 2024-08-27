@@ -1098,8 +1098,15 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         result->setDouble("sourceID"_s, sourceID);
         result->setString("name"_s, stackFrame.displayName(m_vm));
         result->setString("location"_s, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
-        result->setDouble("line"_s, stackFrame.semanticLocation.lineColumn.line);
-        result->setDouble("column"_s, stackFrame.semanticLocation.lineColumn.column);
+        LineColumn sourceMappedLineColumn = stackFrame.semanticLocation.lineColumn;
+        if (provider) {
+            auto& fn = m_vm.computeLineColumnWithSourcemap();
+            if (fn) {
+                fn(m_vm, provider, sourceMappedLineColumn);
+            }
+        }
+        result->setDouble("line"_s, sourceMappedLineColumn.line);
+        result->setDouble("column"_s, sourceMappedLineColumn.column);
         result->setString("category"_s, tierName(stackFrame));
         uint32_t flags = 0;
         if (stackFrame.frameType == SamplingProfiler::FrameType::Executable && stackFrame.executable) {
@@ -1112,8 +1119,15 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
             auto inliner = JSON::Object::create();
             inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
             inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
-            inliner->setDouble("line"_s, machineLocation->first.lineColumn.line);
-            inliner->setDouble("column"_s, machineLocation->first.lineColumn.column);
+            LineColumn sourceMappedLineColumn = machineLocation->first.lineColumn;
+            if (provider) {
+                auto& fn = m_vm.computeLineColumnWithSourcemap();
+                if (fn) {
+                    fn(m_vm, provider, sourceMappedLineColumn);
+                }
+            }
+            inliner->setDouble("line"_s, sourceMappedLineColumn.line);
+            inliner->setDouble("column"_s, sourceMappedLineColumn.column);
             inliner->setString("category"_s, tierName(stackFrame));
             result->setValue("inliner"_s, WTFMove(inliner));
         }
