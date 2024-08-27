@@ -264,7 +264,7 @@ if (ENABLE_WEBDRIVER)
 endif ()
 
 if (ENABLE_XSLT)
-    find_package(LibXslt 1.1.7 REQUIRED)
+    find_package(LibXslt 1.1.13 REQUIRED)
 endif ()
 
 if (ENABLE_WPE_PLATFORM)
