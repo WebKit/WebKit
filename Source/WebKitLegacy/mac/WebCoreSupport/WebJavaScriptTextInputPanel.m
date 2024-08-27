@@ -42,7 +42,7 @@
 
 - (id)initWithPrompt:(NSString *)p text:(NSString *)t
 {
-    self = [self initWithWindowNibName:@"WebJavaScriptTextInputPanel"];
+    self = [super initWithWindowNibName:@"WebJavaScriptTextInputPanel"];
     if (!self)
         return nil;
     NSWindow *window = [self window];

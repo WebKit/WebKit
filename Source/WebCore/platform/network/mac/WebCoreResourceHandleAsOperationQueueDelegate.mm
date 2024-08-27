@@ -82,9 +82,9 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
         CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
 }
 
-- (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue
+- (instancetype)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
 

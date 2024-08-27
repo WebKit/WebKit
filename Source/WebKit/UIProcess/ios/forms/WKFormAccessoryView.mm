@@ -131,7 +131,7 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
 
 - (instancetype)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistant delegate:(id<WKFormAccessoryViewDelegate>)delegate
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
 
