@@ -373,7 +373,11 @@ void WritingToolsController::showSelection() const
         return;
     }
 
-    document->selection().setSelection(*currentRange);
+    auto visibleSelection = VisibleSelection { *currentRange };
+    if (visibleSelection.isNoneOrOrphaned())
+        return;
+
+    document->selection().setSelection(visibleSelection);
 }
 
 void WritingToolsController::compositionSessionDidFinishReplacement()

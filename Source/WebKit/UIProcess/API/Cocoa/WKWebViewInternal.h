@@ -420,7 +420,6 @@ struct PerWebProcessState {
 #endif
 
 - (void)_didEndPartialIntelligenceTextPonderingAnimation;
-- (BOOL)_intelligenceTextPonderingAnimationIsComplete;
 - (BOOL)_writingToolsTextReplacementsFinished;
 
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;

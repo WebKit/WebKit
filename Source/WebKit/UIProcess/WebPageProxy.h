@@ -2438,8 +2438,9 @@ public:
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 
-    void showSelectionForActiveWritingToolsSessionIfNeeded();
     bool writingToolsTextReplacementsFinished();
+    void showSelectionForActiveWritingToolsSession();
+
     void didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&);
     void didEndPartialIntelligenceTextPonderingAnimationImpl();
 #endif
