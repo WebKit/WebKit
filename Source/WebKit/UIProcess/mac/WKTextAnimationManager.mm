@@ -80,7 +80,7 @@
     _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
 
     _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
-    [_effectView setFrame:webView.view().frame];
+    [_effectView setFrame:webView.view().bounds];
     [_webView->view() addSubview:_effectView.get()];
     return self;
 }
