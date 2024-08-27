@@ -53,11 +53,6 @@ class PlatformCALayer;
 
 struct VelocityData;
 
-enum TileSizeMode {
-    StandardTileSizeMode,
-    GiantTileSizeMode
-};
-
 enum ScrollingModeIndication {
     SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication,
     SynchronousScrollingBecauseOfStyleIndication,
