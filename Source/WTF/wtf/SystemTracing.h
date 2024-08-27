@@ -264,6 +264,7 @@ WTF_EXTERN_C_END
     M(JSCJSGlobalObject) \
     M(IPCConnection) \
     M(StreamClientConnection) \
+    M(FinalizeRenderingUpdate) \
 
 #define DECLARE_WTF_SIGNPOST_NAME_ENUM(name) WTFOSSignpostName ## name,
 
