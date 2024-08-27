@@ -61,8 +61,6 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
     , m_sessionID(session.sessionID())
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    ASSERT(m_downloadID);
-
     m_downloadManager.didCreateDownload();
 }
 
@@ -75,8 +73,6 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
     , m_sessionID(session.sessionID())
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    ASSERT(m_downloadID);
-
     m_downloadManager.didCreateDownload();
 }
 #endif

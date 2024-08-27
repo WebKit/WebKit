@@ -72,7 +72,6 @@ template: enum class WebCore::TextManipulationItemIdentifierType
 template: enum class WebCore::TextManipulationTokenIdentifierType
 template: enum class WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifierType
 template: enum class WebKit::ContentWorldIdentifierType
-template: enum class WebKit::DownloadIdentifierType
 template: enum class WebKit::ImageAnalysisRequestIdentifierType
 template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
 template: enum class WebKit::MediaRecorderIdentifierType
@@ -159,6 +158,7 @@ template: enum class WebCore::SWServerToContextConnectionIdentifierType
 template: enum class WebCore::SharedWorkerIdentifierType
 template: enum class WebCore::WindowIdentifierType
 template: enum class WebCore::WorkletGlobalScopeIdentifierType
+template: enum class WebKit::DownloadIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {

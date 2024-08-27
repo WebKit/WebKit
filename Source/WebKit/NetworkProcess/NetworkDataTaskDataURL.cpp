@@ -173,9 +173,9 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
     }
 
     auto& downloadManager = m_session->networkProcess().downloadManager();
-    auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
+    auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
     auto* downloadPtr = download.get();
-    downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
+    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 
     if (-1 == FileSystem::writeToFile(downloadDestinationFile, data.span())) {
