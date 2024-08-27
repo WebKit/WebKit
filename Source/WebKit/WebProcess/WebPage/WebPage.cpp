@@ -5030,12 +5030,16 @@ bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCo
 
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+    WTFBeginSignpost(this, FinalizeRenderingUpdate);
+
     m_page->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
     if (m_remoteRenderingBackendProxy)
         m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
     flushDeferredDidReceiveMouseEvent();
+
+    WTFEndSignpost(this, FinalizeRenderingUpdate);
 }
 
 void WebPage::willStartRenderingUpdateDisplay()

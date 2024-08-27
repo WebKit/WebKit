@@ -42,6 +42,7 @@
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif
+#include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
 
 #if USE(CAIRO)
@@ -1160,6 +1161,10 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     if (!m_nicosia.backingStore)
         return;
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    TraceScope traceScope(UpdateLayerContentBuffersStart, UpdateLayerContentBuffersEnd);
+#endif
+
     // Prepare for painting on the impl-contained backing store. isFlushing is used there
     // for internal sanity checks.
     auto& layerState = m_nicosia.backingStore->layerState();
@@ -1219,15 +1224,22 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     // With all the affected tiles created and/or invalidated, we can finally paint them.
     auto dirtyTiles = layerState.mainBackingStore->dirtyTiles();
     if (!dirtyTiles.isEmpty()) {
+        auto dirtyTilesCount = dirtyTiles.size();
         bool didUpdateTiles = false;
 
-        for (auto& tileReference : dirtyTiles) {
-            auto& tile = tileReference.get();
+        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %lu", dirtyTilesCount);
+
+        for (unsigned dirtyTileIndex = 0; dirtyTileIndex < dirtyTilesCount; ++dirtyTileIndex) {
+            auto& tile = dirtyTiles[dirtyTileIndex].get();
             tile.ensureTileID();
+
+            WTFBeginSignpost(this, UpdateTile, "%u/%lu, id: %d", dirtyTileIndex + 1, dirtyTilesCount, tile.tileID());
 
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
             auto buffer = paintTile(dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect), layerState.mainBackingStore->contentsScale());
+
+            WTFBeginSignpost(this, UpdateTileBackingStore, "rect %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
 
             IntRect updateRect(dirtyRect);
             updateRect.move(-tileRect.x(), -tileRect.y());
@@ -1235,10 +1247,15 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
             tile.markClean();
             didUpdateTiles |= true;
+
+            WTFEndSignpost(this, UpdateTileBackingStore);
+            WTFEndSignpost(this, UpdateTile);
         }
 
         if (didUpdateTiles)
             didUpdateTileBuffers();
+
+        WTFEndSignpost(this, UpdateTiles);
     }
 
     // Request a new update immediately if some tiles are still pending creation. Do this on a timer
