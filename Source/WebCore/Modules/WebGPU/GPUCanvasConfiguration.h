@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GPUCanvasAlphaMode.h"
+#include "GPUCanvasToneMapping.h"
 #include "GPUDevice.h"
 #include "GPUPredefinedColorSpace.h"
 #include "GPUTextureFormat.h"
@@ -58,6 +59,7 @@ struct GPUCanvasConfiguration {
     Vector<GPUTextureFormat> viewFormats;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
     GPUCanvasAlphaMode alphaMode { GPUCanvasAlphaMode::Opaque };
+    GPUCanvasToneMapping toneMapping;
 };
 
 }

@@ -76,6 +76,7 @@ private:
 #endif
     WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
     WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };
+    WGPUToneMappingMode m_toneMappingMode { WGPUToneMappingMode_Standard };
 };
 
 } // namespace WebGPU

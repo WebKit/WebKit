@@ -29,6 +29,7 @@
 #include "DestinationColorSpace.h"
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
+#include "GPUCanvasTonemapping.h"
 #include "GPUPresentationContext.h"
 #include "GPUPresentationContextDescriptor.h"
 #include "GPUTextureDescriptor.h"
@@ -238,6 +239,14 @@ static DestinationColorSpace toWebCoreColorSpace(const GPUPredefinedColorSpace& 
     return DestinationColorSpace::SRGB();
 }
 
+static auto computeTextureFormat(auto format, auto toneMappingMode)
+{
+    if (configuration.format == GPUTextureFormat::Rgba16float && toneMappingMode == GPUCanvasToneMappingMode::Standard)
+        return WebCore::TextureFormat::Bgra8unorm;
+
+    return WebCore::convertToBacking(configuration.format);
+}
+
 ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration, bool dueToReshape)
 {
     if (isConfigured()) {
@@ -262,12 +271,12 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     if (!m_compositorIntegration)
         return { };
 
-    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, WebCore::convertToBacking(configuration.format), configuration.device->backing());
+    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, computeTextureFormat(configuration.format, configuration.toneMappingMode), configuration.device->backing());
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 
     bool reportValidationErrors = !dueToReshape;
-    if (!m_presentationContext || !m_presentationContext->configure(configuration, m_width, m_height, reportValidationErrors))
+    if (!m_presentationContext || !m_presentationContext->configure(configuration, m_width, m_height, configuration.toneMappingMode == GPUCanvasToneMappingMode::Standard, reportValidationErrors))
         return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
 
     m_configuration = {

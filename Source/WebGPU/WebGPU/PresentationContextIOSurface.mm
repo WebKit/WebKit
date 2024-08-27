@@ -186,6 +186,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     };
     m_colorSpace = descriptor.colorSpace;
     m_alphaMode = descriptor.compositeAlphaMode;
+    m_toneMappingMode = descriptor.toneMappingMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -232,7 +233,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     textureDescriptor.usage |= MTLTextureUsageRenderTarget;
-    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float;
+    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float && m_toneMappingMode != WGPUToneMappingMode_Extended;
     auto existingUsage = textureDescriptor.usage;
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;

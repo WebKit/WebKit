@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUCanvasAlphaMode.h"
+#include "WebGPUCanvasToneMappingMode.h"
 #include "WebGPUDevice.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
@@ -42,6 +43,7 @@ struct CanvasConfiguration {
     Vector<TextureFormat> viewFormats;
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
+    CanvasToneMappingMode toneMappingMode { CanvasToneMappingMode::Standard };
     bool reportValidationErrors { true };
 };
 

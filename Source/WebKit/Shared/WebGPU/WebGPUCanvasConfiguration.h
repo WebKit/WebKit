@@ -29,6 +29,7 @@
 
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCanvasAlphaMode.h>
+#include <WebCore/WebGPUCanvasToneMappingMode.h>
 #include <WebCore/WebGPUPredefinedColorSpace.h>
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
@@ -46,6 +47,7 @@ struct CanvasConfiguration {
     Vector<WebCore::WebGPU::TextureFormat> viewFormats;
     WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
     WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode { WebCore::WebGPU::CanvasAlphaMode::Opaque };
+    WebCore::WebGPU::CanvasToneMappingMode toneMappingMode { WebCore::WebGPU::CanvasToneMappingMode::Standard };
     bool reportValidationErrors { true };
 };
 

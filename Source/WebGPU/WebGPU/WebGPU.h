@@ -308,6 +308,11 @@ typedef enum WGPUCompositeAlphaMode {
     WGPUCompositeAlphaMode_Force32 = 0x7FFFFFFF
 } WGPUCompositeAlphaMode WGPU_ENUM_ATTRIBUTE;
 
+typedef enum WGPUToneMappingMode {
+    WGPUToneMappingMode_Standard = 0x00000000,
+    WGPUToneMappingMode_Extended = 0x00000001,
+} WGPUToneMappingMode WGPU_ENUM_ATTRIBUTE;
+
 typedef enum WGPUCreatePipelineAsyncStatus {
     WGPUCreatePipelineAsyncStatus_Success = 0x00000000,
     WGPUCreatePipelineAsyncStatus_ValidationError = 0x00000001,
@@ -1110,6 +1115,7 @@ typedef struct WGPUSwapChainDescriptor {
 #endif
     WGPUColorSpace colorSpace;
     WGPUCompositeAlphaMode compositeAlphaMode;
+    WGPUToneMappingMode toneMappingMode;
     WGPUBool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 

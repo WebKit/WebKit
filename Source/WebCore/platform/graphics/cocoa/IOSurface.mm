@@ -186,13 +186,15 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
     };
 }
 
-static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+template<unsigned bitsPerPixel>
+static NSDictionary *optionsForSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
 {
     int width = size.width();
     int height = size.height();
 
-    unsigned bytesPerElement = 4;
-    unsigned bytesPerPixel = 4;
+    static_assert(!(bitsPerPixel % 32), "bitsPerPixel must be a multiple of 32");
+    unsigned bytesPerElement = 4 * (bitsPerPixel / 32);
+    unsigned bytesPerPixel = bytesPerElement;
 
     size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
     ASSERT(bytesPerRow);
@@ -213,7 +215,14 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, 
         (id)kIOSurfaceElementHeight: @(1),
         (id)kIOSurfaceName: surfaceNameToNSString(name)
     };
-
+}
+static NDDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface<32>(size, pixelFormat, name);
+}
+static NDDictionary *optionsFor64BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface<64>(size, pixelFormat, name);
 }
 
 IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format format, bool& success)
@@ -246,6 +255,9 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::RGBX:
     case Format::RGBA:
         options = optionsFor32BitSurface(size, 'RGBA', name);
+        break;
+    case Format::RGBA16F:
+        options = optionsFor64BitSurface(size, 'RGhA', name);
         break;
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
@@ -418,6 +430,7 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
         break;
     case Format::BGRA:
         break;
+    case Format::RGBA16F:
 #if HAVE(IOSURFACE_RGB10)
     case Format::RGB10:
     case Format::RGB10A8:
@@ -710,6 +723,9 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
         break;
     case IOSurface::Format::RGBA:
         ts << "RGBA";
+        break;
+    case IOSurface::Format::RGBA16F:
+        ts << "RGBA16F";
         break;
     }
     return ts;

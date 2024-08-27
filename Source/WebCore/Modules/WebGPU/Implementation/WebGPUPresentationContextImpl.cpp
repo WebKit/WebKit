@@ -30,6 +30,7 @@
 
 #include "NativeImage.h"
 #include "WebGPUCanvasConfiguration.h"
+#include "WebGPUCanvasToneMappingMode.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
 #include "WebGPUTextureDescriptor.h"
@@ -71,6 +72,19 @@ static WGPUCompositeAlphaMode convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMod
     return WGPUCompositeAlphaMode_Premultiplied;
 }
 
+static WGPUToneMappingMode convertToToneMappingMode(WebCore::WebGPU::CanvasToneMappingMode toneMappingMode)
+{
+    switch (toneMappingMode) {
+    case WebCore::WebGPU::CanvasToneMappingMode::Standard:
+        return WGPUToneMappingMode_Standard;
+    case WebCore::WebGPU::CanvasToneMappingMode::Extended:
+        return WGPUToneMappingMode_Extended;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUToneMappingMode_Extended;
+}
+
 bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     m_swapChain = nullptr;
@@ -90,6 +104,7 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         }),
         .colorSpace = canvasConfiguration.colorSpace == WebCore::WebGPU::PredefinedColorSpace::SRGB ? WGPUColorSpace::SRGB : WGPUColorSpace::DisplayP3,
         .compositeAlphaMode = convertToAlphaMode(canvasConfiguration.compositingAlphaMode),
+        .toneMappingMode = convertToToneMappingMode(canvasConfiguration.toneMappingMode),
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
