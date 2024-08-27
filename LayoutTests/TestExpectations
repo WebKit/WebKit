@@ -5637,8 +5637,6 @@ webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-cha
 
 webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]
 
-webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.html [ Skip ]
-
 # Needs display box support.
 fast/layoutformattingcontext/ [ Skip ]
 

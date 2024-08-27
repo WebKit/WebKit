@@ -239,6 +239,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         RenderObject* o = boxFirst;
         while (o) {
             RenderObject* no = o;
+            auto internalMoveScope = SetForScope { m_builder.m_internalMovesType, IsInternalMove::Yes };
             o = no->nextSibling();
             auto childToMove = m_builder.detachFromRenderElement(*block, *no, WillBeDestroyed::No);
             m_builder.attachToRenderElementInternal(*pre, WTFMove(childToMove));
