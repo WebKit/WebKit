@@ -88,10 +88,8 @@ RejectedPromiseTracker::~RejectedPromiseTracker() = default;
 
 static RefPtr<ScriptCallStack> createScriptCallStackFromReason(JSGlobalObject& lexicalGlobalObject, JSValue reason)
 {
-    VM& vm = lexicalGlobalObject.vm();
-
     // Always capture a stack from the exception if this rejection was an exception.
-    if (auto* exception = vm.lastException()) {
+    if (auto* exception = lexicalGlobalObject.vm().lastException()) {
         if (exception->value() == reason)
             return createScriptCallStackFromException(&lexicalGlobalObject, exception);
     }

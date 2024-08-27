@@ -304,8 +304,7 @@ void MessagePort::dispatchEvent(Event& event)
 bool MessagePort::virtualHasPendingActivity() const
 {
     // If the ScriptExecutionContext has been shut down on this object close()'ed, we can GC.
-    auto* context = scriptExecutionContext();
-    if (!context || m_isDetached)
+    if (!scriptExecutionContext() || m_isDetached)
         return false;
 
     // If this MessagePort has no message event handler then there is no point in keeping it alive.
