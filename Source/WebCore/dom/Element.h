@@ -820,11 +820,6 @@ public:
     bool hasValidTextDirectionState() const;
     bool hasAutoTextDirectionState() const;
 
-    std::optional<TextDirection> computeAutoTextDirection() const;
-    std::optional<TextDirection> computeTextDirectionIfDirIsAuto() const;
-
-    void updateEffectiveTextDirectionOfDescendants(std::optional<TextDirection>, Element* exclude = nullptr);
-    void updateEffectiveTextDirectionOfAncestors(Element* exclude = nullptr);
     void updateEffectiveTextDirection();
 
 protected:

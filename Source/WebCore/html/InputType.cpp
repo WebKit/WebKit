@@ -40,6 +40,7 @@
 #include "Decimal.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
+#include "ElementTextDirection.h"
 #include "EmailInputType.h"
 #include "EventNames.h"
 #include "FileInputType.h"
@@ -812,7 +813,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
     bool wasInRange = isInRange(element->value());
     bool inRange = isInRange(sanitizedValue);
 
-    auto oldDirection = element->computeTextDirectionIfDirIsAuto();
+    auto oldDirection = computeTextDirectionIfDirIsAuto(*element);
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (wasInRange != inRange)
@@ -820,7 +821,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 
     element->setValueInternal(sanitizedValue, eventBehavior);
 
-    if (oldDirection.value_or(TextDirection::LTR) != element->computeTextDirectionIfDirIsAuto().value_or(TextDirection::LTR))
+    if (oldDirection.value_or(TextDirection::LTR) != computeTextDirectionIfDirIsAuto(*element).value_or(TextDirection::LTR))
         element->invalidateStyleInternal();
 
     switch (eventBehavior) {

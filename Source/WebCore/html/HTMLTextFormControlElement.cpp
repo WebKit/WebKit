@@ -35,6 +35,7 @@
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
+#include "ElementTextDirection.h"
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -871,7 +872,7 @@ String HTMLTextFormControlElement::directionForFormData() const
             if (equalLettersIgnoringASCIICase(value, "ltr"_s))
                 return TextDirection::LTR;
             if (equalLettersIgnoringASCIICase(value, "auto"_s))
-                return element.computeAutoTextDirection().value_or(TextDirection::LTR);
+                return computeAutoDirectionality(element).value_or(TextDirection::LTR);
         }
         return TextDirection::LTR;
     }();
