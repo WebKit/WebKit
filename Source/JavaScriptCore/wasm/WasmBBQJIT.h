@@ -473,7 +473,7 @@ public:
             : m_enclosedHeight(0)
         { }
 
-        ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs);
+        ControlData(BBQJIT& generator, BlockType, BlockSignature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs, RegisterSet liveScratchFPRs);
 
         // Re-use the argument layout of another block (eg. else will re-use the argument/result locations from if)
         enum BranchCallingConventionReuseTag { UseBlockCallingConventionOfOtherBranch };
@@ -847,6 +847,9 @@ private:
 #define LOG_DEDENT() do { if (UNLIKELY(Options::verboseBBQJITInstructions())) { m_loggingIndent -= 2; } } while (false);
 
 public:
+    // FIXME: Support fused branch compare on 32-bit platforms.
+    static constexpr bool shouldFuseBranchCompare = is64Bit();
+
     static constexpr bool tierSupportsSIMD = true;
 
     BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp);
@@ -1749,6 +1752,22 @@ public:
     int alignedFrameSize(int frameSize) const;
 
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
+
+    enum BranchFoldResult {
+        BranchAlwaysTaken,
+        BranchNeverTaken,
+        BranchNotFolded
+    };
+
+    BranchFoldResult WARN_UNUSED_RETURN tryFoldFusedBranchCompare(OpType, ExpressionType);
+    Jump WARN_UNUSED_RETURN emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
+    BranchFoldResult WARN_UNUSED_RETURN tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
+    Jump WARN_UNUSED_RETURN emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
+
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
 
     // Flush a value to its canonical slot.
     void flushValue(Value value);

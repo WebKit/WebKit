@@ -203,8 +203,10 @@ private:
 
     using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN unaryCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
+    PartialResult WARN_UNUSED_RETURN unaryCompareCase(OpType, UnaryOperationHandler, Type returnType, Type operandType);
     using BinaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN binaryCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
+    PartialResult WARN_UNUSED_RETURN binaryCompareCase(OpType, BinaryOperationHandler, Type returnType, Type lhsType, Type rhsType);
 
     PartialResult WARN_UNUSED_RETURN store(Type memoryType);
     PartialResult WARN_UNUSED_RETURN load(Type memoryType);
@@ -537,12 +539,130 @@ auto FunctionParser<Context>::binaryCase(OpType op, BinaryOperationHandler handl
 }
 
 template<typename Context>
+auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandler handler, Type returnType, Type lhsType, Type rhsType) -> PartialResult
+{
+    TypedExpression right;
+    TypedExpression left;
+
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(right, "binary right"_s);
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(left, "binary left"_s);
+
+    WASM_VALIDATOR_FAIL_IF(left.type() != lhsType, op, " left value type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(right.type() != rhsType, op, " right value type mismatch"_s);
+
+    uint8_t nextOpcode;
+    if (Context::shouldFuseBranchCompare && peekUInt8(nextOpcode)) {
+        if (nextOpcode == OpType::BrIf) {
+            m_currentOpcodeStartingOffset = m_offset;
+            m_currentOpcode = static_cast<OpType>(nextOpcode);
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+            m_context.willParseOpcode();
+
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, left, right, m_expressionStack));
+            m_context.didParseOpcode();
+            return { };
+        }
+        if (nextOpcode == OpType::If) {
+            m_currentOpcodeStartingOffset = m_offset;
+            m_currentOpcode = static_cast<OpType>(nextOpcode);
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+            m_context.willParseOpcode();
+
+            BlockSignature inlineSignature;
+            WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
+
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature->toString());
+            unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
+            for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+
+            int64_t oldSize = m_expressionStack.size();
+            Stack newStack;
+            ControlType control;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, left, right, inlineSignature, m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+            ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
+            m_expressionStack = WTFMove(newStack);
+            m_context.didParseOpcode();
+            return { };
+        }
+    }
+
+    ExpressionType result;
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(left, right, result));
+    m_expressionStack.constructAndAppend(returnType, result);
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::unaryCase(OpType op, UnaryOperationHandler handler, Type returnType, Type operandType) -> PartialResult
 {
     TypedExpression value;
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary"_s);
 
     WASM_VALIDATOR_FAIL_IF(value.type() != operandType, op, " value type mismatch"_s);
+
+    ExpressionType result;
+    WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(value, result));
+    m_expressionStack.constructAndAppend(returnType, result);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler handler, Type returnType, Type operandType) -> PartialResult
+{
+    TypedExpression value;
+    WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "unary"_s);
+
+    WASM_VALIDATOR_FAIL_IF(value.type() != operandType, op, " value type mismatch"_s);
+
+    uint8_t nextOpcode;
+    if (Context::shouldFuseBranchCompare && peekUInt8(nextOpcode)) {
+        if (nextOpcode == OpType::BrIf) {
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the branch, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data, Conditional));
+            WASM_TRY_ADD_TO_CONTEXT(addFusedBranchCompare(op, data, value, m_expressionStack));
+            return { };
+        }
+        if (nextOpcode == OpType::If) {
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the if, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+
+            BlockSignature inlineSignature;
+            WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get if's signature"_s);
+
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature->toString());
+            unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
+            for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+
+            int64_t oldSize = m_expressionStack.size();
+            Stack newStack;
+            ControlType control;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedIfCompare(op, value, inlineSignature, m_expressionStack, control, newStack));
+            ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+            ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
+            m_expressionStack = WTFMove(newStack);
+            return { };
+        }
+    }
 
     ExpressionType result;
     WASM_FAIL_IF_HELPER_FAILS((m_context.*handler)(value, result));
@@ -1744,11 +1864,19 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 {
     switch (m_currentOpcode) {
 #define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCase(OpType::name, &Context::add##name, Types::returnType, Types::lhsType, Types::rhsType);
-        FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+        FOR_EACH_WASM_NON_COMPARE_BINARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, id, b3op, inc, lhsType, rhsType, returnType) case OpType::name: return binaryCompareCase(OpType::name, &Context::add##name, Types::returnType, Types::lhsType, Types::rhsType);
+        FOR_EACH_WASM_COMPARE_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
 #define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCase(OpType::name, &Context::add##name, Types::returnType, Types::operandType);
-        FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
+        FOR_EACH_WASM_NON_COMPARE_UNARY_OP(CREATE_CASE)
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, id, b3op, inc, operandType, returnType) case OpType::name: return unaryCompareCase(OpType::name, &Context::add##name, Types::returnType, Types::operandType);
+        FOR_EACH_WASM_COMPARE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
     case Select: {

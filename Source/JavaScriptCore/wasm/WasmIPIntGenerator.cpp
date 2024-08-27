@@ -171,6 +171,8 @@ class IPIntGenerator {
 public:
     IPIntGenerator(ModuleInformation&, unsigned, const TypeDefinition&, std::span<const uint8_t>);
 
+    static constexpr bool shouldFuseBranchCompare = false;
+
     using ControlType = IPIntControlType;
     using ExpressionType = Value;
     using CallType = CallLinkInfo::CallType;
@@ -477,6 +479,12 @@ public:
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&);
 
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
+
+    // Fused comparison stubs (TODO: make use of these for better codegen)
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
 

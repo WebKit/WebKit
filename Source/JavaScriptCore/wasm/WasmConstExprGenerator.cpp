@@ -177,6 +177,7 @@ public:
         Evaluate
     };
 
+    static constexpr bool shouldFuseBranchCompare = false;
     static constexpr bool tierSupportsSIMD = true;
     static ExpressionType emptyExpression() { return 0; };
 
@@ -657,6 +658,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType, const Vector<ControlData*>&, ControlData&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry& entry, Stack& expressionStack)
     {

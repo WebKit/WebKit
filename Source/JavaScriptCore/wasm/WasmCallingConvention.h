@@ -336,7 +336,7 @@ public:
         return result;
     }
 
-    RegisterSet argumentGPRS() const { return RegisterSetBuilder::argumentGPRS(); }
+    RegisterSet argumentGPRs() const { return RegisterSetBuilder::argumentGPRs(); }
 
     const Vector<JSValueRegs> jsrArgs;
     const Vector<FPRReg> fprArgs;

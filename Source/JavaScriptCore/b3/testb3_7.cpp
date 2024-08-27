@@ -1434,7 +1434,7 @@ void testShuffleDoesntTrashCalleeSaves()
     unsigned i = 0;
     Vector<Value*> patches;
     for (Reg reg : regs.buildAndValidate()) {
-        if (RegisterSetBuilder::argumentGPRS().contains(reg, IgnoreVectors) || !reg.isGPR())
+        if (RegisterSetBuilder::argumentGPRs().contains(reg, IgnoreVectors) || !reg.isGPR())
             continue;
         ++i;
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());

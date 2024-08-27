@@ -3035,6 +3035,370 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRethrow(unsigned, ControlType& data)
     return { };
 }
 
+BBQJIT::BranchFoldResult BBQJIT::tryFoldFusedBranchCompare(OpType opType, ExpressionType operand)
+{
+    if (!operand.isConst())
+        return BranchNotFolded;
+    switch (opType) {
+    case OpType::I32Eqz:
+        return operand.asI32() ? BranchNeverTaken : BranchAlwaysTaken;
+    case OpType::I64Eqz:
+        return operand.asI64() ? BranchNeverTaken : BranchAlwaysTaken;
+    default:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a unary comparison and should not have been fused.\n", makeString(opType).characters());
+    }
+    return BranchNotFolded;
+}
+
+BBQJIT::Jump BBQJIT::emitFusedBranchCompareBranch(OpType opType, ExpressionType, Location operandLocation)
+{
+    // Emit the negation of the intended branch.
+    switch (opType) {
+    case OpType::I32Eqz:
+        return m_jit.branchTest32(ResultCondition::NonZero, operandLocation.asGPR());
+    case OpType::I64Eqz:
+        return m_jit.branchTest64(ResultCondition::NonZero, operandLocation.asGPR());
+    default:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a unary comparison and should not have been fused.\n", makeString(opType).characters());
+    }
+}
+
+PartialResult BBQJIT::addFusedBranchCompare(OpType opType, ControlType& target, ExpressionType operand, Stack& results)
+{
+    ASSERT(!operand.isNone());
+
+    switch (tryFoldFusedBranchCompare(opType, operand)) {
+    case BranchNeverTaken:
+        return { };
+    case BranchAlwaysTaken:
+        currentControlData().flushAndSingleExit(*this, target, results, false, false);
+        target.addBranch(m_jit.jump());
+        return { };
+    case BranchNotFolded:
+        break;
+    }
+
+    {
+        // Like in normal addBranch(), we can directly use the operand location
+        // because it shouldn't interfere with flushAtBlockBoundary().
+        Location operandLocation = loadIfNecessary(operand);
+        consume(operand);
+
+        LOG_INSTRUCTION("BranchCompare", makeString(opType).characters(), operand, operandLocation);
+
+        currentControlData().flushAtBlockBoundary(*this, 0, results, false);
+        Jump ifNotTaken = emitFusedBranchCompareBranch(opType, operand, operandLocation);
+        currentControlData().addExit(*this, target.targetLocations(), results);
+        target.addBranch(m_jit.jump());
+        ifNotTaken.link(&m_jit);
+        currentControlData().finalizeBlock(*this, target.targetLocations().size(), results, true);
+    }
+
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType operand, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
+{
+    BranchFoldResult foldResult = tryFoldFusedBranchCompare(op, operand);
+
+    ScratchScope<0, 1> scratches(*this);
+    Location operandLocation;
+    RegisterSet liveScratchGPRs, liveScratchFPRs;
+    if (foldResult == BranchNotFolded) {
+        if (!operand.isConst())
+            operandLocation = loadIfNecessary(operand);
+        else if (operand.isFloat())
+            emitMove(operand, operandLocation = Location::fromFPR(scratches.fpr(0)));
+        if (operandLocation.isGPR())
+            liveScratchGPRs.add(operandLocation.asGPR(), IgnoreVectors);
+        else
+            liveScratchFPRs.add(operandLocation.asFPR(), operand.type() == TypeKind::V128 ? Width128 : Width64);
+    }
+    consume(operand);
+
+    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
+
+    // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
+    currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
+
+    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature, operand, operandLocation);
+    LOG_INDENT();
+    splitStack(signature, enclosingStack, newStack);
+
+    result.startBlock(*this, newStack);
+    if (foldResult == BranchNeverTaken)
+        result.setIfBranch(m_jit.jump()); // Emit direct branch if we know the condition is false.
+    else if (foldResult == BranchNotFolded) // Otherwise, we only emit a branch at all if we don't know the condition statically.
+        result.setIfBranch(emitFusedBranchCompareBranch(op, operand, operandLocation));
+    return { };
+}
+
+BBQJIT::BranchFoldResult BBQJIT::tryFoldFusedBranchCompare(OpType opType, ExpressionType left, ExpressionType right)
+{
+    if (!left.isConst() || !right.isConst())
+        return BranchNotFolded;
+    switch (opType) {
+    case OpType::I32LtS:
+        return left.asI32() < right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32LtU:
+        return static_cast<uint32_t>(left.asI32()) < static_cast<uint32_t>(right.asI32()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32GtS:
+        return left.asI32() > right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32GtU:
+        return static_cast<uint32_t>(left.asI32()) > static_cast<uint32_t>(right.asI32()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32LeS:
+        return left.asI32() <= right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32LeU:
+        return static_cast<uint32_t>(left.asI32()) <= static_cast<uint32_t>(right.asI32()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32GeS:
+        return left.asI32() >= right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32GeU:
+        return static_cast<uint32_t>(left.asI32()) >= static_cast<uint32_t>(right.asI32()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32Eq:
+        return left.asI32() == right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I32Ne:
+        return left.asI32() == right.asI32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64LtS:
+        return left.asI64() < right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64LtU:
+        return static_cast<uint64_t>(left.asI64()) < static_cast<uint64_t>(right.asI64()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64GtS:
+        return left.asI64() > right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64GtU:
+        return static_cast<uint64_t>(left.asI64()) > static_cast<uint64_t>(right.asI64()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64LeS:
+        return left.asI64() <= right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64LeU:
+        return static_cast<uint64_t>(left.asI64()) <= static_cast<uint64_t>(right.asI64()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64GeS:
+        return left.asI64() >= right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64GeU:
+        return static_cast<uint64_t>(left.asI64()) >= static_cast<uint64_t>(right.asI64()) ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64Eq:
+        return left.asI64() == right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::I64Ne:
+        return left.asI64() == right.asI64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Lt:
+        return left.asF32() < right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Gt:
+        return left.asF32() > right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Le:
+        return left.asF32() <= right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Ge:
+        return left.asF32() >= right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Eq:
+        return left.asF32() == right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F32Ne:
+        return left.asF32() != right.asF32() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Lt:
+        return left.asF64() < right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Gt:
+        return left.asF64() > right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Le:
+        return left.asF64() <= right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Ge:
+        return left.asF64() >= right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Eq:
+        return left.asF64() == right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    case OpType::F64Ne:
+        return left.asF64() != right.asF64() ? BranchAlwaysTaken : BranchNeverTaken;
+    default:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a binary comparison and should not have been fused.\n", makeString(opType).characters());
+    }
+}
+
+static MacroAssembler::Jump emitBranchI32(CCallHelpers& jit, MacroAssembler::RelationalCondition condition, Value left, Location leftLocation, Value right, Location rightLocation)
+{
+    if (right.isConst())
+        return jit.branch32(condition, leftLocation.asGPR(), MacroAssembler::TrustedImm32(right.asI32()));
+    if (left.isConst())
+        return jit.branch32(condition, MacroAssembler::TrustedImm32(left.asI32()), rightLocation.asGPR());
+    return jit.branch32(condition, leftLocation.asGPR(), rightLocation.asGPR());
+}
+
+static MacroAssembler::Jump emitBranchI64(CCallHelpers& jit, MacroAssembler::RelationalCondition condition, Value left, Location leftLocation, Value right, Location rightLocation)
+{
+    if (right.isConst())
+        return jit.branch64(condition, leftLocation.asGPR(), MacroAssembler::Imm64(right.asI64()));
+    if (left.isConst())
+        return jit.branch64(MacroAssembler::commute(condition), rightLocation.asGPR(), MacroAssembler::Imm64(left.asI64()));
+    return jit.branch64(condition, leftLocation.asGPR(), rightLocation.asGPR());
+}
+
+static MacroAssembler::Jump emitBranchF32(CCallHelpers& jit, MacroAssembler::DoubleCondition condition, Value, Location leftLocation, Value, Location rightLocation)
+{
+    return jit.branchFloat(condition, leftLocation.asFPR(), rightLocation.asFPR());
+}
+
+static MacroAssembler::Jump emitBranchF64(CCallHelpers& jit, MacroAssembler::DoubleCondition condition, Value, Location leftLocation, Value, Location rightLocation)
+{
+    return jit.branchDouble(condition, leftLocation.asFPR(), rightLocation.asFPR());
+}
+
+BBQJIT::Jump BBQJIT::emitFusedBranchCompareBranch(OpType opType, ExpressionType left, Location leftLocation, ExpressionType right, Location rightLocation)
+{
+    // Emit a branch with the inverse of the comparison. We're generating the "branch-if-false" case.
+    switch (opType) {
+    case OpType::I32LtS:
+        return emitBranchI32(m_jit, RelationalCondition::GreaterThanOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I32LtU:
+        return emitBranchI32(m_jit, RelationalCondition::AboveOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I32GtS:
+        return emitBranchI32(m_jit, RelationalCondition::LessThanOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I32GtU:
+        return emitBranchI32(m_jit, RelationalCondition::BelowOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I32LeS:
+        return emitBranchI32(m_jit, RelationalCondition::GreaterThan, left, leftLocation, right, rightLocation);
+    case OpType::I32LeU:
+        return emitBranchI32(m_jit, RelationalCondition::Above, left, leftLocation, right, rightLocation);
+    case OpType::I32GeS:
+        return emitBranchI32(m_jit, RelationalCondition::LessThan, left, leftLocation, right, rightLocation);
+    case OpType::I32GeU:
+        return emitBranchI32(m_jit, RelationalCondition::Below, left, leftLocation, right, rightLocation);
+    case OpType::I32Eq:
+        return emitBranchI32(m_jit, RelationalCondition::NotEqual, left, leftLocation, right, rightLocation);
+    case OpType::I32Ne:
+        return emitBranchI32(m_jit, RelationalCondition::Equal, left, leftLocation, right, rightLocation);
+    case OpType::I64LtS:
+        return emitBranchI64(m_jit, RelationalCondition::GreaterThanOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I64LtU:
+        return emitBranchI64(m_jit, RelationalCondition::AboveOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I64GtS:
+        return emitBranchI64(m_jit, RelationalCondition::LessThanOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I64GtU:
+        return emitBranchI64(m_jit, RelationalCondition::BelowOrEqual, left, leftLocation, right, rightLocation);
+    case OpType::I64LeS:
+        return emitBranchI64(m_jit, RelationalCondition::GreaterThan, left, leftLocation, right, rightLocation);
+    case OpType::I64LeU:
+        return emitBranchI64(m_jit, RelationalCondition::Above, left, leftLocation, right, rightLocation);
+    case OpType::I64GeS:
+        return emitBranchI64(m_jit, RelationalCondition::LessThan, left, leftLocation, right, rightLocation);
+    case OpType::I64GeU:
+        return emitBranchI64(m_jit, RelationalCondition::Below, left, leftLocation, right, rightLocation);
+    case OpType::I64Eq:
+        return emitBranchI64(m_jit, RelationalCondition::NotEqual, left, leftLocation, right, rightLocation);
+    case OpType::I64Ne:
+        return emitBranchI64(m_jit, RelationalCondition::Equal, left, leftLocation, right, rightLocation);
+    case OpType::F32Lt:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F32Gt:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F32Le:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F32Ge:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F32Eq:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F32Ne:
+        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
+    case OpType::F64Lt:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F64Gt:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F64Le:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F64Ge:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F64Eq:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
+    case OpType::F64Ne:
+        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
+    default:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a binary comparison and should not have been fused.\n", makeString(opType).characters());
+    }
+}
+
+PartialResult BBQJIT::addFusedBranchCompare(OpType opType, ControlType& target, ExpressionType left, ExpressionType right, Stack& results)
+{
+    switch (tryFoldFusedBranchCompare(opType, left, right)) {
+    case BranchNeverTaken:
+        return { };
+    case BranchAlwaysTaken:
+        currentControlData().flushAndSingleExit(*this, target, results, false, false);
+        target.addBranch(m_jit.jump());
+        return { };
+    case BranchNotFolded:
+        break;
+    }
+
+    {
+        Location leftLocation, rightLocation;
+
+        if (!left.isConst())
+            leftLocation = loadIfNecessary(left);
+        else if (left.isFloat()) // Materialize floats here too, since they don't have a good immediate lowering.
+            emitMove(left, leftLocation = Location::fromFPR(wasmScratchFPR));
+        if (!right.isConst())
+            rightLocation = loadIfNecessary(right);
+        else if (right.isFloat())
+            emitMove(right, rightLocation = Location::fromFPR(wasmScratchFPR));
+
+        consume(left);
+        consume(right);
+
+        LOG_INSTRUCTION("BranchCompare", makeString(opType).characters(), left, leftLocation, right, rightLocation);
+
+        currentControlData().flushAtBlockBoundary(*this, 0, results, false);
+        Jump ifNotTaken = emitFusedBranchCompareBranch(opType, left, leftLocation, right, rightLocation);
+        currentControlData().addExit(*this, target.targetLocations(), results);
+        target.addBranch(m_jit.jump());
+        ifNotTaken.link(&m_jit);
+        currentControlData().finalizeBlock(*this, target.targetLocations().size(), results, true);
+    }
+
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType left, ExpressionType right, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
+{
+    BranchFoldResult foldResult = tryFoldFusedBranchCompare(op, left, right);
+
+    ScratchScope<0, 1> scratches(*this, RegisterSetBuilder::argumentGPRs(), RegisterSetBuilder::argumentFPRs());
+    scratches.unbindPreserved();
+    Location leftLocation, rightLocation;
+    RegisterSet liveScratchGPRs, liveScratchFPRs;
+    if (foldResult == BranchNotFolded) {
+        ASSERT(!left.isConst() || !right.isConst()); // If they're both constants, we should have folded.
+
+        if (!left.isConst())
+            leftLocation = loadIfNecessary(left);
+        else if (left.isFloat())
+            emitMove(left, leftLocation = Location::fromFPR(scratches.fpr(0)));
+        if (leftLocation.isGPR())
+            liveScratchGPRs.add(leftLocation.asGPR(), IgnoreVectors);
+        else if (leftLocation.isFPR())
+            liveScratchFPRs.add(leftLocation.asFPR(), left.type() == TypeKind::V128 ? Width128 : Width64);
+
+        if (!right.isConst())
+            rightLocation = loadIfNecessary(right);
+        else if (right.isFloat())
+            emitMove(right, rightLocation = Location::fromFPR(scratches.fpr(0)));
+        if (rightLocation.isGPR())
+            liveScratchGPRs.add(rightLocation.asGPR(), IgnoreVectors);
+        else if (rightLocation.isFPR())
+            liveScratchFPRs.add(rightLocation.asFPR(), right.type() == TypeKind::V128 ? Width128 : Width64);
+    }
+    consume(left);
+    consume(right);
+
+
+    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
+
+    // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
+    currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
+
+    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature, left, leftLocation, right, rightLocation);
+    LOG_INDENT();
+    splitStack(signature, enclosingStack, newStack);
+
+    result.startBlock(*this, newStack);
+    if (foldResult == BranchNeverTaken)
+        result.setIfBranch(m_jit.jump()); // Emit direct branch if we know the condition is false.
+    else if (foldResult == BranchNotFolded) // Otherwise, we only emit a branch at all if we don't know the condition statically.
+        result.setIfBranch(emitFusedBranchCompareBranch(op, left, leftLocation, right, rightLocation));
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchNull(ControlData& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result)
 {
     Value condition;
@@ -4559,7 +4923,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
     GPRReg calleeInstance;
     GPRReg calleeCode;
     {
-        ScratchScope<1, 0> calleeCodeScratch(*this, RegisterSetBuilder::argumentGPRS());
+        ScratchScope<1, 0> calleeCodeScratch(*this, RegisterSetBuilder::argumentGPRs());
         calleeCode = calleeCodeScratch.gpr(0);
         calleeCodeScratch.unbindPreserved();
 

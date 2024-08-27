@@ -464,7 +464,7 @@ uint32_t RegisterBinding::encode() const
     return m_uintValue;
 }
 
-ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs = { })
+ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs = { }, RegisterSet liveScratchFPRs = { })
     : m_signature(signature)
     , m_blockType(blockType)
     , m_enclosedHeight(enclosedHeight)
@@ -483,6 +483,7 @@ ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature 
         auto gprSetCopy = generator.m_validGPRs;
         auto fprSetCopy = generator.m_validFPRs;
         liveScratchGPRs.forEach([&] (auto r) { gprSetCopy.remove(r); });
+        liveScratchFPRs.forEach([&] (auto r) { fprSetCopy.remove(r); });
 
         for (unsigned i = 0; i < signature->argumentCount(); ++i)
             m_argumentLocations.append(allocateArgumentOrResult(generator, signature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
@@ -3346,17 +3347,13 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addLoop(BlockSignature signature, Stack
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addIf(Value condition, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
 {
-    // Here, we cannot use wasmScratchGPR since it is used for shuffling in flushAndSingleExit.
-    static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
-    ScratchScope<1, 0> scratches(*this, RegisterSetBuilder::argumentGPRS());
-    scratches.unbindPreserved();
-    Location conditionLocation = Location::fromGPR(scratches.gpr(0));
-    if (!condition.isConst())
-        emitMove(condition, conditionLocation);
-    consume(condition);
-
     RegisterSet liveScratchGPRs;
-    liveScratchGPRs.add(conditionLocation.asGPR(), IgnoreVectors);
+    Location conditionLocation;
+    if (!condition.isConst()) {
+        conditionLocation = loadIfNecessary(condition);
+        liveScratchGPRs.add(conditionLocation.asGPR(), IgnoreVectors);
+    }
+    consume(condition);
 
     result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs);
 
@@ -3625,9 +3622,16 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranch(ControlData& target, Value co
     if (condition.isConst() && !condition.asI32()) // If condition is known to be false, this is a no-op.
         return { };
 
-    Location conditionLocation = Location::fromGPR(wasmScratchGPR);
+    // It should be safe to directly use the condition location here. Between
+    // this point and when we use the condition register, we can only flush,
+    // we don't do any shuffling. Flushing will involve only the registers held
+    // by live values, and since we are about to consume the condition, its
+    // register is not one of them. The scratch register would be vulnerable to
+    // clobbering, but we don't need it - if our condition is a constant, we
+    // just fold away the branch instead of materializing it.
+    Location conditionLocation;
     if (!condition.isNone() && !condition.isConst())
-        emitMove(condition, conditionLocation);
+        conditionLocation = loadIfNecessary(condition);
     consume(condition);
 
     if (condition.isNone())
@@ -3640,7 +3644,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranch(ControlData& target, Value co
         target.addBranch(m_jit.jump()); // We know condition is true, since if it was false we would have returned early.
     } else {
         currentControlData().flushAtBlockBoundary(*this, 0, results, condition.isNone());
-        Jump ifNotTaken = m_jit.branchTest32(ResultCondition::Zero, wasmScratchGPR);
+        Jump ifNotTaken = m_jit.branchTest32(ResultCondition::Zero, conditionLocation.asGPR());
         currentControlData().addExit(*this, target.targetLocations(), results);
         target.addBranch(m_jit.jump());
         ifNotTaken.link(&m_jit);
@@ -4034,7 +4038,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
     parameterLocations.reserveInitialCapacity(arguments.size() + isX86());
 
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
-    auto preserved = callingConvention.argumentGPRS();
+    auto preserved = callingConvention.argumentGPRs();
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
     ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
@@ -4164,7 +4168,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const T
 
 void BBQJIT::emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results)
 {
-    ASSERT(!RegisterSetBuilder::argumentGPRS().contains(calleeCode, IgnoreVectors));
+    ASSERT(!RegisterSetBuilder::argumentGPRs().contains(calleeCode, IgnoreVectors));
 
     const auto& callingConvention = wasmCallingConvention();
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
@@ -4198,7 +4202,7 @@ void BBQJIT::emitIndirectCall(const char* opcode, const Value& calleeIndex, GPRR
 
 void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments)
 {
-    ASSERT(!RegisterSetBuilder::argumentGPRS().contains(calleeCode, IgnoreVectors));
+    ASSERT(!RegisterSetBuilder::argumentGPRs().contains(calleeCode, IgnoreVectors));
     m_jit.loadPtr(Address(calleeCode), calleeCode);
 
     // Do a context switch if needed.
@@ -4244,7 +4248,7 @@ void BBQJIT::emitIndirectTailCall(const Value& calleeIndex, GPRReg calleeInstanc
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
 #elif CPU(ARM64)
-    ScratchScope<1, 0> scratches(*this, RegisterSetBuilder::argumentGPRS(), calleeCode, callingConvention.prologueScratchGPRs[0]);
+    ScratchScope<1, 0> scratches(*this, RegisterSetBuilder::argumentGPRs(), calleeCode, callingConvention.prologueScratchGPRs[0]);
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, scratches.gpr(0), MacroAssembler::linkRegister);
 #else
     // FIXME: Add support for armv7
@@ -4358,7 +4362,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
     GPRReg calleeRTT;
 
     {
-        ScratchScope<1, 0> calleeCodeScratch(*this, RegisterSetBuilder::argumentGPRS());
+        ScratchScope<1, 0> calleeCodeScratch(*this, RegisterSetBuilder::argumentGPRs());
         calleeCode = calleeCodeScratch.gpr(0);
         calleeCodeScratch.unbindPreserved();
 

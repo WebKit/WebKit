@@ -142,14 +142,16 @@ defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
 defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["value"] == 0xfc or op["category"] == "gc" or isAtomic(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
-defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and isSimple(op))])
-defines.append("\n\n#define FOR_EACH_WASM_UNARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
-defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and not (isSimple(op)))])
-defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and isSimple(op))])
-defines.append("\n\n#define FOR_EACH_WASM_BINARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)")
-defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and not (isSimple(op)))])
+defines.append("\n\n#define FOR_EACH_WASM_NON_COMPARE_UNARY_OP(macro)")
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and not isCompare(op))])
+defines.append("\n\n#define FOR_EACH_WASM_COMPARE_UNARY_OP(macro)")
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isUnary(op) and isCompare(op))])
+defines.append("\n\n#define FOR_EACH_WASM_UNARY_OP(macro) \\\n    FOR_EACH_WASM_NON_COMPARE_UNARY_OP(macro) \\\n    FOR_EACH_WASM_COMPARE_UNARY_OP(macro)")
+defines.append("\n\n#define FOR_EACH_WASM_NON_COMPARE_BINARY_OP(macro)")
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and not isCompare(op))])
+defines.append("\n\n#define FOR_EACH_WASM_COMPARE_BINARY_OP(macro)")
+defines.extend([op for op in opcodeWithTypesMacroizer(lambda op: isBinary(op) and isCompare(op))])
+defines.append("\n\n#define FOR_EACH_WASM_BINARY_OP(macro) \\\n    FOR_EACH_WASM_NON_COMPARE_BINARY_OP(macro) \\\n    FOR_EACH_WASM_COMPARE_BINARY_OP(macro)")
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro)")
 defines.extend([op for op in memoryLoadMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)")
@@ -445,32 +447,6 @@ inline bool isControlOp(OpType op)
     switch (op) {
 #define CREATE_CASE(name, ...) case OpType::name:
     FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
-        return true;
-#undef CREATE_CASE
-    default:
-        break;
-    }
-    return false;
-}
-
-inline bool isSimple(UnaryOpType op)
-{
-    switch (op) {
-#define CREATE_CASE(name, ...) case UnaryOpType::name:
-    FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
-        return true;
-#undef CREATE_CASE
-    default:
-        break;
-    }
-    return false;
-}
-
-inline bool isSimple(BinaryOpType op)
-{
-    switch (op) {
-#define CREATE_CASE(name, ...) case BinaryOpType::name:
-    FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
     default:
