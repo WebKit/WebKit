@@ -1196,20 +1196,19 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             append('n', 'u', 'l', 'l');
             return;
         }
-        if (UNLIKELY(!hasRemainingCapacity(sizeof(NumberToStringBuffer)))) {
+        if (UNLIKELY(!hasRemainingCapacity(WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()))) {
             recordBufferFull();
             return;
         }
         if constexpr (sizeof(CharType) == 1) {
-            WTF::double_conversion::StringBuilder builder { reinterpret_cast<char*>(buffer() + m_length), sizeof(NumberToStringBuffer) };
-            WTF::dragonbox::ToShortest(number, &builder);
-            m_length += builder.position();
+            const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, reinterpret_cast<char*>(buffer() + m_length));
+            m_length = cursor - reinterpret_cast<char*>(buffer());
         } else {
-            NumberToStringBuffer temporary;
-            WTF::double_conversion::StringBuilder builder { temporary.data(), sizeof(NumberToStringBuffer) };
-            WTF::dragonbox::ToShortest(number, &builder);
-            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), builder.position());
-            m_length += builder.position();
+            std::array<char, WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()> temporary;
+            const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, temporary.data());
+            size_t length = cursor - temporary.data();
+            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), length);
+            m_length += length;
         }
         return;
     }
