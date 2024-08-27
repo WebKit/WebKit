@@ -3843,7 +3843,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
         if (auto* inlineLevelBox = dynamicDowncast<RenderBox>(renderer)) {
             // FIXME: Move this to where the actual content change happens and call it on the parent IFC.
-            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && (inlineLevelBox->normalChildNeedsLayout() || inlineLevelBox->posChildNeedsLayout()) && modernLineLayout();
+            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && inlineLevelBox->needsLayout() && modernLineLayout();
             if (shouldTriggerFullLayout)
                 modernLineLayout()->boxContentWillChange(*inlineLevelBox);
         }

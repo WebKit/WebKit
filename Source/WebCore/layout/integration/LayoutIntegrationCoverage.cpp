@@ -101,8 +101,6 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return false;
         if (is<RenderLineBreak>(renderer))
             return true;
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer); renderBox && renderBox->hasRelativeDimensions())
-            return false;
         if (is<RenderReplaced>(renderer))
             return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
         if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer))
@@ -163,16 +161,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance)
         return true;
 
-    auto rootHasNonSupportedRenderer = [&] (bool shouldOnlyCheckForRelativeDimension = false) {
+    auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            auto siblingHasRelativeDimensions = false;
-            if (auto* renderBox = dynamicDowncast<RenderBox>(*sibling); renderBox && renderBox->hasRelativeDimensions())
-                siblingHasRelativeDimensions = true;
-
-            if (shouldOnlyCheckForRelativeDimension && !siblingHasRelativeDimensions)
-                continue;
-
-            if (siblingHasRelativeDimensions || (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling) && !is<RenderReplaced>(*sibling)))
+            if (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling) && !is<RenderReplaced>(*sibling))
                 return true;
         }
         return !canUseForLineLayout(rootBlockContainer);
@@ -181,7 +172,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     case TypeOfChangeForInvalidation::NodeRemoval:
         return (!renderer.previousSibling() && !renderer.nextSibling()) || rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeInsertion:
-        return rootHasNonSupportedRenderer(!renderer.nextSibling());
+        return renderer.nextSibling() && rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeMutation:
         return rootHasNonSupportedRenderer();
     default:
