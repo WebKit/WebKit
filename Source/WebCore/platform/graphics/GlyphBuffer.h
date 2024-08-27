@@ -164,6 +164,16 @@ public:
         setWidth(lastAdvance, WebCore::width(lastAdvance) + width);
     }
 
+    void expandAdvanceToLogicalRight(unsigned index, float width)
+    {
+        if (index >= size()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        setWidth(m_advances[index], WebCore::width(m_advances[index]) + width);
+        setX(m_origins[index], x(m_origins[index]) + width);
+    }
+
     void expandLastAdvance(GlyphBufferAdvance expansion)
     {
         ASSERT(!isEmpty());

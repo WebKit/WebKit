@@ -629,10 +629,6 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
     if (s_codePath != CodePath::Auto)
         return s_codePath;
 
-    // FIXME: add support for text-autospace on simple path (rdar://133319627).
-    if (textAutospace().hasIdeographAlpha())
-        return CodePath::Complex;
-
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
     if ((enableKerning() || requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
