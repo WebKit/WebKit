@@ -81,9 +81,6 @@ def update_symlink_from_candidates(symlink_path: Path, config_path: Path):
                 candidate_str = candidate_str.replace("/", "\\")
             update_symlink_with_path(symlink_path, candidate_str)
             return
-    print(f"update-compile-commands-symlink: Couldn't update {symlink_path}. "
-        f"None of the candidates provided in {config_path} exist.",
-        file=sys.stderr)
 
 
 def main():
