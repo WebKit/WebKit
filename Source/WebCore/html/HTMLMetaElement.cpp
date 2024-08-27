@@ -76,7 +76,7 @@ static bool isNameColorScheme(const AtomString& nameValue)
 
 bool HTMLMetaElement::mediaAttributeMatches()
 {
-    auto& document = this->document();
+    Ref document = this->document();
 
     if (!m_mediaQueryList) {
         auto mediaText = attributeWithoutSynchronization(mediaAttr).convertToASCIILowercase();
@@ -84,12 +84,12 @@ bool HTMLMetaElement::mediaAttributeMatches()
     }
 
     std::optional<RenderStyle> documentStyle;
-    if (document.hasLivingRenderTree())
+    if (document->hasLivingRenderTree())
         documentStyle = Style::resolveForDocument(document);
 
     AtomString mediaType;
-    if (auto* frame = document.frame()) {
-        if (auto* frameView = frame->view())
+    if (RefPtr frame = document->frame()) {
+        if (RefPtr frameView = frame->view())
             mediaType = frameView->mediaType();
     }
 
