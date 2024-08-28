@@ -91,11 +91,6 @@ Synchronousness JSModuleRecord::link(JSGlobalObject* globalObject, JSValue scrip
     EXCEPTION_ASSERT(!!scope.exception() == !executable);
     RETURN_IF_EXCEPTION(scope, Synchronousness::Sync);
 
-    if (!executable) {
-        throwSyntaxError(globalObject, scope);
-        return Synchronousness::Sync;
-    }
-
     instantiateDeclarations(globalObject, executable, scriptFetcher);
     RETURN_IF_EXCEPTION(scope, Synchronousness::Sync);
     m_moduleProgramExecutable.set(vm, this, executable);
