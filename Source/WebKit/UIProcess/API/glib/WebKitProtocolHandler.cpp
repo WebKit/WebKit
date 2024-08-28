@@ -46,6 +46,8 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringView.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if OS(UNIX)
@@ -287,8 +289,72 @@ static String renderBufferFormat(WebKitURISchemeRequest* request)
 #endif
 #endif
 
+static String prettyPrintJSON(const String& jsonString)
+{
+    StringBuilder result;
+    result.reserveCapacity(jsonString.length() + 128);
+    int indentLevel = 0;
+    bool inQuotes = false;
+    bool escape = false;
+    // 4 spaces per identation level
+    constexpr auto identSpaceLevel = "    "_s;
+
+    for (auto ch : StringView(jsonString).codePoints()) {
+        switch (ch) {
+        case '\"':
+            if (!escape)
+                inQuotes = !inQuotes;
+            result.append(ch);
+            break;
+        case '{':
+        case '[':
+            result.append(ch);
+            if (!inQuotes) {
+                result.append('\n');
+                indentLevel++;
+                for (int i = 0; i < indentLevel; ++i)
+                    result.append(identSpaceLevel);
+            }
+            break;
+        case '}':
+        case ']':
+            if (!inQuotes) {
+                result.append('\n');
+                indentLevel--;
+                for (int i = 0; i < indentLevel; ++i)
+                    result.append(identSpaceLevel);
+            }
+            result.append(ch);
+            break;
+        case ',':
+            result.append(ch);
+            if (!inQuotes) {
+                result.append('\n');
+                for (int i = 0; i < indentLevel; ++i)
+                    result.append(identSpaceLevel);
+            }
+            break;
+        case ':':
+            result.append(ch);
+            if (!inQuotes)
+                result.append(' ');
+            break;
+        case '\\':
+            result.append(ch);
+            escape = !escape;
+            break;
+        default:
+            result.append(ch);
+            escape = false;
+            break;
+        }
+    }
+    return result.toString();
+}
+
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 {
+    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
     GString* html = g_string_new(
         "<html><head><title>GPU information</title>"
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
@@ -604,24 +670,19 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "textArea.select();"
         "document.execCommand('copy');"
         "document.body.removeChild(textArea);"
-        "}</script>", infoAsString.utf8().data());
-
-    g_string_append_printf(html, "<script>function sendToConsole() { "
-        "console.log(JSON.stringify(%s, null, 4));"
-        "}</script>", infoAsString.utf8().data());
-
-    g_string_append(html, "</head><body>");
+        "}</script></head><body>", infoAsString.utf8().data());
 #if PLATFORM(GTK)
-    g_string_append(html, "<button onclick=\"copyAsJSON()\">Copy to clipboard</button>");
-#else
     // WPE doesn't seem to pass clipboard data yet.
-    g_string_append(html, "<button onclick=\"sendToConsole()\">Send to JS console</button>");
+    g_string_append(html, "<button onclick=\"copyAsJSON()\">Copy to clipboard</button>");
 #endif
-
+    g_string_append(html, "<button onclick=\"window.location.href='webkit://gpu/stdout'\">Print in stdout</button>");
     g_string_append_printf(html, "%s</body></html>", tablesBuilder.toString().utf8().data());
     gsize streamLength = html->len;
     GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(g_string_free(html, FALSE), streamLength, g_free));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
+
+    if (requestURL.path() == "/stdout"_s)
+        WTFLogAlways("GPU information\n%s", prettyPrintJSON(infoAsString).utf8().data());
 }
 
 } // namespace WebKit
