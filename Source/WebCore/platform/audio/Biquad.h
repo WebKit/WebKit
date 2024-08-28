@@ -32,6 +32,7 @@
 #include "AudioArray.h"
 #include <complex>
 #include <sys/types.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ namespace WebCore {
 //    lowpass, highpass, shelving, parameteric, notch, allpass, ...
 
 class Biquad final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Biquad);
 public:   
     Biquad();
     ~Biquad();

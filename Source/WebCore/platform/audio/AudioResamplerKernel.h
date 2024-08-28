@@ -28,6 +28,7 @@
 #include "AudioArray.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class AudioResampler;
 // It uses a simple linear interpolation for good performance.
 
 class AudioResamplerKernel final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioResamplerKernel);
     WTF_MAKE_NONCOPYABLE(AudioResamplerKernel);
 public:
     AudioResamplerKernel(AudioResampler*);

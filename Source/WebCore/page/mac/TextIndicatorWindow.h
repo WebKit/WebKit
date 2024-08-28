@@ -40,7 +40,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
 
 class TextIndicatorWindow {
-    WTF_MAKE_TZONE_ALLOCATED(TextIndicatorWindow);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIndicatorWindow, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:

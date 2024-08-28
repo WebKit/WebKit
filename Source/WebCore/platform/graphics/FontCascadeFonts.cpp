@@ -33,11 +33,12 @@
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "GlyphPage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class MixedFontGlyphPage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MixedFontGlyphPage);
 public:
     MixedFontGlyphPage(const GlyphPage* initialPage)
     {

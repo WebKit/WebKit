@@ -34,12 +34,15 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieJarDB);
 
 // At least 50 cookies per domain (RFC6265 6.1. Limits)
 #define MAX_COOKIE_PER_DOMAIN 80

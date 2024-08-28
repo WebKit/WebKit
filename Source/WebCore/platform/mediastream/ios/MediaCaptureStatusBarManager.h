@@ -28,8 +28,8 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include <wtf/CompletionHandler.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS WebCoreMediaCaptureStatusBarHandler;
@@ -46,7 +46,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaCapture
 namespace WebCore {
 
 class MediaCaptureStatusBarManager : public CanMakeWeakPtr<MediaCaptureStatusBarManager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaCaptureStatusBarManager);
 public:
     static bool hasSupport();
 

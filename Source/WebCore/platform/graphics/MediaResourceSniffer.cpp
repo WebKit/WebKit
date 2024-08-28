@@ -31,9 +31,12 @@
 #include "MIMESniffer.h"
 #include "ResourceRequest.h"
 #include <limits.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResourceSniffer);
 
 Ref<MediaResourceSniffer> MediaResourceSniffer::create(PlatformMediaResourceLoader& loader, ResourceRequest&& request, std::optional<size_t> maxSize)
 {

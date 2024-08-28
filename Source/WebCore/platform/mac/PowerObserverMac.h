@@ -31,6 +31,7 @@
 #import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,7 +46,8 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PowerObserve
 namespace WebCore {
 
 class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerObserver, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(PowerObserver);
 
 public:
     WEBCORE_EXPORT PowerObserver(Function<void()>&& powerOnHander);

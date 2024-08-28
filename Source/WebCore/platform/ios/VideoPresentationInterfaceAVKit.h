@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
 #include "VideoPresentationInterfaceIOS.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS WebAVPlayerController;
@@ -41,7 +42,7 @@ namespace WebCore {
 class PlaybackSessionInterfaceIOS;
 
 class VideoPresentationInterfaceAVKit final : public VideoPresentationInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceAVKit, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceAVKit);
 public:
     WEBCORE_EXPORT static Ref<VideoPresentationInterfaceAVKit> create(PlaybackSessionInterfaceIOS&);

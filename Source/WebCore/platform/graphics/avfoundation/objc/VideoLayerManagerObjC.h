@@ -34,6 +34,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebVideoContainerLayer;
 
@@ -45,8 +46,8 @@ class VideoLayerManagerObjC final
     , public LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoLayerManagerObjC, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(VideoLayerManagerObjC);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
 #if !RELEASE_LOG_DISABLED

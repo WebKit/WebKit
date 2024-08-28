@@ -35,6 +35,7 @@
 #import <AVFoundation/AVTime.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -42,6 +43,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceIOS);
 
 PlaybackSessionInterfaceIOS::PlaybackSessionInterfaceIOS(PlaybackSessionModel& model)
     : m_playbackSessionModel(&model)

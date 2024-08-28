@@ -31,9 +31,13 @@
 #include "FloatRoundedRect.h"
 
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FloatRoundedRectRadii, FloatRoundedRect::Radii);
 
 FloatRoundedRect::FloatRoundedRect(const RoundedRect& rect)
     : m_rect(rect.rect())

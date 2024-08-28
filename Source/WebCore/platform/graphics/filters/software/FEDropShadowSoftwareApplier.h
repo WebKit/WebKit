@@ -21,13 +21,14 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEDropShadow;
 
 class FEDropShadowSoftwareApplier final : public FilterEffectConcreteApplier<FEDropShadow> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEDropShadowSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FEDropShadow>;
 
 public:

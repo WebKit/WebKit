@@ -169,8 +169,8 @@ private:
     double timestamp();
 
     class PendingInterceptRequest {
-        WTF_MAKE_NONCOPYABLE(PendingInterceptRequest);
         WTF_MAKE_TZONE_ALLOCATED(PendingInterceptRequest);
+        WTF_MAKE_NONCOPYABLE(PendingInterceptRequest);
     public:
         PendingInterceptRequest(RefPtr<ResourceLoader> loader, Function<void(const ResourceRequest&)>&& callback)
             : m_loader(loader)
@@ -194,8 +194,8 @@ private:
     };
 
     class PendingInterceptResponse {
-        WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
         WTF_MAKE_TZONE_ALLOCATED(PendingInterceptResponse);
+        WTF_MAKE_NONCOPYABLE(PendingInterceptResponse);
     public:
         PendingInterceptResponse(const ResourceResponse& originalResponse, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& completionHandler)
             : m_originalResponse(originalResponse)

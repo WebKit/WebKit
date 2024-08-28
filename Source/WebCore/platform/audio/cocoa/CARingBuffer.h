@@ -33,6 +33,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Lock.h>
 #include <wtf/SequenceLocked.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -43,7 +44,7 @@ namespace WebCore {
 class CAAudioStreamDescription;
 
 class CARingBuffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CARingBuffer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~CARingBuffer();
 

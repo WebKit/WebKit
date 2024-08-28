@@ -34,12 +34,13 @@
 #include "PlatformSpeechSynthesisVoice.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include "WebKitFliteSourceGStreamer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 class GstSpeechSynthesisWrapper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GstSpeechSynthesisWrapper);
     WTF_MAKE_NONCOPYABLE(GstSpeechSynthesisWrapper);
 public:
     explicit GstSpeechSynthesisWrapper(const PlatformSpeechSynthesizer&);

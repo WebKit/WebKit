@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 
 #include "ContextMenuItem.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +39,8 @@ namespace WebCore {
 class ContextMenuController;
 
 class ContextMenu {
-    WTF_MAKE_NONCOPYABLE(ContextMenu); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContextMenu);
+    WTF_MAKE_NONCOPYABLE(ContextMenu);
 public:
     ContextMenu();
 

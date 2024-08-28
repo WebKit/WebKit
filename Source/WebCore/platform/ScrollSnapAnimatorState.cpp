@@ -30,9 +30,12 @@
 #include "ScrollExtents.h"
 #include "ScrollingEffectsController.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollSnapAnimatorState);
 
 ScrollSnapAnimatorState::~ScrollSnapAnimatorState() = default;
 

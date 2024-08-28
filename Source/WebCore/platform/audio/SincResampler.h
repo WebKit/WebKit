@@ -34,13 +34,14 @@
 #include <span>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // SincResampler is a high-quality sample-rate converter.
 
 class SincResampler final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SincResampler);
 public:
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // requestFrames controls the size in frames of the buffer requested by each provideInput() call.

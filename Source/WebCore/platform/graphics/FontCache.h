@@ -40,7 +40,6 @@
 #include <array>
 #include <limits.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
@@ -48,6 +47,7 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
@@ -113,7 +113,8 @@ enum class FontLookupOptions : uint8_t {
 };
 
 class FontCache {
-    WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FontCache);
+    WTF_MAKE_NONCOPYABLE(FontCache);
 public:
     WEBCORE_EXPORT static FontCache& forCurrentThread();
     static FontCache* forCurrentThreadIfExists();

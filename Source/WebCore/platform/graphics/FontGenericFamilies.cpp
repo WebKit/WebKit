@@ -28,8 +28,11 @@
 
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontGenericFamilies);
 
 using namespace WebKitFontFamilyNames;
 

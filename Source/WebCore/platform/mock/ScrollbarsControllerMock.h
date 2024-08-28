@@ -32,6 +32,7 @@
 #pragma once
 
 #include "ScrollbarsController.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ namespace WebCore {
 // the internal setting setMockScrollbarsControllerEnabled().
 
 class ScrollbarsControllerMock final : public ScrollbarsController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollbarsControllerMock);
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMock);
 public:
     ScrollbarsControllerMock(ScrollableArea&, Function<void(const String&)>&&);

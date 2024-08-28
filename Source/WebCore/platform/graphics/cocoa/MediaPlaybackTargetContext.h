@@ -27,6 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ enum class MediaPlaybackTargetContextType : uint8_t {
 };
 
 class MediaPlaybackTargetContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlaybackTargetContext);
 public:
     using Type = MediaPlaybackTargetContextType;
     using MockState = MediaPlaybackTargetContextMockState;

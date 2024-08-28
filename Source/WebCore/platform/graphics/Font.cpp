@@ -41,6 +41,7 @@
 #include "SharedBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>

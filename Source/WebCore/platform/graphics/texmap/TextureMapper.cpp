@@ -39,6 +39,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
@@ -49,8 +50,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapper);
+
 class TextureMapperGLData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TextureMapperGLData);
 public:
     explicit TextureMapperGLData(void*);
     ~TextureMapperGLData();

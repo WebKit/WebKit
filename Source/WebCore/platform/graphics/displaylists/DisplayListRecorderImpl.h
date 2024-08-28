@@ -26,13 +26,14 @@
 #pragma once
 
 #include "DisplayListRecorder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 namespace DisplayList {
 
 class RecorderImpl : public Recorder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RecorderImpl);
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);

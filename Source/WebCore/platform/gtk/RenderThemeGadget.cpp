@@ -31,8 +31,11 @@
 
 #include "FloatRect.h"
 #include "GRefPtrGtk.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderThemeGadget);
 
 std::unique_ptr<RenderThemeGadget> RenderThemeGadget::create(const RenderThemeGadget::Info& info, RenderThemeGadget* parent, const Vector<RenderThemeGadget::Info> siblings, unsigned position)
 {

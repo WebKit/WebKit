@@ -28,7 +28,7 @@
 #include "DecodingOptions.h"
 #include "ImageTypes.h"
 #include "Timer.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ class BitmapImageSource;
 class ImageFrame;
 
 class ImageFrameAnimator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageFrameAnimator);
 public:
     static std::unique_ptr<ImageFrameAnimator> create(BitmapImageSource&);
 

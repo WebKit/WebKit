@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "MediaStreamTrackDataHolder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -49,7 +50,7 @@ private:
     }
 
     class PreventSourceFromEndingObserver final : public RealtimeMediaSourceObserver {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(PreventSourceFromEndingObserver);
     public:
         explicit PreventSourceFromEndingObserver(Ref<RealtimeMediaSource>&& source)
             : m_source(WTFMove(source))

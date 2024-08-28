@@ -36,6 +36,7 @@
 #include "AudioUtilities.h"
 #include <wtf/Algorithms.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -116,6 +117,8 @@
 // note: we're glossing over how the sub-sample handling works with m_virtualSourceIndex, etc.
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SincResampler);
 
 constexpr unsigned kernelSize { 32 };
 constexpr unsigned numberOfKernelOffsets { 32 };

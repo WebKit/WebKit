@@ -30,6 +30,7 @@
 #include "LibWebRTCMacros.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "WebRTCProvider.h"
+#include <wtf/TZoneMalloc.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -66,7 +67,7 @@ class RegistrableDomain;
 struct PeerConnectionFactoryAndThreads;
 
 class WEBCORE_EXPORT LibWebRTCProvider : public WebRTCProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCProvider);
 public:
     static UniqueRef<LibWebRTCProvider> create();
 

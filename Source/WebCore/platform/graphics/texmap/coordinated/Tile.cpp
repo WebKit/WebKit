@@ -30,8 +30,11 @@
 
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Tile);
 
 static const uint32_t InvalidTileID = 0;
 

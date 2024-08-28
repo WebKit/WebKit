@@ -31,6 +31,7 @@
 #include <mutex>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WIN)
 #include "PlatformDisplayWin.h"
@@ -44,6 +45,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformDisplay);
 
 #if PLATFORM(WIN)
 PlatformDisplay& PlatformDisplay::sharedDisplay()

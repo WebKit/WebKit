@@ -28,6 +28,7 @@
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ public:
 };
 
 class WEBCORE_EXPORT NowPlayingManager : public RemoteCommandListenerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NowPlayingManager);
 public:
     NowPlayingManager();
     ~NowPlayingManager();

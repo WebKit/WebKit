@@ -29,6 +29,7 @@
 #include "ScrollExtents.h"
 #include "ScrollTypes.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class FloatPoint;
 class FloatSize;
 
 class ScrollingMomentumCalculator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingMomentumCalculator);
 public:
     WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
 

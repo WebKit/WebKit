@@ -50,6 +50,7 @@
 #include "WindRule.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -95,7 +96,7 @@ using LayerHostingContextID = uint32_t;
 // without pulling in style-related data from outside of the platform directory.
 // FIXME: Should be moved to its own header file.
 class AnimationValue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AnimationValue, WEBCORE_EXPORT);
 public:
     virtual ~AnimationValue() = default;
 
@@ -262,7 +263,7 @@ protected:
 // which may have associated transformation and animations.
 
 class GraphicsLayer : public RefCounted<GraphicsLayer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayer, WEBCORE_EXPORT);
 public:
     enum class Type : uint8_t {
         Normal,

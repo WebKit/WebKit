@@ -33,10 +33,13 @@
 #import "GamepadHapticEffectType.h"
 #import "Logging.h"
 #import <cmath>
+#import <wtf/TZoneMallocInlines.h>
 
 #import "CoreHapticsSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerHapticEffect);
 
 static double magnitudeToIntensity(double magnitude)
 {

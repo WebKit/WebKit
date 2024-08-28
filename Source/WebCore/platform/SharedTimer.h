@@ -26,10 +26,10 @@
 #ifndef SharedTimer_h
 #define SharedTimer_h
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -37,7 +37,8 @@ namespace WebCore {
 // This instance is shared by all timers in the thread.
 // Not intended to be used directly; use the Timer class instead.
 class SharedTimer {
-    WTF_MAKE_NONCOPYABLE(SharedTimer); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SharedTimer);
+    WTF_MAKE_NONCOPYABLE(SharedTimer);
 public:
     SharedTimer() = default;
     virtual ~SharedTimer() = default;

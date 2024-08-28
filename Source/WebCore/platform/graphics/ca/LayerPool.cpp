@@ -28,8 +28,11 @@
 
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerPool);
 
 static constexpr Seconds capacityDecayTime { 5_s };
 

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
+
 typedef struct AudioBufferList AudioBufferList;
 struct AudioStreamBasicDescription;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
@@ -36,7 +38,7 @@ class CAAudioStreamDescription;
 class PlatformAudioData;
 
 class AudioSampleDataConverter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioSampleDataConverter);
 public:
     AudioSampleDataConverter();
     ~AudioSampleDataConverter();

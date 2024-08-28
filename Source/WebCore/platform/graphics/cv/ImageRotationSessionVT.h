@@ -27,6 +27,7 @@
 
 #include "AffineTransform.h"
 #include "FloatSize.h"
+#include <wtf/TZoneMalloc.h>
 
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
@@ -37,7 +38,7 @@ namespace WebCore {
 class VideoFrame;
 
 class ImageRotationSessionVT final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageRotationSessionVT, WEBCORE_EXPORT);
 public:
     struct RotationProperties {
         bool flipX { false };

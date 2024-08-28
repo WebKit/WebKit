@@ -31,6 +31,7 @@
 #include <gst/gst.h>
 #include <mutex>
 #include <wtf/Condition.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ struct PadProbeInformation {
 #endif
 
 class AppendPipeline {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AppendPipeline);
 public:
     AppendPipeline(SourceBufferPrivateGStreamer&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
@@ -66,8 +67,8 @@ private:
     struct Track {
         // Track objects are created on pad-added for the first initialization segment, and destroyed after
         // the pipeline state has been set to GST_STATE_NULL.
+        WTF_MAKE_TZONE_ALLOCATED(Track);
         WTF_MAKE_NONCOPYABLE(Track);
-        WTF_MAKE_FAST_ALLOCATED;
     public:
 
         Track(TrackID trackId, const AtomString& trackStringId, StreamType streamType, const GRefPtr<GstCaps>& caps, const FloatSize& presentationSize)

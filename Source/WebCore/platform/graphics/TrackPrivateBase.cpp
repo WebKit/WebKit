@@ -26,12 +26,15 @@
 #include "config.h"
 #include "TrackPrivateBase.h"
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
 #include "Logging.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackPrivateBase);
 
 std::optional<AtomString> TrackPrivateBase::trackUID() const
 {

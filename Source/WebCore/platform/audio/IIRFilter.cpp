@@ -34,8 +34,11 @@
 #include <algorithm>
 #include <complex>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRFilter);
 
 // The length of the memory buffers for the IIR filter. This MUST be a power of
 // two and must be greater than the possible length of the filter coefficients.

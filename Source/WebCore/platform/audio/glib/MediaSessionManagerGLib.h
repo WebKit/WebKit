@@ -23,6 +23,7 @@
 #include "MediaSessionIdentifier.h"
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -33,7 +34,7 @@ class MediaSessionGLib;
 class MediaSessionManagerGLib
     : public PlatformMediaSessionManager
     , private NowPlayingManagerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerGLib);
 public:
     MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&&);
     ~MediaSessionManagerGLib();

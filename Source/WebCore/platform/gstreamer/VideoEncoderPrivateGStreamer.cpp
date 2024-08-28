@@ -27,12 +27,15 @@
 #include "GStreamerCommon.h"
 #include "NotImplemented.h"
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebKitVideoEncoderBitRateAllocation);
 
 GST_DEBUG_CATEGORY(video_encoder_debug);
 #define GST_CAT_DEFAULT video_encoder_debug

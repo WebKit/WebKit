@@ -33,9 +33,9 @@
 #import "PlatformCALayerDelegatedContents.h"
 #import "ProcessIdentity.h"
 #import <wtf/Condition.h>
-#import <wtf/FastMalloc.h>
 #import <wtf/Lock.h>
 #import <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ constexpr Seconds frameFinishedTimeout = 5_s;
 namespace {
 
 class DisplayBufferFence final : public PlatformCALayerDelegatedContentsFence {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DisplayBufferFence);
     WTF_MAKE_NONCOPYABLE(DisplayBufferFence);
 public:
     static RefPtr<DisplayBufferFence> create()

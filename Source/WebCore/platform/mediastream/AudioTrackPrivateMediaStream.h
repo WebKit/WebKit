@@ -30,6 +30,7 @@
 #include "AudioTrackPrivate.h"
 #include "MediaStreamTrackPrivate.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,8 +41,8 @@ class AudioTrackPrivateMediaStream final
     , public MediaStreamTrackPrivateObserver
     , private RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<AudioTrackPrivateMediaStream> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateMediaStream);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaStream)
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioTrackPrivateMediaStream);
 public:
     static Ref<AudioTrackPrivateMediaStream> create(MediaStreamTrackPrivate& streamTrack)

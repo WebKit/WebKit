@@ -24,7 +24,7 @@
 #include "GRefPtrGStreamer.h"
 #include "VideoDecoder.h"
 
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -32,7 +32,7 @@ namespace WebCore {
 class GStreamerInternalVideoDecoder;
 
 class GStreamerVideoDecoder : public ThreadSafeRefCounted<GStreamerVideoDecoder>, public VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);

@@ -27,8 +27,11 @@
 #include "TextureMapper.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperLayer);
 
 class TextureMapperPaintOptions {
 public:

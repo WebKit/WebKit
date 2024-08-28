@@ -34,6 +34,7 @@
 #include "FloatSize.h"
 #include "Region.h"
 #include "RoundedRect.h"
+#include <wtf/TZoneMalloc.h>
 
 #if USE(SKIA)
 class SkRRect;
@@ -42,10 +43,10 @@ class SkRRect;
 namespace WebCore {
 
 class FloatRoundedRect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatRoundedRect, WEBCORE_EXPORT);
 public:
     class Radii {
-    WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Radii);
     public:
         Radii() = default;
         Radii(const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight)

@@ -32,8 +32,11 @@
 
 #include "Cone.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConeEffect);
 
 ConeEffect::ConeEffect() = default;
 

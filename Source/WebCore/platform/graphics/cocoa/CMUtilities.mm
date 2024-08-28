@@ -38,6 +38,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #import "CoreVideoSoftLink.h"
@@ -47,6 +48,8 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PacketDurationParser);
 
 #if ENABLE(VORBIS)
 constexpr uint32_t kAudioFormatVorbis = 'vorb';

@@ -32,13 +32,14 @@
 
 #include "ScalableImageDecoder.h"
 #include <stdint.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // This class decodes a BMP image. It is used in the BMP and ICO decoders,
 // which wrap it in the appropriate code to read file headers, etc.
 class BMPImageReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BMPImageReader);
 public:
     // Read a value from |data[offset]|, converting from little to native
     // endianness.

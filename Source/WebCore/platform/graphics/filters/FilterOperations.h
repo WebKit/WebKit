@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 struct BlendingContext;
 
 class FilterOperations {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterOperations, WEBCORE_EXPORT);
 public:
     using const_iterator = Vector<Ref<FilterOperation>>::const_iterator;
     using const_reverse_iterator = Vector<Ref<FilterOperation>>::const_reverse_iterator;

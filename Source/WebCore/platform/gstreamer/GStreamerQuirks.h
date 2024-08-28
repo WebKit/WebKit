@@ -26,6 +26,7 @@
 #include "MediaPlayer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ enum class ElementRuntimeCharacteristics : uint8_t {
 };
 
 class GStreamerQuirkBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerQuirkBase);
 
 public:
     GStreamerQuirkBase() = default;
@@ -48,7 +49,7 @@ public:
 };
 
 class GStreamerQuirk : public GStreamerQuirkBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerQuirk);
 public:
     GStreamerQuirk() = default;
     virtual ~GStreamerQuirk() = default;
@@ -65,7 +66,7 @@ public:
 };
 
 class GStreamerHolePunchQuirk : public GStreamerQuirkBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerHolePunchQuirk);
 public:
     GStreamerHolePunchQuirk() = default;
     virtual ~GStreamerHolePunchQuirk() = default;
@@ -77,7 +78,7 @@ public:
 
 class GStreamerQuirksManager : public RefCounted<GStreamerQuirksManager> {
     friend NeverDestroyed<GStreamerQuirksManager>;
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerQuirksManager);
 
 public:
     static GStreamerQuirksManager& singleton();

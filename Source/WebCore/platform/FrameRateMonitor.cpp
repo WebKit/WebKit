@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "FrameRateMonitor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameRateMonitor);
 
 static constexpr Seconds MinimumAverageDuration = 1_s;
 static constexpr Seconds MaxQueueDuration = 2_s;

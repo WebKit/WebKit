@@ -30,10 +30,11 @@
 
 #include "Logging.h"
 #include "RuntimeApplicationChecks.h"
+#include <pal/cocoa/AVFoundationSoftLink.h>
 #include <pal/spi/ios/SBSStatusBarSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
-#include <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(SpringBoardServices)
 SOFT_LINK_CLASS_OPTIONAL(SpringBoardServices, SBSStatusBarStyleOverridesAssertion)
@@ -148,6 +149,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaCaptureStatusBarManager);
 
 bool MediaCaptureStatusBarManager::hasSupport()
 {

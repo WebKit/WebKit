@@ -30,6 +30,7 @@
 
 #include <memory>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GraphicsLayer;
@@ -41,7 +42,7 @@ namespace Nicosia {
 class Buffer;
 
 class PaintingEngine {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PaintingEngine);
 public:
     WEBCORE_EXPORT static std::unique_ptr<PaintingEngine> create();
 

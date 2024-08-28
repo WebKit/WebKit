@@ -39,6 +39,7 @@
 #include "MediaEncodingConfiguration.h"
 #include "ProcessQualified.h"
 #include <dlfcn.h>
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
@@ -68,6 +69,8 @@ ALLOW_UNUSED_PARAMETERS_END
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProvider);
 
 LibWebRTCProvider::LibWebRTCProvider()
 {
@@ -100,7 +103,7 @@ static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& 
 }
 
 class BasicPacketSocketFactory : public rtc::PacketSocketFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BasicPacketSocketFactory);
 public:
     explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
         : m_socketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(networkThread.socketserver()))

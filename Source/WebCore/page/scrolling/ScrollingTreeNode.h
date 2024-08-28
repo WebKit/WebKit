@@ -44,7 +44,7 @@ class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 
 class ScrollingTreeNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingTreeNode> {
-    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeNode, WEBCORE_EXPORT);
     friend class ScrollingTree;
 public:
     virtual ~ScrollingTreeNode();

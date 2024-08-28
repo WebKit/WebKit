@@ -28,8 +28,11 @@
 
 #include "EmptyControlFactory.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactory);
 
 #if !PLATFORM(COCOA) && !USE(THEME_ADWAITA)
 RefPtr<ControlFactory> ControlFactory::create()

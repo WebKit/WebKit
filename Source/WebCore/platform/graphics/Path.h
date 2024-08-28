@@ -33,7 +33,7 @@
 #include "PlatformPath.h"
 #include "WindRule.h"
 #include <wtf/DataRef.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ class PathTraversalState;
 class RoundedRect;
 
 class Path {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Path);
 public:
     Path() = default;
     WEBCORE_EXPORT Path(PathSegment&&);

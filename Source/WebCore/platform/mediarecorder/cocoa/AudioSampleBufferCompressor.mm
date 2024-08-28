@@ -34,6 +34,7 @@
 #include <Foundation/Foundation.h>
 #include <algorithm>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -41,6 +42,8 @@
 #define LOW_WATER_TIME_IN_SECONDS 0.1
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleBufferCompressor);
 
 std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject)
 {

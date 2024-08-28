@@ -31,12 +31,13 @@
 #pragma once
 
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // All methods are synchronous.
 class FileStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FileStream);
 public:
     FileStream();
     ~FileStream();

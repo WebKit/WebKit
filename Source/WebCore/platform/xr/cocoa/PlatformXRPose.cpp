@@ -4,8 +4,11 @@
 
 #include "config.h"
 #include "PlatformXRPose.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformXRPose);
 
 WebCore::FloatPoint3D PlatformXRPose::position() const
 {

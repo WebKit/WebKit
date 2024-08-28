@@ -35,8 +35,11 @@
 #include "NativeImage.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorFilter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEComponentTransferSkiaApplier);
 
 bool FEComponentTransferSkiaApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {

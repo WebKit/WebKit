@@ -43,7 +43,7 @@ class ScrollingStateFrameScrollingNode;
 // the scrolling thread, avoiding locking. 
 
 class ScrollingStateTree final : public CanMakeCheckedPtr<ScrollingStateTree> {
-    WTF_MAKE_TZONE_ALLOCATED(ScrollingStateTree);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateTree, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollingStateTree);
     friend class ScrollingStateNode;
 public:

@@ -29,12 +29,14 @@
 #ifndef ZeroPole_h
 #define ZeroPole_h
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 // ZeroPole is a simple filter with one zero and one pole.
 
 class ZeroPole final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ZeroPole);
 public:
     ZeroPole()
         : m_zero(0)

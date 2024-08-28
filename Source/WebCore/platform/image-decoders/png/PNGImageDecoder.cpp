@@ -44,6 +44,7 @@
 #include "Color.h"
 #include <png.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueArray.h>
 
 #if USE(LCMS)
@@ -116,7 +117,7 @@ static int PNGAPI readChunks(png_structp png, png_unknown_chunkp chunk)
 }
 
 class PNGImageReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PNGImageReader);
 public:
     PNGImageReader(PNGImageDecoder* decoder)
         : m_png(png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning))

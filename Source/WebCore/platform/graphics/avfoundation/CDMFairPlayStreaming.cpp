@@ -47,6 +47,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
@@ -58,6 +59,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMFactoryFairPlayStreaming);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateFairPlayStreaming);
 
 #if !RELEASE_LOG_DISABLED
 static WTFLogChannel& logChannel() { return LogEME; }

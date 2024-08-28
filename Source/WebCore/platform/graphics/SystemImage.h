@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ enum class SystemImageType : uint8_t {
 };
 
 class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SystemImage);
 public:
     virtual ~SystemImage() = default;
 

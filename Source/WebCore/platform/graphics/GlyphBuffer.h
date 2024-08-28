@@ -36,7 +36,6 @@
 #include <climits>
 #include <limits>
 #include <wtf/CheckedRef.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

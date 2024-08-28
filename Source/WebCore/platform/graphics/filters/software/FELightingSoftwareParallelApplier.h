@@ -30,11 +30,12 @@
 #if !(CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE))
 
 #include "FELightingSoftwareApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FELightingSoftwareParallelApplier final : public FELightingSoftwareApplier {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FELightingSoftwareParallelApplier);
 
 public:
     using FELightingSoftwareApplier::FELightingSoftwareApplier;

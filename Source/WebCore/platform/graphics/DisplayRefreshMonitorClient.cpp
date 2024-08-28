@@ -28,8 +28,11 @@
 
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayRefreshMonitorClient);
 
 DisplayRefreshMonitorClient::DisplayRefreshMonitorClient() = default;
 

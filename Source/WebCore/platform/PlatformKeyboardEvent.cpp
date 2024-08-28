@@ -27,8 +27,11 @@
 #include "PlatformKeyboardEvent.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformKeyboardEvent);
 
 std::optional<OptionSet<PlatformEvent::Modifier>> PlatformKeyboardEvent::s_currentModifiers;    
 

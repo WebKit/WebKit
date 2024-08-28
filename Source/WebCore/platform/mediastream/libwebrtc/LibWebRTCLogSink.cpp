@@ -26,9 +26,13 @@
 #include "config.h"
 #include "LibWebRTCLogSink.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if USE(LIBWEBRTC)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCLogSink);
 
 LibWebRTCLogSink::LibWebRTCLogSink(LogCallback&& callback)
     : m_callback(WTFMove(callback))

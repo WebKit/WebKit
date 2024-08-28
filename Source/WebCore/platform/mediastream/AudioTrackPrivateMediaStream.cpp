@@ -31,12 +31,15 @@
 #include "AudioMediaStreamTrackRenderer.h"
 #include "Logging.h"
 #include "RealtimeIncomingAudioSource.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBWEBRTC)
 #include "LibWebRTCAudioModule.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateMediaStream);
 
 AudioTrackPrivateMediaStream::AudioTrackPrivateMediaStream(MediaStreamTrackPrivate& track)
     : m_streamTrack(track)

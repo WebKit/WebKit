@@ -8,9 +8,10 @@
 
 #include <WebCore/PlatformXR.h>
 #include <simd/simd.h>
+#include <wtf/TZoneMalloc.h>
 
 class PlatformXRPose {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlatformXRPose);
 
 public:
     simd_float4x4 simdTransform() const { return m_simdTransform; }

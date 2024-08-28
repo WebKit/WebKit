@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "PathImpl.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathImpl);
 
 void PathImpl::addLinesForRect(const FloatRect& rect)
 {

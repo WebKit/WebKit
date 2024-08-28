@@ -38,13 +38,13 @@
 #include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class LocalAudioMediaStreamTrackRendererInternalUnit final : public AudioMediaStreamTrackRendererInternalUnit {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LocalAudioMediaStreamTrackRendererInternalUnit);
 public:
     static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> create(Client& client)
     {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class DisplayRefreshMonitor;
 using PlatformDisplayID = uint32_t;
 
 class DisplayRefreshMonitorFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DisplayRefreshMonitorFactory);
 public:
     virtual ~DisplayRefreshMonitorFactory() = default;
 

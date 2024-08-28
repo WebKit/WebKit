@@ -35,11 +35,11 @@
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/CheckedRef.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS WKSLinearMediaPlayer;
@@ -55,7 +55,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceIOS>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceIOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceIOS);
 public:
     void initialize();

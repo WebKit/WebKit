@@ -33,8 +33,8 @@
 #include "FloatSize.h"
 #include <array>
 #include <optional>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
@@ -61,7 +61,7 @@ class Region;
 class TransformationMatrix;
 
 class AffineTransform {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AffineTransform);
 public:
     constexpr AffineTransform();
     constexpr AffineTransform(double a, double b, double c, double d, double e, double f);

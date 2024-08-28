@@ -31,6 +31,7 @@
 #include "TransformationMatrix.h"
 #include <array>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 // TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
@@ -45,7 +46,7 @@ class FloatRoundedRect;
 enum class TextureMapperFlags : uint16_t;
 
 class TextureMapper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapper);
 public:
     enum class WrapMode : uint8_t {
         Stretch,

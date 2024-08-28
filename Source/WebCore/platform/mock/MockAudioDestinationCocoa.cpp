@@ -31,8 +31,11 @@
 #include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "WebAudioBufferList.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockAudioDestinationCocoa);
 
 const int kRenderBufferSize = 128;
 

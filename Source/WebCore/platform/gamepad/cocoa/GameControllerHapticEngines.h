@@ -29,6 +29,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS CHHapticEngine;
@@ -50,7 +51,7 @@ struct GamepadEffectParameters;
 enum class GamepadHapticEffectType : uint8_t;
 
 class GameControllerHapticEngines : public CanMakeWeakPtr<GameControllerHapticEngines> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GameControllerHapticEngines);
 public:
     static std::unique_ptr<GameControllerHapticEngines> create(GCController *);
     ~GameControllerHapticEngines();

@@ -44,6 +44,8 @@
 #include "LCMSUniquePtr.h"
 #endif
 
+#include <wtf/TZoneMallocInlines.h>
+
 extern "C" {
 #include <setjmp.h>
 }
@@ -246,7 +248,7 @@ static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
 #endif
 
 class JPEGImageReader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JPEGImageReader);
 public:
     JPEGImageReader(JPEGImageDecoder* decoder)
         : m_decoder(decoder)

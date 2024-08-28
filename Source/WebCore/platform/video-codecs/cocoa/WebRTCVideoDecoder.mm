@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebRTCVideoDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBWEBRTC)
 
@@ -41,7 +42,7 @@ ALLOW_COMMA_END
 namespace WebCore {
 
 class WebRTCLocalVideoDecoder final : public WebRTCVideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebRTCLocalVideoDecoder);
 public:
     explicit WebRTCLocalVideoDecoder(webrtc::LocalDecoder decoder)
         : m_decoder(decoder)
@@ -67,7 +68,7 @@ UniqueRef<WebRTCVideoDecoder> WebRTCVideoDecoder::createFromLocalDecoder(webrtc:
 }
 
 class WebRTCDecoderVTBAV1 final : public WebRTCVideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebRTCDecoderVTBAV1);
 public:
     explicit WebRTCDecoderVTBAV1(RTCVideoDecoderVTBAV1Callback callback)
         : m_decoder(adoptNS([[RTCVideoDecoderVTBAV1 alloc] init]))

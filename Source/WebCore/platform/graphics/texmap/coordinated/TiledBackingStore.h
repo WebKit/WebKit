@@ -28,6 +28,7 @@
 #include "Tile.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,8 @@ class GraphicsContext;
 class TiledBackingStoreClient;
 
 class TiledBackingStore {
-    WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TiledBackingStore);
+    WTF_MAKE_NONCOPYABLE(TiledBackingStore);
 public:
     TiledBackingStore(TiledBackingStoreClient&, float contentsScale = 1.f);
     ~TiledBackingStore();

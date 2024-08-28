@@ -37,8 +37,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkStorageSession);
 
 static HashSet<OrganizationStorageAccessPromptQuirk>& updatableStorageAccessPromptQuirks()
 {

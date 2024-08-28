@@ -29,8 +29,11 @@
 #include "GraphicsContext.h"
 #include "TileController.h"
 #include "TileGrid.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TileCoverageMap);
 
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)

@@ -29,10 +29,13 @@
 #include "CurlStreamScheduler.h"
 #include "SharedBuffer.h"
 #include "SocketStreamError.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CURL)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CurlStream);
 
 CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url, ServerTrustEvaluation serverTrustEvaluation, LocalhostAlias localhostAlias)
     : m_scheduler(scheduler)

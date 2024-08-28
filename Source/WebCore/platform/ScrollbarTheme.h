@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "ScrollTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,7 +42,8 @@ class GraphicsLayer;
 #endif
 
 class ScrollbarTheme {
-    WTF_MAKE_NONCOPYABLE(ScrollbarTheme); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollbarTheme);
+    WTF_MAKE_NONCOPYABLE(ScrollbarTheme);
 public:
     ScrollbarTheme() = default;
     virtual ~ScrollbarTheme() {};

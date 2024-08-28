@@ -40,6 +40,7 @@
 #include <shlwapi.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 // MFSamplePresenterSampleCounter
 // Data type: UINT32
@@ -54,8 +55,14 @@ static constexpr uint32_t tenMegahertz = 10000000;
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateMediaFoundation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaPlayerPrivateMediaFoundationVideoSamplePool, MediaPlayerPrivateMediaFoundation::VideoSamplePool);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaPlayerPrivateMediaFoundationVideoScheduler, MediaPlayerPrivateMediaFoundation::VideoScheduler);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaPlayerPrivateMediaFoundationDirect3DPresenter, MediaPlayerPrivateMediaFoundation::Direct3DPresenter);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaPlayerPrivateMediaFoundationCustomVideoPresenter, MediaPlayerPrivateMediaFoundation::CustomVideoPresenter);
+
 class MediaPlayerPrivateMediaFoundation::AsyncCallback : public IMFAsyncCallback {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerPrivateMediaFoundationAsyncCallback);
 public:
     AsyncCallback(Function<void(IMFAsyncResult*)>&& callback)
         : m_callback(WTFMove(callback))

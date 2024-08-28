@@ -35,6 +35,7 @@
 #include "CDMPrivate.h"
 #include "CDMProxy.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -54,7 +55,7 @@ enum {
 } // namespace ClearKey
 
 class CDMFactoryClearKey final : public CDMFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMFactoryClearKey);
 public:
     static CDMFactoryClearKey& singleton();
 
@@ -69,7 +70,7 @@ private:
 };
 
 class CDMPrivateClearKey final : public CDMPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateClearKey);
 public:
     CDMPrivateClearKey();
     virtual ~CDMPrivateClearKey();

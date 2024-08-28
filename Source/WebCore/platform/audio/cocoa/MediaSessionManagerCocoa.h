@@ -33,6 +33,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
     , private NowPlayingManagerClient
     , private AudioHardwareListener::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerCocoa);
 public:
     MediaSessionManagerCocoa();
     

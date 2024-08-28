@@ -23,6 +23,7 @@
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/app/gstappsink.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
@@ -30,7 +31,7 @@ GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
 
 class WebKitVideoSinkProbe {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitVideoSinkProbe);
 public:
 
     WebKitVideoSinkProbe(MediaPlayerPrivateGStreamer* player)

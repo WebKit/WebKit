@@ -32,6 +32,7 @@
 #include "NotImplemented.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
 #include "AudioSessionMac.h"
@@ -42,6 +43,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSession);
 
 bool AudioSession::s_shouldManageAudioSessionCategory { false };
 

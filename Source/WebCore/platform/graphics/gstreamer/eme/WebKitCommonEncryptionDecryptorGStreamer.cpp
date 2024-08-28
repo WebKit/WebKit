@@ -32,13 +32,14 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 
 using WebCore::CDMProxy;
 
 // Instances of this class are tied to the decryptor lifecycle. They can't be alive after the decryptor has been destroyed.
 class CDMProxyDecryptionClientImplementation : public WebCore::CDMProxyDecryptionClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CDMProxyDecryptionClientImplementation);
 public:
     CDMProxyDecryptionClientImplementation(WebKitMediaCommonEncryptionDecrypt* decryptor)
         : m_decryptor(decryptor) { }

@@ -38,6 +38,7 @@
 #endif
 
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 
 @interface WebCoreTextTrackRepresentationCocoaHelper : NSObject <CALayerDelegate> {
@@ -106,6 +107,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackRepresentationCocoa);
 
 std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client, HTMLMediaElement& mediaElement)
 {

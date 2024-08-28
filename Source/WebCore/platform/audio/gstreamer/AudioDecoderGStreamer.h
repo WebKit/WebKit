@@ -23,7 +23,7 @@
 
 #include "AudioDecoder.h"
 #include "GRefPtrGStreamer.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -31,7 +31,7 @@ namespace WebCore {
 class GStreamerInternalAudioDecoder;
 
 class GStreamerAudioDecoder : public ThreadSafeRefCounted<GStreamerAudioDecoder>, public AudioDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioDecoder);
 
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);

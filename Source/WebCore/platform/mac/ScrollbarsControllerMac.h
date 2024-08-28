@@ -32,6 +32,7 @@
 #include "Timer.h"
 
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebScrollerImpPairDelegate;
 OBJC_CLASS WebScrollerImpDelegate;
@@ -43,7 +44,7 @@ namespace WebCore {
 class WheelEventTestMonitor;
 
 class ScrollbarsControllerMac final : public ScrollbarsController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollbarsControllerMac);
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMac);
 public:
     explicit ScrollbarsControllerMac(ScrollableArea&);

@@ -29,6 +29,7 @@
 
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class MediaTime;
@@ -41,7 +42,7 @@ class LibWebRTCAudioModule;
 class PlatformAudioData;
 
 class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRenderer);
 public:
     struct Init {
         Function<void()>&& crashCallback;

@@ -32,6 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
@@ -48,7 +49,8 @@ class ResourceError;
 class ResourceResponse;
 
 class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceLoader> {
-    WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
+    WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
     static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();

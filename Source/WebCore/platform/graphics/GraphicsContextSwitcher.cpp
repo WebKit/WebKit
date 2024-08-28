@@ -30,8 +30,11 @@
 #include "GraphicsContext.h"
 #include "ImageBufferContextSwitcher.h"
 #include "TransparencyLayerContextSwitcher.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextSwitcher);
 
 std::unique_ptr<GraphicsContextSwitcher> GraphicsContextSwitcher::create(GraphicsContext& destinationContext, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
 {

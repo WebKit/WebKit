@@ -27,6 +27,7 @@
 
 #include "GLDisplay.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,7 +58,8 @@ class SkiaGLContext;
 #endif
 
 class PlatformDisplay {
-    WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlatformDisplay);
+    WTF_MAKE_NONCOPYABLE(PlatformDisplay);
 public:
     WEBCORE_EXPORT static PlatformDisplay& sharedDisplay();
 #if !PLATFORM(WIN)

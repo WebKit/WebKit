@@ -29,8 +29,11 @@
 #include "Filter.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMorphologySoftwareApplier);
 
 inline ColorComponents<uint8_t, 4> FEMorphologySoftwareApplier::minOrMax(const ColorComponents<uint8_t, 4>& a, const ColorComponents<uint8_t, 4>& b, MorphologyOperatorType type)
 {

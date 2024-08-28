@@ -30,8 +30,11 @@
 #import <notify.h>
 #import <pal/spi/cocoa/IOPSLibSPI.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PowerSourceNotifier);
 
 PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
     : m_callback(WTFMove(callback))

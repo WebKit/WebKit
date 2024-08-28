@@ -27,10 +27,14 @@
 #include "ScrollbarsController.h"
 
 #include "ScrollableArea.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(WPE) && !PLATFORM(GTK)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsController);
+
 std::unique_ptr<ScrollbarsController> ScrollbarsController::create(ScrollableArea& scrollableArea)
 {
     return makeUnique<ScrollbarsController>(scrollableArea);

@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "CAAudioStreamDescription.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CAAudioStreamDescription);
 
 CAAudioStreamDescription::~CAAudioStreamDescription() = default;
 

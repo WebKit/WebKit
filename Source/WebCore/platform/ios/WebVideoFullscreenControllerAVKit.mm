@@ -44,6 +44,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/CheckedRef.h>
 #import <wtf/CrossThreadCopier.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/ios/UIKitSoftLink.h>
@@ -103,7 +104,7 @@ class VideoFullscreenControllerContext final
     , private PlaybackSessionModel
     , private PlaybackSessionModelClient
     , public CanMakeCheckedPtr<VideoFullscreenControllerContext> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoFullscreenControllerContext);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoFullscreenControllerContext);
 public:
     static Ref<VideoFullscreenControllerContext> create()

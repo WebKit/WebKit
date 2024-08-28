@@ -25,6 +25,7 @@
 #include "OpenXRUtils.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace PlatformXR {
@@ -32,7 +33,7 @@ namespace PlatformXR {
 class OpenXRInputSource;
 
 class OpenXRInput {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRInput);
     WTF_MAKE_NONCOPYABLE(OpenXRInput);
 public:
     static std::unique_ptr<OpenXRInput> create(XrInstance, XrSession, XrSpace);

@@ -27,6 +27,7 @@
 #define SuddenTermination_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ namespace WebCore {
 #endif
 
     class SuddenTerminationDisabler {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(SuddenTerminationDisabler);
         WTF_MAKE_NONCOPYABLE(SuddenTerminationDisabler);
     public:
         SuddenTerminationDisabler()

@@ -34,9 +34,9 @@
 #include "VideoFullscreenCaptions.h"
 #include "VideoPresentationModel.h"
 #include <wtf/CheckedRef.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,7 +55,7 @@ class VideoPresentationInterfaceMac final
     , public VideoFullscreenCaptions
     , public RefCounted<VideoPresentationInterfaceMac>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceMac> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceMac, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceMac);
 public:
     static Ref<VideoPresentationInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)

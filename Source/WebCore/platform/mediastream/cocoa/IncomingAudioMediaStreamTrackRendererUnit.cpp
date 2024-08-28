@@ -35,11 +35,14 @@
 #include "Logging.h"
 #include "WebAudioBufferList.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IncomingAudioMediaStreamTrackRendererUnit);
 
 IncomingAudioMediaStreamTrackRendererUnit::IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule& audioModule)
     : m_audioModule(audioModule)

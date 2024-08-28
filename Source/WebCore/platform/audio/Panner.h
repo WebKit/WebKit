@@ -30,6 +30,7 @@
 #define Panner_h
 
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ enum class PanningModelType {
 // Abstract base class for panning a mono or stereo source.
 
 class Panner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Panner);
 public:
     static std::unique_ptr<Panner> create(PanningModelType, float sampleRate, HRTFDatabaseLoader*);
 

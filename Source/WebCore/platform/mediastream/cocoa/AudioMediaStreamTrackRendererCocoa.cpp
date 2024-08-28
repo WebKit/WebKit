@@ -33,8 +33,11 @@
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioModule.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererCocoa);
 
 AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa(Init&& init)
     : AudioMediaStreamTrackRenderer(WTFMove(init))

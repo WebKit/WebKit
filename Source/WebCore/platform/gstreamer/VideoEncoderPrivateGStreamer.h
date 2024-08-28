@@ -22,7 +22,7 @@
 
 #include "GStreamerCommon.h"
 #include "VideoEncoder.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 #define WEBKIT_TYPE_VIDEO_ENCODER (webkit_video_encoder_get_type())
 #define WEBKIT_VIDEO_ENCODER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_VIDEO_ENCODER, WebKitVideoEncoder))
@@ -47,8 +47,8 @@ struct _WebKitVideoEncoderClass {
 GType webkit_video_encoder_get_type(void);
 
 class WebKitVideoEncoderBitRateAllocation : public RefCounted<WebKitVideoEncoderBitRateAllocation> {
+    WTF_MAKE_TZONE_ALLOCATED(WebKitVideoEncoderBitRateAllocation);
     WTF_MAKE_NONCOPYABLE(WebKitVideoEncoderBitRateAllocation);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static Ref<WebKitVideoEncoderBitRateAllocation> create(WebCore::VideoEncoder::ScalabilityMode scalabilityMode)

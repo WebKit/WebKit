@@ -23,6 +23,7 @@
 #include "GLContext.h"
 #include "GLFenceEGL.h"
 #include "GLFenceGL.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -31,6 +32,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GLFence);
 
 const GLFence::Capabilities& GLFence::capabilities()
 {

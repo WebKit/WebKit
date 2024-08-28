@@ -28,6 +28,7 @@
 #include "PixelBufferFormat.h"
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class IntSize;
 class PixelBuffer;
 
 class ImageBufferAllocator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferAllocator, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT ImageBufferAllocator();
     WEBCORE_EXPORT virtual ~ImageBufferAllocator() = default;

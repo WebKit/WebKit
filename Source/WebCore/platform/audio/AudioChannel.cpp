@@ -35,8 +35,11 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioChannel);
 
 void AudioChannel::scale(float scale)
 {

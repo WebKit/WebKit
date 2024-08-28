@@ -28,14 +28,14 @@
 #include "FloatRoundedRect.h"
 #include "PathElement.h"
 #include "PathSegment.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class PathImpl : public ThreadSafeRefCounted<PathImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PathImpl);
 public:
     virtual ~PathImpl() = default;
 

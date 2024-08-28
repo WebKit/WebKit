@@ -28,9 +28,9 @@
 #include "FilterEffect.h"
 #include "FilterImageVector.h"
 #include "ImageBufferAllocator.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class FilterEffect;
 class FilterImage;
 
 class FilterResults {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterResults, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT FilterResults(std::unique_ptr<ImageBufferAllocator>&& = nullptr);
 

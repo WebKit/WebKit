@@ -29,8 +29,11 @@
 
 #include "LocalizedStrings.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceErrorBase);
 
 const ASCIILiteral errorDomainWebKitInternal = "WebKitInternal"_s;
 const ASCIILiteral errorDomainWebKitServiceWorker = "WebKitServiceWorker"_s;

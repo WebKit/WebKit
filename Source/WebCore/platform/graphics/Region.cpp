@@ -27,6 +27,7 @@
 #include "Region.h"
 
 #include <stdio.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 // A region class based on the paper "Scanline Coherent Shape Algebra"
@@ -38,6 +39,8 @@
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Region);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RegionShape, Region::Shape);
 
 Region::Region()
 {

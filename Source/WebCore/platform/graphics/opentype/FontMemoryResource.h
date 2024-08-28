@@ -29,11 +29,12 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class FontMemoryResource : public RefCounted<FontMemoryResource> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FontMemoryResource);
 public:
     static Ref<FontMemoryResource> create(HANDLE handle)
     {

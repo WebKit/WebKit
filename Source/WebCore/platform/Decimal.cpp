@@ -39,6 +39,7 @@
 #include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -162,6 +163,8 @@ static uint64_t scaleUp(uint64_t x, int n)
 } // namespace DecimalPrivate
 
 using namespace DecimalPrivate;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Decimal);
 
 Decimal& Decimal::operator+=(const Decimal& other)
 {

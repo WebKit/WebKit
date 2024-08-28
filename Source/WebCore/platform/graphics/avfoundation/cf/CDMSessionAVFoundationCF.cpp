@@ -36,11 +36,14 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/cf/CFURLExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionAVFoundationCF);
 
 CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient&)
     : m_parent(parent)

@@ -30,11 +30,13 @@
 #import "DeprecatedGlobalSettings.h"
 #import "Logging.h"
 #import <AudioToolbox/AudioConverter.h>
-#include <wtf/FastMalloc.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleDataConverter);
 
 AudioSampleDataConverter::AudioSampleDataConverter()
     : m_latencyAdaptationEnabled(DeprecatedGlobalSettings::webRTCAudioLatencyAdaptationEnabled())

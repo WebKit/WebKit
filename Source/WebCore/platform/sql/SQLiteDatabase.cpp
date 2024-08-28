@@ -36,10 +36,10 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
-#include <wtf/FastMalloc.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -50,6 +50,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteDatabase);
 
 static constexpr auto notOpenErrorMessage = "database is not open"_s;
 

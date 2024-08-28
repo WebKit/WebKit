@@ -22,10 +22,13 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 #include "OpenXRInputSource.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
 namespace PlatformXR {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRInput);
 
 std::unique_ptr<OpenXRInput> OpenXRInput::create(XrInstance instance, XrSession session, XrSpace space)
 {

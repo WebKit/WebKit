@@ -27,9 +27,12 @@
 #include "SelectionGeometry.h"
 
 #include "FloatQuad.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionGeometry);
 
 SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, bool isHorizontal, int pageNumber)
     : m_quad(quad)

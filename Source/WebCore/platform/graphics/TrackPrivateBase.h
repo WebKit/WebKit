@@ -34,6 +34,7 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -48,8 +49,8 @@ class WEBCORE_EXPORT TrackPrivateBase
     , public LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(TrackPrivateBase);
     WTF_MAKE_NONCOPYABLE(TrackPrivateBase);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~TrackPrivateBase() = default;
 

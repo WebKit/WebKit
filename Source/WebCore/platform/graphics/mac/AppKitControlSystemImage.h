@@ -33,6 +33,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ enum class AppKitControlSystemImageType : uint8_t {
 };
 
 class WEBCORE_EXPORT AppKitControlSystemImage : public SystemImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AppKitControlSystemImage);
 public:
     virtual ~AppKitControlSystemImage() = default;
 

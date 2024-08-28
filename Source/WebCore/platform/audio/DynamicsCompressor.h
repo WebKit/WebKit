@@ -32,6 +32,7 @@
 #include "DynamicsCompressorKernel.h"
 #include "ZeroPole.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ class AudioBus;
 // making the sound richer, fuller, and more controlled.
 
 class DynamicsCompressor final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DynamicsCompressor);
     WTF_MAKE_NONCOPYABLE(DynamicsCompressor);
 public:
     enum {

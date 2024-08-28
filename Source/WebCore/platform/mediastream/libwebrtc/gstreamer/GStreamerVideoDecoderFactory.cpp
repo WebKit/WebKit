@@ -36,6 +36,7 @@
 #include <mutex>
 #include <wtf/Lock.h>
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +44,8 @@ GST_DEBUG_CATEGORY(webkit_webrtcdec_debug);
 #define GST_CAT_DEFAULT webkit_webrtcdec_debug
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerVideoDecoderFactory);
 
 class GStreamerWebRTCVideoDecoder : public webrtc::VideoDecoder {
 public:

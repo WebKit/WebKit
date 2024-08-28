@@ -35,8 +35,11 @@
 #include "SpotLightSource.h"
 #include <wtf/Int128.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingNeonParallelApplier);
 
 // Otherwise: Distant Light.
 #define FLAG_POINT_LIGHT                 0x01

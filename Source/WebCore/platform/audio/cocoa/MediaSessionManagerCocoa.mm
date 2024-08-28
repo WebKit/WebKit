@@ -44,6 +44,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 #import <wtf/MathExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import "MediaRemoteSoftLink.h"
 #include <pal/cocoa/AVFoundationSoftLink.h>
@@ -51,6 +52,8 @@
 static const size_t kLowPowerVideoBufferSize = 4096;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManagerCocoa);
 
 #if PLATFORM(MAC)
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()

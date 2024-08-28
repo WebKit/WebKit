@@ -31,13 +31,14 @@
 
 #include "AudioArray.h"
 #include "DirectConvolver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // UpSampler up-samples the source stream by a factor of 2x.
 
 class UpSampler final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UpSampler);
 public:
     explicit UpSampler(size_t inputBlockSize);
 

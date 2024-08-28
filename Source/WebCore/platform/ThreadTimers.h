@@ -45,7 +45,8 @@ typedef Vector<RefPtr<ThreadTimerHeapItem>> ThreadTimerHeap;
     
 // A collection of timers per thread. Kept in ThreadGlobalData.
 class ThreadTimers {
-    WTF_MAKE_NONCOPYABLE(ThreadTimers); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ThreadTimers);
+    WTF_MAKE_NONCOPYABLE(ThreadTimers);
 public:
     ThreadTimers();
 

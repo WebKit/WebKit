@@ -45,6 +45,7 @@
 #include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerMock.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -57,6 +58,8 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SameSizeAsSc
 }
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollableArea);
 
 struct SameSizeAsScrollableArea final : public CanMakeWeakPtr<SameSizeAsScrollableArea> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

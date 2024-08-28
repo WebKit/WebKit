@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebCLLocationManager;
 
@@ -38,7 +39,7 @@ class GeolocationPositionData;
 class RegistrableDomain;
 
 class WEBCORE_EXPORT CoreLocationGeolocationProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CoreLocationGeolocationProvider);
 public:
     class Client {
     public:

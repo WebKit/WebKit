@@ -32,9 +32,12 @@
 #include "IntSize.h"
 #include "LengthFunctions.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterOperations);
 
 FilterOperations::FilterOperations(Vector<Ref<FilterOperation>>&& operations)
     : m_operations(WTFMove(operations))

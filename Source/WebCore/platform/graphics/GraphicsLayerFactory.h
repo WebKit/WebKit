@@ -27,11 +27,12 @@
 
 #include "GraphicsLayer.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class GraphicsLayerFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GraphicsLayerFactory);
 public:
     virtual ~GraphicsLayerFactory() = default;
 

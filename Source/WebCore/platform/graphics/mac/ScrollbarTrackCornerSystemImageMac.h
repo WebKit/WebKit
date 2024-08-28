@@ -31,11 +31,12 @@
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT ScrollbarTrackCornerSystemImageMac final : public AppKitControlSystemImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollbarTrackCornerSystemImageMac);
 public:
     static Ref<ScrollbarTrackCornerSystemImageMac> create();
     static Ref<ScrollbarTrackCornerSystemImageMac> create(WebCore::Color&& tintColor, bool useDarkAppearance);

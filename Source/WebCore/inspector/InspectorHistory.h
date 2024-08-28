@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class InspectorHistory final {
-    WTF_MAKE_TZONE_ALLOCATED();
+    WTF_MAKE_TZONE_ALLOCATED(InspectorHistory);
     WTF_MAKE_NONCOPYABLE(InspectorHistory);
 public:
     class Action {

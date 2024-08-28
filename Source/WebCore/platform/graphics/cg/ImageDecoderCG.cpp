@@ -43,6 +43,7 @@
 #include <ImageIO/ImageIO.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/FlipBytes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include "MediaAccessibilitySoftLink.h"
 #if ENABLE(QUICKLOOK_FULLSCREEN)
@@ -50,6 +51,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderCG);
 
 const CFStringRef WebCoreCGImagePropertyAVISDictionary = CFSTR("{AVIS}");
 const CFStringRef WebCoreCGImagePropertyHEICSDictionary = CFSTR("{HEICS}");

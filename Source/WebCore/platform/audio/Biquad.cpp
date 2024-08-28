@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(ACCELERATE)
 // Work around a bug where VForce.h forward declares std::complex in a way that's incompatible with libc++ complex.
@@ -45,6 +46,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Biquad);
 
 #if USE(ACCELERATE)
 constexpr int kBufferSize = 1024;

@@ -33,8 +33,11 @@
 #import "LocalCurrentGraphicsContext.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarTrackCornerSystemImageMac);
 
 Ref<ScrollbarTrackCornerSystemImageMac> ScrollbarTrackCornerSystemImageMac::create()
 {

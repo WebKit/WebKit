@@ -32,9 +32,12 @@
 #include "PathStream.h"
 #include "PathTraversalState.h"
 #include "PlatformPathImpl.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Path);
 
 Path::Path(const Vector<FloatPoint>& points)
     : m_data(DataRef<PathImpl> { PathStream::create(points) })

@@ -31,6 +31,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -57,8 +58,8 @@ public:
 };
 
 class TimerBase {
+    WTF_MAKE_TZONE_ALLOCATED(TimerBase);
     WTF_MAKE_NONCOPYABLE(TimerBase);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT TimerBase();
     WEBCORE_EXPORT virtual ~TimerBase();
@@ -139,7 +140,7 @@ private:
 };
 
 class Timer : public TimerBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Timer, WEBCORE_EXPORT);
 public:
     static void schedule(Seconds delay, Function<void()>&& function)
     {
@@ -196,7 +197,7 @@ inline void TimerBase::setHasReachedMaxNestingLevel(bool value)
 }
 
 class DeferrableOneShotTimer : protected TimerBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeferrableOneShotTimer, WEBCORE_EXPORT);
 public:
     template<typename TimerFiredClass>
     DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)

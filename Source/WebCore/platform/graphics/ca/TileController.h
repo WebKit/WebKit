@@ -37,6 +37,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -51,7 +52,8 @@ typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 const int kDefaultTileSize = 512;
 
 class TileController final : public TiledBacking {
-    WTF_MAKE_NONCOPYABLE(TileController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TileController, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(TileController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TileController);
 
     friend class TileCoverageMap;

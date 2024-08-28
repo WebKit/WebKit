@@ -29,6 +29,7 @@
 #include "RenderingResourceIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WIN)
 #include <wtf/text/WTFString.h>
@@ -65,7 +66,7 @@ struct FontCustomPlatformSerializedData {
 #endif
 
 struct FontCustomPlatformData : public RefCounted<FontCustomPlatformData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FontCustomPlatformData);
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
     WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, const String&);

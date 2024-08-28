@@ -35,6 +35,7 @@
 #include <wtf/Observer.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -60,7 +61,7 @@ struct PlatformVideoTrackConfiguration;
 struct PlatformAudioTrackConfiguration;
 
 class AVTrackPrivateAVFObjCImpl : public CanMakeWeakPtr<AVTrackPrivateAVFObjCImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AVTrackPrivateAVFObjCImpl);
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
     explicit AVTrackPrivateAVFObjCImpl(AVAssetTrack*);

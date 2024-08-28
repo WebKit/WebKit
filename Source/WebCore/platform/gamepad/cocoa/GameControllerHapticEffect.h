@@ -29,6 +29,7 @@
 
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ struct GamepadEffectParameters;
 enum class GamepadHapticEffectType : uint8_t;
 
 class GameControllerHapticEffect : public CanMakeWeakPtr<GameControllerHapticEffect> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GameControllerHapticEffect);
 public:
     static std::unique_ptr<GameControllerHapticEffect> create(GameControllerHapticEngines&, GamepadHapticEffectType, const GamepadEffectParameters&);
     ~GameControllerHapticEffect();

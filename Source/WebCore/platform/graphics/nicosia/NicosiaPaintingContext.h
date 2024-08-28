@@ -30,6 +30,7 @@
 
 #include "NicosiaPaintingOperation.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -40,7 +41,7 @@ namespace Nicosia {
 class Buffer;
 
 class PaintingContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PaintingContext);
 public:
     template<typename T>
     static void paint(Buffer& buffer, const T& paintFunctor)

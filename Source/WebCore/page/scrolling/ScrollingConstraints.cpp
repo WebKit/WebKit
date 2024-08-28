@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(AbsolutePositionConstraint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AbsolutePositionConstraints);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewportConstraints);
 
 AbsolutePositionConstraints::AbsolutePositionConstraints(const FloatSize& alignmentOffset, const FloatPoint& layerPositionAtLastLayout)
     : m_alignmentOffset(alignmentOffset)

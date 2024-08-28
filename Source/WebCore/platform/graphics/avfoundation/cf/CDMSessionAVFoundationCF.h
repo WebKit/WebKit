@@ -27,6 +27,7 @@
 
 #include "LegacyCDMSession.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -38,7 +39,7 @@ namespace WebCore {
 class MediaPlayerPrivateAVFoundationCF;
 
 class CDMSessionAVFoundationCF final : public LegacyCDMSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationCF);
 public:
     CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient&);
 

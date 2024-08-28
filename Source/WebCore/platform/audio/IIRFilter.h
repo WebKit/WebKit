@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class IIRFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IIRFilter);
 public:
     static constexpr size_t maxOrder { 20 };
     IIRFilter(const Vector<double>& feedforward, const Vector<double>& feedback);

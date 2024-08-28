@@ -27,12 +27,13 @@
 
 #include "IntDegrees.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class OrientationNotifier final : public CanMakeCheckedPtr<OrientationNotifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OrientationNotifier);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OrientationNotifier);
 public:
     explicit OrientationNotifier(IntDegrees orientation) { m_orientation = orientation; }

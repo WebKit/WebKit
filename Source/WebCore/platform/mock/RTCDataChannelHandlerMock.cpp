@@ -32,8 +32,11 @@
 #include "ProcessQualified.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCNotifiersMock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelHandlerMock);
 
 RTCDataChannelHandlerMock::RTCDataChannelHandlerMock(const String& label, const RTCDataChannelInit& init)
     : m_label(label)

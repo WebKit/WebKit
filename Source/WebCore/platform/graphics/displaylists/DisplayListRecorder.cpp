@@ -37,6 +37,7 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(SYSTEM_PREVIEW)
@@ -45,6 +46,8 @@
 
 namespace WebCore {
 namespace DisplayList {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Recorder);
 
 Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : GraphicsContext(isDeferred, state)

@@ -52,6 +52,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #ifndef NDEBUG
 #include <wtf/text/StringBuilder.h>
@@ -144,7 +145,7 @@ protected:
     enum Color { Red, Black };
 
     class Node {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Node);
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         explicit Node(T&& data)

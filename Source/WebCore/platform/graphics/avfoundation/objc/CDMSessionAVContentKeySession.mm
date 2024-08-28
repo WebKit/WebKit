@@ -47,6 +47,7 @@
 #import <objc/objc-runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -110,6 +111,8 @@ typedef NSString *AVContentKeySystem;
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionAVContentKeySession);
 
 constexpr Seconds kDidProvideContentKeyRequestTimeout { 5_s };
 

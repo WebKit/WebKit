@@ -30,6 +30,7 @@
 #include "AudioSampleDataSource.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace webrtc {
 class AudioTrackInterface;
@@ -39,7 +40,7 @@ class AudioTrackSinkInterface;
 namespace WebCore {
 
 class RealtimeOutgoingAudioSourceCocoa final : public RealtimeOutgoingAudioSource, public CanMakeCheckedPtr<RealtimeOutgoingAudioSourceCocoa> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeOutgoingAudioSourceCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RealtimeOutgoingAudioSourceCocoa);
 public:
     static Ref<RealtimeOutgoingAudioSourceCocoa> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSourceCocoa(WTFMove(audioSource))); }

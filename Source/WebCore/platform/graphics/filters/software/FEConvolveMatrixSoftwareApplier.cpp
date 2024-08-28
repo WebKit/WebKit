@@ -30,9 +30,12 @@
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEConvolveMatrixSoftwareApplier);
 
 /*
    -----------------------------------

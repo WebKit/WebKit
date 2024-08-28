@@ -25,11 +25,12 @@
 #include "LibWebRTCMacros.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GStreamerVideoDecoderFactory : public webrtc::VideoDecoderFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoderFactory);
 public:
     GStreamerVideoDecoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 

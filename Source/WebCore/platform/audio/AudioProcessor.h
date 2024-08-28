@@ -31,6 +31,8 @@
 #ifndef AudioProcessor_h
 #define AudioProcessor_h
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 class AudioBus;
@@ -40,8 +42,8 @@ class AudioBus;
 // or as the processor for a basic (one input - one output) AudioNode.
 
 class AudioProcessor {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioProcessor);
     WTF_MAKE_NONCOPYABLE(AudioProcessor);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioProcessor(float sampleRate, unsigned numberOfChannels)
         : m_initialized(false)

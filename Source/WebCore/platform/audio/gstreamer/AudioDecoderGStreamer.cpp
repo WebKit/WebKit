@@ -27,11 +27,14 @@
 #include "GStreamerRegistryScanner.h"
 #include "PlatformRawAudioDataGStreamer.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerAudioDecoder);
 
 GST_DEBUG_CATEGORY(webkit_audio_decoder_debug);
 #define GST_CAT_DEFAULT webkit_audio_decoder_debug
@@ -44,7 +47,7 @@ static WorkQueue& gstDecoderWorkQueue()
 
 class GStreamerInternalAudioDecoder : public ThreadSafeRefCounted<GStreamerInternalAudioDecoder>
     , public CanMakeWeakPtr<GStreamerInternalAudioDecoder, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalAudioDecoder);
 
 public:
     static Ref<GStreamerInternalAudioDecoder> create(const String& codecName, const AudioDecoder::Config& config, AudioDecoder::OutputCallback&& outputCallback, AudioDecoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)

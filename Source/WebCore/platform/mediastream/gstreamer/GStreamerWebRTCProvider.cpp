@@ -30,8 +30,11 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerWebRTCProvider);
 
 void WebRTCProvider::setH264HardwareEncoderAllowed(bool)
 {

@@ -36,6 +36,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 struct gbm_bo;
@@ -43,7 +44,7 @@ struct gbm_bo;
 namespace WebCore {
 
 class GBMBufferSwapchain : public ThreadSafeRefCounted<GBMBufferSwapchain> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GBMBufferSwapchain);
 public:
     // The size should be adjusted to the use-case.
     // For cyclical rendering (e.g. WebGL), Four should be ideal since we'll rely on
@@ -76,7 +77,7 @@ public:
     };
 
     class Buffer : public ThreadSafeRefCounted<Buffer> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Buffer);
     public:
         Buffer(uint32_t, const BufferDescription&);
         ~Buffer();

@@ -27,6 +27,7 @@
 #pragma once
 
 #include <pal/ThreadGlobalData.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
@@ -46,8 +47,8 @@ struct EventNames;
 struct MIMETypeRegistryThreadGlobalData;
 
 class ThreadGlobalData : public PAL::ThreadGlobalData {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThreadGlobalData, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT ThreadGlobalData();
     WEBCORE_EXPORT ~ThreadGlobalData();

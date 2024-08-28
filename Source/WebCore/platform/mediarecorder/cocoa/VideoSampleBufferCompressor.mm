@@ -32,6 +32,7 @@
 #import <CoreMedia/CoreMedia.h>
 #import <Foundation/Foundation.h>
 #import <wtf/EnumTraits.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/SoftLinking.h>
 
 #import "VideoToolboxSoftLink.h"
@@ -39,6 +40,8 @@
 #import <pal/cf/VideoToolboxSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoSampleBufferCompressor);
 
 std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create(String mimeType, CMBufferQueueTriggerCallback callback, void* callbackObject)
 {

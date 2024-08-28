@@ -30,13 +30,14 @@
 #define Cone_h
 
 #include "FloatPoint3D.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Cone gain is defined according to the OpenAL specification
 
 class ConeEffect final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ConeEffect);
 public:
     ConeEffect();
 

@@ -28,6 +28,7 @@
 
 #include "ResourceRequestBase.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSCachedURLResponse;
 OBJC_CLASS NSURLRequest;
@@ -51,6 +52,7 @@ struct ResourceRequestPlatformData {
 using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
 
 class ResourceRequest : public ResourceRequestBase {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceRequest, WEBCORE_EXPORT);
 public:
     explicit ResourceRequest(const String& url) 
         : ResourceRequestBase(URL({ }, url), ResourceRequestCachePolicy::UseProtocolCachePolicy)

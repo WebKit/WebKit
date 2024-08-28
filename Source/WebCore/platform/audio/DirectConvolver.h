@@ -31,11 +31,12 @@
 
 #include "AudioArray.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DirectConvolver final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DirectConvolver);
     WTF_MAKE_NONCOPYABLE(DirectConvolver);
 public:
     explicit DirectConvolver(size_t inputBlockSize);

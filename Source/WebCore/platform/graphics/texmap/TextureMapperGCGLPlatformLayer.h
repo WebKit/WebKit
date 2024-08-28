@@ -25,13 +25,14 @@
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextureMapperPlatformLayerProxy;
 
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperGCGLPlatformLayer);
 public:
     TextureMapperGCGLPlatformLayer(GraphicsContextGLTextureMapperANGLE&);
     virtual ~TextureMapperGCGLPlatformLayer();

@@ -30,8 +30,11 @@
 
 #include "AVIFImageReader.h"
 #include "AVIFImageDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AVIFImageReader);
 
 AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
     : m_decoder(WTFMove(decoder))

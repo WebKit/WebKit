@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #import <CoreMedia/CoreMedia.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/WorkQueue.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -35,7 +36,7 @@ typedef struct OpaqueAudioConverter* AudioConverterRef;
 namespace WebCore {
 
 class AudioSampleBufferCompressor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioSampleBufferCompressor);
 public:
     static std::unique_ptr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
     ~AudioSampleBufferCompressor();

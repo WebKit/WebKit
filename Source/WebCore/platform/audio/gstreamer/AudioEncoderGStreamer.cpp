@@ -27,11 +27,14 @@
 #include "GStreamerRegistryScanner.h"
 #include "PlatformRawAudioDataGStreamer.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerAudioEncoder);
 
 GST_DEBUG_CATEGORY(webkit_audio_encoder_debug);
 #define GST_CAT_DEFAULT webkit_audio_encoder_debug
@@ -43,8 +46,8 @@ static WorkQueue& gstEncoderWorkQueue()
 }
 
 class GStreamerInternalAudioEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalAudioEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalAudioEncoder);
     WTF_MAKE_NONCOPYABLE(GStreamerInternalAudioEncoder);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, AudioEncoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element))); }

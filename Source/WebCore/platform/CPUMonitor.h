@@ -29,11 +29,12 @@
 
 #include <wtf/CPUTime.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CPUMonitor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CPUMonitor, WEBCORE_EXPORT);
 public:
     using ExceededCPULimitHandler = Function<void(double)>;
     WEBCORE_EXPORT CPUMonitor(Seconds checkInterval, ExceededCPULimitHandler&&);

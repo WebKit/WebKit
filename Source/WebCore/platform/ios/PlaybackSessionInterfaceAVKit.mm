@@ -36,6 +36,7 @@
 #import <AVFoundation/AVTime.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -45,6 +46,8 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceAVKit);
 
 Ref<PlaybackSessionInterfaceAVKit> PlaybackSessionInterfaceAVKit::create(PlaybackSessionModel& model)
 {

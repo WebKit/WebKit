@@ -33,9 +33,12 @@
 #include "ResourceRequest.h"
 #include <dlfcn.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceRequest);
 
 // FIXME: Make this a NetworkingContext property.
 #if PLATFORM(IOS_FAMILY)

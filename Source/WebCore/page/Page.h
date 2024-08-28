@@ -320,8 +320,8 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 
 
 class Page : public RefCounted<Page>, public Supplementable<Page>, public CanMakeWeakPtr<Page> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Page, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Page);
-    WTF_MAKE_TZONE_ALLOCATED(Page);
     friend class SettingsBase;
 
 public:

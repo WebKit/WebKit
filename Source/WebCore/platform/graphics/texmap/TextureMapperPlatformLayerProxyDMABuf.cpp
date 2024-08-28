@@ -35,6 +35,7 @@
 #include <fcntl.h>
 #include <initializer_list>
 #include <unistd.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/egl.h>
@@ -47,6 +48,9 @@
 #include "DMABufEGLUtilities.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperPlatformLayerProxyDMABuf);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(TextureMapperPlatformLayerProxyDMABufDMABufLayer, TextureMapperPlatformLayerProxyDMABuf::DMABufLayer);
 
 struct TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

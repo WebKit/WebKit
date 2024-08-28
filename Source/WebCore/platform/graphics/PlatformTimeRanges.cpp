@@ -29,9 +29,12 @@
 #include <math.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformTimeRanges);
 
 PlatformTimeRanges::PlatformTimeRanges()
 {

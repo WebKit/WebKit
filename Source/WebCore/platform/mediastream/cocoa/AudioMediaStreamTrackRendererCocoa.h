@@ -34,6 +34,7 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <optional>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ class AudioSampleBufferList;
 class BaseAudioMediaStreamTrackRendererUnit;
 
 class AudioMediaStreamTrackRendererCocoa : public AudioMediaStreamTrackRenderer, public CanMakeWeakPtr<AudioMediaStreamTrackRendererCocoa, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererCocoa);
 public:
     AudioMediaStreamTrackRendererCocoa(Init&&);
     ~AudioMediaStreamTrackRendererCocoa();

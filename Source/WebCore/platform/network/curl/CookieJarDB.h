@@ -30,6 +30,7 @@
 #include "SQLiteStatement.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ enum class CookieAcceptPolicy {
 };
 
 class CookieJarDB {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CookieJarDB);
     WTF_MAKE_NONCOPYABLE(CookieJarDB);
 
 public:

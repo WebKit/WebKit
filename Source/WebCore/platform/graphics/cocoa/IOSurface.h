@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include "ProcessIdentity.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -53,7 +54,7 @@ using IOSurfaceSeed = uint32_t;
 using PlatformDisplayID = uint32_t;
 
 class IOSurface final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurface, WEBCORE_EXPORT);
 public:
     enum class Name : uint8_t {
         Default,

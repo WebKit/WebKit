@@ -31,6 +31,7 @@
 #include "PlatformMediaSession.h"
 #include "PlatformStrategies.h"
 #include <gio/gio.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 
 // https://specifications.freedesktop.org/mpris-spec/latest/
@@ -111,6 +112,8 @@ static const char s_mprisInterface[] =
     "</node>";
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManagerGLib);
 
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {

@@ -23,6 +23,7 @@
 
 #include "MediaSessionIdentifier.h"
 #include "PlatformMediaSession.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ enum class MediaSessionGLibMprisRegistrationEligiblilty : uint8_t {
 class MediaSessionManagerGLib;
 
 class MediaSessionGLib {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionGLib);
 
 public:
     static std::unique_ptr<MediaSessionGLib> create(MediaSessionManagerGLib&, MediaSessionIdentifier);

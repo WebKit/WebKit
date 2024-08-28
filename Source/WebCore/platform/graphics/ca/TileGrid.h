@@ -34,6 +34,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGContext *CGContextRef;
@@ -48,8 +49,8 @@ class TileController;
 using TileIndex = IntPoint;
 
 class TileGrid : public PlatformCALayerClient {
+    WTF_MAKE_TZONE_ALLOCATED(TileGrid);
     WTF_MAKE_NONCOPYABLE(TileGrid);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit TileGrid(TileController&);
     ~TileGrid();

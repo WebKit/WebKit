@@ -41,7 +41,6 @@
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
 #include <skia/gpu/gl/GrGLInterface.h>
 #include <skia/gpu/gl/GrGLTypes.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/Vector.h>

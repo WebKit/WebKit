@@ -26,13 +26,14 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEGaussianBlur;
 
 class FEGaussianBlurSkiaApplier final : public FilterEffectConcreteApplier<FEGaussianBlur> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEGaussianBlurSkiaApplier);
     using Base = FilterEffectConcreteApplier<FEGaussianBlur>;
 
 public:

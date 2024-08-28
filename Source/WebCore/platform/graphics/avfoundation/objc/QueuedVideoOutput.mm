@@ -35,6 +35,8 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
+#include <wtf/TZoneMallocInlines.h>
+
 @interface WebQueuedVideoOutputDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     WeakPtr<WebCore::QueuedVideoOutput> _parent;
 }
@@ -111,6 +113,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QueuedVideoOutput);
 
 static dispatch_queue_t globalOutputDelegateQueue()
 {

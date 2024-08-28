@@ -29,8 +29,11 @@
 #include "Logging.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteDatabaseTracker.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteTransaction);
 
 SQLiteTransaction::SQLiteTransaction(SQLiteDatabase& db, bool readOnly)
     : m_db(db)
