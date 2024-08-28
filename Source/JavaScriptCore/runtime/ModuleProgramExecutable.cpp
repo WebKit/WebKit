@@ -75,7 +75,9 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm)) ModuleProgramExecutable(globalObject, source);
     executable->finishCreation(vm);
-    executable->getUnlinkedCodeBlock(globalObject); // This generates and binds unlinked code block.
+    // This generates and binds unlinked code block.
+    if (!executable->getUnlinkedCodeBlock(globalObject))
+        return nullptr;
     return executable;
 }
 
