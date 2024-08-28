@@ -474,7 +474,6 @@ private:
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     void positionOverflowControlsLayers();
 
-    WebCore::ScrollingCoordinator* scrollingCoordinator();
     void createScrollingNodeIfNecessary();
 
     void revealPDFDestination(PDFDestination *);
