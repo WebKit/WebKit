@@ -5448,6 +5448,12 @@ class RunAPITests(shell.TestNewStyle, AddToLogMixin, ShellMixin):
 
         if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
+            if self.name == ReRunAPITests.name:
+                first_results_failing_tests = self.getProperty('first_run_failures', [])
+                flaky_failures_string = ', '.join(first_results_failing_tests)
+                pluralSuffix = 's' if len(first_results_failing_tests) > 1 else ''
+                message = f'Found flaky test{pluralSuffix}: {flaky_failures_string}'
+
             self.descriptionDone = message
             if self.name != RunAPITestsWithoutChange.name:
                 self.build.results = SUCCESS
