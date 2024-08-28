@@ -133,7 +133,9 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         }
     }
 
+#ifndef NDEBUG
     ASSERT(parentNodes.isEmpty());
+#endif
 }
 
 void NodeSet::sort() const
