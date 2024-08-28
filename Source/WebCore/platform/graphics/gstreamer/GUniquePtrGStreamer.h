@@ -24,6 +24,7 @@
 #include <gst/audio/audio.h>
 #include <gst/base/gstbytereader.h>
 #include <gst/base/gstflowcombiner.h>
+#include <gst/fft/gstfftf32.h>
 #include <gst/gstsegment.h>
 #include <gst/gststructure.h>
 #include <gst/pbutils/install-plugins.h>
@@ -47,6 +48,7 @@ WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioInfo, gst_audio_info_free)
+WTF_DEFINE_GPTR_DELETER(GstFFTF32, gst_fft_f32_free)
 
 #if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
 WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_description_free)
