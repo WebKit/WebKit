@@ -115,6 +115,15 @@ String CSSViewTransitionRule::cssText() const
     return builder.toString();
 }
 
+AtomString CSSViewTransitionRule::navigation() const
+{
+    if (!m_viewTransitionRule->navigation())
+        return emptyAtom();
+    if (*m_viewTransitionRule->navigation() == ViewTransitionNavigation::Auto)
+        return "auto"_s;
+    return "none"_s;
+}
+
 void CSSViewTransitionRule::reattach(StyleRuleBase& rule)
 {
     m_viewTransitionRule = downcast<StyleRuleViewTransition>(rule);
