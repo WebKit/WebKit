@@ -871,7 +871,11 @@ end
     move cfr, a1
     cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
 
+if ARMv7
+    branchIfException(.handleException)
+else
     btpnz r1, .handleException
+end
 
     # Clean up and return
     restoreJSEntrypointInterpreterRegisters()
