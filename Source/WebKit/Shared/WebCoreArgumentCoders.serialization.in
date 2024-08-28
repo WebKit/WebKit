@@ -6482,6 +6482,7 @@ header: <WebCore/WritingToolsTypes.h>
 header: <WebCore/WritingToolsTypes.h>
 [CustomHeader] enum class WebCore::WritingTools::SessionCompositionType : uint8_t {
     None,
+    Compose,
     SmartReply,
     Other
 };

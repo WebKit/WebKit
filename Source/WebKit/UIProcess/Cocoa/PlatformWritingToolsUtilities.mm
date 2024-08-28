@@ -146,6 +146,9 @@ WebCore::WritingTools::Session::CompositionType convertToWebCompositionSessionTy
     case WTCompositionSessionTypeNone:
         return WebCore::WritingTools::Session::CompositionType::None;
 
+    case WTCompositionSessionTypeCompose:
+        return WebCore::WritingTools::Session::CompositionType::Compose;
+
     case WTCompositionSessionTypeSmartReply:
         return WebCore::WritingTools::Session::CompositionType::SmartReply;
 
