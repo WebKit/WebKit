@@ -33,6 +33,7 @@
 #include "ColorSerialization.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
+#include "InlineIteratorSVGTextBox.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
@@ -337,7 +338,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
         writeNameValuePair(ts, "color"_s, serializationForRenderTreeAsText(text.style().visitedDependentColor(CSSPropertyColor)));
 }
 
-static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::TextBox& textBox)
+static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::SVGTextBox& textBox)
 {
     auto& fragments = textBox.svgTextFragments();
     if (fragments.isEmpty())

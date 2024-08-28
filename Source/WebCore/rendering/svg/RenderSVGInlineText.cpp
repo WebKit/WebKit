@@ -27,7 +27,7 @@
 #include "CSSFontSelector.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorSVGTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderAncestorIterator.h"

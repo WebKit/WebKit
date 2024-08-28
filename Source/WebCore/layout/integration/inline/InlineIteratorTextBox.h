@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-struct SVGTextFragment;
-
 namespace InlineIterator {
 
 class TextBox : public Box {
@@ -48,9 +46,6 @@ public:
     TextBoxSelectableRange selectableRange() const;
 
     const FontCascade& fontCascade() const;
-
-    FloatRect calculateBoundariesIncludingSVGTransform() const;
-    const Vector<SVGTextFragment>& svgTextFragments() const;
 
     inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 

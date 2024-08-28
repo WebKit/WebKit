@@ -54,6 +54,7 @@ public:
     Box(PathVariant&&);
 
     bool isText() const;
+    bool isSVGText() const;
     bool isInlineBox() const;
     bool isRootInlineBox() const;
     bool isLineBreak() const;

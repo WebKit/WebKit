@@ -36,7 +36,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
-#include "InlineIteratorTextBox.h"
+#include "InlineIteratorSVGTextBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutInlineTextBox.h"
@@ -522,7 +522,8 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
 {
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
-        auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
+        auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
+        auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.visualRectIgnoringBlockDirection();
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
@@ -643,7 +644,8 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
         }
 
         if (start <= textBox.start() && textBox.end() <= end) {
-            auto boundaries = textBox.calculateBoundariesIncludingSVGTransform();
+            auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
+            auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.visualRectIgnoringBlockDirection();
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);
