@@ -514,4 +514,13 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
     }
 }
 
+bool FontCascade::hasOTSVGGlyph(const GlyphBuffer& glyphBuffer) const
+{
+    for (unsigned i = 0; i < glyphBuffer.size(); ++i) {
+        if (glyphBuffer.fontAt(i).findOTSVGGlyphs(glyphBuffer.glyphs(i), 1))
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore

@@ -235,6 +235,13 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     if (glyphBuffer.isEmpty())
         return nullptr;
 
+// #if PLATFORM(COCOA)
+//     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252347
+//     // DisplayLists don't handle OTSVG glyphs correctly. From LayoutTests it seems to affect only Cocoa (rdar://105515478).
+//     if (hasOTSVGGlyph(glyphBuffer))
+//         return nullptr;
+// #endif
+
     std::unique_ptr<DisplayList::DisplayList> displayList = makeUnique<DisplayList::DisplayList>();
     DisplayList::RecorderImpl recordingContext(*displayList, context.state().clone(GraphicsContextState::Purpose::Initial), { },
         context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale), context.colorSpace(),
