@@ -414,6 +414,7 @@ class PageLoadState;
 class PageLoadStateObserverBase;
 class PlatformXRSystem;
 class PlaybackSessionManagerProxy;
+class ProcessAssertion;
 class ProcessThrottlerActivity;
 class ProcessThrottlerTimedActivity;
 class ProvisionalPageProxy;
@@ -3129,15 +3130,18 @@ private:
         void takeVisibleActivity();
         void takeAudibleActivity();
         void takeCapturingActivity();
+        void takeMutedCaptureAssertion();
 
         void reset();
         void dropVisibleActivity();
         void dropAudibleActivity();
         void dropCapturingActivity();
+        void dropMutedCaptureAssertion();
 
         bool hasValidVisibleActivity() const;
         bool hasValidAudibleActivity() const;
         bool hasValidCapturingActivity() const;
+        bool hasValidMutedCaptureAssertion() const;
 
 #if PLATFORM(IOS_FAMILY)
         void takeOpeningAppLinkActivity();
@@ -3154,6 +3158,7 @@ private:
 #endif
         std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
         std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
+        RefPtr<ProcessAssertion> m_isMutedCaptureAssertion;
 #if PLATFORM(IOS_FAMILY)
         std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
 #endif
