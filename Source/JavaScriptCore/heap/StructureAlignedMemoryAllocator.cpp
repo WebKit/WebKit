@@ -164,10 +164,6 @@ void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 
 void* StructureAlignedMemoryAllocator::tryMallocBlock()
 {
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        initializeStructureAddressSpace();
-    });
     return s_structureMemoryManager->tryMallocStructureBlock();
 }
 
