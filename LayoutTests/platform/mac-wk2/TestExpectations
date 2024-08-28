@@ -1850,3 +1850,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-windo
 
 # webkit.org/b/278738 [ Sonoma wk2 x86_64]: fast/canvas/image-buffer-backend-variants.html is a flaky crash.
 [ Sonoma x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Crash ]
+
+# webkit.org/b/278801 REGRESSION (280449@main): [ macOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html is a flaky crash 
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html [ Pass Crash ]
