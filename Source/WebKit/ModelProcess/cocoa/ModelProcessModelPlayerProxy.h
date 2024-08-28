@@ -30,19 +30,21 @@
 #include "Connection.h"
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
-#include <CoreRE/CoreRE.h>
 #include <WebCore/Color.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerIdentifier.h>
-#include <WebKitAdditions/REPtr.h>
-#include <WebKitAdditions/REModelLoaderClient.h>
 #include <simd/simd.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/REModelLoaderClient.h>
+#include <WebKitAdditions/REPtr.h>
+#endif
 
 OBJC_CLASS WKModelProcessModelLayer;
 OBJC_CLASS WKSRKEntity;
@@ -59,7 +61,9 @@ class ModelProcessModelPlayerManagerProxy;
 
 class ModelProcessModelPlayerProxy final
     : public WebCore::ModelPlayer
+#if USE(APPLE_INTERNAL_SDK)
     , public WebCore::REModelLoaderClient
+#endif
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerProxy);
 public:
@@ -82,9 +86,11 @@ public:
     void createLayer();
     void loadModel(Ref<WebCore::Model>&&, WebCore::LayoutSize);
 
+#if USE(APPLE_INTERNAL_SDK)
     // WebCore::REModelLoaderClient overrides.
     void didFinishLoading(WebCore::REModelLoader&, Ref<WebCore::REModel>) final;
     void didFailLoading(WebCore::REModelLoader&, const WebCore::ResourceError&) final;
+#endif
 
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) final;
@@ -128,7 +134,9 @@ private:
     RefPtr<WebCore::REModelLoader> m_loader;
     RefPtr<WebCore::REModel> m_model;
     RetainPtr<WKSRKEntity> m_modelRKEntity;
+#if USE(APPLE_INTERNAL_SDK)
     REPtr<RESceneRef> m_scene;
+#endif
 
     WebCore::Color m_backgroundColor;
     simd_float3 m_originalBoundingBoxCenter { simd_make_float3(0, 0, 0) };

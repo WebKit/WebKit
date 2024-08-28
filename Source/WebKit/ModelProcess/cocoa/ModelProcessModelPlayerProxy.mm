@@ -55,6 +55,10 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
+#if !USE(APPLE_INTERNAL_SDK)
+typedef struct REScene* RESceneRef;
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerProxy);
@@ -265,6 +269,7 @@ static RECALayerService *webDefaultLayerService(void)
     return REServiceLocatorGetCALayerService(REEngineGetServiceLocator(REEngineGetShared()));
 }
 
+#if USE(APPLE_INTERNAL_SDK)
 void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& loader, Ref<WebCore::REModel> model)
 {
     dispatch_assert_queue(dispatch_get_main_queue());
@@ -337,6 +342,7 @@ void ModelProcessModelPlayerProxy::didFailLoading(WebCore::REModelLoader& loader
 
     // FIXME: Do something sensible in the failure case.
 }
+#endif
 
 // MARK: - WebCore::ModelPlayer
 
