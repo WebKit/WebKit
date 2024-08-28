@@ -4087,14 +4087,12 @@ bool WebViewImpl::prepareForDragOperation(id <NSDraggingInfo>)
     return true;
 }
 
-static void performDragWithLegacyFiles(RefPtr<WebPageProxy> page, Box<Vector<String>>&& fileNames, Box<WebCore::DragData>&& dragData, const String& pasteboardName)
+static void performDragWithLegacyFiles(WebPageProxy& page, Box<Vector<String>>&& fileNames, Box<WebCore::DragData>&& dragData, const String& pasteboardName)
 {
-    auto* networkProcess = page->websiteDataStore().networkProcessIfExists();
+    auto* networkProcess = page.websiteDataStore().networkProcessIfExists();
     if (!networkProcess)
         return;
-    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(page->protectedLegacyMainFrameProcess()->coreProcessIdentifier(), *fileNames), [page = WTFMove(page), fileNames, dragData, pasteboardName]() mutable {
-        if (!page)
-            return;
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(page.protectedLegacyMainFrameProcess()->coreProcessIdentifier(), *fileNames), [page = Ref { page }, fileNames, dragData, pasteboardName]() mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
@@ -4104,7 +4102,7 @@ static void performDragWithLegacyFiles(RefPtr<WebPageProxy> page, Box<Vector<Str
     });
 }
 
-static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<WebCore::DragData>&& dragData, RefPtr<WebPageProxy> page, RetainPtr<NSView<WebViewImplDelegate>> view)
+static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<WebCore::DragData>&& dragData, WebPageProxy& page, RetainPtr<NSView<WebViewImplDelegate>> view)
 {
     // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
     // guaranteed that the count of UTIs equals the count of files, since some clients only write
@@ -4123,13 +4121,11 @@ static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<Web
     String pasteboardName = draggingInfo.draggingPasteboard.name;
     [draggingInfo enumerateDraggingItemsWithOptions:0 forView:view.autorelease() classes:@[NSFilePromiseReceiver.class] searchOptions:@{ } usingBlock:[&](NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
         auto queue = adoptNS([NSOperationQueue new]);
-        [draggingItem.item receivePromisedFilesAtDestination:dropDestination options:@{ } operationQueue:queue.get() reader:[page = WTFMove(page), fileNames, fileCount, dragData, pasteboardName](NSURL *fileURL, NSError *errorOrNil) {
+        [draggingItem.item receivePromisedFilesAtDestination:dropDestination options:@{ } operationQueue:queue.get() reader:[page = Ref { page }, fileNames, fileCount, dragData, pasteboardName](NSURL *fileURL, NSError *errorOrNil) {
             if (errorOrNil)
                 return;
 
             RunLoop::main().dispatch([page = WTFMove(page), path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] () mutable {
-                if (!page)
-                    return;
                 fileNames->append(path.get());
                 if (fileNames->size() != fileCount)
                     return;
