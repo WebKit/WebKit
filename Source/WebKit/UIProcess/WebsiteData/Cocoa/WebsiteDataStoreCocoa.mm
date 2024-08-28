@@ -231,7 +231,7 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 
     [[maybe_unused]] const auto isSafari =
 #if PLATFORM(MAC)
-        MacApplication::isSafari();
+        WebCore::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
         WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
 #else

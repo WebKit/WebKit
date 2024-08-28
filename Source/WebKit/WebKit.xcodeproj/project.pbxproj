@@ -1931,6 +1931,8 @@
 		9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */; };
 		9B1229CE23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */; };
 		9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */; };
+		9B12A4D62C73C155008A9AAB /* _WKPageLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B12A4D42C73C155008A9AAB /* _WKPageLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B12A4DC2C746D16008A9AAB /* _WKPageLoadTimingInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B12A4DB2C746D16008A9AAB /* _WKPageLoadTimingInternal.h */; };
 		9B38009E2AEA2D9D0011A892 /* ViewWindowCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */; };
 		9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */; };
 		9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B47908E253151CC00EC11AB /* JSIPCBinding.h */; };
@@ -7038,6 +7040,9 @@
 		9B1229CC23FF25F2008CA751 /* RemoteAudioDestinationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationManager.cpp; sourceTree = "<group>"; };
 		9B1229CF23FF2814008CA751 /* RemoteAudioDestinationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioDestinationManager.messages.in; sourceTree = "<group>"; };
 		9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationIdentifier.h; sourceTree = "<group>"; };
+		9B12A4D42C73C155008A9AAB /* _WKPageLoadTiming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPageLoadTiming.h; sourceTree = "<group>"; };
+		9B12A4D52C73C155008A9AAB /* _WKPageLoadTiming.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKPageLoadTiming.mm; sourceTree = "<group>"; };
+		9B12A4DB2C746D16008A9AAB /* _WKPageLoadTimingInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKPageLoadTimingInternal.h; sourceTree = "<group>"; };
 		9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewWindowCoordinates.serialization.in; sourceTree = "<group>"; };
 		9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewWindowCoordinates.h; sourceTree = "<group>"; };
 		9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageArgumentDescriptions.h; sourceTree = "<group>"; };
@@ -7051,6 +7056,7 @@
 		9B5BEC252400F4A90070C6EF /* WebMediaStrategy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaStrategy.cpp; sourceTree = "<group>"; };
 		9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationProxy.h; sourceTree = "<group>"; };
 		9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationProxy.cpp; sourceTree = "<group>"; };
+		9B7F8A502C785725000057F3 /* WebPageLoadTiming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageLoadTiming.h; sourceTree = "<group>"; };
 		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
 		9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIPCBinding.cpp; sourceTree = "<group>"; };
 		9BF622512C3E8559007F7021 /* SharedPreferencesForWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedPreferencesForWebProcess.cpp; sourceTree = "<group>"; };
@@ -11453,6 +11459,9 @@
 				51130EC6294466AF00E076C5 /* _WKNotificationData.mm */,
 				51130EC5294466AE00E076C5 /* _WKNotificationDataInternal.h */,
 				9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */,
+				9B12A4D42C73C155008A9AAB /* _WKPageLoadTiming.h */,
+				9B12A4D52C73C155008A9AAB /* _WKPageLoadTiming.mm */,
+				9B12A4DB2C746D16008A9AAB /* _WKPageLoadTimingInternal.h */,
 				1A43E828188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h */,
 				1A43E827188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm */,
 				7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */,
@@ -14138,6 +14147,7 @@
 				BC7B6204129A0A6700D174A4 /* WebPageGroup.h */,
 				2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */,
 				2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */,
+				9B7F8A502C785725000057F3 /* WebPageLoadTiming.h */,
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
@@ -15995,6 +16005,8 @@
 				A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */,
 				A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */,
 				9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */,
+				9B12A4D62C73C155008A9AAB /* _WKPageLoadTiming.h in Headers */,
+				9B12A4DC2C746D16008A9AAB /* _WKPageLoadTimingInternal.h in Headers */,
 				1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */,
 				7C89D2D71A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h in Headers */,
 				5790A67425679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.h in Headers */,

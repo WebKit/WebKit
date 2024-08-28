@@ -64,6 +64,7 @@ class NavigationAction;
 class NavigationClient;
 class NavigationResponse;
 class PageConfiguration;
+class PageLoadTiming;
 class PolicyClient;
 class ResourceLoadClient;
 class SerializedScriptValue;
@@ -460,6 +461,7 @@ class WebPageDebuggable;
 class WebPageGroup;
 class WebPageInjectedBundleClient;
 class WebPageInspectorController;
+class WebPageLoadTiming;
 class WebPageProxyMessageReceiverRegistration;
 class WebPageProxyTesting;
 class WebPopupMenuProxy;
@@ -1907,7 +1909,7 @@ public:
 
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 
-    void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
+    void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>, WallTime timestamp);
 
     void didRestoreScrollPosition();
 
@@ -2027,7 +2029,7 @@ public:
     void destroyProvisionalPage();
 
     // Logic shared between the WebPageProxy and the ProvisionalPageProxy.
-    void didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&);
+    void didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
     void didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebFrameProxy&, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
     void didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, WebCore::ResourceRequest&&, const UserData&);
     void didPerformServerRedirectShared(Ref<WebProcessProxy>&&, const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
@@ -2504,6 +2506,9 @@ public:
 
     void simulateClickOverFirstMatchingTextInViewportWithUserInteraction(String&& targetText, CompletionHandler<void(bool)>&&);
 
+    void startNetworkRequestsForPageLoadTiming();
+    void endNetworkRequestsForPageLoadTiming(WallTime);
+
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2547,13 +2552,13 @@ private:
 
     void didCreateSubframe(IPC::Connection&, WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, const String& frameName);
 
-    void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&);
+    void didStartProvisionalLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, WebCore::ResourceRequest&&, const UserData&);
     void willPerformClientRedirectForFrame(IPC::Connection&, WebCore::FrameIdentifier, const String& url, double delay, WebCore::LockBackForwardList);
     void didCancelClientRedirectForFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, URL&&);
     void didFailProvisionalLoadForFrame(IPC::Connection&, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& provisionalURL, const WebCore::ResourceError&, WebCore::WillContinueLoading, const UserData&, WebCore::WillInternallyHandleFailure);
-    void didFinishDocumentLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, const UserData&);
+    void didFinishDocumentLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, const UserData&, WallTime);
     void didFinishLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const UserData&);
     void didFailLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceError&, const UserData&);
     void didSameDocumentNavigationForFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, SameDocumentNavigationType, URL&&, const UserData&);
@@ -2571,6 +2576,14 @@ private:
     void didChangeProgress(double);
     void didFinishProgress();
     void setNetworkRequestsInProgress(bool);
+
+    void didEndNetworkRequestsForPageLoadTimingTimerFired();
+    void generatePageLoadingTimingSoon();
+#if PLATFORM(COCOA)
+    void didGeneratePageLoadTiming(const WebPageLoadTiming&);
+#else
+    void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
+#endif
 
     void updateRemoteFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
 
@@ -3171,6 +3184,10 @@ private:
     std::unique_ptr<WebNavigationState> m_navigationState;
     String m_failingProvisionalLoadURL;
     bool m_isLoadingAlternateHTMLStringForFailingProvisionalLoad { false };
+
+    std::unique_ptr<WebPageLoadTiming> m_pageLoadTiming;
+    unsigned m_subresourceLoadingCountForPageLoadTiming { 0 };
+    RunLoop::Timer m_generatePageLoadTimingTimer;
 
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
 #if PLATFORM(COCOA)

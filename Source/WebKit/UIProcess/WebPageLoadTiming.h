@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,40 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
-#if HAVE(CORE_TELEPHONY)
-
-namespace WTF {
-class URL;
-}
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WallTime.h>
 
 namespace WebKit {
 
-#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
-bool shouldAllowAutoFillForCellularIdentifiers(const WTF::URL&);
-#endif
+class WebPageLoadTiming {
+    WTF_MAKE_NONCOPYABLE(WebPageLoadTiming);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit WebPageLoadTiming(WallTime navigationStart)
+        : m_navigationStart(navigationStart)
+    { }
 
-} // namespace WebKit
+    WallTime navigationStart() const { return m_navigationStart; }
 
-#endif // HAVE(CORE_TELEPHONY)
+    WallTime firstMeaningfulPaint() const { return m_firstMeaningfulPaint; }
+    void setFirstMeaningfulPaint(WallTime timestamp) { m_firstMeaningfulPaint = timestamp; }
+
+    WallTime documentFinishedLoading() const { return m_documentFinishedLoading; }
+    void setDocumentFinishedLoading(WallTime timestamp) { m_documentFinishedLoading = timestamp; }
+
+    WallTime allSubresourcesFinishedLoading() const { return m_allSubresourcesFinishedLoading; }
+    void updateEndOfNetworkRequests(WallTime timestamp)
+    {
+        if (timestamp > m_allSubresourcesFinishedLoading)
+            m_allSubresourcesFinishedLoading = timestamp;
+    }
+
+private:
+    WallTime m_navigationStart;
+    WallTime m_firstMeaningfulPaint;
+    WallTime m_documentFinishedLoading;
+    WallTime m_allSubresourcesFinishedLoading;
+};
+
+}

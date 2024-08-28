@@ -35,6 +35,7 @@
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
 #import <WebKit/_WKInputDelegate.h>
+#import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>

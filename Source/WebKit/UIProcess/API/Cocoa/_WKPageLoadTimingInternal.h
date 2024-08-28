@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WKFoundation.h"
 
-#include <wtf/Forward.h>
-
-#if HAVE(CORE_TELEPHONY)
-
-namespace WTF {
-class URL;
-}
+#import "_WKPageLoadTiming.h"
 
 namespace WebKit {
+class WebPageLoadTiming;
+};
 
-#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
-bool shouldAllowAutoFillForCellularIdentifiers(const WTF::URL&);
-#endif
+@interface _WKPageLoadTiming (WKPrivate)
 
-} // namespace WebKit
+- (instancetype)_initWithTiming:(const WebKit::WebPageLoadTiming&)timing;
 
-#endif // HAVE(CORE_TELEPHONY)
+@end

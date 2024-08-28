@@ -45,6 +45,7 @@
 
 namespace WebKit {
 class NavigationState;
+class WebPageLoadTiming;
 }
 
 namespace WTF {
@@ -99,6 +100,8 @@ public:
     enum class NetworkActivityReleaseReason { LoadCompleted, ScreenLocked };
     void releaseNetworkActivity(NetworkActivityReleaseReason);
 #endif
+
+    void didGeneratePageLoadTiming(const WebPageLoadTiming&);
 
 private:
     class NavigationClient final : public API::NavigationClient {
@@ -283,6 +286,7 @@ private:
 #if HAVE(APP_SSO)
         bool webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler : 1;
 #endif
+        bool webViewDidGeneratePageLoadTiming : 1;
     } m_navigationDelegateMethods;
 
     WeakObjCPtr<id<WKHistoryDelegatePrivate>> m_historyDelegate;

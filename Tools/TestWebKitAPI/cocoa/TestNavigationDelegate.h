@@ -49,6 +49,7 @@
 @property (nonatomic, copy) void (^didPromptForStorageAccess)(WKWebView *, NSString *, NSString *, BOOL);
 @property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKNavigationAction *, WKDownload *);
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKNavigationResponse *, WKDownload *);
+@property (nonatomic, copy) void (^didGeneratePageLoadTiming)(_WKPageLoadTiming *);
 
 - (void)allowAnyTLSCertificate;
 - (void)waitForDidStartProvisionalNavigation;

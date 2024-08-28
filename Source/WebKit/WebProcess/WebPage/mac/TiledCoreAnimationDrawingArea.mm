@@ -63,6 +63,7 @@
 #import <WebCore/WindowEventLoop.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/SystemTracing.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -304,7 +305,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
     if (!m_pendingNewlyReachedPaintingMilestones)
         return;
 
-    Ref { m_webPage.get() }->send(Messages::WebPageProxy::DidReachLayoutMilestone(std::exchange(m_pendingNewlyReachedPaintingMilestones, { })));
+    Ref { m_webPage.get() }->send(Messages::WebPageProxy::DidReachLayoutMilestone(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }), WallTime::now()));
 }
 
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)

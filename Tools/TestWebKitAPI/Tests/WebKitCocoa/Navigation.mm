@@ -45,6 +45,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/RetainPtr.h>
@@ -2457,6 +2458,40 @@ TEST(WKNavigation, NavigationToUnknownBlankURL)
     TestWebKitAPI::Util::run(&done);
     EXPECT_FALSE(navigationFailed);
 }
+
+#if PLATFORM(MAC)
+TEST(WKNavigation, GeneratePageLoadTiming)
+{
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:0 backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [window.get().contentView addSubview:webView.get()];
+
+    [window.get() makeKeyAndOrderFront:nil];
+    EXPECT_TRUE([window.get() isVisible]);
+
+    __block NSDate *beforeStart = [NSDate now];
+    __block bool done = false;
+    delegate.get().didGeneratePageLoadTiming = ^(_WKPageLoadTiming *timing) {
+        NSDate *afterEnd = [NSDate now];
+        EXPECT_EQ([beforeStart compare:timing.navigationStart], NSOrderedAscending);
+        EXPECT_EQ([timing.navigationStart compare:afterEnd], NSOrderedAscending);
+        EXPECT_EQ([timing.navigationStart compare:timing.firstMeaningfulPaint], NSOrderedAscending);
+        EXPECT_EQ([timing.firstMeaningfulPaint compare:afterEnd], NSOrderedAscending);
+        EXPECT_EQ([timing.navigationStart compare:timing.documentFinishedLoading], NSOrderedAscending);
+        EXPECT_EQ([timing.documentFinishedLoading compare:afterEnd], NSOrderedAscending);
+        EXPECT_EQ([timing.navigationStart compare:timing.allSubresourcesFinishedLoading], NSOrderedAscending);
+        EXPECT_EQ([timing.allSubresourcesFinishedLoading compare:afterEnd], NSOrderedAscending);
+        done = true;
+    };
+
+    auto request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"multiple-images" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+}
+#endif // PLATFORM(MAC)
 
 struct PrivateTokenTestSetupState {
     RetainPtr<WKWebView> webView;

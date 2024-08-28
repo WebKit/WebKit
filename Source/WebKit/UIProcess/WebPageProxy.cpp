@@ -164,6 +164,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageInjectedBundleClient.h"
 #include "WebPageInspectorController.h"
+#include "WebPageLoadTiming.h"
 #include "WebPageMessages.h"
 #include "WebPageNetworkParameters.h"
 #include "WebPageProxyInternals.h"
@@ -665,6 +666,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_contextMenuClient(makeUnique<API::ContextMenuClient>())
 #endif
     , m_navigationState(makeUnique<WebNavigationState>())
+    , m_generatePageLoadTimingTimer(RunLoop::main(), this, &WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired)
     , m_legacyMainFrameProcess(process)
     , m_pageGroup(*m_configuration->pageGroup())
     , m_preferences(m_configuration->preferences())
@@ -6047,6 +6049,44 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     internals().pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
+void WebPageProxy::startNetworkRequestsForPageLoadTiming()
+{
+    m_generatePageLoadTimingTimer.stop();
+    ++m_subresourceLoadingCountForPageLoadTiming;
+}
+
+void WebPageProxy::endNetworkRequestsForPageLoadTiming(WallTime timestamp)
+{
+    ASSERT(m_subresourceLoadingCountForPageLoadTiming);
+    --m_subresourceLoadingCountForPageLoadTiming;
+    if (!m_pageLoadTiming)
+        return;
+    m_pageLoadTiming->updateEndOfNetworkRequests(timestamp);
+    generatePageLoadingTimingSoon();
+}
+
+void WebPageProxy::generatePageLoadingTimingSoon()
+{
+    m_generatePageLoadTimingTimer.stop();
+    if (!m_pageLoadTiming)
+        return;
+    if (m_subresourceLoadingCountForPageLoadTiming)
+        return;
+    if (!m_pageLoadTiming->firstMeaningfulPaint())
+        return;
+    if (!m_pageLoadTiming->documentFinishedLoading())
+        return;
+    if (!m_pageLoadTiming->allSubresourcesFinishedLoading())
+        return;
+    m_generatePageLoadTimingTimer.startOneShot(100_ms);
+}
+
+void WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired()
+{
+    didGeneratePageLoadTiming(*m_pageLoadTiming);
+    m_pageLoadTiming = nullptr;
+}
+
 void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
 {
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
@@ -6094,9 +6134,9 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
     m_navigationState->didDestroyNavigation(process->coreProcessIdentifier(), navigationID);
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData)
+void WebPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
-    didStartProvisionalLoadForFrameShared(protectedLegacyMainFrameProcess(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
+    didStartProvisionalLoadForFrameShared(protectedLegacyMainFrameProcess(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData, timestamp);
 }
 
 static bool shouldPrewarmWebProcessOnProvisionalLoad()
@@ -6110,7 +6150,7 @@ static bool shouldPrewarmWebProcessOnProvisionalLoad()
 #endif
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData)
+void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
     Ref protectedPageClient { pageClient() };
 
@@ -6118,6 +6158,11 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK_URL(process, url);
     MESSAGE_CHECK_URL(process, unreachableURL);
+
+    if (frame->isMainFrame()) {
+        m_pageLoadTiming = makeUnique<WebPageLoadTiming>(timestamp);
+        m_generatePageLoadTimingTimer.stop();
+    }
 
     // If a provisional load has since been started in another process, ignore this message.
     if (m_preferences->siteIsolationEnabled()) {
@@ -6601,12 +6646,17 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 #endif
 }
 
-void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, const UserData& userData)
+void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, const UserData& userData, WallTime timestamp)
 {
     Ref protectedPageClient { pageClient() };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK_BASE(frame, connection);
+
+    if (m_pageLoadTiming && frame->isMainFrame() && !frame->url().isAboutBlank()) {
+        m_pageLoadTiming->setDocumentFinishedLoading(timestamp);
+        generatePageLoadingTimingSoon();
+    }
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didFinishDocumentLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.object().toUInt64(), frame->isMainFrame());
 
@@ -6981,16 +7031,23 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection& conne
 
 void WebPageProxy::didLayoutForCustomContentProvider()
 {
-    didReachLayoutMilestone({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold });
+    didReachLayoutMilestone({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold }, WallTime::now());
 }
 
-void WebPageProxy::didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
+void WebPageProxy::didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones, WallTime timestamp)
 {
     Ref protectedPageClient { pageClient() };
 
     if (layoutMilestones.contains(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout))
         protectedPageClient->clearBrowsingWarningIfForMainFrameNavigation();
-    
+
+    if (layoutMilestones.contains(WebCore::LayoutMilestone::DidFirstMeaningfulPaint)) {
+        if (m_pageLoadTiming && !m_pageLoadTiming->firstMeaningfulPaint()) {
+            m_pageLoadTiming->setFirstMeaningfulPaint(timestamp);
+            generatePageLoadingTimingSoon();
+        }
+    }
+
     if (m_loaderClient)
         m_loaderClient->didReachLayoutMilestone(*this, layoutMilestones);
     m_navigationClient->renderingProgressDidChange(*this, layoutMilestones);

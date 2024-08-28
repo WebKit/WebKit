@@ -350,7 +350,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         webPageProxy->dispatchDidUpdateEditorState();
 
     if (auto milestones = layerTreeTransaction.newlyReachedPaintingMilestones())
-        webPageProxy->didReachLayoutMilestone(milestones);
+        webPageProxy->didReachLayoutMilestone(milestones, WallTime::now());
 
     for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
         if (auto callback = connection.takeAsyncReplyHandler(callbackID))

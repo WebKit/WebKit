@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
-#include <wtf/Forward.h>
+NS_ASSUME_NONNULL_BEGIN
 
-#if HAVE(CORE_TELEPHONY)
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface _WKPageLoadTiming : NSObject
 
-namespace WTF {
-class URL;
-}
+@property (nonatomic, readonly) NSDate *navigationStart;
+@property (nonatomic, readonly) NSDate *firstMeaningfulPaint;
+@property (nonatomic, readonly) NSDate *documentFinishedLoading;
+@property (nonatomic, readonly) NSDate *allSubresourcesFinishedLoading;
 
-namespace WebKit {
+@end
 
-#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
-bool shouldAllowAutoFillForCellularIdentifiers(const WTF::URL&);
-#endif
-
-} // namespace WebKit
-
-#endif // HAVE(CORE_TELEPHONY)
+NS_ASSUME_NONNULL_END

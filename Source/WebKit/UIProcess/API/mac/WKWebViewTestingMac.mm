@@ -36,6 +36,7 @@
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
+#import <WebCore/ColorCocoa.h>
 
 @implementation WKWebView (WKTestingMac)
 

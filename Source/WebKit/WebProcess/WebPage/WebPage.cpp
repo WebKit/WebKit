@@ -958,7 +958,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setMuted(parameters.muted, [] { });
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
-    m_page->addLayoutMilestones({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout });
+    // We use LayoutMilestone::DidFirstMeaningfulPaint to generte WKPageLoadTiming.
+    m_page->addLayoutMilestones({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, LayoutMilestone::DidFirstMeaningfulPaint });
 
     auto& webProcess = WebProcess::singleton();
     webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_identifier, *this);
@@ -6628,6 +6629,11 @@ void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& pri
 
 void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request)
 {
+    ASSERT(!m_networkResourceRequestIdentifiersForPageLoadTiming.contains(identifier));
+    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
+        send(Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming());
+    m_networkResourceRequestIdentifiersForPageLoadTiming.add(identifier);
+
     if (!request.url().protocolIsInHTTPFamily())
         return;
 
@@ -6643,6 +6649,11 @@ void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, c
 
 void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier)
 {
+    auto didRemove = m_networkResourceRequestIdentifiersForPageLoadTiming.remove(identifier);
+    ASSERT_UNUSED(didRemove, didRemove);
+    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
+        send(Messages::WebPageProxy::EndNetworkRequestsForPageLoadTiming(WallTime::now()));
+
     if (!m_trackedNetworkResourceRequestIdentifiers.remove(identifier))
         return;
 
@@ -8168,7 +8179,7 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
         updateIntrinsicContentSizeIfNeeded(localMainFrameView()->autoSizingIntrinsicContentSize());
     }
 
-    send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones));
+    send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones, WallTime::now()));
 }
 
 void WebPage::didRestoreScrollPosition()
