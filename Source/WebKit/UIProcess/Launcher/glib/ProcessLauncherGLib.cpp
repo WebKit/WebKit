@@ -58,6 +58,7 @@ namespace WebKit {
 #if OS(LINUX)
 static bool isFlatpakSpawnUsable()
 {
+    ASSERT(isInsideFlatpak());
     static std::optional<bool> ret;
     if (ret)
         return *ret;
@@ -218,7 +219,7 @@ void ProcessLauncher::launchProcess()
 #if OS(LINUX)
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
-    if (sandboxEnabled && isFlatpakSpawnUsable())
+    if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitSocketPair.client, pidSocketPair.client, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
