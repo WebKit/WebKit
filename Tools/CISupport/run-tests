@@ -30,9 +30,9 @@ scripts = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, scripts)
 
 import webkitpy
-import rapidfuzz
 
 from webkitcorepy import log, testing, OutputCapture, StringIO
+from webkitpy.autoinstalled import buildbot
 
 
 if __name__ == '__main__':

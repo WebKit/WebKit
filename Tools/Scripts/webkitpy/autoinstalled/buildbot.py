@@ -26,6 +26,10 @@ import webkitscmpy
 from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.autoinstalled import twisted
 
+import webkitscmpy
+import rapidfuzz
+
+AutoInstall.install('markupsafe')
 AutoInstall.install('jinja2')
 
 AutoInstall.install(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
