@@ -140,20 +140,19 @@ public:
         if (!derefBase())
             return;
 
-        auto deleteThis = [this] {
+        if constexpr (destructionThread == DestructionThread::Any) {
             delete static_cast<const T*>(this);
-        };
-        switch (destructionThread) {
-        case DestructionThread::Any:
-            break;
-        case DestructionThread::Main:
-            ensureOnMainThread(WTFMove(deleteThis));
-            return;
-        case DestructionThread::MainRunLoop:
-            ensureOnMainRunLoop(WTFMove(deleteThis));
-            return;
+        } else if constexpr (destructionThread == DestructionThread::Main) {
+            ensureOnMainThread([this] {
+                delete static_cast<const T*>(this);
+            });
+        } else if constexpr (destructionThread == DestructionThread::MainRunLoop) {
+            ensureOnMainRunLoop([this] {
+                delete static_cast<const T*>(this);
+            });
+        } else {
+            static_assert(!sizeof(T), "Unexpected destructionThread enumerator");
         }
-        deleteThis();
     }
 
     void derefAllowingPartiallyDestroyed() const
@@ -161,20 +160,19 @@ public:
         if (!derefBaseWithoutDeletionCheck())
             return;
 
-        auto deleteThis = [this] {
+        if constexpr (destructionThread == DestructionThread::Any) {
             delete static_cast<const T*>(this);
-        };
-        switch (destructionThread) {
-        case DestructionThread::Any:
-            break;
-        case DestructionThread::Main:
-            ensureOnMainThread(WTFMove(deleteThis));
-            return;
-        case DestructionThread::MainRunLoop:
-            ensureOnMainRunLoop(WTFMove(deleteThis));
-            return;
+        } else if constexpr (destructionThread == DestructionThread::Main) {
+            ensureOnMainThread([this] {
+                delete static_cast<const T*>(this);
+            });
+        } else if constexpr (destructionThread == DestructionThread::MainRunLoop) {
+            ensureOnMainRunLoop([this] {
+                delete static_cast<const T*>(this);
+            });
+        } else {
+            static_assert(!sizeof(T), "Unexpected destructionThread enumerator");
         }
-        deleteThis();
     }
 
 protected:
