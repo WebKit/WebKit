@@ -195,6 +195,8 @@ public:
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
 
+    virtual void scrollableAreaWillBeDetached(ScrollableArea&) { }
+
     virtual void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> /* nominalFramesPerSecond */) { }
 
     static String synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason>);

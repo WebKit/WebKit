@@ -4081,6 +4081,11 @@ void WebPage::updateIsInWindow(bool isInitialState)
 
     if (isInWindow)
         layoutIfNeeded();
+
+#if ENABLE(PDF_PLUGIN)
+    for (auto& pluginView : m_pluginViews)
+        pluginView.didChangeIsInWindow();
+#endif
 }
 
 void WebPage::visibilityDidChange()

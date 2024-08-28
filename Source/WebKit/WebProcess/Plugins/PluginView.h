@@ -120,6 +120,8 @@ public:
 
     void windowActivityDidChange();
 
+    void didChangeIsInWindow();
+
     void didSameDocumentNavigationForFrame(WebFrame&);
 
     PDFPluginIdentifier pdfPluginIdentifier() const;

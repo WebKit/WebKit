@@ -452,7 +452,7 @@ private:
     void repaintForIncrementalLoad();
 
     void didChangeScrollOffset() override;
-    void didChangeIsInWindow();
+    void didChangeIsInWindow() override;
     bool isInWindow() const;
 
     void didChangeSettings() override;

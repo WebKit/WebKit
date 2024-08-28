@@ -653,6 +653,11 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
 
     bool isInWindow = page->isInWindow();
     m_presentationController->updateIsInWindow(isInWindow);
+
+    if (!isInWindow) {
+        auto& scrollingCoordinator = *page->scrollingCoordinator();
+        scrollingCoordinator.scrollableAreaWillBeDetached(*this);
+    }
 }
 
 void UnifiedPDFPlugin::windowActivityDidChange()
