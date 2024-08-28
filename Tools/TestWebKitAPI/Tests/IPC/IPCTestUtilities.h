@@ -69,6 +69,8 @@ struct MockTestMessageWithAsyncReply1 {
 };
 
 class MockConnectionClient final : public IPC::Connection::Client {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockConnectionClient);
 public:
     ~MockConnectionClient()
     {
