@@ -31,6 +31,7 @@
 #include "AccessibilityMathMLElement.h"
 
 #include "AXObjectCache.h"
+#include "AXTreeFilter.h"
 #include "MathMLNames.h"
 #include "RenderStyleInlines.h"
 
@@ -199,16 +200,15 @@ bool AccessibilityMathMLElement::isMathTableCell() const
 
 bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjectType type) const
 {
-    AXCoreObject* parent = parentObjectUnignored();
+    auto* parent = AXTreeFilter::parent(*this);
     if (!parent)
         return false;
-
     return type == AccessibilityMathScriptObjectType::Subscript ? this == parent->mathSubscriptObject() : this == parent->mathSuperscriptObject();
 }
 
 bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType type) const
 {
-    AXCoreObject* parent = parentObjectUnignored();
+    auto* parent = AXTreeFilter::parent(*this);
     if (!parent || !parent->isMathMultiscript())
         return false;
 

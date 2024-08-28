@@ -68,8 +68,7 @@ public:
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
     AXCoreObject* sibling(AXDirection) const;
     AXCoreObject* siblingOrParent(AXDirection) const;
-    AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
-    AXIsolatedObject* parentObjectUnignored() const final;
+    AXIsolatedObject* parentObject() const final { return tree()->objectForID(parent()).get(); }
     AXIsolatedObject* editableAncestor() final { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
 
@@ -239,7 +238,7 @@ private:
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
     // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
-    bool accessibilityIsIgnored() const final { return false; }
+    bool isIgnored() const final { return false; }
     unsigned blockquoteLevel() const final { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     unsigned headingLevel() const final { return unsignedAttributeValue(AXPropertyName::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXPropertyName::ButtonState); }

@@ -33,6 +33,7 @@
 #include "AXLogger.h"
 #include "AXSearchManager.h"
 #include "AXTextRun.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityNodeObject.h"
 #include "DateComponents.h"
 #include "HTMLNames.h"
@@ -58,7 +59,7 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     ASSERT(isMainThread());
     ASSERT(objectID().isValid());
 
-    auto* axParent = axObject->parentObjectUnignored();
+    auto* axParent = AXTreeFilter::parent(axObject);
     m_parentID = axParent ? axParent->objectID() : AXID();
 
     // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
@@ -682,7 +683,7 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
 
 AXCoreObject* AXIsolatedObject::sibling(AXDirection direction) const
 {
-    RefPtr parent = parentObjectUnignored();
+    RefPtr parent = parentObject();
     if (!parent)
         return nullptr;
     const auto& siblings = parent->children();
@@ -698,7 +699,7 @@ AXCoreObject* AXIsolatedObject::sibling(AXDirection direction) const
 AXCoreObject* AXIsolatedObject::siblingOrParent(AXDirection direction) const
 {
     auto* sibling = this->sibling(direction);
-    return sibling ? sibling : parentObjectUnignored();
+    return sibling ? sibling : parentObject();
 }
 
 bool AXIsolatedObject::isDetachedFromParent()
@@ -781,11 +782,6 @@ bool AXIsolatedObject::fileUploadButtonReturnsValueInTitle() const
 AXIsolatedObject* AXIsolatedObject::focusedUIElement() const
 {
     return tree()->focusedNode().get();
-}
-    
-AXIsolatedObject* AXIsolatedObject::parentObjectUnignored() const
-{
-    return tree()->objectForID(parent()).get();
 }
 
 AXIsolatedObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)

@@ -675,7 +675,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
         stream.dumpProperty("renderName", axObject->renderer()->renderName());
 
     if (options & AXStreamOptions::ParentID) {
-        auto* parent = object.parentObjectUnignored();
+        auto* parent = object.parentObject();
         stream.dumpProperty("parentID", parent ? parent->objectID() : AXID());
     }
 
@@ -688,7 +688,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
         auto* objectWithInterestingHTML = role == AccessibilityRole::Button ? // Add here other roles of interest.
             &object : nullptr;
 
-        auto* parent = object.parentObjectUnignored();
+        auto* parent = object.parentObject();
         if (role == AccessibilityRole::StaticText && parent)
             objectWithInterestingHTML = parent;
 

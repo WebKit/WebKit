@@ -36,6 +36,7 @@
 #include "AXLogger.h"
 #include "AXRemoteFrame.h"
 #include "AXTextMarker.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
 #include "AccessibilityARIATable.h"
@@ -527,8 +528,8 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
             return dynamicDowncast<AccessibilityObject>(descendant);
     }
 
-    if (focus->accessibilityIsIgnored())
-        return focus->parentObjectUnignored();
+    if (focus->isIgnored())
+        return AXTreeFilter::parent(focus);
     return focus;
 }
 
@@ -902,7 +903,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isP
     cacheAndInitializeWrapper(*newObject, &node);
     // Compute the object's initial ignored status.
     newObject->recomputeIsIgnored();
-    // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
+    // Sometimes asking isIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
     if (newObject->isDetached())
         return nullptr;
@@ -926,7 +927,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
     cacheAndInitializeWrapper(object.get(), &renderer);
     // Compute the object's initial ignored status.
     object->recomputeIsIgnored();
-    // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
+    // Sometimes asking isIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
     if (object->isDetached())
         return nullptr;
@@ -2068,7 +2069,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
 #if PLATFORM(COCOA) || USE(ATSPI)
     AccessibilityObject* object = getOrCreate(*node);
-    if (object && object->accessibilityIsIgnored()) {
+    if (object && object->isIgnored()) {
 #if PLATFORM(COCOA)
         if (position.atLastEditingPositionForNode()) {
             if (AccessibilityObject* nextSibling = object->nextSiblingUnignored(1))
@@ -4941,7 +4942,7 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
         childrenChanged(origin);
     } else if (relationType == AXRelationType::OwnedBy) {
-        if (auto* parentObject = origin->parentObjectUnignored())
+        if (auto* parentObject = AXTreeFilter::parent(origin))
             childrenChanged(parentObject);
     }
 
@@ -4953,9 +4954,9 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
-            if (origin && origin->accessibilityIsIgnored())
+            if (origin && origin->isIgnored())
                 deferAddUnconnectedNode(*origin);
-            if (target && target->accessibilityIsIgnored())
+            if (target && target->isIgnored())
                 deferAddUnconnectedNode(*target);
         }
 #endif

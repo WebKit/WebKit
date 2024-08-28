@@ -58,7 +58,7 @@ bool AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored() const
     return true;
 #endif
 
-    return m_parent->accessibilityIsIgnored();
+    return m_parent->isIgnored();
 }
 
 void AccessibilityTableHeaderContainer::addChildren()

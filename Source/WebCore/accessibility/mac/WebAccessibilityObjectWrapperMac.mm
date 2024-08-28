@@ -37,6 +37,7 @@
 #import "AXRemoteFrame.h"
 #import "AXSearchManager.h"
 #import "AXTextMarker.h"
+#import "AXTreeFilter.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
@@ -1566,22 +1567,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return roleDescription(*backingObject);
 
-    if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityParentAttribute]) {
         // This will return the parent of the AXWebArea, if this is a web area.
         if (id scrollView = scrollViewParent(*backingObject))
             return scrollView;
 
         // Tree item (changed to AXRows) can only report the tree (AXOutline) as its parent.
         if (backingObject->isTreeItem()) {
-            auto parent = backingObject->parentObjectUnignored();
-            while (parent) {
+            for (RefPtr parent = AXTreeFilter::parent(backingObject.get()); parent; parent = AXTreeFilter::parent(parent.get())) {
                 if (parent->isTree())
                     return parent->wrapper();
-                parent = parent->parentObjectUnignored();
             }
         }
 
-        auto parent = backingObject->parentObjectUnignored();
+        auto* parent = AXTreeFilter::parent(*backingObject);
         if (!parent)
             return nil;
 
@@ -2508,7 +2507,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];
-    return backingObject->accessibilityIsIgnored();
+    return backingObject->isIgnored();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -2907,11 +2906,9 @@ static RenderObject* rendererForView(NSView* view)
     RenderObject* renderer = rendererForView(subview);
     if (!renderer)
         return nil;
-    
-    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(*renderer);
-    if (obj)
-        return obj->parentObjectUnignored()->wrapper();
-    return nil;
+
+    auto* object = AXTreeFilter::parent(renderer->document().axObjectCache()->getOrCreate(renderer));
+    return object ? object->wrapper() : nil;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityARIAGridRow.h"
 
+#include "AXTreeFilter.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 
@@ -64,22 +65,22 @@ bool AccessibilityARIAGridRow::isARIATreeGridRow() const
     
     return parent->isTreeGrid();
 }
-    
+
 AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRows()
 {
-    AccessibilityChildrenVector disclosedRows;
-    // The contiguous disclosed rows will be the rows in the table that 
+    // The contiguous disclosed rows will be the rows in the table that
     // have an aria-level of plus 1 from this row.
-    RefPtr parent = parentObjectUnignored();
+    RefPtr parent = AXTreeFilter::parent(*this);
     if (auto* axTable = dynamicDowncast<AccessibilityTable>(*parent); !axTable || !axTable->isExposable())
-        return disclosedRows;
+        return { };
 
     // Search for rows that match the correct level. 
     // Only take the subsequent rows from this one that are +1 from this row's level.
     int index = rowIndex();
     if (index < 0)
-        return disclosedRows;
+        return { };
 
+    AccessibilityChildrenVector disclosedRows;
     unsigned level = hierarchicalLevel();
     auto allRows = parent->rows();
     int rowCount = allRows.size();
@@ -94,12 +95,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRow
 
     return disclosedRows;
 }
-    
+
 AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
 {
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
-    RefPtr parent = parentObjectUnignored();
+    RefPtr parent = AXTreeFilter::parent(*this);
     if (auto* axTable = dynamicDowncast<AccessibilityTable>(*parent); !axTable || !axTable->isExposable())
         return nullptr;
 
@@ -122,13 +123,6 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
     }
 
     return nullptr;
-}
-
-AccessibilityObject* AccessibilityARIAGridRow::parentObjectUnignored() const
-{
-    if (auto* table = parentTable())
-        return table;
-    return AccessibilityTableRow::parentObjectUnignored();
 }
 
 AccessibilityTable* AccessibilityARIAGridRow::parentTable() const

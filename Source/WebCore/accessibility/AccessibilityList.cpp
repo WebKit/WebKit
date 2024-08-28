@@ -108,11 +108,11 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     if (!axBeforePseudo)
         return false;
     
-    if (!axBeforePseudo->accessibilityIsIgnored())
+    if (!axBeforePseudo->isIgnored())
         return true;
     
     for (const auto& child : axBeforePseudo->children()) {
-        if (!child->accessibilityIsIgnored())
+        if (!child->isIgnored())
             return true;
     }
     

@@ -33,8 +33,9 @@
 namespace WebCore {
     
 class AccessibilityTable;
-    
+
 class AccessibilityARIAGridRow final : public AccessibilityTableRow {
+    friend class AXTreeFilter;
 public:
     static Ref<AccessibilityARIAGridRow> create(RenderObject&);
     static Ref<AccessibilityARIAGridRow> create(Node&);
@@ -44,7 +45,6 @@ public:
     AXCoreObject* disclosedByRow() const override;
 
     AXCoreObject* rowHeader() final;
-    
 private:
     explicit AccessibilityARIAGridRow(RenderObject&);
     explicit AccessibilityARIAGridRow(Node&);
@@ -52,7 +52,6 @@ private:
 
     bool isARIATreeGridRow() const override;
     AccessibilityTable* parentTable() const override;
-    AccessibilityObject* parentObjectUnignored() const override;
 };
 
 } // namespace WebCore 

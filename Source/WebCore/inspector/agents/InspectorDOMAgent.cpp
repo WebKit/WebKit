@@ -32,6 +32,7 @@
 #include "InspectorDOMAgent.h"
 
 #include "AXObjectCache.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityNodeObject.h"
 #include "AddEventListenerOptions.h"
 #include "Attr.h"
@@ -2321,7 +2322,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                     focused = axObject->isFocused();
             }
 
-            ignored = axObject->accessibilityIsIgnored();
+            ignored = axObject->isIgnored();
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             
             String invalidValue = axObject->invalidStatus();
@@ -2388,7 +2389,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                 }
             }
 
-            if (AXCoreObject* parentObject = axObject->parentObjectUnignored())
+            if (auto* parentObject = AXTreeFilter::parent(axObject))
                 parentNode = parentObject->node();
 
             supportsPressed = axObject->pressedIsPresent();

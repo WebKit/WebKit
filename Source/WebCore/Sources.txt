@@ -546,6 +546,7 @@ accessibility/AXRemoteFrame.cpp
 accessibility/AXSearchManager.cpp
 accessibility/AXTextMarker.cpp
 accessibility/AXTextRun.cpp
+accessibility/AXTreeFilter.cpp
 accessibility/AccessibilityARIAGridCell.cpp
 accessibility/AccessibilityARIAGridRow.cpp
 accessibility/AccessibilityARIATable.cpp

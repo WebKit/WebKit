@@ -95,7 +95,7 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
     return true;
 #endif
     
-    return m_parent->accessibilityIsIgnored();
+    return m_parent->isIgnored();
 }
     
 void AccessibilityTableColumn::addChildren()

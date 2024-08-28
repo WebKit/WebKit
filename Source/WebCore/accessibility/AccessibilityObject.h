@@ -260,7 +260,7 @@ public:
     // Note: computeAccessibilityIsIgnored does not consider whether an object is ignored due to presence of modals.
     // Use accessibilityIsIgnored as the word of law when determining if an object is ignored.
     virtual bool computeAccessibilityIsIgnored() const { return true; }
-    bool accessibilityIsIgnored() const override;
+    bool isIgnored() const override;
     void recomputeIsIgnored();
     AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
@@ -339,7 +339,6 @@ public:
     AccessibilityObject* previousSiblingUnignored(unsigned limit = std::numeric_limits<unsigned>::max()) const;
     AccessibilityObject* parentObject() const override { return nullptr; }
     AccessibilityObject* displayContentsParent() const;
-    AccessibilityObject* parentObjectUnignored() const override;
     virtual AccessibilityObject* parentObjectIfExists() const { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) final;

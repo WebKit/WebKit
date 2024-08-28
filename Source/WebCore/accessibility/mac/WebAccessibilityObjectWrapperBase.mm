@@ -246,12 +246,12 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
         WebAccessibilityObjectWrapper *wrappers[2];
         NSString *keys[2];
         NSUInteger count = 0;
-        if (pair.first && pair.first->wrapper() && !pair.first->accessibilityIsIgnored()) {
+        if (pair.first && pair.first->wrapper() && !pair.first->isIgnored()) {
             wrappers[0] = pair.first->wrapper();
             keys[0] = subscriptKey;
             count = 1;
         }
-        if (pair.second && pair.second->wrapper() && !pair.second->accessibilityIsIgnored()) {
+        if (pair.second && pair.second->wrapper() && !pair.second->isIgnored()) {
             wrappers[count] = pair.second->wrapper();
             keys[count] = superscriptKey;
             count += 1;

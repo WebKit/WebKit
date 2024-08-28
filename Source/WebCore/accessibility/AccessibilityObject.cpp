@@ -34,6 +34,7 @@
 #include "AXObjectCache.h"
 #include "AXSearchManager.h"
 #include "AXTextMarker.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
@@ -479,13 +480,6 @@ unsigned AccessibilityObject::blockquoteLevel() const
     return level;
 }
 
-AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
-{
-    return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
-        return !object.accessibilityIsIgnored();
-    });
-}
-
 AccessibilityObject* AccessibilityObject::displayContentsParent() const
 {
     auto* parentNode = node() ? node()->parentNode() : nullptr;
@@ -501,7 +495,7 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) c
     ASSERT(limit);
 
     for (auto sibling = iterator(nextSibling()); limit && sibling; --limit, ++sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -512,7 +506,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limi
     ASSERT(limit);
 
     for (auto sibling = iterator(previousSibling()); limit && sibling; --limit, --sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -556,7 +550,7 @@ FloatRect AccessibilityObject::relativeFrame() const
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
     return WebCore::firstAccessibleObjectFromNode(node, [] (const AccessibilityObject& accessible) {
-        return !accessible.accessibilityIsIgnored();
+        return !accessible.isIgnored();
     });
 }
 
@@ -650,7 +644,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
-    if (child->accessibilityIsIgnored()) {
+    if (child->isIgnored()) {
         if (descendIfIgnored == DescendIfIgnored::Yes) {
             unsigned insertionIndex = index;
             auto childAncestorFlags = child->computeAncestorFlags();
@@ -664,7 +658,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
                     // Even though `child` is ignored, we still need to set ancestry flags based on it.
                     grandchild->initializeAncestorFlags(childAncestorFlags);
                     grandchild->addAncestorFlags(thisAncestorFlags);
-                    // Calls to `child->accessibilityIsIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
+                    // Calls to `child->isIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
                     if (insertionIndex > m_children.size())
                         break;
                     m_children.insert(insertionIndex, grandchild);
@@ -1656,7 +1650,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
     // create an AX object, but skip it if it is not supposed to be seen
     if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
         if (auto* axObject = cache->getOrCreate(*replacedNode))
-            return !axObject->accessibilityIsIgnored();
+            return !axObject->isIgnored();
     }
 
     return true;
@@ -2744,7 +2738,7 @@ String AccessibilityObject::computedRoleString() const
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     AccessibilityRole role = roleValue();
 
-    if (role == AccessibilityRole::Image && accessibilityIsIgnored())
+    if (role == AccessibilityRole::Image && isIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
 
     // We do compute a role string for block elements with author-provided roles.
@@ -3013,7 +3007,7 @@ bool AccessibilityObject::isSelected() const
     if (isMenuItem()) {
         if (isFocused())
             return true;
-        WeakPtr parent = parentObjectUnignored();
+        WeakPtr parent = parentObject();
         return parent && parent->activeDescendant() == this;
     }
 
@@ -3994,14 +3988,14 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 
     return accessibilityPlatformIncludesObject();
 }
-    
-bool AccessibilityObject::accessibilityIsIgnored() const
+
+bool AccessibilityObject::isIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;
     auto* axObjectCache = this->axObjectCache();
     if (axObjectCache)
         attributeCache = axObjectCache->computedObjectAttributeCache();
-    
+
     if (attributeCache) {
         AccessibilityObjectInclusion ignored = attributeCache->getIgnored(objectID());
         switch (ignored) {
@@ -4031,6 +4025,9 @@ bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cach
     bool ignored = cache && cache->isRetrievingCurrentModalNode() ? false : ignoredFromModalPresence();
     if (!ignored)
         ignored = computeAccessibilityIsIgnored();
+
+    if (!ignored)
+        ignored = AXTreeFilter::isIgnored(*this);
 
     auto previousLastKnownIsIgnoredValue = m_lastKnownIsIgnoredValue;
     const_cast<AccessibilityObject*>(this)->setLastKnownIsIgnoredValue(ignored);

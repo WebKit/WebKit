@@ -948,7 +948,7 @@ public:
     virtual Node* node() const = 0;
     virtual RenderObject* renderer() const = 0;
 
-    virtual bool accessibilityIsIgnored() const = 0;
+    virtual bool isIgnored() const = 0;
 
     virtual unsigned blockquoteLevel() const = 0;
     virtual unsigned headingLevel() const = 0;
@@ -1035,7 +1035,6 @@ public:
     virtual RemoteAXObjectRef remoteParentObject() const = 0;
 #endif
     virtual AXCoreObject* parentObject() const = 0;
-    virtual AXCoreObject* parentObjectUnignored() const = 0;
 
     virtual AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;

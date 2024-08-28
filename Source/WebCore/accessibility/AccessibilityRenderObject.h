@@ -36,7 +36,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-    
+
 class AccessibilitySVGRoot;
 class AXObjectCache;
 class Element;

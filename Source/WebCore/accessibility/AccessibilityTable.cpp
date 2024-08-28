@@ -517,7 +517,7 @@ void AccessibilityTable::addChildren()
             return;
         processedRows.add(row);
 
-        if (row->roleValue() != AccessibilityRole::Unknown && row->accessibilityIsIgnored()) {
+        if (row->roleValue() != AccessibilityRole::Unknown && row->isIgnored()) {
             // Skip ignored rows (except for those ignored because they have an unknown role, which will happen after a table has become un-exposed but is potentially becoming re-exposed).
             // This is an addition on top of the HTML algorithm because the computed AX table has extra restrictions (e.g. cannot contain aria-hidden or role="presentation" rows).
             return;

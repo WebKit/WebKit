@@ -31,6 +31,7 @@
 
 #include "AXLogger.h"
 #include "AXObjectCache.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySVGRoot.h"
@@ -1182,7 +1183,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             if (ancestor->roleValue() == AccessibilityRole::TextField)
                 return true;
 
-            if (checkForIgnored && !ancestor->accessibilityIsIgnored()) {
+            if (checkForIgnored && !ancestor->isIgnored()) {
                 checkForIgnored = false;
                 // Static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level.
                 if (ancestor->isMenuItem() || ancestor->isMenuButton())
@@ -1319,7 +1320,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     }
 
     if (m_renderer->isRenderListMarker()) {
-        AXCoreObject* parent = parentObjectUnignored();
+        auto* parent = AXTreeFilter::parent(*this);
         return parent && !parent->isListItem();
     }
 
@@ -1660,7 +1661,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         if (auto* renderer = current->renderer()) {
             RefPtr<AccessibilityObject> axObject = document.axObjectCache()->getOrCreate(*renderer);
             ASSERT(axObject);
-            if (!axObject->accessibilityIsIgnored() && axObject->isLink())
+            if (!axObject->isIgnored() && axObject->isLink())
                 result.append(axObject);
         } else {
             auto* parent = current->parentNode();
@@ -2035,13 +2036,13 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
     result = result->elementAccessibilityHitTest(point);
 
-    if (result && result->accessibilityIsIgnored()) {
+    if (result && result->isIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
         auto* controlObject = result->controlForLabelElement();
         if (controlObject && !controlObject->titleUIElement())
             return controlObject;
 
-        result = result->parentObjectUnignored();
+        result = AXTreeFilter::parent(*result);
     }
     return result.get();
 }
@@ -2273,7 +2274,7 @@ void AccessibilityRenderObject::addImageMapChildren()
         areaObject.setHTMLAreaElement(&area);
         areaObject.setHTMLMapElement(map.get());
         areaObject.setParent(this);
-        if (!areaObject.accessibilityIsIgnored())
+        if (!areaObject.isIgnored())
             addChild(&areaObject);
         else
             axObjectCache()->remove(areaObject.objectID());
@@ -2392,7 +2393,7 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
 {
     // Only the unignored parent should set the attachment parent, because that's what is reflected in the AX 
     // hierarchy to the client.
-    if (accessibilityIsIgnored())
+    if (isIgnored())
         return;
     
     for (const auto& child : m_children) {
@@ -2443,7 +2444,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
         if (child->renderer()) {
             // Find out where the last render sibling is located within m_children.
             AXCoreObject* childObject = axObjectCache()->get(child->renderer());
-            if (childObject && childObject->accessibilityIsIgnored()) {
+            if (childObject && childObject->isIgnored()) {
                 auto& children = childObject->children();
                 if (children.size())
                     childObject = children.last().get();
@@ -2471,7 +2472,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
 #if USE(ATSPI)
 RenderObject* AccessibilityRenderObject::markerRenderer() const
 {
-    if (accessibilityIsIgnored() || !isListItem() || !m_renderer || !m_renderer->isRenderListItem())
+    if (isIgnored() || !isListItem() || !m_renderer || !m_renderer->isRenderListItem())
         return nullptr;
 
     return uncheckedDowncast<RenderListItem>(*m_renderer).markerRenderer();

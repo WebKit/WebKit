@@ -83,7 +83,7 @@ void AccessibilityMenuList::addChildren()
         return;
 
     downcast<AccessibilityMockObject>(*list).setParent(this);
-    if (list->accessibilityIsIgnored()) {
+    if (list->isIgnored()) {
         cache->remove(list->objectID());
         return;
     }

@@ -30,6 +30,7 @@
 #include "AccessibilityTableCell.h"
 
 #include "AXObjectCache.h"
+#include "AXTreeFilter.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 #include "HTMLParserIdioms.h"
@@ -122,11 +123,11 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     
     return tableFromRenderTree.get();
 }
-    
+
 bool AccessibilityTableCell::isExposedTableCell() const
 {
     // If the parent table is an accessibility table, then we are a table cell.
-    // This used to check if the unignoredParent was a row, but that exploded performance if
+    // This used to check if the unignored parent was a row, but that exploded performance if
     // this was in nested tables. This check should be just as good.
     auto* parentTable = this->parentTable();
     return parentTable && parentTable->isExposable();
@@ -322,18 +323,9 @@ AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityTableCell::parentObjectUnignored() const
-{
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
-    return AccessibilityRenderObject::parentObjectUnignored();
-}
-
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 {
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
-    return dynamicDowncast<AccessibilityTableRow>(parentObjectUnignored());
+    return dynamicDowncast<AccessibilityTableRow>(AXTreeFilter::parent(*this));
 }
 
 void AccessibilityTableCell::ensureIndexesUpToDate() const

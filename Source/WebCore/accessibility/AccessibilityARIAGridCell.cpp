@@ -66,7 +66,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // which pass the tests for inclusion.
     return dynamicDowncast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
         RefPtr ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor);
-        return ancestorTable && ancestorTable->isExposable() && !ancestorTable->accessibilityIsIgnored();
+        return ancestorTable && ancestorTable->isExposable() && !ancestorTable->isIgnored();
     }));
 }
     

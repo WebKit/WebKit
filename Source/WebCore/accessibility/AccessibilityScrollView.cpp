@@ -202,7 +202,7 @@ bool AccessibilityScrollView::computeAccessibilityIsIgnored() const
     if (!webArea)
         return true;
 
-    return webArea->accessibilityIsIgnored();
+    return webArea->isIgnored();
 }
 
 void AccessibilityScrollView::addRemoteFrameChild()
