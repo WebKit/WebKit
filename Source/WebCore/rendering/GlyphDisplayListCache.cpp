@@ -32,6 +32,7 @@
 #include "PaintInfo.h"
 #include "RenderLayer.h"
 #include "RenderStyleInlines.h"
+#include "SVGTextFragment.h"
 
 namespace WebCore {
 
@@ -144,6 +145,11 @@ DisplayList::DisplayList* GlyphDisplayListCache::get(const InlineDisplay::Box& r
     return getDisplayList(run, font, context, textRun, paintInfo);
 }
 
+DisplayList::DisplayList* GlyphDisplayListCache::get(const SVGTextFragment& run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun, const PaintInfo& paintInfo)
+{
+    return getDisplayList(run, font, context, textRun, paintInfo);
+}
+
 template<typename LayoutRun>
 DisplayList::DisplayList* GlyphDisplayListCache::getIfExistsImpl(const LayoutRun& run)
 {
@@ -160,6 +166,11 @@ DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const LegacyInlineT
 }
 
 DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const InlineDisplay::Box& run)
+{
+    return getIfExistsImpl(run);
+}
+
+DisplayList::DisplayList* GlyphDisplayListCache::getIfExists(const SVGTextFragment& run)
 {
     return getIfExistsImpl(run);
 }
