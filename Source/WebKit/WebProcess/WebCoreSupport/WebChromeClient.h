@@ -533,6 +533,8 @@ private:
     void clearAnimationsForActiveWritingToolsSession() final;
 #endif
 
+    void setIsInRedo(bool) final;
+
     void hasActiveNowPlayingSessionChanged(bool) final;
 
 #if ENABLE(GPU_PROCESS)

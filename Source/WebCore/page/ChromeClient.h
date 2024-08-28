@@ -692,6 +692,8 @@ public:
     virtual void clearAnimationsForActiveWritingToolsSession() { };
 #endif
 
+    virtual void setIsInRedo(bool) { }
+
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
 
     virtual void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const { callback(std::nullopt); }
