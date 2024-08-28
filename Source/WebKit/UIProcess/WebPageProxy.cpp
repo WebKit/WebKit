@@ -3472,13 +3472,19 @@ void WebPageProxy::dragExited(DragData& dragData)
 
 void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
 {
+    if (!hasRunningProcess())
+        return;
 
 #if PLATFORM(GTK)
+    URL url { dragData.asURL() };
+    if (url.protocolIsFile())
+        protectedLegacyMainFrameProcess()->assumeReadAccessToBaseURL(*this, url.string(), [] { });
+    else if (!dragData.fileNames().isEmpty())
+        websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(siteIsolatedProcess().coreProcessIdentifier(), dragData.fileNames()), [] { });
+
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
 #endif
 #if PLATFORM(COCOA)
-    if (!hasRunningProcess())
-        return;
     grantAccessToCurrentPasteboardData(dragStorageName, [this, protectedThis = Ref { *this }, dragStorageName, dragData = WTFMove(dragData), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), sandboxExtensionsForUpload = WTFMove(sandboxExtensionsForUpload)] () mutable {
         sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
             protectedPageClient()->didPerformDragOperation(handled);
@@ -3503,31 +3509,17 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
         dragData.setClientPosition(remoteUserInputEventData->transformedPoint);
         performDragControllerAction(action, dragData, remoteUserInputEventData->targetFrameID);
     };
+#if PLATFORM(GTK)
+    ASSERT(dragData.platformData());
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
+#else
     auto filenames = dragData.fileNames();
 
     auto afterAllowed = [this, weakThis = WeakPtr { *this }, frameID, action, dragData = WTFMove(dragData), completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis)
             return;
 
-#if PLATFORM(GTK)
-        UNUSED_PARAM(frameID);
-        String url = dragData.asURL();
-        if (!url.isEmpty()) {
-            protectedLegacyMainFrameProcess()->assumeReadAccessToBaseURL(*weakThis, url, [this, weakThis = WeakPtr { *this }, frameID, action, dragData = WTFMove(dragData), completionHandler = WTFMove(completionHandler)] () mutable {
-                if (!weakThis)
-                    return;
-
-                ASSERT(dragData.platformData());
-                sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
-            });
-            return;
-        }
-
-        ASSERT(dragData.platformData());
-        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), *dragData.platformData(), dragData.flags()), WTFMove(completionHandler));
-#else
         sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragControllerAction(frameID, action, dragData), WTFMove(completionHandler));
-#endif
     };
 
     auto processID = siteIsolatedProcess().coreProcessIdentifier();
@@ -3540,6 +3532,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
         return afterAllowed();
 
     websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(processID, filenames), WTFMove(afterAllowed));
+#endif
 }
 
 void WebPageProxy::didPerformDragControllerAction(std::optional<WebCore::DragOperation> dragOperation, WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const IntRect& insertionRect, const IntRect& editableElementRect)
