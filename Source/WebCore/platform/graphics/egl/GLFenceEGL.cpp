@@ -50,7 +50,7 @@ static std::unique_ptr<GLFence> createEGLFence(EGLenum type, const Vector<EGLAtt
 
     glFlush();
 
-#if OS(LINUX)
+#if OS(UNIX)
     bool isExportable = type == EGL_SYNC_NATIVE_FENCE_ANDROID;
 #else
     bool isExportable = false;
@@ -63,7 +63,7 @@ std::unique_ptr<GLFence> GLFenceEGL::create()
     return createEGLFence(EGL_SYNC_FENCE_KHR, { });
 }
 
-#if OS(LINUX)
+#if OS(UNIX)
 std::unique_ptr<GLFence> GLFenceEGL::createExportable()
 {
     return createEGLFence(EGL_SYNC_NATIVE_FENCE_ANDROID, { });
@@ -117,7 +117,7 @@ void GLFenceEGL::serverWait()
         eglWaitSyncKHR(display.eglDisplay(), m_sync, 0);
 }
 
-#if OS(LINUX)
+#if OS(UNIX)
 UnixFileDescriptor GLFenceEGL::exportFD()
 {
     if (!m_isExportable)
