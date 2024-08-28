@@ -34,7 +34,6 @@
 #include "ReceiverMatcher.h"
 #include "Timeout.h"
 #include <wtf/Assertions.h>
-#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -231,9 +230,7 @@ public:
     using SyncRequestID = ConnectionSyncRequestID;
     using AsyncReplyID = IPC::AsyncReplyID;
 
-    class Client : public MessageReceiver, public CanMakeThreadSafeCheckedPtr<Client> {
-        WTF_MAKE_FAST_ALLOCATED;
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
+    class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection&) = 0;
         virtual void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) = 0;
@@ -306,7 +303,7 @@ public:
 
     ~Connection();
 
-    Client* client() const { return m_client.get(); }
+    Client* client() const { return m_client; }
 
     enum UniqueIDType { };
     using UniqueID = LegacyNullableAtomicObjectIdentifier<UniqueIDType>;
@@ -576,7 +573,7 @@ private:
 
     static constexpr size_t largeOutgoingMessageQueueCountThreshold { 128 };
 
-    CheckedPtr<Client> m_client;
+    Client* m_client { nullptr };
     std::unique_ptr<SyncMessageState, SyncMessageStateRelease> m_syncState;
     UniqueID m_uniqueID;
     bool m_isServer;

@@ -87,8 +87,6 @@ class RemoteImageBufferSetProxy;
 
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, SerialFunctionDispatcher {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteRenderingBackendProxy);
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
     static std::unique_ptr<RemoteRenderingBackendProxy> create(SerialFunctionDispatcher&);

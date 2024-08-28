@@ -144,8 +144,6 @@ protected:
 };
 
 class MockMessageReceiver : public IPC::Connection::Client, public WaitForMessageMixin {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockMessageReceiver);
 public:
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override

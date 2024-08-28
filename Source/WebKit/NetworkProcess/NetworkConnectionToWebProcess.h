@@ -133,8 +133,6 @@ class NetworkConnectionToWebProcess
 #endif
     , public WebCore::CookiesEnabledStateObserver
     , public IPC::Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkConnectionToWebProcess);
 public:
     using MessageReceiver::weakPtrFactory;
     using MessageReceiver::WeakValueType;

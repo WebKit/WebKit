@@ -130,8 +130,6 @@ private:
 };
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyCocoa);
 public:
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }

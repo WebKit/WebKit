@@ -35,7 +35,6 @@
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -46,8 +45,6 @@ struct ModelProcessCreationParameters;
 
 class ModelProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
     WTF_MAKE_NONCOPYABLE(ModelProcess);
-    WTF_MAKE_TZONE_ALLOCATED(ModelProcess);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcess);
 public:
     explicit ModelProcess(AuxiliaryProcessInitializationParameters&&);
     ~ModelProcess();

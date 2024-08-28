@@ -66,7 +66,8 @@ class AuxiliaryProcessProxy
     : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
     , public ResponsivenessTimer::Client
     , private ProcessLauncher::Client
-    , public IPC::Connection::Client {
+    , public IPC::Connection::Client
+    , public CanMakeThreadSafeCheckedPtr<AuxiliaryProcessProxy> {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
     WTF_MAKE_TZONE_ALLOCATED(AuxiliaryProcessProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcessProxy);
