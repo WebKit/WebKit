@@ -30,9 +30,9 @@
 #include "AbstractSlotVisitor.h"
 #include "BuiltinNames.h"
 #include "GetterSetter.h"
-#include "IteratorPrototype.h"
 #include "JSCInlines.h"
 #include "JSIterator.h"
+#include "JSIteratorPrototype.h"
 #include "SlotVisitor.h"
 
 namespace JSC {
@@ -44,14 +44,14 @@ Structure* JSIteratorConstructor::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-JSIteratorConstructor* JSIteratorConstructor::create(VM& vm, Structure* structure, IteratorPrototype* iteratorPrototype)
+JSIteratorConstructor* JSIteratorConstructor::create(VM& vm, Structure* structure, JSIteratorPrototype* iteratorPrototype)
 {
     JSIteratorConstructor* constructor = new (NotNull, allocateCell<JSIteratorConstructor>(vm)) JSIteratorConstructor(vm, structure);
     constructor->finishCreation(vm, iteratorPrototype);
     return constructor;
 }
 
-void JSIteratorConstructor::finishCreation(VM& vm, IteratorPrototype* iteratorPrototype)
+void JSIteratorConstructor::finishCreation(VM& vm, JSIteratorPrototype* iteratorPrototype)
 {
     Base::finishCreation(vm, 0, vm.propertyNames->Iterator.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, iteratorPrototype, static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly));

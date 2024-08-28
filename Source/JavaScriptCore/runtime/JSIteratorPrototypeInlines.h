@@ -26,39 +26,13 @@
 
 #pragma once
 
-#include "JSObject.h"
+#include "JSIteratorPrototype.h"
 
 namespace JSC {
 
-class IteratorPrototype final : public JSNonFinalObject {
-public:
-    using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
-
-    template<typename CellType, SubspaceAccess>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IteratorPrototype, Base);
-        return &vm.plainObjectSpace();
-    }
-
-    static IteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-    {
-        IteratorPrototype* prototype = new (NotNull, allocateCell<IteratorPrototype>(vm)) IteratorPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject);
-        return prototype;
-    }
-
-    DECLARE_INFO;
-
-    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-private:
-    IteratorPrototype(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
-    void finishCreation(VM&, JSGlobalObject*);
-};
+inline Structure* JSIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
 
 } // namespace JSC

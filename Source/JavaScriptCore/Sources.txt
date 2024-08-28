@@ -889,7 +889,6 @@ runtime/IntlSegmentsPrototype.cpp
 runtime/IntlWorkaround.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect to this file.
 runtime/ISO8601.cpp
 runtime/IteratorOperations.cpp
-runtime/IteratorPrototype.cpp
 runtime/JSArray.cpp
 runtime/JSArrayBuffer.cpp
 runtime/JSArrayBufferConstructor.cpp
@@ -930,6 +929,7 @@ runtime/JSInternalPromiseConstructor.cpp
 runtime/JSInternalPromisePrototype.cpp
 runtime/JSIterator.cpp
 runtime/JSIteratorConstructor.cpp
+runtime/JSIteratorPrototype.cpp
 runtime/JSLexicalEnvironment.cpp
 runtime/JSLock.cpp
 runtime/JSMap.cpp

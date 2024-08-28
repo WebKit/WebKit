@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "IteratorPrototype.h"
+#include "JSIteratorPrototype.h"
 
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-const ClassInfo IteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IteratorPrototype) };
+const ClassInfo JSIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIteratorPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncIterator);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoConstructorGetter);
@@ -46,7 +46,7 @@ static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoConstructorSetter);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoToStringTagGetter);
 static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoToStringTagSetter);
 
-void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
