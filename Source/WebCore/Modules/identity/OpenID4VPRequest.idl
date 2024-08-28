@@ -26,5 +26,5 @@
 
 // Based on https://openid.github.io/OpenID4VP/openid-4-verifiable-presentations-wg-draft.html#name-openid4vp-profile-for-the-w
 dictionary OpenID4VPRequest {
-    // Members coming soon
+    sequence<USVString> expected_origins;
 };
