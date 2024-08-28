@@ -74,6 +74,7 @@ WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
 WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call_indirect);
+WASM_SLOW_PATH_HIDDEN_DECL(tail_call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(call_builtin);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref);
 

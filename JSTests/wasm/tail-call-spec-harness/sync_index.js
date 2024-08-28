@@ -84,6 +84,15 @@ function eq_externref(x, y) {
 function eq_funcref(x, y) {
   return x === y ? 1 : 0;
 }
+let hostrefs = {};
+let hostsym = Symbol("hostref");
+function hostref(s) {
+  if (! (s in hostrefs)) hostrefs[s] = {[hostsym]: s};
+  return hostrefs[s];
+}
+function eq_ref(x, y) {
+  return x === y ? 1 : 0;
+}
 
 let $$;
 
@@ -101,6 +110,8 @@ function reinitializeRegistry() {
         is_funcref: is_funcref,
         eq_externref: eq_externref,
         eq_funcref: eq_funcref,
+        hostref: hostref,
+        eq_ref: eq_ref,
         print: console.log.bind(console),
         print_i32: console.log.bind(console),
         print_i32_f32: console.log.bind(console),

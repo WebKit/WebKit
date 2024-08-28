@@ -1917,6 +1917,10 @@ wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
     slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect)
 end)
 
+wasmOp(tail_call_ref, WasmTailCallRef, macro(ctx)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_ref)
+end)
+
 slowWasmOp(call_builtin)
 
 wasmOp(select, WasmSelect, macro(ctx)

@@ -1472,6 +1472,7 @@ op :wasm_trampoline_wasm_call_indirect
 op :wasm_trampoline_wasm_call_ref
 op :wasm_trampoline_wasm_tail_call
 op :wasm_trampoline_wasm_tail_call_indirect
+op :wasm_trampoline_wasm_tail_call_ref
 
 end_section :NativeHelpers
 
@@ -1709,6 +1710,15 @@ op :call_ref,
         typeIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
+    }
+
+op :tail_call_ref,
+    args: {
+        functionReference: VirtualRegister,
+        typeIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfCalleeStackArgs: unsigned,
+        numberOfCallerStackArgs: unsigned,
     }
 
 op :call_builtin,

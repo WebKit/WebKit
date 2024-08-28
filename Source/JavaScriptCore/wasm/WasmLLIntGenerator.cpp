@@ -389,7 +389,7 @@ public:
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -1554,14 +1554,27 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     return { };
 }
 
-auto LLIntGenerator::addCallRef(const TypeDefinition& signature, ArgumentList& args, ResultList& results) -> PartialResult
+auto LLIntGenerator::addCallRef(const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
+    bool isTailCall = callType == CallType::TailCall;
+    ASSERT(callType == CallType::Call || isTailCall);
     ExpressionType callee = args.takeLast();
 
     const auto& functionSignature = *signature.expand().as<FunctionSignature>();
     LLIntCallInformation info = callInformationForCaller(functionSignature);
     unifyValuesWithBlock(info.arguments, args);
-    WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+    if (isTailCall) {
+        m_codeBlock->setTailCallClobbersInstance(true);
+
+        const auto& callingConvention = wasmCallingConvention();
+        const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
+        const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
+        uint32_t callerStackArgs = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), callingConvention.numberOfStackValues(*callerTypeDefinition.as<FunctionSignature>()));
+
+        WasmTailCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, callerStackArgs);
+    } else
+        WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+
     info.commitResults(results);
 
     return { };
