@@ -463,6 +463,11 @@ compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region-purged.html [ Skip ]
 compositing/repaint/copy-forward-dirty-region.html [ Skip ]
 
+# testRunner.pathToLocalResource
+fast/loader/local-CSS-from-local.html [ Failure ]
+fast/loader/local-JavaScript-from-local.html [ Failure ]
+fast/loader/local-image-from-local.html [ Failure ]
+
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61829 fast/events/drag-image-filename.html [ Skip ]
 
@@ -544,27 +549,16 @@ imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure Pa
 # Following tests are labeled "Skip" because not working well and causes crash or timeout
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-# LayoutTest/fast/loader tests that fail or time out.
-fast/loader/local-CSS-from-local.html [ Failure ]
-fast/loader/local-JavaScript-from-local.html [ Failure ]
-fast/loader/local-image-from-local.html [ Failure ]
-
-# If this does crash, the test has passed.
-fast/loader/cancel-load-during-port-block-timer.html [ Skip ]
-
 webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
 
 # This is because Cairo is claiming to only support encoding PNG images.
-fast/canvas/toDataURL-supportedTypes.html [ Failure ] # [ Skip ]
-fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ] # [ Skip ]
+fast/canvas/toDataURL-supportedTypes.html [ Skip ]
+fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Skip ]
 
 # resizeTO, resizeBy
 fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 
 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
-
-# entire directory fails
-dom/svg/level3/xpath [ Skip ]
 
 webkit.org/b/205487 fast/text/selection-in-initial-advance-region.html [ Failure ]
 webkit.org/b/206282 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
@@ -651,7 +645,8 @@ crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 # Windows recognizes .mjs files as JavaScript, this will just work.
 js/dom/modules/import-mjs-module.html [ Failure ]
 
-webkit.org/b/223788 js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
+# ReferenceError: Can't find variable: RTCPeerConnection
+js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
 
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1547,6 +1542,8 @@ webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ 
 webkit.org/b/230504 css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
 
 webkit.org/b/262687 fast/workers/pending-requestAnimationFrame-upon-destruction.html [ Pass Failure ]
+
+webkit.org/b/102131 fast/workers/worker-exception-during-navigation.html [ Pass Failure ]
 
 webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Skip ] # Skip a failing dump render tree test
 
