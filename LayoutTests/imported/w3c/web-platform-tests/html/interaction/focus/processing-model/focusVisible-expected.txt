@@ -1,8 +1,8 @@
 ABC
 
-FAIL FocusOptions.focusVisible: button assert_equals: :focus-visible expected true but got false
-FAIL FocusOptions.focusVisible: input assert_equals: :focus-visible expected false but got true
-FAIL FocusOptions.focusVisible: #contenteditable assert_equals: :focus-visible expected false but got true
-FAIL FocusOptions.focusVisible: #tabindex assert_equals: :focus-visible expected true but got false
+PASS FocusOptions.focusVisible: button
+PASS FocusOptions.focusVisible: input
+PASS FocusOptions.focusVisible: #contenteditable
+PASS FocusOptions.focusVisible: #tabindex
 PASS FocusOptions.focusVisible: #not_focusable
 
