@@ -33,11 +33,12 @@ SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
 
 class MessageReceiver(object):
-    def __init__(self, name, superclass, attributes, receiver_enabled_by, shared_preferences_needs_connection, messages, condition, namespace):
+    def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_conjunction, shared_preferences_needs_connection, messages, condition, namespace):
         self.name = name
         self.superclass = superclass
         self.attributes = frozenset(attributes or [])
         self.receiver_enabled_by = receiver_enabled_by
+        self.receiver_enabled_by_conjunction = receiver_enabled_by_conjunction
         self.shared_preferences_needs_connection = shared_preferences_needs_connection
         self.messages = messages
         self.condition = condition
@@ -52,7 +53,7 @@ class MessageReceiver(object):
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, attributes, condition, enabled_if=None, enabled_by=None):
+    def __init__(self, name, parameters, reply_parameters, attributes, condition, enabled_if=None, enabled_by=None, enabled_by_conjunction=None):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
@@ -61,6 +62,7 @@ class Message(object):
         assert(not enabled_if or not enabled_by)
         self.enabled_if = enabled_if
         self.enabled_by = enabled_by
+        self.enabled_by_conjunction = enabled_by_conjunction
 
     def has_attribute(self, attribute):
         return attribute in self.attributes
@@ -78,7 +80,7 @@ class Parameter(object):
         return attribute in self.attributes
 
 
-ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, shared_preferences_needs_connection=False, messages=[
+ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_conjunction=None, shared_preferences_needs_connection=False, messages=[
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
@@ -119,6 +121,6 @@ def generate_global_model(receivers):
         for message in receiver.messages:
             if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
                 async_reply_messages.append(Message(name='%s_%sReply' % (receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
-    async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, shared_preferences_needs_connection=False, messages=async_reply_messages, condition=None, namespace='WebKit')
+    async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_conjunction=None, shared_preferences_needs_connection=False, messages=async_reply_messages, condition=None, namespace='WebKit')
 
     return [ipc_receiver, async_reply_receiver] + receivers

@@ -14,6 +14,8 @@ TESTS = \
     TestWithStreamServerConnectionHandle \
     TestWithEnabledBy \
     TestWithEnabledIf \
+    TestWithEnabledByAndConjunction \
+    TestWithEnabledByOrConjunction \
 #
 
 all:

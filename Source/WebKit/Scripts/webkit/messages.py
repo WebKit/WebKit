@@ -653,14 +653,18 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
-def generate_enabled_by(receiver, enabled_by):
-    return ' && '.join(['sharedPreferences.' + preference[0].lower() + preference[1:] for preference in enabled_by])
+def generate_enabled_by(receiver, enabled_by, enabled_by_conjunction):
+    conjunction = ' %s ' % (enabled_by_conjunction or '&&')
+    return conjunction.join(['sharedPreferences.' + preference[0].lower() + preference[1:] for preference in enabled_by])
 
 
 def generate_runtime_enablement(receiver, message):
     if not message.enabled_by:
         return message.enabled_if
-    return generate_enabled_by(receiver, message.enabled_by)
+    runtime_enablement = generate_enabled_by(receiver, message.enabled_by, message.enabled_by_conjunction)
+    if len(message.enabled_by) > 1:
+        return '(%s)' % runtime_enablement
+    return runtime_enablement
 
 
 def async_message_statement(receiver, message):
@@ -1302,6 +1306,7 @@ def generate_header_includes_from_conditions(header_conditions):
 
 def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_for_testing, return_value=None):
     enabled_by = receiver.receiver_enabled_by
+    enabled_by_conjunction = receiver.receiver_enabled_by_conjunction
     shared_preferences_retrieval = [
         '    auto& sharedPreferences = sharedPreferencesForWebProcess(%s);\n' % ('connection' if receiver.shared_preferences_needs_connection else ''),
         '    UNUSED_VARIABLE(sharedPreferences);\n'
@@ -1310,7 +1315,7 @@ def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_
         if any([message.enabled_by for message in messages]):
             return shared_preferences_retrieval
         return []
-    runtime_enablement = generate_enabled_by(receiver, enabled_by)
+    runtime_enablement = generate_enabled_by(receiver, enabled_by, enabled_by_conjunction)
     return_statement_line = 'return %s' % return_value if return_value else 'return'
     return shared_preferences_retrieval + [
         '    if (!%s) {\n' % ('(%s)' % runtime_enablement if len(enabled_by) > 1 else runtime_enablement),

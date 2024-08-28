@@ -375,8 +375,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithEnabledBy_ConditionallyEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledBy_MultiConditionallyEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_MultiConditionallyEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledAnd>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledOr>(globalObject, decoder);
     case MessageName::TestWithEnabledIf_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
@@ -1108,7 +1110,9 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithEnabledBy_MultiConditionallyEnabled:
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithEnabledIf_AlwaysEnabled:
         return Vector<ArgumentDescription> {

@@ -33,18 +33,18 @@
 
 
 namespace Messages {
-namespace TestWithEnabledBy {
+namespace TestWithEnabledByOrConjunction {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::TestWithEnabledBy;
+    return IPC::ReceiverName::TestWithEnabledByOrConjunction;
 }
 
 class AlwaysEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_AlwaysEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -63,64 +63,5 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-class ConditionallyEnabled {
-public:
-    using Arguments = std::tuple<String>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabled; }
-    static constexpr bool isSync = false;
-    static constexpr bool canDispatchOutOfOrder = false;
-    static constexpr bool replyCanDispatchOutOfOrder = false;
-
-    explicit ConditionallyEnabled(const String& url)
-        : m_arguments(url)
-    {
-    }
-
-    auto&& arguments()
-    {
-        return WTFMove(m_arguments);
-    }
-
-private:
-    std::tuple<const String&> m_arguments;
-};
-
-class ConditionallyEnabledAnd {
-public:
-    using Arguments = std::tuple<>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledAnd; }
-    static constexpr bool isSync = false;
-    static constexpr bool canDispatchOutOfOrder = false;
-    static constexpr bool replyCanDispatchOutOfOrder = false;
-
-    auto&& arguments()
-    {
-        return WTFMove(m_arguments);
-    }
-
-private:
-    std::tuple<> m_arguments;
-};
-
-class ConditionallyEnabledOr {
-public:
-    using Arguments = std::tuple<>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledOr; }
-    static constexpr bool isSync = false;
-    static constexpr bool canDispatchOutOfOrder = false;
-    static constexpr bool replyCanDispatchOutOfOrder = false;
-
-    auto&& arguments()
-    {
-        return WTFMove(m_arguments);
-    }
-
-private:
-    std::tuple<> m_arguments;
-};
-
-} // namespace TestWithEnabledBy
+} // namespace TestWithEnabledByOrConjunction
 } // namespace Messages
