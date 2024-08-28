@@ -171,6 +171,11 @@ def parse_args(args):
             help="Path to the directory under which build files are kept (should not include configuration)"),
         optparse.make_option("--add-platform-exceptions", action="store_true", default=False,
             help="Save generated results into the *most-specific-platform* directory rather than the *generic-platform* directory"),
+        optparse.make_option("--add-baselines-to-platform", default=False,
+            help="Save generated results into a specified platform directory",
+            metavar="PLATFORM_DIR"),
+        optparse.make_option("--add-redundant-platform-results", action="store_true",
+            help="Save generated results the platform even if they're redundant"),
         optparse.make_option("--new-baseline", action="store_true",
             default=False, help="Save generated results as new baselines "
                  "into the *most-specific-platform* directory, overwriting whatever's "
@@ -263,6 +268,7 @@ def parse_args(args):
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
         optparse.make_option("--skipped", action="store", default="default",
+            choices=["default", "ignore", "only", "always"],
             help=("control how tests marked SKIP are run. "
                  "'default' == Skip tests unless explicitly listed on the command line, "
                  "'ignore' == Run them anyway, "
@@ -274,6 +280,7 @@ def parse_args(args):
         optparse.make_option("--time-out-ms", "--timeout",
             help="Set the timeout for each test in milliseconds"),
         optparse.make_option("--order", action="store", default="natural",
+            choices=["none", "natural", "random"],
             help=("determine the order in which the test cases will be run. "
                   "'none' == use the order in which the tests were listed either in arguments or test list, "
                   "'natural' == use the natural order (default), "
