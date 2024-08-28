@@ -45,6 +45,8 @@ struct ModelProcessCreationParameters;
 
 class ModelProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
     WTF_MAKE_NONCOPYABLE(ModelProcess);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcess);
 public:
     explicit ModelProcess(AuxiliaryProcessInitializationParameters&&);
     ~ModelProcess();
