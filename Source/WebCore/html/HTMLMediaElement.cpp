@@ -9674,8 +9674,8 @@ auto HTMLMediaElement::sourceType() const -> std::optional<SourceType>
     switch (movieLoadType()) {
     case HTMLMediaElement::MovieLoadType::Unknown: return std::nullopt;
     case HTMLMediaElement::MovieLoadType::Download: return SourceType::File;
-    case HTMLMediaElement::MovieLoadType::StoredStream: return SourceType::LiveStream;
-    case HTMLMediaElement::MovieLoadType::LiveStream: return SourceType::StoredStream;
+    case HTMLMediaElement::MovieLoadType::LiveStream: return SourceType::LiveStream;
+    case HTMLMediaElement::MovieLoadType::StoredStream: return SourceType::StoredStream;
     case HTMLMediaElement::MovieLoadType::HttpLiveStream: return SourceType::HLS;
     }
 

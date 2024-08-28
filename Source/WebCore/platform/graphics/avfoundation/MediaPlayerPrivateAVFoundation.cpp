@@ -713,9 +713,6 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
     if (isHLS())
         return MediaPlayer::MovieLoadType::HttpLiveStream;
 
-    if (isLiveStream())
-        return MediaPlayer::MovieLoadType::LiveStream;
-
     return MediaPlayer::MovieLoadType::Download;
 }
 
