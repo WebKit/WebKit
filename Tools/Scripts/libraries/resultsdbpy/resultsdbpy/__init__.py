@@ -71,14 +71,11 @@ if platform.machine() == 'arm64':
     AutoInstall.register(Package('cassandra', Version(3, 25, 0), pypi_name='cassandra-driver', slow_install=True))
 else:
     AutoInstall.register(Package('cassandra', Version(3, 25, 0), pypi_name='cassandra-driver', wheel=True))
-AutoInstall.register(Package('click', Version(7, 1, 2)))
 AutoInstall.register(Package('Crypto', Version(3, 10, 1), pypi_name='pycryptodome'))
 AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
 AutoInstall.register(Package('geomet', Version(0, 2, 1)))
 AutoInstall.register(Package('gremlinpython', Version(3, 4, 6)))
-AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
 AutoInstall.register(Package('isodate', Version(0, 6, 0)))
-AutoInstall.register(Package('lupa', Version(1, 13)))
 AutoInstall.register(Package('pyasn1_modules', Version(0, 2, 8), pypi_name='pyasn1-modules'))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 if sys.version_info < (3, 8):

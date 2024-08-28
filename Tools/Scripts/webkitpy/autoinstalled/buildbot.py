@@ -26,17 +26,16 @@ import webkitscmpy
 from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.autoinstalled import twisted
 
+AutoInstall.install('jinja2')
+
 AutoInstall.install(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 AutoInstall.install(Package('constantly', Version(15, 1, 0)))
 AutoInstall.install(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil'))
 AutoInstall.install(Package('future', Version(0, 18, 2)))
-AutoInstall.install(Package('jinja2', Version(2, 11, 3), pypi_name='Jinja2'))
 AutoInstall.install(Package('pbr', Version(5, 9, 0)))
 AutoInstall.install(Package('lz4', Version(4, 3, 2)))
 AutoInstall.install(Package('jwt', Version(1, 7, 1), pypi_name='PyJWT'))
 AutoInstall.install(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
-
-AutoInstall.install('markupsafe')
 
 if sys.version_info >= (3, 0):
     # autobahn has wheel=False because of https://bugs.webkit.org/show_bug.cgi?id=263392

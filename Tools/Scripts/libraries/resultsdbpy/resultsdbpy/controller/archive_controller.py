@@ -85,7 +85,7 @@ class ArchiveController(HasCommitContext):
 
         if not result:
             abort(404, description='No archives matching the specified criteria')
-        return send_file(result, attachment_filename=f'{filename}.zip', as_attachment=True)
+        return send_file(result, download_name=f'{filename}.zip', as_attachment=True)
 
     def upload(self):
         AssertRequest.is_type(['POST'])
