@@ -1,5 +1,7 @@
-Blocked access to external URL http://nonexistent.127.0.0.1:8800/foo.html
-n
+FALLBACK CONTENT
 
-PASS Verify fallback content for failed cross-origin navigations is shown correctly.
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Verify fallback content for failed cross-origin navigations is shown correctly: http://www.not-web-platform.test:8800/foo.html Test timed out
+NOTRUN Verify fallback content for failed cross-origin navigations is shown correctly: http://nonexistent.not-web-platform.test:8800/foo.html
 

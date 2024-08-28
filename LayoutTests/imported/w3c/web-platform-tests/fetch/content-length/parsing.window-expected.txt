@@ -3,20 +3,20 @@ PASS Loading JSON…
 PASS Input: "Content-Length: 42". Expected: 42.
 PASS Input: "Content-Length: 42,42". Expected: 42.
 PASS Input: "Content-Length: 42\r\nContent-Length: 42". Expected: 42.
-PASS Input: "Content-Length: 42\r\nContent-Length: 42,42". Expected: 42.
+FAIL Input: "Content-Length: 42\r\nContent-Length: 42,42". Expected: 42. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS Input: "Content-Length: 30". Expected: 30.
 PASS Input: "Content-Length: 30,30". Expected: 30.
 PASS Input: "Content-Length: 30\r\nContent-Length: 30". Expected: 30.
-PASS Input: "Content-Length: 30\r\nContent-Length: 30,30". Expected: 30.
+FAIL Input: "Content-Length: 30\r\nContent-Length: 30,30". Expected: 30. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 FAIL Input: "Content-Length: 42,30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: 30,42". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: 42\r\nContent-Length: 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: 30\r\nContent-Length: 42". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Input: "Content-Length: 42\r\nContent-Length: 30". Expected: network error.
+PASS Input: "Content-Length: 30\r\nContent-Length: 42". Expected: network error.
 FAIL Input: "Content-Length: 30,". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: ,30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: 30\r\nContent-Length: \t". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: \r\nContent-Length: 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Input: "Content-Length: aaaah\r\nContent-Length: nah". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Input: "Content-Length: 30\r\nContent-Length: \t". Expected: network error.
+PASS Input: "Content-Length: \r\nContent-Length: 30". Expected: network error.
+PASS Input: "Content-Length: aaaah\r\nContent-Length: nah". Expected: network error.
 FAIL Input: "Content-Length: aaaah, nah". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: aaaah\r\nContent-Length: aaaah". Expected: 42. assert_equals: expected 42 but got 0
 FAIL Input: "Content-Length: aaaah, aaaah". Expected: 42. assert_equals: expected 42 but got 0
@@ -26,9 +26,9 @@ FAIL Input: "Content-Length: 30s". Expected: 42. assert_equals: expected 42 but 
 FAIL Input: "Content-Length: -1". Expected: 42. assert_equals: expected 42 but got 0
 FAIL Input: "Content-Length: 0x20". Expected: 42. assert_equals: expected 42 but got 0
 PASS Input: "Content-Length: 030". Expected: 30.
-FAIL Input: "Content-Length: 030\r\nContent-Length: 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Input: "Content-Length: 030\r\nContent-Length: 30". Expected: network error.
 FAIL Input: "Content-Length: 030, 30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Input: "Content-Length: \"30\"". Expected: 42. assert_equals: expected 42 but got 0
-FAIL Input: "Content-Length:30\r\nContent-Length:,\r\nContent-Length:30". Expected: network error. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Input: "Content-Length:30\r\nContent-Length:,\r\nContent-Length:30". Expected: network error.
 FAIL Input: "Content-Length: ". Expected: 42. assert_equals: expected 42 but got 0
 

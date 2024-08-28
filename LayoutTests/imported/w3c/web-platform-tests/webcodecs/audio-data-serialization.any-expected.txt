@@ -1,5 +1,5 @@
 
-PASS Verify closing AudioData does not propagate accross contexts.
-PASS Verify posting closed AudioData throws.
-PASS Verify transferring audio data closes them.
+FAIL Verify closing AudioData does not propagate accross contexts. AudioData creation failed
+FAIL Verify posting closed AudioData throws. AudioData creation failed
+FAIL Verify transferring audio data closes them. AudioData creation failed
 

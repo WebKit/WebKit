@@ -9,19 +9,19 @@ PASS 'script (Potentially Cached): Immediately fetch the same URL, exercising th
 PASS 'link (Populate cache): The initial request populates the cache (if appropriate).
 PASS 'link (Potentially Cached): Immediately fetch the same URL, exercising the cache hit path (if any).
 PASS 'iframe: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'.
-PASS 'xmlhttprequest: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'.
-PASS 'script: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'.
-PASS 'link: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'.
-PASS 'iframe (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
-PASS 'xmlhttprequest (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
-PASS 'script (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
-PASS 'link (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'.
-PASS 'iframe 250ms delay in headers does not affect responseStart'
-PASS 'xmlhttprequest 250ms delay in headers does not affect responseStart'
-PASS 'script 250ms delay in headers does not affect responseStart'
-PASS 'link 250ms delay in headers does not affect responseStart'
-PASS 'iframe responseStart uses 1XX (first) response timings'
-PASS 'xmlhttprequest responseStart uses 1XX (first) response timings'
-PASS 'script responseStart uses 1XX (first) response timings'
-PASS 'link responseStart uses 1XX (first) response timings'
+FAIL 'xmlhttprequest: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'script: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'link: 250ms delay before 'responseStart', another 250ms delay before 'responseEnd'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'iframe (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'xmlhttprequest (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'script (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'link (Redirected): 250ms delay before 'redirectEnd', another 250ms delay before 'responseStart'. assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'iframe 250ms delay in headers does not affect responseStart' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'xmlhttprequest 250ms delay in headers does not affect responseStart' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'script 250ms delay in headers does not affect responseStart' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'link 250ms delay in headers does not affect responseStart' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'iframe responseStart uses 1XX (first) response timings' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'xmlhttprequest responseStart uses 1XX (first) response timings' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'script responseStart uses 1XX (first) response timings' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
+FAIL 'link responseStart uses 1XX (first) response timings' assert_less_than_equal: connectEnd <= requestStart expected a number less than or equal to 2792.0000000000005 but got 2793
 Show details

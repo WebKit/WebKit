@@ -10,11 +10,11 @@ PASS getStats() track with stream returns peer-connection and outbound-rtp stats
 PASS getStats() track without stream returns peer-connection and outbound-rtp stats
 PASS getStats() audio outbound-rtp contains all mandatory stats
 PASS getStats() video outbound-rtp contains all mandatory stats
-FAIL getStats() audio and video validate all mandatory stats assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined"
+FAIL getStats() audio and video validate all mandatory stats assert_equals: Expect values of qualityLimitationDurations to be numbers expected "number" but got "undefined"
 PASS getStats() on track associated with RTCRtpSender should return stats report containing outbound-rtp stats
 PASS getStats() on track associated with RTCRtpReceiver should return stats report containing inbound-rtp stats
 PASS getStats() inbound-rtp contains all mandatory stats
-FAIL getStats() with connected peer connections having tracks and data channel should return all mandatory to implement stats assert_unreached: test failed with error: Error: assert_equals: Expect dictionary.totalAudioEnergy to be number expected "number" but got "undefined" Reached unreachable code
+FAIL getStats() with connected peer connections having tracks and data channel should return all mandatory to implement stats assert_unreached: test failed with error: Error: assert_equals: Expect dictionary.currentRoundTripTime to be number expected "number" but got "undefined" Reached unreachable code
 FAIL getStats(track) should not work if multiple senders have the same track assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS RTCStats.timestamp increases with time passing
+FAIL RTCStats.timestamp increases with time passing assert_less_than_equal: expected a number less than or equal to 502 but got 502.000244140625
 

@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/avif,image/jxl,image/heic,image/heic-sequence,video/*;q=0.8,imag...
 
     <!-- speculative case in document.write -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'none'"><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=bbb65ecc-f7c0-4b4d-b554-24bf6f5f2fa7&amp;encodingcheck=&Gbreve;">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'none'"><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=ef028437-3b23-415e-9c55-d378fc678db3&amp;encodingcheck=&Gbreve;">
 
 
-FAIL Speculative parsing, document.write(): meta-csp-img-src-none Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+FAIL Speculative parsing, document.write(): meta-csp-img-src-none Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: image/webp,image/avif,image/jxl,image/heic,image/heic-sequence,video/*;q=0.8,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/document-write/meta-csp-img-src-none.tentative.sub.html"
 

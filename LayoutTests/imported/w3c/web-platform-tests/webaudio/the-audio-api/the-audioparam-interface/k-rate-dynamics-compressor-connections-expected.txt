@@ -59,7 +59,19 @@ PASS   threshold: mod = new ConstantSourceNode(context, {offset: 0}) did not thr
 PASS   threshold: mod.offset.setValueAtTime(0, 0) did not throw an exception.
 PASS   threshold: mod.offset.linearRampToValueAtTime(100, 0.25) did not throw an exception.
 PASS   threshold: mod.connect(tstNode[threshold]) did not throw an exception.
-PASS   k-rate threshold AudioParam with input equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-PASS < [threshold] All assertions passed. (total 9 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
+FAIL X k-rate threshold AudioParam with input does not equal [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[512]	4.097588e-3	4.096667e-3	9.215437e-7	2.249496e-4	0.000000e+0
+	[513]	4.910325e-3	4.909221e-3	1.104549e-6	2.249947e-4	0.000000e+0
+	[514]	5.835444e-3	5.834132e-3	1.312699e-6	2.250034e-4	0.000000e+0
+	[515]	6.121337e-3	6.119960e-3	1.376960e-6	2.249950e-4	0.000000e+0
+	[516]	7.302821e-3	7.301178e-3	1.642387e-6	2.249483e-4	0.000000e+0
+	...and 11483 more errors.
+	Max AbsError of 3.071502e-5 at index of 2523.
+	[2523]	3.125175e-2	3.128247e-2	3.071502e-5	9.818605e-4	0.000000e+0
+	Max RelError of 1.016615e-3 at index of 2450.
+	[2450]	-9.482080e-3	-9.491730e-3	9.649433e-6	1.016615e-3	0.000000e+0
+ assert_true: expected true got false
+FAIL < [threshold] 1 out of 9 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
 

@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: speculative case did not fetch got disallowed value ""
 
     <!-- speculative case in document.write -->
-    <svg><image xlink:href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=1414bb61-6fd6-45c6-9bb1-9b4d79a171a2&amp;encodingcheck=&Gbreve;"></image></svg>
+    <svg><image xlink:href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=c99f657b-adb9-491d-ad95-2778e5cefc32&amp;encodingcheck=&Gbreve;"></image></svg>
 
 
 FAIL Speculative parsing, document.write(): svg-image-xlinkhref Unhandled rejection: assert_not_equals: speculative case did not fetch got disallowed value ""

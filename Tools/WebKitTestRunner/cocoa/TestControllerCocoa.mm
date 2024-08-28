@@ -36,6 +36,7 @@
 #import "TestWebsiteDataStoreDelegate.h"
 #import "WebCoreTestSupport.h"
 #import <Foundation/Foundation.h>
+#import <Network/Network.h>
 #import <Security/SecItem.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKContextConfigurationRef.h>
@@ -59,6 +60,7 @@
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
@@ -230,6 +232,42 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
 #if ENABLE(DATA_DETECTION)
     m_appStoreURLSwizzler = makeUnique<InstanceMethodSwizzler>(NSURL.class, @selector(iTunesStoreURL), reinterpret_cast<IMP>(swizzledAppStoreURL));
+#endif
+
+#if PLATFORM(MAC)
+    // See NetworkProcess::platformInitializeNetworkProcessCocoa for supporting a local DNS resolver on iOS Simulator.
+
+    if (!options.useLocalDNSResolver)
+        return;
+
+    auto agentUUID = adoptNS([[NSUUID alloc] init]);
+    uuid_t agentUUIDBytes;
+    [agentUUID.get() getUUIDBytes:agentUUIDBytes];
+    NSLog(@"useLocalDNSResolver: agent UUID: %@.", agentUUID.get());
+
+    static nw_resolver_config_t resolverConfig = nw_resolver_config_create();
+    nw_resolver_config_set_protocol(resolverConfig, nw_resolver_protocol_dns53);
+    nw_resolver_config_set_class(resolverConfig, nw_resolver_class_designated_direct);
+    nw_resolver_config_add_name_server(resolverConfig, "127.0.0.1:8053");
+    nw_resolver_config_add_match_domain(resolverConfig, "test");
+    nw_resolver_config_set_identifier(resolverConfig, agentUUIDBytes);
+    bool published = nw_resolver_config_publish(resolverConfig);
+    if (!published) {
+        NSLog(@"Failed to register DNS resolver agent UUID: %@. Using local DNS resolver failed.", agentUUID.get());
+        return;
+    }
+
+    // The following NetworkExtension policy is needed so we can run tests while a VPN is connected
+    static RetainPtr<NEPolicySession> policySession = adoptNS([[NEPolicySession alloc] init]);
+    NEPolicy *domainPolicy = [[NEPolicy alloc] initWithOrder:1 result:[NEPolicyResult netAgentUUID:agentUUID.get()] conditions:@[ [NEPolicyCondition domain:@"test"] ]];
+    [policySession.get() addPolicy:domainPolicy];
+
+    NSString *agentString = agentUUID.get().UUIDString;
+    NEPolicy *agentPolicy = [[NEPolicy alloc] initWithOrder:1 result:[NEPolicyResult netAgentUUID:agentUUID.get()] conditions:@[ [NEPolicyCondition domain:agentString] ]];
+    [policySession.get() addPolicy:agentPolicy];
+
+    policySession.get().priority = NEPolicySessionPriorityHigh;
+    [policySession.get() apply];
 #endif
 }
 

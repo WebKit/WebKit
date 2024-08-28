@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: non-speculative case did not fetch got disallowed value ""
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: expected the same number of headers between speculative and non-speculative expected 2 but got 3
 
     <!-- speculative case in document.write -->
-    <meta name=referrer content=no-referrer><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=88bfc67a-e522-4cdd-88f2-7a17b4e1c7b4&amp;encodingcheck=&Gbreve;">
+    <meta name=referrer content=no-referrer><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=adbd66c9-bd1d-458e-86ec-3c3cdcb50324&amp;encodingcheck=&Gbreve;">
 
 
 
-FAIL Speculative parsing, document.write(): meta-referrer-no-referrer-img-src Unhandled rejection: assert_not_equals: non-speculative case did not fetch got disallowed value ""
+FAIL Speculative parsing, document.write(): meta-referrer-no-referrer-img-src Unhandled rejection: assert_equals: expected the same number of headers between speculative and non-speculative expected 2 but got 3
 

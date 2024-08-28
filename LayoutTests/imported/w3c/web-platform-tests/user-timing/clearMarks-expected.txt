@@ -5,11 +5,11 @@ This test validates functionality of the interface window.performance.clearMarks
 
 PASS First loop: checking entries after removing "". There should be 2 entries.
 PASS First loop: checking entries after removing "". Entries in entrylist should be in order.
-PASS First loop: checking entries after removing "". Entry_list 0. Entry "1" should be one that we have set.
+PASS First loop: checking entries after removing "". Entry_list 0. Entry "abc" should be one that we have set.
 PASS First loop: checking entries after removing "". Entry_list 0. entryType should be "mark".
 PASS First loop: checking entries after removing "". Entry_list 0. startTime should greater than 0.
 PASS First loop: checking entries after removing "". Entry_list 0. duration of mark should be 0.
-PASS First loop: checking entries after removing "". Entry_list 1. Entry "abc" should be one that we have set.
+PASS First loop: checking entries after removing "". Entry_list 1. Entry "1" should be one that we have set.
 PASS First loop: checking entries after removing "". Entry_list 1. entryType should be "mark".
 PASS First loop: checking entries after removing "". Entry_list 1. startTime should greater than 0.
 PASS First loop: checking entries after removing "". Entry_list 1. duration of mark should be 0.
@@ -27,19 +27,19 @@ PASS First loop: marks that we cleared for "abc" should not exist anymore.
 PASS No marks should exist after we clear all.
 PASS Second loop: checking entries after removing "". There should be 4 entries.
 PASS Second loop: checking entries after removing "". Entries in entrylist should be in order.
-PASS Second loop: checking entries after removing "". Entry_list 0. Entry "1" should be one that we have set.
+PASS Second loop: checking entries after removing "". Entry_list 0. Entry "abc" should be one that we have set.
 PASS Second loop: checking entries after removing "". Entry_list 0. entryType should be "mark".
 PASS Second loop: checking entries after removing "". Entry_list 0. startTime should greater than 0.
 PASS Second loop: checking entries after removing "". Entry_list 0. duration of mark should be 0.
-PASS Second loop: checking entries after removing "". Entry_list 1. Entry "1" should be one that we have set.
+PASS Second loop: checking entries after removing "". Entry_list 1. Entry "abc" should be one that we have set.
 PASS Second loop: checking entries after removing "". Entry_list 1. entryType should be "mark".
 PASS Second loop: checking entries after removing "". Entry_list 1. startTime should greater than 0.
 PASS Second loop: checking entries after removing "". Entry_list 1. duration of mark should be 0.
-PASS Second loop: checking entries after removing "". Entry_list 2. Entry "abc" should be one that we have set.
+PASS Second loop: checking entries after removing "". Entry_list 2. Entry "1" should be one that we have set.
 PASS Second loop: checking entries after removing "". Entry_list 2. entryType should be "mark".
 PASS Second loop: checking entries after removing "". Entry_list 2. startTime should greater than 0.
 PASS Second loop: checking entries after removing "". Entry_list 2. duration of mark should be 0.
-PASS Second loop: checking entries after removing "". Entry_list 3. Entry "abc" should be one that we have set.
+PASS Second loop: checking entries after removing "". Entry_list 3. Entry "1" should be one that we have set.
 PASS Second loop: checking entries after removing "". Entry_list 3. entryType should be "mark".
 PASS Second loop: checking entries after removing "". Entry_list 3. startTime should greater than 0.
 PASS Second loop: checking entries after removing "". Entry_list 3. duration of mark should be 0.

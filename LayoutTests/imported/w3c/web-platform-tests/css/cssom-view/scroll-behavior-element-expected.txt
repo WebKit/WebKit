@@ -4,33 +4,33 @@ PASS Element with auto scroll-behavior ; scroll() with auto behavior
 PASS Element with auto scroll-behavior ; scroll() with instant behavior
 PASS Element with auto scroll-behavior ; scroll() with smooth behavior
 PASS Element with smooth scroll-behavior ; scroll() with default behavior
-PASS Element with smooth scroll-behavior ; scroll() with auto behavior
+FAIL Element with smooth scroll-behavior ; scroll() with auto behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Element with smooth scroll-behavior ; scroll() with instant behavior
-PASS Element with smooth scroll-behavior ; scroll() with smooth behavior
+FAIL Element with smooth scroll-behavior ; scroll() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Element with auto scroll-behavior ; scrollTo() with default behavior
 PASS Element with auto scroll-behavior ; scrollTo() with auto behavior
 PASS Element with auto scroll-behavior ; scrollTo() with instant behavior
-PASS Element with auto scroll-behavior ; scrollTo() with smooth behavior
-PASS Element with smooth scroll-behavior ; scrollTo() with default behavior
-PASS Element with smooth scroll-behavior ; scrollTo() with auto behavior
+FAIL Element with auto scroll-behavior ; scrollTo() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 0
+FAIL Element with smooth scroll-behavior ; scrollTo() with default behavior assert_equals: Final value of scrollLeft expected 500 but got 0
+FAIL Element with smooth scroll-behavior ; scrollTo() with auto behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Element with smooth scroll-behavior ; scrollTo() with instant behavior
-PASS Element with smooth scroll-behavior ; scrollTo() with smooth behavior
+FAIL Element with smooth scroll-behavior ; scrollTo() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Element with auto scroll-behavior ; scrollBy() with default behavior
 PASS Element with auto scroll-behavior ; scrollBy() with auto behavior
 PASS Element with auto scroll-behavior ; scrollBy() with instant behavior
-PASS Element with auto scroll-behavior ; scrollBy() with smooth behavior
+FAIL Element with auto scroll-behavior ; scrollBy() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 1000
 PASS Element with smooth scroll-behavior ; scrollBy() with default behavior
-PASS Element with smooth scroll-behavior ; scrollBy() with auto behavior
+FAIL Element with smooth scroll-behavior ; scrollBy() with auto behavior assert_equals: Final value of scrollLeft expected 500 but got 1000
 PASS Element with smooth scroll-behavior ; scrollBy() with instant behavior
-PASS Element with smooth scroll-behavior ; scrollBy() with smooth behavior
+FAIL Element with smooth scroll-behavior ; scrollBy() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 1500
 PASS Element with auto scroll-behavior ; scrollIntoView() with default behavior
 PASS Element with auto scroll-behavior ; scrollIntoView() with auto behavior
 PASS Element with auto scroll-behavior ; scrollIntoView() with instant behavior
 PASS Element with auto scroll-behavior ; scrollIntoView() with smooth behavior
 PASS Element with smooth scroll-behavior ; scrollIntoView() with default behavior
-PASS Element with smooth scroll-behavior ; scrollIntoView() with auto behavior
+FAIL Element with smooth scroll-behavior ; scrollIntoView() with auto behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Element with smooth scroll-behavior ; scrollIntoView() with instant behavior
-PASS Element with smooth scroll-behavior ; scrollIntoView() with smooth behavior
+FAIL Element with smooth scroll-behavior ; scrollIntoView() with smooth behavior assert_equals: Final value of scrollLeft expected 500 but got 0
 PASS Set scrollLeft to element with auto scroll-behavior
 PASS Set scrollLeft to element with smooth scroll-behavior
 PASS Set scrollTop to element with auto scroll-behavior

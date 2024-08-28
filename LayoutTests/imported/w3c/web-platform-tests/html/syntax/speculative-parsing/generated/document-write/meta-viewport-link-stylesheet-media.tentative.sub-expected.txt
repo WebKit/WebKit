@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/speculat...
 
     <!-- speculative case in document.write -->
-    <meta name=viewport content="width=400, initial-scale=1"><link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=9d80d37d-38b9-4b5b-80d7-a331e8a12739&amp;encodingcheck=&Gbreve;" media="(min-width: 401px)">
+    <meta name=viewport content="width=400, initial-scale=1"><link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=039ef2f3-8add-4764-85f5-6c073471a42d&amp;encodingcheck=&Gbreve;" media="(min-width: 401px)">
 
 
-FAIL Speculative parsing, document.write(): meta-viewport-link-stylesheet-media Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+FAIL Speculative parsing, document.write(): meta-viewport-link-stylesheet-media Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/document-write/meta-viewport-link-stylesheet-media.tentative.sub.html"
 
