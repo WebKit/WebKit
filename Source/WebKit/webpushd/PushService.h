@@ -75,6 +75,7 @@ public:
 
     void removeRecordsForSubscriptionSet(const WebCore::PushSubscriptionSetIdentifier&, CompletionHandler<void(unsigned)>&&);
     void removeRecordsForSubscriptionSetAndOrigin(const WebCore::PushSubscriptionSetIdentifier&, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&&);
 
     void didCompleteGetSubscriptionRequest(GetSubscriptionRequest&);
     void didCompleteSubscribeRequest(SubscribeRequest&);

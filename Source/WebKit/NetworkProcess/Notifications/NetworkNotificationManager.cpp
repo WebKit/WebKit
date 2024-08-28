@@ -106,12 +106,12 @@ void NetworkNotificationManager::getNotifications(const URL& registrationURL, co
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTFMove(completionHandler));
 }
 
-void NetworkNotificationManager::cancelNotification(const WTF::UUID& notificationID)
+void NetworkNotificationManager::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
 {
     if (!m_connection)
         return;
 
-    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { notificationID });
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { WTFMove(origin), notificationID });
 }
 
 void NetworkNotificationManager::clearNotifications(const Vector<WTF::UUID>&)

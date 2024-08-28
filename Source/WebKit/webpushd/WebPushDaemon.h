@@ -47,6 +47,9 @@
 #include <wtf/StdList.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
+#if PLATFORM(IOS)
+@class FBSOpenApplicationService;
+#endif
 
 namespace JSC {
 enum class MessageLevel : uint8_t;
@@ -94,7 +97,7 @@ public:
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     void showNotification(PushClientConnection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(PushClientConnection&, const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
-    void cancelNotification(PushClientConnection&, const WTF::UUID& notificationID);
+    void cancelNotification(PushClientConnection&, WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
 
     void getPushPermissionState(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
@@ -134,7 +137,11 @@ private:
     bool m_pushServiceStarted { false };
     Deque<Function<void()>> m_pendingPushServiceFunctions;
 
-    HashMap<WebCore::PushSubscriptionSetIdentifier, Deque<WebKit::WebPushMessage>> m_pushMessages;
+    struct PendingPushMessage {
+        WebCore::PushSubscriptionSetIdentifier identifier;
+        WebKit::WebPushMessage message;
+    };
+    Deque<PendingPushMessage> m_pendingPushMessages;
 
     WebCore::Timer m_incomingPushTransactionTimer;
     OSObjectPtr<os_transaction_t> m_incomingPushTransaction;
@@ -153,6 +160,9 @@ private:
     Class m_userNotificationCenterClass;
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
+#if PLATFORM(IOS)
+    RetainPtr<FBSOpenApplicationService> m_openService;
+#endif
 };
 
 } // namespace WebPushD

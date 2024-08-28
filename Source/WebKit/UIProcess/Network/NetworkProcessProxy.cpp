@@ -1794,18 +1794,26 @@ void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, Compl
 
 void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const WebPushMessage& pushMessage, CompletionHandler<void(bool wasProcessed, std::optional<WebCore::NotificationPayload>&&)>&& callback)
 {
-    auto permission = PushPermissionState::Prompt;
-    HashMap<String, bool> permissions;
+    auto permission = PushPermissionState::Granted;
 
-    if (auto *dataStore = websiteDataStoreFromSessionID(sessionID))
-        permissions = dataStore->client().notificationPermissions();
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    // When built-in notifications are disabled, the source of permissions is the UIProcess.
+    // Since we're already in UIProcess, we look up the permissions here to remove a round trip.
+    if (!DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
+        permission = PushPermissionState::Prompt;
+        HashMap<String, bool> permissions;
 
-    if (permissions.isEmpty())
-        permissions = WebNotificationManagerProxy::sharedServiceWorkerManager().notificationPermissions();
+        if (auto *dataStore = websiteDataStoreFromSessionID(sessionID))
+            permissions = dataStore->client().notificationPermissions();
 
-    auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL).toString();
-    if (auto it = permissions.find(origin); it != permissions.end())
-        permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
+        if (permissions.isEmpty())
+            permissions = WebNotificationManagerProxy::sharedServiceWorkerManager().notificationPermissions();
+
+        auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL).toString();
+        if (auto it = permissions.find(origin); it != permissions.end())
+            permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
+    }
+#endif
 
     RefPtr<ProcessAssertion> assertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit Process Push Event"_s, ProcessAssertionType::UnboundedNetworking);
 

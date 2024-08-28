@@ -40,7 +40,7 @@ messages -> WebPushD::PushClientConnection NotUsingIPCConnection {
     GetPushTopicsForTesting() -> (Vector<String> enabled, Vector<String> ignored)
     ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
     GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
-    CancelNotification(WTF::UUID notificationID)
+    CancelNotification(WebCore::SecurityOriginData origin, WTF::UUID notificationID)
     RequestPushPermission(WebCore::SecurityOriginData origin) -> (bool granted)
     SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     GetAppBadgeForTesting() -> (std::optional<uint64_t> badge)

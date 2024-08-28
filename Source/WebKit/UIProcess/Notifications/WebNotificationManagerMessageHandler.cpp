@@ -51,11 +51,11 @@ void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& con
     callback();
 }
 
-void WebNotificationManagerMessageHandler::cancelNotification(const WTF::UUID& notificationID)
+void WebNotificationManagerMessageHandler::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
 {
     auto& serviceWorkerNotificationHandler = ServiceWorkerNotificationHandler::singleton();
     if (serviceWorkerNotificationHandler.handlesNotification(notificationID)) {
-        serviceWorkerNotificationHandler.cancelNotification(notificationID);
+        serviceWorkerNotificationHandler.cancelNotification(WTFMove(origin), notificationID);
         return;
     }
     m_webPageProxy.cancelNotification(notificationID);

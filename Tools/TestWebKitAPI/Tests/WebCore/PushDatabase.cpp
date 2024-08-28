@@ -431,6 +431,20 @@ public:
         return removedRecords;
     }
 
+    Vector<RemovedPushRecord> removeRecordsByBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier)
+    {
+        bool done = false;
+        Vector<RemovedPushRecord> removedRecords;
+
+        db->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [&done, &removedRecords](auto&& result) {
+            removedRecords = WTFMove(result);
+            done = true;
+        });
+        Util::run(&done);
+
+        return removedRecords;
+    }
+
     unsigned incrementSilentPushCount(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, const String& securityOrigin)
     {
         bool done = false;
@@ -658,6 +672,31 @@ TEST_F(PushDatabaseTest, RemoveRecordsBySubscriptionSetAndSecurityOrigin)
         { record2.subscriptionSetIdentifier, record2.securityOrigin, true },
         { record5.subscriptionSetIdentifier, record5.securityOrigin, true },
         { record8.subscriptionSetIdentifier, record8.securityOrigin, true }
+    };
+    EXPECT_EQ(getPushSubscriptionSets(), expectedSubscriptionSets);
+}
+
+TEST_F(PushDatabaseTest, RemoveRecordsByBundleIdentifierAndDataStore)
+{
+    // record5, record6, and record7 have the same bundleIdentifier and dataStoreIdentifier, but different pushPartitions.
+    auto removedRecords = removeRecordsByBundleIdentifierAndDataStore(record5.subscriptionSetIdentifier.bundleIdentifier, record5.subscriptionSetIdentifier.dataStoreIdentifier);
+    auto expected = HashSet<String> { record5.topic, record6.topic, record7.topic };
+    EXPECT_EQ(getTopicsFromRecords(removedRecords), expected);
+    EXPECT_EQ(removedRecords.size(), 3u);
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4 }));
+
+    // Inserting a new record should produce a new identifier.
+    PushRecord record8 = record5;
+    auto insertResult = insertRecord(WTFMove(record8));
+    EXPECT_TRUE(insertResult);
+    EXPECT_EQ(insertResult->identifier, LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(8));
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4, 8 }));
+
+    Vector<PushSubscriptionSetRecord> expectedSubscriptionSets {
+        { record1.subscriptionSetIdentifier, record1.securityOrigin, true },
+        { record2.subscriptionSetIdentifier, record2.securityOrigin, true },
+        { record3.subscriptionSetIdentifier, record3.securityOrigin, true },
+        { record5.subscriptionSetIdentifier, record5.securityOrigin, true },
     };
     EXPECT_EQ(getPushSubscriptionSets(), expectedSubscriptionSets);
 }

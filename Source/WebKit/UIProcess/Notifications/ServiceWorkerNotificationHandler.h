@@ -40,7 +40,7 @@ public:
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
 
-    void cancelNotification(const WTF::UUID& notificationID) final;
+    void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
