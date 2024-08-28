@@ -1100,13 +1100,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        auto isNSHTTPURLResponseClass = [response isKindOfClass:NSHTTPURLResponse.class];
-        int statusCode = isNSHTTPURLResponseClass ? [(NSHTTPURLResponse *)response statusCode] : 0;
-        NSString *xContentTypeOptions = isNSHTTPURLResponseClass ? [(NSHTTPURLResponse *)response valueForHTTPHeaderField:@"X-Content-Type-Options"] : nil;
-        bool isNoSniff = xContentTypeOptions && [xContentTypeOptions caseInsensitiveCompare:@"nosniff"] == NSOrderedSame;
+        int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
         if (statusCode != httpStatus304NotModified) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequestRequester::Main;
-            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad ? WebCore::IsMainResourceLoad::Yes : WebCore::IsMainResourceLoad::No, isNoSniff ? WebCore::IsNoSniffSet::Yes : WebCore::IsNoSniffSet::No);
+            WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
         }
 
         WebCore::ResourceResponse resourceResponse(response);

@@ -1,3 +1,0 @@
-html-document.html has MIME type text/html
-CONSOLE MESSAGE: Pass
-

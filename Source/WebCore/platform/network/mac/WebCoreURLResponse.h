@@ -36,10 +36,7 @@ namespace WebCore {
 WEBCORE_EXPORT NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentRequest, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 #endif
 
-enum class IsMainResourceLoad : bool { No, Yes };
-enum class IsNoSniffSet : bool { No, Yes };
-
-WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef, IsMainResourceLoad, IsNoSniffSet);
+WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef, bool isMainResourceLoad);
 
 RetainPtr<CFStringRef> filePathExtension(CFURLResponseRef);
 RetainPtr<CFStringRef> preferredMIMETypeForFileExtensionFromUTType(CFStringRef extension);

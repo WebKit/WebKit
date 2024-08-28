@@ -1,2 +1,0 @@
-nosniff-html.html has MIME type application/octet-stream
-
