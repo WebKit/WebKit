@@ -76,12 +76,12 @@ struct EditorState {
     bool selectionIsRange { false };
     bool selectionIsRangeInsideImageOverlay { false };
     bool selectionIsRangeInAutoFilledAndViewableField { false };
-    bool isContentEditable { false };
+    bool isContentEditable  { false };
     bool isContentRichlyEditable { false };
     bool isInPasswordField { false };
     bool isInPlugin { false };
-    bool hasComposition { false };
-    bool triggeredByAccessibilitySelectionChange { false };
+    bool hasComposition  { false };
+    bool triggeredByAccessibilitySelectionChange  { false };
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
 #endif
