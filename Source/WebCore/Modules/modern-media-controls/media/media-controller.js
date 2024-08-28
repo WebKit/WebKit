@@ -61,6 +61,7 @@ class MediaController
         media.addEventListener(this.fullscreenChangeEventType, this);
         media.addEventListener("keydown", this);
         media.addEventListener("keyup", this);
+        media.addEventListener("click", this);
 
         window.addEventListener("keydown", this);
 
@@ -221,6 +222,15 @@ class MediaController
             event.preventDefault();
         else if (event.type === this.fullscreenChangeEventType)
             this.host?.presentationModeChanged?.();
+        else if (event.type === "click" && event.target === this.media) {
+            // If the <video> receives a click event, and the <video> is also the target
+            // of this event, this means we have clicked outside the border of the
+            // media controls <div>, which covers the video content.
+            if (this.host && this.host.inWindowFullscreen) {
+                this.media.webkitExitFullscreen();
+                event.stopPropagation();
+            }
+        }
 
         if (event.currentTarget === this.media) {
             if (event.type === "play")
