@@ -1850,7 +1850,3 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-windo
 
 # webkit.org/b/278738 [ Sonoma wk2 x86_64]: fast/canvas/image-buffer-backend-variants.html is a flaky crash.
 [ Sonoma x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Crash ]
-
-# webkit.org/b/278744 REGRESSION(282559@main?): [macOS Debug wk2] 2 tests in imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements are flaky crashes (failure in EWS)
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Crash ]
-[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track.html [ Pass Crash ]
