@@ -4110,6 +4110,14 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyWebkitMask, // for mask-position
         CSSPropertyMaskPosition,
         CSSPropertyWebkitMaskPosition,
+        CSSPropertyBorderBlock,
+        CSSPropertyBorderBlockColor,
+        CSSPropertyBorderBlockStyle,
+        CSSPropertyBorderBlockWidth,
+        CSSPropertyBorderInline,
+        CSSPropertyBorderInlineColor,
+        CSSPropertyBorderInlineStyle,
+        CSSPropertyBorderInlineWidth,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
         CSSPropertyBorderBlockStart, CSSPropertyBorderBlockEnd, CSSPropertyBorderInlineStart, CSSPropertyBorderInlineEnd,
         CSSPropertyBorderColor,
@@ -4127,6 +4135,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyGridColumn,
         CSSPropertyGridRow,
         CSSPropertyGridTemplate,
+        CSSPropertyInsetBlock, // logical shorthand
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
         CSSPropertyMarginBlock, // logical shorthand
@@ -4204,19 +4213,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // property should be animatable, make sure to file a bug.
 
         // To be fixed / untriaged:
-        case CSSPropertyBorderBlock: // logical shorthand
-        case CSSPropertyBorderBlockColor: // logical shorthand
-        case CSSPropertyBorderBlockStyle: // logical shorthand
-        case CSSPropertyBorderBlockWidth: // logical shorthand
-        case CSSPropertyBorderInline: // logical shorthand
-        case CSSPropertyBorderInlineColor: // logical shorthand
-        case CSSPropertyBorderInlineStyle: // logical shorthand
-        case CSSPropertyBorderInlineWidth: // logical shorthand
         case CSSPropertyBorderStyle:
         case CSSPropertyInlineSize:
         case CSSPropertyInputSecurity:
         case CSSPropertyInset:
-        case CSSPropertyInsetBlock:
         case CSSPropertyInsetBlockEnd:
         case CSSPropertyInsetBlockStart:
         case CSSPropertyInsetInline:

@@ -21,7 +21,7 @@ PASS Animations with implicit from values update when the writing-mode is change
 PASS Animations with overlapping physical and logical properties update when the writing-mode is changed
 PASS Animations update when the writing-mode is changed through a CSS variable
 PASS Animations update when the direction is changed
-FAIL Logical shorthand with variable references animates correctly assert_equals: expected "250px" but got "auto"
+PASS Logical shorthand with variable references animates correctly
 PASS writing-mode is not animatable
 PASS direction is not animatable
 
