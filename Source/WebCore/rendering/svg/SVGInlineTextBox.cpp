@@ -38,12 +38,14 @@
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include "SVGGlyphDisplayListCache.h"
 #include "SVGInlineTextBoxInlines.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
+#include "SVGTextFragment.h"
 #include "TextBoxSelectableRange.h"
 #include "TextPainter.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -58,6 +60,7 @@ struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     void* pointer;
     SVGPaintServerOrColor paintServerOrColor;
     Vector<SVGTextFragment> vector;
+    void* displayList;
 };
 
 static_assert(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), "SVGInlineTextBox is not of expected size");
@@ -296,14 +299,14 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
                     continue;
                 setPaintingResourceMode({ RenderSVGResourceMode::ApplyToFill, RenderSVGResourceMode::ApplyToText });
                 ASSERT(selectionStyle);
-                paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
+                paintText(paintInfo, paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
             case PaintType::Stroke:
                 if (!hasVisibleStroke)
                     continue;
                 setPaintingResourceMode({ RenderSVGResourceMode::ApplyToStroke, RenderSVGResourceMode::ApplyToText});
                 ASSERT(selectionStyle);
-                paintText(paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
+                paintText(paintInfo, paintInfo.context(), style, *selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
                 break;
             case PaintType::Markers:
                 continue;
@@ -602,7 +605,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
         releaseLegacyPaintingResource(usedContext, &path);
 }
 
-void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const RenderStyle& style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
+void SVGInlineTextBox::paintTextWithShadows(const PaintInfo& paintInfo, GraphicsContext& context, const RenderStyle& style, TextRun& textRun, SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
 {
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
@@ -622,6 +625,8 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
 
     GraphicsContext* usedContext = &context;
     SVGPaintServerHandling paintServerHandling { context };
+
+    setGlyphDisplayListIfNeeded(fragment, scaledFont, context, paintInfo, textRun);
 
     auto prepareGraphicsContext = [&]() -> bool {
         if (renderer().document().settings().layerBasedSVGEngineEnabled())
@@ -682,7 +687,8 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
                 usedContext->save();
 
             usedContext->scale(1 / scalingFactor);
-            scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
+            // scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
+            drawText(*usedContext, scaledFont, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->restore();
@@ -700,7 +706,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
     } while (shadow);
 }
 
-void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle& style, const RenderStyle& selectionStyle, const SVGTextFragment& fragment, bool hasSelection, bool paintSelectedTextOnly)
+void SVGInlineTextBox::paintText(const PaintInfo& paintInfo, GraphicsContext& context, const RenderStyle& style, const RenderStyle& selectionStyle, SVGTextFragment& fragment, bool hasSelection, bool paintSelectedTextOnly)
 {
     unsigned startPosition = 0;
     unsigned endPosition = 0;
@@ -712,23 +718,23 @@ void SVGInlineTextBox::paintText(GraphicsContext& context, const RenderStyle& st
     // Fast path if there is no selection, just draw the whole chunk part using the regular style
     TextRun textRun = constructTextRun(style, fragment);
     if (!hasSelection || startPosition >= endPosition) {
-        paintTextWithShadows(context, style, textRun, fragment, 0, fragment.length);
+        paintTextWithShadows(paintInfo, context, style, textRun, fragment, 0, fragment.length);
         return;
     }
 
     // Eventually draw text using regular style until the start position of the selection
     if (startPosition > 0 && !paintSelectedTextOnly)
-        paintTextWithShadows(context, style, textRun, fragment, 0, startPosition);
+        paintTextWithShadows(paintInfo, context, style, textRun, fragment, 0, startPosition);
 
     // Draw text using selection style from the start to the end position of the selection
     {
         SVGResourcesCache::SetStyleForScope temporaryStyleChange(parent()->renderer(), style, selectionStyle);
-        paintTextWithShadows(context, selectionStyle, textRun, fragment, startPosition, endPosition);
+        paintTextWithShadows(paintInfo, context, selectionStyle, textRun, fragment, startPosition, endPosition);
     }
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
     if (endPosition < fragment.length && !paintSelectedTextOnly)
-        paintTextWithShadows(context, style, textRun, fragment, endPosition, fragment.length);
+        paintTextWithShadows(paintInfo, context, style, textRun, fragment, endPosition, fragment.length);
 }
 
 FloatRect SVGInlineTextBox::calculateBoundaries() const
@@ -791,6 +797,28 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
         }
     }
     return false;
+}
+
+bool SVGInlineTextBox::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
+{
+    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer();
+}
+
+void SVGInlineTextBox::setGlyphDisplayListIfNeeded(SVGTextFragment& textFragment, const FontCascade& fontCascade, GraphicsContext& context, const PaintInfo& paintInfo, const TextRun& textRun)
+{
+    if (!SVGInlineTextBox::shouldUseGlyphDisplayList(paintInfo))
+        textFragment.removeFromGlyphDisplayListCache();
+    else
+        m_glyphDisplayList = SVGGlyphDisplayListCache::singleton().getDisplayList(textFragment, fontCascade, context, textRun, paintInfo);
+}
+
+void SVGInlineTextBox::drawText(GraphicsContext& context, const FontCascade& fontCascade, const TextRun& textRun, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset)
+{
+    if (startOffset || endOffset < textRun.length() || !m_glyphDisplayList)
+        fontCascade.drawText(context, textRun, textOrigin, startOffset, endOffset);
+    else
+        context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), textOrigin);
+    m_glyphDisplayList = nullptr;
 }
 
 } // namespace WebCore
