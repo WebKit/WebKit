@@ -307,7 +307,7 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 
     SandboxExtension::Handle sandboxExtensionHandle;
     URL itemURL { item.url() };
-    m_page->maybeInitializeSandboxExtensionHandle(process(), itemURL, item.resourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, itemURL = WTFMove(itemURL), itemID = item.itemID(), navigationLoadType = *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, websitePoliciesData = WTFMove(websitePoliciesData), existingNetworkResourceLoadIdentifierToResume = WTFMove(existingNetworkResourceLoadIdentifierToResume), navigation = Ref { navigation }, sandboxExtensionHandle = WTFMove(sandboxExtensionHandle)] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
+    m_page->maybeInitializeSandboxExtensionHandle(process(), itemURL, item.resourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, itemURL, itemID = item.itemID(), navigationLoadType = *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, websitePoliciesData = WTFMove(websitePoliciesData), existingNetworkResourceLoadIdentifierToResume = WTFMove(existingNetworkResourceLoadIdentifierToResume), navigation = Ref { navigation }, sandboxExtensionHandle = WTFMove(sandboxExtensionHandle)] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
         if (!weakThis)
             return;
         auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(itemURL);
