@@ -30,6 +30,7 @@
 #include "Timer.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -41,8 +42,8 @@ class LoadableScript;
 class WeakPtrImplWithEventTargetData;
 
 class ScriptRunner final : public PendingScriptClient, public CanMakeCheckedPtr<ScriptRunner> {
+    WTF_MAKE_TZONE_ALLOCATED(ScriptRunner);
     WTF_MAKE_NONCOPYABLE(ScriptRunner);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptRunner);
 public:
     explicit ScriptRunner(Document&);

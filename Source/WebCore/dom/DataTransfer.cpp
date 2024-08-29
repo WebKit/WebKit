@@ -49,6 +49,7 @@
 #include "WebContentReader.h"
 #include "WebCorePasteboardFileReader.h"
 #include "markup.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -57,7 +58,8 @@ namespace WebCore {
 #if ENABLE(DRAG_SUPPORT)
 
 class DragImageLoader final : private CachedImageClient {
-    WTF_MAKE_NONCOPYABLE(DragImageLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DragImageLoader);
+    WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
     explicit DragImageLoader(DataTransfer&);
     void startLoading(CachedResourceHandle<CachedImage>&);

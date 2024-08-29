@@ -32,8 +32,11 @@
 #include "DeviceMotionEvent.h"
 #include "EventNames.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceMotionController);
 
 DeviceMotionController::DeviceMotionController(DeviceMotionClient& client)
     : DeviceController(client)

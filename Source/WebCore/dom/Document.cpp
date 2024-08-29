@@ -403,6 +403,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Document);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentParserYieldToken);
 
 using namespace HTMLNames;
 using namespace WTF::Unicode;
@@ -413,7 +414,7 @@ static const Seconds maxIntervalForUserGestureForwardingAfterMediaFinishesPlayin
 
 // Defined here to avoid including GCReachableRef.h in Document.h
 struct Document::PendingScrollEventTargetList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingScrollEventTargetList);
 
 public:
     Vector<GCReachableRef<ContainerNode>> targets;

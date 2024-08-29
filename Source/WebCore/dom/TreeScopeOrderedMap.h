@@ -33,6 +33,7 @@
 #include "Element.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -45,7 +46,7 @@ class HTMLMapElement;
 class TreeScope;
 
 class TreeScopeOrderedMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TreeScopeOrderedMap);
 public:
     void add(const AtomString&, Element&, const TreeScope&);
     void remove(const AtomString&, Element&);

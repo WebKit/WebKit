@@ -46,6 +46,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -213,7 +214,7 @@ public:
     WEBCORE_EXPORT void derefAllowingPartiallyDestroyed();
 
     class Task {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Task);
     public:
         enum CleanupTaskTag { CleanupTask };
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntersectionObserver.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ enum class ViewportProximity : bool { Far, Near };
 enum class HadInitialVisibleContentVisibilityDetermination : bool { No, Yes };
 
 class ContentVisibilityDocumentState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContentVisibilityDocumentState);
 public:
     static void observe(Element&);
     static void unobserve(Element&);

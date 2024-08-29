@@ -29,6 +29,7 @@
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 
 class IdleCallbackController : public CanMakeWeakPtr<IdleCallbackController> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdleCallbackController);
 
 public:
     IdleCallbackController(Document&);

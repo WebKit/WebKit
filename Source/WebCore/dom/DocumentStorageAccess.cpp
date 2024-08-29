@@ -42,8 +42,11 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentStorageAccess);
 
 DocumentStorageAccess::DocumentStorageAccess(Document& document)
     : m_document(document)

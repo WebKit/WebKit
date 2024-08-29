@@ -30,6 +30,7 @@
 #include "Timer.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -48,8 +49,8 @@ enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
 enum class FilterMarkerResult : bool { Keep, Remove };
 
 class DocumentMarkerController final : public CanMakeCheckedPtr<DocumentMarkerController> {
+    WTF_MAKE_TZONE_ALLOCATED(DocumentMarkerController);
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentMarkerController);
 public:
     enum class IterationDirection : bool {

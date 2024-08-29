@@ -32,8 +32,11 @@
 #include "DeviceOrientationEvent.h"
 #include "EventNames.h"
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationController);
 
 DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient& client)
     : DeviceController(client)

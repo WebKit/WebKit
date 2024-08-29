@@ -44,8 +44,11 @@
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
 #include "UserStyleSheet.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtensionStyleSheets);
 
 #if ENABLE(CONTENT_EXTENSIONS)
 using namespace ContentExtensions;

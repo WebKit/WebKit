@@ -37,8 +37,11 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentFontLoader);
 
 DocumentFontLoader::DocumentFontLoader(Document& document)
     : m_document(document)

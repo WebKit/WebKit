@@ -28,6 +28,7 @@
 
 #include "DeviceController.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,8 +36,8 @@ class DeviceMotionClient;
 class DeviceMotionData;
 
 class DeviceMotionController : public DeviceController {
+    WTF_MAKE_TZONE_ALLOCATED(DeviceMotionController);
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceMotionController);
 public:
     explicit DeviceMotionController(DeviceMotionClient&);

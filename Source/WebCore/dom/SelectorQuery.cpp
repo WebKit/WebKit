@@ -40,8 +40,12 @@
 #include "StyledElement.h"
 #include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQuery);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQueryCache);
 
 #if ASSERT_ENABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)

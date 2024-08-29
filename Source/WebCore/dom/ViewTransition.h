@@ -37,6 +37,7 @@
 #include "ViewTransitionUpdateCallback.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -56,7 +57,7 @@ enum class ViewTransitionPhase : uint8_t {
 };
 
 struct CapturedElement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CapturedElement);
 public:
     // std::nullopt represents an non-capturable element.
     // nullptr represents an absent snapshot on an capturable element.
@@ -141,7 +142,7 @@ private:
 };
 
 struct ViewTransitionParams {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ViewTransitionParams);
 public:
 
     OrderedNamedElementsMap namedElements;
@@ -150,6 +151,7 @@ public:
 };
 
 class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
     static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     static RefPtr<ViewTransition> resolveInboundCrossDocumentViewTransition(Document&, std::unique_ptr<ViewTransitionParams>);

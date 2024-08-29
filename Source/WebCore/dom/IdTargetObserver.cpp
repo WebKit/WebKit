@@ -27,8 +27,11 @@
 #include "IdTargetObserver.h"
 
 #include "IdTargetObserverRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdTargetObserver);
 
 IdTargetObserver::IdTargetObserver(IdTargetObserverRegistry& registry, const AtomString& id)
     : m_registry(&registry)

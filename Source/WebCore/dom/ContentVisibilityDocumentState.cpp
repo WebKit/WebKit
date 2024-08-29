@@ -39,8 +39,11 @@
 #include "SimpleRange.h"
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentVisibilityDocumentState);
 
 class ContentVisibilityIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:

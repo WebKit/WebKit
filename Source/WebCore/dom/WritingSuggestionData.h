@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WritingSuggestionData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WritingSuggestionData);
 public:
     WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset, String&& originalPrefix, String&& originalSuffix, bool supportsSuffix)
         : m_content(WTFMove(content))

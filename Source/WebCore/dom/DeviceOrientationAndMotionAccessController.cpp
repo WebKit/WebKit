@@ -36,8 +36,11 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationAndMotionAccessController);
 
 DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController(Document& topDocument)
     : m_topDocument(topDocument)

@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -53,7 +54,7 @@ enum class ConstantProperty {
 };
 
 class ConstantPropertyMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ConstantPropertyMap);
 public:
     explicit ConstantPropertyMap(Document&);
 

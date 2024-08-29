@@ -31,6 +31,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -46,8 +47,8 @@ class ScriptExecutionContext;
 class UnhandledPromise;
 
 class RejectedPromiseTracker final : public CanMakeCheckedPtr<RejectedPromiseTracker> {
+    WTF_MAKE_TZONE_ALLOCATED(RejectedPromiseTracker);
     WTF_MAKE_NONCOPYABLE(RejectedPromiseTracker);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RejectedPromiseTracker);
 public:
     explicit RejectedPromiseTracker(ScriptExecutionContext&, JSC::VM&);

@@ -46,10 +46,13 @@
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RejectedPromiseTracker);
 
 class UnhandledPromise {
     WTF_MAKE_NONCOPYABLE(UnhandledPromise);

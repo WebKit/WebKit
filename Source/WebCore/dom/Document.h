@@ -61,6 +61,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -406,7 +407,7 @@ using RenderingContext = std::variant<
 using StartViewTransitionCallbackOptions = std::optional<std::variant<RefPtr<JSViewTransitionUpdateCallback>, StartViewTransitionOptions>>;
 
 class DocumentParserYieldToken {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DocumentParserYieldToken, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT DocumentParserYieldToken(Document&);
     WEBCORE_EXPORT ~DocumentParserYieldToken();

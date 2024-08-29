@@ -29,8 +29,11 @@
 
 #include "Namespace.h"
 #include "NodeName.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QualifiedNameCache);
 
 struct QNameComponentsTranslator {
     static unsigned hash(const QualifiedNameComponents& components)

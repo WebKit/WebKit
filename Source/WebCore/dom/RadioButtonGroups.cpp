@@ -24,12 +24,15 @@
 #include "HTMLInputElement.h"
 #include "Range.h"
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioButtonGroups);
+
 class RadioButtonGroup {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RadioButtonGroup);
 public:
     bool isEmpty() const { return m_members.isEmptyIgnoringNullReferences(); }
     bool isRequired() const { return m_requiredCount; }
