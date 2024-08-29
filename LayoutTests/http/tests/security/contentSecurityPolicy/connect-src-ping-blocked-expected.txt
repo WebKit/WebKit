@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Refused to connect to https://localhost:8443/ because it does not appear in the connect-src directive of the Content Security Policy.
+Test Page. Some Text.
