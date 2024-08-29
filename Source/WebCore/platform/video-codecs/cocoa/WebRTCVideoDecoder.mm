@@ -48,6 +48,7 @@ public:
         : m_decoder(decoder)
     {
     }
+
     ~WebRTCLocalVideoDecoder()
     {
         webrtc::releaseLocalDecoder(m_decoder);
@@ -61,11 +62,6 @@ private:
 
     webrtc::LocalDecoder m_decoder;
 };
-
-UniqueRef<WebRTCVideoDecoder> WebRTCVideoDecoder::createFromLocalDecoder(webrtc::LocalDecoder decoder)
-{
-    return makeUniqueRef<WebRTCLocalVideoDecoder>(decoder);
-}
 
 class WebRTCDecoderVTBAV1 final : public WebRTCVideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebRTCDecoderVTBAV1);
@@ -90,9 +86,20 @@ private:
     RetainPtr<RTCVideoDecoderVTBAV1> m_decoder;
 };
 
-UniqueRef<WebRTCVideoDecoder> createAV1VTBDecoder(RTCVideoDecoderVTBAV1Callback callback)
+std::unique_ptr<WebRTCVideoDecoder> WebRTCVideoDecoder::create(VideoCodecType decoderType, WebRTCVideoDecoderCallback callback)
 {
-    return makeUniqueRef<WebRTCDecoderVTBAV1>(callback);
+    switch (decoderType) {
+    case VideoCodecType::H264:
+        return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH264Decoder(callback));
+    case VideoCodecType::H265:
+        return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH265Decoder(callback));
+    case VideoCodecType::VP9:
+        return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalVP9Decoder(callback));
+    case VideoCodecType::AV1:
+        return makeUnique<WebRTCDecoderVTBAV1>(callback);
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 }

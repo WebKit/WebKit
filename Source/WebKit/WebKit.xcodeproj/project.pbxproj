@@ -4783,7 +4783,6 @@
 		2D9BECF92B30A57800D0AE99 /* SyntheticEditingCommandType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SyntheticEditingCommandType.serialization.in; sourceTree = "<group>"; };
 		2D9BECFA2B30A5F600D0AE99 /* TextRecognitionUpdateResult.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextRecognitionUpdateResult.serialization.in; sourceTree = "<group>"; };
 		2D9BECFB2B30AF0400D0AE99 /* UndoOrRedo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UndoOrRedo.serialization.in; sourceTree = "<group>"; };
-		2D9BECFC2B30AF1600D0AE99 /* VideoCodecType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoCodecType.serialization.in; sourceTree = "<group>"; };
 		2D9BECFD2B30B16200D0AE99 /* WebsiteAutoplayPolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteAutoplayPolicy.serialization.in; sourceTree = "<group>"; };
 		2D9BECFE2B30B17C00D0AE99 /* WebsiteAutoplayQuirk.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteAutoplayQuirk.serialization.in; sourceTree = "<group>"; };
 		2D9BECFF2B30B19800D0AE99 /* WebsitePopUpPolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsitePopUpPolicy.serialization.in; sourceTree = "<group>"; };
@@ -5241,7 +5240,6 @@
 		418FCBE4271049DC00F96ECA /* RemoteRealtimeVideoSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeVideoSource.h; sourceTree = "<group>"; };
 		4193927728BE41C000162139 /* LSApplicationWorkspaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSApplicationWorkspaceSPI.h; sourceTree = "<group>"; };
 		419ACF9B1F981D26009F1A83 /* WebServiceWorkerFetchTaskClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceWorkerFetchTaskClient.h; sourceTree = "<group>"; };
-		419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoCodecType.h; sourceTree = "<group>"; };
 		41A5F7B9226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeDispositionCocoa.h; sourceTree = "<group>"; };
 		41A5F7BA226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeDispositionCocoa.mm; sourceTree = "<group>"; };
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
@@ -9273,8 +9271,6 @@
 				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
 				466BB8672B9C1F2E0010907E /* UserScriptIdentifier.h */,
 				466BB8692B9C215A0010907E /* UserStyleSheetIdentifier.h */,
-				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
-				2D9BECFC2B30AF1600D0AE99 /* VideoCodecType.serialization.in */,
 				9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */,
 				9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,

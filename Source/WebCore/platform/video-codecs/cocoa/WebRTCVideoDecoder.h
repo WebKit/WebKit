@@ -27,10 +27,11 @@
 
 #if USE(LIBWEBRTC)
 
+#include "VideoCodecType.h"
 #include <wtf/UniqueRef.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
-using RTCVideoDecoderVTBAV1Callback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
+using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
 
 namespace webrtc {
 using LocalDecoder = void*;
@@ -42,17 +43,13 @@ class WebRTCVideoDecoder {
 public:
     virtual ~WebRTCVideoDecoder() = default;
 
-#if USE(LIBWEBRTC)
-    WEBCORE_EXPORT static UniqueRef<WebRTCVideoDecoder> createFromLocalDecoder(webrtc::LocalDecoder);
-#endif
+    WEBCORE_EXPORT static std::unique_ptr<WebRTCVideoDecoder> create(VideoCodecType, WebRTCVideoDecoderCallback);
 
     virtual void flush() = 0;
     virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) = 0;
     virtual int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>) = 0;
     virtual void setFrameSize(uint16_t width, uint16_t height) = 0;
 };
-
-WEBCORE_EXPORT UniqueRef<WebRTCVideoDecoder> createAV1VTBDecoder(RTCVideoDecoderVTBAV1Callback);
 
 }
 

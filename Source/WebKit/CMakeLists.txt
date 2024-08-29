@@ -462,7 +462,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/UpdateInfo.serialization.in
     Shared/UserContentControllerParameters.serialization.in
     Shared/UserData.serialization.in
-    Shared/VideoCodecType.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in

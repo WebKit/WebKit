@@ -25,7 +25,7 @@
 
 #pragma once
 
-namespace WebKit {
+namespace WebCore {
 
 enum class VideoCodecType : uint8_t {
     H264,
@@ -34,4 +34,4 @@ enum class VideoCodecType : uint8_t {
     AV1
 };
 
-} // namespace WebKit
+} // namespace WebCore

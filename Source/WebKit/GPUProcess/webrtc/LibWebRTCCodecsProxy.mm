@@ -146,41 +146,28 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
+std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
 {
-    auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging));
-
-    switch (codecType) {
-    case VideoCodecType::H264:
-        return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH264Decoder(block.get())).moveToUniquePtr();
-    case VideoCodecType::H265:
-        return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalH265Decoder(block.get())).moveToUniquePtr();
-    case VideoCodecType::VP9:
-        return WebRTCVideoDecoder::createFromLocalDecoder(webrtc::createLocalVP9Decoder(block.get())).moveToUniquePtr();
-    case VideoCodecType::AV1:
-        return createAV1VTBDecoder(block.get()).moveToUniquePtr();
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return WebRTCVideoDecoder::create(codecType, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get());
 }
 
-static bool validateCodecString(VideoCodecType codecType, const String& codecString)
+static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
 {
     // FIXME: Further tighten checks.
     switch (codecType) {
-    case VideoCodecType::H264: {
+    case WebCore::VideoCodecType::H264: {
         auto parameters = parseAVCCodecParameters(codecString);
         // Limit to High Profile, level 5.2.
         return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
     }
-    case VideoCodecType::H265: {
+    case WebCore::VideoCodecType::H265: {
         auto parameters = parseHEVCCodecParameters(codecString);
         return parameters && validateHEVCParameters(*parameters, false, false);
     }
-    case VideoCodecType::VP9:
+    case WebCore::VideoCodecType::VP9:
         ASSERT(codecString.startsWith("vp09.0"_s));
         return true;
-    case VideoCodecType::AV1:
+    case WebCore::VideoCodecType::AV1:
         ASSERT(codecString.startsWith("av01."_s));
         if (!codecString.startsWith("av01."_s) || codecString.length() < 7)
             return false;
@@ -191,7 +178,7 @@ static bool validateCodecString(VideoCodecType codecType, const String& codecStr
     return true;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
 
@@ -285,11 +272,11 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Func
     task(iterator->value);
 }
 
-static bool validateEncoderConfiguration(VideoCodecType codecType, const String& codecString, bool useLowLatency, VideoEncoderScalabilityMode scalabilityMode)
+static bool validateEncoderConfiguration(WebCore::VideoCodecType codecType, const String& codecString, bool useLowLatency, VideoEncoderScalabilityMode scalabilityMode)
 {
     // FIXME: Further tighten checks.
     switch (codecType) {
-    case VideoCodecType::H264: {
+    case WebCore::VideoCodecType::H264: {
         if (scalabilityMode != VideoEncoderScalabilityMode::L1T1 && scalabilityMode != VideoEncoderScalabilityMode::L1T2)
             return false;
 
@@ -303,7 +290,7 @@ static bool validateEncoderConfiguration(VideoCodecType codecType, const String&
         }
         return true;
     }
-    case VideoCodecType::H265: {
+    case WebCore::VideoCodecType::H265: {
         if (scalabilityMode != VideoEncoderScalabilityMode::L1T1)
             return false;
 
@@ -313,22 +300,22 @@ static bool validateEncoderConfiguration(VideoCodecType codecType, const String&
         }
         return true;
     }
-    case VideoCodecType::VP9:
-    case VideoCodecType::AV1:
+    case WebCore::VideoCodecType::VP9:
+    case WebCore::VideoCodecType::AV1:
         break;
     }
     ASSERT_NOT_REACHED();
     return true;
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebCore::VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
 
-    if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265) {
+    if (codecType != WebCore::VideoCodecType::H264 && codecType != WebCore::VideoCodecType::H265) {
         callback(false);
         return;
     }
@@ -365,7 +352,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
         callback(false);
         return;
     }
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == WebCore::VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
     if (!encoder) {
         callback(false);
         return;

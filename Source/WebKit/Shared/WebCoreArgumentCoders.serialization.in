@@ -2325,6 +2325,15 @@ struct WebCore::MediaCapabilitiesEncodingInfo : WebCore::MediaCapabilitiesInfo {
     WebCore::MediaEncodingConfiguration supportedConfiguration;
 }
 
+header: <WebCore/VideoCodecType.h>
+
+enum class WebCore::VideoCodecType : uint8_t {
+    H264,
+    H265,
+    VP9,
+    AV1
+};
+
 header: <WebCore/FormData.h>
 [CustomHeader] struct WebCore::FormDataElement {
     std::variant<Vector<uint8_t>, WebCore::FormDataElement::EncodedFileData, WebCore::FormDataElement::EncodedBlobData> data
