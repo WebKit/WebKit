@@ -2733,6 +2733,9 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExten
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)
 {
+    if (!extension().hasSidebar())
+        return std::nullopt;
+
     return m_sidebarWindowMap.ensure(window, [&] {
         return WebExtensionSidebar::create(*this, window);
     }).iterator->value;
@@ -2740,9 +2743,24 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionTab& tab)
 {
+    if (!extension().hasSidebar())
+        return std::nullopt;
+
     return m_sidebarTabMap.ensure(tab, [&] {
         return WebExtensionSidebar::create(*this, tab);
     }).iterator->value;
+}
+
+RefPtr<WebExtensionSidebar> WebExtensionContext::getOrCreateSidebar(RefPtr<WebExtensionTab> tab)
+{
+    if (!extension().hasSidebar())
+        return nil;
+    if (!tab)
+        return &defaultSidebar();
+
+    return getOrCreateSidebar(*tab.get())
+        .and_then([](auto const& sidebar) { return std::optional(RefPtr<WebExtensionSidebar>(&sidebar.get())); })
+        .value_or(nil);
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 

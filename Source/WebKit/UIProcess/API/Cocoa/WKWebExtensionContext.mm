@@ -842,6 +842,23 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
     return _webExtensionContext->backgroundContentURL();
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+- (nullable _WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
+{
+    if (tab)
+        NSParameterAssert([tab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+
+    if (RefPtr maybeSidebar = _webExtensionContext->getOrCreateSidebar(toImplNullable(tab, *_webExtensionContext)))
+        return maybeSidebar->wrapper();
+    return nil;
+}
+#else
+- (nullable _WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
+{
+    return nil;
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -1234,6 +1251,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 }
 
 - (NSURL *)_backgroundContentURL
+{
+    return nil;
+}
+
+- (nullable _WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
 {
     return nil;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebExtensionContext.h>
+#import "_WKWebExtensionSidebar.h"
 
-@class _WKWebExtensionSidebar;
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-WK_HEADER_AUDIT_BEGIN(nullability, sendability)
+#import "WKObject.h"
+#import "WebExtensionSidebar.h"
 
-@interface WKWebExtensionContext ()
+namespace WebKit {
+template<> struct WrapperTraits<WebExtensionSidebar> {
+    using WrapperClass = _WKWebExtensionSidebar;
+};
+}
 
-/*! @abstract The extension background view used for the extension, or `nil` if the extension does not have background content or it is currently unloaded. */
-@property (nonatomic, nullable, readonly) WKWebView *_backgroundWebView;
+@interface _WKWebExtensionSidebar () <WKObject> {
+@package
+    API::ObjectStorage<WebKit::WebExtensionSidebar> _webExtensionSidebar;
+}
 
-/*! @abstract The extension background content URL for the extension, or `nil` if the extension does not have background content. */
-@property (nonatomic, nullable, readonly) NSURL *_backgroundContentURL;
-
-/*!
- @abstract Retrieves the extension sidebar for a given tab, or the default sidebar if `nil` is passed.
- @param tab The tab for which to retrieve the extension sidebar, or `nil` to get the default sidebar.
- @discussion The returned object represents the sidebar specific to the tab when provided; otherwise, it returns the default sidebar.
- The default sidebar should not be directly displayed. When possible, specify the tab to get the most context-relevant sidebar.
- */
-- (nullable _WKWebExtensionSidebar *)sidebarForTab:(nullable id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
+@property (nonatomic, readonly) WebKit::WebExtensionSidebar& _webExtensionSidebar;
 
 @end
 
-WK_HEADER_AUDIT_END(nullability, sendability)
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)

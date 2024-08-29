@@ -82,6 +82,9 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*! @abstract A Boolean value indicating whether the extension use modules for the background content. */
 @property (readonly, nonatomic) BOOL _hasModularBackgroundContent;
 
+/*! @abstract A Boolean value indicating whether the extension has a sidebar. */
+@property (readonly, nonatomic) BOOL _hasSidebar;
+
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)
