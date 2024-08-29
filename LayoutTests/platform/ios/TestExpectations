@@ -7553,3 +7553,6 @@ imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss 
 
 # webkit.org/b/278323 REGRESSION(282170@main): [ iOS ] css3/filters/backdrop-filter-page-scale.html is a flaky image failure
 css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/277841 REGRESSION (281870@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
