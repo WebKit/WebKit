@@ -157,7 +157,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
 
         for (unsigned i = 1; i < value->numChildren(); ++i) {
             Value* child = value->child(i);
-            for (size_t j = 0; j < cCallArgumentRegisterCount(child); j++) {
+            for (size_t j = 0; j < cCallArgumentRegisterCount(child->type()); j++) {
                 next(
                     Arg::Use,
                     bankForType(child->type()),

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "testb3.h"
 
-#if ENABLE(B3_JIT) && !CPU(ARM)
+#if ENABLE(B3_JIT)
 
 void testPatchpointManyWarmAnyImms()
 {
@@ -45,13 +45,22 @@ void testPatchpointManyWarmAnyImms()
     patchpoint->append(ConstrainedValue(arg5, ValueRep::WarmAny));
     patchpoint->setGenerator(
         [&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            CHECK(params.size() == 5);
-            CHECK(params[0] == ValueRep::constant(42));
-            CHECK(params[1] == ValueRep::constant(43));
-            CHECK(params[2] == ValueRep::constant(43000000000000ll));
-            CHECK(params[3] == ValueRep::constantDouble(42.5));
-            CHECK(params[4] == ValueRep::constantFloat(-42.5f));
-            CHECK(params[4].floatValue() == -42.5f);
+            CHECK_EQ(params.size(), (is32Bit() ? 6u : 5u));
+            if constexpr (is32Bit()) {
+                CHECK_EQ(params[0], ValueRep::constant(42));
+                CHECK_EQ(params[1], ValueRep::constant(43));
+                CHECK_EQ(params[2], ValueRep::constant(43000000000000ll >> 32));
+                CHECK_EQ(params[3], ValueRep::constant(43000000000000ll & 0xffffffff));
+                CHECK_EQ(params[4], ValueRep::constantDouble(42.5));
+                CHECK_EQ(params[5], ValueRep::constantFloat(-42.5f));
+                CHECK_EQ(params[5].floatValue(), -42.5f);
+            }
+            CHECK_EQ(params[0], ValueRep::constant(42));
+            CHECK_EQ(params[1], ValueRep::constant(43));
+            CHECK_EQ(params[2], ValueRep::constant(43000000000000ll));
+            CHECK_EQ(params[3], ValueRep::constantDouble(42.5));
+            CHECK_EQ(params[4], ValueRep::constantFloat(-42.5f));
+            CHECK_EQ(params[4].floatValue(), -42.5f);
         });
     root->appendNewControlValue(
         proc, Return, Origin(),
@@ -77,13 +86,13 @@ void testPatchpointManyColdAnyImms()
     patchpoint->append(ConstrainedValue(arg5, ValueRep::ColdAny));
     patchpoint->setGenerator(
         [&] (CCallHelpers&, const StackmapGenerationParams& params) {
-            CHECK(params.size() == 5);
-            CHECK(params[0] == ValueRep::constant(42));
-            CHECK(params[1] == ValueRep::constant(43));
-            CHECK(params[2] == ValueRep::constant(43000000000000ll));
-            CHECK(params[3] == ValueRep::constantDouble(42.5));
-            CHECK(params[4] == ValueRep::constantFloat(-42.5f));
-            CHECK(params[4].floatValue() == -42.5f);
+            CHECK_EQ(params.size(), 5u);
+            CHECK_EQ(params[0], ValueRep::constant(42));
+            CHECK_EQ(params[1], ValueRep::constant(43));
+            CHECK_EQ(params[2], ValueRep::constant(43000000000000ll));
+            CHECK_EQ(params[3], ValueRep::constantDouble(42.5));
+            CHECK_EQ(params[4], ValueRep::constantFloat(-42.5f));
+            CHECK_EQ(params[4].floatValue(), -42.5f);
         });
     root->appendNewControlValue(
         proc, Return, Origin(),
@@ -96,8 +105,9 @@ void testPatchpointWithRegisterResult()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
@@ -105,23 +115,24 @@ void testPatchpointWithRegisterResult()
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 3);
-            CHECK(params[0] == ValueRep::reg(GPRInfo::nonArgGPR0));
+            CHECK_EQ(params.size(), 3u);
+            CHECK_EQ(params[0], ValueRep::reg(GPRInfo::nonArgGPR0));
             CHECK(params[1].isGPR());
             CHECK(params[2].isGPR());
             add32(jit, params[1].gpr(), params[2].gpr(), GPRInfo::nonArgGPR0);
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
 
-    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+    CHECK_EQ(compileAndRun<int>(proc, 1, 2), 3);
 }
 
 void testPatchpointWithStackArgumentResult()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
@@ -130,8 +141,8 @@ void testPatchpointWithStackArgumentResult()
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 3);
-            CHECK(params[0] == ValueRep::stack(-static_cast<intptr_t>(proc.frameSize())));
+            CHECK_EQ(params.size(), 3u);
+            CHECK_EQ(params[0], ValueRep::stack(-static_cast<intptr_t>(proc.frameSize())));
             CHECK(params[1].isGPR());
             CHECK(params[2].isGPR());
             jit.add32(params[1].gpr(), params[2].gpr(), jit.scratchRegister());
@@ -139,15 +150,16 @@ void testPatchpointWithStackArgumentResult()
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
 
-    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+    CHECK_EQ(compileAndRun<int>(proc, 1, 2), 3);
 }
 
 void testPatchpointWithAnyResult()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Double, Origin());
     patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
@@ -158,7 +170,7 @@ void testPatchpointWithAnyResult()
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 3);
+            CHECK_EQ(params.size(), 3u);
             CHECK(params[0].isStack());
             CHECK(params[1].isGPR());
             CHECK(params[2].isGPR());
@@ -168,7 +180,7 @@ void testPatchpointWithAnyResult()
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
 
-    CHECK(compileAndRun<double>(proc, 1, 2) == 3);
+    CHECK_EQ(compileAndRun<double>(proc, 1, 2), 3);
 }
 
 void testSimpleCheck()
@@ -177,7 +189,8 @@ void testSimpleCheck()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
+    Value* arg = arguments[0];
     CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), arg);
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -195,8 +208,8 @@ void testSimpleCheck()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code, 0) == 0);
-    CHECK(invoke<int>(*code, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, 0), 0);
+    CHECK_EQ(invoke<int>(*code, 1), 42);
 }
 
 void testCheckFalse()
@@ -216,7 +229,7 @@ void testCheckFalse()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == 0);
+    CHECK_EQ(invoke<int>(*code), 0);
 }
 
 void testCheckTrue()
@@ -232,7 +245,7 @@ void testCheckTrue()
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             if (optLevel > 1)
-                CHECK(params.value()->opcode() == Patchpoint);
+                CHECK_EQ(params.value()->opcode(), Patchpoint);
             CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
@@ -246,7 +259,7 @@ void testCheckTrue()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == 42);
+    CHECK_EQ(invoke<int>(*code), 42);
 }
 
 void testCheckLessThan()
@@ -255,9 +268,8 @@ void testCheckLessThan()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = arguments[0];
     CheckValue* check = root->appendNew<CheckValue>(
         proc, Check, Origin(),
         root->appendNew<Value>(
@@ -279,11 +291,11 @@ void testCheckLessThan()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code, 42) == 0);
-    CHECK(invoke<int>(*code, 1000) == 0);
-    CHECK(invoke<int>(*code, 41) == 42);
-    CHECK(invoke<int>(*code, 0) == 42);
-    CHECK(invoke<int>(*code, -1) == 42);
+    CHECK_EQ(invoke<int>(*code, 42), 0);
+    CHECK_EQ(invoke<int>(*code, 1000), 0);
+    CHECK_EQ(invoke<int>(*code, 41), 42);
+    CHECK_EQ(invoke<int>(*code, 0), 42);
+    CHECK_EQ(invoke<int>(*code, -1), 42);
 }
 
 void testCheckMegaCombo()
@@ -292,12 +304,13 @@ void testCheckMegaCombo()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* index = root->appendNew<Value>(
+    auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
+    Value* base = arguments[0];
+    Value* index = arguments[1];
+    index = root->appendNew<Value>(
         proc, ZExt32, Origin(),
         root->appendNew<Value>(
-            proc, Trunc, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            proc, Trunc, Origin(), index));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -329,15 +342,15 @@ void testCheckMegaCombo()
 
     int8_t value;
     value = 42;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 0);
     value = 127;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 0);
     value = 41;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
     value = 0;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
     value = -1;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
 }
 
 void testCheckTrickyMegaCombo()
@@ -346,14 +359,13 @@ void testCheckTrickyMegaCombo()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
+    Value* base = arguments[0];
     Value* index = root->appendNew<Value>(
         proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Add, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(),
             root->appendNew<Value>(
-                proc, Trunc, Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)),
+                proc, Trunc, Origin(), arguments[1]),
             root->appendNew<Const32Value>(proc, Origin(), 1)));
 
     Value* ptr = root->appendNew<Value>(
@@ -386,15 +398,15 @@ void testCheckTrickyMegaCombo()
 
     int8_t value;
     value = 42;
-    CHECK(invoke<int>(*code, &value - 2, 0) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 0), 0);
     value = 127;
-    CHECK(invoke<int>(*code, &value - 2, 0) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 0), 0);
     value = 41;
-    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 0), 42);
     value = 0;
-    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 0), 42);
     value = -1;
-    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 0), 42);
 }
 
 void testCheckTwoMegaCombos()
@@ -403,12 +415,13 @@ void testCheckTwoMegaCombos()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* index = root->appendNew<Value>(
+    auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
+    Value* base = arguments[0];
+    Value* index = arguments[1];
+    index = root->appendNew<Value>(
         proc, ZExt32, Origin(),
         root->appendNew<Value>(
-            proc, Trunc, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            proc, Trunc, Origin(), index));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -452,15 +465,15 @@ void testCheckTwoMegaCombos()
 
     int8_t value;
     value = 42;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 0);
     value = 127;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 0);
     value = 41;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
     value = 0;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
     value = -1;
-    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1), 42);
 }
 
 void testCheckTwoNonRedundantMegaCombos()
@@ -472,18 +485,17 @@ void testCheckTwoNonRedundantMegaCombos()
     BasicBlock* root = proc.addBlock();
     BasicBlock* thenCase = proc.addBlock();
     BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, size_t, int32_t>(proc, root);
 
-    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* index = root->appendNew<Value>(
+    Value* base = arguments[0];
+    Value* index = arguments[1];
+    index = root->appendNew<Value>(
         proc, ZExt32, Origin(),
         root->appendNew<Value>(
-            proc, Trunc, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            proc, Trunc, Origin(), index));
     Value* branchPredicate = root->appendNew<Value>(
         proc, BitAnd, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
+        arguments[2],
         root->appendNew<Const32Value>(proc, Origin(), 0xff));
 
     Value* ptr = root->appendNew<Value>(
@@ -536,26 +548,26 @@ void testCheckTwoNonRedundantMegaCombos()
     int8_t value;
 
     value = 42;
-    CHECK(invoke<int>(*code, &value - 2, 1, true) == 43);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, true), 43);
     value = 127;
-    CHECK(invoke<int>(*code, &value - 2, 1, true) == 43);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, true), 43);
     value = 41;
-    CHECK(invoke<int>(*code, &value - 2, 1, true) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, true), 42);
     value = 0;
-    CHECK(invoke<int>(*code, &value - 2, 1, true) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, true), 42);
     value = -1;
-    CHECK(invoke<int>(*code, &value - 2, 1, true) == 42);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, true), 42);
 
     value = 42;
-    CHECK(invoke<int>(*code, &value - 2, 1, false) == 45);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, false), 45);
     value = 127;
-    CHECK(invoke<int>(*code, &value - 2, 1, false) == 45);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, false), 45);
     value = 41;
-    CHECK(invoke<int>(*code, &value - 2, 1, false) == 44);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, false), 44);
     value = 0;
-    CHECK(invoke<int>(*code, &value - 2, 1, false) == 44);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, false), 44);
     value = -1;
-    CHECK(invoke<int>(*code, &value - 2, 1, false) == 44);
+    CHECK_EQ(invoke<int>(*code, &value - 2, 1, false), 44);
 }
 
 void testCheckAddImm()
@@ -564,9 +576,8 @@ void testCheckAddImm()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg1 = arguments[0];
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), 42);
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
     checkAdd->append(arg1);
@@ -574,10 +585,10 @@ void testCheckAddImm()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isConstant());
-            CHECK(params[1].value() == 42);
+            CHECK_EQ(params[1].value(), 42);
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -590,10 +601,10 @@ void testCheckAddImm()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == 42.0);
-    CHECK(invoke<double>(*code, 1) == 43.0);
-    CHECK(invoke<double>(*code, 42) == 84.0);
-    CHECK(invoke<double>(*code, 2147483647) == 2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0), 42.0);
+    CHECK_EQ(invoke<double>(*code, 1), 43.0);
+    CHECK_EQ(invoke<double>(*code, 42), 84.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647), 2147483689.0);
 }
 
 void testCheckAddImmCommute()
@@ -602,9 +613,8 @@ void testCheckAddImmCommute()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg1 = arguments[0];
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), 42);
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg2, arg1);
     checkAdd->append(arg1);
@@ -612,10 +622,10 @@ void testCheckAddImmCommute()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isConstant());
-            CHECK(params[1].value() == 42);
+            CHECK_EQ(params[1].value(), 42);
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -628,10 +638,10 @@ void testCheckAddImmCommute()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == 42.0);
-    CHECK(invoke<double>(*code, 1) == 43.0);
-    CHECK(invoke<double>(*code, 42) == 84.0);
-    CHECK(invoke<double>(*code, 2147483647) == 2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0), 42.0);
+    CHECK_EQ(invoke<double>(*code, 1), 43.0);
+    CHECK_EQ(invoke<double>(*code, 42), 84.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647), 2147483689.0);
 }
 
 void testCheckAddImmSomeRegister()
@@ -640,9 +650,8 @@ void testCheckAddImmSomeRegister()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg1 = arguments[0];
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), 42);
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
     checkAdd->appendSomeRegister(arg1);
@@ -650,7 +659,7 @@ void testCheckAddImmSomeRegister()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -665,10 +674,10 @@ void testCheckAddImmSomeRegister()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == 42.0);
-    CHECK(invoke<double>(*code, 1) == 43.0);
-    CHECK(invoke<double>(*code, 42) == 84.0);
-    CHECK(invoke<double>(*code, 2147483647) == 2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0), 42.0);
+    CHECK_EQ(invoke<double>(*code, 1), 43.0);
+    CHECK_EQ(invoke<double>(*code, 42), 84.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647), 2147483689.0);
 }
 
 void testCheckAdd()
@@ -677,19 +686,16 @@ void testCheckAdd()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
     checkAdd->appendSomeRegister(arg1);
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -704,46 +710,64 @@ void testCheckAdd()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0, 42) == 42.0);
-    CHECK(invoke<double>(*code, 1, 42) == 43.0);
-    CHECK(invoke<double>(*code, 42, 42) == 84.0);
-    CHECK(invoke<double>(*code, 2147483647, 42) == 2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0, 42), 42.0);
+    CHECK_EQ(invoke<double>(*code, 1, 42), 43.0);
+    CHECK_EQ(invoke<double>(*code, 42, 42), 84.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647, 42), 2147483689.0);
 }
 
+#if CPU(ARM_THUMB2)
+void testCheckAdd64() { } // TODO
+#else
 void testCheckAdd64()
 {
     Procedure proc;
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
     checkAdd->appendSomeRegister(arg1);
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
-            CHECK(params[0].isGPR());
-            CHECK(params[1].isGPR());
-            jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt64ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
-            jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
-            jit.emitFunctionEpilogue();
-            jit.ret();
-        });
+#if CPU(ARM_THUMB2)
+                CHECK_EQ(params.size(), 4u);
+                CHECK(params[0].isGPR());
+                CHECK(params[1].isGPR());
+                CHECK(params[2].isGPR());
+                CHECK(params[3].isGPR());
+                jit.convertInt64ToDouble(params[0].gpr(), params[1].gpr(), FPRInfo::fpRegT0);
+                jit.convertInt64ToDouble(params[2].gpr(), params[3].gpr(), FPRInfo::fpRegT0);
+                jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+                jit.emitFunctionEpilogue();
+                jit.ret();
+#else
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                CHECK_EQ(params.size(), 2u);
+                CHECK(params[0].isGPR());
+                CHECK(params[1].isGPR());
+                jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+                jit.convertInt64ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
+                jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+                jit.emitFunctionEpilogue();
+                jit.ret();
+#endif
+    });
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(proc, IToD, Origin(), checkAdd));
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0ll, 42ll) == 42.0);
-    CHECK(invoke<double>(*code, 1ll, 42ll) == 43.0);
-    CHECK(invoke<double>(*code, 42ll, 42ll) == 84.0);
-    CHECK(invoke<double>(*code, 9223372036854775807ll, 42ll) == static_cast<double>(9223372036854775807ll) + 42.0);
+    CHECK_EQ(invoke<double>(*code, 0ll, 42ll), 42.0);
+    CHECK_EQ(invoke<double>(*code, 1ll, 42ll), 43.0);
+    CHECK_EQ(invoke<double>(*code, 42ll, 42ll), 84.0);
+    CHECK_EQ(invoke<double>(*code, 9223372036854775807ll, 42ll), static_cast<double>(9223372036854775807ll) + 42.0);
 }
+#endif
 
 void testCheckAdd64Range()
 {
@@ -768,7 +792,7 @@ void testCheckAdd64Range()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, 0x8ffffffe00000000LL) == 42.0);
+    CHECK_EQ(invoke<int64_t>(*code, 0x8ffffffe00000000LL), 42.0);
 }
 
 void testCheckAddFold(int a, int b)
@@ -788,7 +812,7 @@ void testCheckAddFold(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == a + b);
+    CHECK_EQ(invoke<int>(*code), a + b);
 }
 
 void testCheckAddFoldFail(int a, int b)
@@ -811,16 +835,17 @@ void testCheckAddFoldFail(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == 42);
+    CHECK_EQ(invoke<int>(*code), 42);
 }
 
 void testCheckAddArgumentAliasing64()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value* arg3 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto arguments = cCallArgumentValues<int64_t, int64_t, int64_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
+    Value* arg3 = arguments[2];
 
     // Pretend to use all the args.
     PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
@@ -848,22 +873,17 @@ void testCheckAddArgumentAliasing64()
 
     root->appendNewControlValue(proc, Return, Origin(), checkAdd3);
 
-    CHECK(compileAndRun<int64_t>(proc, 1, 2, 3) == 8);
+    CHECK_EQ(compileAndRun<int64_t>(proc, 1LL, 2LL, 3LL), 8);
 }
 
 void testCheckAddArgumentAliasing32()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
-    Value* arg3 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
+    Value* arg3 = arguments[2];
 
     // Pretend to use all the args.
     PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
@@ -891,7 +911,7 @@ void testCheckAddArgumentAliasing32()
 
     root->appendNewControlValue(proc, Return, Origin(), checkAdd3);
 
-    CHECK(compileAndRun<int32_t>(proc, 1, 2, 3) == 8);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 1, 2, 3), 8);
 }
 
 void testCheckAddSelfOverflow64()
@@ -900,13 +920,18 @@ void testCheckAddSelfOverflow64()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    Value* arg = arguments[0];
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->append(arg);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
+            if constexpr (is32Bit()) {
+                jit.move(params[1].gpr(), GPRInfo::returnValueGPR);
+                jit.move(params[0].gpr(), GPRInfo::returnValueGPR2);
+            } else
+                jit.move(params[0].gpr(), GPRInfo::returnValueGPR);
             jit.emitFunctionEpilogue();
             jit.ret();
         });
@@ -920,9 +945,9 @@ void testCheckAddSelfOverflow64()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, 0ll) == 0);
-    CHECK(invoke<int64_t>(*code, 1ll) == 2);
-    CHECK(invoke<int64_t>(*code, std::numeric_limits<int64_t>::max()) == std::numeric_limits<int64_t>::max());
+    CHECK_EQ(invoke<int64_t>(*code, 0ll), 0);
+    CHECK_EQ(invoke<int64_t>(*code, 1ll), 2);
+    CHECK_EQ(invoke<int64_t>(*code, std::numeric_limits<int64_t>::max()), std::numeric_limits<int64_t>::max());
 }
 
 void testCheckAddSelfOverflow32()
@@ -931,9 +956,8 @@ void testCheckAddSelfOverflow32()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = arguments[0];
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->append(arg);
     checkAdd->setGenerator(
@@ -953,16 +977,17 @@ void testCheckAddSelfOverflow32()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int32_t>(*code, 0ll) == 0);
-    CHECK(invoke<int32_t>(*code, 1ll) == 2);
-    CHECK(invoke<int32_t>(*code, std::numeric_limits<int32_t>::max()) == std::numeric_limits<int32_t>::max());
+    CHECK_EQ(invoke<int32_t>(*code, 0ll), 0);
+    CHECK_EQ(invoke<int32_t>(*code, 1ll), 2);
+    CHECK_EQ(invoke<int32_t>(*code, std::numeric_limits<int32_t>::max()), std::numeric_limits<int32_t>::max());
 }
 
 void testCheckAddRemoveCheckWithSExt8(int8_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt8, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt8, Origin(), arguments[0]));
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -973,14 +998,15 @@ void testCheckAddRemoveCheckWithSExt8(int8_t value)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, value) == 2ll * static_cast<int32_t>(value));
+    CHECK_EQ(invoke<int64_t>(*code, value), 2ll * static_cast<int32_t>(value));
 }
 
 void testCheckAddRemoveCheckWithSExt16(int16_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt16, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, SExt16, Origin(), arguments[0]));
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -991,14 +1017,15 @@ void testCheckAddRemoveCheckWithSExt16(int16_t value)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, value) == 2ll * static_cast<int32_t>(value));
+    CHECK_EQ(invoke<int64_t>(*code, value), 2ll * static_cast<int32_t>(value));
 }
 
 void testCheckAddRemoveCheckWithSExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = root->appendNew<Value>(proc, SExt32, Origin(), arguments[0]);
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -1009,14 +1036,15 @@ void testCheckAddRemoveCheckWithSExt32(int32_t value)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int64_t>(*code, value) == 2ll * value);
+    CHECK_EQ(invoke<int64_t>(*code, value), 2ll * value);
 }
 
 void testCheckAddRemoveCheckWithZExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg = root->appendNew<Value>(proc, ZExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg = root->appendNew<Value>(proc, ZExt32, Origin(), arguments[0]);
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg, arg);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
@@ -1027,7 +1055,7 @@ void testCheckAddRemoveCheckWithZExt32(int32_t value)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<uint64_t>(*code, value) == static_cast<uint64_t>(2 * static_cast<uint64_t>(static_cast<uint32_t>(value))));
+    CHECK_EQ(invoke<uint64_t>(*code, value), static_cast<uint64_t>(2 * static_cast<uint64_t>(static_cast<uint32_t>(value))));
 }
 
 void testCheckSubImm()
@@ -1036,9 +1064,8 @@ void testCheckSubImm()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg1 = arguments[0];
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), 42);
     CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), arg1, arg2);
     checkSub->append(arg1);
@@ -1046,10 +1073,10 @@ void testCheckSubImm()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isConstant());
-            CHECK(params[1].value() == 42);
+            CHECK_EQ(params[1].value(), 42);
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -1062,10 +1089,10 @@ void testCheckSubImm()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == -42.0);
-    CHECK(invoke<double>(*code, 1) == -41.0);
-    CHECK(invoke<double>(*code, 42) == 0.0);
-    CHECK(invoke<double>(*code, -2147483647) == -2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0), -42.0);
+    CHECK_EQ(invoke<double>(*code, 1), -41.0);
+    CHECK_EQ(invoke<double>(*code, 42), 0.0);
+    CHECK_EQ(invoke<double>(*code, -2147483647), -2147483689.0);
 }
 
 void testCheckSubBadImm()
@@ -1074,9 +1101,8 @@ void testCheckSubBadImm()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<uint32_t>(proc, root);
+    Value* arg1 = arguments[0];
     int32_t badImm = std::numeric_limits<int>::min();
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), badImm);
     CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), arg1, arg2);
@@ -1085,12 +1111,12 @@ void testCheckSubBadImm()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
 
             if (params[1].isConstant()) {
-                CHECK(params[1].value() == badImm);
+                CHECK_EQ(params[1].value(), badImm);
                 jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(badImm), FPRInfo::fpRegT1);
             } else {
                 CHECK(params[1].isGPR());
@@ -1106,10 +1132,10 @@ void testCheckSubBadImm()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == -static_cast<double>(badImm));
-    CHECK(invoke<double>(*code, -1) == -static_cast<double>(badImm) - 1);
-    CHECK(invoke<double>(*code, 1) == -static_cast<double>(badImm) + 1);
-    CHECK(invoke<double>(*code, 42) == -static_cast<double>(badImm) + 42);
+    CHECK_EQ(invoke<double>(*code, 0), -static_cast<double>(badImm));
+    CHECK_EQ(invoke<double>(*code, -1), -static_cast<double>(badImm) - 1);
+    CHECK_EQ(invoke<double>(*code, 1), -static_cast<double>(badImm) + 1);
+    CHECK_EQ(invoke<double>(*code, 42), -static_cast<double>(badImm) + 42);
 }
 
 void testCheckSub()
@@ -1118,19 +1144,16 @@ void testCheckSub()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    auto arguments = cCallArgumentValues<uint32_t, uint32_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), arg1, arg2);
     checkSub->append(arg1);
     checkSub->append(arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1145,10 +1168,10 @@ void testCheckSub()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0, 42) == -42.0);
-    CHECK(invoke<double>(*code, 1, 42) == -41.0);
-    CHECK(invoke<double>(*code, 42, 42) == 0.0);
-    CHECK(invoke<double>(*code, -2147483647, 42) == -2147483689.0);
+    CHECK_EQ(invoke<double>(*code, 0, 42), -42.0);
+    CHECK_EQ(invoke<double>(*code, 1, 42), -41.0);
+    CHECK_EQ(invoke<double>(*code, 42, 42), 0.0);
+    CHECK_EQ(invoke<double>(*code, -2147483647, 42), -2147483689.0);
 }
 
 void testCheckSubBitAnd()
@@ -1157,11 +1180,11 @@ void testCheckSubBitAnd()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int>(proc, root);
     Value* zero = root->appendNew<Const32Value>(proc, Origin(), 0);
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* truncatedArg1 = root->appendNew<Value>(proc, Trunc, Origin(), arg1);
+    Value* arg1 = arguments[0];
     Value* minusTwo = root->appendNew<Const32Value>(proc, Origin(), -2);
-    Value* bitAnd = root->appendNew<Value>(proc, BitAnd, Origin(), truncatedArg1, minusTwo);
+    Value* bitAnd = root->appendNew<Value>(proc, BitAnd, Origin(), arg1, minusTwo);
     CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), zero, bitAnd);
     checkSub->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1188,6 +1211,9 @@ NEVER_INLINE double doubleSub(double a, double b)
     return a - b;
 }
 
+#if CPU(ARM_THUMB2)
+void testCheckSub64() { } // TODO
+#else
 void testCheckSub64()
 {
     Procedure proc;
@@ -1202,7 +1228,7 @@ void testCheckSub64()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1217,11 +1243,12 @@ void testCheckSub64()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0ll, 42ll) == -42.0);
-    CHECK(invoke<double>(*code, 1ll, 42ll) == -41.0);
-    CHECK(invoke<double>(*code, 42ll, 42ll) == 0.0);
-    CHECK(invoke<double>(*code, -9223372036854775807ll, 42ll) == doubleSub(static_cast<double>(-9223372036854775807ll), 42.0));
+    CHECK_EQ(invoke<double>(*code, 0ll, 42ll), -42.0);
+    CHECK_EQ(invoke<double>(*code, 1ll, 42ll), -41.0);
+    CHECK_EQ(invoke<double>(*code, 42ll, 42ll), 0.0);
+    CHECK_EQ(invoke<double>(*code, -9223372036854775807ll, 42ll), doubleSub(static_cast<double>(-9223372036854775807ll), 42.0));
 }
+#endif
 
 void testCheckSubFold(int a, int b)
 {
@@ -1240,7 +1267,7 @@ void testCheckSubFold(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == a - b);
+    CHECK_EQ(invoke<int>(*code), a - b);
 }
 
 void testCheckSubFoldFail(int a, int b)
@@ -1263,7 +1290,7 @@ void testCheckSubFoldFail(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == 42);
+    CHECK_EQ(invoke<int>(*code), 42);
 }
 
 void testCheckNeg()
@@ -1272,16 +1299,15 @@ void testCheckNeg()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     Value* arg1 = root->appendNew<Const32Value>(proc, Origin(), 0);
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = arguments[0];
     CheckValue* checkNeg = root->appendNew<CheckValue>(proc, CheckSub, Origin(), arg1, arg2);
     checkNeg->append(arg2);
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK_EQ(params.size(), 1u);
             CHECK(params[0].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT1);
             jit.negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -1294,12 +1320,15 @@ void testCheckNeg()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == 0.0);
-    CHECK(invoke<double>(*code, 1) == -1.0);
-    CHECK(invoke<double>(*code, 42) == -42.0);
-    CHECK(invoke<double>(*code, -2147483647 - 1) == 2147483648.0);
+    CHECK_EQ(invoke<double>(*code, 0), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1), -1.0);
+    CHECK_EQ(invoke<double>(*code, 42), -42.0);
+    CHECK_EQ(invoke<double>(*code, -2147483647 - 1), 2147483648.0);
 }
 
+#if CPU(ARM_THUMB2)
+void testCheckNeg64() { } // TODO
+#else
 void testCheckNeg64()
 {
     Procedure proc;
@@ -1313,7 +1342,7 @@ void testCheckNeg64()
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK_EQ(params.size(), 1u);
             CHECK(params[0].isGPR());
             jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT1);
             jit.negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -1326,11 +1355,12 @@ void testCheckNeg64()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0ll) == 0.0);
-    CHECK(invoke<double>(*code, 1ll) == -1.0);
-    CHECK(invoke<double>(*code, 42ll) == -42.0);
-    CHECK(invoke<double>(*code, -9223372036854775807ll - 1) == 9223372036854775808.0);
+    CHECK_EQ(invoke<double>(*code, 0ll), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1ll), -1.0);
+    CHECK_EQ(invoke<double>(*code, 42ll), -42.0);
+    CHECK_EQ(invoke<double>(*code, -9223372036854775807ll - 1), 9223372036854775808.0);
 }
+#endif
 
 void testCheckMul()
 {
@@ -1338,19 +1368,16 @@ void testCheckMul()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
     CheckValue* checkMul = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg1, arg2);
     checkMul->append(arg1);
     checkMul->append(arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1365,10 +1392,10 @@ void testCheckMul()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0, 42) == 0.0);
-    CHECK(invoke<double>(*code, 1, 42) == 42.0);
-    CHECK(invoke<double>(*code, 42, 42) == 42.0 * 42.0);
-    CHECK(invoke<double>(*code, 2147483647, 42) == 2147483647.0 * 42.0);
+    CHECK_EQ(invoke<double>(*code, 0, 42), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1, 42), 42.0);
+    CHECK_EQ(invoke<double>(*code, 42, 42), 42.0 * 42.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647, 42), 2147483647.0 * 42.0);
 }
 
 void testCheckMulMemory()
@@ -1393,7 +1420,7 @@ void testCheckMulMemory()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1410,19 +1437,19 @@ void testCheckMulMemory()
 
     left = 0;
     right = 42;
-    CHECK(invoke<double>(*code) == 0.0);
+    CHECK_EQ(invoke<double>(*code), 0.0);
 
     left = 1;
     right = 42;
-    CHECK(invoke<double>(*code) == 42.0);
+    CHECK_EQ(invoke<double>(*code), 42.0);
 
     left = 42;
     right = 42;
-    CHECK(invoke<double>(*code) == 42.0 * 42.0);
+    CHECK_EQ(invoke<double>(*code), 42.0 * 42.0);
 
     left = 2147483647;
     right = 42;
-    CHECK(invoke<double>(*code) == 2147483647.0 * 42.0);
+    CHECK_EQ(invoke<double>(*code), 2147483647.0 * 42.0);
 }
 
 void testCheckMul2()
@@ -1431,9 +1458,8 @@ void testCheckMul2()
     if (proc.optLevel() < 1)
         return;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* arg1 = arguments[0];
     Value* arg2 = root->appendNew<Const32Value>(proc, Origin(), 2);
     CheckValue* checkMul = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg1, arg2);
     checkMul->append(arg1);
@@ -1441,10 +1467,10 @@ void testCheckMul2()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isConstant());
-            CHECK(params[1].value() == 2);
+            CHECK_EQ(params[1].value(), 2);
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(2), FPRInfo::fpRegT1);
             jit.mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
@@ -1457,12 +1483,15 @@ void testCheckMul2()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0) == 0.0);
-    CHECK(invoke<double>(*code, 1) == 2.0);
-    CHECK(invoke<double>(*code, 42) == 42.0 * 2.0);
-    CHECK(invoke<double>(*code, 2147483647) == 2147483647.0 * 2.0);
+    CHECK_EQ(invoke<double>(*code, 0), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1), 2.0);
+    CHECK_EQ(invoke<double>(*code, 42), 42.0 * 2.0);
+    CHECK_EQ(invoke<double>(*code, 2147483647), 2147483647.0 * 2.0);
 }
 
+#if CPU(ARM_THUMB2)
+void testCheckMul64() { } // TODO
+#else
 void testCheckMul64()
 {
     Procedure proc;
@@ -1477,7 +1506,7 @@ void testCheckMul64()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1492,11 +1521,12 @@ void testCheckMul64()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0, 42) == 0.0);
-    CHECK(invoke<double>(*code, 1, 42) == 42.0);
-    CHECK(invoke<double>(*code, 42, 42) == 42.0 * 42.0);
-    CHECK(invoke<double>(*code, 9223372036854775807ll, 42) == static_cast<double>(9223372036854775807ll) * 42.0);
+    CHECK_EQ(invoke<double>(*code, 0, 42), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1, 42), 42.0);
+    CHECK_EQ(invoke<double>(*code, 42, 42), 42.0 * 42.0);
+    CHECK_EQ(invoke<double>(*code, 9223372036854775807ll, 42), static_cast<double>(9223372036854775807ll) * 42.0);
 }
+#endif
 
 void testCheckMulFold(int a, int b)
 {
@@ -1515,7 +1545,7 @@ void testCheckMulFold(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == a * b);
+    CHECK_EQ(invoke<int>(*code), a * b);
 }
 
 void testCheckMulFoldFail(int a, int b)
@@ -1538,16 +1568,17 @@ void testCheckMulFoldFail(int a, int b)
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int>(*code) == 42);
+    CHECK_EQ(invoke<int>(*code), 42);
 }
 
 void testCheckMulArgumentAliasing64()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value* arg3 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto arguments = cCallArgumentValues<int64_t, int64_t, int64_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
+    Value* arg3 = arguments[2];
 
     // Pretend to use all the args.
     PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
@@ -1574,23 +1605,20 @@ void testCheckMulArgumentAliasing64()
     checkMul3->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) { jit.oops(); });
 
     root->appendNewControlValue(proc, Return, Origin(), checkMul3);
-
-    CHECK(compileAndRun<int64_t>(proc, 2, 3, 4) == 72);
+    int64_t a = 2;
+    int64_t b = 3;
+    int64_t c = 4;
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b, c), 72);
 }
 
 void testCheckMulArgumentAliasing32()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* arg1 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* arg2 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
-    Value* arg3 = root->appendNew<Value>(
-        proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2));
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t>(proc, root);
+    Value* arg1 = arguments[0];
+    Value* arg2 = arguments[1];
+    Value* arg3 = arguments[2];
 
     // Pretend to use all the args.
     PatchpointValue* useArgs = root->appendNew<PatchpointValue>(proc, Void, Origin());
@@ -1618,9 +1646,12 @@ void testCheckMulArgumentAliasing32()
 
     root->appendNewControlValue(proc, Return, Origin(), checkMul3);
 
-    CHECK(compileAndRun<int32_t>(proc, 2, 3, 4) == 72);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 2, 3, 4), 72);
 }
 
+#if CPU(ARM_THUMB2)
+void testCheckMul64SShr() { } // TODO
+#else
 void testCheckMul64SShr()
 {
     Procedure proc;
@@ -1641,7 +1672,7 @@ void testCheckMul64SShr()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 2);
+            CHECK_EQ(params.size(), 2u);
             CHECK(params[0].isGPR());
             CHECK(params[1].isGPR());
             jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
@@ -1656,11 +1687,12 @@ void testCheckMul64SShr()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<double>(*code, 0ll, 42ll) == 0.0);
-    CHECK(invoke<double>(*code, 1ll, 42ll) == 0.0);
-    CHECK(invoke<double>(*code, 42ll, 42ll) == (42.0 / 2.0) * (42.0 / 2.0));
-    CHECK(invoke<double>(*code, 10000000000ll, 10000000000ll) == 25000000000000000000.0);
+    CHECK_EQ(invoke<double>(*code, 0ll, 42ll), 0.0);
+    CHECK_EQ(invoke<double>(*code, 1ll, 42ll), 0.0);
+    CHECK_EQ(invoke<double>(*code, 42ll, 42ll), (42.0 / 2.0) * (42.0 / 2.0));
+    CHECK_EQ(invoke<double>(*code, 10000000000ll, 10000000000ll), 25000000000000000000.0);
 }
+#endif
 
 template<typename LeftFunctor, typename RightFunctor, typename InputType>
 void genericTestCompare(
@@ -1683,7 +1715,7 @@ void genericTestCompare(
                 comparisonResult,
                 root->appendIntConstant(proc, Origin(), comparisonResult->type(), 0)));
 
-        CHECK(compileAndRun<int>(proc, left, right) == result);
+        CHECK_EQ(compileAndRun<int>(proc, left, right), result);
     }
 
     // Using a branch.
@@ -1706,7 +1738,7 @@ void genericTestCompare(
         patchpoint->setGenerator(
             [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                CHECK(params.size() == 1);
+                CHECK_EQ(params.size(), 1u);
                 CHECK(params[0].isGPR());
                 jit.move(CCallHelpers::TrustedImm32(1), params[0].gpr());
             });
@@ -1716,7 +1748,7 @@ void genericTestCompare(
             proc, Return, Origin(),
             elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
-        CHECK(compileAndRun<int>(proc, left, right) == result);
+        CHECK_EQ(compileAndRun<int>(proc, left, right), result);
     }
 }
 
@@ -1771,9 +1803,8 @@ void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int rig
                 block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
         },
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<Value>(
-                proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+            auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, block);
+            return arguments[1];
         },
         left, right, result);
 
@@ -1798,9 +1829,8 @@ void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int rig
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<Value>(
-                proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+            auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, block);
+            return arguments[0];
         },
         [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<MemoryValue>(
@@ -1849,23 +1879,27 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
+            return arguments[0];
         },
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
+            return arguments[1];
         },
         left, right, result);
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
             return block->appendNew<Value>(
                 proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+                arguments[0]);
         },
         [&] (BasicBlock* block, Procedure& proc) {
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
             return block->appendNew<Value>(
                 proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+                arguments[1]);
         },
         left, right, int32Result);
 
@@ -1876,7 +1910,8 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
             return block->appendNew<Const64Value>(proc, Origin(), left);
         },
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
+            return arguments[1];
         },
         left, right, result);
     genericTestCompare(
@@ -1885,9 +1920,10 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
             return block->appendNew<Const32Value>(proc, Origin(), left);
         },
         [&] (BasicBlock* block, Procedure& proc) {
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
             return block->appendNew<Value>(
                 proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+                arguments[1]);
         },
         left, right, int32Result);
 
@@ -1895,7 +1931,8 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
-            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
+            return arguments[0];
         },
         [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Const64Value>(proc, Origin(), right);
@@ -1904,9 +1941,10 @@ void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
+            auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, block);
             return block->appendNew<Value>(
                 proc, Trunc, Origin(),
-                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+                arguments[0]);
         },
         [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Const32Value>(proc, Origin(), right);
@@ -1951,14 +1989,15 @@ void testEqualDouble(double left, double right, bool result)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double, double>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, Equal, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+            arguments[0],
+            arguments[1]));
 
-    CHECK(compileAndRun<bool>(proc, left, right) == result);
+    CHECK_EQ(compileAndRun<bool>(proc, left, right), result);
 }
 
 extern "C" {
@@ -1973,15 +2012,16 @@ void testCallSimple(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
             root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunction)),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            arguments[0],
+            arguments[1]));
 
-    CHECK(compileAndRun<int>(proc, a, b) == a + b);
+    CHECK_EQ(compileAndRun<int>(proc, a, b), a + b);
 }
 
 void testCallRare(int a, int b)
@@ -1990,10 +2030,11 @@ void testCallRare(int a, int b)
     BasicBlock* root = proc.addBlock();
     BasicBlock* common = proc.addBlock();
     BasicBlock* rare = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t, intptr_t>(proc, root).eager();
 
     root->appendNewControlValue(
         proc, Branch, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        arguments[0],
         FrequentedBlock(rare, FrequencyClass::Rare),
         FrequentedBlock(common));
 
@@ -2005,10 +2046,10 @@ void testCallRare(int a, int b)
         rare->appendNew<CCallValue>(
             proc, Int32, Origin(),
             rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunction)),
-            rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
-            rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+            arguments[1],
+            arguments[2]));
 
-    CHECK(compileAndRun<int>(proc, true, a, b) == a + b);
+    CHECK_EQ(compileAndRun<int>(proc, true, a, b), a + b);
 }
 
 void testCallRareLive(int a, int b, int c)
@@ -2017,10 +2058,11 @@ void testCallRareLive(int a, int b, int c)
     BasicBlock* root = proc.addBlock();
     BasicBlock* common = proc.addBlock();
     BasicBlock* rare = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t, intptr_t, int32_t>(proc, root).eager();
 
     root->appendNewControlValue(
         proc, Branch, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        arguments[0],
         FrequentedBlock(rare, FrequencyClass::Rare),
         FrequentedBlock(common));
 
@@ -2034,28 +2076,27 @@ void testCallRareLive(int a, int b, int c)
             rare->appendNew<CCallValue>(
                 proc, Int32, Origin(),
                 rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunction)),
-                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
-                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
-            rare->appendNew<Value>(
-                proc, Trunc, Origin(),
-                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3))));
+                arguments[1],
+                arguments[2]),
+            arguments[3]));
 
-    CHECK(compileAndRun<int>(proc, true, a, b, c) == a + b + c);
+    CHECK_EQ(compileAndRun<int>(proc, true, a, b, c), a + b + c);
 }
 
 void testCallSimplePure(int a, int b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(), Effects::none(),
             root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunction)),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            arguments[0],
+            arguments[1]));
 
-    CHECK(compileAndRun<int>(proc, a, b) == a + b);
+    CHECK_EQ(compileAndRun<int>(proc, a, b), a + b);
 }
 
 
@@ -2083,7 +2124,7 @@ void testCallFunctionWithHellaArguments()
 
     root->appendNewControlValue(proc, Return, Origin(), call);
 
-    CHECK(compileAndRun<int>(proc) == functionWithHellaArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+    CHECK_EQ(compileAndRun<int>(proc), functionWithHellaArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
 extern "C" {
@@ -2114,7 +2155,7 @@ void testCallFunctionWithHellaArguments2()
 
     auto a = compileAndRun<uint64_t>(proc);
     auto b = functionWithHellaArguments2(limit, limit-1, limit-2, limit-3, limit-4, limit-5, limit-6, limit-7, limit-8, limit-9, limit-10, limit-11, limit-12, limit-13, limit-14, limit-15, limit-16, limit-17, limit-18, limit-19, limit-20, limit-21, limit-22, limit-23, limit-24, limit-25);
-    CHECK(a == b);
+    CHECK_EQ(a, b);
 }
 
 #if OS(WINDOWS)
@@ -2174,14 +2215,14 @@ void testCallFunctionWithHellaArguments3()
 #endif
 
     std::unique_ptr<Compilation> compilation = compileProc(proc);
-    CHECK(invoke<int>(*compilation) == invoke<int>(*compilation));
-    CHECK(invoke<int>(*compilation) == 7967500);
-    CHECK(invoke<int>(*compilation) == invoke<int>(*compilation));
-    CHECK(invoke<int>(*compilation) == 7967500);
-    CHECK(invoke<int>(*compilation) == invoke<int>(*compilation));
-    CHECK(invoke<int>(*compilation) == 7967500);
-    CHECK(invoke<int>(*compilation) == invoke<int>(*compilation));
-    CHECK(invoke<int>(*compilation) == 7967500);
+    CHECK_EQ(invoke<int>(*compilation), invoke<int>(*compilation));
+    CHECK_EQ(invoke<int>(*compilation), 7967500);
+    CHECK_EQ(invoke<int>(*compilation), invoke<int>(*compilation));
+    CHECK_EQ(invoke<int>(*compilation), 7967500);
+    CHECK_EQ(invoke<int>(*compilation), invoke<int>(*compilation));
+    CHECK_EQ(invoke<int>(*compilation), 7967500);
+    CHECK_EQ(invoke<int>(*compilation), invoke<int>(*compilation));
+    CHECK_EQ(invoke<int>(*compilation), 7967500);
 }
 
 struct IntPtrPair {
@@ -2222,12 +2263,12 @@ void testCallPairResultRare(int a, int b)
     BasicBlock* root = proc.addBlock();
     BasicBlock* call = proc.addBlock();
     BasicBlock* ret0 = proc.addBlock();
-
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root).eager();
 
     {
         root->appendNewControlValue(
             proc, Branch, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            arguments[0],
             FrequentedBlock(call, FrequencyClass::Rare),
             FrequentedBlock(ret0));
     }
@@ -2287,15 +2328,16 @@ void testCallSimpleDouble(double a, double b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double, double>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Double, Origin(),
             root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunctionDouble)),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+            arguments[0],
+            arguments[1]));
 
-    CHECK(compileAndRun<double>(proc, a, b) == a + b);
+    CHECK_EQ(compileAndRun<double>(proc, a, b), a + b);
 }
 
 extern "C" {
@@ -2310,10 +2352,9 @@ void testCallSimpleFloat(float a, float b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* argument1int32 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* argument2int32 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* argument1int32 = arguments[0];
+    Value* argument2int32 = arguments[1];
     Value* floatValue1 = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument1int32);
     Value* floatValue2 = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument2int32);
     root->appendNewControlValue(
@@ -2351,7 +2392,7 @@ void testCallFunctionWithHellaDoubleArguments()
 
     root->appendNewControlValue(proc, Return, Origin(), call);
 
-    CHECK(compileAndRun<double>(proc) == functionWithHellaDoubleArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+    CHECK_EQ(compileAndRun<double>(proc), functionWithHellaDoubleArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
 extern "C" {
@@ -2378,7 +2419,7 @@ void testCallFunctionWithHellaFloatArguments()
 
     root->appendNewControlValue(proc, Return, Origin(), call);
 
-    CHECK(compileAndRun<float>(proc) == functionWithHellaFloatArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+    CHECK_EQ(compileAndRun<float>(proc), functionWithHellaFloatArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
 void testLinearScanWithCalleeOnStack()
@@ -2391,14 +2432,15 @@ void testLinearScanWithCalleeOnStack()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
 
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
             root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(simpleFunction)),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+            arguments[0],
+            arguments[1]));
 
     // Force the linear scan algorithm to spill everything.
     auto original = Options::airLinearScanSpillsEverything();
@@ -2418,19 +2460,16 @@ void testChillDiv(int num, int den, int res)
     {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
     
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
                 proc, chill(Div), Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+                arguments[0],
+                arguments[1]));
 
-        CHECK(compileAndRun<int>(proc, num, den) == res);
+        CHECK_EQ(compileAndRun<int>(proc, num, den), res);
     }
 
     // Test constant.
@@ -2445,7 +2484,7 @@ void testChillDiv(int num, int den, int res)
                 root->appendNew<Const32Value>(proc, Origin(), num),
                 root->appendNew<Const32Value>(proc, Origin(), den)));
     
-        CHECK(compileAndRun<int>(proc) == res);
+        CHECK_EQ(compileAndRun<int>(proc), res);
     }
 }
 
@@ -2453,6 +2492,7 @@ void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t>(proc, root);
 
     root->appendNewControlValue(
         proc, Return, Origin(),
@@ -2460,22 +2500,14 @@ void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
             proc, Add, Origin(),
             root->appendNew<Value>(
                 proc, chill(Div), Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))),
+                arguments[0],
+                arguments[1]),
             root->appendNew<Value>(
                 proc, chill(Div), Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3)))));
+                arguments[2],
+                arguments[3])));
 
-    CHECK(compileAndRun<int>(proc, num1, den1, num2, den2) == res);
+    CHECK_EQ(compileAndRun<int>(proc, num1, den1, num2, den2), res);
 }
 
 void testChillDiv64(int64_t num, int64_t den, int64_t res)
@@ -2487,15 +2519,16 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
     {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
     
         root->appendNewControlValue(
             proc, Return, Origin(),
             root->appendNew<Value>(
                 proc, chill(Div), Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+                arguments[0],
+                arguments[1]));
     
-        CHECK(compileAndRun<int64_t>(proc, num, den) == res);
+        CHECK_EQ(compileAndRun<int64_t>(proc, num, den), res);
     }
 
     // Test constant.
@@ -2510,7 +2543,7 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
                 root->appendNew<Const64Value>(proc, Origin(), num),
                 root->appendNew<Const64Value>(proc, Origin(), den)));
     
-        CHECK(compileAndRun<int64_t>(proc) == res);
+        CHECK_EQ(compileAndRun<int64_t>(proc), res);
     }
 }
 
@@ -2521,8 +2554,9 @@ void testModArg(int64_t value)
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
 
-    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument = arguments[0];
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
@@ -2538,13 +2572,14 @@ void testModArgs(int64_t numerator, int64_t denominator)
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
 
-    Value* argument1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* argument2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* argument1 = arguments[0];
+    Value* argument2 = arguments[1];
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == numerator % denominator);
+    CHECK_EQ(compileAndRun<int64_t>(proc, numerator, denominator), numerator % denominator);
 }
 
 void testModImms(int64_t numerator, int64_t denominator)
@@ -2562,7 +2597,7 @@ void testModImms(int64_t numerator, int64_t denominator)
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == numerator % denominator);
+    CHECK_EQ(compileAndRun<int64_t>(proc, numerator, denominator), numerator % denominator);
 }
 
 void testModArg32(int32_t value)
@@ -2572,9 +2607,9 @@ void testModArg32(int32_t value)
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
 
-    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = arguments[0];
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
@@ -2590,15 +2625,14 @@ void testModArgs32(int32_t numerator, int32_t denominator)
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
 
-    Value* argument1 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* argument1 = arguments[0];
+    Value* argument2 = arguments[1];
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == numerator % denominator);
+    CHECK_EQ(compileAndRun<int32_t>(proc, numerator, denominator), numerator % denominator);
 }
 
 void testModImms32(int32_t numerator, int32_t denominator)
@@ -2616,15 +2650,16 @@ void testModImms32(int32_t numerator, int32_t denominator)
     Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == numerator % denominator);
+    CHECK_EQ(compileAndRun<int32_t>(proc, numerator, denominator), numerator % denominator);
 }
 
 void testChillModArg(int64_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
 
-    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument = arguments[0];
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
@@ -2635,13 +2670,14 @@ void testChillModArgs(int64_t numerator, int64_t denominator)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
 
-    Value* argument1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    Value* argument2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* argument1 = arguments[0];
+    Value* argument2 = arguments[1];
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+    CHECK_EQ(compileAndRun<int64_t>(proc, numerator, denominator), chillMod(numerator, denominator));
 }
 
 void testChillModImms(int64_t numerator, int64_t denominator)
@@ -2654,16 +2690,16 @@ void testChillModImms(int64_t numerator, int64_t denominator)
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+    CHECK_EQ(compileAndRun<int64_t>(proc, numerator, denominator), chillMod(numerator, denominator));
 }
 
 void testChillModArg32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
 
-    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = arguments[0];
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
@@ -2674,15 +2710,14 @@ void testChillModArgs32(int32_t numerator, int32_t denominator)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
 
-    Value* argument1 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-    Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* argument1 = arguments[0];
+    Value* argument2 = arguments[1];
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+    CHECK_EQ(compileAndRun<int32_t>(proc, numerator, denominator), chillMod(numerator, denominator));
 }
 
 void testChillModImms32(int32_t numerator, int32_t denominator)
@@ -2695,7 +2730,7 @@ void testChillModImms32(int32_t numerator, int32_t denominator)
     Value* result = root->appendNew<Value>(proc, chill(Mod), Origin(), argument1, argument2);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+    CHECK_EQ(compileAndRun<int32_t>(proc, numerator, denominator), chillMod(numerator, denominator));
 }
 
 void testLoopWithMultipleHeaderEdges()
@@ -2707,24 +2742,26 @@ void testLoopWithMultipleHeaderEdges()
     BasicBlock* outerHeader = proc.addBlock();
     BasicBlock* outerEnd = proc.addBlock();
     BasicBlock* end = proc.addBlock();
-
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t>(proc, root);
+    auto* arg0 = arguments[0];
     auto* ne42 = outerHeader->appendNew<Value>(
         proc, NotEqual, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        arg0,
         root->appendNew<ConstPtrValue>(proc, Origin(), 42));
     outerHeader->appendNewControlValue(
         proc, Branch, Origin(),
         ne42,
         FrequentedBlock(innerHeader), FrequentedBlock(outerEnd));
+    auto* arg32 = arg0;
+    if constexpr (!is32Bit())
+        arg32 = root->appendNew<Value>(proc, Trunc, Origin(), arg0);
     outerEnd->appendNewControlValue(
         proc, Branch, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(),
-            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        arg32,
         FrequentedBlock(outerHeader), FrequentedBlock(end));
 
     SwitchValue* switchValue = innerHeader->appendNew<SwitchValue>(
-        proc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        proc, Origin(), arguments[1]);
     switchValue->setFallThrough(FrequentedBlock(innerEnd));
     for (unsigned i = 0; i < 20; ++i) {
         switchValue->appendCase(SwitchCase(i, FrequentedBlock(innerHeader)));
@@ -2738,7 +2775,7 @@ void testLoopWithMultipleHeaderEdges()
         end->appendNew<Const32Value>(proc, Origin(), 5678));
 
     auto code = compileProc(proc); // This shouldn't crash in computing NaturalLoops.
-    CHECK(invoke<int32_t>(*code, 0, 12345) == 5678);
+    CHECK_EQ(invoke<int32_t>(*code, 0, 12345), 5678);
 }
 
 void testSwitch(unsigned degree, unsigned gap)
@@ -2747,27 +2784,27 @@ void testSwitch(unsigned degree, unsigned gap)
     BasicBlock* root = proc.addBlock();
 
     BasicBlock* terminate = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t, intptr_t>(proc, root);
     terminate->appendNewControlValue(
         proc, Return, Origin(),
         terminate->appendNew<Const32Value>(proc, Origin(), 0));
 
     SwitchValue* switchValue = root->appendNew<SwitchValue>(
-        proc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        proc, Origin(), arguments[0]);
     switchValue->setFallThrough(FrequentedBlock(terminate));
 
     for (unsigned i = 0; i < degree; ++i) {
         BasicBlock* newBlock = proc.addBlock();
         newBlock->appendNewControlValue(
             proc, Return, Origin(),
-            newBlock->appendNew<ArgumentRegValue>(
-                proc, Origin(), (i & 1) ? GPRInfo::argumentGPR2 : GPRInfo::argumentGPR1));
+            (i & 1) ? arguments.withBlock(newBlock, 2) : arguments.withBlock(newBlock, 1));
         switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
     }
 
     auto code = compileProc(proc);
 
     for (unsigned i = 0; i < degree; ++i) {
-        CHECK(invoke<int32_t>(*code, i * gap, 42, 11) == ((i & 1) ? 11 : 42));
+        CHECK_EQ(invoke<int32_t>(*code, i * gap, 42, 11), ((i & 1) ? 11 : 42));
         if (gap > 1) {
             CHECK(!invoke<int32_t>(*code, i * gap + 1, 42, 11));
             CHECK(!invoke<int32_t>(*code, i * gap - 1, 42, 11));
@@ -2785,11 +2822,12 @@ void testSwitchSameCaseAsDefault()
     BasicBlock* root = proc.addBlock();
 
     BasicBlock* return10 = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     return10->appendNewControlValue(
         proc, Return, Origin(),
         return10->appendNew<Const32Value>(proc, Origin(), 10));
 
-    Value* switchOperand = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* switchOperand = arguments[0];
 
     BasicBlock* caseAndDefault = proc.addBlock();
     caseAndDefault->appendNewControlValue(
@@ -2809,21 +2847,22 @@ void testSwitchSameCaseAsDefault()
 
     auto code = compileProc(proc);
 
-    CHECK(invoke<int32_t>(*code, 100) == 10);
-    CHECK(invoke<int32_t>(*code, 0) == 1);
-    CHECK(invoke<int32_t>(*code, 1) == 0);
-    CHECK(invoke<int32_t>(*code, 2) == 0);
-    CHECK(invoke<int32_t>(*code, 99) == 0);
-    CHECK(invoke<int32_t>(*code, 0xbaadbeef) == 0);
+    CHECK_EQ(invoke<int32_t>(*code, 100), 10);
+    CHECK_EQ(invoke<int32_t>(*code, 0), 1);
+    CHECK_EQ(invoke<int32_t>(*code, 1), 0);
+    CHECK_EQ(invoke<int32_t>(*code, 2), 0);
+    CHECK_EQ(invoke<int32_t>(*code, 99), 0);
+    CHECK_EQ(invoke<int32_t>(*code, 0xbaadbeef), 0);
 }
 
 void testSwitchChillDiv(unsigned degree, unsigned gap)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t, intptr_t, intptr_t>(proc, root);
 
-    Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value* right = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* left = arguments[1];
+    Value* right = arguments[2];
 
     BasicBlock* terminate = proc.addBlock();
     terminate->appendNewControlValue(
@@ -2831,7 +2870,7 @@ void testSwitchChillDiv(unsigned degree, unsigned gap)
         terminate->appendNew<Const32Value>(proc, Origin(), 0));
 
     SwitchValue* switchValue = root->appendNew<SwitchValue>(
-        proc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        proc, Origin(), arguments[0]);
     switchValue->setFallThrough(FrequentedBlock(terminate));
 
     for (unsigned i = 0; i < degree; ++i) {
@@ -2851,7 +2890,7 @@ void testSwitchChillDiv(unsigned degree, unsigned gap)
         dataLog("i = ", i, "\n");
         int32_t result = invoke<int32_t>(*code, i * gap, 42, 11);
         dataLog("result = ", result, "\n");
-        CHECK(result == ((i & 1) ? 11/42 : 42/11));
+        CHECK_EQ(result, ((i & 1) ? 11 / 42 : 42 / 11));
         if (gap > 1) {
             CHECK(!invoke<int32_t>(*code, i * gap + 1, 42, 11));
             CHECK(!invoke<int32_t>(*code, i * gap - 1, 42, 11));
@@ -2869,12 +2908,13 @@ void testSwitchTargettingSameBlock()
     BasicBlock* root = proc.addBlock();
 
     BasicBlock* terminate = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     terminate->appendNewControlValue(
         proc, Return, Origin(),
         terminate->appendNew<Const32Value>(proc, Origin(), 5));
 
     SwitchValue* switchValue = root->appendNew<SwitchValue>(
-        proc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        proc, Origin(), arguments[0]);
     switchValue->setFallThrough(FrequentedBlock(terminate));
 
     BasicBlock* otherTarget = proc.addBlock();
@@ -2888,7 +2928,7 @@ void testSwitchTargettingSameBlock()
 
     for (unsigned i = 0; i < 20; ++i) {
         int32_t expected = (i == 3 || i == 13) ? 42 : 5;
-        CHECK(invoke<int32_t>(*code, i) == expected);
+        CHECK_EQ(invoke<int32_t>(*code, i), expected);
     }
 }
 
@@ -2898,11 +2938,12 @@ void testSwitchTargettingSameBlockFoldPathConstant()
     BasicBlock* root = proc.addBlock();
 
     BasicBlock* terminate = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     terminate->appendNewControlValue(
         proc, Return, Origin(),
         terminate->appendNew<Const32Value>(proc, Origin(), 42));
 
-    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument = arguments[0];
     SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), argument);
     switchValue->setFallThrough(FrequentedBlock(terminate));
 
@@ -2916,7 +2957,7 @@ void testSwitchTargettingSameBlockFoldPathConstant()
 
     for (unsigned i = 0; i < 20; ++i) {
         int32_t expected = (i == 3 || i == 13) ? i : 42;
-        CHECK(invoke<int32_t>(*code, i) == expected);
+        CHECK_EQ(invoke<int32_t>(*code, i), expected);
     }
 }
 
@@ -2930,22 +2971,21 @@ void testTruncFold(int64_t value)
             proc, Trunc, Origin(),
             root->appendNew<Const64Value>(proc, Origin(), value)));
 
-    CHECK(compileAndRun<int>(proc) == static_cast<int>(value));
+    CHECK_EQ(compileAndRun<int>(proc), static_cast<int>(value));
 }
 
 void testZExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, ZExt32, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+            arguments[0]));
 
-    CHECK(compileAndRun<uint64_t>(proc, value) == static_cast<uint64_t>(static_cast<uint32_t>(value)));
+    CHECK_EQ(compileAndRun<uint64_t>(proc, value), static_cast<uint64_t>(static_cast<uint32_t>(value)));
 }
 
 void testZExt32Fold(int32_t value)
@@ -2958,22 +2998,21 @@ void testZExt32Fold(int32_t value)
             proc, ZExt32, Origin(),
             root->appendNew<Const32Value>(proc, Origin(), value)));
 
-    CHECK(compileAndRun<uint64_t>(proc, value) == static_cast<uint64_t>(static_cast<uint32_t>(value)));
+    CHECK_EQ(compileAndRun<uint64_t>(proc, value), static_cast<uint64_t>(static_cast<uint32_t>(value)));
 }
 
 void testSExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt32, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+            arguments[0]));
 
-    CHECK(compileAndRun<int64_t>(proc, value) == static_cast<int64_t>(value));
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), static_cast<int64_t>(value));
 }
 
 void testSExt32Fold(int32_t value)
@@ -2986,56 +3025,53 @@ void testSExt32Fold(int32_t value)
             proc, SExt32, Origin(),
             root->appendNew<Const32Value>(proc, Origin(), value)));
 
-    CHECK(compileAndRun<int64_t>(proc, value) == static_cast<int64_t>(value));
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), static_cast<int64_t>(value));
 }
 
 void testTruncZExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, Trunc, Origin(),
             root->appendNew<Value>(
                 proc, ZExt32, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == value);
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), value);
 }
 
 void testTruncSExt32(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, Trunc, Origin(),
             root->appendNew<Value>(
                 proc, SExt32, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == value);
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), value);
 }
 
 void testSExt8(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt8, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+            arguments[0]));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int8_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int8_t>(value)));
 }
 
 void testSExt8Fold(int32_t value)
@@ -3048,92 +3084,87 @@ void testSExt8Fold(int32_t value)
             proc, SExt8, Origin(),
             root->appendNew<Const32Value>(proc, Origin(), value)));
 
-    CHECK(compileAndRun<int32_t>(proc) == static_cast<int32_t>(static_cast<int8_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc), static_cast<int32_t>(static_cast<int8_t>(value)));
 }
 
 void testSExt8SExt8(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt8, Origin(),
             root->appendNew<Value>(
                 proc, SExt8, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int8_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int8_t>(value)));
 }
 
 void testSExt8SExt16(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt8, Origin(),
             root->appendNew<Value>(
                 proc, SExt16, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int8_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int8_t>(value)));
 }
 
 void testSExt8BitAnd(int32_t value, int32_t mask)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt8, Origin(),
             root->appendNew<Value>(
                 proc, BitAnd, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                arguments[0],
                 root->appendNew<Const32Value>(proc, Origin(), mask))));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int8_t>(value & mask)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int8_t>(value & mask)));
 }
 
 void testBitAndSExt8(int32_t value, int32_t mask)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, BitAnd, Origin(),
             root->appendNew<Value>(
                 proc, SExt8, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+                arguments[0]),
             root->appendNew<Const32Value>(proc, Origin(), mask)));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == (static_cast<int32_t>(static_cast<int8_t>(value)) & mask));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), (static_cast<int32_t>(static_cast<int8_t>(value)) & mask));
 }
 
 void testSExt16(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt16, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(),
-                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+            arguments[0]));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int16_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int16_t>(value)));
 }
 
 void testSExt16Fold(int32_t value)
@@ -3146,95 +3177,90 @@ void testSExt16Fold(int32_t value)
             proc, SExt16, Origin(),
             root->appendNew<Const32Value>(proc, Origin(), value)));
 
-    CHECK(compileAndRun<int32_t>(proc) == static_cast<int32_t>(static_cast<int16_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc), static_cast<int32_t>(static_cast<int16_t>(value)));
 }
 
 void testSExt16SExt16(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt16, Origin(),
             root->appendNew<Value>(
                 proc, SExt16, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int16_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int16_t>(value)));
 }
 
 void testSExt16SExt8(int32_t value)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt16, Origin(),
             root->appendNew<Value>(
                 proc, SExt8, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+                arguments[0])));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int8_t>(value)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int8_t>(value)));
 }
 
 void testSExt16BitAnd(int32_t value, int32_t mask)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt16, Origin(),
             root->appendNew<Value>(
                 proc, BitAnd, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                arguments[0],
                 root->appendNew<Const32Value>(proc, Origin(), mask))));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<int32_t>(static_cast<int16_t>(value & mask)));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), static_cast<int32_t>(static_cast<int16_t>(value & mask)));
 }
 
 void testBitAndSExt16(int32_t value, int32_t mask)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, BitAnd, Origin(),
             root->appendNew<Value>(
                 proc, SExt16, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+                arguments[0]),
             root->appendNew<Const32Value>(proc, Origin(), mask)));
 
-    CHECK(compileAndRun<int32_t>(proc, value) == (static_cast<int32_t>(static_cast<int16_t>(value)) & mask));
+    CHECK_EQ(compileAndRun<int32_t>(proc, value), (static_cast<int32_t>(static_cast<int16_t>(value)) & mask));
 }
 
 void testSExt32BitAnd(int32_t value, int32_t mask)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
     root->appendNewControlValue(
         proc, Return, Origin(),
         root->appendNew<Value>(
             proc, SExt32, Origin(),
             root->appendNew<Value>(
                 proc, BitAnd, Origin(),
-                root->appendNew<Value>(
-                    proc, Trunc, Origin(),
-                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                arguments[0],
                 root->appendNew<Const32Value>(proc, Origin(), mask))));
 
-    CHECK(compileAndRun<int64_t>(proc, value) == static_cast<int64_t>(value & mask));
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), static_cast<int64_t>(value & mask));
 }
 
 #endif // ENABLE(B3_JIT)

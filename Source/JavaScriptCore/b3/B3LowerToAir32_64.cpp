@@ -85,7 +85,7 @@ struct MaybeWide {
     void dump(PrintStream& out) const
     {
         if (!*this)
-            out.print("(<none>)");
+            out.print("(<none (maybewide)>)");
         else if (inner.index() == 1)
             out.print("(", std::get<1>(inner), ")");
         else {
@@ -501,7 +501,7 @@ private:
         }
         return tmp;
     }
-    Arg someArg(Value *value)
+    Arg someArg(Value* value)
     {
         LogicalTmp tmp = someTmp(value);
         if (tmp.isNarrow())
@@ -1665,7 +1665,7 @@ private:
                 break;
             case ValueRep::SomeRegister:
             case ValueRep::SomeLateRegister:
-                arg = tmp(value.value());
+                arg = someArg(value.value());
                 break;
             case ValueRep::SomeRegisterWithClobber: {
                 Tmp dstTmp = m_code.newTmp(value.value()->resultBank());
@@ -4882,6 +4882,7 @@ private:
                     inst.args.append(arg.tmp());
                     return;
                 case ValueRep::Register: {
+                    RELEASE_ASSERT(!is32Bit() || type != Int64);
                     Tmp reg = Tmp(rep.reg());
                     inst.args.append(reg);
                     after.append(Inst(relaxedMoveForType(type), m_value, reg, arg.tmp()));

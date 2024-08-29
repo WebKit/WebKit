@@ -30,6 +30,10 @@
 
 #include "AirCCallSpecial.h"
 #include "AirCode.h"
+#include "B3ArgumentRegValue.h"
+#include "B3AtomicValue.h"
+#include "B3BasicBlockInlines.h"
+#include "B3BreakCriticalEdges.h"
 #include "B3CCallValue.h"
 #include "B3Procedure.h"
 
@@ -38,10 +42,10 @@ namespace JSC { namespace B3 { namespace Air {
 namespace {
 
 template<typename BankInfo>
-void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Value* child)
+void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Type childType)
 {
-    const auto registerCount = cCallArgumentRegisterCount(child);
-    if (is32Bit() && child->type() == Int64)
+    const auto registerCount = cCallArgumentRegisterCount(childType);
+    if (is32Bit() && childType == Int64)
         argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
 
     if (argumentCount < BankInfo::numberOfArgumentRegisters) {
@@ -57,10 +61,10 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
         // In the rare case when the Arg width does not match the argument width
         // (32-bit arm passing a 64-bit argument), we respect the width needed
         // for each stack access:
-        slotSize = bytesForWidth(cCallArgumentRegisterWidth(child->type()));
+        slotSize = bytesForWidth(cCallArgumentRegisterWidth(childType));
 
         // but the logical stack slot uses the natural alignment of the argument
-        slotAlignment = sizeofType(child->type());
+        slotAlignment = sizeofType(childType);
 
     } else {
         // On other platforms, arguments are always aligned to machine word
@@ -76,14 +80,15 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
     }
 }
 
-void marshallCCallArgument(Vector<Arg> &result, unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Value* child)
+
+void marshallCCallArgument(Vector<Arg> &result, unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Type childType)
 {
-    switch (bankForType(child->type())) {
+    switch (bankForType(childType)) {
     case GP:
-        marshallCCallArgumentImpl<GPRInfo>(result, gpArgumentCount, stackOffset, child);
+        marshallCCallArgumentImpl<GPRInfo>(result, gpArgumentCount, stackOffset, childType);
         return;
     case FP:
-        marshallCCallArgumentImpl<FPRInfo>(result, fpArgumentCount, stackOffset, child);
+        marshallCCallArgumentImpl<FPRInfo>(result, fpArgumentCount, stackOffset, childType);
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -99,7 +104,7 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
     unsigned fpArgumentCount = 0;
     unsigned stackOffset = 0;
     for (unsigned i = 1; i < value->numChildren(); ++i)
-        marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i));
+        marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i)->type());
     code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf<stackAlignmentBytes()>(stackOffset));
     return result;
 }
@@ -129,9 +134,9 @@ size_t cCallResultCount(Code& code, CCallValue* value)
     }
 }
 
-size_t cCallArgumentRegisterCount(const Value* value)
+size_t cCallArgumentRegisterCount(Type type)
 {
-    switch (value->type().kind()) {
+    switch (type.kind()) {
     case Void:
         return 0;
     case Int64:
@@ -201,6 +206,91 @@ Inst buildCCall(Code& code, Value* origin, const Vector<Arg>& arguments)
             inst.args.append(arg);
     }
     return inst;
+}
+
+#if CPU(ARM_THUMB2)
+Value* ArgumentValueList::makeStitch(B3::BasicBlock*, Value* hi, Value* low) const
+{
+    return block->appendNew<Value>(procedure, Stitch, Origin(), hi, low);
+}
+#endif
+
+Value* ArgumentValueList::makeCCallValue(B3::BasicBlock* block, Type type, Air::Arg arg) const
+{
+    if (arg.isTmp() && arg.tmp().isReg()) {
+        Value* val = block->appendNew<ArgumentRegValue>(procedure, Origin(), arg.reg());
+        if constexpr (!is32Bit()) {
+            if (type == Int32)
+                val = block->appendNew<Value>(procedure, Trunc, Origin(), val);
+        }
+
+        if (type == Float)
+            val = block->appendNew<Value>(procedure, Trunc, Origin(), val);
+
+        return val;
+    }
+
+    // we really shouldn't be using this except on arm32, so, assert just in
+    // case, since the details are likely wrong for other architectures, and
+    // it's not expected to end up here on 64-bit
+    RELEASE_ASSERT(isARM_THUMB2() && arg.isCallArg());
+
+    return block->appendNew<MemoryValue>(procedure,
+        Load,
+        type,
+        Origin(),
+        block->appendNew<Value>(procedure, FramePointer, Origin()),
+        arg.offset() + 2 * sizeof(void*)
+    );
+}
+
+Value* ArgumentValueList::makeCCallValue(B3::BasicBlock* block, size_t idx) const
+{
+    unsigned firstUnderlyingArg = argUnderlyingCounts[idx];
+    unsigned argCount = 0;
+    if (idx + 1 < types.size())
+        argCount = argUnderlyingCounts[idx + 1] - firstUnderlyingArg;
+    else
+        argCount = underlyingArgs.size() - firstUnderlyingArg;
+    RELEASE_ASSERT(firstUnderlyingArg < underlyingArgs.size());
+    RELEASE_ASSERT(firstUnderlyingArg + argCount <= underlyingArgs.size());
+
+    switch (types[idx].kind()) {
+    case Int32:
+    case Float:
+    case Double:
+        RELEASE_ASSERT(argCount == 1);
+        return makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]);
+
+    case Int64:
+        RELEASE_ASSERT(argCount == sizeof(uint64_t) / sizeof(uintptr_t));
+#if CPU(ARM_THUMB2)
+            return makeStitch(block, makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg + 1]),
+                makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]));
+#else
+        return makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]);
+#endif
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
+ArgumentValueList computeCCallArguments(Procedure& procedure, B3::BasicBlock* block, const Vector<Type>& types)
+{
+    Vector<Air::Arg> underlyingArgs;
+    Vector<unsigned> argUnderlyingCounts;
+    unsigned gpArgumentCount = 0;
+    unsigned fpArgumentCount = 0;
+    unsigned stackOffset = 0;
+
+    for (auto type : types) {
+        argUnderlyingCounts.append(underlyingArgs.size());
+        marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, type);
+    }
+
+    return ArgumentValueList { procedure, block, types, WTFMove(underlyingArgs), WTFMove(argUnderlyingCounts) };
 }
 
 } } } // namespace JSC::B3::Air
