@@ -1,0 +1,6 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/VisionKitCore.framework/VisionKitCore
+exports: []
+...

@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing
+current-version: 0
+compatibility-version: 0
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        objc-classes: [SSBLookupContext]
+...

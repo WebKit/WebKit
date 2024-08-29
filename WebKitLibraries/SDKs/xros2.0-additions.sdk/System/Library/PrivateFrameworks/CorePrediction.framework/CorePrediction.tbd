@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        symbols: [_svm_load_model, _svm_predict_values]
+...
