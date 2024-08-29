@@ -1,0 +1,8 @@
+Test that "invisible autoplay not allowed restriction" does not pause media after an explicit call to play().
+
+
+** setting video.src
+EVENT(play)
+Promise resolved OK
+END OF TEST
+

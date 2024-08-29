@@ -4328,6 +4328,12 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 
     if (processingUserGestureForMedia())
         removeBehaviorRestrictionsAfterFirstUserGesture();
+    else {
+        // If we are allowed to explicitly play without a user gesture, remove the restriction
+        // preventing invisible autoplay, as that will cause explicit playback to be interrupted
+        // by updateShouldAutoplay().
+        mediaSession().removeBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
+    }
 
     m_pendingPlayPromises.append(WTFMove(promise));
     playInternal();
