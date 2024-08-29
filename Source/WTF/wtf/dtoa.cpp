@@ -24,18 +24,18 @@
 
 namespace WTF {
 
-const char* numberToString(float number, NumberToStringBuffer& buffer)
+size_t numberToStringAndSize(float number, NumberToStringBuffer& buffer)
 {
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
-    dragonbox::ToShortest(number, &builder);
-    return builder.Finalize();
+    static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary32>() + 1));
+    auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
+    return result - buffer.data();
 }
 
-const char* numberToString(double d, NumberToStringBuffer& buffer)
+size_t numberToStringAndSize(double number, NumberToStringBuffer& buffer)
 {
-    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
-    dragonbox::ToShortest(d, &builder);
-    return builder.Finalize();
+    static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary64>() + 1));
+    auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
+    return result - buffer.data();
 }
 
 const char* numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)

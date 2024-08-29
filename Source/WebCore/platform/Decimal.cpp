@@ -547,8 +547,8 @@ Decimal Decimal::fromDouble(double doubleValue)
 {
     if (std::isfinite(doubleValue)) {
         NumberToStringBuffer buffer;
-        auto* result = numberToString(doubleValue, buffer);
-        return fromString(span8(result));
+        size_t length = numberToStringAndSize(doubleValue, buffer);
+        return fromString(StringView { std::span { buffer.data(), length } });
     }
 
     if (std::isinf(doubleValue))
