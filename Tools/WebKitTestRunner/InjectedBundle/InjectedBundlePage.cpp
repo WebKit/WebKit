@@ -113,9 +113,7 @@ static WTF::String dumpPath(WKBundlePageRef page, WKBundleScriptWorldRef world, 
     if (!node)
         return "(null)"_s;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
     JSValueRef nodeValue = WKBundleFrameGetJavaScriptWrapperForNodeForWorld(frame, node, world);
@@ -130,9 +128,7 @@ static WTF::String string(WKBundlePageRef page, WKBundleScriptWorldRef world, WK
     if (!rangeRef)
         return "(null)"_s;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto frame = WKBundlePageGetMainFrame(page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
     auto rangeValue = WKBundleFrameGetJavaScriptWrapperForRangeForWorld(frame, rangeRef, world);
     ASSERT(JSValueIsObject(context, rangeValue));
@@ -187,9 +183,7 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL)
     if (!isLocalFileScheme(schemeString.get()))
         return toWTFString(adoptWK(WKURLCopyString(fileURL)));
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    ALLOW_DEPRECATED_DECLARATIONS_END
     auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
     if (!mainFrameURL)
         mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
@@ -359,9 +353,7 @@ void InjectedBundlePage::prepare()
     
     WKBundleClearHistoryForTesting(m_page);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
-    ALLOW_DEPRECATED_DECLARATIONS_END
 
     WKBundlePageSetTracksRepaints(m_page, false);
     
@@ -372,9 +364,7 @@ void InjectedBundlePage::prepare()
 
 void InjectedBundlePage::resetAfterTest()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 
     // WebKit currently doesn't reset focus even when navigating to a new page. This may or may not be a bug
     // (see <https://bugs.webkit.org/show_bug.cgi?id=138334>), however for tests, we want to start each one with a clean state.
@@ -694,9 +684,7 @@ static void dumpDescendantFrameScrollPositions(WKBundleFrameRef frame, StringBui
 
 void InjectedBundlePage::dumpAllFrameScrollPositions(StringBuilder& stringBuilder)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
     dumpFrameScrollPosition(frame, stringBuilder);
     dumpDescendantFrameScrollPositions(frame, stringBuilder);
 }
@@ -732,9 +720,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
     }
     WKBundlePageFlushPendingEditorStateUpdate(m_page);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
     auto urlRef = adoptWK(WKBundleFrameCopyURL(frame));
     if (!urlRef)
         return;
@@ -770,11 +756,8 @@ void InjectedBundlePage::dump(bool forceRepaint)
 
     if (testRunner->shouldDumpAllFrameScrollPositions())
         dumpAllFrameScrollPositions(stringBuilder);
-    else if (testRunner->shouldDumpMainFrameScrollPosition()) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    else if (testRunner->shouldDumpMainFrameScrollPosition())
         dumpFrameScrollPosition(WKBundlePageGetMainFrame(m_page), stringBuilder);
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    }
 
     if (testRunner->shouldDumpBackForwardListsForAllWindows())
         injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
@@ -783,9 +766,7 @@ void InjectedBundlePage::dump(bool forceRepaint)
         bool shouldCreateSnapshot = testRunner->isPrinting();
         if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
-            ALLOW_DEPRECATED_DECLARATIONS_END
 
             if (testRunner->isPrinting())
                 options |= kWKSnapshotOptionsPrinting;
@@ -1011,9 +992,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         && !isLocalHost(host.get())) {
         bool mainFrameIsExternal = false;
         if (injectedBundle.isTestRunning()) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(m_page);
-            ALLOW_DEPRECATED_DECLARATIONS_END
             auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
             if (!mainFrameURL || WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(mainFrameURL.get())).get(), "about:blank"))
                 mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
@@ -1681,9 +1660,7 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 
 static bool hasTestWaitAttribute(WKBundlePageRef page)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto frame = WKBundlePageGetMainFrame(page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
     return frame && hasTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
 }
 
@@ -1743,10 +1720,8 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
         return;
     }
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (auto frame = WKBundlePageGetMainFrame(page->page()))
         sendTestRenderedEvent(WKBundleFrameGetJavaScriptContext(frame));
-    ALLOW_DEPRECATED_DECLARATIONS_END
     dumpAfterWaitAttributeIsRemoved(page->page());
 }
 

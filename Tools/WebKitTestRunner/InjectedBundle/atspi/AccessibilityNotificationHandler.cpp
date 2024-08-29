@@ -45,9 +45,7 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
 {
     WKAccessibilityEnable();
 #if ENABLE(DEVELOPER_MODE)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    ALLOW_DEPRECATED_DECLARATIONS_END
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(jsContext, m_callback);
 
@@ -55,9 +53,7 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
         if (m_element && m_element.get() != &element)
             return;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-        ALLOW_DEPRECATED_DECLARATIONS_END
         JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
 
         JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName));
@@ -102,9 +98,7 @@ AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 #if ENABLE(DEVELOPER_MODE)
     WebCore::AccessibilityAtspi::singleton().removeNotificationObserver(this);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
-    ALLOW_DEPRECATED_DECLARATIONS_END
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueUnprotect(jsContext, m_callback);
 #endif
