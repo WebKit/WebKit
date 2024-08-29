@@ -367,6 +367,17 @@ private:
 - (void)setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *action))handler;
 @end
 
+@interface _WKWebsiteDataStoreNotificationCenterDelegate : NSObject <UNUserNotificationCenterDelegate>
+@end
+
+@implementation _WKWebsiteDataStoreNotificationCenterDelegate
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler
+{
+    completionHandler();
+}
+
+@end
+
 #endif
 
 @implementation WKWebsiteDataStore {
@@ -1333,6 +1344,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         [UIApplication.sharedApplication _registerInternalBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
+
+        if (!UNUserNotificationCenter.currentNotificationCenter.delegate) {
+            static NeverDestroyed<RetainPtr<_WKWebsiteDataStoreNotificationCenterDelegate>> notificationDelegate = adoptNS([[_WKWebsiteDataStoreNotificationCenterDelegate alloc] init]);
+            UNUserNotificationCenter.currentNotificationCenter.delegate = notificationDelegate.get().get();
+        }
     });
     [_WKWebsiteDataStoreBSActionHandler.shared setWebPushActionHandler:handler];
 #else
