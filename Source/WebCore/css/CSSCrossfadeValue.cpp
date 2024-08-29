@@ -66,7 +66,12 @@ String CSSCrossfadeValue::customCSSText() const
 
 RefPtr<StyleImage> CSSCrossfadeValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleCrossfadeImage::create(state.createStyleImage(m_fromValueOrNone), state.createStyleImage(m_toValueOrNone), m_percentageValue->doubleValue(), m_isPrefixed);
+    return StyleCrossfadeImage::create(
+        state.createStyleImage(m_fromValueOrNone),
+        state.createStyleImage(m_toValueOrNone),
+        clampTo<double>(m_percentageValue->resolveAsNumber<double>(state.cssToLengthConversionData()), 0, 1),
+        m_isPrefixed
+    );
 }
 
 } // namespace WebCore

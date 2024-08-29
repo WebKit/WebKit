@@ -39,14 +39,14 @@ static std::optional<LayoutUnit> computeLength(const CSSValue* value, const CSST
         return { };
 
     if (primitiveValue->isNumberOrInteger()) {
-        if (primitiveValue->doubleValue())
+        if (primitiveValue->resolveAsNumber(conversionData))
             return { };
         return 0_lu;
     }
 
     if (!primitiveValue->isLength())
         return { };
-    return primitiveValue->computeLength<LayoutUnit>(conversionData);
+    return primitiveValue->resolveAsLength<LayoutUnit>(conversionData);
 }
 
 template<typename T>
@@ -88,7 +88,7 @@ static EvaluationResult evaluateNumberComparison(double number, const std::optio
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->doubleValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsNumberDeprecated();
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -101,7 +101,7 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->intValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsIntegerDeprecated();
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -114,7 +114,7 @@ static EvaluationResult evaluateResolutionComparison(float resolution, const std
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->floatValue(CSSUnitType::CSS_DPPX);
+    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsResolutionDeprecated<float>();
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;
@@ -171,7 +171,7 @@ EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValu
         return toEvaluationResult(currentValue);
 
     Ref value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
-    auto expectedValue = value->intValue();
+    auto expectedValue = value->resolveAsIntegerDeprecated();
 
     if (expectedValue && expectedValue != 1)
         return EvaluationResult::Unknown;

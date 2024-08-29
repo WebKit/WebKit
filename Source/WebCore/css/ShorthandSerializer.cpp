@@ -958,7 +958,7 @@ String ShorthandSerializer::serializeFont() const
         auto& stretchValue = downcast<CSSPrimitiveValue>(longhandValue(stretchIndex));
         if (stretchValue.isCalculated() || !stretchValue.isPercentage())
             return String();
-        auto keyword = fontStretchKeyword(stretchValue.doubleValue());
+        auto keyword = fontStretchKeyword(stretchValue.resolveAsPercentageNoConversionDataRequired());
         if (!keyword)
             return String();
         stretchKeyword = *keyword;

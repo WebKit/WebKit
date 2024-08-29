@@ -994,7 +994,7 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
     double zoomFactor = style.usedZoom();
     if (zoomFactor == 1)
         return value;
-    // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
+    // Needed because resolveAsLength<int> truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1) {
         if (value < 0)
             value--;

@@ -243,7 +243,7 @@ private:
     static bool createGridTrackList(const CSSValue&, GridTrackList&, BuilderState&);
     static bool createGridPosition(const CSSValue&, GridPosition&);
     static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap&, NamedGridLinesMap&, GridTrackSizingDirection);
-    static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(BuilderState&);
+    static CSSToLengthConversionData cssToLengthConversionDataWithTextZoomFactor(BuilderState&);
 };
 
 inline Length BuilderConverter::convertLength(const BuilderState& builderState, const CSSValue& value)
@@ -254,13 +254,13 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
         : builderState.cssToLengthConversionData();
 
     if (primitiveValue.isLength()) {
-        Length length = primitiveValue.computeLength<Length>(conversionData);
+        Length length = primitiveValue.resolveAsLength<Length>(conversionData);
         length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
         return length;
     }
 
     if (primitiveValue.isPercentage())
-        return Length(primitiveValue.doubleValue(), LengthType::Percent);
+        return Length(primitiveValue.resolveAsPercentage(conversionData), LengthType::Percent);
 
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
@@ -274,9 +274,13 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
 inline Length BuilderConverter::convertLengthAllowingNumber(const BuilderState& builderState, const CSSValue& value)
 {
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isNumberOrInteger())
-        return convertLength(builderState, CSSPrimitiveValue::create(primitiveValue.doubleValue(), CSSUnitType::CSS_PX));
+        return Length(primitiveValue.resolveAsNumber(conversionData), LengthType::Fixed);
     return convertLength(builderState, value);
 }
 
@@ -347,14 +351,14 @@ inline TabSize BuilderConverter::convertTabSize(const BuilderState& builderState
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isNumber())
-        return TabSize(primitiveValue.floatValue(), SpaceValueType);
-    return TabSize(primitiveValue.computeLength<float>(builderState.cssToLengthConversionData()), LengthValueType);
+        return TabSize(primitiveValue.resolveAsNumber<float>(builderState.cssToLengthConversionData()), SpaceValueType);
+    return TabSize(primitiveValue.resolveAsLength<float>(builderState.cssToLengthConversionData()), LengthValueType);
 }
 
 template<typename T>
 inline T BuilderConverter::convertComputedLength(BuilderState& builderState, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).computeLength<T>(builderState.cssToLengthConversionData());
+    return downcast<CSSPrimitiveValue>(value).resolveAsLength<T>(builderState.cssToLengthConversionData());
 }
 
 template<typename T>
@@ -373,7 +377,7 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
         // This keeps border lines from vanishing.
         T result = convertComputedLength<T>(builderState, value);
         if (builderState.style().usedZoom() < 1.0f && result < 1.0) {
-            T originalLength = primitiveValue.computeLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
+            T originalLength = primitiveValue.resolveAsLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
             if (originalLength >= 1.0)
                 return 1;
         }
@@ -391,10 +395,10 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
 inline Length BuilderConverter::convertToRadiusLength(const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue& value)
 {
     if (value.isPercentage())
-        return Length(value.doubleValue(), LengthType::Percent);
+        return Length(value.resolveAsPercentage(conversionData), LengthType::Percent);
     if (value.isCalculatedPercentageWithLength())
         return Length(value.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
-    auto length = value.computeLength<Length>(conversionData);
+    auto length = value.resolveAsLength<Length>(conversionData);
     if (length.isNegative())
         return { 0, LengthType::Fixed };
     return length;
@@ -507,9 +511,9 @@ inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderSt
 }
 
 template<typename T>
-inline T BuilderConverter::convertNumber(BuilderState&, const CSSValue& value)
+inline T BuilderConverter::convertNumber(BuilderState& builderState, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).value<T>(CSSUnitType::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(value).resolveAsNumber<T>(builderState.cssToLengthConversionData());
 }
 
 template<typename T>
@@ -520,12 +524,12 @@ inline T BuilderConverter::convertNumberOrAuto(BuilderState& builderState, const
     return convertNumber<T>(builderState, value);
 }
 
-inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState&, const CSSValue& value)
+inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueNoLimit)
         return -1;
-    return primitiveValue.value<short>(CSSUnitType::CSS_NUMBER);
+    return primitiveValue.resolveAsNumber<short>(builderState.cssToLengthConversionData());
 }
 
 template<CSSPropertyID>
@@ -561,14 +565,20 @@ inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(Bu
     return translateForValue(value, conversionData);
 }
 
-inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState&, const CSSValue& value)
+inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState& builderState, const CSSValue& value)
 {
-    return rotateForValue(value);
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    return rotateForValue(value, conversionData);
 }
 
-inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderState&, const CSSValue& value)
+inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderState& builderState, const CSSValue& value)
 {
-    return scaleForValue(value);
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+    return scaleForValue(value, conversionData);
 }
 
 #if ENABLE(DARK_MODE_CSS)
@@ -741,9 +751,9 @@ inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderSt
 
     auto position = rayValue.position();
     if (position)
-        return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining(), convertPosition(builderState, *position));
+        return RayPathOperation::create(rayValue.angle()->resolveAsAngle(builderState.cssToLengthConversionData()), size, rayValue.isContaining(), convertPosition(builderState, *position));
 
-    return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
+    return RayPathOperation::create(rayValue.angle()->resolveAsAngle(builderState.cssToLengthConversionData()), size, rayValue.isContaining());
 }
 
 inline RefPtr<BasicShapePath> BuilderConverter::convertSVGPath(BuilderState& builderState, const CSSValue& value)
@@ -819,24 +829,27 @@ inline Resize BuilderConverter::convertResize(BuilderState& builderState, const 
     return resize;
 }
 
-inline int BuilderConverter::convertMarqueeRepetition(BuilderState&, const CSSValue& value)
+inline int BuilderConverter::convertMarqueeRepetition(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueInfinite)
         return -1; // -1 means repeat forever.
 
     ASSERT(primitiveValue.isNumber());
-    return primitiveValue.intValue();
+    return primitiveValue.resolveAsNumber<int>(builderState.cssToLengthConversionData());
 }
 
-inline int BuilderConverter::convertMarqueeSpeed(BuilderState&, const CSSValue& value)
+inline int BuilderConverter::convertMarqueeSpeed(BuilderState& builderState, const CSSValue& value)
 {
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isTime())
-        return primitiveValue.computeTime<int, CSSPrimitiveValue::TimeUnit::Milliseconds>();
+        return primitiveValue.resolveAsTime<int, CSSPrimitiveValue::TimeUnit::Milliseconds>(conversionData);
+
     // For scrollamount support.
     ASSERT(primitiveValue.isNumber());
-    return primitiveValue.intValue();
+    return primitiveValue.resolveAsNumber<int>(conversionData);
 }
 
 inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState&, const CSSValue& value)
@@ -914,16 +927,18 @@ inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(
         return TextDecorationThickness::createWithAuto();
     case CSSValueFromFont:
         return TextDecorationThickness::createFromFont();
-    default:
-        if (primitiveValue.isPercentage())
-            return TextDecorationThickness::createWithLength(Length(clampTo<float>(primitiveValue.floatValue(), minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Percent));
-
+    default: {
         auto conversionData = builderState.cssToLengthConversionData();
+
+        if (primitiveValue.isPercentage())
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Percent));
+
         if (primitiveValue.isCalculatedPercentageWithLength())
             return TextDecorationThickness::createWithLength(Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })));
 
         ASSERT(primitiveValue.isLength());
-        return TextDecorationThickness::createWithLength(primitiveValue.computeLength<Length>(conversionData));
+        return TextDecorationThickness::createWithLength(primitiveValue.resolveAsLength<Length>(conversionData));
+    }
     }
 }
 
@@ -1009,11 +1024,16 @@ inline TextEdge BuilderConverter::convertTextEdge(BuilderState&, const CSSValue&
     };
 }
 
-inline IntSize BuilderConverter::convertInitialLetter(BuilderState&, const CSSValue& value)
+inline IntSize BuilderConverter::convertInitialLetter(BuilderState& builderState, const CSSValue& value)
 {
     if (value.valueID() == CSSValueNormal)
         return IntSize();
-    return { downcast<CSSPrimitiveValue>(value.first()).intValue(), downcast<CSSPrimitiveValue>(value.second()).intValue() };
+
+    auto& conversionData = builderState.cssToLengthConversionData();
+    return {
+        downcast<CSSPrimitiveValue>(value.first()).resolveAsNumber<int>(conversionData),
+        downcast<CSSPrimitiveValue>(value.second()).resolveAsNumber<int>(conversionData)
+    };
 }
 
 inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState, const CSSValue& value)
@@ -1165,11 +1185,13 @@ inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveVal
     if (primitiveValue.valueID() == CSSValueMaxContent || primitiveValue.valueID() == CSSValueWebkitMaxContent)
         return Length(LengthType::MaxContent);
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     // Fractional unit.
     if (primitiveValue.isFlex())
-        return GridLength(primitiveValue.doubleValue());
+        return GridLength(primitiveValue.resolveAsFlex<double>(conversionData));
 
-    auto length = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(builderState.cssToLengthConversionData());
+    auto length = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(conversionData);
     if (!length.isUndefined())
         return length;
     return Length(0.0, LengthType::Fixed);
@@ -1309,7 +1331,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
 
     int gridLineNumber = 0;
     if (currentValue && currentValue->isInteger()) {
-        gridLineNumber = currentValue->intValue();
+        gridLineNumber = currentValue->resolveAsIntegerDeprecated();
         ++it;
         currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(*it) : nullptr;
     }
@@ -1481,7 +1503,7 @@ inline float zoomWithTextZoomFactor(BuilderState& builderState)
     return builderState.cssToLengthConversionData().zoom();
 }
 
-inline CSSToLengthConversionData BuilderConverter::csstoLengthConversionDataWithTextZoomFactor(BuilderState& builderState)
+inline CSSToLengthConversionData BuilderConverter::cssToLengthConversionDataWithTextZoomFactor(BuilderState& builderState)
 {
     float zoom = zoomWithTextZoomFactor(builderState);
     if (zoom == builderState.cssToLengthConversionData().zoom())
@@ -1495,18 +1517,18 @@ inline Length BuilderConverter::convertTextLengthOrNormal(BuilderState& builderS
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     auto conversionData = (builderState.useSVGZoomRulesForLength())
         ? builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : csstoLengthConversionDataWithTextZoomFactor(builderState);
+        : cssToLengthConversionDataWithTextZoomFactor(builderState);
 
     if (primitiveValue.valueID() == CSSValueNormal)
         return RenderStyle::zeroLength();
     if (primitiveValue.isLength())
-        return primitiveValue.computeLength<Length>(conversionData);
+        return primitiveValue.resolveAsLength<Length>(conversionData);
     if (primitiveValue.isPercentage())
-        return Length(clampTo<double>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
+        return Length(clampTo<double>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
     if (primitiveValue.isNumber())
-        return Length(primitiveValue.doubleValue(), LengthType::Fixed);
+        return Length(primitiveValue.resolveAsNumber(conversionData), LengthType::Fixed);
     ASSERT_NOT_REACHED();
     return RenderStyle::zeroLength();
 }
@@ -1517,11 +1539,13 @@ inline std::optional<float> BuilderConverter::convertPerspective(BuilderState& b
     if (primitiveValue.valueID() == CSSValueNone)
         return RenderStyle::initialPerspective();
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     float perspective = -1;
     if (primitiveValue.isLength())
-        perspective = primitiveValue.computeLength<float>(builderState.cssToLengthConversionData());
+        perspective = primitiveValue.resolveAsLength<float>(conversionData);
     else if (primitiveValue.isNumber())
-        perspective = primitiveValue.doubleValue() * builderState.cssToLengthConversionData().zoom();
+        perspective = primitiveValue.resolveAsNumber<float>(conversionData) * conversionData.zoom();
     else
         ASSERT_NOT_REACHED();
 
@@ -1541,17 +1565,19 @@ inline std::optional<FilterOperations> BuilderConverter::convertFilterOperations
     return builderState.createFilterOperations(value);
 }
 
-inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)
+inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(value.valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID()));
         return { };
     }
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     FontFeatureSettings settings;
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontFeatureValue>(item);
-        settings.insert(FontFeature(feature.tag(), feature.value()));
+        settings.insert(FontFeature(feature.tag(), feature.value()->resolveAsNumber<int>(conversionData)));
     }
     return settings;
 }
@@ -1561,7 +1587,7 @@ inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSS
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isNumber())
-        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+        return FontSelectionValue::clampFloat(primitiveValue.resolveAsNumberDeprecated<float>());
 
     ASSERT(primitiveValue.isValueID());
     switch (primitiveValue.valueID()) {
@@ -1583,7 +1609,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isPercentage())
-        return FontSelectionValue::clampFloat(primitiveValue.floatValue());
+        return FontSelectionValue::clampFloat(primitiveValue.resolveAsPercentageDeprecated<float>());
 
     ASSERT(primitiveValue.isValueID());
     if (auto value = fontStretchValue(primitiveValue.valueID()))
@@ -1594,7 +1620,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
 
 inline FontSelectionValue BuilderConverter::convertFontStyleAngle(const CSSValue& value)
 {
-    return normalizedFontItalicValue(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::CSS_DEG));
+    return normalizedFontItalicValue(downcast<CSSPrimitiveValue>(value).resolveAsAngleDeprecated<float>());
 }
 
 // The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
@@ -1645,7 +1671,7 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
     return settings;
 }
 
-inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, const CSSValue& value)
+inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& builderState, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueNone
@@ -1654,7 +1680,7 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
 
         auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
         if (primitiveValue->isNumber())
-            return { defaultMetric, FontSizeAdjust::ValueType::Number, primitiveValue->floatValue() };
+            return { defaultMetric, FontSizeAdjust::ValueType::Number, primitiveValue->resolveAsNumber(builderState.cssToLengthConversionData()) };
 
         ASSERT(primitiveValue->valueID() == CSSValueFromFont);
         // We cannot determine the primary font here, so we defer resolving the
@@ -1670,7 +1696,7 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair->first()).valueID());
     auto& primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
     if (primitiveValue.isNumber())
-        return { metric, FontSizeAdjust::ValueType::Number, primitiveValue.floatValue() };
+        return { metric, FontSizeAdjust::ValueType::Number, primitiveValue.resolveAsNumber(builderState.cssToLengthConversionData()) };
 
     ASSERT(primitiveValue.valueID() == CSSValueFromFont);
     return { metric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
@@ -1768,12 +1794,10 @@ inline PaintOrder BuilderConverter::convertPaintOrder(BuilderState&, const CSSVa
     }
 }
 
-inline float BuilderConverter::convertOpacity(BuilderState&, const CSSValue& value)
+inline float BuilderConverter::convertOpacity(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    float opacity = primitiveValue.floatValue();
-    if (primitiveValue.isPercentage())
-        opacity /= 100.0f;
+    float opacity = primitiveValue.valueDividingBy100IfPercentage(builderState.cssToLengthConversionData());
     return std::max(0.0f, std::min(1.0f, opacity));
 }
 
@@ -1820,9 +1844,9 @@ inline StyleContentAlignmentData BuilderConverter::convertContentAlignmentData(B
     return alignmentData;
 }
 
-inline GlyphOrientation BuilderConverter::convertGlyphOrientation(BuilderState&, const CSSValue& value)
+inline GlyphOrientation BuilderConverter::convertGlyphOrientation(BuilderState& builderState, const CSSValue& value)
 {
-    float angle = std::abs(fmodf(downcast<CSSPrimitiveValue>(value).floatValue(), 360.0f));
+    float angle = std::abs(fmodf(downcast<CSSPrimitiveValue>(value).resolveAsAngle(builderState.cssToLengthConversionData()), 360.0f));
     if (angle <= 45.0f || angle > 315.0f)
         return GlyphOrientation::Degrees0;
     if (angle > 45.0f && angle <= 135.0f)
@@ -1849,11 +1873,12 @@ inline Length BuilderConverter::convertLineHeight(BuilderState& builderState, co
     if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
         return RenderStyle::initialLineHeight();
 
+    auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
+
     if (primitiveValue.isLength() || primitiveValue.isCalculatedPercentageWithLength()) {
-        auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
         Length length;
         if (primitiveValue.isLength())
-            length = primitiveValue.computeLength<Length>(conversionData);
+            length = primitiveValue.resolveAsLength<Length>(conversionData);
         else {
             auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(builderState.style().computedFontSize());
             length = { clampTo<float>(value, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed };
@@ -1871,11 +1896,11 @@ inline Length BuilderConverter::convertLineHeight(BuilderState& builderState, co
     // values and raw numbers to percentages.
     if (primitiveValue.isPercentage()) {
         // FIXME: percentage should not be restricted to an integer here.
-        return Length((builderState.style().computedFontSize() * primitiveValue.intValue()) / 100, LengthType::Fixed);
+        return Length((builderState.style().computedFontSize() * primitiveValue.resolveAsPercentage<int>(conversionData)) / 100, LengthType::Fixed);
     }
 
     ASSERT(primitiveValue.isNumber());
-    return Length(primitiveValue.doubleValue() * 100.0, LengthType::Percent);
+    return Length(primitiveValue.resolveAsNumber(conversionData) * 100.0, LengthType::Percent);
 }
 
 inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSSValue& value)
@@ -1922,7 +1947,7 @@ inline GapLength BuilderConverter::convertGapLength(BuilderState& builderState, 
     return (value.valueID() == CSSValueNormal) ? GapLength() : GapLength(convertLength(builderState, value));
 }
 
-inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const CSSValue& value)
+inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState& builderState, const CSSValue& value)
 {
     RefPtr<const CSSPrimitiveValue> modifierValue;
     RefPtr<const CSSPrimitiveValue> angleValue;
@@ -1942,7 +1967,7 @@ inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const
     float angleInDegrees = 0;
 
     if (angleValue)
-        angleInDegrees = static_cast<float>(angleValue->computeDegrees());
+        angleInDegrees = angleValue->resolveAsAngle<float>(builderState.cssToLengthConversionData());
 
     if (modifierValue) {
         switch (modifierValue->valueID()) {

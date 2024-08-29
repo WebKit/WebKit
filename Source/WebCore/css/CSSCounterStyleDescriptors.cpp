@@ -59,9 +59,9 @@ CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(Ref<CSSValue> value)
         int convertedLow { std::numeric_limits<int>::min() };
         int convertedHigh { std::numeric_limits<int>::max() };
         if (low.isInteger())
-            convertedLow = low.intValue();
+            convertedLow = low.resolveAsIntegerDeprecated();
         if (high.isInteger())
-            convertedHigh = high.intValue();
+            convertedHigh = high.resolveAsIntegerDeprecated();
         result.append({ convertedLow, convertedHigh });
     }
     return result;
@@ -104,7 +104,7 @@ CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbolsFromCSSValue(Ref<CSSV
     CSSCounterStyleDescriptors::AdditiveSymbols result;
     for (auto& additiveSymbol : downcast<CSSValueList>(value.get())) {
         auto& pair = downcast<CSSValuePair>(additiveSymbol);
-        auto weight = downcast<CSSPrimitiveValue>(pair.first()).value<unsigned>();
+        auto weight = downcast<CSSPrimitiveValue>(pair.first()).resolveAsIntegerDeprecated<unsigned>();
         auto symbol = symbolFromCSSValue(&pair.second());
         result.constructAndAppend(symbol, weight);
     }
@@ -123,7 +123,7 @@ CSSCounterStyleDescriptors::Pad padFromCSSValue(Ref<CSSValue> value)
 {
     auto list = downcast<CSSValueList>(WTFMove(value));
     ASSERT(list->size() == 2);
-    auto length = downcast<CSSPrimitiveValue>(list.get()[0]).intValue();
+    auto length = downcast<CSSPrimitiveValue>(list.get()[0]).resolveAsIntegerDeprecated();
     ASSERT(length >= 0);
     return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(&list.get()[1]) };
 }
@@ -222,7 +222,7 @@ CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(RefPtr<CSSV
             result.first = AtomString { secondValue.isCustomIdent() ? secondValue.customIdent() : "decimal"_s };
         } else if (system == CSSCounterStyleDescriptors::System::Fixed) {
             ASSERT(secondValue.isInteger());
-            result.second = secondValue.isInteger() ? secondValue.integer() : 1;
+            result.second = secondValue.isInteger() ? secondValue.integerDeprecated() : 1;
         }
     }
     return result;

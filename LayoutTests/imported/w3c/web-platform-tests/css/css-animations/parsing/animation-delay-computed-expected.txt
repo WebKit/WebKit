@@ -2,4 +2,5 @@
 PASS Property animation-delay value '-500ms'
 PASS Property animation-delay value 'calc(2 * 3s)'
 PASS Property animation-delay value '20s, 10s'
+PASS Property animation-delay value 'calc(10s + (sign(2cqw - 10px) * 5s))'
 

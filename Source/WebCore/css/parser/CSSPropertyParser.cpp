@@ -484,15 +484,26 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             auto length = Style::BuilderConverter::convertLength(builderState, downcast<CSSPrimitiveValue>(value));
             return { WTFMove(length) };
         }
-        case CSSCustomPropertySyntax::Type::Percentage:
         case CSSCustomPropertySyntax::Type::Integer:
-        case CSSCustomPropertySyntax::Type::Number:
-        case CSSCustomPropertySyntax::Type::Angle:
-        case CSSCustomPropertySyntax::Type::Time:
+        case CSSCustomPropertySyntax::Type::Number: {
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsNumber(builderState.cssToLengthConversionData());
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, CSSUnitType::CSS_NUMBER } };
+        }
+        case CSSCustomPropertySyntax::Type::Percentage: {
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsPercentage(builderState.cssToLengthConversionData());
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, CSSUnitType::CSS_PERCENTAGE } };
+        }
+        case CSSCustomPropertySyntax::Type::Angle: {
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsAngle(builderState.cssToLengthConversionData());
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, CSSUnitType::CSS_DEG } };
+        }
+        case CSSCustomPropertySyntax::Type::Time: {
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsTime(builderState.cssToLengthConversionData());
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, CSSUnitType::CSS_S } };
+        }
         case CSSCustomPropertySyntax::Type::Resolution: {
-            auto canonicalUnit = canonicalUnitTypeForUnitType(downcast<CSSPrimitiveValue>(value).primitiveType());
-            auto doubleValue = downcast<CSSPrimitiveValue>(value).doubleValue(canonicalUnit);
-            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, canonicalUnit } };
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).resolveAsResolution(builderState.cssToLengthConversionData());
+            return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, CSSUnitType::CSS_DPPX } };
         }
         case CSSCustomPropertySyntax::Type::Color: {
             auto color = builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), Style::ForVisitedLink::No);
@@ -1317,7 +1328,7 @@ static bool isValueIDPair(const CSSValue& value, CSSValueID valueID)
 
 static bool isNumber(const CSSPrimitiveValue& value, double number, CSSUnitType type)
 {
-    return value.primitiveType() == type && value.doubleValue() == number;
+    return value.primitiveType() == type && !value.isCalculated() && value.valueNoConversionDataRequired<double>() == number;
 }
 
 static bool isNumber(const CSSPrimitiveValue* value, double number, CSSUnitType type)

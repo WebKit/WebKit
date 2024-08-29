@@ -679,7 +679,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontStyleAngle(CSSParserTokenRange& rang
     RefPtr angle = consumeAngle(rangeAfterAngle, mode);
     if (!angle)
         return nullptr;
-    if (!angle->isCalculated() && !isFontStyleAngleInRange(angle->doubleValue(CSSUnitType::CSS_DEG)))
+    if (!angle->isCalculated() && !isFontStyleAngleInRange(angle->resolveAsAngleNoConversionDataRequired()))
         return nullptr;
     range = rangeAfterAngle;
     return angle;
@@ -1223,17 +1223,19 @@ RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange& range)
     if (!tag)
         return nullptr;
 
-    int tagValue = 1;
+    RefPtr<CSSPrimitiveValue> tagValue;
     if (!range.atEnd() && range.peek().type() != CommaToken) {
         // Feature tag values could follow: <integer> | on | off
-        if (auto integer = consumeNonNegativeIntegerRaw(range))
-            tagValue = *integer;
+        if (auto integer = consumeNonNegativeInteger(range))
+            tagValue = WTFMove(integer);
         else if (range.peek().id() == CSSValueOn || range.peek().id() == CSSValueOff)
-            tagValue = range.consumeIncludingWhitespace().id() == CSSValueOn;
+            tagValue = CSSPrimitiveValue::createInteger(range.consumeIncludingWhitespace().id() == CSSValueOn ? 1 : 0);
         else
             return nullptr;
-    }
-    return CSSFontFeatureValue::create(WTFMove(*tag), tagValue);
+    } else
+        tagValue = CSSPrimitiveValue::createInteger(1);
+
+    return CSSFontFeatureValue::create(WTFMove(*tag), tagValue.releaseNonNull());
 }
 
 

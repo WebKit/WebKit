@@ -1,0 +1,10 @@
+
+PASS Property counter-reset value 'none'
+PASS Property counter-reset value 'myCounter'
+PASS Property counter-reset value 'myCounter 5'
+PASS Property counter-reset value 'myCounter 7 otherCounter 8'
+PASS Property counter-reset value 'myCounter otherCounter -8'
+PASS Property counter-reset value 'myCounter 7 otherCounter'
+PASS Property counter-reset value 'myCounter calc(10 + (sign(2cqw - 10px) * 5))'
+PASS Property counter-reset value 'myCounter calc(10 + (sign(2cqw - 10px) * 5)) otherCounter calc(15 + (sign(2cqw - 10px) * 5))'
+

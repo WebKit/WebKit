@@ -35,6 +35,7 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSStyleDeclaration;
+class CSSToLengthConversionData;
 class CSSUnresolvedColor;
 class CachedResource;
 class Color;
@@ -188,7 +189,8 @@ public:
     inline String customIdent() const;
 
     inline bool isInteger() const;
-    inline int integer() const;
+    inline int integer(const CSSToLengthConversionData&) const;
+    inline int integerDeprecated() const;
 
     inline const CSSValue& first() const; // CSSValuePair
     Ref<CSSValue> protectedFirst() const; // CSSValuePair

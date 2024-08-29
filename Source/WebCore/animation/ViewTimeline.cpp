@@ -60,9 +60,9 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const CSSViewValue& cssViewVa
 
         auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         if (primitiveValue.isPercentage())
-            return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+            return Length(primitiveValue.resolveAsPercentageDeprecated(), LengthType::Percent);
         if (primitiveValue.isLength())
-            return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PX), LengthType::Fixed);
+            return Length(primitiveValue.resolveAsLengthDeprecated(), LengthType::Fixed);
 
         ASSERT_NOT_REACHED();
         return std::nullopt;

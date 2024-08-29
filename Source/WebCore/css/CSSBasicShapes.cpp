@@ -94,7 +94,7 @@ static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offs
         side = defaultSide;
     else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*amount); (side == CSSValueRight || side == CSSValueBottom) && primitiveValue && primitiveValue->isPercentage()) {
         side = defaultSide;
-        amount = CSSPrimitiveValue::create(Length(100 - primitiveValue->floatValue(), LengthType::Percent));
+        amount = CSSPrimitiveValue::create(Length(100 - primitiveValue->resolveAsPercentageDeprecated<float>(), LengthType::Percent));
     } else if (isZeroLength(*amount)) {
         if (side == CSSValueRight || side == CSSValueBottom)
             amount = CSSPrimitiveValue::create(Length(100, LengthType::Percent));

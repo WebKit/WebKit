@@ -189,11 +189,8 @@ inline double CSSCalcValue::clampToPermittedRange(double value) const
     return m_tree.range == ValueRange::NonNegative && value < 0 ? 0 : value;
 }
 
-double CSSCalcValue::doubleValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+double CSSCalcValue::doubleValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
-    if (m_tree.requiresConversionData)
-        ALWAYS_LOG_WITH_STREAM(stream << "ERROR: The value returned from CSSCalcValue::doubleValueDeprecated is likely incorrect as the calculation tree has unresolved units that require CSSToLengthConversionData to interpret. Update caller to use non-deprecated variant of this function.");
-
     auto options = CSSCalc::EvaluationOptions {
         .conversionData = std::nullopt,
         .symbolTable = symbolTable,
@@ -201,6 +198,14 @@ double CSSCalcValue::doubleValueDeprecated(const CSSCalcSymbolTable& symbolTable
         .allowNonMatchingUnits = true
     };
     return clampToPermittedRange(CSSCalc::evaluateDouble(m_tree, options).value_or(0));
+}
+
+double CSSCalcValue::doubleValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+{
+    if (m_tree.requiresConversionData)
+        ALWAYS_LOG_WITH_STREAM(stream << "ERROR: The value returned from CSSCalcValue::doubleValueDeprecated is likely incorrect as the calculation tree has unresolved units that require CSSToLengthConversionData to interpret. Update caller to use non-deprecated variant of this function.");
+
+    return doubleValueNoConversionDataRequired(symbolTable);
 }
 
 double CSSCalcValue::doubleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const

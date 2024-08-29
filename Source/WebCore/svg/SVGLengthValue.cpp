@@ -245,17 +245,17 @@ SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& va
 {
     auto primitiveType = value.primitiveType();
     if (primitiveType == CSSUnitType::CSS_NUMBER && shouldConvertNumberToPxLength == ShouldConvertNumberToPxLength::Yes)
-        return { value.floatValue(), SVGLengthType::Pixels };
+        return { value.resolveAsNumber<float>(conversionData), SVGLengthType::Pixels };
 
-    auto lengthType = primitiveTypeToLengthType(primitiveType);
-    switch (lengthType) {
+    switch (primitiveTypeToLengthType(primitiveType)) {
     case SVGLengthType::Unknown:
         return { };
     case SVGLengthType::Number:
+        return { value.resolveAsNumber<float>(conversionData), SVGLengthType::Number };
     case SVGLengthType::Percentage:
-        return { value.floatValue(), lengthType };
+        return { value.resolveAsPercentage<float>(conversionData), SVGLengthType::Percentage };
     default:
-        return { value.computeLength<float>(conversionData), SVGLengthType::Pixels };
+        return { value.resolveAsLength<float>(conversionData), SVGLengthType::Pixels };
     }
 
     ASSERT_NOT_REACHED();

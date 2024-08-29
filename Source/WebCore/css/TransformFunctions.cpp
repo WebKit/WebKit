@@ -142,7 +142,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
 
     auto& firstValue = downcast<CSSPrimitiveValue>((*transformValue)[0]);
     auto doubleValue = [&](unsigned index) {
-        return downcast<CSSPrimitiveValue>((*transformValue)[index]).doubleValue();
+        return downcast<CSSPrimitiveValue>((*transformValue)[index]).resolveAsNumber(conversionData);
     };
 
     switch (transformValue->name()) {
@@ -152,13 +152,13 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double sx = 1.0;
         double sy = 1.0;
         if (transformValue->name() == CSSValueScaleY)
-            sy = firstValue.doubleValueDividingBy100IfPercentage();
+            sy = firstValue.valueDividingBy100IfPercentage<double>(conversionData);
         else {
-            sx = firstValue.doubleValueDividingBy100IfPercentage();
+            sx = firstValue.valueDividingBy100IfPercentage<double>(conversionData);
             if (transformValue->name() != CSSValueScaleX) {
                 if (transformValue->length() > 1) {
                     auto& secondValue = downcast<CSSPrimitiveValue>((*transformValue)[1]);
-                    sy = secondValue.doubleValueDividingBy100IfPercentage();
+                    sy = secondValue.valueDividingBy100IfPercentage<double>(conversionData);
                 } else
                     sy = sx;
             }
@@ -172,19 +172,19 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double sy = 1.0;
         double sz = 1.0;
         if (transformValue->name() == CSSValueScaleZ)
-            sz = firstValue.doubleValueDividingBy100IfPercentage();
+            sz = firstValue.valueDividingBy100IfPercentage<double>(conversionData);
         else if (transformValue->name() == CSSValueScaleY)
-            sy = firstValue.doubleValueDividingBy100IfPercentage();
+            sy = firstValue.valueDividingBy100IfPercentage<double>(conversionData);
         else {
-            sx = firstValue.doubleValueDividingBy100IfPercentage();
+            sx = firstValue.valueDividingBy100IfPercentage<double>(conversionData);
             if (transformValue->name() != CSSValueScaleX) {
                 if (transformValue->length() > 2) {
                     auto& thirdValue = downcast<CSSPrimitiveValue>((*transformValue)[2]);
-                    sz = thirdValue.doubleValueDividingBy100IfPercentage();
+                    sz = thirdValue.valueDividingBy100IfPercentage<double>(conversionData);
                 }
                 if (transformValue->length() > 1) {
                     auto& secondValue = downcast<CSSPrimitiveValue>((*transformValue)[1]);
-                    sy = secondValue.doubleValueDividingBy100IfPercentage();
+                    sy = secondValue.valueDividingBy100IfPercentage<double>(conversionData);
                 } else
                     sy = sx;
             }
@@ -245,7 +245,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     }
 
     case CSSValueRotate: {
-        double angle = firstValue.computeDegrees();
+        double angle = firstValue.resolveAsAngle(conversionData);
         return RotateTransformOperation::create(0, 0, 1, angle, transformOperationType(transformValue->name()));
     }
 
@@ -255,7 +255,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
         double x = 0;
         double y = 0;
         double z = 0;
-        double angle = firstValue.computeDegrees();
+        double angle = firstValue.resolveAsAngle(conversionData);
         if (transformValue->name() == CSSValueRotateX)
             x = 1;
         else if (transformValue->name() == CSSValueRotateY)
@@ -268,7 +268,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     case CSSValueRotate3d: {
         if (transformValue->length() < 4)
             break;
-        double angle = downcast<CSSPrimitiveValue>((*transformValue)[3]).computeDegrees();
+        double angle = downcast<CSSPrimitiveValue>((*transformValue)[3]).resolveAsAngle(conversionData);
         return RotateTransformOperation::create(doubleValue(0), doubleValue(1), doubleValue(2), angle, transformOperationType(transformValue->name()));
     }
 
@@ -277,7 +277,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
     case CSSValueSkewY: {
         double angleX = 0;
         double angleY = 0;
-        double angle = firstValue.computeDegrees();
+        double angle = firstValue.resolveAsAngle(conversionData);
         if (transformValue->name() == CSSValueSkewY)
             angleY = angle;
         else {
@@ -285,7 +285,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
             if (transformValue->name() == CSSValueSkew) {
                 if (transformValue->length() > 1) {
                     auto& secondValue = downcast<CSSPrimitiveValue>((*transformValue)[1]);
-                    angleY = secondValue.computeDegrees();
+                    angleY = secondValue.resolveAsAngle(conversionData);
                 }
             }
         }
@@ -318,9 +318,7 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
                 perspectiveLength = convertToFloatLength(&firstValue, conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232669
-                // This does not deal properly with calc(), because we aren't passing conversionData here.
-                double doubleValue = firstValue.doubleValue();
+                double doubleValue = firstValue.resolveAsNumber<double>(conversionData);
                 if (doubleValue < 0)
                     return nullptr;
                 perspectiveLength = Length(clampToPositiveInteger(doubleValue), LengthType::Fixed);
@@ -375,7 +373,7 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
     return TranslateTransformOperation::create(tx, ty, tz, type);
 }
 
-RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
+RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     auto* valueList = dynamicDowncast<CSSValueList>(value);
     if (!valueList)
@@ -393,20 +391,20 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
         if (!valueItem)
             return nullptr;
         if (!i) {
-            sx = valueItem->doubleValueDividingBy100IfPercentage();
+            sx = valueItem->valueDividingBy100IfPercentage<double>(conversionData);
             sy = sx;
         } else if (i == 1)
-            sy = valueItem->doubleValueDividingBy100IfPercentage();
+            sy = valueItem->valueDividingBy100IfPercentage<double>(conversionData);
         else if (i == 2) {
             type = TransformOperation::Type::Scale3D;
-            sz = valueItem->doubleValueDividingBy100IfPercentage();
+            sz = valueItem->valueDividingBy100IfPercentage<double>(conversionData);
         }
     }
 
     return ScaleTransformOperation::create(sx, sy, sz, type);
 }
 
-RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
+RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     auto* valueList = dynamicDowncast<CSSValueList>(value);
     if (!valueList)
@@ -425,7 +423,7 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
     auto* lastValue = dynamicDowncast<CSSPrimitiveValue>(valueList->itemWithoutBoundsCheck(numberOfItems - 1));
     if (!lastValue)
         return nullptr;
-    auto angle = lastValue->computeDegrees();
+    auto angle = lastValue->resolveAsAngle(conversionData);
 
     if (numberOfItems == 1)
         return RotateTransformOperation::create(angle, TransformOperation::Type::Rotate);
@@ -457,12 +455,12 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
             if (!valueItem)
                 return nullptr;
             if (!i)
-                x = valueItem->doubleValue();
+                x = valueItem->resolveAsNumber(conversionData);
             else if (i == 1)
-                y = valueItem->doubleValue();
+                y = valueItem->resolveAsNumber(conversionData);
             else if (i == 2) {
                 type = TransformOperation::Type::Rotate3D;
-                z = valueItem->doubleValue();
+                z = valueItem->resolveAsNumber(conversionData);
             }
         }
     }

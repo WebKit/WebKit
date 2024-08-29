@@ -24,6 +24,7 @@ PASS syntax:'<length>', initialValue:' calc(-2px)' is valid
 PASS syntax:'<length>', initialValue:'calc(2px*4 + 10px)' is valid
 PASS syntax:'<length>', initialValue:'7.1e-4cm' is valid
 PASS syntax:'<length>', initialValue:'calc(7in - 12px)' is valid
+PASS syntax:'<length>', initialValue:'calc(15px + (sign(100vh - 10px) * 5px))' is valid
 PASS syntax:'<length>+', initialValue:'2px 7px calc(8px)' is valid
 PASS syntax:'<length>#', initialValue:'2px, 7px, calc(8px)' is valid
 PASS syntax:'<percentage>', initialValue:'-9.3e3%' is valid
@@ -35,19 +36,24 @@ PASS syntax:'<percentage> | <length>+', initialValue:'calc(100vh - 10px) 30px' i
 PASS syntax:'<number>', initialValue:'-109' is valid
 PASS syntax:'<number>', initialValue:'2.3e4' is valid
 PASS syntax:'<number>', initialValue:'calc(1 / 2)' is valid
+PASS syntax:'<number>', initialValue:'calc(15 + (sign(100vh - 10px) * 5))' is valid
 PASS syntax:'<integer>', initialValue:'-109' is valid
 PASS syntax:'<integer>', initialValue:'19' is valid
 PASS syntax:'<integer>', initialValue:'calc(1)' is valid
 PASS syntax:'<integer>', initialValue:'calc(1 + 2)' is valid
 PASS syntax:'<integer>', initialValue:'calc(3.1415)' is valid
 PASS syntax:'<integer>', initialValue:'calc(3.1415 + 3.1415)' is valid
+PASS syntax:'<integer>', initialValue:'calc(15 + (sign(100vh - 10px) * 5))' is valid
 PASS syntax:'<angle>', initialValue:'10deg' is valid
 PASS syntax:'<angle>', initialValue:'20.5rad' is valid
 PASS syntax:'<angle>', initialValue:'calc(50grad + 3.14159rad)' is valid
+PASS syntax:'<angle>', initialValue:'calc(15deg + (sign(100vh - 10px) * 5deg))' is valid
 PASS syntax:'<time>', initialValue:'2s' is valid
 PASS syntax:'<time>', initialValue:'calc(2s - 9ms)' is valid
+PASS syntax:'<time>', initialValue:'calc(15s + (sign(100vh - 10px) * 5s))' is valid
 PASS syntax:'<resolution>', initialValue:'10dpi' is valid
 PASS syntax:'<resolution>', initialValue:'3dPpX' is valid
+PASS syntax:'<resolution>', initialValue:'calc(15dppx + (sign(100vh - 10px) * 5dpi))' is valid
 PASS syntax:'<transform-function>', initialValue:'translateX(2px)' is valid
 PASS syntax:'<transform-function>|<integer>', initialValue:'5' is valid
 PASS syntax:'<transform-function>|<integer>', initialValue:'scale(2)' is valid

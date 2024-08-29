@@ -640,28 +640,15 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
 {
-    // FIXME: Use CSSPrimitiveValue::computeValue.
     switch (primitiveValue.primitiveType()) {
     case CSSUnitType::CSS_PX:
-        result = primitiveValue.floatValue(CSSUnitType::CSS_PX);
-        return true;
     case CSSUnitType::CSS_PT:
-        result = 4 * primitiveValue.floatValue(CSSUnitType::CSS_PT) / 3;
-        return true;
     case CSSUnitType::CSS_PC:
-        result = 16 * primitiveValue.floatValue(CSSUnitType::CSS_PC);
-        return true;
     case CSSUnitType::CSS_CM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 2.54;
-        return true;
     case CSSUnitType::CSS_MM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 25.4;
-        return true;
     case CSSUnitType::CSS_Q:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / (25.4 * 4.0);
-        return true;
     case CSSUnitType::CSS_IN:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_IN);
+        result = primitiveValue.resolveAsLengthDeprecated();
         return true;
     default:
         return false;

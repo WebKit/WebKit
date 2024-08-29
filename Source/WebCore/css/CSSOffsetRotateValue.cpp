@@ -50,7 +50,7 @@ String CSSOffsetRotateValue::customCSSText() const
 bool CSSOffsetRotateValue::isInitialValue() const
 {
     return m_modifier && m_modifier->valueID() == CSSValueAuto
-        && (!m_angle || m_angle->computeDegrees() == 0.0);
+        && (!m_angle || m_angle->isZero().value_or(false));
 }
 
 bool CSSOffsetRotateValue::equals(const CSSOffsetRotateValue& o) const

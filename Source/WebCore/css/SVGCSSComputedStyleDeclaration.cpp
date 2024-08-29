@@ -62,7 +62,7 @@ static Ref<CSSValue> createCSSValue(const Vector<SVGLengthValue>& dashes)
         auto primitiveValue = length.toCSSPrimitiveValue();
         // Computed lengths should always be in 'px' unit.
         if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::CSS_PX)
-            list.append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
+            list.append(CSSPrimitiveValue::create(primitiveValue->resolveAsLengthDeprecated(), CSSUnitType::CSS_PX));
         else
             list.append(WTFMove(primitiveValue));
     }
@@ -168,7 +168,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         case BaselineShift::Length: {
             auto computedValue = svgStyle.baselineShiftValue().toCSSPrimitiveValue(m_element.get());
             if (computedValue->isLength() && computedValue->primitiveType() != CSSUnitType::CSS_PX)
-                return CSSPrimitiveValue::create(computedValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX);
+                return CSSPrimitiveValue::create(computedValue->resolveAsLengthDeprecated(), CSSUnitType::CSS_PX);
             return computedValue;
         }
         }
@@ -197,7 +197,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         break;
     default:
         // If you crash here, it's because you added a css property and are not handling it
-        // in either this switch statement or the one in CSSComputedStyleDelcaration::getPropertyCSSValue
+        // in either this switch statement or the one in CSSComputedStyleDeclaration::getPropertyCSSValue
         ASSERT_WITH_MESSAGE(0, "unimplemented propertyID: %d", propertyID);
     }
     return nullptr;

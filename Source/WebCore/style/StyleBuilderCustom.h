@@ -219,11 +219,11 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
         builderState.setZoom(docZoom);
     } else if (primitiveValue.isPercentage()) {
         resetUsedZoom(builderState);
-        if (float percent = primitiveValue.floatValue())
+        if (float percent = primitiveValue.resolveAsPercentage<float>(builderState.cssToLengthConversionData()))
             builderState.setZoom(percent / 100.0f);
     } else if (primitiveValue.isNumber()) {
         resetUsedZoom(builderState);
-        if (float number = primitiveValue.floatValue())
+        if (float number = primitiveValue.resolveAsNumber<float>(builderState.cssToLengthConversionData()))
             builderState.setZoom(number);
     }
 }
@@ -654,7 +654,7 @@ inline void BuilderCustom::applyValueWebkitTextSizeAdjust(BuilderState& builderS
     else if (primitiveValue.valueID() == CSSValueNone)
         builderState.style().setTextSizeAdjust(TextSizeAdjustment::none());
     else
-        builderState.style().setTextSizeAdjust(TextSizeAdjustment(primitiveValue.floatValue()));
+        builderState.style().setTextSizeAdjust(TextSizeAdjustment(primitiveValue.resolveAsPercentage<float>(builderState.cssToLengthConversionData())));
 
     builderState.setFontDirty();
 }
@@ -693,10 +693,10 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& shadowValue = downcast<CSSShadowValue>(item);
         auto& conversionData = builderState.cssToLengthConversionData();
-        auto x = shadowValue.x->computeLength<Length>(conversionData);
-        auto y = shadowValue.y->computeLength<Length>(conversionData);
-        auto blur = shadowValue.blur ? shadowValue.blur->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
-        auto spread = shadowValue.spread ? shadowValue.spread->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
+        auto x = shadowValue.x->resolveAsLength<Length>(conversionData);
+        auto y = shadowValue.y->resolveAsLength<Length>(conversionData);
+        auto blur = shadowValue.blur ? shadowValue.blur->resolveAsLength<Length>(conversionData) : Length(0, LengthType::Fixed);
+        auto spread = shadowValue.spread ? shadowValue.spread->resolveAsLength<Length>(conversionData) : Length(0, LengthType::Fixed);
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
         // If no color value is specified, the color is currentColor
         auto color = StyleColor::currentColor();
@@ -971,16 +971,21 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
     if (!list)
         return;
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     if (auto* ratioList = dynamicDowncast<CSSValueList>(*list->item(1))) {
         builderState.style().setAspectRatioType(AspectRatioType::AutoAndRatio);
         ASSERT(ratioList->length() == 2);
-        builderState.style().setAspectRatio(downcast<CSSPrimitiveValue>(ratioList->item(0))->doubleValue(), downcast<CSSPrimitiveValue>(ratioList->item(1))->doubleValue());
+        builderState.style().setAspectRatio(
+            downcast<CSSPrimitiveValue>(ratioList->item(0))->resolveAsNumber(conversionData),
+            downcast<CSSPrimitiveValue>(ratioList->item(1))->resolveAsNumber(conversionData)
+        );
         return;
     }
 
     ASSERT(list->length() == 2);
-    auto width = downcast<CSSPrimitiveValue>(list->item(0))->doubleValue();
-    auto height = downcast<CSSPrimitiveValue>(list->item(1))->doubleValue();
+    auto width = downcast<CSSPrimitiveValue>(list->item(0))->resolveAsNumber(conversionData);
+    auto height = downcast<CSSPrimitiveValue>(list->item(1))->resolveAsNumber(conversionData);
     if (!width || !height)
         builderState.style().setAspectRatioType(AspectRatioType::AutoZero);
     else
@@ -1059,9 +1064,11 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
     if (setCounterIncrementToNone)
         return;
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     for (auto& item : downcast<CSSValueList>(value)) {
         AtomString identifier { downcast<CSSPrimitiveValue>(item.first()).stringValue() };
-        int value = downcast<CSSPrimitiveValue>(item.second()).intValue();
+        int value = downcast<CSSPrimitiveValue>(item.second()).resolveAsNumber<int>(conversionData);
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;
@@ -1619,15 +1626,14 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         }
     } else {
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !primitiveValue.isParentFontRelativeLength());
-        if (primitiveValue.isLength()) {
-            auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
-            size = primitiveValue.computeLength<float>(conversionData);
-        } else if (primitiveValue.isPercentage())
-            size = (primitiveValue.floatValue() * parentSize) / 100.0f;
-        else if (primitiveValue.isCalculatedPercentageWithLength()) {
-            auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
+        auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
+        if (primitiveValue.isLength())
+            size = primitiveValue.resolveAsLength<float>(conversionData);
+        else if (primitiveValue.isPercentage())
+            size = (primitiveValue.resolveAsPercentage<float>(conversionData) * parentSize) / 100.0f;
+        else if (primitiveValue.isCalculatedPercentageWithLength())
             size = primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(parentSize);
-        } else
+        else
             return;
     }
 
@@ -1819,7 +1825,7 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::Length);
-            auto width = primitiveValue->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            auto width = primitiveValue->resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             style.setContainIntrinsicWidth(width);
         }
         return;
@@ -1835,7 +1841,7 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
     else {
         ASSERT(downcast<CSSPrimitiveValue>(pair->second()).isLength());
         style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicWidth(lengthValue);
     }
 }
@@ -1863,7 +1869,7 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
 
         if (primitiveValue->isLength()) {
             style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::Length);
-            auto height = primitiveValue->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            auto height = primitiveValue->resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
             style.setContainIntrinsicHeight(height);
         }
         return;
@@ -1879,7 +1885,7 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
     else {
         ASSERT(downcast<CSSPrimitiveValue>(pair->second()).isLength());
         style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
-        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair->second()).resolveAsLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicHeight(lengthValue);
     }
 }

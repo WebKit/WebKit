@@ -3483,7 +3483,7 @@
                 "parser-function": "consumePaintStroke",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
-                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implemenation.",
+                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implementation.",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
             },
             "specification": {
@@ -5629,7 +5629,7 @@
                 "parser-function": "consumePaintStroke",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
-                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implemenation.",
+                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implementation.",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
             },
             "specification": {

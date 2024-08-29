@@ -201,7 +201,7 @@ struct Tree {
     Stage stage;
     ValueRange range;
 
-    // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::deprecatedDoubleValue` that the evaluation results will be incorrect.
+    // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::doubleValueDeprecated` that the evaluation results will be incorrect.
     bool requiresConversionData = false;
 
     bool operator==(const Tree&) const = default;

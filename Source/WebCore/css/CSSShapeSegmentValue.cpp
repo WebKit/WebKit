@@ -190,7 +190,7 @@ String CSSShapeSegmentValue::customCSSText() const
             builder.append(" large"_s);
 
         if (RefPtr angleValue = dynamicDowncast<CSSPrimitiveValue>(arcData.angle)) {
-            if (angleValue->computeDegrees())
+            if (!angleValue->isZero().value_or(false))
                 builder.append(" rotate "_s, angleValue->cssText());
         }
         break;
@@ -225,12 +225,12 @@ BasicShapeShape::ShapeSegment CSSShapeSegmentValue::toShapeSegment(const Style::
         return LengthSize { toLength(pairValue->first()), toLength(pairValue->second()) };
     };
 
-    auto toDegrees = [](const CSSValue& value) {
+    auto toDegrees = [&](const CSSValue& value) {
         RefPtr angleValue = dynamicDowncast<CSSPrimitiveValue>(value);
         if (!angleValue || !angleValue->isAngle())
             return 0.0;
 
-        return angleValue->computeDegrees();
+        return angleValue->resolveAsAngle(builderState.cssToLengthConversionData());
     };
 
     switch (type()) {

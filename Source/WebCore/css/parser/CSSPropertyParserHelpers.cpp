@@ -189,17 +189,18 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
             parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         else if (filterType == CSSValueBlur)
             parsedValue = consumeLength(args, HTMLStandardMode, ValueRange::NonNegative);
-        else {
-            RefPtr primitiveValue = consumePercent(args, ValueRange::NonNegative);
-            if (!primitiveValue)
-                primitiveValue = consumeNumber(args, ValueRange::NonNegative);
-            if (primitiveValue && !allowsValuesGreaterThanOne(filterType)) {
-                bool isPercentage = primitiveValue->isPercentage();
-                double maxAllowed = isPercentage ? 100.0 : 1.0;
-                if (primitiveValue->doubleValue() > maxAllowed)
-                    primitiveValue = CSSPrimitiveValue::create(maxAllowed, isPercentage ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_NUMBER);
+        else if (RefPtr percentage = consumePercent(args, ValueRange::NonNegative)) {
+            if (!allowsValuesGreaterThanOne(filterType)) {
+                if (percentage->resolveAsPercentageDeprecated() > 100.0)
+                    percentage = CSSPrimitiveValue::create(100.0, CSSUnitType::CSS_PERCENTAGE);
             }
-            parsedValue = WTFMove(primitiveValue);
+            parsedValue = WTFMove(percentage);
+        } else if (RefPtr number = consumeNumber(args, ValueRange::NonNegative)) {
+            if (!allowsValuesGreaterThanOne(filterType)) {
+                if (number->resolveAsNumberDeprecated() > 1.0)
+                    number = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_NUMBER);
+            }
+            parsedValue = WTFMove(number);
         }
     }
     if (!parsedValue || !args.atEnd())
@@ -1493,6 +1494,8 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSSParserMode mode
 
 RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSSParserMode)
 {
+    // none | [ <number> | <percentage> ]{1,3}
+
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
@@ -1515,15 +1518,17 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSSParserMode)
         range.consumeWhitespace();
         z = consumePercentDividedBy100OrNumber(range);
     }
-    if (z && z->doubleValue() != 1.0)
+    if (z && z->resolveAsNumberDeprecated() != 1.0)
         return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
-    if (y && x->doubleValue() != y->doubleValue())
+    if (y && x->resolveAsNumberDeprecated() != y->resolveAsNumberDeprecated())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull());
     return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 }
 
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode mode)
 {
+    // none | <angle> | [ x | y | z | <number>{3} ] && <angle>
+
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
@@ -1588,9 +1593,9 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode mode)
 
         // No we must check the values since if we have a vector in the x, y or z axis alone we must serialize to the
         // matching identifier.
-        auto x = downcast<CSSPrimitiveValue>(list[0].get()).doubleValue();
-        auto y = downcast<CSSPrimitiveValue>(list[1].get()).doubleValue();
-        auto z = downcast<CSSPrimitiveValue>(list[2].get()).doubleValue();
+        auto x = downcast<CSSPrimitiveValue>(list[0].get()).resolveAsNumberDeprecated();
+        auto y = downcast<CSSPrimitiveValue>(list[1].get()).resolveAsNumberDeprecated();
+        auto z = downcast<CSSPrimitiveValue>(list[2].get()).resolveAsNumberDeprecated();
 
         if (x && !y && !z)
             return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueX), angle.releaseNonNull());
@@ -3064,9 +3069,9 @@ RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range)
 
     if (spanValue && !numericValue && !gridLineName)
         return nullptr; // "span" keyword alone is invalid.
-    if (spanValue && numericValue && numericValue->intValue() < 0)
+    if (spanValue && numericValue && numericValue->isNegative().value_or(false))
         return nullptr; // Negative numbers are not allowed for span.
-    if (numericValue && numericValue->intValue() == 0)
+    if (numericValue && numericValue->isZero().value_or(false))
         return nullptr; // An <integer> value of zero makes the declaration invalid.
 
     CSSValueListBuilder values;
@@ -3883,7 +3888,7 @@ RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
 
         // If the lower bound of any range is higher than the upper bound, the entire descriptor is invalid and must be
         // ignored.
-        if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->intValue() > upperBound->intValue())
+        if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->resolveAsIntegerDeprecated() > upperBound->resolveAsIntegerDeprecated())
             return nullptr;
 
         return CSSValuePair::createNoncoalescing(lowerBound.releaseNonNull(), upperBound.releaseNonNull());
@@ -3954,7 +3959,7 @@ RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, 
             return nullptr;
 
         // Additive tuples must be specified in order of strictly descending weight.
-        auto weight = integer->intValue();
+        auto weight = integer->resolveAsIntegerDeprecated();
         if (lastWeight && !(weight < lastWeight))
             return nullptr;
         lastWeight = weight;

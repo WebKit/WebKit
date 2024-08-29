@@ -296,7 +296,7 @@ void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& valu
     if (!primitiveValue)
         return;
 
-    animation.setDelay(primitiveValue->computeTime<double, CSSPrimitiveValue::TimeUnit::Seconds>());
+    animation.setDelay(primitiveValue->resolveAsTime(m_builderState.cssToLengthConversionData()));
 }
 
 void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& value)
@@ -338,7 +338,7 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& v
     if (!primitiveValue)
         return;
 
-    auto duration = std::max<double>(primitiveValue->computeTime<double, CSSPrimitiveValue::TimeUnit::Seconds>(), 0);
+    auto duration = std::max<double>(primitiveValue->resolveAsTime(m_builderState.cssToLengthConversionData()), 0);
     animation.setDuration(duration);
 }
 
@@ -384,7 +384,7 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSVa
     if (primitiveValue->valueID() == CSSValueInfinite)
         animation.setIterationCount(Animation::IterationCountInfinite);
     else
-        animation.setIterationCount(primitiveValue->floatValue());
+        animation.setIterationCount(primitiveValue->resolveAsNumber<float>(m_builderState.cssToLengthConversionData()));
 }
 
 void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
@@ -537,13 +537,19 @@ void CSSToStyleMap::mapNinePieceImageSlice(const CSSValue& value, NinePieceImage
 void CSSToStyleMap::mapNinePieceImageSlice(const CSSBorderImageSliceValue& value, NinePieceImage& image)
 {
     // Set up a length box to represent our image slices.
-    auto side = [](const CSSPrimitiveValue& value) -> Length {
+    auto& conversionData = m_builderState.cssToLengthConversionData();
+    auto side = [&](const CSSPrimitiveValue& value) -> Length {
         if (value.isPercentage())
-            return { value.doubleValue(), LengthType::Percent };
-        return { value.intValue(CSSUnitType::CSS_NUMBER), LengthType::Fixed };
+            return { value.resolveAsPercentage(conversionData), LengthType::Percent };
+        return { value.resolveAsNumber<int>(conversionData), LengthType::Fixed };
     };
     auto& slices = value.slices();
-    image.setImageSlices({ side(slices.top()), side(slices.right()), side(slices.bottom()), side(slices.left()) });
+    image.setImageSlices({
+        side(slices.top()),
+        side(slices.right()),
+        side(slices.bottom()),
+        side(slices.left())
+    });
 
     // Set our fill mode.
     image.setFill(value.fill());
@@ -584,14 +590,14 @@ Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& side)
     auto& value = downcast<CSSPrimitiveValue>(side);
     if (value.valueID() == CSSValueAuto)
         return { };
-    if (value.isNumber())
-        return { value.floatValue(), LengthType::Relative };
-    if (value.isPercentage())
-        return { value.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent };
     auto& conversionData = m_builderState.cssToLengthConversionData();
+    if (value.isNumber())
+        return { value.resolveAsNumber<float>(conversionData), LengthType::Relative };
+    if (value.isPercentage())
+        return { value.resolveAsPercentage<float>(conversionData), LengthType::Percent };
     if (value.isCalculatedPercentageWithLength())
         return Length { value.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
-    return { value.computeLength<Length>(conversionData) };
+    return { value.resolveAsLength<Length>(conversionData) };
 }
 
 LengthBox CSSToStyleMap::mapNinePieceImageQuad(const Quad& quad)

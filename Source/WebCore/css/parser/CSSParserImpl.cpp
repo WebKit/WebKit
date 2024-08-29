@@ -827,7 +827,7 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
             if (!value)
                 return { };
             ASSERT(value->isInteger());
-            auto tagInteger = value->intValue();
+            auto tagInteger = value->resolveAsIntegerDeprecated();
             ASSERT(tagInteger >= 0);
             values.append(std::make_unsigned_t<int>(tagInteger));
             if (maxValues && values.size() > *maxValues)
@@ -940,7 +940,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(*basePaletteValue);
         if (primitiveValue.isInteger())
-            basePalette = FontPaletteIndex(primitiveValue.value<unsigned>());
+            basePalette = FontPaletteIndex(primitiveValue.resolveAsIntegerDeprecated<unsigned>());
         else if (primitiveValue.valueID() == CSSValueLight)
             basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
         else if (primitiveValue.valueID() == CSSValueDark)
@@ -954,7 +954,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
             const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item);
             if (!pair.key().isInteger())
                 continue;
-            unsigned key = pair.key().value<unsigned>();
+            auto key = pair.key().resolveAsIntegerDeprecated<unsigned>();
             auto color = pair.color().absoluteColor();
             // Ignore non absolute color https://drafts.csswg.org/css-fonts/#override-color
             if (!color.isValid())

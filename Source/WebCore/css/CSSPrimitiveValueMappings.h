@@ -44,6 +44,7 @@
 #include "SVGRenderStyleDefs.h"
 #include "ScrollAxis.h"
 #include "ScrollTypes.h"
+#include "StyleBuilderState.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
 #include "TouchAction.h"
@@ -64,9 +65,11 @@ template<typename TargetType> TargetType fromCSSValue(const CSSValue& value)
 
 class TypeDeducingCSSValueMapper {
 public:
-    TypeDeducingCSSValueMapper(const CSSValue& value)
-        : m_value(value)
-    { }
+    TypeDeducingCSSValueMapper(Style::BuilderState& builderState, const CSSValue& value)
+        : m_builderState { builderState }
+        , m_value { value }
+    {
+    }
 
     template<typename TargetType> operator TargetType() const
     {
@@ -80,43 +83,44 @@ public:
 
     operator unsigned short() const
     {
-        return numericValue().value<unsigned short>();
+        return numericValue().resolveAsNumber<unsigned short>(m_builderState.cssToLengthConversionData());
     }
 
     operator int() const
     {
-        return numericValue().value<int>();
+        return numericValue().resolveAsNumber<int>(m_builderState.cssToLengthConversionData());
     }
 
     operator unsigned() const
     {
-        return numericValue().value<unsigned>();
+        return numericValue().resolveAsNumber<unsigned>(m_builderState.cssToLengthConversionData());
     }
 
     operator float() const
     {
-        return numericValue().value<float>();
+        return numericValue().resolveAsNumber<float>(m_builderState.cssToLengthConversionData());
     }
 
     operator double() const
     {
-        return numericValue().doubleValue();
+        return numericValue().resolveAsNumber<double>(m_builderState.cssToLengthConversionData());
     }
 
 private:
     const CSSPrimitiveValue& numericValue() const
     {
         auto& value = downcast<CSSPrimitiveValue>(m_value);
-        ASSERT(value.primitiveType() == CSSUnitType::CSS_NUMBER || value.primitiveType() == CSSUnitType::CSS_INTEGER);
+        ASSERT(value.isNumberOrInteger());
         return value;
     }
 
+    Style::BuilderState& m_builderState;
     const CSSValue& m_value;
 };
 
-inline TypeDeducingCSSValueMapper fromCSSValueDeducingType(const CSSValue& value)
+inline TypeDeducingCSSValueMapper fromCSSValueDeducingType(Style::BuilderState& builderState, const CSSValue& value)
 {
-    return value;
+    return { builderState, value };
 }
 
 #define EMIT_TO_CSS_SWITCH_CASE(VALUE) case TYPE::VALUE: return CSSValue##VALUE;
@@ -146,10 +150,10 @@ template<> inline LineClampValue fromCSSValue(const CSSValue& value)
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.primitiveType() == CSSUnitType::CSS_INTEGER)
-        return LineClampValue(primitiveValue.value<int>(), LineClamp::LineCount);
+        return LineClampValue(primitiveValue.resolveAsIntegerDeprecated<int>(), LineClamp::LineCount);
 
     if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
-        return LineClampValue(primitiveValue.value<int>(), LineClamp::Percentage);
+        return LineClampValue(primitiveValue.resolveAsPercentageDeprecated<int>(), LineClamp::Percentage);
 
     ASSERT(primitiveValue.valueID() == CSSValueNone);
     return LineClampValue();
@@ -2049,11 +2053,11 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
     if (!convertingToLengthHasRequiredConversionData(supported, conversionData))
         return Length(LengthType::Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
-        return computeLength<Length>(conversionData);
+        return resolveAsLength<Length>(conversionData);
     if ((supported & FixedFloatConversion) && isLength())
-        return Length(computeLength<double>(conversionData), LengthType::Fixed);
+        return Length(resolveAsLength<double>(conversionData), LengthType::Fixed);
     if ((supported & PercentConversion) && isPercentage())
-        return Length(doubleValue(), LengthType::Percent);
+        return Length(resolveAsPercentage<double>(conversionData), LengthType::Percent);
     if ((supported & AutoConversion) && valueID() == CSSValueAuto)
         return Length(LengthType::Auto);
     if ((supported & CalculatedConversion) && isCalculated())

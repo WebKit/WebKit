@@ -71,7 +71,7 @@ static FilterOperation::Type filterOperationForType(CSSValueID type)
     return FilterOperation::Type::None;
 }
 
-std::optional<FilterOperations> createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& cssToLengthConversionData, const CSSValue& inValue)
+std::optional<FilterOperations> createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSValue& inValue)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(inValue)) {
         if (primitiveValue->valueID() == CSSValueNone)
@@ -123,11 +123,8 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         case FilterOperation::Type::Sepia:
         case FilterOperation::Type::Saturate: {
             double amount = 1;
-            if (filterValue->length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
+            if (filterValue->length() == 1)
+                amount = firstValue->valueDividingBy100IfPercentage<double>(conversionData);
 
             operations.append(BasicColorMatrixFilterOperation::create(amount, operationType));
             break;
@@ -135,7 +132,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         case FilterOperation::Type::HueRotate: {
             double angle = 0;
             if (filterValue->length() == 1)
-                angle = firstValue->computeDegrees();
+                angle = firstValue->resolveAsAngle(conversionData);
 
             operations.append(BasicColorMatrixFilterOperation::create(angle, operationType));
             break;
@@ -145,11 +142,8 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         case FilterOperation::Type::Contrast:
         case FilterOperation::Type::Opacity: {
             double amount = 1;
-            if (filterValue->length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
+            if (filterValue->length() == 1)
+                amount = firstValue->valueDividingBy100IfPercentage<double>(conversionData);
 
             operations.append(BasicComponentTransferFilterOperation::create(amount, operationType));
             break;
@@ -161,7 +155,7 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
         case FilterOperation::Type::Blur: {
             Length stdDeviation = Length(0, LengthType::Fixed);
             if (filterValue->length() >= 1)
-                stdDeviation = convertToFloatLength(firstValue, cssToLengthConversionData);
+                stdDeviation = convertToFloatLength(firstValue, conversionData);
             if (stdDeviation.isUndefined())
                 return std::nullopt;
 
@@ -176,11 +170,11 @@ std::optional<FilterOperations> createFilterOperations(const Document& document,
             if (!item)
                 continue;
 
-            int x = item->x->computeLength<int>(cssToLengthConversionData);
-            int y = item->y->computeLength<int>(cssToLengthConversionData);
+            int x = item->x->resolveAsLength<int>(conversionData);
+            int y = item->y->resolveAsLength<int>(conversionData);
             IntPoint location(x, y);
-            int blur = item->blur ? item->blur->computeLength<int>(cssToLengthConversionData) : 0;
-            auto color = item->color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, cssToLengthConversionData, *item->color) : style.color();
+            int blur = item->blur ? item->blur->resolveAsLength<int>(conversionData) : 0;
+            auto color = item->color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, conversionData, *item->color) : style.color();
 
             operations.append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparentBlack));
             break;
