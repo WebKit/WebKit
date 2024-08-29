@@ -1187,7 +1187,8 @@ private:
 
     void setWasOmittedFromZOrderTree();
     void setWasIncludedInZOrderTree() { m_wasOmittedFromZOrderTree = false; }
-    void removeSelfAndDescendantsFromCompositor();
+    void removeSelfFromCompositor();
+    void removeDescendantsFromCompositor();
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     void setHasCompositedNonContainedDescendants(bool value) { m_hasCompositedNonContainedDescendants = value; }
