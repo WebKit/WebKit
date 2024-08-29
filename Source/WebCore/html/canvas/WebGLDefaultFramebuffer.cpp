@@ -27,8 +27,11 @@
 
 #if ENABLE(WEBGL)
 #include "WebGLDefaultFramebuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLDefaultFramebuffer);
 
 std::unique_ptr<WebGLDefaultFramebuffer> WebGLDefaultFramebuffer::create(WebGLRenderingContextBase& context, IntSize size)
 {

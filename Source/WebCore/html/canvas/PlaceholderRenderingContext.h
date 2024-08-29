@@ -28,6 +28,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CanvasRenderingContext.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +38,7 @@ class PlaceholderRenderingContext;
 
 // Thread-safe interface to submit frames from worker to the placeholder rendering context.
 class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
     WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
 public:
     static Ref<PlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);

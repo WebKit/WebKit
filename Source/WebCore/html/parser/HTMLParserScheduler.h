@@ -28,6 +28,7 @@
 #include "NestingLevelIncrementer.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
@@ -61,7 +62,8 @@ public:
 };
 
 class HTMLParserScheduler {
-    WTF_MAKE_NONCOPYABLE(HTMLParserScheduler); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HTMLParserScheduler);
+    WTF_MAKE_NONCOPYABLE(HTMLParserScheduler);
 public:
     explicit HTMLParserScheduler(HTMLDocumentParser&);
     ~HTMLParserScheduler();

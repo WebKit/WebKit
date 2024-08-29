@@ -46,8 +46,12 @@
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTTokenizer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebVTTCueData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebVTTParser);
 
 constexpr double secondsPerHour = 3600;
 constexpr double secondsPerMinute = 60;

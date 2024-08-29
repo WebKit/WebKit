@@ -33,6 +33,7 @@
 #include "FormListedElement.h"
 #include "HTMLElement.h"
 #include "ValidationMessage.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 
 namespace WebCore {
@@ -40,8 +41,8 @@ namespace WebCore {
 class HTMLMaybeFormAssociatedCustomElement;
 
 class ValidatedFormListedElement : public FormListedElement {
+    WTF_MAKE_TZONE_ALLOCATED(ValidatedFormListedElement);
     WTF_MAKE_NONCOPYABLE(ValidatedFormListedElement);
-    WTF_MAKE_FAST_ALLOCATED;
     friend class DelayedUpdateValidityScope;
     friend class HTMLMaybeFormAssociatedCustomElement;
 public:

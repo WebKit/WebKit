@@ -30,10 +30,13 @@
 #include "ContextDestructionObserverInlines.h"
 #include "SecurityOrigin.h"
 #include "URLRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PublicURLManager);
 
 Ref<PublicURLManager> PublicURLManager::create(ScriptExecutionContext* context)
 {

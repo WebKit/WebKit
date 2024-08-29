@@ -32,8 +32,12 @@
 #include "HTMLOptionElement.h"
 #include "HTMLTableElement.h"
 #include "MathMLNames.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLElementStack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(HTMLElementStackElementRecord, HTMLElementStack::ElementRecord);
 
 using namespace ElementNames;
 

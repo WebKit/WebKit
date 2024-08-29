@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ class CanvasRenderingContext2DBase;
 class FloatRect;
 
 class CanvasFilterContextSwitcher {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CanvasFilterContextSwitcher);
 public:
     static std::unique_ptr<CanvasFilterContextSwitcher> create(CanvasRenderingContext2DBase&, const FloatRect& bounds);
 

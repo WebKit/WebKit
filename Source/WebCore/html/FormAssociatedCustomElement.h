@@ -29,12 +29,13 @@
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "ValidatedFormListedElement.h"
 #include "ValidityStateFlags.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FormAssociatedCustomElement final : public ValidatedFormListedElement {
+    WTF_MAKE_TZONE_ALLOCATED(FormAssociatedCustomElement);
     WTF_MAKE_NONCOPYABLE(FormAssociatedCustomElement);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<FormAssociatedCustomElement> create(HTMLMaybeFormAssociatedCustomElement&);
 

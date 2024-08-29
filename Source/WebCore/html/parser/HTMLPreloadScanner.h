@@ -29,10 +29,12 @@
 #include "CSSPreloadScanner.h"
 #include "HTMLTokenizer.h"
 #include "SegmentedString.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TokenPreloadScanner {
+    WTF_MAKE_TZONE_ALLOCATED(TokenPreloadScanner);
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner);
 public:
     explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
@@ -82,7 +84,7 @@ private:
 };
 
 class HTMLPreloadScanner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HTMLPreloadScanner);
 public:
     HTMLPreloadScanner(const HTMLParserOptions&, const URL& documentURL, float deviceScaleFactor = 1.0);
 
