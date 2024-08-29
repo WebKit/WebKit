@@ -1882,7 +1882,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     case CSSPropertyBackgroundBlendMode:
         return CSSPropertyParsing::consumeSingleBackgroundBlendMode(range);
     case CSSPropertyBackgroundAttachment:
-        return CSSPropertyParsing::consumeSingleBackgroundAttachment(range);
+        return consumeSingleBackgroundAttachment(range, context, FromShorthand::Yes);
     case CSSPropertyBackgroundOrigin:
         return CSSPropertyParsing::consumeSingleBackgroundOrigin(range);
     case CSSPropertyBackgroundImage:

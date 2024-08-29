@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ CSSFixedBackgroundSupportEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+if (window.internals)
+    internals.settings.setCSSFixedBackgroundSupportEnabled(false);
+
+description("Tests that background-attachment:fixed returns NO to @supports() when CSSFixedBackgroundSupportEnabled is disabled");
+
+shouldBeTrue("'backgroundAttachment' in document.documentElement.style");
+shouldBeTrue("'background-attachment' in getComputedStyle(document.documentElement)");
+
+// Make sure @supports(background-attachment:fixed) returns NO when CSSFixedBackgroundSupportEnabled is disabled.
+shouldBeFalse("CSS.supports('background-attachment:fixed')");
+
+// Make sure the flag does not impact the other kinds of background-attachment.
+shouldBeTrue("CSS.supports('background-attachment:scroll')");
+shouldBeTrue("CSS.supports('background-attachment:local')");
+</script>
+</body>
+</html>

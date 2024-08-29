@@ -89,6 +89,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , transformStyleOptimized3DEnabled { document.settings().cssTransformStyleOptimized3DEnabled() }
 #endif
     , masonryEnabled { document.settings().masonryEnabled() }
+    , cssFixedBackgroundSupportEnabled { document.settings().cssFixedBackgroundSupportEnabled() }
     , cssNestingEnabled { document.settings().cssNestingEnabled() }
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
     , cssScopeAtRuleEnabled { document.settings().cssScopeAtRuleEnabled() }
@@ -127,29 +128,30 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
         | context.transformStyleOptimized3DEnabled          << 6
 #endif
-        | context.masonryEnabled                            << 7
-        | context.cssNestingEnabled                         << 8
-        | context.cssPaintingAPIEnabled                     << 9
-        | context.cssScopeAtRuleEnabled                     << 10
-        | context.cssShapeFunctionEnabled                   << 11
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 12
-        | context.cssBackgroundClipBorderAreaEnabled        << 13
-        | context.cssWordBreakAutoPhraseEnabled             << 14
-        | context.popoverAttributeEnabled                   << 15
-        | context.sidewaysWritingModesEnabled               << 16
-        | context.cssTextWrapPrettyEnabled                  << 17
-        | context.highlightAPIEnabled                       << 18
-        | context.grammarAndSpellingPseudoElementsEnabled   << 19
-        | context.customStateSetEnabled                     << 20
-        | context.thumbAndTrackPseudoElementsEnabled        << 21
+        | context.cssFixedBackgroundSupportEnabled          << 7
+        | context.masonryEnabled                            << 8
+        | context.cssNestingEnabled                         << 9
+        | context.cssPaintingAPIEnabled                     << 10
+        | context.cssScopeAtRuleEnabled                     << 11
+        | context.cssShapeFunctionEnabled                   << 12
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 13
+        | context.cssBackgroundClipBorderAreaEnabled        << 14
+        | context.cssWordBreakAutoPhraseEnabled             << 15
+        | context.popoverAttributeEnabled                   << 16
+        | context.sidewaysWritingModesEnabled               << 17
+        | context.cssTextWrapPrettyEnabled                  << 18
+        | context.highlightAPIEnabled                       << 19
+        | context.grammarAndSpellingPseudoElementsEnabled   << 20
+        | context.customStateSetEnabled                     << 21
+        | context.thumbAndTrackPseudoElementsEnabled        << 22
 #if ENABLE(SERVICE_CONTROLS)
-        | context.imageControlsEnabled                      << 22
+        | context.imageControlsEnabled                      << 23
 #endif
-        | context.colorLayersEnabled                        << 23
-        | context.lightDarkEnabled                          << 24
-        | context.targetTextPseudoElementEnabled            << 25
-        | context.viewTransitionTypesEnabled                << 26
-        | (uint32_t)context.mode                            << 27; // This is multiple bits, so keep it last.
+        | context.colorLayersEnabled                        << 24
+        | context.lightDarkEnabled                          << 25
+        | context.targetTextPseudoElementEnabled            << 26
+        | context.viewTransitionTypesEnabled                << 27
+        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

@@ -583,7 +583,7 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
     } else {
         LayoutRect viewportRect;
         float topContentInset = 0;
-        if (renderer.settings().fixedBackgroundsPaintRelativeToDocument())
+        if (!renderer.settings().cssFixedBackgroundSupportEnabled())
             viewportRect = view.unscaledDocumentRect();
         else {
             LocalFrameView& frameView = view.frameView();
