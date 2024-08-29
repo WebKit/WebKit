@@ -31,6 +31,7 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "VideoEncoder.h"
+#include "WebCodecsBaseClass.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsVideoEncoderConfig.h"
@@ -46,7 +47,8 @@ struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderEncodeOptions;
 
 class WebCodecsVideoEncoder
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
+    : private WebCodecsBaseClass
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoEncoder);

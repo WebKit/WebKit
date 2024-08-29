@@ -137,7 +137,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     if (m_internalEncoder) {
         queueControlMessageAndProcess({ *this, [this, config]() mutable {
             m_isMessageQueueBlocked = true;
-            m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config)]() mutable {
+            m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config).isolatedCopy()]() mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -270,7 +270,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
     queueControlMessageAndProcess({ *this, [this, audioData = WTFMove(audioData), timestamp = frame->timestamp(), duration = frame->duration()]() mutable {
         --m_encodeQueueSize;
         scheduleDequeueEvent();
-        m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }, [this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](auto&& result) {
+        m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }, [this, pendingActivity = takePendingWebCodecActivity()](auto&& result) {
             if (!result.isNull()) {
                 if (auto* context = scriptExecutionContext())
                     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("AudioEncoder encode failed: "_s, result));
@@ -291,7 +291,7 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
 
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = makePendingActivity(*this)] {
+        m_internalEncoder->flush([this, weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
@@ -427,7 +427,7 @@ void WebCodecsAudioEncoder::stop()
 
 bool WebCodecsAudioEncoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_isMessageQueueBlocked);
+    return (m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_isMessageQueueBlocked)) || hasPendingWebCodecActivity();
 }
 
 } // namespace WebCore

@@ -161,7 +161,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&
         --m_decodeQueueSize;
         scheduleDequeueEvent();
 
-        m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, pendingActivity = makePendingActivity(*this)](String&& result) {
+        m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, pendingActivity = takePendingWebCodecActivity()](String&& result) {
             if (!result.isNull())
                 closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
         });
@@ -177,7 +177,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::flush(Ref<DeferredPromise>&& promise)
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount] {
-        m_internalDecoder->flush([this, clearFlushPromiseCount, pendingActivity = makePendingActivity(*this)] {
+        m_internalDecoder->flush([this, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] {
             if (clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
@@ -313,7 +313,7 @@ void WebCodecsAudioDecoder::stop()
 
 bool WebCodecsAudioDecoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked);
+    return (m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked)) || hasPendingWebCodecActivity();
 }
 
 } // namespace WebCore

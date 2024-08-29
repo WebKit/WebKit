@@ -197,7 +197,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         --m_decodeQueueSize;
         scheduleDequeueEvent();
 
-        m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, pendingActivity = makePendingActivity(*this)](auto&& result) {
+        m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, pendingActivity = takePendingWebCodecActivity()](auto&& result) {
             if (!result.isNull())
                 closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
         });
@@ -213,7 +213,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount] {
-        m_internalDecoder->flush([this, clearFlushPromiseCount, pendingActivity = makePendingActivity(*this)] {
+        m_internalDecoder->flush([this, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] {
             if (clearFlushPromiseCount != m_clearFlushPromiseCount)
                 return;
 
@@ -349,7 +349,7 @@ void WebCodecsVideoDecoder::stop()
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked);
+    return (m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked)) || hasPendingWebCodecActivity();
 }
 
 } // namespace WebCore
