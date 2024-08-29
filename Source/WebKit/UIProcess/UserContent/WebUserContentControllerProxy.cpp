@@ -329,15 +329,21 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
 void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> dataReference, CompletionHandler<void(std::span<const uint8_t>, const String&)>&& reply)
 {
     auto page = WebProcessProxy::webPage(pageProxyID);
-    if (!page)
+    if (!page) {
+        reply({ }, { });
         return;
+    }
 
-    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
+    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID)) {
+        reply({ }, { });
         return;
+    }
 
     RefPtr<WebScriptMessageHandler> handler = m_scriptMessageHandlers.get(messageHandlerID);
-    if (!handler)
+    if (!handler) {
+        reply({ }, { });
         return;
+    }
 
     if (!handler->client().supportsAsyncReply()) {
         handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }));
