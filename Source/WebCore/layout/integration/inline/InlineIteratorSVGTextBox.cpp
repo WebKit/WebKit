@@ -44,7 +44,7 @@ FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform() const
     return visualRectIgnoringBlockDirection();
 }
 
-const Vector<SVGTextFragment>& SVGTextBox::svgTextFragments() const
+const Vector<SVGTextFragment>& SVGTextBox::textFragments() const
 {
     if (auto* svgText = dynamicDowncast<SVGInlineTextBox>(legacyInlineBox()))
         return svgText->textFragments();
@@ -69,7 +69,7 @@ SVGTextBoxIterator::SVGTextBoxIterator(const Box& box)
 {
 }
 
-SVGTextBoxIterator firstTextBoxFor(const RenderSVGInlineText& text)
+SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText& text)
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(text))
         return { *lineLayout->textBoxesFor(text) };
@@ -77,10 +77,16 @@ SVGTextBoxIterator firstTextBoxFor(const RenderSVGInlineText& text)
     return { BoxLegacyPath { text.firstLegacyTextBox() } };
 }
 
-SVGTextBoxRange textBoxesFor(const RenderSVGInlineText& text)
+BoxRange<SVGTextBoxIterator> svgTextBoxesFor(const RenderSVGInlineText& text)
 {
-    return { firstTextBoxFor(text) };
+    return { firstSVGTextBoxFor(text) };
 }
+
+SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox* box)
+{
+    return { BoxLegacyPath { box } };
+}
+
 
 }
 }

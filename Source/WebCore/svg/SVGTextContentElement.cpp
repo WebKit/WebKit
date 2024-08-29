@@ -210,7 +210,7 @@ bool SVGTextContentElement::selfHasRelativeLengths() const
     return true;
 }
 
-SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* renderer)
+const SVGTextContentElement* SVGTextContentElement::elementFromRenderer(const RenderObject* renderer)
 {
     if (!renderer)
         return nullptr;

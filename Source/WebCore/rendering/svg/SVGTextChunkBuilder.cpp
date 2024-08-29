@@ -56,13 +56,13 @@ float SVGTextChunkBuilder::totalAnchorShift() const
     return anchorShift;
 }
 
-AffineTransform SVGTextChunkBuilder::transformationForTextBox(SVGInlineTextBox* textBox) const
+AffineTransform SVGTextChunkBuilder::transformationForTextBox(InlineIterator::SVGTextBoxIterator textBox) const
 {
-    auto it = m_textBoxTransformations.find(textBox);
+    auto it = m_textBoxTransformations.find(makeSVGChunkTransformMapKey(textBox));
     return it == m_textBoxTransformations.end() ? AffineTransform() : it->value;
 }
 
-void SVGTextChunkBuilder::buildTextChunks(const Vector<SVGInlineTextBox*>& lineLayoutBoxes)
+void SVGTextChunkBuilder::buildTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes)
 {
     if (lineLayoutBoxes.isEmpty())
         return;
@@ -71,7 +71,7 @@ void SVGTextChunkBuilder::buildTextChunks(const Vector<SVGInlineTextBox*>& lineL
     unsigned first = limit;
 
     for (unsigned i = 0; i < limit; ++i) {
-        if (!lineLayoutBoxes[i]->startsNewTextChunk())
+        if (!lineLayoutBoxes[i]->legacyInlineBox()->startsNewTextChunk())
             continue;
 
         if (first == limit)
@@ -87,7 +87,7 @@ void SVGTextChunkBuilder::buildTextChunks(const Vector<SVGInlineTextBox*>& lineL
         m_textChunks.append(SVGTextChunk(lineLayoutBoxes, first, limit));
 }
 
-void SVGTextChunkBuilder::layoutTextChunks(const Vector<SVGInlineTextBox*>& lineLayoutBoxes)
+void SVGTextChunkBuilder::layoutTextChunks(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes)
 {
     buildTextChunks(lineLayoutBoxes);
     if (m_textChunks.isEmpty())

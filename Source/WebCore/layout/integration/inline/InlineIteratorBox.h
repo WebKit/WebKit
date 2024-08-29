@@ -151,6 +151,21 @@ public:
     LeafBoxIterator& traversePreviousOnLineIgnoringLineBreak();
 };
 
+template<class IteratorType>
+class BoxRange {
+public:
+    BoxRange(IteratorType begin)
+        : m_begin(begin)
+    {
+    }
+
+    IteratorType begin() const { return m_begin; }
+    EndIterator end() const { return { }; }
+
+private:
+    IteratorType m_begin;
+};
+
 LeafBoxIterator boxFor(const RenderLineBreak&);
 LeafBoxIterator boxFor(const RenderBox&);
 LeafBoxIterator boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);

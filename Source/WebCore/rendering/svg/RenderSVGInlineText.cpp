@@ -130,7 +130,7 @@ std::unique_ptr<LegacyInlineTextBox> RenderSVGInlineText::createTextBox()
 FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
 {
     FloatRect boundingBox;
-    for (auto& box : InlineIterator::textBoxesFor(*this))
+    for (auto& box : InlineIterator::svgTextBoxesFor(*this))
         boundingBox.unite(box.calculateBoundariesIncludingSVGTransform());
 
     return boundingBox;
@@ -177,8 +177,8 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     const SVGInlineTextBox* closestDistanceBox = nullptr;
 
     AffineTransform fragmentTransform;
-    for (auto& box : InlineIterator::textBoxesFor(*this)) {
-        auto& fragments = box.svgTextFragments();
+    for (auto& box : InlineIterator::svgTextBoxesFor(*this)) {
+        auto& fragments = box.textFragments();
 
         unsigned textFragmentsSize = fragments.size();
         for (unsigned i = 0; i < textFragmentsSize; ++i) {

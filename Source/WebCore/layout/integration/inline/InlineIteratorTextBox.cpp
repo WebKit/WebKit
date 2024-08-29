@@ -92,7 +92,7 @@ TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size
     return { BoxModernPath { content, boxIndex } };
 }
 
-TextBoxRange textBoxesFor(const RenderText& text)
+BoxRange<TextBoxIterator> textBoxesFor(const RenderText& text)
 {
     return { firstTextBoxFor(text) };
 }

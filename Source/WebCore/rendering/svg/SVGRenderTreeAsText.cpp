@@ -340,7 +340,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 
 static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::SVGTextBox& textBox)
 {
-    auto& fragments = textBox.svgTextFragments();
+    auto& fragments = textBox.textFragments();
     if (fragments.isEmpty())
         return;
 
@@ -393,7 +393,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::S
 
 static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderSVGInlineText& text)
 {
-    for (auto& box : InlineIterator::textBoxesFor(text))
+    for (auto& box : InlineIterator::svgTextBoxesFor(text))
         writeSVGInlineTextBox(ts, box);
 }
 

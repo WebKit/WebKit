@@ -40,7 +40,7 @@ public:
     SVGTextBox(PathVariant&&);
 
     FloatRect calculateBoundariesIncludingSVGTransform() const;
-    const Vector<SVGTextFragment>& svgTextFragments() const;
+    const Vector<SVGTextFragment>& textFragments() const;
 
     const RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(TextBox::renderer()); }
 
@@ -76,8 +76,9 @@ private:
     SVGTextBoxIterator m_begin;
 };
 
-SVGTextBoxIterator firstTextBoxFor(const RenderSVGInlineText&);
-SVGTextBoxRange textBoxesFor(const RenderSVGInlineText&);
+SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText&);
+BoxRange<SVGTextBoxIterator> svgTextBoxesFor(const RenderSVGInlineText&);
+SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox*);
 
 }
 }

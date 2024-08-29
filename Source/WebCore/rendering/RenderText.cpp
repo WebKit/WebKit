@@ -216,8 +216,7 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
             // For last text box in a InlineTextBox chain, we allow the caret to move to a position 'after' the end of the last text box.
             bool isCaretWithinLastTextBox = rangeStart >= textBox.start() && rangeStart <= textBox.end();
 
-            auto itEnd = InlineIterator::TextBoxRange { InlineIterator::TextBoxIterator(textBox) }.end();
-            auto isLastTextBox = textBox.nextTextBox() == itEnd;
+            auto isLastTextBox = !textBox.nextTextBox();
 
             if ((isLastTextBox && !isCaretWithinLastTextBox) || (!isLastTextBox && !isCaretWithinTextBox))
                 return { };
