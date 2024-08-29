@@ -34,7 +34,6 @@
 #include "Logging.h"
 #include <array>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <zlib.h>

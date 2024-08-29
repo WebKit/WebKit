@@ -37,11 +37,14 @@
 #include <stdio.h>
 #include <wtf/DateMath.h>
 #include <wtf/DebugUtilities.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HistoryItemClient);
 
 int64_t HistoryItem::generateSequenceNumber()
 {

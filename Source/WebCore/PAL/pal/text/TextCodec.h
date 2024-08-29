@@ -33,6 +33,7 @@
 #include <unicode/umachine.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 
@@ -41,7 +42,8 @@ class TextEncoding;
 using UnencodableReplacementArray = std::array<char, 32>;
 
 class TextCodec {
-    WTF_MAKE_NONCOPYABLE(TextCodec); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextCodec);
+    WTF_MAKE_NONCOPYABLE(TextCodec);
 public:
     TextCodec() = default;
     virtual ~TextCodec() = default;

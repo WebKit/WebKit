@@ -34,10 +34,14 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 namespace Bindings {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Field);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Class);
 
 Array::Array(RefPtr<RootObject>&& rootObject)
     : m_rootObject(WTFMove(rootObject))

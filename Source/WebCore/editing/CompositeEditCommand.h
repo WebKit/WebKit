@@ -30,6 +30,7 @@
 #include "EditCommand.h"
 #include "CSSPropertyNames.h"
 #include "UndoStep.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,7 +44,7 @@ class StyledElement;
 class Text;
 
 class AccessibilityUndoReplacedText {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityUndoReplacedText);
 public:
     AccessibilityUndoReplacedText() { }
     void configureRangeDeletedByReapplyWithStartingSelection(const VisibleSelection&);

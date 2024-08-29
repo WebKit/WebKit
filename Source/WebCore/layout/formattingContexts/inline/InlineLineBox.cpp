@@ -31,9 +31,12 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "RenderStyleInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LineBox);
 
 LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount)
     : m_lineIndex(lineIndex)

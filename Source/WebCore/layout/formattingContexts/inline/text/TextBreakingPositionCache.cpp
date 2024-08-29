@@ -28,9 +28,12 @@
 
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextBreakingPositionCache);
 
 static constexpr size_t evictionSoftThreshold = 500000; // At this amount of content (string + breaking position list) we should start evicting
 static constexpr size_t evictionHardCapMultiplier = 5; // Do not let the cache grow beyond this

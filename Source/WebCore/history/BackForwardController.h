@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -39,8 +40,8 @@ class HistoryItem;
 class Page;
 
 class BackForwardController final : public CanMakeCheckedPtr<BackForwardController> {
+    WTF_MAKE_TZONE_ALLOCATED(BackForwardController);
     WTF_MAKE_NONCOPYABLE(BackForwardController);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BackForwardController);
 public:
     BackForwardController(Page&, Ref<BackForwardClient>&&);

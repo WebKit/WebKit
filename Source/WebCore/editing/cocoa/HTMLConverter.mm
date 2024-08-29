@@ -74,6 +74,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/ASCIICType.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -131,7 +132,7 @@ static const CGFloat defaultFontSize = 12;
 static const CGFloat minimumFontSize = 1;
 
 class HTMLConverterCaches {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTMLConverterCaches);
 public:
     String propertyValueForNode(Node&, CSSPropertyID );
     bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);

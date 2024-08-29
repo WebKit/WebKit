@@ -48,6 +48,7 @@
 #include "VP9Utilities.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"
@@ -194,7 +195,7 @@ class Internals final
     , private RealtimeMediaSource::VideoFrameObserver
 #endif
     {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Internals);
 #if ENABLE(MEDIA_STREAM)
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
 #endif

@@ -29,6 +29,7 @@
 
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -42,6 +43,7 @@ class RenderView;
 struct GapRects;
 
 class SelectionGeometryGatherer {
+    WTF_MAKE_TZONE_ALLOCATED(SelectionGeometryGatherer);
     WTF_MAKE_NONCOPYABLE(SelectionGeometryGatherer);
 
 public:
@@ -53,7 +55,7 @@ public:
     bool isTextOnly() const { return m_isTextOnly; }
 
     class Notifier {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Notifier);
         WTF_MAKE_NONCOPYABLE(Notifier);
     public:
         Notifier(SelectionGeometryGatherer&);

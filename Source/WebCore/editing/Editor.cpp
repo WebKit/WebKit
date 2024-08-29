@@ -131,6 +131,7 @@
 #include <pal/text/KillRing.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -143,6 +144,10 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TemporarySelectionChange);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IgnoreSelectionChangeForScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Editor);
 
 static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, IsInputMethodComposing isInputMethodComposing, const String& data = { },
     RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)

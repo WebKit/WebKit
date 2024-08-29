@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AccessibilityObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -208,7 +209,7 @@ private:
 };
 
 class AXTextMarkerRange {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AXTextMarkerRange);
     friend bool operator==(const AXTextMarkerRange&, const AXTextMarkerRange&);
     friend bool operator<(const AXTextMarkerRange&, const AXTextMarkerRange&);
     friend bool operator>(const AXTextMarkerRange&, const AXTextMarkerRange&);

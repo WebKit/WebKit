@@ -63,6 +63,7 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -180,7 +181,7 @@ static bool hasTransparentBackgroundColor(StyleProperties*);
 static RefPtr<CSSValue> backgroundColorInEffect(Node*);
 
 class HTMLElementEquivalent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTMLElementEquivalent);
 public:
     HTMLElementEquivalent(CSSPropertyID, CSSValueID primitiveValue, const QualifiedName& tagName);
     virtual ~HTMLElementEquivalent() = default;

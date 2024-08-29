@@ -34,8 +34,12 @@
 #include "LocalFrame.h"
 #include "RenderView.h"
 #include "ServicesOverlayController.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionGeometryGatherer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SelectionGeometryGathererNotifier, SelectionGeometryGatherer::Notifier);
 
 SelectionGeometryGatherer::SelectionGeometryGatherer(RenderView& renderView)
     : m_renderView(renderView)

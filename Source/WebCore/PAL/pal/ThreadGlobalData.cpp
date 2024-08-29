@@ -29,11 +29,14 @@
 
 #include "TextCodecICU.h"
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringImpl.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadGlobalData);
 
 ThreadGlobalData::ThreadGlobalData()
     : m_cachedConverterICU(makeUnique<ICUConverterWrapper>())

@@ -46,9 +46,13 @@
 #include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockPaymentCoordinator);
 
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }

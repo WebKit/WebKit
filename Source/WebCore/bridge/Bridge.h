@@ -27,15 +27,16 @@
 #ifndef Bridge_h
 #define Bridge_h
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC  {
 
 namespace Bindings {
 
 class Method {
-    WTF_MAKE_NONCOPYABLE(Method); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Method);
+    WTF_MAKE_NONCOPYABLE(Method);
 public:
     Method() = default;
     virtual int numParameters() const = 0;

@@ -21,6 +21,7 @@
 
 #include <optional>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,7 +35,8 @@ typedef unsigned EGLenum;
 namespace WebCore {
 
 class GLDisplay {
-    WTF_MAKE_NONCOPYABLE(GLDisplay); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GLDisplay);
+    WTF_MAKE_NONCOPYABLE(GLDisplay);
 public:
     static std::unique_ptr<GLDisplay> create(EGLDisplay);
     explicit GLDisplay(EGLDisplay);

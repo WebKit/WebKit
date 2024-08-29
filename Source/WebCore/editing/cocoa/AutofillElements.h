@@ -26,11 +26,12 @@
 #pragma once
 
 #include "HTMLInputElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AutofillElements {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AutofillElements);
 public:
     WEBCORE_EXPORT static std::optional<AutofillElements> computeAutofillElements(Ref<HTMLInputElement>);
     WEBCORE_EXPORT void autofill(String, String);

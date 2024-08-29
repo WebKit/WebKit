@@ -36,6 +36,7 @@
 #include <queue>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/MakeString.h>
@@ -43,6 +44,8 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelector);
 
 using namespace HTMLNames;
 

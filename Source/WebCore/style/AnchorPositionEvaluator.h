@@ -28,6 +28,7 @@
 #include "EventTarget.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -47,7 +48,7 @@ enum class AnchorPositionResolutionStage : uint8_t {
 };
 
 struct AnchorPositionedState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AnchorPositionedState);
 public:
     HashMap<String, WeakRef<Element, WeakPtrImplWithEventTargetData>> anchorElements;
     HashSet<String> anchorNames;

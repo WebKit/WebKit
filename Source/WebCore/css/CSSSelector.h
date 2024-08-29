@@ -26,6 +26,7 @@
 #include "RenderStyleConstants.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ enum class SelectorSpecificityIncrement {
 // Selector for a StyleRule.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 class CSSSelector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CSSSelector);
 public:
     CSSSelector() = default;
     CSSSelector(const CSSSelector&);

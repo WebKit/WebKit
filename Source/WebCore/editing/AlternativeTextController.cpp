@@ -49,9 +49,11 @@
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AlternativeTextController);
 
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
 

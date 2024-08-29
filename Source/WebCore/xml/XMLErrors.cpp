@@ -41,8 +41,11 @@
 #include "LocalFrame.h"
 #include "SVGNames.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLErrors);
 
 using namespace HTMLNames;
 

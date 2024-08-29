@@ -27,6 +27,7 @@
 
 #include "PropertyCascade.h"
 #include "StyleBuilderState.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ struct CSSRegisteredCustomProperty;
 namespace Style {
 
 class Builder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Builder);
 public:
     Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, OptionSet<PropertyCascade::PropertyType> = PropertyCascade::normalProperties(), const HashSet<AnimatableCSSProperty>* animatedProperties = nullptr);
     ~Builder();

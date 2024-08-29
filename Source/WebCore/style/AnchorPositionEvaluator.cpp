@@ -43,9 +43,12 @@
 #include "WritingMode.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore::Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
 {

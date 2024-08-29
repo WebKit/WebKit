@@ -37,9 +37,13 @@
 #include "XMLNSNames.h"
 #include "XPathParser.h"
 #include "XPathUtil.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace XPath {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Step);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StepNodeTest, Step::NodeTest);
 
 Step::Step(Axis axis, NodeTest nodeTest)
     : m_axis(axis)

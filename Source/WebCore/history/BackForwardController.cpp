@@ -30,8 +30,11 @@
 #include "HistoryItem.h"
 #include "Page.h"
 #include "ShouldTreatAsContinuingLoad.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackForwardController);
 
 BackForwardController::BackForwardController(Page& page, Ref<BackForwardClient>&& client)
     : m_page(page)

@@ -38,6 +38,7 @@
 #include "VisibleSelection.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -62,8 +63,8 @@ enum class CaretVisibilitySuppressionReason : uint8_t {
 };
 
 class CaretBase {
+    WTF_MAKE_TZONE_ALLOCATED(CaretBase);
     WTF_MAKE_NONCOPYABLE(CaretBase);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, const Node*);
 protected:
@@ -91,8 +92,8 @@ private:
 };
 
 class DragCaretController : private CaretBase {
+    WTF_MAKE_TZONE_ALLOCATED(DragCaretController);
     WTF_MAKE_NONCOPYABLE(DragCaretController);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     DragCaretController();
 
@@ -118,8 +119,8 @@ private:
 };
 
 class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr<FrameSelection> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameSelection, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(FrameSelection);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameSelection);
 public:
     enum class ShouldUpdateAppearance : bool { No, Yes };

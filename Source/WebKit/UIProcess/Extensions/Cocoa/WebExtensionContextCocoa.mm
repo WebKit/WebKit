@@ -3943,8 +3943,9 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         return;
 
     class InspectorExtensionClient : public API::InspectorExtensionClient {
+        IGNORE_CLANG_WARNINGS_BEGIN("unused-local-typedef")
         WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorExtensionClient);
-
+        IGNORE_CLANG_WARNINGS_END
     public:
         explicit InspectorExtensionClient(API::InspectorExtension& inspectorExtension, WebExtensionContext& extensionContext)
             : m_inspectorExtension(&inspectorExtension)

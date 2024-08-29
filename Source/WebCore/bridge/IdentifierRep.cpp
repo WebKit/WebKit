@@ -30,10 +30,13 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentifierRep);
 
 typedef HashSet<IdentifierRep*> IdentifierSet;
 

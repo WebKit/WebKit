@@ -36,6 +36,7 @@
 #include "CSSUnresolvedRelativeColor.h"
 #include <variant>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ struct CSSUnresolvedColorResolutionState;
 struct CSSUnresolvedStyleColorResolutionState;
 
 class CSSUnresolvedColor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CSSUnresolvedColor);
 public:
     template<typename T> explicit CSSUnresolvedColor(T&& value)
         : m_value { std::forward<T>(value) }

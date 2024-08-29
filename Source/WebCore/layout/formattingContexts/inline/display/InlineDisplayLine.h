@@ -29,12 +29,13 @@
 #include "InlineRect.h"
 #include "TextRun.h"
 #include "TextUtil.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace InlineDisplay {
 
 class Line {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Line);
 public:
     struct EnclosingTopAndBottom {
         // This values encloses the root inline box and any other inline level box's border box.

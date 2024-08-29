@@ -31,6 +31,7 @@
 #include "InlineIteratorTextBox.h"
 #include "SimpleRange.h"
 #include "TextIteratorBehavior.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -95,7 +96,7 @@ private:
 bool shouldEmitNewlinesBeforeAndAfterNode(Node&);
 
 class TextIterator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIterator, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit TextIterator(const SimpleRange&, TextIteratorBehaviors = { });
     WEBCORE_EXPORT ~TextIterator();

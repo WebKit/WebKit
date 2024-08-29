@@ -85,6 +85,7 @@
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
@@ -98,6 +99,10 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CaretBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DragCaretController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameSelection);
 
 using namespace HTMLNames;
 

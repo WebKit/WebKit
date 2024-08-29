@@ -37,6 +37,7 @@
 #include "SerializedScriptValue.h"
 #include <memory>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -61,7 +62,7 @@ class ResourceRequest;
 enum class PruningReason;
 
 class HistoryItemClient : public RefCounted<HistoryItemClient> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HistoryItemClient, WEBCORE_EXPORT);
 public:
     virtual ~HistoryItemClient() = default;
     virtual void historyItemChanged(const HistoryItem&) = 0;

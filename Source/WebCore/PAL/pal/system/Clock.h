@@ -27,11 +27,12 @@
 #pragma once
 
 #include <memory>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
 
 class Clock {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Clock);
 public:
     static std::unique_ptr<Clock> create();
     virtual ~Clock() = default;

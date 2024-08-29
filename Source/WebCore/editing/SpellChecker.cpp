@@ -40,8 +40,11 @@
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpellChecker);
 
 SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, const String& text, OptionSet<TextCheckingType> options, TextCheckingProcessType type)
     : m_checkingRange(checkingRange)

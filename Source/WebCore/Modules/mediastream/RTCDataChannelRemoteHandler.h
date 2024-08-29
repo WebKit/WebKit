@@ -29,7 +29,6 @@
 #include "RTCDataChannelHandler.h"
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelState.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>

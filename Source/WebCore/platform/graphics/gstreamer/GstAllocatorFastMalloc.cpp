@@ -21,7 +21,6 @@
 #include "GstAllocatorFastMalloc.h"
 
 #include <gst/gst.h>
-#include <wtf/FastMalloc.h>
 
 typedef struct {
     GstMemory base;

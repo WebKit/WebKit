@@ -37,9 +37,12 @@
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexLayout);
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)

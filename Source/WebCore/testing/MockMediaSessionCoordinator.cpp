@@ -34,11 +34,14 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockMediaSessionCoordinator);
 
 Ref<MockMediaSessionCoordinator> MockMediaSessionCoordinator::create(ScriptExecutionContext& context, RefPtr<StringCallback>&& listener)
 {

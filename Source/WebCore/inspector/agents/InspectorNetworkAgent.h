@@ -66,8 +66,8 @@ class WebSocket;
 struct WebSocketFrame;
 
 class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
-    WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorNetworkAgent);
+    WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
 public:
     ~InspectorNetworkAgent() override;
 
