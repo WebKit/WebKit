@@ -5608,6 +5608,7 @@
         "web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-002.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-003.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-dynamic-text-004.html",
+        "web-platform-tests/css/css-text/text-autospace/text-autospace-ideogram-alpha-001-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-no-001-mismatch-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-no-001-ref.html",
         "web-platform-tests/css/css-text/text-autospace/text-autospace-vertical-combine-001-ref.html",
