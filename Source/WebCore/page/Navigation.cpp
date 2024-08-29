@@ -282,7 +282,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-navigate
 Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    auto newURL = window()->document()->completeURL(url);
+    auto newURL = window()->document()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     const URL& currentURL = scriptExecutionContext()->url();
 
     if (!newURL.isValid())
