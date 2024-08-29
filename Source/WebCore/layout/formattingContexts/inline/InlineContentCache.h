@@ -29,12 +29,14 @@
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
 #include "LineLayoutResult.h"
+#include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
+using InlineBoxBoundaryTextSpacings = WTF::HashMap<unsigned, float>;
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(InlineContentCache);
@@ -79,8 +81,12 @@ public:
     std::optional<InlineLayoutUnit> maximumContentSize() const { return m_maximumContentSize; }
     void resetMinimumMaximumContentSizes();
 
+    const InlineBoxBoundaryTextSpacings& inlineBoxBoundaryTextSpacings() const { return m_inlineBoxBoundaryTextSpacings; }
+    void setInlineBoxBoundaryTextSpacings(InlineBoxBoundaryTextSpacings&& spacings) { m_inlineBoxBoundaryTextSpacings = WTFMove(spacings); }
+
 private:
     InlineItems m_inlineItems;
+    InlineBoxBoundaryTextSpacings m_inlineBoxBoundaryTextSpacings;
     std::optional<LineLayoutResult> m_maximumIntrinsicWidthLineContent { };
     std::optional<InlineLayoutUnit> m_minimumContentSize { };
     std::optional<InlineLayoutUnit> m_maximumContentSize { };
