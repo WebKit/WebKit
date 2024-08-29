@@ -34,7 +34,6 @@
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PlaybackSessionModel.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/SpatialVideoMetadata.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -364,14 +363,6 @@ void PlaybackSessionInterfaceLMK::supportsLinearMediaPlayerChanged(bool supports
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void PlaybackSessionInterfaceLMK::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
-{
-    RetainPtr<WKSLinearMediaSpatialVideoMetadata> spatialVideoMetadata;
-    if (metadata)
-        spatialVideoMetadata = [allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment];
-    [m_player setSpatialVideoMetadata:spatialVideoMetadata.get()];
 }
 
 void PlaybackSessionInterfaceLMK::startObservingNowPlayingMetadata()

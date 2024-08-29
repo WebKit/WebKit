@@ -41,7 +41,6 @@ messages -> PlaybackSessionManagerProxy {
     IsInWindowFullscreenActiveChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool isInWindow)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     SupportsLinearMediaPlayerChanged(WebKit::PlaybackSessionContextIdentifier contextId, bool supportsLinearMediaPlayer)
-    SpatialVideoMetadataChanged(WebKit::PlaybackSessionContextIdentifier contextId, std::optional<WebCore::SpatialVideoMetadata> metadata);
 #endif
     SetUpPlaybackControlsManagerWithID(WebKit::PlaybackSessionContextIdentifier contextId, bool isVideo)
     ClearPlaybackControlsManager()

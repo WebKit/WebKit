@@ -224,10 +224,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBanner) object:nil];
 #endif
-#if ENABLE(LINEAR_MEDIA_PLAYER)
-    [self _didCleanupFullscreen];
-#endif
-
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     _playbackClient.setParent(nullptr);
     _playbackClient.setInterface(nullptr);
@@ -369,7 +365,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)videoControlsManagerDidChange
 {
     ASSERT(_valid);
-    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
+    auto page = [self._webView _page];
+    RefPtr videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
+    RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
+    RefPtr playbackSessionInterface = videoPresentationInterface ? &videoPresentationInterface->playbackSessionInterface() : nullptr;
 
     _playbackClient.setInterface(playbackSessionInterface.get());
 
@@ -409,7 +408,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
+    RefPtr playbackSessionManager = page->playbackSessionManager();
+    RefPtr playbackSessionInterface = playbackSessionManager ? playbackSessionManager->controlsManagerInterface() : nullptr;
     auto* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     if (!playbackSessionModel || !playbackSessionModel->supportsLinearMediaPlayer()) {
         [self _removeEnvironmentPickerButtonView];
@@ -418,10 +418,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RefPtr videoPresentationManager = page->videoPresentationManager();
     RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
-
-    if (videoPresentationInterface)
-        videoPresentationInterface->setSpatialImmersive(true);
-
     LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
 
@@ -456,18 +452,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self removeChildViewController:_environmentPickerButtonViewController.get()];
 
     _environmentPickerButtonViewController = nil;
-}
-
-- (void)_didCleanupFullscreen
-{
-    RefPtr page = self._webView._page.get();
-    if (!page)
-        return;
-    RefPtr videoPresentationManager = page->videoPresentationManager();
-    if (!videoPresentationManager)
-        return;
-    if (RefPtr videoPresentationInterface = videoPresentationManager->controlsManagerInterface())
-        videoPresentationInterface->setSpatialImmersive(false);
 }
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 
@@ -854,19 +838,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return insets;
 }
 
-- (RefPtr<WebCore::PlatformPlaybackSessionInterface>) _playbackSessionInterface
-{
-    auto page = [self._webView _page];
-    if (!page)
-        return nullptr;
-
-    WebKit::PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
-    if (!playbackSessionManager)
-        return nullptr;
-
-    return playbackSessionManager->controlsManagerInterface();
-}
-
 - (void)_cancelAction:(id)sender
 {
     ASSERT(_valid);
@@ -876,8 +847,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_togglePiPAction:(id)sender
 {
     ASSERT(_valid);
+    auto page = [self._webView _page];
+    if (!page)
+        return;
 
-    RefPtr playbackSessionInterface = [self _playbackSessionInterface];
+    WebKit::PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
+    if (!playbackSessionManager)
+        return;
+
+    RefPtr playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
     if (!playbackSessionInterface)
         return;
 
