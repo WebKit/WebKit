@@ -973,8 +973,8 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
     auto placeholderBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
     RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:placeholderBundleIdentifier.get()]);
 
-    auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
-        WorkQueue::main().dispatch([identifier = crossThreadCopy(identifier), notifications = RetainPtr { notifications }, completionHandler = WTFMove(completionHandler)] mutable {
+    auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), registrationURL = crossThreadCopy(registrationURL), tag = crossThreadCopy(tag), completionHandler = WTFMove(completionHandler)](NSArray<UNNotification *> *notifications) mutable {
+        ensureOnMainRunLoop([identifier = crossThreadCopy(identifier), notifications = RetainPtr { notifications }, registrationURL = crossThreadCopy(WTFMove(registrationURL)), tag = crossThreadCopy(WTFMove(tag)), completionHandler = WTFMove(completionHandler)] mutable {
             Vector<WebCore::NotificationData> notificationDatas;
             for (UNNotification *notification in notifications.get()) {
                 auto notificationData = WebCore::NotificationData::fromDictionary(notification.request.content.userInfo);
@@ -982,6 +982,10 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
                     RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8().data());
                     continue;
                 }
+
+                if (notificationData->tag != tag || notificationData->serviceWorkerRegistrationURL != registrationURL)
+                    continue;
+
                 notificationDatas.append(*notificationData);
             }
             RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), identifier.debugDescription().utf8().data());
