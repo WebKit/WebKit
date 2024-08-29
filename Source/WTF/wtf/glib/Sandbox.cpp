@@ -79,6 +79,15 @@ bool isInsideSnap()
     return returnValue;
 }
 
+bool shouldUseBubblewrap()
+{
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    return !isInsideFlatpak() && !isInsideSnap() && !isInsideUnsupportedContainer();
+#else
+    return false;
+#endif
+}
+
 bool shouldUsePortal()
 {
     static bool returnValue = []() -> bool {
