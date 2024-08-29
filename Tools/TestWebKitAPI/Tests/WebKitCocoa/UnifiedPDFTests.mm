@@ -40,14 +40,11 @@ namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
 
-static bool shouldEnableUnifiedPDFForTesting()
-{
-#if ENABLE(UNIFIED_PDF_BY_DEFAULT) || ENABLE(UNIFIED_PDF_AS_PREVIEW)
-    return true;
+#if ENABLE(UNIFIED_PDF_FOR_TESTING)
+#define UNIFIED_PDF_TEST(name) TEST(UnifiedPDF, name)
 #else
-    return false;
+#define UNIFIED_PDF_TEST(name) TEST(UnifiedPDF, DISABLED_##name)
 #endif
-}
 
 static RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF()
 {
@@ -77,11 +74,8 @@ static Vector<WebCore::Color> sampleColorsInWebView(TestWKWebView *webView, unsi
     return samples;
 }
 
-TEST(UnifiedPDF, KeyboardScrollingInSinglePageMode)
+UNIFIED_PDF_TEST(KeyboardScrollingInSinglePageMode)
 {
-    if (!shouldEnableUnifiedPDFForTesting())
-        return;
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     [webView setForceWindowToBecomeKey:YES];
 
@@ -118,11 +112,8 @@ TEST(UnifiedPDF, KeyboardScrollingInSinglePageMode)
     }
 }
 
-TEST(UnifiedPDF, SnapshotsPaintPageContent)
+UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
 {
-    if (!shouldEnableUnifiedPDFForTesting())
-        return;
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     [webView setForceWindowToBecomeKey:YES];
 
@@ -162,12 +153,8 @@ TEST(UnifiedPDF, SnapshotsPaintPageContent)
     Util::run(&done);
 }
 
-
-TEST(UnifiedPDF, CopyEditingCommandOnEmptySelectionShouldNotCrash)
+UNIFIED_PDF_TEST(CopyEditingCommandOnEmptySelectionShouldNotCrash)
 {
-    if (!shouldEnableUnifiedPDFForTesting())
-        return;
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
     [webView setForceWindowToBecomeKey:YES];
 
