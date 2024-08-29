@@ -429,12 +429,15 @@ AllowsPictureInPictureMediaPlayback:
   status: embedder
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(VISION)": false
       "PLATFORM(IOS_FAMILY)": WebKit::defaultAllowsPictureInPictureMediaPlayback()
       default: false
     WebKit:
+      "PLATFORM(VISION)": false
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
+      "PLATFORM(VISION)": false
       default: true
   disableInLockdownMode: true
 
@@ -5373,10 +5376,13 @@ PictureInPictureAPIEnabled:
   condition: ENABLE(PICTURE_IN_PICTURE_API)
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(VISION)": false
       default: false
     WebKit:
+      "PLATFORM(VISION)": false
       default: true
     WebCore:
+      "PLATFORM(VISION)": false
       default: true
   disableInLockdownMode: true
 
