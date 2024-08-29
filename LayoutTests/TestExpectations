@@ -8126,6 +8126,10 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.
 
 fast/canvas/image-buffer-resource-limits.html [ Slow ]
 
+# CSS Nesting interleaved declarations and rules
+# https://bugs.webkit.org/show_bug.cgi?id=275365
+imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]
+
 # Standardized CSS zoom tests.
 imported/w3c/web-platform-tests/css/css-viewport/width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing.html [ ImageOnlyFailure ]

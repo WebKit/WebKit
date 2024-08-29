@@ -1,0 +1,8 @@
+
+FAIL Trailing declarations assert_equals: expected 2 but got 1
+FAIL Mixed declarations assert_equals: expected 6 but got 3
+FAIL CSSNestedDeclarations.style assert_equals: expected 2 but got 1
+FAIL Nested group rule assert_equals: expected 2 but got 1
+FAIL Nested @scope rule assert_equals: expected 2 but got 1
+FAIL Inner rule starting with an ident assert_equals: expected 4 but got 2
+
