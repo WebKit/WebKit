@@ -21,7 +21,7 @@
 
 #include "GraphicsContextGL.h"
 #include "Logging.h"
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
