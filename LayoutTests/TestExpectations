@@ -8147,3 +8147,5 @@ webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
+
+webkit.org/b/278855 imported/w3c/web-platform-tests/css/css-animations/jump-start-animation-before-phase.html [ ImageOnlyFailure ]
