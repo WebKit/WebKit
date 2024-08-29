@@ -8149,3 +8149,11 @@ webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
 
 webkit.org/b/278855 imported/w3c/web-platform-tests/css/css-animations/jump-start-animation-before-phase.html [ ImageOnlyFailure ]
+
+# Dump `rendertree` rather than proper test expectation as `testharness` test
+imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototype.any.html [ Skip ]
+imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototype.any.worker.html [ Skip ]
+
+# Below tests give `Error fetching /interfaces/webidl.idl` in test output
+imported/w3c/web-platform-tests/WebIDL/idlharness.any.html [ Skip ]
+imported/w3c/web-platform-tests/WebIDL/idlharness.any.worker.html [ Skip ]

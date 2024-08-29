@@ -10598,6 +10598,8 @@
         "web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/crashtests/currentTime-after-discard.html",
         "web-platform-tests/webcodecs/encodedVideoChunk-serialization.crossAgentCluster.helper.html",
         "web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.helper.html",
+        "web-platform-tests/webidl/ecmascript-binding/support/constructors-support.html",
+        "web-platform-tests/webidl/ecmascript-binding/support/dummy-iframe.html",
         "web-platform-tests/webmessaging/message-channels/004-1.html",
         "web-platform-tests/webmessaging/message-channels/004-2.html",
         "web-platform-tests/webmessaging/multi-globals/support/current-document-domain.sub.html",

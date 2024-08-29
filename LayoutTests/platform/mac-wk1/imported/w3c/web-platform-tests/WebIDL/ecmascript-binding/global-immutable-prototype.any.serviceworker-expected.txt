@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+
+
