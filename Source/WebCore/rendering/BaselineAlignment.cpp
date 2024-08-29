@@ -29,8 +29,12 @@
 #include "BaselineAlignmentInlines.h"
 #include "RenderBox.h"
 #include "RenderStyleInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineGroup);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineAlignmentState);
 
 BaselineGroup::BaselineGroup(BlockFlowDirection blockFlow, ItemPosition childPreference)
     : m_maxAscent(0), m_items()

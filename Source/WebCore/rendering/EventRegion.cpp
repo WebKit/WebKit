@@ -35,9 +35,12 @@
 #include "RenderStyleInlines.h"
 #include "SimpleRange.h"
 #include "WindRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventRegionContext);
 
 EventRegionContext::EventRegionContext(EventRegion& eventRegion)
     : m_eventRegion(eventRegion)

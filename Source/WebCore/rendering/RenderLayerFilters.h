@@ -34,6 +34,7 @@
 #include "CachedSVGDocumentClient.h"
 #include "FilterRenderingMode.h"
 #include "RenderLayer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ class FilterOperations;
 class GraphicsContextSwitcher;
 
 class RenderLayerFilters final : private CachedSVGDocumentClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
     explicit RenderLayerFilters(RenderLayer&);
     virtual ~RenderLayerFilters();

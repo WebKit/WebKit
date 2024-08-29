@@ -36,8 +36,13 @@
 #include "RenderStyleConstants.h"
 #include "StyleSelfAlignmentData.h"
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GridTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GridTrackSizingAlgorithm);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GridTrackSizingAlgorithmStrategy);
 
 GridTrackSizingAlgorithm::GridTrackSizingAlgorithm(const RenderGrid* renderGrid, Grid& grid)
     : m_grid(grid)

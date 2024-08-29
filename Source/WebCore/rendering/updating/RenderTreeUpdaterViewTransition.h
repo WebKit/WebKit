@@ -27,6 +27,7 @@
 
 #include "RenderStyleConstants.h"
 #include "RenderTreeUpdater.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class Element;
 class RenderQuote;
 
 class RenderTreeUpdater::ViewTransition {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
     ViewTransition(RenderTreeUpdater&);
 

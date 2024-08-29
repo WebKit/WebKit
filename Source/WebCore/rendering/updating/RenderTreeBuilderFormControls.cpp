@@ -29,8 +29,11 @@
 #include "RenderButton.h"
 #include "RenderMenuList.h"
 #include "RenderTreeBuilderBlock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderFormControls, RenderTreeBuilder::FormControls);
 
 RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
     : m_builder(builder)

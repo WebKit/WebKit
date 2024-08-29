@@ -29,7 +29,6 @@
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

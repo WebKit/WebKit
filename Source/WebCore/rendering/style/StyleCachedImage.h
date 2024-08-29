@@ -25,6 +25,7 @@
 
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class RenderSVGResourceContainer;
 class TreeScope;
 
 class StyleCachedImage final : public StyleImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StyleCachedImage);
 public:
     static Ref<StyleCachedImage> create(Ref<CSSImageValue>, float scaleFactor = 1);
     static Ref<StyleCachedImage> copyOverridingScaleFactor(StyleCachedImage&, float scaleFactor);

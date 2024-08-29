@@ -23,7 +23,7 @@
 #include "BidiContext.h"
 #include "LegacyInlineFlowBox.h"
 #include "RenderBox.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

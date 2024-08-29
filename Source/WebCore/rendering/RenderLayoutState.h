@@ -29,6 +29,7 @@
 #include "LocalFrameViewLayoutContext.h"
 #include "StyleTextEdge.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,7 +42,8 @@ class RenderMultiColumnFlow;
 class RenderObject;
 
 class RenderLayoutState {
-    WTF_MAKE_NONCOPYABLE(RenderLayoutState); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderLayoutState);
+    WTF_MAKE_NONCOPYABLE(RenderLayoutState);
 
 public:
     struct TextBoxTrim {

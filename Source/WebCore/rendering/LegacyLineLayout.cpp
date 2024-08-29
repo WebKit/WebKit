@@ -50,8 +50,11 @@
 #include "SVGRootInlineBox.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyLineLayout);
 
 LegacyLineLayout::LegacyLineLayout(RenderBlockFlow& flow)
     : m_flow(flow)

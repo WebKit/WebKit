@@ -33,6 +33,7 @@
 #include "Shape.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ class FloatingObject;
 Ref<const Shape> makeShapeForShapeOutside(const RenderBox&);
 
 class ShapeOutsideDeltas final {
+    WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideDeltas);
 public:
     ShapeOutsideDeltas()
         : m_lineOverlapsShape(false)
@@ -81,7 +83,7 @@ private:
 };
 
 class ShapeOutsideInfo final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideInfo);
 public:
     ShapeOutsideInfo(const RenderBox& renderer)
         : m_renderer(renderer)

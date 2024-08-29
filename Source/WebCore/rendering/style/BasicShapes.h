@@ -35,6 +35,7 @@
 #include "WindRule.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -55,7 +56,7 @@ enum class CoordinateAffinity : uint8_t {
 };
 
 class BasicShape : public RefCounted<BasicShape> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BasicShape);
 public:
     virtual ~BasicShape() = default;
 

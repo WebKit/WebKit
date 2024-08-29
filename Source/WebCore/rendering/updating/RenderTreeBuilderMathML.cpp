@@ -32,8 +32,11 @@
 #include "RenderMathMLFencedOperator.h"
 #include "RenderStyleSetters.h"
 #include "RenderTreeBuilderBlock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderMathML, RenderTreeBuilder::MathML);
 
 RenderTreeBuilder::MathML::MathML(RenderTreeBuilder& builder)
     : m_builder(builder)

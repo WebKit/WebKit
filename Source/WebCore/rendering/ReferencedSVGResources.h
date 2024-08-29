@@ -26,7 +26,6 @@
 #pragma once
 
 #include "SVGNames.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>

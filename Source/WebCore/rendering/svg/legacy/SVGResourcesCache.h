@@ -23,6 +23,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -34,7 +35,8 @@ class RenderStyle;
 class SVGResources;
 
 class SVGResourcesCache {
-    WTF_MAKE_NONCOPYABLE(SVGResourcesCache); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGResourcesCache);
+    WTF_MAKE_NONCOPYABLE(SVGResourcesCache);
 public:
     SVGResourcesCache();
     ~SVGResourcesCache();

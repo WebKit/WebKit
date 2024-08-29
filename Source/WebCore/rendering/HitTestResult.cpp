@@ -54,6 +54,7 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -62,6 +63,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HitTestResult);
 
 static inline void appendToNodeSet(const HitTestResult::NodeSet& source, HitTestResult::NodeSet& destination)
 {

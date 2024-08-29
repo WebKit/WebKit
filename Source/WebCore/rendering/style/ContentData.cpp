@@ -30,8 +30,11 @@
 #include "RenderStyle.h"
 #include "RenderTextFragment.h"
 #include "StyleInheritedData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentData);
 
 std::unique_ptr<ContentData> ContentData::clone() const
 {

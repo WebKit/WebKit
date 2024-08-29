@@ -34,9 +34,12 @@
 #include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayoutState);
 
 RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     : m_clipped(false)

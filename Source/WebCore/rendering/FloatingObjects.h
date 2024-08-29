@@ -25,6 +25,7 @@
 
 #include "LegacyRootInlineBox.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,7 +38,8 @@ template<typename, typename> class PODInterval;
 template<typename, typename> class PODIntervalTree;
 
 class FloatingObject {
-    WTF_MAKE_NONCOPYABLE(FloatingObject); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FloatingObject);
+    WTF_MAKE_NONCOPYABLE(FloatingObject);
 public:
     // Note that Type uses bits so you can use FloatLeftRight as a mask to query for both left and right.
     enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
@@ -144,7 +146,8 @@ typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
 // FIXME: This is really the same thing as FloatingObjectSet.
 // Change clients to use that set directly, and replace the moveAllToFloatInfoMap function with a takeSet function.
 class FloatingObjects {
-    WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FloatingObjects);
+    WTF_MAKE_NONCOPYABLE(FloatingObjects);
 public:
     explicit FloatingObjects(const RenderBlockFlow&);
     ~FloatingObjects();

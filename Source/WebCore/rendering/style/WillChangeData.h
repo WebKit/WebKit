@@ -27,12 +27,13 @@
 
 #include "CSSPropertyNames.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class WillChangeData : public RefCounted<WillChangeData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WillChangeData);
 public:
     static Ref<WillChangeData> create()
     {

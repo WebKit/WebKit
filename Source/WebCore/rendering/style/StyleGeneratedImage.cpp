@@ -27,6 +27,7 @@
 #include "GeneratedImage.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ static const Seconds timeToKeepCachedGeneratedImages { 3_s };
 // MARK: - CachedGeneratedImage
 
 class StyleGeneratedImage::CachedGeneratedImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedGeneratedImage);
 public:
     CachedGeneratedImage(StyleGeneratedImage&, FloatSize, GeneratedImage&);
     GeneratedImage& image() const { return m_image; }

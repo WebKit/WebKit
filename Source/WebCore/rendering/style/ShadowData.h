@@ -30,6 +30,7 @@
 #include "LengthBox.h"
 #include "LengthPoint.h"
 #include "StyleColor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ enum class ShadowStyle : uint8_t { Normal, Inset };
 // This class holds information about shadows for the text-shadow and box-shadow properties.
 
 class ShadowData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ShadowData);
 public:
     ShadowData() = default;
 

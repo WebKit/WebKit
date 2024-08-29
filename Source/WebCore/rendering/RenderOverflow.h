@@ -23,6 +23,7 @@
 
 #include "LayoutRect.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore
 {
@@ -39,7 +40,8 @@ namespace WebCore
 
 // This object is allocated only when some of these fields have non-default values in the owning box.
 class RenderOverflow : public RefCounted<RenderOverflow> {
-    WTF_MAKE_NONCOPYABLE(RenderOverflow); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RenderOverflow);
+    WTF_MAKE_NONCOPYABLE(RenderOverflow);
 public:
     RenderOverflow(const LayoutRect& layoutRect, const LayoutRect& visualRect) 
         : m_layoutOverflow(layoutRect)

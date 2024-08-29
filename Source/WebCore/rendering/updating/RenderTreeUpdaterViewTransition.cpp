@@ -35,8 +35,11 @@
 #include "RenderViewTransitionCapture.h"
 #include "StyleTreeResolver.h"
 #include "ViewTransition.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeUpdaterViewTransition, RenderTreeUpdater::ViewTransition);
 
 RenderTreeUpdater::ViewTransition::ViewTransition(RenderTreeUpdater& updater)
     : m_updater(updater)

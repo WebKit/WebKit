@@ -30,6 +30,7 @@
 #include "RenderLineBoxList.h"
 #include "TrailingObjects.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct RenderBlockFlowRareData;
@@ -88,7 +89,8 @@ private:
 
 // Allocated only when some of these fields have non-default values
 struct RenderBlockFlowRareData {
-    WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderBlockFlowRareData);
+    WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData);
 public:
     RenderBlockFlowRareData(const RenderBlockFlow&);
     ~RenderBlockFlowRareData();

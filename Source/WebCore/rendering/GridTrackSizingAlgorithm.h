@@ -32,6 +32,7 @@
 #include "LayoutSize.h"
 #include "RenderBoxInlines.h"
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class GridTrack;
@@ -71,6 +72,7 @@ class GridTrackSizingAlgorithmStrategy;
 class GridItemWithSpan;
 
 class GridTrack : public CanMakeWeakPtr<GridTrack> {
+    WTF_MAKE_TZONE_ALLOCATED(GridTrack);
 public:
     GridTrack() = default;
 
@@ -116,6 +118,7 @@ private:
 };
 
 class GridTrackSizingAlgorithm final {
+    WTF_MAKE_TZONE_ALLOCATED(GridTrackSizingAlgorithm);
     friend class GridTrackSizingAlgorithmStrategy;
     friend class DefiniteSizeStrategy;
 
@@ -353,7 +356,7 @@ private:
 };
 
 class GridTrackSizingAlgorithmStrategy {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GridTrackSizingAlgorithmStrategy);
 public:
     virtual LayoutUnit minContentContributionForGridItem(RenderBox&, GridLayoutState&) const;
     LayoutUnit maxContentContributionForGridItem(RenderBox&, GridLayoutState&) const;

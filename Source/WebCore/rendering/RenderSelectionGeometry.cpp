@@ -27,8 +27,11 @@
 #include "RenderSelectionGeometry.h"
 
 #include "RenderText.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSelectionGeometryBase);
 
 RenderSelectionGeometryBase::RenderSelectionGeometryBase(RenderObject& renderer)
     : m_renderer(renderer)

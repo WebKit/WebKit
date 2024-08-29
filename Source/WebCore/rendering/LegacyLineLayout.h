@@ -30,6 +30,7 @@
 #include "RenderLineBoxList.h"
 #include "RenderStyleConstants.h"
 #include "TrailingObjects.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ struct WordMeasurement;
 template <class Run> class BidiRunList;
 
 class LegacyLineLayout {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyLineLayout);
 public:
     LegacyLineLayout(RenderBlockFlow&);
     ~LegacyLineLayout();

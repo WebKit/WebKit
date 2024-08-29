@@ -34,8 +34,11 @@
 #include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityRegionContext);
 
 AccessibilityRegionContext::~AccessibilityRegionContext()
 {

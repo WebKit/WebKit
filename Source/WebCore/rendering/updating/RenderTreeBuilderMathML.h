@@ -29,6 +29,7 @@
 
 #include "MathMLOperatorDictionary.h"
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class RenderMathMLFenced;
 class RenderMathMLFencedOperator;
 
 class RenderTreeBuilder::MathML {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MathML);
 public:
     MathML(RenderTreeBuilder&);
 

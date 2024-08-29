@@ -31,8 +31,11 @@
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderList, RenderTreeBuilder::List);
 
 // FIXME: This shouldn't need LegacyInlineIterator
 static bool generatesLineBoxesForInlineChild(RenderBlock& current, RenderObject* inlineObj)

@@ -27,6 +27,7 @@
 #include "CounterContent.h"
 #include "StyleImage.h"
 #include "RenderPtr.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class RenderObject;
 class RenderStyle;
 
 class ContentData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ContentData);
 public:
     enum Type {
         CounterDataType,

@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleImage.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -60,7 +61,7 @@ struct FillRepeatXY {
 };
 
 class FillLayer : public RefCounted<FillLayer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FillLayer);
 public:
     static Ref<FillLayer> create(FillLayerType);
     static Ref<FillLayer> create(const FillLayer&);

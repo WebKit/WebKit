@@ -31,6 +31,7 @@
 #include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "RenderBlock.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

@@ -28,8 +28,11 @@
 #include "RenderView.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGResourceSolidColor);
 
 LegacyRenderSVGResourceSolidColor::LegacyRenderSVGResourceSolidColor() = default;
 

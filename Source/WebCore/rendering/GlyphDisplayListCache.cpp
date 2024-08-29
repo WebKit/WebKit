@@ -32,8 +32,12 @@
 #include "PaintInfo.h"
 #include "RenderLayer.h"
 #include "RenderStyleInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCacheEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GlyphDisplayListCache);
 
 struct GlyphDisplayListCacheKey {
     GlyphDisplayListCacheKey(const TextRun& textRun, const FontCascade& font, const GraphicsContext& context)
