@@ -1204,9 +1204,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-t
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
 
-webkit.org/b/278847 css3/blending/background-blend-mode-crossfade-image.html [ Skip ] # Crash
-webkit.org/b/278847 css3/blending/background-blend-mode-tiled-layers.html [ Skip ] # Crash
-
 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ Skip ] # ImageOnlyFailure
 css3/blending/blend-mode-body-child-isolate-html-background-color.html [ Skip ] # ImageOnlyFailure
 css3/blending/blend-mode-body-composited-child-background-color.html [ Skip ] # ImageOnlyFailure
