@@ -104,6 +104,11 @@ endif ()
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
 
+    # Split debug information in ".debug_types" / ".debug_info" sections - this leads
+    # to a smaller overall size of the debug information, and avoids linker relocation
+    # errors on e.g. aarch64 (relocation R_AARCH64_ABS32 out of range: 4312197985 is not in [-2147483648, 4294967295])
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fdebug-types-section)
+
     # clang-cl.exe impersonates cl.exe so some clang arguments like -fno-rtti are
     # represented using cl.exe's options and should not be passed as flags, so
     # we do not add -fno-rtti or -fno-exceptions for clang-cl
