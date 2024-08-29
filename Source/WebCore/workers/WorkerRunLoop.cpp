@@ -46,12 +46,17 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/AutodrainedPool.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB)
 #include <glib.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerRunLoop);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerDedicatedRunLoop);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerDedicatedRunLoopTask, WorkerDedicatedRunLoop::Task);
 
 class WorkerSharedTimer final : public SharedTimer {
 public:

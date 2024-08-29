@@ -27,8 +27,11 @@
 #include "SWOriginStore.h"
 
 #include "SecurityOrigin.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SWOriginStore);
 
 void SWOriginStore::add(const SecurityOriginData& origin)
 {

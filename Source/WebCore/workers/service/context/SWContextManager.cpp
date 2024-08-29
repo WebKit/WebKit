@@ -32,9 +32,12 @@
 #include "NotificationPayload.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WTFProcess.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SWContextManagerServiceWorkerTerminationRequest, SWContextManager::ServiceWorkerTerminationRequest);
 
 SWContextManager& SWContextManager::singleton()
 {

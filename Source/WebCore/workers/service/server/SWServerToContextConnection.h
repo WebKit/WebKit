@@ -37,6 +37,7 @@
 #include "ServiceWorkerTypes.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -53,7 +54,7 @@ struct ServiceWorkerJobDataIdentifier;
 enum class WorkerThreadMode : bool;
 
 class SWServerToContextConnection: public CanMakeWeakPtr<SWServerToContextConnection>, public CanMakeCheckedPtr<SWServerToContextConnection>, public Identified<SWServerToContextConnectionIdentifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SWServerToContextConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SWServerToContextConnection);
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();

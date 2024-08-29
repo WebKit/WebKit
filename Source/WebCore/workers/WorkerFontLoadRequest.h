@@ -30,6 +30,7 @@
 #include "ResourceLoaderOptions.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoaderClient.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,7 @@ class WorkerGlobalScope;
 struct FontCustomPlatformData;
 
 class WorkerFontLoadRequest final : public FontLoadRequest, public ThreadableLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerFontLoadRequest);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerFontLoadRequest);
 public:
     WorkerFontLoadRequest(URL&&, LoadedFromOpaqueSource);
