@@ -42,6 +42,9 @@
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 @interface UNNotification ()
 + (instancetype)notificationWithRequest:(UNNotificationRequest *)request date:(NSDate *)date;
+
+@property (readonly) NSString *sourceIdentifier;
+
 @end
 
 @interface UNNotificationIcon : NSObject <NSCopying, NSSecureCoding>

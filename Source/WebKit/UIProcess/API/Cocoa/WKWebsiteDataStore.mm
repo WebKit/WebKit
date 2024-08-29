@@ -35,6 +35,7 @@
 #import "NetworkProcessProxy.h"
 #import "RestrictedOpenerType.h"
 #import "ShouldGrandfatherStatistics.h"
+#import "UserNotificationsSPI.h"
 #import "WKError.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -51,7 +52,7 @@
 #import "WebsiteDataFetchOption.h"
 #import "_WKNotificationDataInternal.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
-#import "_WKWebPushAction.h"
+#import "_WKWebPushActionInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
@@ -70,6 +71,14 @@
 #if HAVE(NW_PROXY_CONFIG)
 #import <Network/Network.h>
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#endif
+
+@interface WKWebsiteDataStore (WKWebPushHandling)
+- (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction;
+@end
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
@@ -1118,6 +1127,29 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+-(void)_processWebCorePersistentNotificationClick:(const WebCore::NotificationData&)constNotificationData completionHandler:(void(^)(bool))completionHandler
+{
+    WebCore::NotificationData notificationData = constNotificationData;
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    if (!notificationData.defaultActionURL.isEmpty() && _websiteDataStore->configuration().isDeclarativeWebPushEnabled()) {
+        RELEASE_LOG(Push, "Sending persistent notification clicked with default action URL. Requesting navigation to it now.");
+
+        _websiteDataStore->client().navigationToNotificationActionURL(notificationData.defaultActionURL);
+        completionHandler(true);
+        return;
+    }
+#endif
+
+    RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8().data());
+
+    notificationData.sourceSession = _websiteDataStore->sessionID();
+    _websiteDataStore->networkProcess().processNotificationEvent(notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        RELEASE_LOG(Push, "Notification click event processing complete. Callback result: %d", wasProcessed);
+        completionHandler(wasProcessed);
+    });
+}
+
 -(void)_processPersistentNotificationClick:(NSDictionary *)notificationDictionaryRepresentation completionHandler:(void(^)(bool))completionHandler
 {
     auto notificationData = WebCore::NotificationData::fromDictionary(notificationDictionaryRepresentation);
@@ -1127,21 +1159,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-    if (!notificationData->defaultActionURL.isEmpty() && _websiteDataStore->configuration().isDeclarativeWebPushEnabled()) {
-        RELEASE_LOG(Push, "Sending persistent notification clicked with default action URL. Requesting navigation to it now.");
+    [self _processWebCorePersistentNotificationClick:*notificationData completionHandler:WTFMove(completionHandler)];
+}
 
-        _websiteDataStore->client().navigationToNotificationActionURL(notificationData->defaultActionURL);
-        completionHandler(true);
-        return;
-    }
-#endif
+-(void)_processWebCorePersistentNotificationClose:(const WebCore::NotificationData&)notificationData completionHandler:(void(^)(bool))completionHandler
+{
+    RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8().data());
 
-    RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
-
-    notificationData->sourceSession = _websiteDataStore->sessionID();
-    _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
-        RELEASE_LOG(Push, "Notification click event processing complete. Callback result: %d", wasProcessed);
+    _websiteDataStore->networkProcess().processNotificationEvent(notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
 }
@@ -1155,12 +1181,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
-
-    _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
-        RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);
-        completionHandler(wasProcessed);
-    });
+    [self _processWebCorePersistentNotificationClose:*notificationData completionHandler:WTFMove(completionHandler)];
 }
 
 -(void)_getAllBackgroundFetchIdentifiers:(void(^)(NSArray<NSString *> *identifiers))completionHandler
@@ -1311,13 +1332,39 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #if PLATFORM(IOS)
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        [UIApplication.sharedApplication _registerBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
+        [UIApplication.sharedApplication _registerInternalBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
     });
     [_WKWebsiteDataStoreBSActionHandler.shared setWebPushActionHandler:handler];
 #else
     // FIXME: Implement for macOS
     UNUSED_PARAM(handler);
 #endif
+}
+
+- (void)_handleNextPushMessage
+{
+    [self _getPendingPushMessage:^(NSDictionary *payload) {
+        if (!payload)
+            return;
+
+        [self _processPushMessage:payload completionHandler:^(bool showedNotification) {
+            [self _handleNextPushMessage];
+        }];
+    }];
+}
+
+- (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction
+{
+    if ([webPushAction.type isEqualToString:_WKWebPushActionTypePushEvent])
+        [self _handleNextPushMessage];
+    else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClick]) {
+        RELEASE_ASSERT(webPushAction.coreNotificationData);
+        [self _processWebCorePersistentNotificationClick:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
+    } else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClose]) {
+        RELEASE_ASSERT(webPushAction.coreNotificationData);
+        [self _processWebCorePersistentNotificationClose:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
+    } else
+        RELEASE_LOG_ERROR(Push, "Unhandled webPushAction: %@", webPushAction);
 }
 
 @end
@@ -1345,6 +1392,33 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     RetainPtr unhandled = adoptNS([[NSMutableSet alloc] init]);
 
     for (BSAction *action in applicationActions) {
+        if (action.UIActionType == UIActionTypeNotificationResponse) {
+            // Try to pull out a notification response from the action
+            UNNotificationResponse *response = nil;
+            if ([action respondsToSelector:@selector(response)])
+                response = [action response];
+            if (!response || ![response isKindOfClass:[UNNotificationResponse class]]) {
+                [unhandled addObject:action];
+                continue;
+            }
+
+            RetainPtr<_WKWebPushAction> webPushAction = [_WKWebPushAction _webPushActionWithNotificationResponse:response];
+            if (!webPushAction) {
+                [unhandled addObject:action];
+                continue;
+            }
+
+            WKWebsiteDataStore *dataStore = _webPushActionHandler.get()(webPushAction.get());
+            [dataStore _handleWebPushAction:webPushAction.get()];
+
+            // Whether or not the data store truly handled the _WKWebPushAction, the BSAction definitely represents
+            // a web push notification activation, so we consume it.
+            if ([action canSendResponse])
+                [action sendResponse:nil];
+
+            continue;
+        }
+
         NSDictionary *object = [action.info objectForSetting:WebKit::WebPushD::pushActionSetting];
         _WKWebPushAction *pushAction = [_WKWebPushAction webPushActionWithDictionary:object];
         if (!pushAction) {
@@ -1353,12 +1427,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         }
 
         WKWebsiteDataStore *dataStoreForPushAction = _webPushActionHandler.get()(pushAction);
-        UNUSED_PARAM(dataStoreForPushAction);
-
-        // FIXME: Use the WKWebsiteDataStore to handle pending push messages
-        // FIXME: If no WKWebsiteDataStore is provided, respond to the BSAction with an error
-
-        [action sendResponse:[BSActionResponse response]];
+        if (dataStoreForPushAction) {
+            [dataStoreForPushAction _handleWebPushAction:pushAction];
+            if (action.canSendResponse)
+                [action sendResponse:BSActionResponse.response];
+        } else {
+            RELEASE_LOG_ERROR(Push, "Unable to handle a _WKWebPushAction: Client did not return a valid WKWebsiteDataStore");
+            if (action.canSendResponse)
+                [action sendResponse:[BSActionResponse responseForError:[NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]]];
+        }
     }
 
     return unhandled.autorelease();

@@ -38,6 +38,7 @@
 #import "MessageNames.h"
 #import "UserNotificationsSPI.h"
 #import "_WKMockUserNotificationCenter.h"
+#import "_WKWebPushActionInternal.h"
 
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotificationData.h>
@@ -134,10 +135,12 @@ static bool platformShouldPlaySound(const WebCore::NotificationData& data)
 #endif
 }
 
-static NSString *platformDefaultActionBundleIdentifier()
+static NSString *platformDefaultActionBundleIdentifier(PushClientConnection& connection)
 {
 #if PLATFORM(IOS)
-    return @"com.apple.webapp";
+    if (connection.hostAppCodeSigningIdentifier() == "com.apple.SafariViewService"_s)
+        return @"com.apple.webapp";
+    return (NSString *)connection.hostAppCodeSigningIdentifier();
 #else
     // FIXME: Calculate appropriate value on macOS
     return nil;
@@ -572,7 +575,7 @@ void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscr
     NSDictionary *settingsInfo = @{
         pushActionVersionKey(): currentPushActionVersion(),
         pushActionPartitionKey(): (NSString *)subscriptionSetIdentifier.pushPartition,
-        pushActionTypeKey(): @"PushEvent"
+        pushActionTypeKey(): _WKWebPushActionTypePushEvent
     };
     RetainPtr<BSMutableSettings> bsSettings = adoptNS([[BSMutableSettings alloc] init]);
     [bsSettings setObject:settingsInfo forSetting:WebKit::WebPushD::pushActionSetting];
@@ -910,11 +913,12 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
 
     RetainPtr content = adoptNS([[UNMutableNotificationContent alloc] init]);
 
-    [content setDefaultActionBundleIdentifier:platformDefaultActionBundleIdentifier()];
+    [content setDefaultActionBundleIdentifier:platformDefaultActionBundleIdentifier(connection)];
 
     content.get().targetContentIdentifier = (NSString *)identifier.pushPartition;
     content.get().title = (NSString *)notificationData.title;
     content.get().body = (NSString *)notificationData.body;
+    content.get().categoryIdentifier = @"webpushdCategory";
 
     if (platformShouldPlaySound(notificationData))
         content.get().sound = [UNNotificationSound defaultSound];
@@ -936,9 +940,12 @@ ALLOW_NONLITERAL_FORMAT_END
     content.get().userInfo = notificationData.dictionaryRepresentation();
 
     UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:(NSString *)notificationData.notificationID.toString() content:content.get() trigger:nil];
-    RetainPtr center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
+    RetainPtr<UNUserNotificationCenter> center = adoptNS([[m_userNotificationCenterClass alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     if (!center)
         RELEASE_LOG_ERROR(Push, "Failed to instantiate UNUserNotificationCenter center");
+
+    UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:@"webpushdCategory" actions:@[] intentIdentifiers:@[] options:UNNotificationCategoryOptionCustomDismissAction];
+    center.get().notificationCategories = [NSSet setWithObject:category];
 
     auto blockPtr = makeBlockPtr([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(notificationData.serviceWorkerRegistrationURL.string()), completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(scope), error = RetainPtr { error }, completionHandler = WTFMove(completionHandler)] mutable {
