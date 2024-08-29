@@ -54,6 +54,7 @@ class DowncastConvertToBackingContext;
 
 class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, public ThreadSafeRefCounted<RemoteGPUProxy>, SerialFunctionDispatcher {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGPUProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGPUProxy);
 public:
     static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, WebPage&);
     static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
