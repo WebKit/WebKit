@@ -54,9 +54,8 @@ private:
     String blobsDirectoryPath() const;
     String blobFilePath(const String&) const;
     std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, FileSystem::MappedFileData&&);
-    using FileDatas = Vector<FileSystem::MappedFileData>;
-    void readAllRecordInfosInternal(CompletionHandler<void(FileDatas&&)>&&);
-    void readRecordsInternal(Vector<String>&&, CompletionHandler<void(FileDatas&&, FileDatas&&)>&&);
+    void readAllRecordInfosInternal(ReadAllRecordInfosCallback&&);
+    void readRecordsInternal(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&);
 
     String m_cacheName;
     String m_path;
