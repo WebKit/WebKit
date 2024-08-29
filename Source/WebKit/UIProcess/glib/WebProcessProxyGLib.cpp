@@ -32,7 +32,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <wtf/FileSystem.h>
-
+#include <wtf/glib/Sandbox.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -55,7 +55,8 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
         launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
 #if USE(ATSPI)
-        launchOptions.extraInitializationData.set("sandboxedAccessibilityBusAddress"_s, m_processPool->sandboxedAccessibilityBusAddress());
+        if (shouldUseBubblewrap())
+            launchOptions.extraInitializationData.set("sandboxedAccessibilityBusAddress"_s, m_processPool->sandboxedAccessibilityBusAddress());
 #endif
     }
 }
