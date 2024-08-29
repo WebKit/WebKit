@@ -832,14 +832,19 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
     }
 }
 
-void RenderLayer::removeSelfAndDescendantsFromCompositor()
+void RenderLayer::removeSelfFromCompositor()
 {
     if (parent())
         compositor().layerWillBeRemoved(*parent(), *this);
     clearBacking();
+}
 
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->removeSelfAndDescendantsFromCompositor();
+void RenderLayer::removeDescendantsFromCompositor()
+{
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+        child->removeSelfFromCompositor();
+        child->removeDescendantsFromCompositor();
+    }
 }
 
 void RenderLayer::setWasOmittedFromZOrderTree()
@@ -847,7 +852,13 @@ void RenderLayer::setWasOmittedFromZOrderTree()
     if (m_wasOmittedFromZOrderTree)
         return;
 
-    removeSelfAndDescendantsFromCompositor();
+    ASSERT(!isNormalFlowOnly());
+    removeSelfFromCompositor();
+
+    // Omitting a stacking context removes the whole subtree, otherwise collectLayers will
+    // visit and omit/include descendants separately.
+    if (isStackingContext())
+        removeDescendantsFromCompositor();
 
     if (compositor().hasContentCompositingLayers() && parent())
         parent()->setDescendantsNeedCompositingRequirementsTraversal();
@@ -863,10 +874,10 @@ void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZ
 
     bool isStacking = isStackingContext();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    bool includeHiddenLayer = (m_hasVisibleContent || m_intrinsicallyComposited) || ((m_hasVisibleDescendant || m_hasIntrinsicallyCompositedDescendants) && isStacking);
-    includeHiddenLayer |= page().hasEverSetVisibilityAdjustment();
+    bool layerOrDescendantsAreVisible = (m_hasVisibleContent || m_intrinsicallyComposited) || ((m_hasVisibleDescendant || m_hasIntrinsicallyCompositedDescendants) && isStacking);
+    layerOrDescendantsAreVisible |= page().hasEverSetVisibilityAdjustment();
     if (!isNormalFlowOnly()) {
-        if (includeHiddenLayer) {
+        if (layerOrDescendantsAreVisible) {
             auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
             if (!layerList)
                 layerList = makeUnique<Vector<RenderLayer*>>();
@@ -879,7 +890,7 @@ void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZ
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context/container.
-    if ((m_hasIntrinsicallyCompositedDescendants || m_hasVisibleDescendant) && !isStacking) {
+    if (!isStacking) {
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             // Ignore reflections.
             if (!isReflectionLayer(*child))
