@@ -55,6 +55,8 @@ public:
     Path& operator=(const Path&) = default;
     Path& operator=(Path&&) = default;
 
+    WEBCORE_EXPORT bool definitelyEqual(const Path&) const;
+
     WEBCORE_EXPORT void moveTo(const FloatPoint&);
 
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);
@@ -85,6 +87,8 @@ public:
 
     WEBCORE_EXPORT std::optional<PathSegment> singleSegment() const;
     std::optional<PathDataLine> singleDataLine() const;
+    std::optional<PathRect> singleRect() const;
+    std::optional<PathRoundedRect> singleRoundedRect() const;
     std::optional<PathArc> singleArc() const;
     std::optional<PathClosedArc> singleClosedArc() const;
     std::optional<PathDataQuadCurve> singleQuadCurve() const;
@@ -111,6 +115,8 @@ public:
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
     FloatRect boundingRect() const;
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+
+    WEBCORE_EXPORT void ensureImplForTesting();
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();

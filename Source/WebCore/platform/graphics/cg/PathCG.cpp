@@ -72,6 +72,23 @@ PathCG::PathCG(RetainPtr<CGMutablePathRef>&& platformPath)
     ASSERT(m_platformPath);
 }
 
+bool PathCG::definitelyEqual(const PathImpl& otherImpl) const
+{
+    RefPtr otherAsPathCGImpl = dynamicDowncast<PathCG>(otherImpl);
+    if (!otherAsPathCGImpl) {
+        // We could convert other to a CG path to compare, but that would be expensive.
+        return false;
+    }
+
+    if (otherAsPathCGImpl.get() == this)
+        return true;
+
+    if (!m_platformPath && !otherAsPathCGImpl->platformPath())
+        return true;
+
+    return CGPathEqualToPath(m_platformPath.get(), otherAsPathCGImpl->platformPath());
+}
+
 Ref<PathImpl> PathCG::copy() const
 {
     return create({ platformPath() });

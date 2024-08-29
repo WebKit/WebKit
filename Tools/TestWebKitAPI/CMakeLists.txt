@@ -212,6 +212,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
         Tests/WebCore/ParsedContentRange.cpp
+        Tests/WebCore/PathTests.cpp
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp

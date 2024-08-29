@@ -65,6 +65,32 @@ Path::Path(const Path& other)
     *this = other;
 }
 
+bool Path::definitelyEqual(const Path& other) const
+{
+    if (&other == this)
+        return true;
+
+    return WTF::switchOn(m_data,
+        [&](std::monostate) {
+            return other.isEmpty();
+        },
+        [&](const PathSegment& segment) {
+            auto otherSegment = other.singleSegment();
+            return otherSegment && segment == otherSegment.value();
+        },
+        [&](const DataRef<PathImpl>& impl) {
+            if (impl->isEmpty())
+                return other.isEmpty();
+
+            if (auto singleSegment = impl->singleSegment()) {
+                auto otherSegment = other.singleSegment();
+                return otherSegment && singleSegment == otherSegment.value();
+            }
+
+            return impl.ptr() && other.asImpl() && impl->definitelyEqual(*other.asImpl());
+        });
+}
+
 Path::Path(PathSegment&& segment)
 {
     m_data = WTFMove(segment);
@@ -100,6 +126,11 @@ PathImpl& Path::ensureImpl()
         return *impl;
 
     return setImpl(PathStream::create());
+}
+
+void Path::ensureImplForTesting()
+{
+    ensureImpl();
 }
 
 PathImpl* Path::asImpl()
@@ -363,6 +394,32 @@ std::optional<PathDataLine> Path::singleDataLine() const
 
     if (auto impl = asImpl())
         return impl->singleDataLine();
+
+    return std::nullopt;
+}
+
+std::optional<PathRect> Path::singleRect() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathRect>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleRect();
+
+    return std::nullopt;
+}
+
+std::optional<PathRoundedRect> Path::singleRoundedRect() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathRoundedRect>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleRoundedRect();
 
     return std::nullopt;
 }

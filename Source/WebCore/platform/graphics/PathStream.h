@@ -40,6 +40,7 @@ public:
     static Ref<PathStream> create(const Vector<FloatPoint>&);
     static Ref<PathStream> create(Vector<PathSegment>&&);
 
+    bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
 
     void add(PathMoveTo) final;
@@ -88,6 +89,8 @@ private:
 
     std::optional<PathSegment> singleSegment() const final;
     std::optional<PathDataLine> singleDataLine() const final;
+    std::optional<PathRect> singleRect() const final;
+    std::optional<PathRoundedRect> singleRoundedRect() const final;
     std::optional<PathArc> singleArc() const final;
     std::optional<PathClosedArc> singleClosedArc() const final;
     std::optional<PathDataQuadCurve> singleQuadCurve() const final;
