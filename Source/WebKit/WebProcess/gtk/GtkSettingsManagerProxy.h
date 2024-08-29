@@ -27,7 +27,6 @@
 
 #include "GtkSettingsState.h"
 #include "MessageReceiver.h"
-#include <gtk/gtk.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -50,7 +49,7 @@ private:
     void applyHintingSettings();
     void applyAntialiasSettings();
 
-    GtkSettings* m_settings;
+    GtkSettingsState m_settings;
 };
 
 } // namespace WebKit

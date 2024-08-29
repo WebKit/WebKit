@@ -43,7 +43,6 @@ GtkSettingsManagerProxy& GtkSettingsManagerProxy::singleton()
 }
 
 GtkSettingsManagerProxy::GtkSettingsManagerProxy()
-    : m_settings(gtk_settings_get_default())
 {
     WebProcess::singleton().addMessageReceiver(Messages::GtkSettingsManagerProxy::messageReceiverName(), *this);
 }
@@ -57,22 +56,22 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 {
     bool shouldUpdateStyle = false;
     if (state.themeName) {
-        g_object_set(m_settings, "gtk-theme-name", state.themeName->utf8().data(), nullptr);
+        m_settings.themeName = WTFMove(state.themeName);
         RenderTheme::singleton().platformColorsDidChange();
         shouldUpdateStyle = true;
     }
 
     if (state.fontName)
-        g_object_set(m_settings, "gtk-font-name", state.fontName->utf8().data(), nullptr);
+        m_settings.fontName = WTFMove(state.fontName);
 
     bool hintingSettingsDidChange = false;
     if (state.xftHinting) {
-        g_object_set(m_settings, "gtk-xft-hinting", *state.xftHinting, nullptr);
+        m_settings.xftHinting = state.xftHinting;
         hintingSettingsDidChange = true;
     }
 
     if (state.xftHintStyle) {
-        g_object_set(m_settings, "gtk-xft-hintstyle", state.xftHintStyle->utf8().data(), nullptr);
+        m_settings.xftHintStyle = WTFMove(state.xftHintStyle);
         hintingSettingsDidChange = true;
     }
 
@@ -83,12 +82,12 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
     bool antialiasSettingsDidChange = false;
     if (state.xftAntialias) {
-        g_object_set(m_settings, "gtk-xft-antialias", *state.xftAntialias, nullptr);
+        m_settings.xftAntialias = state.xftAntialias;
         antialiasSettingsDidChange = true;
     }
 
     if (state.xftRGBA) {
-        g_object_set(m_settings, "gtk-xft-rgba", state.xftRGBA->utf8().data(), nullptr);
+        m_settings.xftRGBA = WTFMove(state.xftRGBA);
         antialiasSettingsDidChange = true;
     }
 
@@ -98,22 +97,22 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
     }
 
     if (state.xftDPI)
-        g_object_set(m_settings, "gtk-xft-dpi", *state.xftDPI, nullptr);
+        m_settings.xftAntialias = state.xftAntialias;
 
     if (state.cursorBlink)
-        g_object_set(m_settings, "gtk-cursor-blink", *state.cursorBlink, nullptr);
+        m_settings.cursorBlink = state.cursorBlink;
 
     if (state.cursorBlinkTime)
-        g_object_set(m_settings, "gtk-cursor-blink-time", *state.cursorBlinkTime, nullptr);
+        m_settings.cursorBlinkTime = state.cursorBlinkTime;
 
     if (state.primaryButtonWarpsSlider)
-        g_object_set(m_settings, "gtk-primary-button-warps-slider", *state.primaryButtonWarpsSlider, nullptr);
+        m_settings.primaryButtonWarpsSlider = state.primaryButtonWarpsSlider;
 
     if (state.overlayScrolling)
-        g_object_set(m_settings, "gtk-overlay-scrolling", *state.overlayScrolling, nullptr);
+        m_settings.overlayScrolling = state.overlayScrolling;
 
     if (state.enableAnimations)
-        g_object_set(m_settings, "gtk-enable-animations", *state.enableAnimations, nullptr);
+        m_settings.enableAnimations = state.enableAnimations;
 
     if (shouldUpdateStyle)
         Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
@@ -121,62 +120,43 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
 void GtkSettingsManagerProxy::applyHintingSettings()
 {
-    gint hinting;
-    GUniqueOutPtr<char> hintStyleString;
-    g_object_get(m_settings, "gtk-xft-hinting", &hinting, "gtk-xft-hintstyle", &hintStyleString.outPtr(), nullptr);
-
     std::optional<FontRenderOptions::Hinting> hintStyle;
-    switch (hinting) {
-    case 0:
+    if (m_settings.xftHinting && !m_settings.xftHinting.value())
         hintStyle = FontRenderOptions::Hinting::None;
-        break;
-    case 1:
-        if (hintStyleString) {
-            if (!strcmp(hintStyleString.get(), "hintnone"))
-                hintStyle = FontRenderOptions::Hinting::None;
-            else if (!strcmp(hintStyleString.get(), "hintslight"))
-                hintStyle = FontRenderOptions::Hinting::Slight;
-            else if (!strcmp(hintStyleString.get(), "hintmedium"))
-                hintStyle = FontRenderOptions::Hinting::Medium;
-            else if (!strcmp(hintStyleString.get(), "hintfull"))
-                hintStyle = FontRenderOptions::Hinting::Full;
-        }
-        break;
+    else if (m_settings.xftHinting == 1) {
+        if (m_settings.xftHintStyle == "hintnone"_s)
+            hintStyle = FontRenderOptions::Hinting::None;
+        else if (m_settings.xftHintStyle == "hintslight"_s)
+            hintStyle = FontRenderOptions::Hinting::Slight;
+        else if (m_settings.xftHintStyle == "hintmedium"_s)
+            hintStyle = FontRenderOptions::Hinting::Medium;
+        else if (m_settings.xftHintStyle == "hintfull"_s)
+            hintStyle = FontRenderOptions::Hinting::Full;
     }
     FontRenderOptions::singleton().setHinting(hintStyle);
 }
 
 void GtkSettingsManagerProxy::applyAntialiasSettings()
 {
-    gint antialias;
-    GUniqueOutPtr<char> rgbaString;
-    g_object_get(m_settings, "gtk-xft-antialias", &antialias, "gtk-xft-rgba", &rgbaString.outPtr(), nullptr);
-
     std::optional<FontRenderOptions::SubpixelOrder> subpixelOrder;
-    if (rgbaString) {
-        if (!strcmp(rgbaString.get(), "rgb"))
+    if (m_settings.xftRGBA) {
+        if (m_settings.xftRGBA == "rgb"_s)
             subpixelOrder = FontRenderOptions::SubpixelOrder::HorizontalRGB;
-        else if (!strcmp(rgbaString.get(), "bgr"))
+        else if (m_settings.xftRGBA == "bgr"_s)
             subpixelOrder = FontRenderOptions::SubpixelOrder::HorizontalBGR;
-        else if (!strcmp(rgbaString.get(), "vrgb"))
+        else if (m_settings.xftRGBA == "vrgb"_s)
             subpixelOrder = FontRenderOptions::SubpixelOrder::VerticalRGB;
-        else if (!strcmp(rgbaString.get(), "vbgr"))
+        else if (m_settings.xftRGBA == "vbgr"_s)
             subpixelOrder = FontRenderOptions::SubpixelOrder::VerticalBGR;
     }
     FontRenderOptions::singleton().setSubpixelOrder(subpixelOrder);
 
     std::optional<FontRenderOptions::Antialias> antialiasMode;
-    switch (antialias) {
-    case 0:
+    if (m_settings.xftAntialias && !m_settings.xftAntialias.value())
         antialiasMode = FontRenderOptions::Antialias::None;
-        break;
-    case 1:
-        if (subpixelOrder.has_value())
-            antialiasMode = FontRenderOptions::Antialias::Subpixel;
-        else
-            antialiasMode = FontRenderOptions::Antialias::Normal;
-        break;
-    }
+    else if (m_settings.xftAntialias == 1)
+        antialiasMode = subpixelOrder.has_value() ? FontRenderOptions::Antialias::Subpixel : FontRenderOptions::Antialias::Normal;
+
     FontRenderOptions::singleton().setAntialias(antialiasMode);
 }
 
