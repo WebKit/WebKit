@@ -257,13 +257,13 @@ public:
     RenderObject* renderer() const override { return nullptr; }
     const RenderStyle* style() const;
 
-    // Note: computeAccessibilityIsIgnored does not consider whether an object is ignored due to presence of modals.
-    // Use accessibilityIsIgnored as the word of law when determining if an object is ignored.
-    virtual bool computeAccessibilityIsIgnored() const { return true; }
-    bool accessibilityIsIgnored() const override;
+    // Note: computeIsIgnored does not consider whether an object is ignored due to presence of modals.
+    // Use isIgnored as the word of law when determining if an object is ignored.
+    virtual bool computeIsIgnored() const { return true; }
+    bool isIgnored() const override;
     void recomputeIsIgnored();
     AccessibilityObjectInclusion defaultObjectInclusion() const;
-    bool accessibilityIsIgnoredByDefault() const;
+    bool isIgnoredByDefault() const;
     bool isARIAHidden() const;
 
     bool isShowingValidationMessage() const;
@@ -899,7 +899,7 @@ private:
     std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const;
 
     // Note that "withoutCache" refers to the lack of referencing AXComputedObjectAttributeCache in the function, not the AXObjectCache parameter we pass in here.
-    bool accessibilityIsIgnoredWithoutCache(AXObjectCache*) const;
+    bool isIgnoredWithoutCache(AXObjectCache*) const;
     void setLastKnownIsIgnoredValue(bool);
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
     AccessibilityChildrenVector ariaListboxSelectedChildren();
@@ -939,8 +939,8 @@ inline bool AccessibilityObject::hasDisplayContents() const
 
 inline void AccessibilityObject::recomputeIsIgnored()
 {
-    // accessibilityIsIgnoredWithoutCache will update m_lastKnownIsIgnoredValue and perform any necessary actions if it has changed.
-    accessibilityIsIgnoredWithoutCache(axObjectCache());
+    // isIgnoredWithoutCache will update m_lastKnownIsIgnoredValue and perform any necessary actions if it has changed.
+    isIgnoredWithoutCache(axObjectCache());
 }
 
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const

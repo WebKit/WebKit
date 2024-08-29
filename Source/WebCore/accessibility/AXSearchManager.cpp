@@ -234,10 +234,10 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     size_t endIndex = isForward ? 0 : childrenSize;
 
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object.get())) {
+    if (startObject && startObject->isIgnored() && startObject->isDescendantOfObject(object.get())) {
         RefPtr<AXCoreObject> parentObject = startObject->parentObject();
         // Go up the parent chain to find the highest ancestor that's also being ignored.
-        while (parentObject && parentObject->accessibilityIsIgnored()) {
+        while (parentObject && parentObject->isIgnored()) {
             if (parentObject == object)
                 break;
             startObject = parentObject;
@@ -249,7 +249,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
         ASSERT(is<AccessibilityObject>(startObject));
         auto* newStartObject = dynamicDowncast<AccessibilityObject>(startObject.get());
         // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        if (newStartObject && newStartObject->accessibilityIsIgnored())
+        if (newStartObject && newStartObject->isIgnored())
             newStartObject = isForward ? newStartObject->previousSiblingUnignored() : newStartObject->nextSiblingUnignored();
         startObject = newStartObject;
     }

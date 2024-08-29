@@ -950,7 +950,7 @@ public:
     virtual Node* node() const = 0;
     virtual RenderObject* renderer() const = 0;
 
-    virtual bool accessibilityIsIgnored() const = 0;
+    virtual bool isIgnored() const = 0;
 
     virtual unsigned blockquoteLevel() const = 0;
     virtual unsigned headingLevel() const = 0;

@@ -50,7 +50,7 @@ private:
     bool isMockObject() const final { return true; }
     bool isDetachedFromParent() override { return !m_parent; }
 
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 };
 
 } // namespace WebCore 

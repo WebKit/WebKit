@@ -76,7 +76,7 @@ String AccessibilityAttachment::roleDescription() const
     return AXAttachmentRoleText();
 }
 
-bool AccessibilityAttachment::computeAccessibilityIsIgnored() const
+bool AccessibilityAttachment::computeIsIgnored() const
 {
     return false;
 }

@@ -154,7 +154,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
         return;
 
     if (RefPtr focusedObject = focusedObjectForPage(page)) {
-        ASSERT(!focusedObject->accessibilityIsIgnored());
+        ASSERT(!focusedObject->isIgnored());
         postPlatformNotification(*focusedObject, AXFocusedUIElementChanged);
     }
 }

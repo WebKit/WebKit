@@ -196,13 +196,13 @@ void AccessibilityScrollView::clearChildren()
     m_childrenDirty = false;
 }
 
-bool AccessibilityScrollView::computeAccessibilityIsIgnored() const
+bool AccessibilityScrollView::computeIsIgnored() const
 {
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)
         return true;
 
-    return webArea->accessibilityIsIgnored();
+    return webArea->isIgnored();
 }
 
 void AccessibilityScrollView::addRemoteFrameChild()

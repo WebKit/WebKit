@@ -49,7 +49,7 @@ private:
     HTMLProgressElement* progressElement() const;
     HTMLMeterElement* meterElement() const;
     
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 };
 
 } // namespace WebCore

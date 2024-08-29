@@ -168,7 +168,7 @@ protected:
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
     void addChildren() override;
     void clearChildren() override;
     void updateChildrenIfNecessary() override;

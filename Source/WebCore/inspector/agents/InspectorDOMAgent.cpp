@@ -2321,8 +2321,8 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                     focused = axObject->isFocused();
             }
 
-            ignored = axObject->accessibilityIsIgnored();
-            ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
+            ignored = axObject->isIgnored();
+            ignoredByDefault = axObject->isIgnoredByDefault();
             
             String invalidValue = axObject->invalidStatus();
             if (invalidValue == "false"_s)

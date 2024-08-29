@@ -48,9 +48,9 @@ Ref<AccessibilityLabel> AccessibilityLabel::create(RenderObject& renderer)
     return adoptRef(*new AccessibilityLabel(renderer));
 }
 
-bool AccessibilityLabel::computeAccessibilityIsIgnored() const
+bool AccessibilityLabel::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 String AccessibilityLabel::stringValue() const

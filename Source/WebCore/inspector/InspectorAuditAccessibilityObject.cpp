@@ -178,8 +178,8 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
         computedProperties.headingLevel = axObject->headingLevel();
         computedProperties.hidden = axObject->isHidden();
         computedProperties.hierarchicalLevel = axObject->hierarchicalLevel();
-        computedProperties.ignored = axObject->accessibilityIsIgnored();
-        computedProperties.ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
+        computedProperties.ignored = axObject->isIgnored();
+        computedProperties.ignoredByDefault = axObject->isIgnoredByDefault();
 
         String invalidValue = axObject->invalidStatus();
         if (invalidValue == "false"_s)

@@ -498,7 +498,7 @@ unsigned AccessibilityObject::blockquoteLevel() const
 AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
-        return !object.accessibilityIsIgnored();
+        return !object.isIgnored();
     });
 }
 
@@ -517,7 +517,7 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) c
     ASSERT(limit);
 
     for (auto sibling = iterator(nextSibling()); limit && sibling; --limit, ++sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -528,7 +528,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limi
     ASSERT(limit);
 
     for (auto sibling = iterator(previousSibling()); limit && sibling; --limit, --sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -572,7 +572,7 @@ FloatRect AccessibilityObject::relativeFrame() const
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
     return WebCore::firstAccessibleObjectFromNode(node, [] (const AccessibilityObject& accessible) {
-        return !accessible.accessibilityIsIgnored();
+        return !accessible.isIgnored();
     });
 }
 
@@ -666,7 +666,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
-    if (child->accessibilityIsIgnored()) {
+    if (child->isIgnored()) {
         if (descendIfIgnored == DescendIfIgnored::Yes) {
             unsigned insertionIndex = index;
             auto childAncestorFlags = child->computeAncestorFlags();
@@ -680,7 +680,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
                     // Even though `child` is ignored, we still need to set ancestry flags based on it.
                     grandchild->initializeAncestorFlags(childAncestorFlags);
                     grandchild->addAncestorFlags(thisAncestorFlags);
-                    // Calls to `child->accessibilityIsIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
+                    // Calls to `child->isIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
                     if (insertionIndex > m_children.size())
                         break;
                     m_children.insert(insertionIndex, grandchild);
@@ -1672,7 +1672,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
     // create an AX object, but skip it if it is not supposed to be seen
     if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
         if (auto* axObject = cache->getOrCreate(*replacedNode))
-            return !axObject->accessibilityIsIgnored();
+            return !axObject->isIgnored();
     }
 
     return true;
@@ -2760,7 +2760,7 @@ String AccessibilityObject::computedRoleString() const
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     AccessibilityRole role = roleValue();
 
-    if (role == AccessibilityRole::Image && accessibilityIsIgnored())
+    if (role == AccessibilityRole::Image && isIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
 
     // We do compute a role string for block elements with author-provided roles.
@@ -3916,7 +3916,7 @@ bool AccessibilityObject::isFileUploadButton() const
     return input && input->isFileUpload();
 }
 
-bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
+bool AccessibilityObject::isIgnoredByDefault() const
 {
     return defaultObjectInclusion() == AccessibilityObjectInclusion::IgnoreObject;
 }
@@ -4011,7 +4011,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     return accessibilityPlatformIncludesObject();
 }
     
-bool AccessibilityObject::accessibilityIsIgnored() const
+bool AccessibilityObject::isIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;
     auto* axObjectCache = this->axObjectCache();
@@ -4030,23 +4030,23 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         }
     }
 
-    bool ignored = accessibilityIsIgnoredWithoutCache(axObjectCache);
+    bool ignored = isIgnoredWithoutCache(axObjectCache);
 
-    // Refetch the attribute cache in case it was enabled as part of computing accessibilityIsIgnored.
+    // Refetch the attribute cache in case it was enabled as part of computing isIgnored.
     if (axObjectCache && (attributeCache = axObjectCache->computedObjectAttributeCache()))
         attributeCache->setIgnored(objectID(), ignored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
 
     return ignored;
 }
 
-bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cache) const
+bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
 {
     // If we are in the midst of retrieving the current modal node, we only need to consider whether the object
-    // is inherently ignored via computeAccessibilityIsIgnored. Also, calling ignoredFromModalPresence
+    // is inherently ignored via computeIsIgnored. Also, calling ignoredFromModalPresence
     // in this state would cause infinite recursion.
     bool ignored = cache && cache->isRetrievingCurrentModalNode() ? false : ignoredFromModalPresence();
     if (!ignored)
-        ignored = computeAccessibilityIsIgnored();
+        ignored = computeIsIgnored();
 
     auto previousLastKnownIsIgnoredValue = m_lastKnownIsIgnoredValue;
     const_cast<AccessibilityObject*>(this)->setLastKnownIsIgnoredValue(ignored);

@@ -62,7 +62,7 @@ Ref<AccessibilityTableCell> AccessibilityTableCell::create(Node& node)
     return adoptRef(*new AccessibilityTableCell(node));
 }
 
-bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
+bool AccessibilityTableCell::computeIsIgnored() const
 {
     auto decision = defaultObjectInclusion();
     if (decision == AccessibilityObjectInclusion::IncludeObject)
@@ -76,7 +76,7 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
     if (!element() && !inTable)
         return true;
 
-    return !isExposedTableCell() && AccessibilityRenderObject::computeAccessibilityIsIgnored();
+    return !isExposedTableCell() && AccessibilityRenderObject::computeIsIgnored();
 }
 
 AccessibilityTable* AccessibilityTableCell::parentTable() const

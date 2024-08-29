@@ -46,7 +46,7 @@ private:
     bool isOrderedList() const override;
     bool isDescriptionList() const override;
 
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;
     bool childHasPseudoVisibleListItemMarkers(Node*);
 };

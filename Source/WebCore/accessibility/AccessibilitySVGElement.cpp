@@ -212,7 +212,7 @@ bool AccessibilitySVGElement::hasTitleOrDescriptionChild() const
     return false;
 }
 
-bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
+bool AccessibilitySVGElement::computeIsIgnored() const
 {
     // According to the SVG Accessibility API Mappings spec, items should be excluded if:
     // * They would be excluded according to the Core Accessibility API Mappings.
@@ -259,7 +259,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
         return true;
     }
 
-    return AccessibilityRenderObject::computeAccessibilityIsIgnored();
+    return AccessibilityRenderObject::computeIsIgnored();
 }
 
 bool AccessibilitySVGElement::inheritsPresentationalRole() const

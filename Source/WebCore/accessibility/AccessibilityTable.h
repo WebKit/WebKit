@@ -104,7 +104,7 @@ protected:
     // Used in type checking function is<AccessibilityTable>.
     bool isAccessibilityTableInstance() const final { return true; }
 
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 
     void addRow(AccessibilityTableRow&, unsigned, unsigned& maxColumnCount);
 

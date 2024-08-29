@@ -40,7 +40,7 @@ public:
     bool containsOnlyStaticText() const;
 private:
     explicit AccessibilityLabel(RenderObject&);
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Label; }
 

@@ -56,7 +56,7 @@ private:
     bool canSetSelectedAttribute() const final;
     LayoutRect elementRect() const final;
     String stringValue() const final;
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 
     WeakPtr<AccessibilityObject> m_parent;
 };

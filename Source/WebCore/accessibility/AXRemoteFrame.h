@@ -46,7 +46,7 @@ private:
     virtual ~AXRemoteFrame() = default;
 
     AccessibilityRole determineAccessibilityRole() { return AccessibilityRole::RemoteFrame; }
-    bool computeAccessibilityIsIgnored() const { return false; }
+    bool computeIsIgnored() const { return false; }
     bool isAXRemoteFrame() const { return true; }
     LayoutRect elementRect() const;
 

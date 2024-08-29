@@ -54,7 +54,7 @@ public:
 private:
     AccessibilityTableColumn();
     
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
     bool isTableColumn() const override { return true; }
 
     bool isAccessibilityTableColumnInstance() const final { return true; }

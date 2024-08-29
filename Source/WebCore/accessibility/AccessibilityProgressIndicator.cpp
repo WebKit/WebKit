@@ -46,9 +46,9 @@ Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(Rende
     return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
 
-bool AccessibilityProgressIndicator::computeAccessibilityIsIgnored() const
+bool AccessibilityProgressIndicator::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
     
 String AccessibilityProgressIndicator::valueDescription() const

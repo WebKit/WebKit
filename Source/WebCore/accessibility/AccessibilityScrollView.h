@@ -52,7 +52,7 @@ private:
     ScrollView* currentScrollView() const;
     ScrollableArea* getScrollableAreaIfScrollable() const override { return currentScrollView(); }
     void scrollTo(const IntPoint&) const override;
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
     bool isAccessibilityScrollViewInstance() const override { return true; }
     bool isEnabled() const override { return true; }
     bool hasRemoteFrameChild() const final { return m_remoteFrame; }

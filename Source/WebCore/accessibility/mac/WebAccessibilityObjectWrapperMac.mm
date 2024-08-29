@@ -2508,7 +2508,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];
-    return backingObject->accessibilityIsIgnored();
+    return backingObject->isIgnored();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

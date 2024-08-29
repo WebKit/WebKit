@@ -314,7 +314,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
-    object.accessibilityIsIgnored();
+    object.isIgnored();
 }
 #endif
 
@@ -484,7 +484,7 @@ void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
     if (!wrapper || [wrapper hasIsolatedObject])
         return;
 
-    if (object.accessibilityIsIgnored())
+    if (object.isIgnored())
         deferAddUnconnectedNode(object);
 }
 #endif
