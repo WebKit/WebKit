@@ -78,7 +78,7 @@ private:
     CALayer *captionsLayer() final;
     void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
     LMPlayableViewController *playableViewController() final;
-    void setSpatialVideoMetadata(const std::optional<WebCore::SpatialVideoMetadata>&) final;
+    void setSpatialImmersive(bool) final;
 
     WKSLinearMediaPlayer *linearMediaPlayer() const;
     void ensurePlayableViewController();

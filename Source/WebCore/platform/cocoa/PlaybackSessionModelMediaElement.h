@@ -30,6 +30,9 @@
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlaybackSessionModel.h"
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+#include "SpatialVideoMetadata.h"
+#endif
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -147,6 +150,9 @@ private:
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     AudioSessionSoundStageSize m_soundStageSize;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    std::optional<SpatialVideoMetadata> m_spatialVideoMetadata;
+#endif
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();

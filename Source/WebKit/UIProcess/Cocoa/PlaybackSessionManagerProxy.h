@@ -42,6 +42,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+#include <WebCore/SpatialVideoMetadata.h>
+#endif
 
 namespace WebKit {
 
@@ -92,6 +95,7 @@ public:
     void isInWindowFullscreenActiveChanged(bool);
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(bool);
+    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&);
 #endif
 
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
@@ -211,6 +215,7 @@ private:
     WebCore::AudioSessionSoundStageSize m_soundStageSize { 0 };
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_supportsLinearMediaPlayer { false };
+    std::optional<WebCore::SpatialVideoMetadata> m_spatialVideoMetadata;
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -281,6 +286,7 @@ private:
     void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool isInWindow);
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier, bool);
+    void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
 #endif
 
     // Messages to PlaybackSessionManager
