@@ -237,6 +237,7 @@ private:
     static LRESULT CALLBACK RunLoopWndProc(HWND, UINT, WPARAM, LPARAM);
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND m_runLoopMessageWindow;
+    HashSet<UINT_PTR> m_liveTimers;
 
     Lock m_loopLock;
 #elif USE(COCOA_EVENT_LOOP)

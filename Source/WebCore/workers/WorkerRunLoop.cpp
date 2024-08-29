@@ -205,6 +205,15 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
     timeoutDelay = std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
 #endif
 
+#if OS(WINDOWS)
+    RunLoop::cycle();
+
+    if (auto* script = context->script()) {
+        JSC::VM& vm = script->vm();
+        timeoutDelay = vm.deferredWorkTimer->timeUntilFire().value_or(Seconds::infinity());
+    }
+#endif
+
     if (predicate.isDefaultMode() && m_sharedTimer->isActive())
         timeoutDelay = std::min(timeoutDelay, m_sharedTimer->fireTimeDelay());
 
