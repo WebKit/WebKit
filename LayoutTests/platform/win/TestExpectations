@@ -16,27 +16,6 @@ fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 # CONTENT_FILTERING is disabled
 contentfiltering [ Skip ]
 
-# CSS_COMPOSITING is disabled
-css3/blending/ [ Skip ]
-imported/blink/css3/blending [ Skip ]
-imported/mozilla/svg/blend-color-burn.svg [ Skip ]
-imported/mozilla/svg/blend-color-dodge.svg [ Skip ]
-imported/mozilla/svg/blend-color.svg [ Skip ]
-imported/mozilla/svg/blend-darken.svg [ Skip ]
-imported/mozilla/svg/blend-difference-stacking.html [ Skip ]
-imported/mozilla/svg/blend-difference.svg [ Skip ]
-imported/mozilla/svg/blend-exclusion.svg [ Skip ]
-imported/mozilla/svg/blend-hard-light.svg [ Skip ]
-imported/mozilla/svg/blend-hue.svg [ Skip ]
-imported/mozilla/svg/blend-lighten.svg [ Skip ]
-imported/mozilla/svg/blend-luminosity.svg [ Skip ]
-imported/mozilla/svg/blend-multiply.svg [ Skip ]
-imported/mozilla/svg/blend-overlay.svg [ Skip ]
-imported/mozilla/svg/blend-saturation.svg [ Skip ]
-imported/mozilla/svg/blend-screen.svg [ Skip ]
-inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
-transitions/blendmode-transitions.html [ Skip ]
-
 # CSS_IMAGE_ORIENTATION is disabled
 fast/css/image-orientation [ Skip ]
 imported/blink/fast/css/image-orientation [ Skip ]
@@ -135,6 +114,10 @@ fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 pointer-lock [ Skip ]
 
+# WebGPU is disabled
+http/tests/webgpu [ Skip ]
+fast/webgpu [ Skip ]
+
 # QUOTA is disabled
 fast/workers/worker-storagequota-query-usage.html [ Skip ]
 storage/storageinfo-missing-arguments.html [ Skip ]
@@ -218,6 +201,13 @@ webaudio [ Skip ]
 
 # WEB_RTC is disabled
 webrtc [ Skip ]
+http/tests/webrtc [ Skip ]
+http/wpt/webrtc [ Skip ]
+imported/w3c/web-platform-tests/webrtc [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
+imported/w3c/web-platform-tests/webrtc-extensions [ Skip ]
+imported/w3c/web-platform-tests/webrtc-priority [ Skip ]
+imported/w3c/web-platform-tests/webrtc-stats [ Skip ]
 
 # WIRELESS_PLAYBACK_TARGET is disabled
 media/airplay-target-availability.html [ Skip ]
@@ -917,9 +907,7 @@ http/tests/ssl/media-stream [ Skip ]
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webcodecs [ Skip ]
-http/tests/webgpu [ Skip ]
-fast/webgpu [ Skip ]
-http/tests/webrtc [ Skip ]
+
 http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
@@ -1058,7 +1046,7 @@ animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/font-variations/font-stretch.html [ Skip ]
 animations/font-variations/font-style.html [ Skip ]
 
-webkit.org/b/229584 animations/fill-mode-forwards.html [ Failure Pass ]
+webkit.org/b/229584 animations/fill-mode-forwards.html [ Failure Pass Timeout ]
 
 # TODO Uses showModalDialog
 webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Skip ]
@@ -1215,6 +1203,19 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-t
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
+
+webkit.org/b/278847 css3/blending/background-blend-mode-crossfade-image.html [ Skip ] # Crash
+webkit.org/b/278847 css3/blending/background-blend-mode-tiled-layers.html [ Skip ] # Crash
+
+css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-body-child-isolate-html-background-color.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-body-composited-child-background-color.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-clip-accelerated-blending-child.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-clip-accelerated-blending-double.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ Skip ] # ImageOnlyFailure
+css3/blending/blend-mode-clip-rect-accelerated-blending.html [ Skip ] # ImageOnlyFailure
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # DOM
@@ -1944,7 +1945,6 @@ http/wpt/selection-live-range [ Skip ]
 http/wpt/webaudio [ Skip ]
 http/wpt/webauthn [ Skip ]
 http/wpt/webcodecs [ Skip ]
-http/wpt/webrtc [ Skip ]
 http/wpt/webxr [ Skip ]
 imported/blink [ Skip ]
 imported/mozilla [ Skip ]
@@ -2134,11 +2134,6 @@ imported/w3c/web-platform-tests/web-share [ Skip ]
 imported/w3c/web-platform-tests/webaudio [ Skip ]
 imported/w3c/web-platform-tests/webcodecs [ Skip ]
 imported/w3c/web-platform-tests/webmessaging [ Skip ]
-imported/w3c/web-platform-tests/webrtc [ Skip ]
-imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
-imported/w3c/web-platform-tests/webrtc-extensions [ Skip ]
-imported/w3c/web-platform-tests/webrtc-priority [ Skip ]
-imported/w3c/web-platform-tests/webrtc-stats [ Skip ]
 imported/w3c/web-platform-tests/websockets [ Skip ]
 imported/w3c/web-platform-tests/webstorage [ Skip ]
 imported/w3c/web-platform-tests/webvtt [ Skip ]
@@ -2442,6 +2437,51 @@ css1 [ Skip ]
 css2.1 [ Skip ]
 css2.1/20110323/replaced-intrinsic-001.htm [ Skip ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Skip ]
+css3/blending/background-blend-mode-default-value.html [ Skip ]
+css3/blending/background-blend-mode-different-image-formats.html [ Skip ]
+css3/blending/background-blend-mode-gif-color-2.html [ Skip ]
+css3/blending/background-blend-mode-gif-color.html [ Skip ]
+css3/blending/background-blend-mode-image-color.html [ Skip ]
+css3/blending/background-blend-mode-image-image.html [ Skip ]
+css3/blending/background-blend-mode-single-layer-no-blending.html [ Skip ]
+css3/blending/blend-mode-background.html [ Skip ]
+css3/blending/blend-mode-isolated-group-1.html [ Skip ]
+css3/blending/blend-mode-isolated-group-2.html [ Skip ]
+css3/blending/blend-mode-isolated-group-3.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-append-non-stacking-context-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-append-stacking-context-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-remove-non-stacking-context-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-remove-stacking-context-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-turn-off-blending-no-isolation.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-turn-off-stacking-context.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-turn-on-blending.html [ Skip ]
+css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Skip ]
+css3/blending/blend-mode-layers.html [ Skip ]
+css3/blending/blend-mode-overflow.html [ Skip ]
+css3/blending/blend-mode-reflection.html [ Skip ]
+css3/blending/blend-mode-simple-composited.html [ Skip ]
+css3/blending/blend-mode-simple.html [ Skip ]
+css3/blending/svg-blend-color-burn.html [ Skip ]
+css3/blending/svg-blend-color-dodge.html [ Skip ]
+css3/blending/svg-blend-darken.html [ Skip ]
+css3/blending/svg-blend-difference.html [ Skip ]
+css3/blending/svg-blend-exclusion.html [ Skip ]
+css3/blending/svg-blend-hard-light.html [ Skip ]
+css3/blending/svg-blend-layer-blend.html [ Skip ]
+css3/blending/svg-blend-layer-clip-path.html [ Skip ]
+css3/blending/svg-blend-layer-filter.html [ Skip ]
+css3/blending/svg-blend-layer-mask.html [ Skip ]
+css3/blending/svg-blend-layer-opacity.html [ Skip ]
+css3/blending/svg-blend-lighten.html [ Skip ]
+css3/blending/svg-blend-multiply-alpha.html [ Skip ]
+css3/blending/svg-blend-multiply.html [ Skip ]
+css3/blending/svg-blend-normal.html [ Skip ]
+css3/blending/svg-blend-overlay.html [ Skip ]
+css3/blending/svg-blend-plus-darker.html [ Skip ]
+css3/blending/svg-blend-plus-lighter.html [ Skip ]
+css3/blending/svg-blend-screen.html [ Skip ]
+css3/blending/svg-blend-soft-light.html [ Skip ]
 css3/filters/composited-during-transition-layertree.html [ Skip ]
 css3/filters/effect-brightness-clamping-hw.html [ Skip ]
 css3/filters/effect-brightness-clamping.html [ Skip ]
@@ -3765,6 +3805,7 @@ transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Skip ]
 transforms/3d/point-mapping/3d-point-mapping.html [ Skip ]
 transforms/svg-vs-css.xhtml [ Skip ]
 
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Skip tests using layerTreeAsText. They need platform specific expected files.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -4038,6 +4079,18 @@ compositing/visibility/layer-visible-content.html [ Skip ]
 compositing/visibility/root-visibility-toggle.html [ Skip ]
 compositing/visibility/visibility-change-in-subframe.html [ Skip ]
 compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
+css3/blending/blend-mode-accelerated-with-multiple-stacking-contexts.html [ Skip ]
+css3/blending/blend-mode-ancestor-clipping-layer.html [ Skip ]
+css3/blending/blend-mode-blended-element-overlapping-composited-sibling-should-have-compositing-layer.html [ Skip ]
+css3/blending/blend-mode-clip-accelerated-blending-canvas.html [ Skip ]
+css3/blending/blend-mode-isolation-accelerated-overflow-hidden.html [ Skip ]
+css3/blending/blend-mode-isolation-turn-off-self-painting-layer.html [ Skip ]
+css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html [ Skip ]
+css3/blending/blend-mode-isolation-turn-off-self-painting-layer2.html [ Skip ]
+css3/blending/blend-mode-isolation-turn-on-self-painting-layer.html [ Skip ]
+css3/blending/blend-mode-parent-of-composited-blended-has-layer.html [ Skip ]
+css3/blending/blend-mode-with-accelerated-sibling.html [ Skip ]
+css3/blending/blend-mode-with-composited-descendant-should-have-layer.html [ Skip ]
 css3/filters/backdrop/resource-use-change-size-from-zero.html [ Skip ]
 css3/filters/filtered-compositing-descendant.html [ Skip ]
 
