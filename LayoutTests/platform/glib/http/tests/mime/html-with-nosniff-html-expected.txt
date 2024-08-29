@@ -1,0 +1,2 @@
+nosniff-html.html has MIME type text/plain
+

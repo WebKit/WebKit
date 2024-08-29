@@ -773,6 +773,7 @@ http/tests/media [ Skip ]
 
 # need to implement content sniffing
 http/tests/mime/mime-type-sniff.html [ Skip ]
+http/tests/mime/html-with-nosniff-html.html [ Skip ]
 
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
