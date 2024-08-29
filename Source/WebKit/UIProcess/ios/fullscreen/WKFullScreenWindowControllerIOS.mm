@@ -1076,6 +1076,14 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [webView _overrideZoomScaleParametersWithMinimumZoomScale:WebKit::baseScale maximumZoomScale:WebKit::baseScale allowUserScaling:NO];
         [webView _resetContentOffset];
         [_window insertSubview:webView.get() atIndex:0];
+
+        // _obscuredInsets and _unobscuredSafeAreaInsets were already reset by
+        // WKWebViewState::applyTo(), but inserting webView into _window may change its
+        // safeAreaInsets, which may cause the client to set new (un)obscured insets.
+        // Therefore we need to reset them again.
+        [webView _resetObscuredInsets];
+        [webView _resetUnobscuredSafeAreaInsets];
+
         [webView setNeedsLayout];
         [webView layoutIfNeeded];
 
