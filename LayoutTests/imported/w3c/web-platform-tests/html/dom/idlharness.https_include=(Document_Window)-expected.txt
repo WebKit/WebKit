@@ -227,6 +227,8 @@ PASS Window interface: operation releaseEvents()
 FAIL Window interface: attribute external assert_own_property: The global object must have a property "external" expected property "external" missing
 PASS Window interface: attribute onabort
 PASS Window interface: attribute onauxclick
+PASS Window interface: attribute onbeforeinput
+PASS Window interface: attribute onbeforetoggle
 PASS Window interface: attribute onblur
 PASS Window interface: attribute oncancel
 PASS Window interface: attribute oncanplay
@@ -382,6 +384,8 @@ PASS Window interface: window must inherit property "releaseEvents()" with the p
 FAIL Window interface: window must inherit property "external" with the proper type assert_own_property: expected property "external" missing
 PASS Window interface: window must inherit property "onabort" with the proper type
 PASS Window interface: window must inherit property "onauxclick" with the proper type
+PASS Window interface: window must inherit property "onbeforeinput" with the proper type
+PASS Window interface: window must inherit property "onbeforetoggle" with the proper type
 PASS Window interface: window must inherit property "onblur" with the proper type
 PASS Window interface: window must inherit property "oncancel" with the proper type
 PASS Window interface: window must inherit property "oncanplay" with the proper type
@@ -543,6 +547,8 @@ PASS Document interface: operation releaseEvents()
 PASS Document interface: attribute all
 PASS Document interface: attribute onabort
 PASS Document interface: attribute onauxclick
+PASS Document interface: attribute onbeforeinput
+PASS Document interface: attribute onbeforetoggle
 PASS Document interface: attribute onblur
 PASS Document interface: attribute oncancel
 PASS Document interface: attribute oncanplay
@@ -673,6 +679,8 @@ PASS Document interface: iframe.contentDocument must inherit property "releaseEv
 FAIL Document interface: iframe.contentDocument must inherit property "all" with the proper type assert_equals: expected "undefined" but got "function"
 PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onauxclick" with the proper type
+PASS Document interface: iframe.contentDocument must inherit property "onbeforeinput" with the proper type
+PASS Document interface: iframe.contentDocument must inherit property "onbeforetoggle" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type
@@ -803,6 +811,8 @@ PASS Document interface: new Document() must inherit property "releaseEvents()" 
 PASS Document interface: new Document() must inherit property "all" with the proper type
 PASS Document interface: new Document() must inherit property "onabort" with the proper type
 PASS Document interface: new Document() must inherit property "onauxclick" with the proper type
+PASS Document interface: new Document() must inherit property "onbeforeinput" with the proper type
+PASS Document interface: new Document() must inherit property "onbeforetoggle" with the proper type
 PASS Document interface: new Document() must inherit property "onblur" with the proper type
 PASS Document interface: new Document() must inherit property "oncancel" with the proper type
 PASS Document interface: new Document() must inherit property "oncanplay" with the proper type
@@ -933,6 +943,8 @@ PASS Document interface: documentWithHandlers must inherit property "releaseEven
 PASS Document interface: documentWithHandlers must inherit property "all" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onabort" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onauxclick" with the proper type
+PASS Document interface: documentWithHandlers must inherit property "onbeforeinput" with the proper type
+PASS Document interface: documentWithHandlers must inherit property "onbeforetoggle" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onblur" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncancel" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncanplay" with the proper type

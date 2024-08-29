@@ -27,11 +27,12 @@
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers
 interface mixin GlobalEventHandlers {
-    // Commented out event handlers are defined by the HTML5 specification but
-    // are not yet implemented.
+    // Commented out event handlers are defined by HTML but are not yet implemented.
 
     attribute EventHandler onabort;
     attribute EventHandler onauxclick;
+    attribute EventHandler onbeforeinput;
+    // attribute EventHandler onbeforematch;
     attribute EventHandler onbeforetoggle;
     attribute EventHandler onblur;
     attribute EventHandler oncancel;
@@ -41,7 +42,9 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onclick;
     attribute EventHandler onclose;
     attribute EventHandler oncontentvisibilityautostatechange;
+    // attribute EventHandler oncontextlost;
     attribute EventHandler oncontextmenu;
+    // attribute EventHandler oncontextrestored;
     attribute EventHandler oncopy;
     attribute EventHandler oncuechange;
     attribute EventHandler oncut;
@@ -84,6 +87,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onreset;
     attribute EventHandler onresize;
     attribute EventHandler onscroll;
+    // attribute EventHandler onscrollend;
     attribute EventHandler onsecuritypolicyviolation;
     attribute EventHandler onseeked;
     attribute EventHandler onseeking;

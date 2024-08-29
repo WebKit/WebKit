@@ -243,6 +243,8 @@ PASS HTMLElement interface: attribute outerText
 PASS HTMLElement interface: operation attachInternals()
 PASS HTMLElement interface: attribute onabort
 PASS HTMLElement interface: attribute onauxclick
+PASS HTMLElement interface: attribute onbeforeinput
+PASS HTMLElement interface: attribute onbeforetoggle
 PASS HTMLElement interface: attribute onblur
 PASS HTMLElement interface: attribute oncancel
 PASS HTMLElement interface: attribute oncanplay
@@ -340,6 +342,8 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onbeforeinput" with the proper type
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onbeforetoggle" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type

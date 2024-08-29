@@ -9,6 +9,16 @@ PASS onauxclick: the default value must be null
 PASS onauxclick: the content attribute must be compiled into a function as the corresponding property
 PASS onauxclick: dynamic changes on the attribute
 PASS onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick
+PASS onbeforeinput: must be on the appropriate locations for GlobalEventHandlers
+PASS onbeforeinput: the default value must be null
+PASS onbeforeinput: the content attribute must be compiled into a function as the corresponding property
+PASS onbeforeinput: dynamic changes on the attribute
+PASS onbeforeinput: dispatching an Event at a <math> element must trigger element.onbeforeinput
+PASS onbeforetoggle: must be on the appropriate locations for GlobalEventHandlers
+PASS onbeforetoggle: the default value must be null
+PASS onbeforetoggle: the content attribute must be compiled into a function as the corresponding property
+PASS onbeforetoggle: dynamic changes on the attribute
+PASS onbeforetoggle: dispatching an Event at a <math> element must trigger element.onbeforetoggle
 PASS onblur: must be on the appropriate locations for GlobalEventHandlers
 PASS onblur: the default value must be null
 PASS onblur: the content attribute must be compiled into a function as the corresponding property

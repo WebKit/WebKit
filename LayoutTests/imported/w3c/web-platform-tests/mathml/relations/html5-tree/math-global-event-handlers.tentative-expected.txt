@@ -9,6 +9,16 @@ FAIL onauxclick: the default value must be null assert_equals: The default value
 FAIL onauxclick: the content attribute must be compiled into a function as the corresponding property assert_equals: The onauxclick property must be a function expected "function" but got "undefined"
 FAIL onauxclick: dynamic changes on the attribute assert_equals: The onauxclick property must be null (no attribute) expected (object) null but got (undefined) undefined
 FAIL onauxclick: dispatching an Event at a <math> element must trigger element.onauxclick assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
+PASS onbeforeinput: must be on the appropriate locations for GlobalEventHandlers
+PASS onbeforeinput: the default value must be null
+PASS onbeforeinput: the content attribute must be compiled into a function as the corresponding property
+PASS onbeforeinput: dynamic changes on the attribute
+PASS onbeforeinput: dispatching an Event at a <math> element must trigger element.onbeforeinput
+PASS onbeforetoggle: must be on the appropriate locations for GlobalEventHandlers
+PASS onbeforetoggle: the default value must be null
+PASS onbeforetoggle: the content attribute must be compiled into a function as the corresponding property
+PASS onbeforetoggle: dynamic changes on the attribute
+PASS onbeforetoggle: dispatching an Event at a <math> element must trigger element.onbeforetoggle
 PASS onblur: must be on the appropriate locations for GlobalEventHandlers
 PASS onblur: the default value must be null
 PASS onblur: the content attribute must be compiled into a function as the corresponding property

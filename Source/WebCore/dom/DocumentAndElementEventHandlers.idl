@@ -30,6 +30,5 @@ interface mixin DocumentAndElementEventHandlers {
     // Non standard.
     [NotEnumerable] attribute EventHandler onbeforecopy;
     [NotEnumerable] attribute EventHandler onbeforecut;
-    [NotEnumerable] attribute EventHandler onbeforeinput;
     [NotEnumerable] attribute EventHandler onbeforepaste;
 };

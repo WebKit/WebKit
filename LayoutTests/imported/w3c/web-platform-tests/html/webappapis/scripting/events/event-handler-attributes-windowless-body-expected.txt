@@ -45,6 +45,8 @@ PASS Return null when getting the unload event handler of a windowless body
 PASS Ignore setting of unload window event handlers on windowless body
 PASS abort is unaffected on a windowless body
 PASS auxclick is unaffected on a windowless body
+PASS beforeinput is unaffected on a windowless body
+PASS beforetoggle is unaffected on a windowless body
 PASS cancel is unaffected on a windowless body
 PASS canplay is unaffected on a windowless body
 PASS canplaythrough is unaffected on a windowless body
@@ -154,6 +156,8 @@ PASS Return null when getting the unload event handler of a windowless frameset
 PASS Ignore setting of unload window event handlers on windowless frameset
 PASS abort is unaffected on a windowless frameset
 PASS auxclick is unaffected on a windowless frameset
+PASS beforeinput is unaffected on a windowless frameset
+PASS beforetoggle is unaffected on a windowless frameset
 PASS cancel is unaffected on a windowless frameset
 PASS canplay is unaffected on a windowless frameset
 PASS canplaythrough is unaffected on a windowless frameset
