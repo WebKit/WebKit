@@ -672,6 +672,33 @@ TEST(AdaptiveImageGlyph, InsertMultiple)
     verifyAdaptiveImageGlyph(1);
 }
 
+TEST(AdaptiveImageGlyph, InsertTextAfterAdaptiveImageGlyph)
+{
+    RetainPtr webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
+
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+
+    RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
+
+    [webView insertAdaptiveImageGlyph:adaptiveImageGlyph.get()];
+
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('picture').style = 'font-size: 64px;'"];
+
+    NSString *text = @"a";
+#if PLATFORM(IOS_FAMILY)
+    [[webView textInputContentView] insertText:text];
+#else
+    [webView insertText:text];
+#endif
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('span').textContent"], "a");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).fontSize"], "64px");
+}
+
 TEST(AdaptiveImageGlyph, CopyRTF)
 {
     auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
