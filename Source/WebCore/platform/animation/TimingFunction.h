@@ -54,7 +54,8 @@ public:
 
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
     static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
-    double transformProgress(double progress, double duration, bool before = false) const;
+    enum class Before : bool { No, Yes };
+    double transformProgress(double progress, double duration, Before = Before::No) const;
     String cssText() const;
 };
 

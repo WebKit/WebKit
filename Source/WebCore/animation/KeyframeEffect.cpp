@@ -1363,7 +1363,7 @@ OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const
         return impact;
 
     ASSERT(computedTiming.currentIteration);
-    setAnimatedPropertiesInStyle(targetStyle, *computedTiming.progress, *computedTiming.currentIteration);
+    setAnimatedPropertiesInStyle(targetStyle, computedTiming);
     return impact;
 }
 
@@ -1529,11 +1529,18 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     }
 
     ASSERT(computedTiming.currentIteration);
-    setAnimatedPropertiesInStyle(*animatedStyle.get(), *computedTiming.progress, *computedTiming.currentIteration);
+    setAnimatedPropertiesInStyle(*animatedStyle.get(), computedTiming);
 }
 
-void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress,  double currentIteration)
+void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, const ComputedEffectTiming& computedTiming)
 {
+    ASSERT(computedTiming.progress);
+    ASSERT(computedTiming.currentIteration);
+
+    auto iterationProgress = *computedTiming.progress;
+    auto currentIteration = *computedTiming.currentIteration;
+    auto before = computedTiming.before;
+
     auto& properties = m_blendingKeyframes.properties();
 
     // In the case of CSS Transitions we already know that there are only two keyframes, one where offset=0 and one where offset=1,
@@ -1606,7 +1613,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
             return CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(*this, property, startKeyframeStyle, endKeyframeStyle);
         };
 
-        interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), composeProperty, accumulateProperty, interpolateProperty, requiresBlendingForAccumulativeIterationCallback);
+        interpolateKeyframes(property, interval, iterationProgress, currentIteration, iterationDuration(), before, composeProperty, accumulateProperty, interpolateProperty, requiresBlendingForAccumulativeIterationCallback);
     }
 
     // In case one of the animated properties has its value set to "inherit" in one of the keyframes,
@@ -2051,10 +2058,8 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             if (this == effect.get())
                 break;
             auto computedTiming = effect->getComputedTiming();
-            if (computedTiming.progress) {
-                ASSERT(computedTiming.currentIteration);
-                effect->setAnimatedPropertiesInStyle(*underlyingStyle, *computedTiming.progress, *computedTiming.currentIteration);
-            }
+            if (computedTiming.progress)
+                effect->setAnimatedPropertiesInStyle(*underlyingStyle, computedTiming);
         }
 
         BlendingKeyframes explicitKeyframes(m_blendingKeyframes.animationName());

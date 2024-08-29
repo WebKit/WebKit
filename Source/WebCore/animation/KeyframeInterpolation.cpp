@@ -121,7 +121,7 @@ const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolati
     return { intervalEndpoints, hasImplicitZeroKeyframe, hasImplicitOneKeyframe };
 }
 
-void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, Seconds iterationDuration, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresBlendingForAccumulativeIterationCallback& requiresBlendingForAccumulativeIterationCallback) const
+void KeyframeInterpolation::interpolateKeyframes(Property property, const KeyframeInterval& interval, double iterationProgress, double currentIteration, Seconds iterationDuration, TimingFunction::Before before, const CompositionCallback& compositionCallback, const AccumulationCallback& accumulationCallback, const InterpolationCallback& interpolationCallback, const RequiresBlendingForAccumulativeIterationCallback& requiresBlendingForAccumulativeIterationCallback) const
 {
     auto& intervalEndpoints = interval.endpoints;
     if (intervalEndpoints.isEmpty())
@@ -197,7 +197,7 @@ void KeyframeInterpolation::interpolateKeyframes(Property property, const Keyfra
     if (iterationDuration) {
         auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
         if (auto* timingFunction = timingFunctionForKeyframe(startKeyframe))
-            transformedDistance = timingFunction->transformProgress(intervalDistance, rangeDuration);
+            transformedDistance = timingFunction->transformProgress(intervalDistance, rangeDuration, before);
     }
 
     // 18. Return the result of applying the interpolation procedure defined by the animation type of the target property, to the values of the target

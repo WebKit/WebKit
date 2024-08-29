@@ -268,37 +268,36 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
         return 1 - *simpleIterationProgress;
     }();
 
-    auto transformedProgress = [this, directedProgress, currentDirection, phase]() -> std::optional<double> {
+    auto [transformedProgress, before] = [this, directedProgress, currentDirection, phase]() -> std::pair<std::optional<double>, TimingFunction::Before> {
         // 3.10.1. Calculating the transformed progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
+        auto before = TimingFunction::Before::No;
 
         // The transformed progress is calculated from the directed progress using the following steps:
         //
         // 1. If the directed progress is unresolved, return unresolved.
         if (!directedProgress)
-            return std::nullopt;
+            return { std::nullopt, before };
 
         if (iterationDuration) {
-            bool before = false;
             // 2. Calculate the value of the before flag as follows:
-            if (is<StepsTimingFunction>(timingFunction)) {
-                // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
-                // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
-                bool goingForwards = currentDirection == ComputedDirection::Forwards;
-                // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
-                //    or if the animation effect is in the after phase and going forwards is false.
-                before = (phase == AnimationEffectPhase::Before && goingForwards) || (phase == AnimationEffectPhase::After && !goingForwards);
-            }
+            // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
+            // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
+            bool goingForwards = currentDirection == ComputedDirection::Forwards;
+            // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
+            //    or if the animation effect is in the after phase and going forwards is false.
+            if ((phase == AnimationEffectPhase::Before && goingForwards) || (phase == AnimationEffectPhase::After && !goingForwards))
+                before = TimingFunction::Before::Yes;
 
             // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
             //    input progress value and before flag as the before flag.
-            return timingFunction->transformProgress(*directedProgress, iterationDuration.seconds(), before);
+            return { timingFunction->transformProgress(*directedProgress, iterationDuration.seconds(), before), before };
         }
 
-        return *directedProgress;
+        return { *directedProgress, before };
     }();
 
-    return { currentIteration, phase, transformedProgress, simpleIterationProgress };
+    return { currentIteration, phase, transformedProgress, simpleIterationProgress, before };
 }
 
 } // namespace WebCore

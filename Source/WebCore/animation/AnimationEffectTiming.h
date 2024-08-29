@@ -41,6 +41,7 @@ struct ResolvedEffectTiming {
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
     MarkableDouble transformedProgress;
     MarkableDouble simpleIterationProgress;
+    TimingFunction::Before before;
 };
 
 struct AnimationEffectTiming {
