@@ -38,12 +38,12 @@ typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 #include "GRefPtrGStreamer.h"
 
 typedef struct _GstGLContext GstGLContext;
 typedef struct _GstGLDisplay GstGLDisplay;
-#endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)
 
 #if USE(SKIA)
 #include <skia/gpu/GrDirectContext.h>
@@ -104,7 +104,7 @@ public:
     EGLContext angleSharingGLContext();
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     GstGLDisplay* gstGLDisplay() const;
     GstGLContext* gstGLContext() const;
     void clearGStreamerGLState();
@@ -143,7 +143,7 @@ private:
     EGLContext m_angleSharingGLContext { nullptr };
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     mutable GRefPtr<GstGLDisplay> m_gstGLDisplay;
     mutable GRefPtr<GstGLContext> m_gstGLContext;
 #endif

@@ -471,9 +471,6 @@ my @features = (
     { option => "avif", desc => "Toggle support for AVIF images",
       define => "USE_AVIF", value => \$avifSupport },
 
-    { option => "gstreamer-gl", desc => "Toggle GStreamer GL support",
-      define => "USE_GSTREAMER_GL", value => \$gstreamerGLSupport },
-
     { option => "iso-malloc", desc => "Toggle IsoMalloc support",
       define => "USE_ISO_MALLOC", value => \$isoMallocSupport },
 

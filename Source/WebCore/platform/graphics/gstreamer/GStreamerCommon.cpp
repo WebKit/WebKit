@@ -395,9 +395,7 @@ void registerWebKitGStreamerElements()
 #if ENABLE(VIDEO)
         gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
         gst_element_register(0, "webkitdmabufvideosink", GST_RANK_NONE, WEBKIT_TYPE_DMABUF_VIDEO_SINK);
-#if USE(GSTREAMER_GL)
         gst_element_register(0, "webkitglvideosink", GST_RANK_NONE, WEBKIT_TYPE_GL_VIDEO_SINK);
-#endif
 #endif
         // We don't want autoaudiosink to autoplug our sink.
         gst_element_register(0, "webkitaudiosink", GST_RANK_NONE, WEBKIT_TYPE_AUDIO_SINK);
@@ -555,10 +553,9 @@ void WebCoreLogObserver::removeWatch(const Logger& logger)
 
 void deinitializeGStreamer()
 {
-#if USE(GSTREAMER_GL)
     if (auto* sharedDisplay = PlatformDisplay::sharedDisplayIfExists())
         sharedDisplay->clearGStreamerGLState();
-#endif
+
 #if ENABLE(MEDIA_STREAM)
     teardownGStreamerCaptureDeviceManagers();
 #endif

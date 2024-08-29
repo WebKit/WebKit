@@ -27,15 +27,12 @@
 #include "GStreamerRegistryScanner.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include "VideoFrameGStreamer.h"
+#include <gst/gl/gstglmemory.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
-
-#if USE(GSTREAMER_GL)
-#include <gst/gl/gstglmemory.h>
-#endif
 
 namespace WebCore {
 

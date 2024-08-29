@@ -20,7 +20,7 @@
 #include "config.h"
 #include "GLVideoSinkGStreamer.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GStreamerVideoSinkCommon.h"

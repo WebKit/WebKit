@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "AudioTrackPrivateGStreamer.h"
+#include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
 #include "GStreamerQuirks.h"
@@ -108,10 +109,6 @@
 #include <gst/mpegts/mpegts.h>
 #undef GST_USE_UNSTABLE_API
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_MPEGTS)
-
-#if USE(GSTREAMER_GL)
-#include "GLVideoSinkGStreamer.h"
-#endif // USE(GSTREAMER_GL)
 
 #if USE(TEXTURE_MAPPER)
 #include "BitmapTexture.h"
@@ -250,10 +247,8 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
         g_signal_handlers_disconnect_matched(videoSinkPad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
     }
 
-#if USE(GSTREAMER_GL)
     if (m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux)
         flushCurrentBuffer();
-#endif
 
     if (m_videoSink)
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
@@ -3861,7 +3856,6 @@ void MediaPlayerPrivateGStreamer::repaintCancelledCallback(MediaPlayerPrivateGSt
     player->cancelRepaint();
 }
 
-#if USE(GSTREAMER_GL)
 void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
     Locker sampleLocker { m_sampleMutex };
@@ -3893,7 +3887,6 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     if (is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer))
         proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
 }
-#endif
 
 void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
 {
@@ -4043,7 +4036,6 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkDMABuf()
 }
 #endif
 
-#if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
     const char* disableGLSink = g_getenv("WEBKIT_GST_DISABLE_GL_SINK");
@@ -4067,7 +4059,6 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 
     return sink;
 }
-#endif // USE(GSTREAMER_GL)
 
 class GStreamerHolePunchClient : public TextureMapperPlatformLayerBuffer::HolePunchClient {
 public:
@@ -4199,10 +4190,9 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     if (!m_videoSink && m_canRenderingBeAccelerated)
         m_videoSink = createVideoSinkDMABuf();
 #endif
-#if USE(GSTREAMER_GL)
+
     if (!m_videoSink && m_canRenderingBeAccelerated)
         m_videoSink = createVideoSinkGL();
-#endif
 
     if (!m_videoSink) {
         m_isUsingFallbackVideoSink = true;

@@ -20,16 +20,14 @@
 #include "config.h"
 #include "PlatformDisplay.h"
 
-#if USE(GSTREAMER_GL)
+#if USE(GSTREAMER)
 
 #include "GLContext.h"
 #include "GStreamerCommon.h"
-#define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #if GST_GL_HAVE_PLATFORM_EGL
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
-#undef GST_USE_UNSTABLE_API
 #include <wtf/glib/GUniquePtr.h>
 
 GST_DEBUG_CATEGORY(webkit_display_debug);
@@ -97,4 +95,4 @@ void PlatformDisplay::clearGStreamerGLState()
 
 #undef GST_CAT_DEFAULT
 
-#endif // USE(GSTREAMER_GL)
+#endif // USE(GSTREAMER)

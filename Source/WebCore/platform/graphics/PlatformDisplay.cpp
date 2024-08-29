@@ -131,7 +131,7 @@ void PlatformDisplay::clearSharingGLContext()
 #if USE(SKIA)
     invalidateSkiaGLContexts();
 #endif
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     m_gstGLContext = nullptr;
 #endif
 #if ENABLE(WEBGL) && !PLATFORM(WIN)
@@ -157,7 +157,7 @@ const GLDisplay::Extensions& PlatformDisplay::eglExtensions() const
 
 void PlatformDisplay::terminateEGLDisplay()
 {
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     m_gstGLDisplay = nullptr;
 #endif
     clearSharingGLContext();

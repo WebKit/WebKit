@@ -35,9 +35,7 @@ public:
     explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, OptionSet<TextureMapperFlags>, bool gstGLEnabled);
     virtual ~GstVideoFrameHolder();
 
-#if USE(GSTREAMER_GL)
     virtual void waitForCPUSync();
-#endif
 
     const IntSize& size() const { return m_size; }
     bool hasAlphaChannel() const { return m_hasAlphaChannel; }
@@ -58,9 +56,7 @@ private:
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     OptionSet<TextureMapperFlags> m_flags;
     GLuint m_textureID { 0 };
-#if USE(GSTREAMER_GL)
     GstGLTextureTarget m_textureTarget { GST_GL_TEXTURE_TARGET_NONE };
-#endif
     bool m_isMapped { false };
     bool m_hasMappedTextures { false };
 };

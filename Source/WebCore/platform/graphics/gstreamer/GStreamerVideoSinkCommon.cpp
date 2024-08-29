@@ -102,7 +102,6 @@ public:
             gst_query_add_allocation_pool(query, nullptr, size, 3, 0);
         }
 
-#if USE(GSTREAMER_GL)
         // FIXME: Verify the following comment. Investigate what actually should be done here.
         //
         // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
@@ -125,7 +124,6 @@ public:
             GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
             player->flushCurrentBuffer();
         }
-#endif
 
         return GST_PAD_PROBE_OK;
     }

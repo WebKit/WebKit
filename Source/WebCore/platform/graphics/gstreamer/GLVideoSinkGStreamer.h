@@ -18,7 +18,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <gst/gst.h>
 
@@ -55,4 +55,4 @@ void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink*, WebCore::MediaPl
 
 G_END_DECLS
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)
