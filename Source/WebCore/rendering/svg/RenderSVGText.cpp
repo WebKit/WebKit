@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
@@ -83,7 +83,12 @@ Ref<SVGTextElement> RenderSVGText::protectedTextElement() const
 
 bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isInline();
+    auto isEmptySVGInlineText = [](const RenderObject* object) {
+        const auto svgInlineText = dynamicDowncast<RenderSVGInlineText>(object);
+        return svgInlineText && svgInlineText->hasEmptyText();
+    };
+
+    return child.isInline() && !isEmptySVGInlineText(&child);
 }
 
 RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(RenderObject& start)
