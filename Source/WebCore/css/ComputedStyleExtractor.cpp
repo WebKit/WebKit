@@ -1989,7 +1989,7 @@ RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringK
     if (!m_element)
         return nullptr;
 
-    m_element->document().updateLayoutIgnorePendingStylesheets();
+    m_element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
     auto* style = m_element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
@@ -4926,7 +4926,7 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
         return false;
     if (propertyID == CSSPropertyFontSize) {
         if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value)) {
-            m_element->document().updateLayoutIgnorePendingStylesheets();
+            m_element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
             if (auto* style = m_element->computedStyle(m_pseudoElementIdentifier)) {
                 if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                     if (primitiveValue->isValueID() && primitiveValue->valueID() == sizeIdentifier)

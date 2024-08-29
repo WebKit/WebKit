@@ -2028,7 +2028,7 @@ void AccessibilityObject::updateBackingStore()
     
     // Updating the layout may delete this object.
     RefPtr<AccessibilityObject> protectedThis(this);
-    if (auto* document = this->document()) {
+    if (RefPtr document = this->document()) {
         if (!Accessibility::inRenderTreeOrStyleUpdate(*document))
             document->updateLayoutIgnorePendingStylesheets();
     }
@@ -3856,7 +3856,7 @@ bool AccessibilityObject::scrollByPage(ScrollByPageDirection direction) const
     
     if (newScrollPosition != scrollPosition) {
         scrollParent->scrollTo(newScrollPosition);
-        document()->updateLayoutIgnorePendingStylesheets();
+        protectedDocument()->updateLayoutIgnorePendingStylesheets();
         return true;
     }
     
