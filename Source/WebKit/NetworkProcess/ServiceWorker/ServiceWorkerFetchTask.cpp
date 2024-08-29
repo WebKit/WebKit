@@ -203,6 +203,9 @@ void ServiceWorkerFetchTask::startFetch()
 
     bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier });
     ASSERT_UNUSED(isSent, isSent);
+
+    if (m_preloader && m_preloader->didReceiveResponseOrError())
+        sendNavigationPreloadUpdate();
 }
 
 void ServiceWorkerFetchTask::didReceiveRedirectResponse(WebCore::ResourceResponse&& response)
@@ -477,12 +480,8 @@ void ServiceWorkerFetchTask::loadResponseFromPreloader()
 void ServiceWorkerFetchTask::preloadResponseIsReady()
 {
     if (!m_isLoadingFromPreloader) {
-        if (m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled()) {
-            if (!m_preloader->error().isNull())
-                sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() });
-            else
-                sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() });
-        }
+        if (m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled() && m_serviceWorkerConnection)
+            sendNavigationPreloadUpdate();
         return;
     }
 
@@ -500,6 +499,16 @@ void ServiceWorkerFetchTask::preloadResponseIsReady()
 
     bool needsContinueDidReceiveResponseMessage = true;
     processResponse(WTFMove(response), needsContinueDidReceiveResponseMessage, ShouldSetSource::No);
+}
+
+void ServiceWorkerFetchTask::sendNavigationPreloadUpdate()
+{
+    ASSERT(!!m_serviceWorkerConnection);
+
+    if (!m_preloader->error().isNull())
+        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() });
+    else
+        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() });
 }
 
 void ServiceWorkerFetchTask::loadBodyFromPreloader()

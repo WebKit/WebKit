@@ -124,6 +124,7 @@ private:
     template<typename Message> bool sendToClient(Message&&);
 
     RefPtr<NetworkResourceLoader> protectedLoader() const;
+    void sendNavigationPreloadUpdate();
 
     WeakPtr<WebSWServerConnection> m_swServerConnection;
     WeakPtr<NetworkResourceLoader> m_loader;

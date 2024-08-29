@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<script src="/common/utils.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?useNavigationPreloadPromise=true&token=" + token();
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    const registration = await navigator.serviceWorker.register("/WebKit/service-workers/simple-fetch-service-worker-preload-worker.js", { scope : url });
+    await waitForState(registration.installing ? registration.installing : registration.active, "activated");
+
+    if (registration.navigationPreload)
+        await registration.navigationPreload.enable();
+
+    if (window.testRunner) {
+        testRunner.terminateServiceWorkers();
+        await fetch("").then(() => { }, () => { });
+    }
+}, "Setup activated but not running worker");
+
+promise_test(async (test) => {
+    await fetch(url + "&value=use-preload", { method: 'POST' });
+
+    const frame = await withIframe(url);
+    assert_equals(frame.contentWindow.value, "use-preload");
+}, "Service worker preloadResponse is correctly served when there is no running worker when receiving the preload response");
+</script>
+</body>
+</html>

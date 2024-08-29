@@ -63,6 +63,7 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
     const WebCore::NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     bool isServiceWorkerNavigationPreloadEnabled() const { return m_state.enabled; }
+    bool didReceiveResponseOrError() const { return m_didReceiveResponseOrError; }
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
@@ -103,6 +104,7 @@ private:
     bool m_isStarted { false };
     bool m_isCancelled { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    bool m_didReceiveResponseOrError { false };
     MonotonicTime m_startTime;
 };
 

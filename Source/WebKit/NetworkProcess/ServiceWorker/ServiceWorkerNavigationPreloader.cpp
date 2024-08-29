@@ -168,6 +168,8 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didReceiveResponse %p", this);
 
+    m_didReceiveResponseOrError = true;
+
     if (response.isRedirection())
         response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
 
@@ -203,6 +205,7 @@ void ServiceWorkerNavigationPreloader::didFailLoading(const ResourceError& error
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didFailLoading %p", this);
 
+    m_didReceiveResponseOrError = true;
     m_error = error;
     didComplete();
 }
