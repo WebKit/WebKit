@@ -11408,7 +11408,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 #endif
 
     if (auto menu = self.scrollToTextFragmentGenerationMenu)
-        [builder insertSiblingMenu:menu afterMenuForIdentifier:UIMenuStandardEdit];
+        [builder insertSiblingMenu:menu beforeMenuForIdentifier:UIMenuShare];
 }
 
 - (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
