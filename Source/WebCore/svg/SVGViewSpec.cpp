@@ -28,9 +28,12 @@
 #include "SVGParserUtilities.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGViewSpec);
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
     : SVGFitToViewBox(&contextElement, SVGPropertyAccess::ReadOnly)

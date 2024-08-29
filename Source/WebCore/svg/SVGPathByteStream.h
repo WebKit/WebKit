@@ -23,6 +23,7 @@
 #include "Path.h"
 #include "SVGPathUtilities.h"
 #include "SVGPropertyTraits.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -38,7 +39,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGPathByteS
 namespace WebCore {
 
 class SVGPathByteStream final : public CanMakeSingleThreadWeakPtr<SVGPathByteStream> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPathByteStream);
 public:
     class Data final : public RefCounted<Data> {
     public:

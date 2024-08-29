@@ -23,6 +23,7 @@
 
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,13 +35,13 @@ class SVGTRefElement final : public SVGTextPositioningElement, public SVGURIRefe
 public:
     static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
+
 private:
     friend class SVGTRefTargetEventListener;
 
     SVGTRefElement(const QualifiedName&, Document&);
     virtual ~SVGTRefElement();
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
 
     Ref<SVGTRefTargetEventListener> protectedTargetListener() const;
 

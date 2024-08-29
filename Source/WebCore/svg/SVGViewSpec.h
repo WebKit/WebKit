@@ -22,6 +22,7 @@
 
 #include "SVGFitToViewBox.h"
 #include "SVGZoomAndPan.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -31,6 +32,7 @@ class SVGTransformList;
 class WeakPtrImplWithEventTargetData;
 
 class SVGViewSpec final : public RefCounted<SVGViewSpec>, public SVGFitToViewBox, public SVGZoomAndPan {
+    WTF_MAKE_TZONE_ALLOCATED(SVGViewSpec);
 public:
     static Ref<SVGViewSpec> create(SVGElement& contextElement)
     {
@@ -50,10 +52,10 @@ public:
 
     const WeakPtr<SVGElement, WeakPtrImplWithEventTargetData>& contextElementConcurrently() const { return m_contextElement; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
+
 private:
     explicit SVGViewSpec(SVGElement&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
 
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
     String m_viewTargetString;

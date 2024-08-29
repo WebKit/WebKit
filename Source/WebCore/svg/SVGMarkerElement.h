@@ -24,6 +24,7 @@
 #include "SVGElement.h"
 #include "SVGFitToViewBox.h"
 #include "SVGMarkerTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

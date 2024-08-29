@@ -28,8 +28,11 @@
 #include "LocalFrameView.h"
 #include "SVGImage.h"
 #include "SVGImageForContainer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGImageCache);
 
 SVGImageCache::SVGImageCache(SVGImage* svgImage)
     : m_svgImage(svgImage)

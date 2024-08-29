@@ -23,6 +23,7 @@
 #include "CommonAtomStrings.h"
 #include "FEConvolveMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -95,10 +96,10 @@ public:
     SVGAnimatedNumber& kernelUnitLengthYAnimated() { return m_kernelUnitLengthY; }
     SVGAnimatedBoolean& preserveAlphaAnimated() { return m_preserveAlpha; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

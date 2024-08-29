@@ -26,6 +26,7 @@
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

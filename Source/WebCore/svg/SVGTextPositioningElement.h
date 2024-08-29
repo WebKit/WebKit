@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGTextContentElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

@@ -26,6 +26,7 @@
 #include "SVGNames.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSegImpl.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -105,10 +106,10 @@ public:
 
     static void clearCache();
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
+
 private:
     SVGPathElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

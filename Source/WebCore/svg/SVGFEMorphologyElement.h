@@ -23,6 +23,7 @@
 
 #include "FEMorphology.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -71,10 +72,10 @@ public:
     SVGAnimatedNumber& radiusXAnimated() { return m_radiusX; }
     SVGAnimatedNumber& radiusYAnimated() { return m_radiusY; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMorphologyElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEMorphologyElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMorphologyElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

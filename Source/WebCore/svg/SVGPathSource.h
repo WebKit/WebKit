@@ -21,6 +21,7 @@
 
 #include "FloatPoint.h"
 #include "SVGPathSeg.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,7 +36,8 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGPathSourc
 namespace WebCore {
 
 class SVGPathSource : public CanMakeSingleThreadWeakPtr<SVGPathSource> {
-    WTF_MAKE_NONCOPYABLE(SVGPathSource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPathSource);
+    WTF_MAKE_NONCOPYABLE(SVGPathSource);
 public:
     SVGPathSource() = default;
     virtual ~SVGPathSource() = default;

@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFitToViewBox);
+
 SVGFitToViewBox::SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess access)
     : m_viewBox(SVGAnimatedRect::create(contextElement, access))
     , m_preserveAspectRatio(SVGAnimatedPreserveAspectRatio::create(contextElement, access))

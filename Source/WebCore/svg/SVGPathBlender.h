@@ -21,6 +21,7 @@
 #pragma once
 
 #include "SVGPathConsumer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -32,7 +33,8 @@ enum FloatBlendMode {
 class SVGPathSource;
 
 class SVGPathBlender {
-    WTF_MAKE_NONCOPYABLE(SVGPathBlender); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGPathBlender);
+    WTF_MAKE_NONCOPYABLE(SVGPathBlender);
 public:
 
     static bool addAnimatedPath(SVGPathSource& from, SVGPathSource& to, SVGPathConsumer&, unsigned repeatCount);

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,10 +32,10 @@ class SVGDefsElement final : public SVGGraphicsElement {
 public:
     static Ref<SVGDefsElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
+
 private:
     SVGDefsElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
 
     bool isValid() const final;
     bool supportsFocus() const final { return false; }

@@ -25,6 +25,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
 #include "SharedStringHash.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

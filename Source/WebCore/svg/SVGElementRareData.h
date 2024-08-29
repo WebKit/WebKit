@@ -26,6 +26,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -34,7 +35,8 @@ class SVGCursorElement;
 class SVGElement;
 
 class SVGElementRareData {
-    WTF_MAKE_NONCOPYABLE(SVGElementRareData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGElementRareData);
+    WTF_MAKE_NONCOPYABLE(SVGElementRareData);
 public:
     SVGElementRareData()
         : m_instancesUpdatesBlocked(false)

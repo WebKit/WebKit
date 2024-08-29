@@ -24,6 +24,7 @@
 #include "SVGElement.h"
 #include "SVGTests.h"
 #include "SVGTransformable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

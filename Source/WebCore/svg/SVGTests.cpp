@@ -30,6 +30,7 @@
 #include "SVGStringList.h"
 #include <wtf/Language.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MATHML)
 #include "MathMLNames.h"
@@ -37,6 +38,7 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGConditionalProcessingAttributes);
 
 SVGConditionalProcessingAttributes::SVGConditionalProcessingAttributes(SVGElement& contextElement)
     : m_requiredExtensions(SVGStringList::create(&contextElement))

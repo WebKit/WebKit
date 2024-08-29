@@ -38,10 +38,13 @@
 #include "SVGUseElement.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGDocumentExtensions);
 
 static bool animationsPausedForDocument(Document& document)
 {

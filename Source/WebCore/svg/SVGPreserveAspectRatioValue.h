@@ -22,6 +22,7 @@
 
 #include "ExceptionOr.h"
 #include "SVGPropertyTraits.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 template<typename T, typename> struct ArgumentCoder;
@@ -33,7 +34,7 @@ class AffineTransform;
 class FloatRect;
 
 class SVGPreserveAspectRatioValue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGPreserveAspectRatioValue);
 public:
     enum SVGPreserveAspectRatioType : uint8_t {
         SVG_PRESERVEASPECTRATIO_UNKNOWN = 0,

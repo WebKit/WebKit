@@ -30,12 +30,14 @@
 
 #include "EmptyClients.h"
 #include "SVGImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class SVGImageChromeClient final : public EmptyChromeClient {
-    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGImageChromeClient);
+    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient);
 public:
     SVGImageChromeClient(SVGImage* image)
         : m_image(image)

@@ -28,9 +28,12 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGURIReference);
 
 SVGURIReference::SVGURIReference(SVGElement* contextElement)
     : m_href(SVGAnimatedString::create(contextElement))

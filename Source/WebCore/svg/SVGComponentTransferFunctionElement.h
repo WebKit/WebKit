@@ -25,6 +25,7 @@
 #include "NodeName.h"
 #include "SVGElement.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -90,10 +91,10 @@ public:
     SVGAnimatedNumber& exponentAnimated() { return m_exponent; }
     SVGAnimatedNumber& offsetAnimated() { return m_offset; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGComponentTransferFunctionElement, SVGElement>;
+
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGComponentTransferFunctionElement, SVGElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
