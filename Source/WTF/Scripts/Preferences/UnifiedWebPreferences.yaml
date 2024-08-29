@@ -1008,20 +1008,6 @@ CSSBackgroundClipBorderAreaEnabled:
     WebCore:
       default: true
 
-CSSColorContrastEnabled:
-  type: bool
-  status: testable
-  category: css
-  humanReadableName: "CSS color-contrast()"
-  humanReadableDescription: "Enable support for CSS color-contrast() defined in CSS Color 5"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 CSSColorLayersEnabled:
   type: bool
   category: css

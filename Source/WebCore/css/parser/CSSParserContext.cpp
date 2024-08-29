@@ -82,7 +82,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , isHTMLDocument { document.isHTMLDocument() }
     , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.protectedSecurityOrigin()->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton()) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
-    , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
@@ -122,34 +121,33 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.hasDocumentSecurityOrigin                 << 1
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
-        | context.colorContrastEnabled                      << 4
-        | context.springTimingFunctionEnabled               << 5
+        | context.springTimingFunctionEnabled               << 4
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        | context.transformStyleOptimized3DEnabled          << 6
+        | context.transformStyleOptimized3DEnabled          << 5
 #endif
-        | context.masonryEnabled                            << 7
-        | context.cssNestingEnabled                         << 8
-        | context.cssPaintingAPIEnabled                     << 9
-        | context.cssScopeAtRuleEnabled                     << 10
-        | context.cssShapeFunctionEnabled                   << 11
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 12
-        | context.cssBackgroundClipBorderAreaEnabled        << 13
-        | context.cssWordBreakAutoPhraseEnabled             << 14
-        | context.popoverAttributeEnabled                   << 15
-        | context.sidewaysWritingModesEnabled               << 16
-        | context.cssTextWrapPrettyEnabled                  << 17
-        | context.highlightAPIEnabled                       << 18
-        | context.grammarAndSpellingPseudoElementsEnabled   << 19
-        | context.customStateSetEnabled                     << 20
-        | context.thumbAndTrackPseudoElementsEnabled        << 21
+        | context.masonryEnabled                            << 6
+        | context.cssNestingEnabled                         << 7
+        | context.cssPaintingAPIEnabled                     << 8
+        | context.cssScopeAtRuleEnabled                     << 9
+        | context.cssShapeFunctionEnabled                   << 10
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 11
+        | context.cssBackgroundClipBorderAreaEnabled        << 12
+        | context.cssWordBreakAutoPhraseEnabled             << 13
+        | context.popoverAttributeEnabled                   << 14
+        | context.sidewaysWritingModesEnabled               << 15
+        | context.cssTextWrapPrettyEnabled                  << 16
+        | context.highlightAPIEnabled                       << 17
+        | context.grammarAndSpellingPseudoElementsEnabled   << 18
+        | context.customStateSetEnabled                     << 19
+        | context.thumbAndTrackPseudoElementsEnabled        << 20
 #if ENABLE(SERVICE_CONTROLS)
-        | context.imageControlsEnabled                      << 22
+        | context.imageControlsEnabled                      << 21
 #endif
-        | context.colorLayersEnabled                        << 23
-        | context.lightDarkEnabled                          << 24
-        | context.targetTextPseudoElementEnabled            << 25
-        | context.viewTransitionTypesEnabled                << 26
-        | (uint32_t)context.mode                            << 27; // This is multiple bits, so keep it last.
+        | context.colorLayersEnabled                        << 22
+        | context.lightDarkEnabled                          << 23
+        | context.targetTextPseudoElementEnabled            << 24
+        | context.viewTransitionTypesEnabled                << 25
+        | (uint32_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

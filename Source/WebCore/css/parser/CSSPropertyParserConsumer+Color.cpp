@@ -83,7 +83,6 @@ struct ColorParserState {
     ColorParserState(const CSSParserContext& context, const CSSColorParsingOptions& options)
         : allowedColorTypes { options.allowedColorTypes }
         , acceptQuirkyColors { options.acceptQuirkyColors }
-        , colorContrastEnabled { context.colorContrastEnabled }
         , colorLayersEnabled { context.colorLayersEnabled }
         , lightDarkEnabled { context.lightDarkEnabled }
         , mode { context.mode }
@@ -93,7 +92,6 @@ struct ColorParserState {
     OptionSet<StyleColor::CSSColorType> allowedColorTypes;
 
     bool acceptQuirkyColors;
-    bool colorContrastEnabled;
     bool colorLayersEnabled;
     bool lightDarkEnabled;
 
@@ -120,9 +118,6 @@ struct ColorParserStateNester {
 
 // Overload of the exposed root functions that take a `ColorParserState&`. Used to implement nesting level tracking.
 static std::optional<CSSUnresolvedColor> consumeColor(CSSParserTokenRange&, ColorParserState&);
-
-// Temporary helper for the legacy color-contrast() code. Will be removed with color-contrast().
-static Color consumeColorRawForLegacyColorContrast(CSSParserTokenRange&, ColorParserState&);
 
 // MARK: - Generic component consumption
 
@@ -461,119 +456,6 @@ static std::optional<CSSUnresolvedColor> consumeColorFunction(CSSParserTokenRang
     });
 }
 
-// MARK: - color-contrast()
-
-static Color selectFirstColorThatMeetsOrExceedsTargetContrast(const Color& originBackgroundColor, Vector<Color>&& colorsToCompareAgainst, double targetContrast)
-{
-    auto originBackgroundColorLuminance = originBackgroundColor.luminance();
-
-    for (auto& color : colorsToCompareAgainst) {
-        if (contrastRatio(originBackgroundColorLuminance, color.luminance()) >= targetContrast)
-            return WTFMove(color);
-    }
-
-    // If there is a target contrast, and the end of the list is reached without meeting that target,
-    // either white or black is returned, whichever has the higher contrast.
-    auto contrastWithWhite = contrastRatio(originBackgroundColorLuminance, 1.0);
-    auto contrastWithBlack = contrastRatio(originBackgroundColorLuminance, 0.0);
-    return contrastWithWhite > contrastWithBlack ? Color::white : Color::black;
-}
-
-static Color selectFirstColorWithHighestContrast(const Color& originBackgroundColor, Vector<Color>&& colorsToCompareAgainst)
-{
-    auto originBackgroundColorLuminance = originBackgroundColor.luminance();
-
-    auto* colorWithGreatestContrast = &colorsToCompareAgainst[0];
-    double greatestContrastSoFar = 0;
-    for (auto& color : colorsToCompareAgainst) {
-        auto contrast = contrastRatio(originBackgroundColorLuminance, color.luminance());
-        if (contrast > greatestContrastSoFar) {
-            greatestContrastSoFar = contrast;
-            colorWithGreatestContrast = &color;
-        }
-    }
-
-    return WTFMove(*colorWithGreatestContrast);
-}
-
-static std::optional<CSSUnresolvedColor> consumeColorContrastFunction(CSSParserTokenRange& range, ColorParserState& state)
-{
-    ASSERT(range.peek().functionId() == CSSValueColorContrast);
-
-    if (!state.colorContrastEnabled)
-        return { };
-
-    auto args = consumeFunction(range);
-
-    auto originBackgroundColor = consumeColorRawForLegacyColorContrast(args, state);
-    if (!originBackgroundColor.isValid())
-        return { };
-
-    if (!consumeIdentRaw<CSSValueVs>(args))
-        return { };
-
-    Vector<Color> colorsToCompareAgainst;
-    bool consumedTo = false;
-    do {
-        auto colorToCompareAgainst = consumeColorRawForLegacyColorContrast(args, state);
-        if (!colorToCompareAgainst.isValid())
-            return { };
-
-        colorsToCompareAgainst.append(WTFMove(colorToCompareAgainst));
-
-        if (consumeIdentRaw<CSSValueTo>(args)) {
-            consumedTo = true;
-            break;
-        }
-    } while (consumeCommaIncludingWhitespace(args));
-
-    // Handle the invalid case where there is only one color in the "compare against" color list.
-    if (colorsToCompareAgainst.size() == 1)
-        return { };
-
-    if (consumedTo) {
-        auto targetContrast = [&] () -> std::optional<NumberRaw> {
-            if (args.peek().type() == IdentToken) {
-                static constexpr std::pair<CSSValueID, NumberRaw> targetContrastMappings[] {
-                    { CSSValueAA, NumberRaw { 4.5 } },
-                    { CSSValueAALarge, NumberRaw { 3.0 } },
-                    { CSSValueAAA, NumberRaw { 7.0 } },
-                    { CSSValueAAALarge, NumberRaw { 4.5 } },
-                };
-                static constexpr SortedArrayMap targetContrastMap { targetContrastMappings };
-                auto value = targetContrastMap.tryGet(args.consumeIncludingWhitespace().id());
-                return value ? std::make_optional(*value) : std::nullopt;
-            }
-            return consumeNumberRaw(args);
-        }();
-
-        if (!targetContrast)
-            return { };
-
-        // Handle the invalid case where there are additional tokens after the target contrast.
-        if (!args.atEnd())
-            return { };
-
-        // When a target contrast is specified, we select "the first color color to meet or exceed the target contrast."
-        return CSSUnresolvedColor {
-            CSSUnresolvedAbsoluteResolvedColor {
-                selectFirstColorThatMeetsOrExceedsTargetContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst), targetContrast->value)
-            }
-        };
-    }
-
-    // Handle the invalid case where there are additional tokens after the "compare against" color list that are not the 'to' identifier.
-    if (!args.atEnd())
-        return { };
-
-    // When a target contrast is NOT specified, we select "the first color with the highest contrast to the single color."
-    return CSSUnresolvedColor {
-        CSSUnresolvedAbsoluteResolvedColor {
-            selectFirstColorWithHighestContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst))
-        }
-    };
-}
-
 // MARK: - color-layers()
 
 static std::optional<CSSUnresolvedColor> consumeColorLayersFunction(CSSParserTokenRange& range, ColorParserState& state)
@@ -782,9 +664,6 @@ static std::optional<CSSUnresolvedColor> consumeAColorFunction(CSSParserTokenRan
     case CSSValueColor:
         color = consumeColorFunction(colorRange, state);
         break;
-    case CSSValueColorContrast:
-        color = consumeColorContrastFunction(colorRange, state);
-        break;
     case CSSValueColorLayers:
         color = consumeColorLayersFunction(colorRange, state);
         break;
@@ -897,19 +776,6 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSPars
 }
 
 // MARK: - Raw consuming entry points
-
-// Temporary helper for the legacy color-contrast() code. Will be removed with color-contrast().
-Color consumeColorRawForLegacyColorContrast(CSSParserTokenRange& range, ColorParserState& state)
-{
-    ColorParserStateNester nester { state };
-
-    if (auto color = consumeColor(range, state)) {
-        CSSUnresolvedColorResolutionState eagerResolutionState { };
-        return color->createColor(eagerResolutionState);
-    }
-
-    return { };
-}
 
 Color consumeColorRaw(CSSParserTokenRange& range, const CSSParserContext& context, const CSSColorParsingOptions& options, CSSUnresolvedColorResolutionState& eagerResolutionState)
 {
