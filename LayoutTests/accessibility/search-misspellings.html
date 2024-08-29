@@ -21,18 +21,21 @@ if (accessibilityController) {
     content = accessibilityController.accessibleElementById("content");
 
     output += "Find all misspelled word from the beginning of content:\n";
-    startRange = content.textMarkerRangeForMarkers(content.startTextMarker, content.startTextMarker);
-    result = content.textMarkerRangeForSearchPredicate(startRange, true, "AXMisspelledWordSearchKey");
+    result = content.textMarkerRangeForMarkers(content.startTextMarker, content.startTextMarker);
+    result = content.textMarkerRangeForSearchPredicate(result, true, "AXMisspelledWordSearchKey");
     while (result) {
         output += `${content.stringForTextMarkerRange(result)}\n`;
+        content.setSelectedTextMarkerRange(result);
         result = content.textMarkerRangeForSearchPredicate(result, true, "AXMisspelledWordSearchKey");
     }
 
     output += "Find all misspelled words backwards from the end of content:\n";
-    startRange = content.textMarkerRangeForMarkers(content.endTextMarker, content.endTextMarker);
-    result = content.textMarkerRangeForSearchPredicate(startRange, false, "AXMisspelledWordSearchKey");
+    result = content.textMarkerRangeForMarkers(content.endTextMarker, content.endTextMarker);
+    content.setSelectedTextMarkerRange(result);
+    result = content.textMarkerRangeForSearchPredicate(result, false, "AXMisspelledWordSearchKey");
     while (result) {
         output += `${content.stringForTextMarkerRange(result)}\n`;
+        content.setSelectedTextMarkerRange(result);
         result = content.textMarkerRangeForSearchPredicate(result, false, "AXMisspelledWordSearchKey");
     }
 

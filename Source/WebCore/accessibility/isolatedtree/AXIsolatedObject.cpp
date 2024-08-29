@@ -1792,11 +1792,11 @@ bool AXIsolatedObject::isSelectedOptionActive() const
     return false;
 }
 
-Vector<CharacterRange> AXIsolatedObject::spellCheckerResultRanges() const
+Vector<AXTextMarkerRange> AXIsolatedObject::misspellingRanges() const
 {
-    return Accessibility::retrieveValueFromMainThread<Vector<CharacterRange>>([this] () -> Vector<CharacterRange> {
+    return Accessibility::retrieveValueFromMainThread<Vector<AXTextMarkerRange>>([this] () -> Vector<AXTextMarkerRange> {
         if (auto* axObject = associatedAXObject())
-            return axObject->spellCheckerResultRanges();
+            return axObject->misspellingRanges();
         return { };
     });
 }

@@ -232,7 +232,7 @@ public:
 
     bool hasBoldFont() const override { return false; }
     bool hasItalicFont() const override { return false; }
-    Vector<CharacterRange> spellCheckerResultRanges() const final;
+    Vector<AXTextMarkerRange> misspellingRanges() const final;
     std::optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const override;
     bool hasPlainText() const override { return false; }
     bool hasSameFont(const AXCoreObject&) const override { return false; }

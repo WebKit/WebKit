@@ -469,7 +469,7 @@ private:
     bool isSelectedOptionActive() const final;
     bool hasBoldFont() const final { return boolAttributeValue(AXPropertyName::HasBoldFont); }
     bool hasItalicFont() const final { return boolAttributeValue(AXPropertyName::HasItalicFont); }
-    Vector<CharacterRange> spellCheckerResultRanges() const final;
+    Vector<AXTextMarkerRange> misspellingRanges() const final;
     bool hasPlainText() const final { return boolAttributeValue(AXPropertyName::HasPlainText); }
     bool hasSameFont(const AXCoreObject&) const final;
     bool hasSameFontColor(const AXCoreObject&) const final;

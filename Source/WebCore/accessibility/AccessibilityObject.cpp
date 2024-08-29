@@ -371,12 +371,15 @@ bool AccessibilityObject::isNonNativeTextControl() const
     return (isARIATextControl() || hasContentEditableAttributeSet()) && !isNativeTextControl();
 }
 
-Vector<CharacterRange> AccessibilityObject::spellCheckerResultRanges() const
+Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
 {
-    if (!node())
+    AXTRACE("AccessibilityObject::misspellingRanges"_s);
+
+    RefPtr node = this->node();
+    if (!node)
         return { };
 
-    auto* frame = node()->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return { };
 
@@ -384,20 +387,33 @@ Vector<CharacterRange> AccessibilityObject::spellCheckerResultRanges() const
     if (!textChecker)
         return { };
 
-    if (unifiedTextCheckerEnabled(frame)) {
-        Vector<TextCheckingResult> results;
-        checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, results, frame->selection().selection());
-        return results.map([] (const auto& result) {
-            return result.range;
-        });
+    // In order to resolve to the correct ranges, Editor::rangeForTextCheckingResult(...)
+    // assumes that the selection is within the Node for which text we are calling checkTextOfParagraph.
+    // Therefore, remember the current selection, set it to the beginning of the Node and restore it aftwards.
+    auto originalSelection = frame->selection().selection();
+    if (auto range = simpleRange()) {
+        // Passing UserTriggered::No, which is the default value, guaranties that accessibility is not notified of text selection changes.
+        frame->selection().setSelectedRange(SimpleRange { range->start, range->start }, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+    }
+
+    Vector<AXTextMarkerRange> ranges;
+    if (unifiedTextCheckerEnabled(frame.get())) {
+        Vector<TextCheckingResult> misspellings;
+        checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
+        for (auto& misspelling : misspellings) {
+            if (auto range = frame->editor().rangeForTextCheckingResult(misspelling))
+                ranges.append(range);
+        }
     } else {
         int location = -1;
         int length = 0;
         textChecker->checkSpellingOfString(stringValue(), &location, &length);
         if (location > -1 && length > 0)
-            return { { static_cast<uint64_t>(location), static_cast<uint64_t>(length) } };
-        return { };
+            ranges = { { treeID(), objectID(), static_cast<unsigned>(location), static_cast<unsigned>(length) } };
     }
+
+    frame->selection().setSelectedRange(originalSelection.range(), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+    return ranges;
 }
 
 std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& start, AccessibilitySearchDirection direction) const
