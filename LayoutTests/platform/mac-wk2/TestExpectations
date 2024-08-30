@@ -506,8 +506,6 @@ webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
-webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
-
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.
@@ -724,7 +722,6 @@ webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Pass ]
 # Imported Blink tests which have not been investigated. Partially covered with rdar://problem/23023848.
 imported/blink/fast/multicol/basic-rtl.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/add-spanner-inside-overflow-hidden.html [ Pass ImageOnlyFailure ]
-imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
 imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass ImageOnlyFailure ]
 
@@ -811,8 +808,6 @@ webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
 webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
-webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plugin.html [ Pass Failure ]
-
 webkit.org/b/168937  tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
 
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
@@ -891,8 +886,6 @@ webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.htm
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Skip ]
 
-webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
-
 http/wpt/cache-storage/cache-put-keys.https.any.html [ Slow ]
 http/wpt/cache-storage/a-cache-open.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota.any.html [ Slow ]
@@ -944,8 +937,6 @@ webkit.org/b/198195 fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnly
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
 #webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
-
-webkit.org/b/199089 [ Debug ] plugins/window-open.html [ Skip ]
 
 webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ Pass Failure ]
 
@@ -1117,9 +1108,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 
 # <rdar://problem/63547191> webrtc/h265.html consistently times out on several Mac models
 [ Release ] webrtc/h265.html [ Pass Timeout ]
-
-# rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
-[ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
 
 # rdar://66706867 (REGRESSION (20A2321a-20A2348b): fast/table/hidpi-collapsed-border-with-odd-pixel-width.html is a flaky image failure)
 [ arm64 ] fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ Pass ImageOnlyFailure ]
@@ -1707,16 +1695,6 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 #webkit.org/b/269301  (2X imported/w3c/web-platform-tests/webcodecs/videoFrame (layout-tests) are constant failures)
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
-
-webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
-
-# webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
-[ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-in-styled-embed.html [ Failure ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure Timeout ]
-[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
-
-[ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed-with-root-page-zoom.html [ Failure ]
 
 webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Timeout ]
 

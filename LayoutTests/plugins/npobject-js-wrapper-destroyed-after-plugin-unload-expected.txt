@@ -1,3 +1,0 @@
-This test will only work in DumpRenderTree/WebKitTestRunner.
-
-PASSED

@@ -477,9 +477,6 @@ fast/events/popup-blocking-click-in-iframe.html [ Skip ]
 # eventSender.leapForward should be reimplemented without Sleep.
 editing/selection/mouse/click-left-of-rtl-wrapping-text.html [ Skip ] # Timeout
 
-# testScriptObjectInvoke is not a function
-imported/blink/plugins/empty-per-context-data.html [ Skip ]
-
 # WTR::TestInvocation::done should quit the message loop of WebKit::WebPopupMenuProxyWin::showPopupMenu
 webkit.org/b/275285 fast/forms/select/menulist-popup-crash.html [ Skip ] # Timeout
 webkit.org/b/275285 fast/forms/select/select-show-picker.html [ Skip ] # Timeout

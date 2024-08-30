@@ -10,8 +10,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.an
 # Skip these tests that enable UnifiedPDFPlugin, since it's only meaningful for macOS 14+.
 http/tests/pdf/linearized-pdf-in-iframe.html [ Skip ]
 http/tests/pdf/linearized-pdf-in-display-none-iframe.html [ Skip ]
-compositing/plugins/pdf/pdf-in-embed-rounded-border.html [ Skip ]
-compositing/plugins/pdf/pdf-plugin-printing.html [ Skip ]
 pdf/unifiedpdf/annotations/checkbox-set-active.html [ Skip ]
 pdf/unifiedpdf/annotations/radio-buttons-select-second.html [ Skip ]
 pdf/unifiedpdf/annotations/dropdown-select-second-option.html [ Skip ]

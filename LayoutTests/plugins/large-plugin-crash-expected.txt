@@ -1,5 +1,0 @@
-Bug 139856: Large plugin crash.
-
-This test PASSES if it does not CRASH.
-
-
