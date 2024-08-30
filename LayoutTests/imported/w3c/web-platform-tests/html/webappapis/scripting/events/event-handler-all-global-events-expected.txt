@@ -71,8 +71,8 @@ FAIL oncontextrestored: the content attribute must execute when an event is disp
 PASS oncontextrestored: dispatching an Event at a <meta> element must trigger element.oncontextrestored
 PASS oncuechange: must be on the appropriate locations for GlobalEventHandlers
 PASS oncuechange: the default value must be null
-FAIL oncuechange: the content attribute must be compiled into a function as the corresponding property assert_equals: The oncuechange property must be a function expected "function" but got "object"
-FAIL oncuechange: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS oncuechange: the content attribute must be compiled into a function as the corresponding property
+PASS oncuechange: the content attribute must execute when an event is dispatched
 PASS oncuechange: dispatching an Event at a <meta> element must trigger element.oncuechange
 PASS ondblclick: must be on the appropriate locations for GlobalEventHandlers
 PASS ondblclick: the default value must be null

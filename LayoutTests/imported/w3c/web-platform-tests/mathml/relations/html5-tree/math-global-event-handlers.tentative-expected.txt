@@ -61,8 +61,8 @@ PASS oncontextmenu: dynamic changes on the attribute
 PASS oncontextmenu: dispatching an Event at a <math> element must trigger element.oncontextmenu
 PASS oncuechange: must be on the appropriate locations for GlobalEventHandlers
 PASS oncuechange: the default value must be null
-FAIL oncuechange: the content attribute must be compiled into a function as the corresponding property assert_equals: The oncuechange property must be a function expected "function" but got "object"
-FAIL oncuechange: dynamic changes on the attribute assert_equals: The oncuechange property must be a function (set attribute) expected "function" but got "object"
+PASS oncuechange: the content attribute must be compiled into a function as the corresponding property
+PASS oncuechange: dynamic changes on the attribute
 PASS oncuechange: dispatching an Event at a <math> element must trigger element.oncuechange
 PASS ondblclick: must be on the appropriate locations for GlobalEventHandlers
 PASS ondblclick: the default value must be null
