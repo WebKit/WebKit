@@ -40,19 +40,19 @@ class BitmapTexturePool {
 public:
     BitmapTexturePool();
 
-    RefPtr<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
+    Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
     void releaseUnusedTexturesTimerFired();
 
 private:
     struct Entry {
-        explicit Entry(RefPtr<BitmapTexture>&& texture)
+        explicit Entry(Ref<BitmapTexture>&& texture)
             : m_texture(WTFMove(texture))
         { }
 
         void markIsInUse() { m_lastUsedTime = MonotonicTime::now(); }
         bool canBeReleased (MonotonicTime minUsedTime) const { return m_lastUsedTime < minUsedTime && m_texture->refCount() == 1; }
 
-        RefPtr<BitmapTexture> m_texture;
+        Ref<BitmapTexture> m_texture;
         MonotonicTime m_lastUsedTime;
     };
 

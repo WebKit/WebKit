@@ -749,7 +749,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 {
     auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
-        SetForScope scopedSurface(options.surface, surface);
+        SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
         SetForScope scopedOpacity(options.opacity, 1);
 
@@ -757,22 +757,22 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
         paintSelfChildrenReplicaFilterAndMask(options);
     }
 
-    commitSurface(options, *surface, rect, options.opacity);
+    commitSurface(options, surface.get(), rect, options.opacity);
 }
 
 void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
 {
     auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
-        SetForScope scopedSurface(options.surface, surface);
+        SetForScope scopedSurface(options.surface, surface.ptr());
         SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
         SetForScope scopedOpacity(options.opacity, 1);
 
         paintIntoSurface(options);
-        surface = options.surface;
+        surface = Ref { *options.surface };
     }
 
-    commitSurface(options, *surface, rect, options.opacity);
+    commitSurface(options, surface.get(), rect, options.opacity);
 }
 
 void TextureMapperLayer::paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions& options)
@@ -848,7 +848,7 @@ void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& 
                 tileRect.intersect(rect);
                 auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha, BitmapTexture::Flags::DepthBuffer });
                 {
-                    SetForScope scopedSurface(options.surface, surface);
+                    SetForScope scopedSurface(options.surface, surface.ptr());
                     SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
                     SetForScope scopedOpacity(options.opacity, 1);
 
@@ -868,7 +868,7 @@ void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& 
                 options.holePunchRects.clear();
 
                 // And finally, blend the intermediate surface.
-                options.textureMapper.drawTexture(*surface, tileRect, { }, options.opacity);
+                options.textureMapper.drawTexture(surface.get(), tileRect, { }, options.opacity);
             }
         }
     }

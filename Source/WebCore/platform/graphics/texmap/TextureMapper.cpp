@@ -184,7 +184,7 @@ TextureMapper::TextureMapper()
 {
 }
 
-RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
+Ref<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
     return m_texturePool.acquireTexture(size, flags);
 }
@@ -288,11 +288,11 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
     IntRect sourceRect(IntPoint::zero(), size);
     IntRect targetRect(roundedIntPoint(targetPoint), size);
 
-    RefPtr<BitmapTexture> texture = m_texturePool.acquireTexture(size, { BitmapTexture::Flags::SupportsAlpha });
+    auto texture = m_texturePool.acquireTexture(size, { BitmapTexture::Flags::SupportsAlpha });
     const unsigned char* bits = cairo_image_surface_get_data(surface);
     int stride = cairo_image_surface_get_stride(surface);
     texture->updateContents(bits, sourceRect, IntPoint::zero(), stride);
-    drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, AllEdgesExposed::Yes);
+    drawTexture(texture.get(), targetRect, modelViewMatrix, 1.0f, AllEdgesExposed::Yes);
 
     cairo_surface_destroy(surface);
     cairo_destroy(cr);

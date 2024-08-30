@@ -224,10 +224,6 @@ private:
 
     bool filtersCanBeComposited(const FilterOperations&) const;
 
-#if USE(SKIA)
-    RefPtr<BitmapTexture> acquireTextureForAcceleratedBuffer(const IntSize&);
-#endif
-
     Nicosia::PlatformLayer::LayerID m_id;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
