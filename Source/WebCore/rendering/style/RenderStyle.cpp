@@ -926,7 +926,8 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
         || first.listStyleType != second.listStyleType
-        || first.listStyleImage != second.listStyleImage)
+        || first.listStyleImage != second.listStyleImage
+        || first.blockEllipsis != second.blockEllipsis)
         return true;
 
     if (first.textStrokeWidth != second.textStrokeWidth)
@@ -2100,6 +2101,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyListStyleType);
         if (first.hyphenationString != second.hyphenationString)
             changingProperties.m_properties.set(CSSPropertyHyphenateCharacter);
+        if (first.blockEllipsis != second.blockEllipsis)
+            changingProperties.m_properties.set(CSSPropertyBlockEllipsis);
 
         // customProperties is handled separately.
         // Non animated styles are followings.

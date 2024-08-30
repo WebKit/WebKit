@@ -2467,6 +2467,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/shapes/ShapeOutsideInfo.h
 
     rendering/style/BasicShapes.h
+    rendering/style/BlockEllipsis.h
     rendering/style/BorderData.h
     rendering/style/BorderValue.h
     rendering/style/CounterDirectives.h

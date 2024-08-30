@@ -45,6 +45,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     float secondFloat;
     TextUnderlineOffset offset;
     TextEdge lineFitEdge;
+    BlockEllipsis blockEllipsis;
     void* customPropertyDataRefs[1];
     unsigned bitfields[7];
     short pagedMediaShorts[2];
@@ -158,6 +159,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #endif
     , listStyleType(RenderStyle::initialListStyleType())
     , scrollbarColor(RenderStyle::initialScrollbarColor())
+    , blockEllipsis(RenderStyle::initialBlockEllipsis())
 {
 }
 
@@ -259,6 +261,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #endif
     , listStyleType(o.listStyleType)
     , scrollbarColor(o.scrollbarColor)
+    , blockEllipsis(o.blockEllipsis)
 {
     ASSERT(o == *this, "StyleRareInheritedData should be properly copied.");
 }
@@ -368,7 +371,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
         && listStyleType == o.listStyleType
-        && scrollbarColor == o.scrollbarColor;
+        && scrollbarColor == o.scrollbarColor
+        && blockEllipsis == o.blockEllipsis;
 }
 
 bool StyleRareInheritedData::hasColorFilters() const

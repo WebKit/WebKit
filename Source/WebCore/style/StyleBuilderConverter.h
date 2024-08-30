@@ -29,6 +29,7 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "BasicShapeConversion.h"
+#include "BlockEllipsis.h"
 #include "CSSBasicShapes.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
@@ -225,6 +226,8 @@ public:
     static Vector<ViewTimelineInsets> convertViewTimelineInset(BuilderState&, const CSSValue&);
 
     static Vector<AtomString> convertAnchorName(BuilderState&, const CSSValue&);
+
+    static BlockEllipsis convertBlockEllipsis(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2231,6 +2234,16 @@ inline Vector<AtomString> BuilderConverter::convertAnchorName(BuilderState&, con
     return WTF::map(*list, [&](auto& item) {
         return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
     });
+}
+
+inline BlockEllipsis BuilderConverter::convertBlockEllipsis(BuilderState& builderState, const CSSValue& value)
+{
+    if (value.valueID() == CSSValueNone)
+        return { };
+    if (value.valueID() == CSSValueAuto)
+        return { BlockEllipsis::Type::Auto, { } };
+    return { BlockEllipsis::Type::String, AtomString { convertString(builderState, value) } };
+
 }
 
 } // namespace Style

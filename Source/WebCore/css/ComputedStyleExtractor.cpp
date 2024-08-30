@@ -3487,6 +3487,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             list.append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
         return CSSValueList::createCommaSeparated(WTFMove(list));
     }
+    case CSSPropertyBlockEllipsis:
+        switch (style.blockEllipsis().type) {
+        case BlockEllipsis::Type::None:
+            return CSSPrimitiveValue::create(CSSValueNone);
+        case BlockEllipsis::Type::Auto:
+            return CSSPrimitiveValue::create(CSSValueAuto);
+        case BlockEllipsis::Type::String:
+            return CSSPrimitiveValue::create(style.blockEllipsis().string);
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyBlockStepInsert:
         return style.blockStepInsert() == BlockStepInsert::Margin ? CSSPrimitiveValue::create(CSSValueMargin) : CSSPrimitiveValue::create(CSSValuePadding);
     case CSSPropertyBlockStepSize: {

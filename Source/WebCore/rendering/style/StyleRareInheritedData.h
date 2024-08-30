@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "BlockEllipsis.h"
 #include "Length.h"
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
@@ -203,6 +204,8 @@ public:
     ListStyleType listStyleType;
 
     Markable<ScrollbarColor> scrollbarColor;
+
+    BlockEllipsis blockEllipsis;
 
 private:
     StyleRareInheritedData();

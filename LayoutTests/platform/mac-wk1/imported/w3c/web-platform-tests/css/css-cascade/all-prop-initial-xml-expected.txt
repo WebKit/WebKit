@@ -32,6 +32,7 @@ PASS background-position-y
 PASS background-repeat
 PASS background-size
 PASS baseline-shift
+PASS block-ellipsis
 PASS block-size
 PASS block-step-insert
 PASS block-step-size

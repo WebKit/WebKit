@@ -93,6 +93,7 @@ inline void RenderStyle::setBackgroundSize(FillSizeType b) { SET_DOUBLY_NESTED(m
 inline void RenderStyle::setBackgroundSizeLength(LengthSize&& size) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_sizeLength, WTFMove(size)); }
 inline void RenderStyle::setBackgroundXPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_xPosition, WTFMove(length)); }
 inline void RenderStyle::setBackgroundYPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_yPosition, WTFMove(length)); }
+inline void RenderStyle::setBlockEllipsis(const BlockEllipsis& value) { SET(m_rareInheritedData, blockEllipsis, value); }
 inline void RenderStyle::setBlockStepInsert(BlockStepInsert newBlockStepInsert) { SET_NESTED(m_nonInheritedData, rareData, blockStepInsert, static_cast<unsigned>(newBlockStepInsert)); }
 inline void RenderStyle::setBlockStepSize(std::optional<Length> length) { SET_NESTED(m_nonInheritedData, rareData, blockStepSize, WTFMove(length)); }
 inline void RenderStyle::setBorderBottomColor(const StyleColor& value) { SET_NESTED_BORDER_COLOR(m_nonInheritedData, surroundData, border.m_bottom, value); }

@@ -1148,6 +1148,20 @@ CSSLightDarkEnabled:
     WebCore:
       default: true
 
+CSSLineClampEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS line-clamp"
+  humanReadableDescription: "Enable CSS line-clamp"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMarginTrimEnabled:
   type: bool
   status: stable

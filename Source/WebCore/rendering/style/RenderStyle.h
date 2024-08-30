@@ -244,6 +244,7 @@ enum class WhiteSpaceCollapse : uint8_t;
 enum class WordBreak : uint8_t;
 enum class WritingMode : uint8_t;
 
+struct BlockEllipsis;
 struct BorderDataRadii;
 struct CounterDirectiveMap;
 struct FillRepeatXY;
@@ -1012,6 +1013,7 @@ public:
 
     inline OptionSet<LineBoxContain> lineBoxContain() const;
     inline const LineClampValue& lineClamp() const;
+    inline const BlockEllipsis& blockEllipsis() const;
     inline const IntSize& initialLetter() const;
     inline int initialLetterDrop() const;
     inline int initialLetterHeight() const;
@@ -1575,6 +1577,8 @@ public:
     inline void setLineBoxContain(OptionSet<LineBoxContain>);
     inline void setLineClamp(LineClampValue);
     
+    inline void setBlockEllipsis(const BlockEllipsis&);
+
     inline void setInitialLetter(const IntSize&);
     
     inline void setTouchActions(OptionSet<TouchAction>);
@@ -2104,6 +2108,7 @@ public:
 
     static constexpr IntSize initialInitialLetter();
     static constexpr LineClampValue initialLineClamp();
+    static inline BlockEllipsis initialBlockEllipsis();
     static constexpr TextSecurity initialTextSecurity();
     static constexpr InputSecurity initialInputSecurity();
 
