@@ -230,7 +230,7 @@ PASS [["delete",""]] "<span style=display:inline-block>fo[o</span><span style=di
 PASS [["delete",""]] "<span style=display:inline-block>fo[o</span><span style=display:inline-block>b]ar</span>" queryCommandValue("delete") after
 PASS [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>": execCommand("delete", false, "") return value
 PASS [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" checks for modifications to non-editable content
-FAIL [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<span style=\"display:inline-table\">fo</span><span style=\"display:inline-table\">ar</span>" but got "<span style=\"display:inline-table\">f<br>o<span style=\"display:inline-table\">ar</span></span>"
+FAIL [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<span style=\"display:inline-table\">fo</span><span style=\"display:inline-table\">ar</span>" but got "<span style=\"display:inline-table\"></span><span style=\"display:inline-table\">fo</span><span style=\"display:inline-table\">ar</span>"
 PASS [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" queryCommandIndeterm("delete") before
 PASS [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" queryCommandState("delete") before
 PASS [["delete",""]] "<span style=display:inline-table>fo[o</span><span style=display:inline-table>b]ar</span>" queryCommandValue("delete") before
@@ -896,7 +896,7 @@ PASS [["delete",""]] "<div>abc  </div> <div>  []def</div>" queryCommandState("de
 PASS [["delete",""]] "<div>abc  </div> <div>  []def</div>" queryCommandValue("delete") after
 PASS [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar": execCommand("delete", false, "") return value
 PASS [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" checks for modifications to non-editable content
-FAIL [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foobar" but got "foo<img contenteditable=\"false\" src=\"/img/lion.svg\">bar"
+FAIL [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foobar" but got ""
 PASS [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" queryCommandIndeterm("delete") before
 PASS [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" queryCommandState("delete") before
 PASS [["delete",""]] "foo<img contenteditable=false src=/img/lion.svg>[]bar" queryCommandValue("delete") before
