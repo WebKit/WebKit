@@ -1,4 +1,4 @@
-一&M000076; 丁
+一 &M000076; 丁
 This test checks that SVG altGlyph elements create the appropriate DOM object.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -48,33 +49,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGInlineText);
 
-static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSpace)
+static String normalizeWhitespace(const String& string)
 {
+    // Turn tabs, newlines and carriage returns into spaces.
     String newString = string;
-    if (preserveWhiteSpace) {
-        // Spec: When xml:space="preserve", the SVG user agent will do the following using a
-        // copy of the original character data content. It will convert all newline and tab
-        // characters into space characters. Then, it will draw all space characters, including
-        // leading, trailing and multiple contiguous space characters.
-        newString = makeStringByReplacingAll(newString, '\t', ' ');
-        newString = makeStringByReplacingAll(newString, '\n', ' ');
-        newString = makeStringByReplacingAll(newString, '\r', ' ');
-        return newString;
-    }
-
-    // Spec: When xml:space="default", the SVG user agent will do the following using a
-    // copy of the original character data content. First, it will remove all newline
-    // characters. Then it will convert all tab characters into space characters.
-    // Then, it will strip off all leading and trailing space characters.
-    // Then, all contiguous space characters will be consolidated.
-    newString = makeStringByReplacingAll(newString, '\n', ""_s);
-    newString = makeStringByReplacingAll(newString, '\r', ""_s);
     newString = makeStringByReplacingAll(newString, '\t', ' ');
+    newString = makeStringByReplacingAll(newString, '\n', ' ');
+    newString = makeStringByReplacingAll(newString, '\r', ' ');
     return newString;
 }
 
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
-    : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
+    : RenderText(Type::SVGInlineText, textNode, normalizeWhitespace(string))
     , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
@@ -103,12 +89,12 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
     bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve : false;
     if (oldPreserves && !newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), false), true);
+        setText(normalizeWhitespace(originalText()), true);
         return;
     }
 
     if (!oldPreserves && newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), true), true);
+        setText(normalizeWhitespace(originalText()), true);
         return;
     }
 
