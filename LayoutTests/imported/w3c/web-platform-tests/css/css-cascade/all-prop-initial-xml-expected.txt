@@ -109,6 +109,7 @@ PASS container-name
 PASS container-type
 PASS content
 PASS content-visibility
+PASS continue
 PASS counter-increment
 PASS counter-reset
 PASS counter-set

@@ -1420,6 +1420,19 @@ TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsic
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
+{
+    switch (overflowContinue) {
+    case OverflowContinue::Auto:
+        ts << "auto";
+        break;
+    case OverflowContinue::Discard:
+        ts << "discard";
+        break;
+    }
+    return ts;
+}
+
 bool alwaysPageBreak(BreakBetween between)
 {
     return between >= BreakBetween::Page;

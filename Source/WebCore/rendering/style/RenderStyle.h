@@ -181,6 +181,7 @@ enum class Order : bool;
 enum class OutlineIsAuto : bool;
 enum class Overflow : uint8_t;
 enum class OverflowAnchor : bool;
+enum class OverflowContinue : bool;
 enum class OverflowWrap : uint8_t;
 enum class OverscrollBehavior : uint8_t;
 enum class PaintBehavior : uint32_t;
@@ -1015,6 +1016,7 @@ public:
     inline const LineClampValue& lineClamp() const;
     inline const BlockEllipsis& blockEllipsis() const;
     inline size_t maxLines() const;
+    inline OverflowContinue overflowContinue() const;
     inline const IntSize& initialLetter() const;
     inline int initialLetterDrop() const;
     inline int initialLetterHeight() const;
@@ -1579,6 +1581,7 @@ public:
     inline void setLineClamp(LineClampValue);
     
     inline void setMaxLines(size_t);
+    inline void setOverflowContinue(OverflowContinue);
     inline void setBlockEllipsis(const BlockEllipsis&);
 
     inline void setInitialLetter(const IntSize&);
@@ -2111,6 +2114,7 @@ public:
     static constexpr IntSize initialInitialLetter();
     static constexpr LineClampValue initialLineClamp();
     static inline BlockEllipsis initialBlockEllipsis();
+    static OverflowContinue initialOverflowContinue();
     static constexpr size_t initialMaxLines() { return 0; }
     static constexpr TextSecurity initialTextSecurity();
     static constexpr InputSecurity initialInputSecurity();

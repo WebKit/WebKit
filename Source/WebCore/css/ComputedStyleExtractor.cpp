@@ -3621,6 +3621,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.hasAutoColumnWidth())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return zoomAdjustedPixelValue(style.columnWidth(), style);
+    case CSSPropertyContinue:
+        if (style.overflowContinue() == OverflowContinue::Discard)
+            return CSSPrimitiveValue::create(CSSValueDiscard);
+        return CSSPrimitiveValue::create(CSSValueAuto);
     case CSSPropertyTabSize:
         return CSSPrimitiveValue::create(style.tabSize().widthInPixels(1.0), style.tabSize().isSpaces() ? CSSUnitType::CSS_NUMBER : CSSUnitType::CSS_PX);
     case CSSPropertyCursor: {

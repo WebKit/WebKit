@@ -253,6 +253,7 @@ inline void RenderStyle::setOutlineStyle(BorderStyle style) { SET_NESTED(m_nonIn
 inline void RenderStyle::setOutlineStyleIsAuto(OutlineIsAuto isAuto) { SET_NESTED(m_nonInheritedData, backgroundData, outline.m_isAuto, static_cast<unsigned>(isAuto)); }
 inline void RenderStyle::setOutlineWidth(float width) { SET_NESTED(m_nonInheritedData, backgroundData, outline.m_width, width); }
 inline void RenderStyle::setOverflowAnchor(OverflowAnchor a) { SET_NESTED(m_nonInheritedData, rareData, overflowAnchor, static_cast<unsigned>(a)); }
+inline void RenderStyle::setOverflowContinue(OverflowContinue value) { SET_NESTED(m_nonInheritedData, rareData, overflowContinue, value); }
 inline void RenderStyle::setOverflowWrap(OverflowWrap rule) { SET(m_rareInheritedData, overflowWrap, static_cast<unsigned>(rule)); }
 inline void RenderStyle::setOverscrollBehaviorX(OverscrollBehavior value) { SET_NESTED(m_nonInheritedData, rareData, overscrollBehaviorX, static_cast<unsigned>(value)); }
 inline void RenderStyle::setOverscrollBehaviorY(OverscrollBehavior value) { SET_NESTED(m_nonInheritedData, rareData, overscrollBehaviorY, static_cast<unsigned>(value)); }

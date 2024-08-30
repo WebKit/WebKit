@@ -1,8 +1,8 @@
 
 PASS Property block-ellipsis has initial value none
 PASS Property block-ellipsis inherits
-FAIL Property continue has initial value auto assert_true: continue doesn't seem to be supported in the computed style expected true got false
-FAIL Property continue does not inherit assert_true: expected true got false
+PASS Property continue has initial value auto
+PASS Property continue does not inherit
 PASS Property max-lines has initial value none
 PASS Property max-lines does not inherit
 FAIL Property overflow-block has initial value visible assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false

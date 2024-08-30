@@ -912,6 +912,11 @@ enum class LineClamp : bool {
     Percentage
 };
 
+enum class OverflowContinue : bool {
+    Auto,
+    Discard
+};
+
 enum class Hyphens : uint8_t {
     None,
     Manual,
@@ -1335,5 +1340,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
+WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
 
 } // namespace WebCore
