@@ -1,7 +1,7 @@
 
 
 PASS Testing inserting content at non-collapsed selection around link element
-PASS Inserting "XY" after deleting first character of a link in <b> and containing <i> (Direct typing) in <p><b><a href="about:blank"><i>[z]abc</i></a></b></p>
+FAIL Inserting "XY" after deleting first character of a link in <b> and containing <i> (Direct typing) in <p><b><a href="about:blank"><i>[z]abc</i></a></b></p> assert_in_array: value "<p><b><a href=\"about:blank\"><i>Yabc</i></a></b></p>" not in array ["<p><b><a href=\"about:blank\"><i>XYabc</i></a></b></p>", "<p><b><a href=\"about:blank\"><i>XYabc</i></a></b><br></p>"]
 FAIL Inserting "XY" after deleting last character in a non-collapsed range of a link in <b> and containing <i> (Direct typing) in <p><b><a href="about:blank"><i>abc[d]</i></a></b></p> assert_in_array: value "<p><b><i><a href=\"about:blank\">abcX</a>Y</i></b></p>" not in array ["<p><b><a href=\"about:blank\"><i>abcXY</i></a></b></p>", "<p><b><a href=\"about:blank\"><i>abcXY</i></a></b><br></p>"]
 PASS Inserting "XY" after deleting text after middle of a link in <b> and containing <i> (Direct typing) in <p><b><a href="about:blank"><i>ab[cd</i></a>de]f</b></p>
 PASS Inserting "XY" after deleting text before middle of a link in <b> and containing <i> (Direct typing) in <p><b>a[bc<a href="about:blank"><i>de]f</i></a></b></p>

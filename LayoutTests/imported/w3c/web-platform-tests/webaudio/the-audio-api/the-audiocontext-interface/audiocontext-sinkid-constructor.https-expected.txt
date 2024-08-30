@@ -1,7 +1,7 @@
 
 FAIL Setting sinkId to the empty string at construction should succeed. assert_equals: expected (string) "" but got (undefined) undefined
-FAIL Setting sinkId with a valid device identifier at construction should succeed. assert_true: the context sinkId should match the given sinkId. expected true got false
-FAIL Setting sinkId with an AudioSinkOptions at construction should succeed. assert_equals: expected "object" but got "undefined"
+FAIL Setting sinkId with a valid device identifier at construction should succeed. assert_unreached: onstatechange not fired or assert failed Reached unreachable code
+FAIL Setting sinkId with an AudioSinkOptions at construction should succeed. assert_unreached: onstatechange not fired or assert failed Reached unreachable code
 FAIL Invalid sinkId arguments should throw an appropriate exception. assert_throws_js: An invalid AudioSinkOptions.type value should throw a TypeError exception. function "() => {
       const audioContext = new AudioContext({sinkId: {type: 'something_else'}});
       audioContext.close();

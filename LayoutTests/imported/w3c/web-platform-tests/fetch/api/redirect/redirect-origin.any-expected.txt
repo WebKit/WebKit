@@ -3,7 +3,7 @@ PASS [GET] Redirect 301 Same origin to same origin
 PASS [GET] Redirect 301 Same origin to other origin
 PASS [GET] Redirect 301 Other origin to other origin
 PASS [GET] Redirect 301 Other origin to same origin
-FAIL [POST] Redirect 301 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://localhost:8800"
+FAIL [POST] Redirect 301 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://web-platform.test:8800"
 PASS [POST] Redirect 301 Same origin to other origin
 PASS [POST] Redirect 301 Other origin to other origin
 PASS [POST] Redirect 301 Other origin to same origin
@@ -11,7 +11,7 @@ PASS [GET] Redirect 302 Same origin to same origin
 PASS [GET] Redirect 302 Same origin to other origin
 PASS [GET] Redirect 302 Other origin to other origin
 PASS [GET] Redirect 302 Other origin to same origin
-FAIL [POST] Redirect 302 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://localhost:8800"
+FAIL [POST] Redirect 302 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://web-platform.test:8800"
 PASS [POST] Redirect 302 Same origin to other origin
 PASS [POST] Redirect 302 Other origin to other origin
 PASS [POST] Redirect 302 Other origin to same origin
@@ -19,7 +19,7 @@ PASS [GET] Redirect 303 Same origin to same origin
 PASS [GET] Redirect 303 Same origin to other origin
 PASS [GET] Redirect 303 Other origin to other origin
 PASS [GET] Redirect 303 Other origin to same origin
-FAIL [POST] Redirect 303 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://localhost:8800"
+FAIL [POST] Redirect 303 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://web-platform.test:8800"
 PASS [POST] Redirect 303 Same origin to other origin
 PASS [POST] Redirect 303 Other origin to other origin
 PASS [POST] Redirect 303 Other origin to same origin
@@ -27,7 +27,7 @@ PASS [GET] Redirect 307 Same origin to same origin
 PASS [GET] Redirect 307 Same origin to other origin
 PASS [GET] Redirect 307 Other origin to other origin
 PASS [GET] Redirect 307 Other origin to same origin
-FAIL [POST] Redirect 307 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://localhost:8800"
+FAIL [POST] Redirect 307 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://web-platform.test:8800"
 PASS [POST] Redirect 307 Same origin to other origin
 PASS [POST] Redirect 307 Other origin to other origin
 PASS [POST] Redirect 307 Other origin to same origin
@@ -35,7 +35,7 @@ PASS [GET] Redirect 308 Same origin to same origin
 PASS [GET] Redirect 308 Same origin to other origin
 PASS [GET] Redirect 308 Other origin to other origin
 PASS [GET] Redirect 308 Other origin to same origin
-FAIL [POST] Redirect 308 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://localhost:8800"
+FAIL [POST] Redirect 308 Same origin to same origin assert_equals: Check origin header expected (object) null but got (string) "http://web-platform.test:8800"
 PASS [POST] Redirect 308 Same origin to other origin
 PASS [POST] Redirect 308 Other origin to other origin
 PASS [POST] Redirect 308 Other origin to same origin

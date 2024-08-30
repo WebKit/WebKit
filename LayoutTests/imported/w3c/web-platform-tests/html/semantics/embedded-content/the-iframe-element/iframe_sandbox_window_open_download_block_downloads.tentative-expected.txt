@@ -1,6 +1,8 @@
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
 
 
-FAIL window.open(download, ) triggering download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
-FAIL window.open(download, "_blank") triggering download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
-FAIL window.open(download, "_blank", "noopener") triggering download in sandbox is blocked. assert_equals: Expect no download to happen, but got one. expected "TOKEN_NOT_SET" but got "TOKEN_SET"
+PASS window.open(download, ) triggering download in sandbox is blocked.
+PASS window.open(download, "_blank") triggering download in sandbox is blocked.
+PASS window.open(download, "_blank", "noopener") triggering download in sandbox is blocked.
 

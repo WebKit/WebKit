@@ -1,25 +1,31 @@
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://localhost:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://localhost:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/common/blank.html due to access control checks.
-CONSOLE MESSAGE: Cancelled load to blob:https://127.0.0.1:9443/5b2efa55-73ac-4027-96d6-2a067e2b2c9e because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to blob:https://127.0.0.1:9443/f547926e-e784-402f-90bf-b888bb70401c because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to blob:https://www1.web-platform.test:9443/7cf865c9-8653-4708-b2e7-123c8e8210be because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to blob:https://not-web-platform.test:9443/1a3f8a6c-0298-4546-a3ce-15a2c3ee021d because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://www1.web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://not-web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://not-web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://not-web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://not-web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'window.opener.parent')
+CONSOLE MESSAGE: Cancelled load to https://web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://web-platform.test:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://web-platform.test:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'window.opener.parent')
 
 Harness Error (TIMEOUT), message = null
 
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via subframe
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via navigate
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via popup
-FAIL Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe assert_true: Cross-origin without CORP did not fail expected true got false
-TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate Test timed out
-FAIL Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via popup assert_true: Cross-origin without CORP did not fail expected true got false
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe
-TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate Test timed out
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via popup
+PASS Cross-Origin-Embedder-Policy and blob: URL from https://web-platform.test:9443 in subframe via subframe
+PASS Cross-Origin-Embedder-Policy and blob: URL from https://web-platform.test:9443 in subframe via navigate
+PASS Cross-Origin-Embedder-Policy and blob: URL from https://web-platform.test:9443 in subframe via popup
+PASS Cross-Origin-Embedder-Policy and blob: URL from https://www1.web-platform.test:9443 in subframe via subframe
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://www1.web-platform.test:9443 in subframe via navigate Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://www1.web-platform.test:9443 in subframe via popup Test timed out
+PASS Cross-Origin-Embedder-Policy and blob: URL from https://not-web-platform.test:9443 in subframe via subframe
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://not-web-platform.test:9443 in subframe via navigate Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://not-web-platform.test:9443 in subframe via popup Test timed out
 

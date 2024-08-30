@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: non-speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: non-speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/spec...
 
     <!-- speculative case in document.write -->
-    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=9ffe1fd7-6565-4574-b025-14260e326e2b&amp;encodingcheck=&Gbreve;" media="not all">
+    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=846fbd92-d0e1-4e71-9349-7bfe0bf4c3f7&amp;encodingcheck=&Gbreve;" media="not all">
 
 
 
-FAIL Speculative parsing, document.write(): link-rel-stylesheet-nomatch-media Unhandled rejection: assert_equals: non-speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+FAIL Speculative parsing, document.write(): link-rel-stylesheet-nomatch-media Unhandled rejection: assert_equals: non-speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: text/css,*/*;q=0.1\r\nReferer: http://web-platform.test:8800/html/syntax/speculative-parsing/generated/resources/link-rel-stylesheet-nomatch-media-nonspeculative.sub.html?uuid=846fbd92-d0e1-4e71-9349-7bfe0bf4c3f7"
 

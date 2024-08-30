@@ -69,6 +69,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
 
     readNextMessage();
     m_channel.didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
+    setHostOverrideForTesting(request.url());
 }
 
 void WebSocketTask::readNextMessage()

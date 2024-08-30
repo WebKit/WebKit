@@ -33,6 +33,7 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/MakeString.h>
@@ -271,8 +272,17 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
     LOG(NetworkSession, "%lu %s cookies for redirect URL %s", (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #endif
 
+    setHostOverrideForTesting(request.url());
+
     updateTaskWithFirstPartyForSameSiteCookies(task(), request);
     completionHandler(WTFMove(request));
 }
 
+void NetworkTaskCocoa::setHostOverrideForTesting(const URL& url)
+{
+#if HAVE(CFNETWORK_HOSTOVERRIDE)
+    if (CheckedPtr networkSession = m_networkSession.get(); networkSession->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(url.host()))
+        task()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", url.port().value_or(0))).get();
+#endif
+}
 } // namespace WebKit

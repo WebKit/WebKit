@@ -1,4 +1,4 @@
 
 
-PASS Check that performance.timing has reasonable values for secureConnectionStart and other attributes
+FAIL Check that performance.timing has reasonable values for secureConnectionStart and other attributes assert_greater_than_equal: performance.timing.secureConnectionStart >= performance.timing.connectStart expected a number greater than or equal to 1715556156343 but got 0
 

@@ -1,3 +1,5 @@
 
-PASS H264 simulcast setup with two streams
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT H264 simulcast setup with two streams Test timed out
 

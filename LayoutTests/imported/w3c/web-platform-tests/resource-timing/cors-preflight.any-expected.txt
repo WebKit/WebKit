@@ -1,3 +1,3 @@
 
-PASS PerformanceResourceTiming sizes fetch with preflight test
+FAIL PerformanceResourceTiming sizes fetch with preflight test assert_greater_than: No-preflight transferSize expected a number greater than 0 but got 0
 

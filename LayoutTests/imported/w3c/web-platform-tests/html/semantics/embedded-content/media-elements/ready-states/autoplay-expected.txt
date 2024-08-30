@@ -1,12 +1,12 @@
 
-FAIL audio.autoplay assert_array_equals: property 1, expected "play" but got "canplaythrough"
-FAIL audio.autoplay and load() assert_array_equals: property 1, expected "play" but got "canplaythrough"
-FAIL audio.autoplay and play() assert_array_equals: property 2, expected "playing" but got "canplaythrough"
+FAIL audio.autoplay assert_array_equals: expected property 1 to be "play" but got "canplaythrough" (expected array ["canplay", "play"] got ["canplay", "canplaythrough"])
+FAIL audio.autoplay and load() assert_array_equals: expected property 1 to be "play" but got "canplaythrough" (expected array ["canplay", "play"] got ["canplay", "canplaythrough"])
+PASS audio.autoplay and play()
 PASS audio.autoplay and pause()
 PASS audio.autoplay and internal pause steps
-FAIL video.autoplay assert_array_equals: property 1, expected "play" but got "canplaythrough"
-FAIL video.autoplay and load() assert_array_equals: property 1, expected "play" but got "canplaythrough"
-FAIL video.autoplay and play() assert_array_equals: property 2, expected "playing" but got "canplaythrough"
+FAIL video.autoplay assert_array_equals: expected property 1 to be "play" but got "canplaythrough" (expected array ["canplay", "play"] got ["canplay", "canplaythrough"])
+FAIL video.autoplay and load() assert_array_equals: expected property 1 to be "play" but got "canplaythrough" (expected array ["canplay", "play"] got ["canplay", "canplaythrough"])
+PASS video.autoplay and play()
 PASS video.autoplay and pause()
 PASS video.autoplay and internal pause steps
 

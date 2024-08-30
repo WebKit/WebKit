@@ -52,7 +52,7 @@ FAIL .target > * 8 assert_equals:
     <div><span></span></div>
     <div><span></span></div>
   </div>
-offsetLeft expected 10 but got 53
+offsetLeft expected 10 but got 50
 FAIL .target > * 9 assert_equals:
 <span data-offset-x="90"></span>
 offsetLeft expected 90 but got 30

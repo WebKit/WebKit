@@ -1235,7 +1235,7 @@ static bool sessionsCreated = false;
 static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID session, bool isFullWebBrowser)
 {
 #if HAVE(LOGGING_PRIVACY_LEVEL)
-    auto loggingPrivacyLevel = nw_context_privacy_level_sensitive;
+    auto loggingPrivacyLevel = nw_context_privacy_level_public;
 #endif
 
     NSURLSessionConfiguration *configuration;
@@ -1243,7 +1243,7 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
         configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
 #if HAVE(LOGGING_PRIVACY_LEVEL) && defined(NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT)
         if (isFullWebBrowser)
-            loggingPrivacyLevel = nw_context_privacy_level_silent;
+            loggingPrivacyLevel = nw_context_privacy_level_public;
 #endif
     } else
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -1263,7 +1263,7 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
     }
 #elif HAVE(ALLOWS_SENSITIVE_LOGGING)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    configuration._allowsSensitiveLogging = NO;
+    configuration._allowsSensitiveLogging = YES;
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 

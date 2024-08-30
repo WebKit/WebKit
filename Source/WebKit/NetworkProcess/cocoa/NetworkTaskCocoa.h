@@ -60,6 +60,7 @@ protected:
     void applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest&);
     void blockCookies();
     void unblockCookies();
+    void setHostOverrideForTesting(const URL&);
     static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTask*, const WebCore::ResourceRequest&);
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
     static NSString *lastRemoteIPAddress(NSURLSessionTask *);

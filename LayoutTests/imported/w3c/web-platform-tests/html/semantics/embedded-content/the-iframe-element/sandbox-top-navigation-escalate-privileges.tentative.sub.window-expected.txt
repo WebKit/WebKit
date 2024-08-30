@@ -1,5 +1,29 @@
-Blocked access to external URL http://www2.localhost:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=5f56c8da-0b46-4eb9-962f-3b1a5dc32e10&pipe=&script=http%3A%2F%2Flocalhost%3A8800%2Fresources%2Ftestdriver.js&script=http%3A%2F%2Flocalhost%3A8800%2Fresources%2Ftestdriver-driver.js&script=http%3A%2F%2Flocalhost%3A8800%2Fresources%2Ftestdriver-vendor.js
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=b862965f-ed76-4cd1-9eaf-e406283459b7&pipe=' from frame with URL 'http://www1.web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=6c0ab66b-acd3-48e0-a725-9241daf5924a&pipe=&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-driver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-vendor.js'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
 
-Harness Error (TIMEOUT), message = null
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=9ed34f5f-5dfc-4a0b-8c6e-31673e07fe4f&pipe=' from frame with URL 'http://www2.web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=90ab7216-a3e9-47c7-b9ba-e11fcc8d59b6&pipe=&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-driver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-vendor.js'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
 
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/common/dispatcher/dispatcher.py?uuid=94c79786-d68d-40b9-958d-4b84e9b03cdf due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/common/dispatcher/dispatcher.py?uuid=94c79786-d68d-40b9-958d-4b84e9b03cdf due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/common/dispatcher/dispatcher.py?uuid=94c79786-d68d-40b9-958d-4b84e9b03cdf due to access control checks.
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Successfully preconnected to https://www.gstatic.com/
+CONSOLE MESSAGE: Successfully preconnected to https://ssl.gstatic.com/
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=83766135-41b3-43eb-a04d-c8f4e41bb375&pipe=' from frame with URL 'http://web-platform.test:8800/html/browsers/browsing-the-web/remote-context-helper/resources/executor.html?uuid=7b8d4b68-2e62-48fd-8b11-18ff555c2883&pipe=header%28Content-Security-Policy%2C+sandbox+allow-scripts+allow-top-navigation%29&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-driver.js&script=http%3A%2F%2Fweb-platform.test%3A8800%2Fresources%2Ftestdriver-vendor.js'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.
+
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/common/dispatcher/dispatcher.py?uuid=333b54c0-3e62-4fcf-9827-932dcd3ea8b7 due to access control checks.
+
+PASS A cross origin unsandboxed frame can't escalate privileges in a child     frame
+FAIL An unsandboxed grandchild inherits its parents ability to navigate top. assert_equals: The navigation should succeed. expected true but got false
+PASS A same-origin grandchild with frame allow-top can navigate top
+PASS A sandboxed same-origin grandchild without allow-same-origin can't     escalate its own top-nav privileges
+PASS A sandboxed same-origin grandchild with allow-same-origin can     give itself top-nav privileges
 
