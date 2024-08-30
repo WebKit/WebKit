@@ -7,7 +7,6 @@ PASS Logical properties in animations respect the direction
 PASS Physical properties win over logical properties in object notation
 PASS Physical properties win over logical properties in array notation
 PASS Physical properties with variables win over logical properties
-FAIL Logical shorthands follow the usual prioritization based on number of component longhands assert_equals: expected "300px" but got "0px"
 PASS Physical longhands win over logical shorthands
 PASS Logical longhands win over physical shorthands
 PASS Physical shorthands win over logical shorthands
