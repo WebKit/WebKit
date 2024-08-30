@@ -236,6 +236,11 @@ public:
 #if PLATFORM(MAC)
     RetainPtr<AXTextMarkerRangeRef> platformData() const;
     operator AXTextMarkerRangeRef() const { return platformData().autorelease(); }
+#elif PLATFORM(IOS_FAMILY)
+    // There is no iOS native type for a TextMarkerRange analogous to AXTextMarkerRangeRef on Mac.
+    // Instead, an NSArray of 2 elements is used.
+    AXTextMarkerRange(NSArray *);
+    RetainPtr<NSArray> platformData() const;
 #endif
 
 #if PLATFORM(COCOA)
