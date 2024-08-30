@@ -89,9 +89,61 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
 
     m_size = { static_cast<float>(videoFrame.width()), static_cast<float>(videoFrame.height()) };
 
-    auto toSkiaColorSpace = [](const PlatformVideoColorSpace&) {
-        notImplemented();
-        return SkColorSpace::MakeSRGB();
+    auto toSkiaColorSpace = [](const PlatformVideoColorSpace& videoColorSpace) {
+        // Only valid, full-range RGB spaces are supported.
+        if (!videoColorSpace.primaries || !videoColorSpace.transfer || !videoColorSpace.matrix || !videoColorSpace.fullRange)
+            return sk_sp<SkColorSpace>();
+        const auto& matrix = *videoColorSpace.matrix;
+        if (matrix != PlatformVideoMatrixCoefficients::Rgb || !*videoColorSpace.fullRange)
+            return sk_sp<SkColorSpace>();
+
+        const auto& primaries = *videoColorSpace.primaries;
+        const auto& transfer = *videoColorSpace.transfer;
+        if (primaries == PlatformVideoColorPrimaries::Bt709) {
+            if (transfer == PlatformVideoTransferCharacteristics::Iec6196621)
+                return SkColorSpace::MakeSRGB();
+            if (transfer == PlatformVideoTransferCharacteristics::Linear)
+                return SkColorSpace::MakeSRGBLinear();
+        }
+
+        skcms_TransferFunction transferFunction = SkNamedTransferFn::kSRGB;
+        switch (transfer) {
+        case PlatformVideoTransferCharacteristics::Iec6196621:
+            break;
+        case PlatformVideoTransferCharacteristics::Linear:
+            transferFunction = SkNamedTransferFn::kLinear;
+            break;
+        case PlatformVideoTransferCharacteristics::Bt2020_10bit:
+        case PlatformVideoTransferCharacteristics::Bt2020_12bit:
+            transferFunction = SkNamedTransferFn::kRec2020;
+            break;
+        case PlatformVideoTransferCharacteristics::PQ:
+            transferFunction = SkNamedTransferFn::kPQ;
+            break;
+        case PlatformVideoTransferCharacteristics::HLG:
+            transferFunction = SkNamedTransferFn::kHLG;
+            break;
+        default:
+            // No known conversion to skia's skcms_TransferFunction - falling back to kSRGB.
+            break;
+        }
+
+        skcms_Matrix3x3 gamut = SkNamedGamut::kSRGB;
+        switch (primaries) {
+        case PlatformVideoColorPrimaries::Bt709:
+            break;
+        case PlatformVideoColorPrimaries::Bt2020:
+            gamut = SkNamedGamut::kRec2020;
+            break;
+        case PlatformVideoColorPrimaries::Smpte432:
+            gamut = SkNamedGamut::kDisplayP3;
+            break;
+        default:
+            // No known conversion to skia's skcms_Matrix3x3 - falling back to kSRGB.
+            break;
+        }
+
+        return SkColorSpace::MakeRGB(transferFunction, gamut);
     };
     auto imageInfo = SkImageInfo::Make(videoFrame.width(), videoFrame.height(), colorType, alphaType, toSkiaColorSpace(videoColorSpaceFromInfo(*videoInfo)));
 

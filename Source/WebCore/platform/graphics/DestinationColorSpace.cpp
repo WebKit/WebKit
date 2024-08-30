@@ -128,7 +128,9 @@ std::optional<DestinationColorSpace> DestinationColorSpace::asRGB() const
     return DestinationColorSpace(colorSpace);
 
 #elif USE(SKIA)
-    notImplemented();
+    // When using skia, we're not using color spaces consisting of custom lookup tables, so we either yield SRGB or nothing.
+    if (platformColorSpace()->isSRGB())
+        return SRGB();
     return std::nullopt;
 
 #else
