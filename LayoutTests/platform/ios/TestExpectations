@@ -7530,9 +7530,6 @@ imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass
 # webkit.org/b/278333 [ iOS ] media/remove-video-best-media-element-in-main-frame-crash.html is a flaky timeout
 media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
 
-# webkit.org/b/278325 New-test(282375@main): [ iOS ] http/tests/scroll-to-text-fragment/generation-does-not-emit-empty-prefix.html is a constant text failure
-http/tests/scroll-to-text-fragment/generation-does-not-emit-empty-prefix.html [ Failure ]
-
 # webkit.org/b/278340 [ iOS ] compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html is a flaky image failure
 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ Pass ImageOnlyFailure ]
 

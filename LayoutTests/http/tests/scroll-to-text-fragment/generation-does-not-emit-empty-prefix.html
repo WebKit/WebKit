@@ -9,7 +9,7 @@ if (window.testRunner)
 window.addEventListener('load', () => {
     const range = document.createRange();
     range.setStart(document.body.childNodes[0], 0);
-    range.setEnd(document.body.childNodes[0], 4);
+    range.setEnd(document.body.childNodes[0], 2);
     document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
 });
 </script>
