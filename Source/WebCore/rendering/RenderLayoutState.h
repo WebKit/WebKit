@@ -51,7 +51,7 @@ public:
         TextEdge propagatedTextBoxEdge { };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
     };
-    struct LineClamp {
+    struct LegacyLineClamp {
         size_t maximumLineCount { 0 };
         size_t currentLineCount { 0 };
         std::optional<LayoutUnit> clampedContentLogicalHeight;
@@ -69,7 +69,7 @@ public:
         , m_blockStartTrimming(Vector<bool>(0))
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<TextBoxTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LegacyLineClamp>, std::optional<TextBoxTrim>);
     explicit RenderLayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }
@@ -104,8 +104,8 @@ public:
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
-    void setLineClamp(std::optional<LineClamp> lineClamp) { m_lineClamp = lineClamp; }
-    std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
+    void setLegacyLineClamp(std::optional<LegacyLineClamp> legacyLineClamp) { m_legacyLineClamp = legacyLineClamp; }
+    std::optional<LegacyLineClamp> legacyLineClamp() const { return m_legacyLineClamp; }
 
     std::optional<TextBoxTrim> textBoxTrim() { return m_textBoxTrim; }
     void setTextBoxTrim(std::optional<TextBoxTrim> textBoxTrim) { m_textBoxTrim = textBoxTrim; }
@@ -163,7 +163,7 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
-    std::optional<LineClamp> m_lineClamp;
+    std::optional<LegacyLineClamp> m_legacyLineClamp;
     std::optional<TextBoxTrim> m_textBoxTrim;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };

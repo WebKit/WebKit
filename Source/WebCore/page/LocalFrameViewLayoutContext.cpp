@@ -604,7 +604,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , offset
             , pageHeight
             , pageHeightChanged
-            , layoutState ? layoutState->lineClamp() : std::nullopt
+            , layoutState ? layoutState->legacyLineClamp() : std::nullopt
             , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
         return true;
     }
@@ -616,15 +616,15 @@ void LocalFrameViewLayoutContext::popLayoutState()
     if (!layoutState())
         return;
 
-    auto currentLineClamp = layoutState()->lineClamp();
+    auto currentLineClamp = layoutState()->legacyLineClamp();
 
     m_layoutStateStack.removeLast();
 
     if (currentLineClamp) {
         // Propagates the current line clamp state to the parent.
-        if (auto* layoutState = this->layoutState(); layoutState && layoutState->lineClamp()) {
-            ASSERT(layoutState->lineClamp()->maximumLineCount == currentLineClamp->maximumLineCount);
-            layoutState->setLineClamp(currentLineClamp);
+        if (auto* layoutState = this->layoutState(); layoutState && layoutState->legacyLineClamp()) {
+            ASSERT(layoutState->legacyLineClamp()->maximumLineCount == currentLineClamp->maximumLineCount);
+            layoutState->setLegacyLineClamp(currentLineClamp);
         }
     }
 }

@@ -444,7 +444,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     if (recomputeLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
-    if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->lineClamp())
+    if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->legacyLineClamp())
         relayoutChildren = true;
 
     rebuildFloatingObjectSetFromIntrudingFloats();
@@ -3946,30 +3946,30 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     setLogicalHeight(newBorderBoxBottom);
     auto updateLineClampStateAndLogicalHeightIfApplicable = [&] {
-        auto lineClamp = layoutState.lineClamp();
-        if (!lineClamp || isFloatingOrOutOfFlowPositioned())
+        auto legacyLineClamp = layoutState.legacyLineClamp();
+        if (!legacyLineClamp || isFloatingOrOutOfFlowPositioned())
             return;
-        lineClamp->currentLineCount += layoutFormattingContextLineLayout.lineCount();
-        if (lineClamp->clampedRenderer) {
+        legacyLineClamp->currentLineCount += layoutFormattingContextLineLayout.lineCount();
+        if (legacyLineClamp->clampedRenderer) {
             // We've already clamped this flex container at a previous flex item.
-            layoutState.setLineClamp(*lineClamp);
+            layoutState.setLegacyLineClamp(*legacyLineClamp);
             return;
         }
         auto clampedContentHeight = [&]() -> std::optional<LayoutUnit> {
             if (auto clampedHeight = layoutFormattingContextLineLayout.clampedContentLogicalHeight())
                 return clampedHeight;
-            if (lineClamp->currentLineCount == lineClamp->maximumLineCount) {
+            if (legacyLineClamp->currentLineCount == legacyLineClamp->maximumLineCount) {
                 // Even if we did not truncate the content, this might be our clamping position.
                 return computeContentHeight();
             }
             return { };
         };
         if (auto logicalHeight = clampedContentHeight()) {
-            lineClamp->clampedContentLogicalHeight = logicalHeight;
-            lineClamp->clampedRenderer = this;
+            legacyLineClamp->clampedContentLogicalHeight = logicalHeight;
+            legacyLineClamp->clampedRenderer = this;
             setLogicalHeight(borderAndPaddingBefore() + *logicalHeight + borderAndPaddingAfter() + scrollbarLogicalHeight());
         }
-        layoutState.setLineClamp(*lineClamp);
+        layoutState.setLegacyLineClamp(*legacyLineClamp);
     };
     updateLineClampStateAndLogicalHeightIfApplicable();
 }
