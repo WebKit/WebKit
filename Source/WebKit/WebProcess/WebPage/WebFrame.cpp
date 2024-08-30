@@ -372,11 +372,7 @@ void WebFrame::loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHosting
         : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(clientCreator), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, localFrame->opener());
     if (!parent)
         corePage->setMainFrame(newFrame.copyRef());
-    newFrame->takeWindowProxyFrom(*localFrame);
-
-    newFrame->setOpener(localFrame->opener());
-    for (auto& frame : localFrame->openedFrames())
-        frame->setOpener(newFrame.ptr());
+    newFrame->takeWindowProxyAndOpenerFrom(*localFrame);
 
     newFrame->tree().setSpecifiedName(localFrame->tree().specifiedName());
     if (ownerRenderer)
@@ -468,11 +464,7 @@ void WebFrame::commitProvisionalFrame()
     localFrame->setOwnerElement(ownerElement.get());
     if (remoteFrame->isMainFrame())
         corePage->setMainFrame(*localFrame);
-    localFrame->takeWindowProxyFrom(*remoteFrame);
-
-    localFrame->setOpener(remoteFrame->opener());
-    for (auto& frame : remoteFrame->openedFrames())
-        frame->setOpener(localFrame.get());
+    localFrame->takeWindowProxyAndOpenerFrom(*remoteFrame);
 
     if (corePage->focusController().focusedFrame() == remoteFrame.get())
         corePage->focusController().setFocusedFrame(localFrame.get(), FocusController::BroadcastFocusedFrame::No);

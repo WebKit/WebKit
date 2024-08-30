@@ -1516,7 +1516,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
             return makeUniqueRef<WebFrameLoaderClient>();
         } },
         WebCore::FrameIdentifier::generate(),
-        nullptr,
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
@@ -1779,7 +1779,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
             return makeUniqueRef<WebFrameLoaderClient>();
         } },
         WebCore::FrameIdentifier::generate(),
-        nullptr,
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),

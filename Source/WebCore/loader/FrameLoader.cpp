@@ -376,7 +376,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& 
 
 FrameLoader::~FrameLoader()
 {
-    m_frame->setOpener(nullptr);
+    m_frame->disownOpener();
     m_frame->detachFromAllOpenedFrames();
 
     if (RefPtr networkingContext = m_networkingContext)
@@ -4060,7 +4060,8 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->protectedPage()->setOpenedByDOM();
     mainFrameLoader->m_client->dispatchShow();
     if (openerPolicy == NewFrameOpenerPolicy::Allow) {
-        mainFrame->setOpener(frame.ptr());
+        ASSERT(mainFrame->opener() == frame.ptr());
+        mainFrame->page()->setOpenedByDOMWithOpener(true);
         mainFrame->protectedDocument()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
@@ -4636,7 +4637,7 @@ bool LocalFrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
+RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
     ASSERT(request.resourceRequest().httpMethod() == "GET"_s);
@@ -4648,11 +4649,12 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, Fra
         return nullptr;
 
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {
-        if (RefPtr frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.protectedDocument().get())) {
+        if (RefPtr frame = openerFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.protectedDocument().get())) {
             if (!isSelfTargetFrameName(request.frameName())) {
                 if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
                     page->chrome().focus();
             }
+            frame->updateOpener(openerFrame);
             return frame;
         }
     }
@@ -4784,7 +4786,7 @@ void FrameLoader::switchBrowsingContextsGroup()
 {
     // Disown opener.
     Ref frame = m_frame.get();
-    frame->setOpener(nullptr);
+    frame->disownOpener();
     if (RefPtr page = m_frame->page())
         page->setOpenedByDOMWithOpener(false);
 

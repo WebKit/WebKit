@@ -813,13 +813,15 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     }
 }
 
-WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy)
+WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy policy)
 {
     WebView *currentWebView = getWebView(m_webFrame.get());
     auto features = adoptNS([[NSDictionary alloc] init]);
     WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView 
                                                 createWebViewWithRequest:nil
                                                           windowFeatures:features.get()];
+    if (newWebView && policy == WebCore::NewFrameOpenerPolicy::Allow)
+        core([newWebView mainFrame])->setOpenerForWebKitLegacy(core(m_webFrame.get()));
     return core([newWebView mainFrame]);
 }
 

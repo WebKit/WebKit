@@ -549,6 +549,6 @@ private:
 //
 // FIXME: Consider making this function part of an appropriate class (not FrameLoader)
 // and moving it to a more appropriate location.
-RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, FrameLoadRequest&&, WindowFeatures&, bool& created);
+RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&&, WindowFeatures&, bool& created);
 
 } // namespace WebCore

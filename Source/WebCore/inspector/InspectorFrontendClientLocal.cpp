@@ -286,12 +286,13 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     bool created;
     WindowFeatures features;
-    RefPtr frame = dynamicDowncast<LocalFrame>(WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), features, created));
+    RefPtr frame = dynamicDowncast<LocalFrame>(WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), features, created));
     if (!frame)
         return;
 
-    frame->setOpener(mainFrame.ptr());
+    ASSERT(frame->opener() == mainFrame.ptr());
     frame->page()->setOpenedByDOM();
+    frame->page()->setOpenedByDOMWithOpener(true);
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
     ResourceRequest resourceRequest { frame->document()->completeURL(url) };

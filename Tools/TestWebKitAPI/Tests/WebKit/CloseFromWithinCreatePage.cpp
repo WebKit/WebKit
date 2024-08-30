@@ -36,22 +36,23 @@ namespace TestWebKitAPI {
 static bool testDone;
 static std::unique_ptr<PlatformWebView> openedWebView;
 
-static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef, const void* clientInfo)
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef, WKPageRunJavaScriptAlertResultListenerRef listener, const void* clientInfo)
 {
     // FIXME: Check that the alert text matches the storage.
     testDone = true;
+    WKPageRunJavaScriptAlertResultListenerCall(listener);
 }
 
-static WKPageRef createNewPageThenClose(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo)
+static WKPageRef createNewPageThenClose(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     EXPECT_TRUE(openedWebView == nullptr);
 
-    openedWebView = makeUnique<PlatformWebView>(page);
+    openedWebView = makeUnique<PlatformWebView>(configuration);
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 6;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
 
@@ -67,10 +68,10 @@ TEST(WebKit, CloseFromWithinCreatePage)
 
     PlatformWebView webView(context.get());
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 6;
     uiClient.createNewPage = createNewPageThenClose;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
@@ -88,16 +89,16 @@ TEST(WebKit, CloseFromWithinCreatePage)
     openedWebView = nullptr;
 }
 
-static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo)
+static WKPageRef createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     EXPECT_TRUE(openedWebView == nullptr);
 
-    openedWebView = makeUnique<PlatformWebView>(page);
+    openedWebView = makeUnique<PlatformWebView>(configuration);
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 6;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
 
@@ -111,10 +112,10 @@ TEST(WebKit, CreatePageThenDocumentOpenMIMEType)
 
     PlatformWebView webView(context.get());
 
-    WKPageUIClientV5 uiClient;
+    WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 6;
     uiClient.createNewPage = createNewPage;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);

@@ -304,8 +304,10 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
 
     auto* newPage = core(newWebView);
-    if (newPage && !features.wantsNoOpener())
+    if (newPage && !features.wantsNoOpener()) {
         m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
+        newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+    }
 
     return newPage;
 }
