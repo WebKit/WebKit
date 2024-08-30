@@ -56,8 +56,8 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
 test/built-ins/Iterator/from/callable.js:
   default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(g())', 'Iterator.from' is undefined)"
   strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(g())', 'Iterator.from' is undefined)"
