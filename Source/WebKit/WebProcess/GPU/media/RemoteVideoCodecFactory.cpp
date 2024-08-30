@@ -218,8 +218,11 @@ void RemoteVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
 {
     if (frame.duration)
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
-    WebProcess::singleton().libWebRTCCodecs().decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height);
-    callback({ });
+    WebProcess::singleton().libWebRTCCodecs().decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height, [callback = WTFMove(callback), callbacks = m_callbacks] (bool result) mutable {
+        callbacks->postTask([callback = WTFMove(callback), result]() mutable {
+            callback(result ? String { } : "Decoding task failed"_s);
+        });
+    });
 }
 
 void RemoteVideoDecoder::flush(Function<void()>&& callback)

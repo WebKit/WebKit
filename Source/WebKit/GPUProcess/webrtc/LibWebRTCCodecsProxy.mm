@@ -84,6 +84,10 @@ void LibWebRTCCodecsProxy::stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFr
     m_queue->dispatch([this, protectedThis = WTFMove(refFromConnection)] {
         assertIsCurrent(workQueue());
         auto decoders = WTFMove(m_decoders);
+        for (auto& decoder : decoders.values()) {
+            while (!decoder.decodingCallbacks.isEmpty())
+                decoder.decodingCallbacks.takeFirst()(false);
+        }
         decoders.clear();
         auto encoders = WTFMove(m_encoders);
         for (auto& encoder : encoders.values()) {
@@ -114,9 +118,11 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
             });
         });
     }
-    return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap), frameRateMonitor = WTFMove(frameRateMonitor)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
+    return [weakThis = ThreadSafeWeakPtr { *this }, identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap), frameRateMonitor = WTFMove(frameRateMonitor)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
         if (!pixelBuffer) {
             connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->notifyDecoderResult(identifier, false);
             return;
         }
 
@@ -129,9 +135,11 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
         if (videoFrameObjectHeap) {
             auto properties = videoFrameObjectHeap->add(WTFMove(videoFrame));
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, 0);
-            return;
-        }
-        connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, timeStampNs, pixelBuffer }, 0);
+        } else
+            connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, timeStampNs, pixelBuffer }, 0);
+
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->notifyDecoderResult(identifier, true);
     };
 }
 
@@ -206,7 +214,7 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, Vide
         });
     }
 
-    auto result = m_decoders.add(identifier,  Decoder { WTFMove(decoder), WTFMove(frameRateMonitor) });
+    auto result = m_decoders.add(identifier,  Decoder { WTFMove(decoder), WTFMove(frameRateMonitor), { } });
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
     callback(true);
@@ -218,6 +226,11 @@ void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
     auto iterator = m_decoders.find(identifier);
     if (iterator == m_decoders.end())
         return;
+
+    m_queue->dispatch([decodingCallbacks = WTFMove(iterator->value.decodingCallbacks)] () mutable {
+        while (!decodingCallbacks.isEmpty())
+            decodingCallbacks.takeFirst()(-2);
+    });
 
     m_decoders.remove(iterator);
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
@@ -238,13 +251,17 @@ void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier id
     });
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, CompletionHandler<void(bool)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    doDecoderTask(identifier, [&](auto& decoder) {
+    doDecoderTask(identifier, [&, callback = WTFMove(callback)] (auto& decoder) mutable {
         if (decoder.frameRateMonitor)
             decoder.frameRateMonitor->update();
-        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data))
+        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data)) {
             m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
+            callback(false);
+            return;
+        }
+        decoder.decodingCallbacks.append(WTFMove(callback));
     });
 }
 
@@ -456,6 +473,23 @@ void LibWebRTCCodecsProxy::notifyEncoderResult(VideoEncoderIdentifier identifier
         assertIsCurrent(workQueue());
         if (auto* encoder = findEncoder(identifier))
             encoder->encodingCallbacks.takeFirst()(result);
+    });
+}
+
+void LibWebRTCCodecsProxy::notifyDecoderResult(VideoDecoderIdentifier identifier, bool result)
+{
+    m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, identifier, result] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        assertIsCurrent(workQueue());
+
+        auto iterator = m_decoders.find(identifier);
+        if (iterator == m_decoders.end())
+            return;
+
+        iterator->value.decodingCallbacks.takeFirst()(result);
     });
 }
 

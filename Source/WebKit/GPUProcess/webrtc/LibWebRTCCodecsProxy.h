@@ -86,7 +86,7 @@ private:
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier);
     void setDecoderFormatDescription(VideoDecoderIdentifier, std::span<const uint8_t>, uint16_t width, uint16_t height);
-    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, CompletionHandler<void(bool)>&&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(VideoEncoderIdentifier, VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
@@ -100,10 +100,12 @@ private:
     void setRTCLoggingLevel(WTFLogLevel);
 
     void notifyEncoderResult(VideoEncoderIdentifier, bool);
+    void notifyDecoderResult(VideoDecoderIdentifier, bool);
 
     struct Decoder {
         std::unique_ptr<WebCore::WebRTCVideoDecoder> webrtcDecoder;
         std::unique_ptr<WebCore::FrameRateMonitor> frameRateMonitor;
+        Deque<CompletionHandler<void(bool)>> decodingCallbacks;
     };
     void doDecoderTask(VideoDecoderIdentifier, Function<void(Decoder&)>&&);
 
