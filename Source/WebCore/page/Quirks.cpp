@@ -215,7 +215,7 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
     return isDomain("zoom.us"_s);
 }
 
-// hulu.com starz.com https://bugs.webkit.org/show_bug.cgi?id=190051
+// hulu.com https://bugs.webkit.org/show_bug.cgi?id=190051
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
@@ -229,7 +229,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     if (m_hasBrokenEncryptedMediaAPISupportQuirk)
         return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 
-    m_hasBrokenEncryptedMediaAPISupportQuirk = isDomain("starz.com"_s) || isDomain("youtube.com"_s) || isDomain("hulu.com"_s);
+    m_hasBrokenEncryptedMediaAPISupportQuirk = isDomain("youtube.com"_s) || isDomain("hulu.com"_s);
 
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 #endif
