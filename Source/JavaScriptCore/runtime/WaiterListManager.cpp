@@ -84,7 +84,7 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "<WaiterListManager> <Thread:", Thread::current(), "> added a new SyncWaiter=", syncWaiter.get(), " to a waiterList for ptr ", RawPointer(ptr));
 
-        while (syncWaiter->vm() && time.now() < time)
+        while (syncWaiter->vm() && time.now() < time && !vm.hasTerminationRequest())
             syncWaiter->condition().waitUntil(list->lock, time.approximateWallTime());
 
         // At this point, syncWaiter should be either notified (dequeued) or timeout (not dequeued).
@@ -96,7 +96,7 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
 
         didGetDequeued = list->findAndRemove(listLocker, syncWaiter);
         ASSERT(didGetDequeued);
-        return WaitSyncResult::TimedOut;
+        return vm.hasTerminationRequest() ? WaitSyncResult::Terminated : WaitSyncResult::TimedOut;
     }
 }
 

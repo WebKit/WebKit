@@ -465,6 +465,9 @@ JSValue atomicsWaitImpl(JSGlobalObject* globalObject, JSArrayType* typedArray, u
         return vm.smallStrings.notEqualString();
     case WaiterListManager::WaitSyncResult::TimedOut:
         return vm.smallStrings.timedOutString();
+    case WaiterListManager::WaitSyncResult::Terminated:
+        vm.throwTerminationException();
+        return { };
     }
     RELEASE_ASSERT_NOT_REACHED();
     return { };
