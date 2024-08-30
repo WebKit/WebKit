@@ -1657,7 +1657,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     if (result) {
         auto notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled).createNSString();
-        [self accessibilityOverrideProcessNotification:notificationName.get()];
+        [self accessibilityOverrideProcessNotification:notificationName.get() notificationData:nil];
 
         CGPoint scrollPos = [self _accessibilityScrollPosition];
         NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
@@ -1666,13 +1666,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.
     return result;
-}
-
-// FIXME: remove this first overload once the system Accessibility bundle has been updated to the second overload.
-- (void)accessibilityOverrideProcessNotification:(NSString *)notificationName
-{
-    // This is overridden by the Accessibility system to post-process notifications.
-    // When it is done, it will call back into handleNotificationRelayToChrome.
 }
 
 - (void)accessibilityOverrideProcessNotification:(NSString *)notificationName notificationData:(NSData *)notificationData

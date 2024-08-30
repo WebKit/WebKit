@@ -106,7 +106,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         return;
 
     auto notificationName = stringNotification.createNSString();
-    [object.wrapper() accessibilityOverrideProcessNotification:notificationName.get()];
+    [object.wrapper() accessibilityOverrideProcessNotification:notificationName.get() notificationData:nil];
 
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
