@@ -99,16 +99,21 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
         // Threaded rendering: record display lists, and asynchronously replay them using dedicated worker threads.
         buffer->beginPainting();
 
-        auto recordingContext = makeUnique<DisplayList::DrawingContext>(tileRect.size());
-        paintIntoGraphicsContext(recordingContext->context());
+        auto displayList = makeUnique<DisplayList::DisplayList>();
+        DisplayList::RecorderImpl recordingContext(*displayList, GraphicsContextState(), FloatRect({ }, tileRect.size()), AffineTransform());
+        paintIntoGraphicsContext(recordingContext);
 
-        workerPool->postTask([buffer = Ref { buffer }, recordingContext = WTFMove(recordingContext), tileRect] {
+        workerPool->postTask([buffer = Ref { buffer }, displayList = WTFMove(displayList), tileRect] {
             RELEASE_ASSERT(buffer->surface());
             if (auto* canvas = buffer->surface()->getCanvas()) {
+                static thread_local RefPtr<ControlFactory> s_controlFactory;
+                if (!s_controlFactory)
+                    s_controlFactory = ControlFactory::create();
+
                 WTFBeginSignpost(canvas, PaintTile, "Skia unaccelerated multithread, dirty region %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
 
                 GraphicsContextSkia context(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-                recordingContext->replayDisplayList(context);
+                context.drawDisplayListItems(displayList->items(), displayList->resourceHeap(), *s_controlFactory, FloatPoint::zero());
 
                 WTFEndSignpost(canvas, PaintTile);
             }
