@@ -32,6 +32,11 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
+// FIXME: This is only needed for the internal Ventura build. Remove when appropriate.
+extern "C" {
+nw_protocol_options_t nw_http2_create_options();
+}
+
 namespace WebKit {
 
 NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint)
