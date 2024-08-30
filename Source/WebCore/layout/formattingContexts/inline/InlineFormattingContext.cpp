@@ -384,7 +384,7 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
 
 InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const LineBox& lineBox, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineDisplay::Content& displayContent, size_t numberOfPreviousLinesWithInlineContent)
 {
-    auto numberOfVisibleLinesAllowed = layoutState().parentBlockLayoutState().lineClamp() ? std::make_optional(layoutState().parentBlockLayoutState().lineClamp()->allowedLineCount()) : std::nullopt;
+    auto numberOfVisibleLinesAllowed = layoutState().parentBlockLayoutState().lineClamp() ? std::make_optional(layoutState().parentBlockLayoutState().lineClamp()->maximumLines) : std::nullopt;
 
     auto numberOfLinesWithInlineContent = numberOfPreviousLinesWithInlineContent + (!lineLayoutResult.inlineContent.isEmpty() ? 1 : 0);
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && numberOfLinesWithInlineContent > *numberOfVisibleLinesAllowed;

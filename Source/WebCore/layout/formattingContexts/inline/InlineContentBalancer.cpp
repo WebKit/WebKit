@@ -101,7 +101,7 @@ InlineContentBalancer::InlineContentBalancer(InlineFormattingContext& inlineForm
 void InlineContentBalancer::initialize()
 {
     auto lineClamp = m_inlineFormattingContext.layoutState().parentBlockLayoutState().lineClamp();
-    auto numberOfVisibleLinesAllowed = lineClamp ? std::make_optional(lineClamp->allowedLineCount()) : std::nullopt;
+    auto numberOfVisibleLinesAllowed = lineClamp ? std::make_optional(lineClamp->maximumLines) : std::nullopt;
 
     if (!m_inlineFormattingContext.layoutState().placedFloats().isEmpty()) {
         m_cannotBalanceContent = true;

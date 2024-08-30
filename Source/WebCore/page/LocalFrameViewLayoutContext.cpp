@@ -604,6 +604,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , offset
             , pageHeight
             , pageHeightChanged
+            , layoutState ? layoutState->lineClamp() : std::nullopt
             , layoutState ? layoutState->legacyLineClamp() : std::nullopt
             , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
         return true;

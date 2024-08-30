@@ -304,8 +304,10 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (auto lineClamp = layoutState.legacyLineClamp())
-        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount };
+    if (auto legacyLineClamp = layoutState.legacyLineClamp())
+        return Layout::BlockLayoutState::LineClamp { std::max(legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, static_cast<size_t>(0)), true };
+    if (auto lineClamp = layoutState.lineClamp())
+        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false };
     return { };
 }
 
