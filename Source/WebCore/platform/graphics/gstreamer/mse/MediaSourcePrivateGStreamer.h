@@ -64,6 +64,7 @@ public:
 
     void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
+    void unmarkEndOfStream() override;
 
     MediaPlayer::ReadyState mediaPlayerReadyState() const override;
     void setMediaPlayerReadyState(MediaPlayer::ReadyState) override;

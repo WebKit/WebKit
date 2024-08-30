@@ -1900,7 +1900,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         GST_ERROR_OBJECT(pipeline(), "%s (url=%s) (code=%d)", err->message, m_url.string().utf8().data(), err->code);
 
-        if (m_shouldResetPipeline || m_didErrorOccur)
+        if (m_shouldResetPipeline || m_didErrorOccur || m_ignoreErrors)
             break;
 
         m_errorMessage = String::fromLatin1(err->message);
