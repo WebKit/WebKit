@@ -123,8 +123,10 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 void RemoteScrollingCoordinatorProxyMac::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
 {
     if (isRubberBanding) {
-        if (scrollingTree()->scrollingPerformanceTestingEnabled())
+        if (scrollingTree()->scrollingPerformanceTestingEnabled()) {
+            m_eventDispatcher->didStartRubberbanding();
             webPageProxy().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::StartedRubberbanding), MonotonicTime::now(), 0);
+        }
         m_uiState.addNodeWithActiveRubberband(nodeID);
     } else
         m_uiState.removeNodeWithActiveRubberband(nodeID);
