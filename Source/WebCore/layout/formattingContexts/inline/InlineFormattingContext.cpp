@@ -317,7 +317,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         previousLineEnd = lineContentEnd;
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }
-    InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(*this, layoutState(), layoutResult.displayContent);
+    InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(*this, layoutState(), layoutResult.displayContent);
     return layoutResult;
 }
 
@@ -384,7 +384,9 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
 
 InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const LineBox& lineBox, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineDisplay::Content& displayContent, size_t numberOfPreviousLinesWithInlineContent)
 {
-    auto numberOfVisibleLinesAllowed = layoutState().parentBlockLayoutState().lineClamp() ? std::make_optional(layoutState().parentBlockLayoutState().lineClamp()->maximumLines) : std::nullopt;
+    auto lineClamp = layoutState().parentBlockLayoutState().lineClamp();
+    auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
+    auto numberOfVisibleLinesAllowed = lineClamp ? std::make_optional(lineClamp->maximumLines) : std::nullopt;
 
     auto numberOfLinesWithInlineContent = numberOfPreviousLinesWithInlineContent + (!lineLayoutResult.inlineContent.isEmpty() ? 1 : 0);
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && numberOfLinesWithInlineContent > *numberOfVisibleLinesAllowed;
@@ -392,11 +394,10 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
 
     auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed);
-    if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(truncationPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent)) {
-        displayLine.setEllipsisVisualRect(*ellipsisRect);
-        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection)
-            layoutState().setClampedLineIndex(lineBox.lineIndex());
-    }
+    InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent, isLegacyLineClamp);
+    auto lineHasLegacyLineClamp = isLegacyLineClamp && displayLine.hasEllipsis() && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
+    if (lineHasLegacyLineClamp)
+        layoutState().setLegacyClampedLineIndex(lineBox.lineIndex());
 
     displayContent.boxes.appendVector(WTFMove(boxes));
     displayContent.lines.append(displayLine);

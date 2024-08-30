@@ -284,31 +284,25 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
     return truncateLeft.value_or(left(boxes.first())) - ellipsisWidth;
 }
 
-std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLastLineWithInlineContent)
+static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy lineEndingTruncationPolicy, String ellipsisText, const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLastLineWithInlineContent)
 {
+    ASSERT(lineEndingTruncationPolicy != LineEndingTruncationPolicy::NoTruncation);
     if (displayBoxes.isEmpty())
         return { };
 
-    auto isTruncatedApplicable = [&] {
-        switch (lineEndingTruncationPolicy) {
-        case LineEndingTruncationPolicy::NoTruncation:
-            return false;
-        case LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection:
+    auto needsEllipsis = [&] {
+        if (lineEndingTruncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection)
             return displayLine.contentLogicalWidth() && displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
-        case LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection:
-            return !isLastLineWithInlineContent;
-        default:
-            ASSERT_NOT_REACHED();
-            return false;
-        }
+        ASSERT(lineEndingTruncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection);
+        return !isLastLineWithInlineContent;
     };
-    if (!isTruncatedApplicable())
+    if (!needsEllipsis())
         return { };
 
     ASSERT(displayBoxes[0].isRootInlineBox());
     auto& rootInlineBox = displayBoxes[0];
     auto& rootStyle = rootInlineBox.style();
-    auto ellipsisWidth = std::max(0.f, rootStyle.fontCascade().width(TextUtil::ellipsisTextRun()));
+    auto ellipsisWidth = std::max(0.f, rootStyle.fontCascade().width(TextRun { ellipsisText }));
 
     auto contentNeedsTruncation = [&] {
         switch (lineEndingTruncationPolicy) {
@@ -364,7 +358,7 @@ static constexpr int legacyMatchingLinkBoxOffset = 3;
 static inline void makeRoomForLinkBoxOnClampedLineIfNeeded(auto& clampedLine, auto& displayBoxes, auto insertionPosition, auto linkContentWidth)
 {
     ASSERT(insertionPosition);
-    auto ellipsisBoxRect = *clampedLine.ellipsisVisualRect();
+    auto ellipsisBoxRect = clampedLine.ellipsis()->visualRect;
     if (ellipsisBoxRect.maxX() + linkContentWidth <= clampedLine.right())
         return;
     auto& rootStyle = displayBoxes[0].layoutBox().style();
@@ -382,19 +376,19 @@ static inline void makeRoomForLinkBoxOnClampedLineIfNeeded(auto& clampedLine, au
     auto ellispsisPosition = clampedLine.right() - linkContentWidth - legacyMatchingLinkBoxOffset;
     auto ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, startIndex(), endIndex, clampedLine.left(), ellispsisPosition, ellipsisBoxRect.width(), rootStyle, LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection);
     ellipsisBoxRect.setX(ellipsisStart);
-    clampedLine.setEllipsisVisualRect(ellipsisBoxRect);
+    clampedLine.setEllipsis({ InlineDisplay::Line::Ellipsis::Type::Block, ellipsisBoxRect, TextUtil::ellipsisTextInInlineDirection(clampedLine.isHorizontal()) });
 }
 
 static inline void moveDisplayBoxToClampedLine(auto& displayLines, auto clampedLineIndex, auto& displayBox, auto horizontalOffset)
 {
     auto& clampedLine = displayLines[clampedLineIndex];
-    displayBox.setLeft(clampedLine.ellipsisVisualRect()->maxX() + horizontalOffset + legacyMatchingLinkBoxOffset);
+    displayBox.setLeft(clampedLine.ellipsis()->visualRect.maxX() + horizontalOffset + legacyMatchingLinkBoxOffset);
     // Assume baseline alignment here.
     displayBox.moveVertically((clampedLine.top() + clampedLine.baseline()) - (displayLines.last().top() + displayLines.last().baseline()));
     displayBox.moveToLine(clampedLineIndex);
 }
 
-void InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
+void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
 {
     // This is link-box type of line clamping (-webkit-line-clamp) where we check if the inline content ends in a link
     // and move such link content next to the clamped line's trailing ellispsis. It is meant to produce the following rendering
@@ -407,7 +401,7 @@ void InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(const Inl
     // at https://commits.webkit.org/6086@main to support special article rendering with clamped lines.
     // It supports horizontal, left-to-right content only where the link inline box has (non-split) text content and when
     // the link content ('more info') fits the clamped line.
-    auto clampedLineIndex = inlineLayoutState.clampedLineIndex();
+    auto clampedLineIndex = inlineLayoutState.legacyClampedLineIndex();
     if (!clampedLineIndex)
         return;
     auto& displayLines = displayContent.lines;
@@ -464,6 +458,31 @@ void InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(const Inl
     displayBoxes.insert(*insertionPosition, linkInlineBoxDisplayBox);
 
     clampedLine.setHasContentAfterEllipsisBox();
+}
+
+void InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy truncationPolicy, InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLastLineWithInlineContent, bool isLegacyLineClamp)
+{
+    if (truncationPolicy == LineEndingTruncationPolicy::NoTruncation || !displayBoxes.size())
+        return;
+
+    auto ellipsisText = [&] {
+        if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection || isLegacyLineClamp) {
+            // Legacy line clamp always uses ...
+            return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
+        }
+        auto& blockEllipsis = displayBoxes[0].layoutBox().style().blockEllipsis();
+        if (blockEllipsis.type == BlockEllipsis::Type::None)
+            return nullAtom();
+        if (blockEllipsis.type == BlockEllipsis::Type::Auto)
+            return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
+        return blockEllipsis.string;
+    }();
+
+    if (ellipsisText.isNull())
+        return;
+
+    if (auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes, isLastLineWithInlineContent))
+        displayLine.setEllipsis({ truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection ? InlineDisplay::Line::Ellipsis::Type::Inline : InlineDisplay::Line::Ellipsis::Type::Block, *ellipsisRect, ellipsisText });
 }
 
 }

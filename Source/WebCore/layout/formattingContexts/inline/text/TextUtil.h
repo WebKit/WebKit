@@ -87,7 +87,7 @@ public:
     static bool isStrongDirectionalityCharacter(char32_t);
     static bool containsStrongDirectionalityText(StringView);
 
-    static TextRun ellipsisTextRun(bool isHorizontal = true);
+    static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
 
     static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
     static size_t firstUserPerceivedCharacterLength(const InlineTextBox&, size_t startPosition, size_t length);

@@ -578,14 +578,14 @@ TextDirection TextUtil::directionForTextContent(StringView content)
     return ubidi_getBaseDirection(characters.data(), characters.size()) == UBIDI_RTL ? TextDirection::RTL : TextDirection::LTR;
 }
 
-TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
+AtomString TextUtil::ellipsisTextInInlineDirection(bool isHorizontal)
 {
     if (isHorizontal) {
         static MainThreadNeverDestroyed<const AtomString> horizontalEllipsisStr(span(horizontalEllipsis));
-        return TextRun { horizontalEllipsisStr->string() };
+        return horizontalEllipsisStr;
     }
     static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(span(verticalEllipsis));
-    return TextRun { verticalEllipsisStr->string() };
+    return verticalEllipsisStr;
 }
 
 bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)

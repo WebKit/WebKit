@@ -58,8 +58,8 @@ public:
     float scrollableOverflowBottom() const { return line().scrollableOverflow().maxY(); }
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
-    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return *line().ellipsisVisualRect(); }
-    TextRun ellipsisText() const { return line().ellipsisText(); }
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return line().ellipsis()->visualRect; }
+    TextRun ellipsisText() const { return TextRun { line().ellipsis()->text.string() }; }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
