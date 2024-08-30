@@ -102,8 +102,12 @@ void RenderTableCol::updateFromElement()
         m_span = tc.span();
     } else
         m_span = 1;
-    if (m_span != oldSpan && hasInitializedStyle() && parent())
-        setNeedsLayoutAndPrefWidthsRecalc();
+    if (m_span != oldSpan && parent()) {
+        if (hasInitializedStyle())
+            setNeedsLayoutAndPrefWidthsRecalc();
+        if (RenderTable* table = this->table())
+            table->invalidateColumns();
+    }
 }
 
 void RenderTableCol::insertedIntoTree()
