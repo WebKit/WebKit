@@ -911,11 +911,6 @@ void RenderTable::computePreferredLogicalWidths()
     for (unsigned i = 0; i < m_captions.size(); i++)
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());
 
-    if (auto overridingLogicalWidth = this->overridingLogicalWidth()) {
-        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, *overridingLogicalWidth);
-        m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, *overridingLogicalWidth);
-    }
-
     auto& styleToUse = style();
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for min-width.
     if (styleToUse.logicalMinWidth().isFixed() && styleToUse.logicalMinWidth().value() > 0) {
