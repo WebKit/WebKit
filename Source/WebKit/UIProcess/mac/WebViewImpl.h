@@ -742,6 +742,8 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
+    void showWritingTools();
+
     void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);
 #endif

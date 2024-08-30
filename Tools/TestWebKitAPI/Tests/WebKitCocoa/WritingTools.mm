@@ -2523,6 +2523,7 @@ TEST(WritingTools, IsWritingToolsActiveAPIWithNoInlineEditing)
 }
 
 #if PLATFORM(MAC)
+
 TEST(WritingTools, ShowAffordance)
 {
     InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
@@ -2577,7 +2578,83 @@ TEST(WritingTools, ShowAffordanceForMultipleLines)
 
     expectScheduleShowAffordanceForSelectionRectCalled(true);
 }
-#endif
+
+TEST(WritingTools, ShowPanelWithNoSelection)
+{
+    __block bool done = false;
+    __block NSRect selectionRect = NSZeroRect;
+
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+        selectionRect = rect;
+        done = true;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='text'>This is some content that should be rewritten.</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+
+    [webView _showWritingTools];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(NSIsEmptyRect(selectionRect));
+}
+
+TEST(WritingTools, ShowPanelWithCaretSelection)
+{
+    __block bool done = false;
+    __block NSRect selectionRect = NSZeroRect;
+
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+        selectionRect = rect;
+        done = true;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='text'>This is some content that should be rewritten.</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const text = document.getElementById('text').childNodes[0];"
+        "  const range = document.createRange();"
+        "  range.setStart(text, 0);"
+        "  range.setEnd(text, 0);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+    [webView waitForNextPresentationUpdate];
+
+    [webView _showWritingTools];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(NSIsEmptyRect(selectionRect));
+}
+
+TEST(WritingTools, ShowPanelWithRangedSelection)
+{
+    __block bool done = false;
+    __block NSRect selectionRect = NSZeroRect;
+
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+        selectionRect = rect;
+        done = true;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='text'>This is some content that should be rewritten.</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    [webView _showWritingTools];
+
+    TestWebKitAPI::Util::run(&done);
+
+    NSRect expectedRect = NSMakeRect(8, 8, 292, 18);
+    EXPECT_TRUE(NSEqualRects(expectedRect, selectionRect));
+}
+
+#endif // PLATFORM(MAC)
 
 TEST(WritingTools, SmartRepliesMatchStyle)
 {
