@@ -81,31 +81,9 @@ public:
         return evaluate(lexicalGlobalObject, source, thisValue, unused);
     }
 
-    static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
-    {
-        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
-        JSC::JSValue returnValue;
-        {
-            JSExecState currentState(lexicalGlobalObject);
-            returnValue = JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callData, thisValue, args, returnedException);
-        }
-        scope.assertNoExceptionExceptTermination();
-        return returnValue;
-    }
+    static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 
-    static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
-    {
-        JSC::VM& vm = JSC::getVM(lexicalGlobalObject);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
-        JSC::JSValue returnValue;
-        {
-            JSExecState currentState(lexicalGlobalObject);
-            returnValue = JSC::profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, returnedException);
-        }
-        scope.assertNoExceptionExceptTermination();
-        return returnValue;
-    }
+    static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
     static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
     {

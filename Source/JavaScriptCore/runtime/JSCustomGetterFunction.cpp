@@ -64,6 +64,8 @@ JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* g
 {
     ASSERT(getter);
     auto name = makeString("get "_s, propertyName.publicName());
+    if (UNLIKELY(globalObject->vm().m_needsToRemoveGetFromAccessor))
+        name = makeString(propertyName.publicName());
     NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, ImplementationVisibility::Public, callHostFunctionAsConstructor, name);
     Structure* structure = globalObject->customGetterFunctionStructure();
     JSCustomGetterFunction* function = new (NotNull, allocateCell<JSCustomGetterFunction>(vm)) JSCustomGetterFunction(vm, executable, globalObject, structure, propertyName, getter, domAttribute);

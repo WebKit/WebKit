@@ -1085,6 +1085,8 @@ private:
 
 public:
     bool didEnterVM { false };
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=274224
+    bool m_needsToRemoveGetFromAccessor { false };
 private:
     bool m_failNextNewCodeBlock { false };
     bool m_globalConstRedeclarationShouldThrow { true };
@@ -1131,7 +1133,7 @@ private:
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
     bool m_isDebuggerHookInjected { false };
-
+    
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
