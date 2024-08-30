@@ -856,7 +856,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
     void captureDevicesChanged();
-    void updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    void updateCaptureState(const WebCore::Document&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

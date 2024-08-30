@@ -9978,9 +9978,18 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
 }
 
 #if ENABLE(MEDIA_STREAM)
-void WebPage::updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+void WebPage::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::ValidateCaptureStateUpdate(isActive, kind), [weakThis = WeakPtr { *this }, isActive, kind, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
+    RefPtr frame = document.frame();
+    if (!frame) {
+        completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "no frame available"_s });
+        return;
+    }
+
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
+    ASSERT(webFrame);
+
+    sendWithAsyncReply(Messages::WebPageProxy::ValidateCaptureStateUpdate(UserMediaRequestIdentifier::generate(), document.clientOrigin(), webFrame->frameID(), isActive, kind), [weakThis = WeakPtr { *this }, isActive, kind, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
         completionHandler(WTFMove(error));
         if (error)
             return;

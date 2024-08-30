@@ -518,7 +518,7 @@ void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& 
         return;
     }
 
-    controller->updateCaptureState(isActive, kind, [weakDocument = WeakPtr { document.get() }, promise = WTFMove(promise)] (auto&& exception) mutable {
+    controller->updateCaptureState(*document, isActive, kind, [weakDocument = WeakPtr { document.get() }, promise = WTFMove(promise)] (auto&& exception) mutable {
         RefPtr protectedDocument = weakDocument.get();
         if (!protectedDocument)
             return;

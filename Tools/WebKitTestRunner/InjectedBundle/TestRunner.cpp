@@ -895,7 +895,7 @@ void TestRunner::setCameraPermission(bool enabled)
 
 void TestRunner::setMicrophonePermission(bool enabled)
 {
-    InjectedBundle::singleton().setCameraPermission(enabled);
+    InjectedBundle::singleton().setMicrophonePermission(enabled);
 }
 
 void TestRunner::setUserMediaPermission(bool enabled)

@@ -193,6 +193,7 @@
 #include <WebCore/AppHighlight.h>
 #include <WebCore/ArchiveError.h>
 #include <WebCore/BitmapImage.h>
+#include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DOMPasteAccess.h>
@@ -11197,30 +11198,72 @@ void WebPageProxy::beginMonitoringCaptureDevices()
     UserMediaProcessManager::singleton().beginMonitoringCaptureDevices();
 }
 
-void WebPageProxy::validateCaptureStateUpdate(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+static WebCore::MediaStreamRequest toUserMediaRequest(WebCore::MediaProducerMediaCaptureKind kind, WebCore::PageIdentifier pageIdentifier)
 {
+    switch (kind) {
+    case WebCore::MediaProducerMediaCaptureKind::Microphone:
+        return { MediaStreamRequest::Type::UserMedia, { { }, { }, true }, { }, true, pageIdentifier };
+    case WebCore::MediaProducerMediaCaptureKind::Camera:
+        return { MediaStreamRequest::Type::UserMedia, { }, { { }, { }, true }, true, pageIdentifier };
+    case WebCore::MediaProducerMediaCaptureKind::Display:
+    case WebCore::MediaProducerMediaCaptureKind::SystemAudio:
+    case WebCore::MediaProducerMediaCaptureKind::EveryKind:
+        ASSERT_NOT_REACHED();
+    }
+    return { };
+}
+
+void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier requestIdentifier, WebCore::ClientOrigin&& clientOrigin, WebCore::FrameIdentifier frameID, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    RefPtr webFrame = WebFrameProxy::webFrame(frameID);
+    if (!webFrame) {
+        completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "no frame available"_s });
+        return;
+    }
+
     if (!isActive) {
         completionHandler({ });
         return;
     }
 
+    auto requestPermission = [&] (auto kind, auto completionHandler) {
+        Vector<WebCore::CaptureDevice> audioDevices, videoDevices;
+        if (kind == WebCore::MediaProducerMediaCaptureKind::Camera)
+            videoDevices = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().videoCaptureDeviceManager().captureDevices();
+        else if (kind == WebCore::MediaProducerMediaCaptureKind::Microphone)
+            audioDevices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
+        auto request = UserMediaPermissionRequestProxy::create(userMediaPermissionRequestManager(), requestIdentifier, mainFrame()->frameID(), frameID, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), WTFMove(audioDevices), WTFMove(videoDevices), toUserMediaRequest(kind, webPageIDInMainFrameProcess()), [completionHandler = WTFMove(completionHandler)] (bool result) mutable {
+            if (!result) {
+                completionHandler(Exception { ExceptionCode::NotAllowedError, "Capture access is denied"_s });
+                return;
+            }
+            completionHandler({ });
+        });
+
+        Ref userMediaOrigin = API::SecurityOrigin::create(request->protectedUserMediaDocumentSecurityOrigin());
+        Ref topLevelOrigin = API::SecurityOrigin::create(request->protectedTopLevelDocumentSecurityOrigin());
+        uiClient().decidePolicyForUserMediaPermissionRequest(*this, *webFrame, WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), request.get());
+    };
+
+
     WebCore::MediaProducerMutedStateFlags mutedState = internals().mutedState;
     switch (kind) {
     case WebCore::MediaProducerMediaCaptureKind::Microphone:
         if (mutedState.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted)) {
-            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting microphone access is denied"_s });
+            requestPermission(kind, WTFMove(completionHandler));
             return;
         }
         break;
     case WebCore::MediaProducerMediaCaptureKind::Camera:
         if (mutedState.contains(WebCore::MediaProducerMutedState::VideoCaptureIsMuted)) {
-            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting camera access is denied"_s });
+            requestPermission(kind, WTFMove(completionHandler));
             return;
         }
         break;
     case WebCore::MediaProducerMediaCaptureKind::Display:
+        // FIXME: Add support for unmuting screen capture.
         if (mutedState.containsAny({ WebCore::MediaProducerMutedState::ScreenCaptureIsMuted, WebCore::MediaProducerMutedState::WindowCaptureIsMuted })) {
-            completionHandler(Exception { ExceptionCode::NotAllowedError, "Restarting screen capture access is denied"_s });
+            completionHandler(Exception { ExceptionCode::NotAllowedError, "Screen capture access is denied"_s });
             return;
         }
         break;
