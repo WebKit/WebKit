@@ -116,7 +116,7 @@ Ref<Frame> HistoryController::protectedFrame() const
 /*
  There is a race condition between the layout and load completion that affects restoring the scroll position.
  We try to restore the scroll position at both the first layout and upon load completion.
- 
+
  1) If first layout happens before the load completes, we want to restore the scroll position then so that the
  first time we draw the page is already scrolled to the right place, instead of starting at the top and later
  jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
@@ -251,7 +251,7 @@ void HistoryController::restoreDocumentState()
     case FrameLoadType::Standard:
         break;
     }
-    
+
     RefPtr currentItem = m_currentItem;
     if (!currentItem)
         return;
@@ -314,7 +314,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     LOG(History, "HistoryController %p goToItem %p type=%d", this, &targetItem, static_cast<int>(type));
 
     ASSERT(!m_frame->tree().parent());
-    
+
     // shouldGoToHistoryItem is a private delegate method. This is needed to fix:
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
@@ -385,7 +385,7 @@ void HistoryController::updateForReload()
 
     if (RefPtr currentItem = m_currentItem) {
         BackForwardCache::singleton().remove(*currentItem);
-    
+
         if (frame->loader().loadType() == FrameLoadType::Reload || frame->loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(currentItem.get());
 
@@ -689,12 +689,11 @@ void HistoryController::setProvisionalItem(RefPtr<HistoryItem>&& item)
     m_provisionalItem = WTFMove(item);
 }
 
-void HistoryController::initializeItem(HistoryItem& item)
+void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader> documentLoader)
 {
     RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr());
     if (!frame)
         return;
-    RefPtr documentLoader = frame->loader().documentLoader();
     ASSERT(documentLoader);
 
     URL unreachableURL = documentLoader->unreachableURL();
@@ -715,11 +714,11 @@ void HistoryController::initializeItem(HistoryItem& item)
     // deal with such things, so we nip that in the bud here.
     // Later we may want to learn to live with nil for URL.
     // See bug 3368236 and related bugs for more information.
-    if (url.isEmpty()) 
+    if (url.isEmpty())
         url = aboutBlankURL();
     if (originalURL.isEmpty())
         originalURL = aboutBlankURL();
-    
+
     StringWithDirection title = documentLoader->title();
 
     item.setURL(url);
@@ -741,11 +740,23 @@ void HistoryController::initializeItem(HistoryItem& item)
 Ref<HistoryItem> HistoryController::createItem(HistoryItemClient& client)
 {
     Ref item = HistoryItem::create(client);
-    initializeItem(item);
-    
+
+    if (RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr())) {
+        RefPtr documentLoader = frame->loader().documentLoader();
+        initializeItem(item, documentLoader);
+    }
+
     // Set the item for which we will save document state
     setCurrentItem(item.copyRef());
-    
+
+    return item;
+}
+
+Ref<HistoryItem> HistoryController::createItemWithLoader(HistoryItemClient& client, DocumentLoader* documentLoader)
+{
+    Ref item = HistoryItem::create(client);
+    initializeItem(item, documentLoader);
+
     return item;
 }
 
@@ -889,7 +900,7 @@ void HistoryController::updateCurrentItem()
         // dependent on the document.
         bool isTargetItem = currentItem->isTargetItem();
         currentItem->reset();
-        initializeItem(*currentItem);
+        initializeItem(*currentItem, documentLoader);
         currentItem->setIsTargetItem(isTargetItem);
     } else {
         // Even if the final URL didn't change, the form data may have changed.

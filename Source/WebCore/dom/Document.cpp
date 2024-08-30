@@ -170,6 +170,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "NavigationActivation.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
@@ -8109,7 +8110,7 @@ void Document::transferViewTransitionParams(Document& newDocument)
     newDocument.m_inboundViewTransitionParams = std::exchange(m_inboundViewTransitionParams, nullptr);
 }
 
-void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition)
+void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition, RefPtr<NavigationActivation>&& activation)
 {
     if (!settings().crossDocumentViewTransitionsEnabled())
         return;
@@ -8117,6 +8118,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition)
     RefPtr<ViewTransition> oldViewTransition;
 
     PageSwapEvent::Init swapInit;
+    swapInit.activation = WTFMove(activation);
     if (canTriggerCrossDocumentViewTransition && globalObject()) {
         oldViewTransition = ViewTransition::setupCrossDocumentViewTransition(*this);
         swapInit.viewTransition = oldViewTransition;

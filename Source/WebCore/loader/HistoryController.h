@@ -94,12 +94,14 @@ public:
 
     void setDefersLoading(bool);
 
+    Ref<HistoryItem> createItemWithLoader(HistoryItemClient&, DocumentLoader*);
+
 private:
     friend class Page;
     bool shouldStopLoadingForHistoryItem(HistoryItem&) const;
     void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
 
-    void initializeItem(HistoryItem&);
+    void initializeItem(HistoryItem&, RefPtr<DocumentLoader>);
     Ref<HistoryItem> createItem(HistoryItemClient&);
     Ref<HistoryItem> createItemTree(HistoryItemClient&, LocalFrame& targetFrame, bool clipAtTarget);
 

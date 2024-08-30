@@ -191,6 +191,7 @@ class MediaQueryList;
 class MediaQueryMatcher;
 class MessagePortChannelProvider;
 class MouseEventWithHitTestResults;
+class NavigationActivation;
 class NodeFilter;
 class NodeIterator;
 class NodeList;
@@ -1384,7 +1385,7 @@ public:
     void queueTaskToDispatchEventOnWindow(TaskSource, Ref<Event>&&);
     void dispatchPageshowEvent(PageshowEventPersistence);
     void dispatchPagehideEvent(PageshowEventPersistence);
-    void dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition);
+    void dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition, RefPtr<NavigationActivation>&&);
     void transferViewTransitionParams(Document&);
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);

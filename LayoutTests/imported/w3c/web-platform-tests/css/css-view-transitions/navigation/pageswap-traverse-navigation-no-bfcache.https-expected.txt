@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'e.activation.entry')
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_array_equals: incorrect event order lengths differ, expected array ["pageswap", "transition", "https://localhost:9443/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-...
 
-Harness Error (FAIL), message = Unhandled rejection: assert_array_equals: incorrect event order lengths differ, expected array ["pageswap", "transition", "https://localhost:9443/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-bfcache.https.html?popup", "traverse", "from", "pagehide"] length 6, got ["pageswap", "transition", "pagehide"] length 3
-
-TIMEOUT pageswap on traverse navigation from script Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: assert_array_equals: incorrect event order lengths differ, expected array ["pageswap", "transition", "https://localhost:9443/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-bfcache.https.html?popup", "traverse", "from", "pagehide"] length 6, got ["pageswap", "transition", "pagehide"] length 3
-
-TIMEOUT pageswap on traverse navigation from script Test timed out
+PASS pageswap on traverse navigation from script
 

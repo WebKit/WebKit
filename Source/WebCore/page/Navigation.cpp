@@ -147,6 +147,44 @@ void Navigation::updateForActivation(HistoryItem* previousItem, std::optional<Na
     m_activation = NavigationActivation::create(*type, *currentEntry(), WTFMove(previousEntry));
 }
 
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#fire-the-pageswap-event
+RefPtr<NavigationActivation> Navigation::createForPageswapEvent(HistoryItem* newItem, DocumentLoader* documentLoader)
+{
+    auto type = documentLoader->triggeringAction().navigationAPIType();
+    if (!type || !frame())
+        return nullptr;
+
+    // Skip cross-origin requests, or if any cross-origin redirects have been made.
+    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(window()->protectedDocument()->securityOrigin());
+    if (!isSameOrigin || !documentLoader->request().isSameSite())
+        return nullptr;
+
+    RefPtr<NavigationHistoryEntry> oldEntry;
+    if (frame()->document() && frame()->document()->settings().navigationAPIEnabled())
+        oldEntry = currentEntry();
+    else if (RefPtr currentItem = frame()->checkedHistory()->currentItem())
+        oldEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *currentItem);
+
+    RefPtr<NavigationHistoryEntry> newEntry;
+    if (*type == NavigationNavigationType::Reload) {
+        newEntry = oldEntry;
+    } else if (*type == NavigationNavigationType::Traverse) {
+        ASSERT(newItem);
+        // FIXME: For a traverse navigation, we should be identifying the right existing history
+        // entry for 'newEntry' instead of allocating a new one.
+        if (newItem)
+            newEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *newItem);
+    } else {
+        ASSERT(newItem);
+        if (newItem)
+            newEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *newItem);
+    }
+
+    if (newEntry)
+        return NavigationActivation::create(*type, newEntry.releaseNonNull(), WTFMove(oldEntry));
+    return nullptr;
+}
+
 const Vector<Ref<NavigationHistoryEntry>>& Navigation::entries() const
 {
     static NeverDestroyed<Vector<Ref<NavigationHistoryEntry>>> emptyEntries;
