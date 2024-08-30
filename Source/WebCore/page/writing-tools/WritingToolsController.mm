@@ -104,7 +104,7 @@ String WritingToolsController::plainText(const SimpleRange& range)
 
 #pragma mark - Static utility helper methods.
 
-static std::optional<SimpleRange> contextRangeForSession(const Document& document, const std::optional<WritingTools::Session>& session)
+static std::optional<SimpleRange> contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
 {
     // If the selection is a range, the range of the context should be the range of the paragraph
     // surrounding the selection range, unless such a range is empty.
@@ -131,6 +131,9 @@ static std::optional<SimpleRange> contextRangeForSession(const Document& documen
                 return paragraphRange;
         }
     }
+
+    if (selection.isNone())
+        return makeRangeSelectingNodeContents(document);
 
     auto startOfFirstEditableContent = startOfEditableContent(selection.start());
     auto endOfLastEditableContent = endOfEditableContent(selection.end());
@@ -188,7 +191,7 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     auto selectedTextRange = document->selection().selection().firstRange();
 
     auto attributedStringFromRange = editingAttributedString(*contextRange, { IncludedElement::Images, IncludedElement::Attachments, IncludedElement::PreservedContent });
-    auto selectedTextCharacterRange = characterRange(*contextRange, *selectedTextRange);
+    auto selectedTextCharacterRange = selectedTextRange ? characterRange(*contextRange, *selectedTextRange) : CharacterRange { };
 
     if (attributedStringFromRange.string.isEmpty())
         RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
