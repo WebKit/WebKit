@@ -50,7 +50,7 @@ private:
     void processBidiContent(const LineLayoutResult&, InlineDisplay::Boxes&);
     void collectInkOverflowForInlineBoxes(InlineDisplay::Boxes&);
     void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&);
-    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
+    void truncateForEllipsisPolicy(LineEndingTruncationPolicy, const LineLayoutResult&, InlineDisplay::Boxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
@@ -93,7 +93,7 @@ private:
     const LineBox& m_lineBox;
     const InlineDisplay::Line& m_displayLine;
     IntSize m_initialContaingBlockSize;
-    // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
+    // FIXME: This should take DisplayLine::isFullyTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
     bool m_hasSeenRubyBase { false };

@@ -75,7 +75,7 @@ public:
     bool isHorizontal() const { return m_isHorizontal; }
     bool isLeftToRightInlineDirection() const { return m_isLeftToRightDirection; }
 
-    bool isTruncatedInBlockDirection() const { return m_isTruncatedInBlockDirection; }
+    bool isFullyTruncatedInBlockDirection() const { return m_isFullyTruncatedInBlockDirection; }
 
     bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
     std::optional<FloatRect> ellipsisVisualRect() const { return m_ellipsisVisualRect; }
@@ -130,7 +130,7 @@ private:
     bool m_isLeftToRightDirection : 1 { true };
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };
-    bool m_isTruncatedInBlockDirection : 1 { false };
+    bool m_isFullyTruncatedInBlockDirection : 1 { false };
     bool m_hasContentAfterEllipsisBox : 1 { false };
     // This is visual rect ignoring block direction.
     std::optional<FloatRect> m_ellipsisVisualRect { };
@@ -148,7 +148,7 @@ inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxR
     , m_baselineType(baselineType)
     , m_isLeftToRightDirection(isLeftToRightDirection)
     , m_isHorizontal(isHorizontal)
-    , m_isTruncatedInBlockDirection(isTruncatedInBlockDirection)
+    , m_isFullyTruncatedInBlockDirection(isTruncatedInBlockDirection)
 {
 }
 
@@ -175,7 +175,7 @@ inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMod
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
-    if (m_isTruncatedInBlockDirection)
+    if (m_isFullyTruncatedInBlockDirection)
         return { };
     if (!hasEllipsis() || hasContentAfterEllipsisBox())
         return m_inkOverflow;

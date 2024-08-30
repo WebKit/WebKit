@@ -41,7 +41,7 @@ public:
 
     InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 
-    static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy, const InlineDisplay::Line&, InlineDisplay::Boxes&, bool isLastLineWithInlineContent);
+    static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingTruncationPolicy, const InlineDisplay::Line&, InlineDisplay::Boxes&, bool isLastLineWithInlineContent);
     static void addLineClampTrailingLinkBoxIfApplicable(const InlineFormattingContext&, const InlineLayoutState&, InlineDisplay::Content&);
 
 private:

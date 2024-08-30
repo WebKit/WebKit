@@ -32,12 +32,10 @@ namespace Layout {
 
 class InlineItem;
 
-enum class LineEndingEllipsisPolicy : uint8_t {
-    NoEllipsis,
+enum class LineEndingTruncationPolicy : uint8_t {
+    NoTruncation,
     WhenContentOverflowsInInlineDirection,
-    WhenContentOverflowsInBlockDirection,
-    // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
-    Always
+    WhenContentOverflowsInBlockDirection
 };
 
 struct ExpansionInfo {
