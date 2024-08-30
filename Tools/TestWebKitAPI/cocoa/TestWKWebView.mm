@@ -135,6 +135,11 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigation];
 }
 
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName asStringWithBaseURL:(NSURL *)url
+{
+    [self synchronouslyLoadHTMLString:[NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil] baseURL:url];
+}
+
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences
 {
     [self loadTestPageNamed:pageName];

@@ -106,7 +106,7 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     [configuration _setAppHighlightsEnabled:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+    [webView synchronouslyLoadTestPageNamed:@"simple-image-overlay" asStringWithBaseURL:[NSURL URLWithString:@"http://webkit.org/simple-image-overlay.html"]];
     [webView stringByEvaluatingJavaScript:@"selectImageOverlay()"];
     [webView waitForNextPresentationUpdate];
 
@@ -115,7 +115,7 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote()]);
     EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote()]);
 
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageNamed:@"simple" asStringWithBaseURL:[NSURL URLWithString:@"http://webkit.org/simple.html"]];
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
 
