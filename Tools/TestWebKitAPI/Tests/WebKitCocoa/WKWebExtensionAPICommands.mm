@@ -28,7 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
-#import <WebKit/WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionCommandPrivate.h>
 
 #if USE(APPKIT)
 #import <Carbon/Carbon.h>
@@ -135,6 +135,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"test-command");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌥⌘Z");
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagControl | NSEventModifierFlagShift)
         timestamp:0 windowNumber:0 context:nil characters:@"Á" charactersIgnoringModifiers:@"y" isARepeat:NO keyCode:kVK_ANSI_A];
@@ -142,6 +143,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"_execute_action");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌃⇧Y");
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"å" charactersIgnoringModifiers:@"a" isARepeat:NO keyCode:kVK_ANSI_A];

@@ -38,6 +38,7 @@
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPKIT)
+#import "AppKitSPI.h"
 #import <Carbon/Carbon.h>
 #endif
 
@@ -200,6 +201,69 @@ String WebExtensionCommand::shortcutString() const
         stringBuilder.append(key.convertToASCIIUppercase());
 
     return stringBuilder.toString();
+}
+
+String WebExtensionCommand::userVisibleShortcut() const
+{
+    auto flags = modifierFlags();
+    auto key = activationKey();
+
+    if (!flags || key.isEmpty())
+        return emptyString();
+
+#if PLATFORM(MAC)
+    NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key modifierMask:flags.toRaw()];
+    return shortcut.localizedDisplayName ?: @"";
+#else
+    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+        { ","_s, ","_s },
+        { "."_s, "."_s },
+        { " "_s, "Space"_s },
+        { @"\uF704", "F1"_s },
+        { @"\uF705", "F2"_s },
+        { @"\uF706", "F3"_s },
+        { @"\uF707", "F4"_s },
+        { @"\uF708", "F5"_s },
+        { @"\uF709", "F6"_s },
+        { @"\uF70A", "F7"_s },
+        { @"\uF70B", "F8"_s },
+        { @"\uF70C", "F9"_s },
+        { @"\uF70D", "F10"_s },
+        { @"\uF70E", "F11"_s },
+        { @"\uF70F", "F12"_s },
+        { @"\uF727", "Ins"_s },
+        { @"\uF728", @"⌫" },
+        { @"\uF729", @"↖︎" },
+        { @"\uF72B", @"↘︎" },
+        { @"\uF72C", @"⇞" },
+        { @"\uF72D", @"⇟" },
+        { @"\uF700", @"↑" },
+        { @"\uF701", @"↓" },
+        { @"\uF702", @"←" },
+        { @"\uF703", @"→" }
+    };
+
+    StringBuilder stringBuilder;
+
+    if (flags.contains(ModifierFlags::Control))
+        stringBuilder.append(String(@"⌃"));
+
+    if (flags.contains(ModifierFlags::Option))
+        stringBuilder.append(String(@"⌥"));
+
+    if (flags.contains(ModifierFlags::Shift))
+        stringBuilder.append(String(@"⇧"));
+
+    if (flags.contains(ModifierFlags::Command))
+        stringBuilder.append(String(@"⌘"));
+
+    if (auto specialKey = specialKeyMap.get().get(key); !specialKey.isEmpty())
+        stringBuilder.append(specialKey);
+    else
+        stringBuilder.append(key.convertToASCIIUppercase());
+
+    return stringBuilder.toString();
+#endif
 }
 
 CocoaMenuItem *WebExtensionCommand::platformMenuItem() const

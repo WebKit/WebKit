@@ -134,6 +134,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
     return _webExtensionCommand->shortcutString();
 }
 
+- (NSString *)_userVisibleShortcut
+{
+    return _webExtensionCommand->userVisibleShortcut();
+}
+
 #if USE(APPKIT)
 - (BOOL)_matchesEvent:(NSEvent *)event
 {
@@ -203,6 +208,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 #endif
 
 - (NSString *)_shortcut
+{
+    return nil;
+}
+
+- (NSString *)_userVisibleShortcut
 {
     return nil;
 }
