@@ -256,25 +256,25 @@ void VideoPresentationInterfaceIOS::doSetup()
 
     setupPlayerViewController();
 
-    UIViewController *playerViewController = this->playerViewController();
+    if (UIViewController *playerViewController = this->playerViewController()) {
+        if (m_viewController) {
+            [m_viewController addChildViewController:playerViewController];
+            [[m_viewController view] addSubview:playerViewController.view];
+            [playerViewController didMoveToParentViewController:m_viewController.get()];
+        } else
+            [m_parentView addSubview:playerViewController.view];
 
-    if (m_viewController) {
-        [m_viewController addChildViewController:playerViewController];
-        [[m_viewController view] addSubview:playerViewController.view];
-        [playerViewController didMoveToParentViewController:m_viewController.get()];
-    } else
-        [m_parentView addSubview:playerViewController.view];
+        playerViewController.view.frame = [m_parentView convertRect:m_inlineRect toView:playerViewController.view.superview];
+        playerViewController.view.backgroundColor = clearUIColor();
+        playerViewController.view.autoresizingMask = (UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin);
 
-    playerViewController.view.frame = [m_parentView convertRect:m_inlineRect toView:playerViewController.view.superview];
-    playerViewController.view.backgroundColor = clearUIColor();
-    playerViewController.view.autoresizingMask = (UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin);
+        [playerViewController.view setNeedsLayout];
+        [playerViewController.view layoutIfNeeded];
 
-    [playerViewController.view setNeedsLayout];
-    [playerViewController.view layoutIfNeeded];
-
-    if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby) {
-        [m_window setHidden:YES];
-        [playerViewController.view setHidden:YES];
+        if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby) {
+            [m_window setHidden:YES];
+            [playerViewController.view setHidden:YES];
+        }
     }
 
     [CATransaction commit];

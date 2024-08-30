@@ -31,11 +31,14 @@ class NullVideoPresentationInterface;
 class VideoPresentationInterfaceAVKit;
 class VideoPresentationInterfaceIOS;
 class VideoPresentationInterfaceMac;
+class VideoPresentationInterfaceTVOS;
 
 #if PLATFORM(WATCHOS)
 using PlatformVideoPresentationInterface = NullVideoPresentationInterface;
 #elif ENABLE(LINEAR_MEDIA_PLAYER)
 using PlatformVideoPresentationInterface = VideoPresentationInterfaceIOS;
+#elif PLATFORM(APPLETV)
+using PlatformVideoPresentationInterface = VideoPresentationInterfaceTVOS;
 #elif PLATFORM(IOS_FAMILY)
 using PlatformVideoPresentationInterface = VideoPresentationInterfaceAVKit;
 #elif PLATFORM(MAC)
