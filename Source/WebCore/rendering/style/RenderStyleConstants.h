@@ -1041,6 +1041,11 @@ enum class RubyAlign : uint8_t {
     SpaceAround
 };
 
+enum class RubyOverhang : bool {
+    Auto,
+    None
+};
+
 #if ENABLE(DARK_MODE_CSS)
 enum class ColorScheme : uint8_t {
     Light = 1 << 0,
@@ -1299,6 +1304,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ReflectionDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, Resize);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyAlign);
+WTF::TextStream& operator<<(WTF::TextStream&, RubyOverhang);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);

@@ -195,6 +195,7 @@ enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class RubyAlign : uint8_t;
+enum class RubyOverhang : bool;
 enum class SVGPaintType : uint8_t;
 enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
@@ -906,6 +907,7 @@ public:
 
     inline RubyPosition rubyPosition() const;
     inline RubyAlign rubyAlign() const;
+    inline RubyOverhang rubyOverhang() const;
 
 #if ENABLE(DARK_MODE_CSS)
     inline StyleColorScheme colorScheme() const;
@@ -1532,6 +1534,7 @@ public:
 
     inline void setRubyPosition(RubyPosition);
     inline void setRubyAlign(RubyAlign);
+    inline void setRubyOverhang(RubyOverhang);
 
 #if ENABLE(DARK_MODE_CSS)
     inline void setColorScheme(StyleColorScheme);
@@ -2021,6 +2024,7 @@ public:
     static constexpr OptionSet<TextEmphasisPosition> initialTextEmphasisPosition();
     static constexpr RubyPosition initialRubyPosition();
     static constexpr RubyAlign initialRubyAlign();
+    static constexpr RubyOverhang initialRubyOverhang();
     static constexpr OptionSet<LineBoxContain> initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();

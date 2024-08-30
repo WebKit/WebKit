@@ -123,6 +123,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , rubyAlign(static_cast<unsigned>(RenderStyle::initialRubyAlign()))
+    , rubyOverhang(static_cast<unsigned>(RenderStyle::initialRubyOverhang()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
@@ -218,6 +219,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textDecorationSkipInk(o.textDecorationSkipInk)
     , rubyPosition(o.rubyPosition)
     , rubyAlign(o.rubyAlign)
+    , rubyOverhang(o.rubyOverhang)
     , textZoom(o.textZoom)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(o.touchCalloutEnabled)
@@ -346,6 +348,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textUnderlinePosition == o.textUnderlinePosition
         && rubyPosition == o.rubyPosition
         && rubyAlign == o.rubyAlign
+        && rubyOverhang == o.rubyOverhang
         && textZoom == o.textZoom
         && lineSnap == o.lineSnap
         && lineAlign == o.lineAlign

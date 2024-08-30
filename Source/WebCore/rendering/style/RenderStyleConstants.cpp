@@ -955,6 +955,15 @@ TextStream& operator<<(TextStream& ts, RubyAlign alignment)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, RubyOverhang overhang)
+{
+    switch (overhang) {
+    case RubyOverhang::Auto: ts << "auto"; break;
+    case RubyOverhang::None: ts << "none"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ScrollSnapAxis axis)
 {
     switch (axis) {

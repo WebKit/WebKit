@@ -274,6 +274,7 @@ PASS right
 PASS rotate
 PASS row-gap
 PASS ruby-align
+PASS ruby-overhang
 PASS rx
 PASS ry
 PASS scale

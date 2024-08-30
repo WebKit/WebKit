@@ -5600,6 +5600,22 @@
             },
             "status": "in development"
         },
+        "ruby-overhang": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssRubyOverhangEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-ruby",
+                "url": "https://www.w3.org/TR/css-ruby-1/#ruby-overhang"
+            },
+            "status": "in development"
+        },
         "rx": {
             "values": [
                 "auto"

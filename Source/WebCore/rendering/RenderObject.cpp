@@ -1473,6 +1473,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         stream << "[" << renderElement->layoutIdentifier() << "]";
     else
         stream << "[n/a]";
+    stream << "overhang:]" << (int)style().rubyOverhang();
     stream.nextLine();
 }
 
