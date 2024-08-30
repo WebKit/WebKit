@@ -31,6 +31,8 @@ NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/cocoa/NetworkTaskCocoa.mm
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 
+NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm
+
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/mac/WebCookieManagerMac.mm

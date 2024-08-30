@@ -7214,6 +7214,11 @@ imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any
 imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/csp-pass.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/csp-fail.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-closed-webtransport-connection.https.window.html [ Skip ]
 
 # These tests are slow and sometime time out in debug.
 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?1-2 [ Skip ]

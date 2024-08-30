@@ -1964,7 +1964,6 @@
 		A14F9B762B68CA6C00AD9C56 /* WKSLinearMediaPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = A14F9B742B68CA6B00AD9C56 /* WKSLinearMediaPlayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14F9B772B68CA6C00AD9C56 /* LinearMediaPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F9B752B68CA6B00AD9C56 /* LinearMediaPlayer.swift */; };
 		A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */ = {isa = PBXBuildFile; fileRef = A15EEDE41E301CEE000069B0 /* WKPasswordView.h */; };
-		A16E66752581A44800EE1749 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */; };
 		A1798B3E222D97A2000764BD /* PaymentAuthorizationPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */; };
 		A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */; };
@@ -2878,13 +2877,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B9FC59C28A28F87007570E7;
 			remoteInfo = WebKitPlatform;
-		};
-		A15797402582AE7300528236 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit;
 		};
 		BC8283D416B4C01F00A278FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8272,6 +8264,7 @@
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
+		FA13529B2C7E70140049C1BC /* NetworkTransportSessionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkTransportSessionCocoa.mm; sourceTree = "<group>"; };
 		FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SandboxExtension.serialization.in; sourceTree = "<group>"; };
 		FA1ED3F32B76B90700C90F3B /* CoreIPCCFType.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFType.mm; sourceTree = "<group>"; };
 		FA22FA122C1241D5006A0F61 /* Site.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Site.h; sourceTree = "<group>"; };
@@ -8442,14 +8435,6 @@
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
 				37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A16E65FD2581930800EE1749 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A16E66752581A44800EE1749 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15878,9 +15863,18 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		FA13529A2C7E6FC00049C1BC /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				FA13529B2C7E70140049C1BC /* NetworkTransportSessionCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		FA651BA82AA3CBEE00747576 /* webtransport */ = {
 			isa = PBXGroup;
 			children = (
+				FA13529A2C7E6FC00049C1BC /* cocoa */,
 				FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */,
 				FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */,
 				FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */,
@@ -17753,7 +17747,6 @@
 				2D9FB21B237523830049F936 /* Sources */,
 				2D9FB21E237523830049F936 /* Frameworks */,
 				2D9FB221237523830049F936 /* Resources */,
-				A15797632582B1A500528236 /* Copy Plug-ins */,
 				2D9FB222237523830049F936 /* Unlock keychain */,
 				2D9FB223237523830049F936 /* Process GPU entitlements */,
 				6577FFBF2769C7550011AEC8 /* Create Symlink to Alt Root Path */,
@@ -17764,7 +17757,6 @@
 			dependencies = (
 				2D9FB217237523830049F936 /* PBXTargetDependency */,
 				2D9FB219237523830049F936 /* PBXTargetDependency */,
-				A15797432582AE9B00528236 /* PBXTargetDependency */,
 			);
 			name = GPU;
 			productName = GPU;
@@ -17778,7 +17770,6 @@
 				372EBB3B2017E64300085064 /* Sources */,
 				372EBB3D2017E64300085064 /* Frameworks */,
 				372EBB402017E64300085064 /* Resources */,
-				A1EF36BF2581F73B0090B02A /* Copy Plug-ins */,
 				7AFCBD5520B8917D00F55C9C /* Process WebContent entitlements */,
 				6577FFBD2769C70F0011AEC8 /* Create Symlink to Alt Root Path */,
 			);
@@ -17787,7 +17778,6 @@
 			dependencies = (
 				E1AC2E3420F7B99E00B0897D /* PBXTargetDependency */,
 				372EBB392017E64300085064 /* PBXTargetDependency */,
-				A1EF36D12581F7A70090B02A /* PBXTargetDependency */,
 			);
 			name = WebContent.Development;
 			productName = WebKit2Service;
@@ -17941,7 +17931,6 @@
 				7A7E8DE82748392500DCC97A /* Sources */,
 				7A7E8DEB2748392500DCC97A /* Frameworks */,
 				7A7E8DEE2748392500DCC97A /* Resources */,
-				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
 				7A7E8DF22748392500DCC97A /* Process WebContent entitlements */,
 				6577FFBC2769C6D90011AEC8 /* Create Symlink to Alt Root Path */,
 				3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */,
@@ -17951,7 +17940,6 @@
 			dependencies = (
 				7A7E8DE22748392500DCC97A /* PBXTargetDependency */,
 				7A7E8DE42748392500DCC97A /* PBXTargetDependency */,
-				7A7E8DE62748392500DCC97A /* PBXTargetDependency */,
 			);
 			name = WebContent.CaptivePortal;
 			productName = WebKit2Service;
@@ -18030,7 +18018,6 @@
 				BC3DE46215A91763008D26FC /* Sources */,
 				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
-				A1EF36D42581F7D70090B02A /* Copy Plug-ins */,
 				7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */,
 				4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */,
 				6577FFBB2769C6AA0011AEC8 /* Create Symlink to Alt Root Path */,
@@ -18041,7 +18028,6 @@
 			dependencies = (
 				E1AC2E3220F7B99B00B0897D /* PBXTargetDependency */,
 				375E0633191EA909004E3CAF /* PBXTargetDependency */,
-				A1EF36D32581F7C50090B02A /* PBXTargetDependency */,
 			);
 			name = WebContent;
 			productName = WebKit2Service;
@@ -18123,9 +18109,6 @@
 						LastSwiftMigration = 1300;
 					};
 					942DB232257EE6D4009BD80A = {
-						CreatedOnToolsVersion = 12.4;
-					};
-					A16E65FF2581930800EE1749 = {
 						CreatedOnToolsVersion = 12.4;
 					};
 					CD0C36D52639D39A004E35D8 = {
@@ -20027,13 +20010,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A16E65FC2581930800EE1749 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BC3DE46215A91763008D26FC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -20230,11 +20206,6 @@
 			isa = PBXTargetDependency;
 			target = 7B9FC59C28A28F87007570E7 /* WebKitPlatform */;
 			targetProxy = 7B9FC5BC28A5233B007570E7 /* PBXContainerItemProxy */;
-		};
-		A15797412582AE7300528236 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
-			targetProxy = A15797402582AE7300528236 /* PBXContainerItemProxy */;
 		};
 		BC8283D516B4C01F00A278FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

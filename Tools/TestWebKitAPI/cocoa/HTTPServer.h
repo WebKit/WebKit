@@ -49,6 +49,7 @@ OBJC_CLASS NSURLRequest;
 namespace TestWebKitAPI {
 
 class Connection;
+class WebTransportServer;
 struct HTTPResponse;
 
 template<typename PromiseType>
@@ -122,6 +123,7 @@ private:
     Protocol m_protocol { Protocol::Http };
 };
 
+// FIXME: Move this to its own header and mm and probably rename to NetworkConnection.
 class Connection {
 public:
     void send(String&&, CompletionHandler<void()>&& = nullptr) const;
@@ -140,6 +142,7 @@ public:
 
 private:
     friend class HTTPServer;
+    friend class WebTransportServer;
     Connection(nw_connection_t connection)
         : m_connection(connection) { }
 

@@ -359,6 +359,7 @@ Tests/WebKitCocoa/WebProcessTerminate.mm
 Tests/WebKitCocoa/WebPushDaemon.mm
 Tests/WebKitCocoa/WebSQLBasics.mm
 Tests/WebKitCocoa/WebSocket.mm
+Tests/WebKitCocoa/WebTransport.mm
 Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm
 Tests/WebKitCocoa/WebsitePolicies.mm
 Tests/WebKitCocoa/WritingSuggestions.mm
