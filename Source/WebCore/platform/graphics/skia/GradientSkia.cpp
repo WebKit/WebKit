@@ -51,22 +51,51 @@ inline SkScalar webCoreDoubleToSkScalar(double d)
 static SkGradientShader::Interpolation toSkiaInterpolation(const ColorInterpolationMethod& method)
 {
     SkGradientShader::Interpolation interpolation;
+
     WTF::switchOn(method.colorSpace,
+        [&] (const ColorInterpolationMethod::HSL&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kHSL;
+        },
+        [&] (const ColorInterpolationMethod::HWB&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kHWB;
+        },
+        [&] (const ColorInterpolationMethod::LCH&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kLCH;
+        },
+        [&] (const ColorInterpolationMethod::Lab&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kLab;
+        },
+        [&] (const ColorInterpolationMethod::OKLCH&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kOKLCH;
+        },
+        [&] (const ColorInterpolationMethod::OKLab&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kOKLab;
+        },
         [&] (const ColorInterpolationMethod::SRGB&) {
             interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kSRGB;
-            switch (method.alphaPremultiplication) {
-            case AlphaPremultiplication::Premultiplied:
-                interpolation.fInPremul = SkGradientShader::Interpolation::InPremul::kYes;
-                break;
-            case AlphaPremultiplication::Unpremultiplied:
-                interpolation.fInPremul = SkGradientShader::Interpolation::InPremul::kNo;
-                break;
-            }
+        },
+        [&] (const ColorInterpolationMethod::SRGBLinear&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kSRGBLinear;
+        },
+        [&] (const ColorInterpolationMethod::XYZD50&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kSRGBLinear;
+        },
+        [&] (const ColorInterpolationMethod::XYZD65&) {
+            interpolation.fColorSpace = SkGradientShader::Interpolation::ColorSpace::kSRGBLinear;
         },
         [&] (const auto&) {
-            // FIXME: support other color spaces.
-            notImplemented();
+            // FIXME: Support other color spaces once skia has support for them.
         });
+
+    switch (method.alphaPremultiplication) {
+    case AlphaPremultiplication::Premultiplied:
+        interpolation.fInPremul = SkGradientShader::Interpolation::InPremul::kYes;
+        break;
+    case AlphaPremultiplication::Unpremultiplied:
+        interpolation.fInPremul = SkGradientShader::Interpolation::InPremul::kNo;
+        break;
+    }
+
     return interpolation;
 }
 
