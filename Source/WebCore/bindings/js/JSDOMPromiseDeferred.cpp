@@ -326,4 +326,18 @@ void DeferredPromise::handleUncaughtException(CatchScope& scope, JSDOMGlobalObje
     reportException(&lexicalGlobalObject, exception);
 };
 
+std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document& document)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    return createPromiseAndWrapper(globalObject);
+}
+
+std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(JSDOMGlobalObject& globalObject)
+{
+    JSC::JSLockHolder lock(globalObject.vm());
+    RefPtr deferredPromise = DeferredPromise::create(globalObject);
+    Ref domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+    return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
+}
+
 } // namespace WebCore

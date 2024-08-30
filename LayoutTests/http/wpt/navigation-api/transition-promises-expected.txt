@@ -1,5 +1,7 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error
+CONSOLE MESSAGE: Unhandled Promise Rejection: UnknownError: Uncaught Error
+
+Harness Error (FAIL), message = Unhandled rejection: Uncaught Error
 
 PASS NavigationTransition finished promise is fulfilled on success
-FAIL NavigationTransition finished promise is rejected on error assert_unreached: Navigation should not succeed Reached unreachable code
+PASS NavigationTransition finished promise is rejected on error
 

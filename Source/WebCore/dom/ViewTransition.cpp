@@ -59,15 +59,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CapturedElement);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransitionParams);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransition);
 
-static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document& document)
-{
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
-    JSC::JSLockHolder lock(globalObject.vm());
-    RefPtr deferredPromise = DeferredPromise::create(globalObject);
-    Ref domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
-    return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
-}
-
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
