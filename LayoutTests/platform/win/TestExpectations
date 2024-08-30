@@ -18,7 +18,6 @@ contentfiltering [ Skip ]
 
 # CSS_IMAGE_ORIENTATION is disabled
 fast/css/image-orientation [ Skip ]
-imported/blink/fast/css/image-orientation [ Skip ]
 
 # TODO EXIF-resolution is not supported
 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
@@ -494,6 +493,11 @@ compositing/tiling/tiled-reflection-inwindow.html [ Skip ]
 # UIHelper.initiateUserScroll() doesn't resolve the promise
 http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ] # Timeout
 
+# WebKitTestRunner: test fonts are not available in GPU process
+webkit.org/b/278895 fast/canvas/canvas-blending-text.html [ Skip ]
+webkit.org/b/278895 fast/text/user-installed-canvas.html [ Skip ]
+webkit.org/b/278895 http/tests/canvas/canvas-slow-font-loading.html [ Skip ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # image diffs off by 0.0x%
@@ -715,7 +719,6 @@ http/tests/download/anchor-load-after-download.html [ Skip ]
 
 http/tests/cache-storage [ Skip ]
 
-http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 http/tests/canvas/color-fonts [ Skip ]
 
 http/wpt/clear-site-data/partitioning.html [ Skip ] # Not supported yet. This test is slow.
@@ -4127,7 +4130,6 @@ editing/selection/shift-click-includes-existing-selection.html [ Failure ]
 editing/selection/shift-click.html [ Failure ]
 editing/selection/user-select-all-with-shift.html [ Failure ]
 editing/style/preserve-selection-direction.html [ Failure ]
-fast/canvas/canvas-blending-text.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
 fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
@@ -4162,7 +4164,6 @@ fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ Skip ] # I
 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 fast/text/international/bdo-bidi-width.html [ ImageOnlyFailure ]
-fast/text/user-installed-canvas.html [ ImageOnlyFailure ]
 
 fast/events/wheel/wheel-event-destroys-frame.html [ Skip ] # Timeout
 fast/text/install-font-style-recalc.html [ Skip ] # Timeout
