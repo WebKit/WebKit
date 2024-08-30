@@ -173,9 +173,11 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setReadDependency(const ResourceRef &resource, bool isRenderCommand);
     void setReadDependency(Resource *resourcePtr, bool isRenderCommand);
 
+#if ANGLE_MTL_EVENT_AVAILABLE
     // Queues the event and returns the current command buffer queue serial.
     uint64_t queueEventSignal(id<MTLEvent> event, uint64_t value);
     void serverWaitEvent(id<MTLEvent> event, uint64_t value);
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void insertDebugSign(const std::string &marker);
     void pushDebugGroup(const std::string &marker);
@@ -206,7 +208,9 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void forceEndingAllEncoders();
 
     void setPendingEvents();
+#if ANGLE_MTL_EVENT_AVAILABLE
     void setEventImpl(id<MTLEvent> event, uint64_t value);
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void pushDebugGroupImpl(const std::string &marker);
     void popDebugGroupImpl();
@@ -229,12 +233,16 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     mutable std::mutex mLock;
 
     std::vector<std::string> mPendingDebugSigns;
+
+#if ANGLE_MTL_EVENT_AVAILABLE
     struct PendingEvent
     {
         AutoObjCPtr<id<MTLEvent>> event;
         uint64_t signalValue = 0;
     };
     std::vector<PendingEvent> mPendingSignalEvents;
+#endif  // ANGLE_MTL_EVENT_AVAILABLE
+
     std::vector<std::string> mDebugGroups;
 
     angle::HashSet<id> mResourceList;
@@ -399,9 +407,7 @@ struct RenderCommandEncoderStates
 class RenderCommandEncoder final : public CommandEncoder
 {
   public:
-    RenderCommandEncoder(CommandBuffer *cmdBuffer,
-                         const OcclusionQueryPool &queryPool,
-                         bool emulateDontCareLoadOpWithRandomClear);
+    RenderCommandEncoder(CommandBuffer *cmdBuffer, const OcclusionQueryPool &queryPool);
     ~RenderCommandEncoder() override;
 
     // override CommandEncoder
@@ -546,15 +552,15 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderCommandEncoder &useResource(const BufferRef &resource,
                                       MTLResourceUsage usage,
-                                      MTLRenderStages stages);
+                                      mtl::RenderStages states);
 
-    RenderCommandEncoder &memoryBarrier(MTLBarrierScope scope,
-                                        MTLRenderStages after,
-                                        MTLRenderStages before);
+    RenderCommandEncoder &memoryBarrier(mtl::BarrierScope,
+                                        mtl::RenderStages after,
+                                        mtl::RenderStages before);
 
     RenderCommandEncoder &memoryBarrierWithResource(const BufferRef &resource,
-                                                    MTLRenderStages after,
-                                                    MTLRenderStages before);
+                                                    mtl::RenderStages after,
+                                                    mtl::RenderStages before);
 
     RenderCommandEncoder &setColorStoreAction(MTLStoreAction action, uint32_t colorAttachmentIndex);
     // Set store action for every color attachment.
@@ -638,8 +644,6 @@ class RenderCommandEncoder final : public CommandEncoder
 
     bool mPipelineStateSet = false;
     uint64_t mSerial       = 0;
-
-    const bool mEmulateDontCareLoadOpWithRandomClear;
 };
 
 class BlitCommandEncoder final : public CommandEncoder

@@ -117,6 +117,8 @@ struct NDRange
             {
                 localWorkSize[dim] = localWorkSizeIn[dim];
             }
+            ASSERT(globalWorkSize[dim] != 0);
+            ASSERT(localWorkSize[dim] != 0);
         }
     }
 

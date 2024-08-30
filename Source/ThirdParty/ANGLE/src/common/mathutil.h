@@ -717,7 +717,7 @@ class Range
 
     T length() const { return (empty() ? 0 : (mHigh - mLow)); }
 
-    bool intersects(const Range<T> &other) const
+    bool intersects(Range<T> other)
     {
         if (mLow <= other.mLow)
         {
@@ -726,19 +726,6 @@ class Range
         else
         {
             return mLow < other.mHigh;
-        }
-    }
-
-    void merge(const Range<T> &other)
-    {
-        if (mLow > other.mLow)
-        {
-            mLow = other.mLow;
-        }
-
-        if (mHigh < other.mHigh)
-        {
-            mHigh = other.mHigh;
         }
     }
 

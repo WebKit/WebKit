@@ -36,7 +36,6 @@ namespace vk
 class SyncHelper;
 }  // namespace vk
 
-class ConversionBuffer;
 class ProgramExecutableVk;
 class WindowSurfaceVk;
 class OffscreenSurfaceVk;
@@ -888,7 +887,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                          VkDeviceSize *offset,
                                          uint8_t **dataPtr);
     // Suballocate a buffer with alignment good for shader storage or copyBuffer.
-    angle::Result initBufferForVertexConversion(ConversionBuffer *conversionBuffer,
+    angle::Result initBufferForVertexConversion(vk::BufferHelper *bufferHelper,
                                                 size_t size,
                                                 vk::MemoryHostVisibility hostVisibility);
 

@@ -24,7 +24,7 @@
 #if defined(NDEBUG) && !defined(ANGLE_METAL_FRAME_CAPTURE)
 #    define ANGLE_METAL_FRAME_CAPTURE_ENABLED 0
 #else
-#    define ANGLE_METAL_FRAME_CAPTURE_ENABLED 1
+#    define ANGLE_METAL_FRAME_CAPTURE_ENABLED ANGLE_WITH_MODERN_METAL_API
 #endif
 
 namespace rx
@@ -263,7 +263,7 @@ angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
 
     // Use loadAction=clear
     mtl::RenderPassDesc rpDesc;
-    rpDesc.rasterSampleCount = mColorTexture->samples();
+    rpDesc.sampleCount = mColorTexture->samples();
 
     switch (binding)
     {

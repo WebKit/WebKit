@@ -178,8 +178,9 @@ class DisplayMtl : public DisplayImpl
     {
         return mFormatTable.getVertexFormat(angleFormatId, tightlyPacked);
     }
-
+#if ANGLE_MTL_EVENT_AVAILABLE
     mtl::AutoObjCObj<MTLSharedEventListener> getOrCreateSharedEventListener();
+#endif
 
   protected:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
@@ -216,7 +217,9 @@ class DisplayMtl : public DisplayImpl
 
     // Built-in Shaders
     mtl::AutoObjCPtr<id<MTLLibrary>> mDefaultShaders;
+#if ANGLE_MTL_EVENT_AVAILABLE
     mtl::AutoObjCObj<MTLSharedEventListener> mSharedEventListener;
+#endif
 
     mutable bool mCapsInitialized;
     mutable gl::TextureCapsMap mNativeTextureCaps;

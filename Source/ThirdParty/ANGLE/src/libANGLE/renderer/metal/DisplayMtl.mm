@@ -172,7 +172,9 @@ void DisplayMtl::terminate()
     mCmdQueue.reset();
     mDefaultShaders = nil;
     mMetalDevice    = nil;
+#if ANGLE_MTL_EVENT_AVAILABLE
     mSharedEventListener = nil;
+#endif
     mCapsInitialized = false;
 
     mMetalDeviceVendorId = 0;
@@ -961,7 +963,13 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.stencilTexturingANGLE         = true;
     mNativeExtensions.copyTextureCHROMIUM           = true;
     mNativeExtensions.copyCompressedTextureCHROMIUM = false;
-    mNativeExtensions.textureMirrorClampToEdgeEXT   = true;
+
+#if !ANGLE_PLATFORM_WATCHOS
+    if (@available(iOS 14.0, macOS 10.11, macCatalyst 14.0, tvOS 16.0, *))
+    {
+        mNativeExtensions.textureMirrorClampToEdgeEXT = true;
+    }
+#endif
 
     if (ANGLE_APPLE_AVAILABLE_XCI(10.11, 13.1, 11.0))
     {
@@ -985,11 +993,8 @@ void DisplayMtl::initializeExtensions() const
     // regular 2D textures with Metal, and causes other problems such as
     // breaking the SPIR-V Metal compiler.
 
-    mNativeExtensions.multisampledRenderToTextureEXT =
-        (supportsAppleGPUFamily(1) ||
-         mFeatures.enableMultisampledRenderToTextureOnNonTilers.enabled) &&
-        mFeatures.hasShaderStencilOutput.enabled && mFeatures.hasDepthAutoResolve.enabled &&
-        mFeatures.hasStencilAutoResolve.enabled;
+    // Disabled due to corrupted WebGL rendering. http://crbug.com/358957665
+    mNativeExtensions.multisampledRenderToTextureEXT = false;
 
     // Enable EXT_blend_minmax
     mNativeExtensions.blendMinmaxEXT = true;
@@ -1434,19 +1439,31 @@ bool DisplayMtl::supportsMetal2_2() const
 
 bool DisplayMtl::supports32BitFloatFiltering() const
 {
-    if (@available(macOS 11.0, *))
+#if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000) ||  \
+     (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140000) || \
+     (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000) || TARGET_OS_VISION)
+    if (@available(macOS 11.0, macCatalyst 14.0, iOS 14.0, tvOS 16.0, *))
     {
         return [mMetalDevice supports32BitFloatFiltering];
     }
+#endif
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     return true;  // Always true on old macOS
+#else
+    return false;  // Always false everywhere else
+#endif
 }
 
 bool DisplayMtl::supportsBCTextureCompression() const
 {
-    if (@available(macOS 11.0, macCatalyst 16.4, iOS 16.4, *))
+#if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000) ||  \
+     (TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400) || \
+     (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160400) || TARGET_OS_VISION)
+    if (@available(macOS 11.0, macCatalyst 16.4, iOS 16.4, tvOS 16.4, *))
     {
         return [mMetalDevice supportsBCTextureCompression];
     }
+#endif
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     return true;  // Always true on old macOS
 #else
@@ -1540,6 +1557,7 @@ bool DisplayMtl::isSimulator() const
     return TARGET_OS_SIMULATOR;
 }
 
+#if ANGLE_MTL_EVENT_AVAILABLE
 mtl::AutoObjCObj<MTLSharedEventListener> DisplayMtl::getOrCreateSharedEventListener()
 {
     if (!mSharedEventListener)
@@ -1552,5 +1570,6 @@ mtl::AutoObjCObj<MTLSharedEventListener> DisplayMtl::getOrCreateSharedEventListe
     }
     return mSharedEventListener;
 }
+#endif
 
 }  // namespace rx

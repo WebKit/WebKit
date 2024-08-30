@@ -4064,7 +4064,6 @@ bool WebGLRenderingContextBase::validateForbiddenInternalFormats(ASCIILiteral fu
     case GraphicsContextGL::BGRA4_ANGLEX:
     case GraphicsContextGL::BGR5_A1_ANGLEX:
     case GraphicsContextGL::BGRA8_SRGB_ANGLEX:
-    case GraphicsContextGL::RGBX8_SRGB_ANGLEX:
     case GraphicsContextGL::BGRA_EXT:
     case GraphicsContextGL::DEPTH_COMPONENT32_OES:
     case GraphicsContextGL::BGRA8_EXT:

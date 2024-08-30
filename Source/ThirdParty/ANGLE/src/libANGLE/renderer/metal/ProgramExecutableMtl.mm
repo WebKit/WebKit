@@ -913,7 +913,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
         mCurrentShaderVariants[gl::ShaderType::Vertex] =
             &mVertexShaderVariants[pipelineDesc.rasterizationType];
 
-        const bool multisampledRendering = pipelineDesc.outputDescriptor.rasterSampleCount > 1;
+        const bool multisampledRendering = pipelineDesc.outputDescriptor.sampleCount > 1;
         const bool allowFragDepthWrite =
             pipelineDesc.outputDescriptor.depthAttachmentPixelFormat != 0;
         mCurrentShaderVariants[gl::ShaderType::Fragment] =
@@ -996,8 +996,7 @@ angle::Result ProgramExecutableMtl::getSpecializedShader(
     {
         // For fragment shader, we need to create 4 variants,
         // combining multisampled rendering and depth write enabled states.
-        const bool multisampledRendering =
-            renderPipelineDesc.outputDescriptor.rasterSampleCount > 1;
+        const bool multisampledRendering = renderPipelineDesc.outputDescriptor.sampleCount > 1;
         const bool allowFragDepthWrite =
             renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat != 0;
         shaderVariant = &mFragmentShaderVariants[PipelineParametersToFragmentShaderVariantIndex(
@@ -1277,7 +1276,7 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
 
         // Remove any other stages other than vertex and fragment.
         uint32_t stages = mArgumentBufferRenderStageUsages[bufferIndex] &
-                          (MTLRenderStageVertex | MTLRenderStageFragment);
+                          (mtl::kRenderStageVertex | mtl::kRenderStageFragment);
 
         if (stages == 0)
         {
@@ -1285,7 +1284,7 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
         }
 
         cmdEncoder->useResource(mLegalizedOffsetedUniformBuffers[bufferIndex].first,
-                                MTLResourceUsageRead, static_cast<MTLRenderStages>(stages));
+                                MTLResourceUsageRead, static_cast<mtl::RenderStages>(stages));
     }
 
     return angle::Result::Continue;
@@ -1426,8 +1425,8 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
                                                     offset:argumentBufferOffset];
 
     constexpr gl::ShaderMap<MTLRenderStages> kShaderStageMap = {
-        {gl::ShaderType::Vertex, MTLRenderStageVertex},
-        {gl::ShaderType::Fragment, MTLRenderStageFragment},
+        {gl::ShaderType::Vertex, mtl::kRenderStageVertex},
+        {gl::ShaderType::Fragment, mtl::kRenderStageFragment},
     };
 
     auto mtlRenderStage = kShaderStageMap[shaderType];

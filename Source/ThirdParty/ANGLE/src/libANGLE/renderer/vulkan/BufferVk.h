@@ -17,17 +17,9 @@
 
 namespace rx
 {
-typedef gl::Range<VkDeviceSize> RangeDeviceSize;
-
 // Conversion buffers hold translated index and vertex data.
-class ConversionBuffer
+struct ConversionBuffer
 {
-  public:
-    ConversionBuffer() : mEntireBufferDirty(true)
-    {
-        mData = std::make_unique<vk::BufferHelper>();
-        mDirtyRange.invalidate();
-    }
     ConversionBuffer(vk::Renderer *renderer,
                      VkBufferUsageFlags usageFlags,
                      size_t initialSize,
@@ -37,61 +29,11 @@ class ConversionBuffer
 
     ConversionBuffer(ConversionBuffer &&other);
 
-    bool dirty() const { return mEntireBufferDirty || !mDirtyRange.empty(); }
-    bool isEntireBufferDirty() const { return mEntireBufferDirty; }
-    void setEntireBufferDirty() { mEntireBufferDirty = true; }
-    void addDirtyBufferRange(const RangeDeviceSize &range) { mDirtyRange.merge(range); }
-    const RangeDeviceSize &getDirtyBufferRange() const { return mDirtyRange; }
-    void clearDirty()
-    {
-        mEntireBufferDirty = false;
-        mDirtyRange.invalidate();
-    }
-
-    bool valid() const { return mData && mData->valid(); }
-    vk::BufferHelper *getBuffer() const { return mData.get(); }
-    void release(vk::Renderer *renderer) { mData->release(renderer); }
-    void destroy(vk::Renderer *renderer) { mData->destroy(renderer); }
-
-  private:
-    // state value determines if we need to re-stream vertex data. mEntireBufferDirty indicates
-    // entire buffer data has changed. mDirtyRange should be ignored when mEntireBufferDirty is
-    // true. If mEntireBufferDirty is false, mDirtyRange is the ranges of data that has been
-    // modified. Note that there is no guarantee that ranges will not overlap.
-    bool mEntireBufferDirty;
-    RangeDeviceSize mDirtyRange;
+    // One state value determines if we need to re-stream vertex data.
+    bool dirty;
 
     // Where the conversion data is stored.
-    std::unique_ptr<vk::BufferHelper> mData;
-};
-
-class VertexConversionBuffer : public ConversionBuffer
-{
-  public:
-    struct CacheKey final
-    {
-        angle::FormatID formatID;
-        GLuint stride;
-        size_t offset;
-        bool hostVisible;
-    };
-
-    VertexConversionBuffer(vk::Renderer *renderer, const CacheKey &cacheKey);
-    ~VertexConversionBuffer();
-
-    VertexConversionBuffer(VertexConversionBuffer &&other);
-
-    bool match(const CacheKey &cacheKey) const
-    {
-        return mCacheKey.formatID == cacheKey.formatID && mCacheKey.stride == cacheKey.stride &&
-               mCacheKey.offset == cacheKey.offset && mCacheKey.hostVisible == cacheKey.hostVisible;
-    }
-
-    const CacheKey &getCacheKey() const { return mCacheKey; }
-
-  private:
-    // The conversion is identified by the triple of {format, stride, offset}.
-    CacheKey mCacheKey;
+    std::unique_ptr<vk::BufferHelper> data;
 };
 
 enum class BufferUpdateType
@@ -193,9 +135,11 @@ class BufferVk : public BufferImpl
                                     GLbitfield access,
                                     void **mapPtr);
 
-    VertexConversionBuffer *getVertexConversionBuffer(
-        vk::Renderer *renderer,
-        const VertexConversionBuffer::CacheKey &cacheKey);
+    ConversionBuffer *getVertexConversionBuffer(vk::Renderer *renderer,
+                                                angle::FormatID formatID,
+                                                GLuint stride,
+                                                size_t offset,
+                                                bool hostVisible);
 
   private:
     angle::Result updateBuffer(ContextVk *contextVk,
@@ -240,7 +184,6 @@ class BufferVk : public BufferImpl
                               BufferUpdateType updateType);
     angle::Result release(ContextVk *context);
     void dataUpdated();
-    void dataRangeUpdated(const RangeDeviceSize &range);
 
     angle::Result acquireBufferHelper(ContextVk *contextVk,
                                       size_t sizeInBytes,
@@ -257,6 +200,23 @@ class BufferVk : public BufferImpl
                                BufferUsageType usageType,
                                VkMemoryPropertyFlags memoryPropertyFlags,
                                size_t size) const;
+
+    struct VertexConversionBuffer : public ConversionBuffer
+    {
+        VertexConversionBuffer(vk::Renderer *renderer,
+                               angle::FormatID formatIDIn,
+                               GLuint strideIn,
+                               size_t offsetIn,
+                               bool hostVisible);
+        ~VertexConversionBuffer();
+
+        VertexConversionBuffer(VertexConversionBuffer &&other);
+
+        // The conversion is identified by the triple of {format, stride, offset}.
+        angle::FormatID formatID;
+        GLuint stride;
+        size_t offset;
+    };
 
     vk::BufferHelper mBuffer;
 
@@ -289,7 +249,8 @@ class BufferVk : public BufferImpl
     BufferUsageType mUsageType;
     // Similar as mIsMappedForWrite, this maybe different from mState's getMapOffset/getMapLength if
     // mapped from angle internal.
-    RangeDeviceSize mMappedRange;
+    VkDeviceSize mMappedOffset;
+    VkDeviceSize mMappedLength;
 };
 
 }  // namespace rx
