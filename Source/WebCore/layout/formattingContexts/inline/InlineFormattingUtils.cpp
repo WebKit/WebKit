@@ -608,6 +608,15 @@ LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(con
     return LineEndingTruncationPolicy::NoTruncation;
 }
 
+bool InlineFormattingUtils::shouldDiscardRemainingContentInBlockDirection(size_t numberOfLinesWithInlineContent) const
+{
+    auto lineClamp = formattingContext().layoutState().parentBlockLayoutState().lineClamp();
+    if (!lineClamp || !lineClamp->shouldDiscardOverflow)
+        return false;
+    ASSERT(!lineClamp->isLegacy);
+    return lineClamp->maximumLines == numberOfLinesWithInlineContent;
+}
+
 }
 }
 
