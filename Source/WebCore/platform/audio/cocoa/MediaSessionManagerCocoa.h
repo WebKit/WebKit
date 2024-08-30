@@ -75,10 +75,8 @@ public:
     static WEBCORE_EXPORT bool mediaSourceInlinePaintingEnabled();
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    static WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
-    static WEBCORE_EXPORT bool sampleBufferContentKeySessionSupportEnabled();
-#endif
+    static WEBCORE_EXPORT void setShouldUseModernAVContentKeySession(bool);
+    static WEBCORE_EXPORT bool shouldUseModernAVContentKeySession();
 
     static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch, double rate);
 

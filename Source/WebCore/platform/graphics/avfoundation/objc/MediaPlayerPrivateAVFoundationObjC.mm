@@ -992,8 +992,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
         [options setObject:nsTypes.get() forKey:AVURLAssetAllowableCaptionFormatsKey];
     }
 
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && PAL::canLoad_AVFoundation_AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests())
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (!MediaSessionManagerCocoa::shouldUseModernAVContentKeySession() && PAL::canLoad_AVFoundation_AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests())
         [options setObject:@YES forKey:AVURLAssetShouldEnableLegacyWebKitCompatibilityModeForContentKeyRequests];
 #endif
 

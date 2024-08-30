@@ -327,9 +327,9 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(*m_preferences.mediaSourceInlinePaintingEnabled);
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    if (updatePreference(m_preferences.sampleBufferContentKeySessionSupportEnabled, preferences.sampleBufferContentKeySessionSupportEnabled))
-        MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(*m_preferences.sampleBufferContentKeySessionSupportEnabled);
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    if (updatePreference(m_preferences.shouldUseModernAVContentKeySession, preferences.shouldUseModernAVContentKeySession))
+        MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(*m_preferences.shouldUseModernAVContentKeySession);
 #endif
 
 #if ENABLE(ALTERNATE_WEBM_PLAYER)

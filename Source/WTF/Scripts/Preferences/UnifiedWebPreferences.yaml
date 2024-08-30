@@ -5888,25 +5888,6 @@ SafeBrowsingEnabled:
     WebKit:
       default: true
 
-SampleBufferContentKeySessionSupportEnabled:
-  type: bool
-  status: unstable
-  category: media
-  humanReadableName: "ContentKeySession support for SampleBuffer Renderers"
-  humanReadableDescription: "ContentKeySession support for SampleBuffer Renderers Enabled"
-  webcoreOnChange: sampleBufferContentKeySessionSupportEnabledChanged
-  condition: HAVE(AVCONTENTKEYSPECIFIER)
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": true
-      default: false
-    WebKit:
-      "PLATFORM(IOS_FAMILY)": true
-      default: false
-    WebCore:
-      "PLATFORM(IOS_FAMILY)": true
-      default: false
-
 SampledPageTopColorMaxDifference:
   type: double
   status: embedder
@@ -6501,6 +6482,22 @@ ShouldTakeNearSuspendedAssertions:
       default: true
     WebKit:
       default: defaultShouldTakeNearSuspendedAssertion()
+    WebCore:
+      default: true
+
+ShouldUseModernAVContentKeySession:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Modern AVContentKeySession"
+  humanReadableDescription: "Use modern AVContentKeySession"
+  webcoreOnChange: shouldUseModernAVContentKeySessionChanged
+  condition: USE(MODERN_AVCONTENTKEYSESSION)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
     WebCore:
       default: true
 

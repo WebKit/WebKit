@@ -54,7 +54,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
+#if USE(MODERN_AVCONTENTKEYSESSION)
 #include "MediaSessionManagerCocoa.h"
 #endif
 
@@ -507,11 +507,11 @@ void SettingsBase::resourceUsageOverlayVisibleChanged()
 #endif
 }
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-void SettingsBase::sampleBufferContentKeySessionSupportEnabledChanged()
+#if USE(MODERN_AVCONTENTKEYSESSION)
+void SettingsBase::shouldUseModernAVContentKeySessionChanged()
 {
     if (m_page)
-        MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(m_page->settings().sampleBufferContentKeySessionSupportEnabled());
+        MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(m_page->settings().shouldUseModernAVContentKeySession());
 }
 #endif
 

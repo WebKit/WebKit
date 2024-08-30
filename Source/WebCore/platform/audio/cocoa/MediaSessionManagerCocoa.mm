@@ -99,19 +99,16 @@ bool MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled()
 }
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-static bool s_sampleBufferContentKeySessionSupportEnabled = false;
-void MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
+static bool s_shouldUseModernAVContentKeySession;
+void MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(bool enabled)
 {
-    s_sampleBufferContentKeySessionSupportEnabled = enabled;
+    s_shouldUseModernAVContentKeySession = enabled;
 }
 
-bool MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()
+bool MediaSessionManagerCocoa::shouldUseModernAVContentKeySession()
 {
-    return s_sampleBufferContentKeySessionSupportEnabled;
+    return s_shouldUseModernAVContentKeySession;
 }
-#endif
-
 
 void MediaSessionManagerCocoa::updateSessionState()
 {

@@ -162,8 +162,8 @@ protected:
     void mockCaptureDevicesEnabledChanged();
 #endif
     void layerBasedSVGEngineEnabledChanged();
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    void sampleBufferContentKeySessionSupportEnabledChanged();
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    void shouldUseModernAVContentKeySessionChanged();
 #endif
 
     WeakPtr<Page> m_page;

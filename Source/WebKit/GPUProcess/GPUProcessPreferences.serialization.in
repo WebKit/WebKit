@@ -35,8 +35,8 @@ struct WebKit::GPUProcessPreferences {
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     std::optional<bool> mediaSourceInlinePaintingEnabled;
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    std::optional<bool> sampleBufferContentKeySessionSupportEnabled;
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    std::optional<bool> shouldUseModernAVContentKeySession;
 #endif
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     std::optional<bool> alternateWebMPlayerEnabled;
