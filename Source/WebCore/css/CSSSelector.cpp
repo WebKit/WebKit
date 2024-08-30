@@ -139,27 +139,29 @@ static SelectorSpecificity operator+(SelectorSpecificity a, SelectorSpecificity 
     return a += b;
 }
 
-static SelectorSpecificity simpleSelectorSpecificity(const CSSSelector&);
+enum class IgnorePseudoElement : bool { No, Yes };
 
-static SelectorSpecificity selectorSpecificity(const CSSSelector& firstSimpleSelector)
+static SelectorSpecificity simpleSelectorSpecificity(const CSSSelector&, IgnorePseudoElement = IgnorePseudoElement::No);
+
+static SelectorSpecificity selectorSpecificity(const CSSSelector& firstSimpleSelector, IgnorePseudoElement ignorePseudoElement = IgnorePseudoElement::No)
 {
     SelectorSpecificity total;
     for (const auto* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
-        total += simpleSelectorSpecificity(*selector);
+        total += simpleSelectorSpecificity(*selector, ignorePseudoElement);
     return total;
 }
 
-static SelectorSpecificity maxSpecificity(const CSSSelectorList* selectorList)
+static SelectorSpecificity maxSpecificity(const CSSSelectorList* selectorList, IgnorePseudoElement ignorePseudoElement = IgnorePseudoElement::No)
 {
     unsigned max = 0;
     if (selectorList) {
-        for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector))
-            max = std::max(max, selectorSpecificity(*selector).specificity);
+        for (const auto& selector : *selectorList)
+            max = std::max(max, selectorSpecificity(selector, ignorePseudoElement).specificity);
     }
     return max;
 }
 
-SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
+SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector, IgnorePseudoElement ignorePseudoElement)
 {
     ASSERT_WITH_MESSAGE(!simpleSelector.isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
 
@@ -175,6 +177,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
     case CSSSelector::Match::PseudoClass:
         switch (simpleSelector.pseudoClass()) {
         case CSSSelector::PseudoClass::Is:
+            return maxSpecificity(simpleSelector.selectorList(), IgnorePseudoElement::Yes);
         case CSSSelector::PseudoClass::Not:
         case CSSSelector::PseudoClass::Has:
             return maxSpecificity(simpleSelector.selectorList());
@@ -201,6 +204,8 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return 0;
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::PseudoElement:
+        if (ignorePseudoElement == IgnorePseudoElement::Yes)
+            return 0;
         switch (simpleSelector.pseudoElement()) {
         // Slotted only competes with other slotted selectors for specificity,
         // so whether we add the ClassC specificity shouldn't be observable.
