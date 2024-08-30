@@ -719,6 +719,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableCopy(unsigned dstTableI
 
 // Locals and Globals
 
+#if USE(JSVALUE64)
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefinition &signature)
 {
     auto sig = signature.as<FunctionSignature>();
@@ -756,6 +757,49 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefiniti
     m_metadata->m_argumINTBytecode.last() = 0x0d;
     return { };
 }
+#elif USE(JSVALUE32_64)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefinition &signature)
+{
+    auto sig = signature.as<FunctionSignature>();
+    auto numArgs = sig->argumentCount();
+    m_metadata->m_numLocals += numArgs;
+    m_metadata->m_numArguments = numArgs;
+    m_metadata->m_argumINTBytecode.resize(numArgs + 1);
+
+    int numGPR = 0;
+    int numFPR = 0;
+
+    // 0x00: GPR 0/1
+    // 0x01: unused
+    // 0x02: GPR 2/3
+    // 0x03 - 0x07: unused
+    // 0x08 - 0x0b: FPR 0-3
+    // 0x0c: stack
+    // 0x0d: end
+
+    for (size_t i = 0; i < numArgs; ++i) {
+        auto arg = sig->argumentType(i);
+        if (arg.isI32() || arg.isI64()) {
+            if (numGPR < 4) {
+                m_metadata->m_argumINTBytecode[i] = numGPR;
+                numGPR += 2;
+            } else {
+                m_metadata->m_numArgumentsOnStack++;
+                m_metadata->m_argumINTBytecode[i] = 0x0c;
+            }
+        } else {
+            if (numFPR < 2)
+                m_metadata->m_argumINTBytecode[i] = 8 + numFPR++;
+            else {
+                m_metadata->m_numArgumentsOnStack++;
+                m_metadata->m_argumINTBytecode[i] = 0x0c;
+            }
+        }
+    }
+    m_metadata->m_argumINTBytecode.last() = 0x0d;
+    return { };
+}
+#endif
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
 {
@@ -2187,6 +2231,7 @@ auto IPIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
 
 // Calls
 
+#if USE(JSVALUE64)
 void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
 {
 #if CPU(ARM64)
@@ -2268,6 +2313,78 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
         ++data;
     }
 }
+#else
+void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
+{
+    const uint8_t gprs = 4;
+    const uint8_t fprs = 2;
+
+    uint8_t gprsUsed = 0;
+    uint8_t fprsUsed = 0;
+    uint16_t stackArgs = 0;
+
+    Vector<uint8_t, 16> minINTBytecode;
+    minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::End));
+    for (size_t i = 0; i < signature.argumentCount(); ++i) {
+        auto type = signature.argumentType(i);
+        if ((type.isI32() || type.isI64()) && gprsUsed != gprs) {
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::ArgumentGPR) + gprsUsed);
+            gprsUsed += 2;
+        } else if ((type.isF32() || type.isF64()) && fprsUsed != fprs)
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::ArgumentFPR) + fprsUsed++);
+        else if (stackArgs++ & 1)
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::ArgumentStackUnaligned));
+        else
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::ArgumentStackAligned));
+    }
+    if (stackArgs & 1)
+        minINTBytecode.append(static_cast<uint8_t>(IPInt::CallArgumentBytecode::StackAlign));
+
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(minINTBytecode.size());
+    auto data = m_metadata->m_metadata.data() + size;
+    while (!minINTBytecode.isEmpty()) {
+        WRITE_TO_METADATA(data, minINTBytecode.last(), uint8_t);
+        data += 1;
+        minINTBytecode.removeLast();
+    }
+
+    IPInt::callReturnMetadata commonReturn {
+        .stackSlots = safeCast<uint16_t>((stackArgs + 1) & (-2)),
+        .argumentCount = safeCast<uint16_t>(signature.argumentCount()),
+        .resultBytecode = { }
+    };
+    size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(sizeof(commonReturn));
+    data = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(data, commonReturn, IPInt::callReturnMetadata);
+
+    minINTBytecode.clear();
+
+    gprsUsed = 0;
+    fprsUsed = 0;
+
+    for (size_t i = 0; i < signature.returnCount(); ++i) {
+        auto type = signature.returnType(i);
+        if ((type.isI32() || type.isI64()) && gprsUsed != gprs) {
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallResultBytecode::ResultGPR) + gprsUsed);
+            gprsUsed += 2;
+        } else if ((type.isF32() || type.isF64()) && fprsUsed != fprs)
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallResultBytecode::ResultFPR) + (fprsUsed++));
+        else
+            minINTBytecode.append(static_cast<uint8_t>(IPInt::CallResultBytecode::ResultStack));
+    }
+    minINTBytecode.append(static_cast<uint8_t>(IPInt::CallResultBytecode::End));
+
+    size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(minINTBytecode.size());
+    data = m_metadata->m_metadata.data() + size;
+    for (auto i : minINTBytecode) {
+        WRITE_TO_METADATA(data, i, uint8_t);
+        ++data;
+    }
+}
+#endif
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType)
 {
