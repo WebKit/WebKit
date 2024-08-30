@@ -127,15 +127,13 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
 
             ASSERT(previousGroupEnd != groupEnd);
             previousGroupEnd = groupEnd;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             parentNodes.remove(n);
 #endif
         }
     }
 
-#ifndef NDEBUG
     ASSERT(parentNodes.isEmpty());
-#endif
 }
 
 void NodeSet::sort() const
