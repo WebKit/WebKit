@@ -31,8 +31,11 @@
 #include "AffineTransform.h"
 #include "DOMMatrix2DInit.h"
 #include "DOMMatrixReadOnly.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Path2D);
 
 Path2D::~Path2D() = default;
 

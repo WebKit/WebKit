@@ -27,8 +27,11 @@
 #include "FontFamilySpecificationCoreTextCache.h"
 
 #include "FontCache.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontFamilySpecificationCoreTextCache);
 
 FontFamilySpecificationCoreTextCache& FontFamilySpecificationCoreTextCache::forCurrentThread()
 {

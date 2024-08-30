@@ -28,6 +28,7 @@
 #include "DisplayListItems.h"
 #include "DisplayListResourceHeap.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,8 @@ namespace WebCore {
 namespace DisplayList {
 
 class DisplayList {
-    WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DisplayList, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(DisplayList);
 public:
     DisplayList() = default;
 

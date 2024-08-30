@@ -31,8 +31,11 @@
 #include "AudioResampler.h"
 #include "AudioUtilities.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioResamplerKernel);
 
 AudioResamplerKernel::AudioResamplerKernel(AudioResampler* resampler)
     : m_resampler(resampler)

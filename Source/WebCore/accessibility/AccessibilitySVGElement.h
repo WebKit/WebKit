@@ -47,7 +47,7 @@ private:
     void accessibilityText(Vector<AccessibilityText>&) const final;
     AccessibilityRole determineAccessibilityRole() override;
     bool inheritsPresentationalRole() const final;
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 
     AccessibilityObject* targetForUseElement() const;
 

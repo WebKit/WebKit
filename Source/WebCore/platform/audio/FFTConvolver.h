@@ -31,11 +31,12 @@
 
 #include "AudioArray.h"
 #include "FFTFrame.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FFTConvolver final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FFTConvolver);
     WTF_MAKE_NONCOPYABLE(FFTConvolver);
 public:
     // fftSize must be a power of two

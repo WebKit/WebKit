@@ -46,12 +46,17 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/AutodrainedPool.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB)
 #include <glib.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerRunLoop);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerDedicatedRunLoop);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerDedicatedRunLoopTask, WorkerDedicatedRunLoop::Task);
 
 class WorkerSharedTimer final : public SharedTimer {
 public:
@@ -198,6 +203,15 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
     CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
     timeoutDelay = std::max(0_s, Seconds(timeUntilNextCFRunLoopTimerInSeconds));
+#endif
+
+#if OS(WINDOWS)
+    RunLoop::cycle();
+
+    if (auto* script = context->script()) {
+        JSC::VM& vm = script->vm();
+        timeoutDelay = vm.deferredWorkTimer->timeUntilFire().value_or(Seconds::infinity());
+    }
 #endif
 
     if (predicate.isDefaultMode() && m_sharedTimer->isActive())

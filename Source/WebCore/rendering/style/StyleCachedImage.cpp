@@ -35,8 +35,11 @@
 #include "SVGResourceImage.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleCachedImage);
 
 Ref<StyleCachedImage> StyleCachedImage::create(Ref<CSSImageValue> cssValue, float scaleFactor)
 {

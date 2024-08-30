@@ -31,6 +31,7 @@
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ private:
 };
 
 class SpellChecker : public CanMakeSingleThreadWeakPtr<SpellChecker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SpellChecker);
 public:
     friend class SpellCheckRequest;
 

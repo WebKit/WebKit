@@ -165,7 +165,7 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
 
         control->dispatchSimulatedClick(&event);
 
-        document().updateLayoutIgnorePendingStylesheets();
+        protectedDocument()->updateLayoutIgnorePendingStylesheets();
         if (control->isMouseFocusable())
             control->focus({ { }, { }, { }, FocusTrigger::Click, { } });
 

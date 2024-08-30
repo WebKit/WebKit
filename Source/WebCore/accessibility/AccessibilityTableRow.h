@@ -65,7 +65,7 @@ protected:
 private:
     bool isTableRow() const final;
     AccessibilityObject* observableObject() const final;
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 
     unsigned m_rowIndex;
 };

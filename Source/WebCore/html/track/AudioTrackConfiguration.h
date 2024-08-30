@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "PlatformAudioTrackConfiguration.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ namespace WebCore {
 using AudioTrackConfigurationInit = PlatformAudioTrackConfiguration;
 
 class AudioTrackConfiguration : public RefCounted<AudioTrackConfiguration> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackConfiguration);
 public:
     static Ref<AudioTrackConfiguration> create(AudioTrackConfigurationInit&& init) { return adoptRef(*new AudioTrackConfiguration(WTFMove(init))); }
     static Ref<AudioTrackConfiguration> create() { return adoptRef(*new AudioTrackConfiguration()); }

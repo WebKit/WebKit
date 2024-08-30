@@ -28,6 +28,7 @@
 #include "GraphicsTypes.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,8 @@ class RenderView;
 class RenderStyle;
 
 class ImageQualityController {
-    WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageQualityController);
+    WTF_MAKE_NONCOPYABLE(ImageQualityController);
 public:
     explicit ImageQualityController(const RenderView&);
 

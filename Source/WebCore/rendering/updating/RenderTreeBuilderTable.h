@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeUpdater.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class RenderTableRow;
 class RenderTreeBuilder;
 
 class RenderTreeBuilder::Table {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
     Table(RenderTreeBuilder&);
 

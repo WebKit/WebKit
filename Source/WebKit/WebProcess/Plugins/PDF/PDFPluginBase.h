@@ -265,6 +265,8 @@ public:
 
     virtual void windowActivityDidChange() { }
 
+    virtual void didChangeIsInWindow() { }
+
     virtual void didSameDocumentNavigationForFrame(WebFrame&) { }
 
 #if PLATFORM(MAC)

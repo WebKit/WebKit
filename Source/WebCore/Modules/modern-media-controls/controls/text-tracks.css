@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,6 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 [useragentpart="cue"] {
     position: absolute;
     unicode-bidi: plaintext;
-    writing-mode: writing-mode;
     overflow-wrap: break-word;
     text-wrap: balance;
 }

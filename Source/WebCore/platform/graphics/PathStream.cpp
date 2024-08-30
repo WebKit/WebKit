@@ -79,6 +79,18 @@ PathStream::PathStream(PathSegment&& segment)
 {
 }
 
+bool PathStream::definitelyEqual(const PathImpl& other) const
+{
+    RefPtr otherAsPathStream = dynamicDowncast<PathStream>(other);
+    if (!otherAsPathStream)
+        return false;
+
+    if (otherAsPathStream.get() == this)
+        return true;
+
+    return segments() == otherAsPathStream->segments();
+}
+
 Ref<PathImpl> PathStream::copy() const
 {
     return create(m_segments);
@@ -219,6 +231,16 @@ std::optional<DataType> PathStream::singleDataType() const
 std::optional<PathDataLine> PathStream::singleDataLine() const
 {
     return singleDataType<PathDataLine>();
+}
+
+std::optional<PathRect> PathStream::singleRect() const
+{
+    return singleDataType<PathRect>();
+}
+
+std::optional<PathRoundedRect> PathStream::singleRoundedRect() const
+{
+    return singleDataType<PathRoundedRect>();
 }
 
 std::optional<PathArc> PathStream::singleArc() const

@@ -32,8 +32,8 @@
 #include "Quaternion.h"
 #include <array>
 #include <string.h> //for memcpy
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;
@@ -73,7 +73,7 @@ class FloatQuad;
 #endif
 
 class TransformationMatrix {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformationMatrix, WEBCORE_EXPORT);
 public:
 
 #if (PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)

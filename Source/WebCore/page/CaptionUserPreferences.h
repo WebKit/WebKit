@@ -33,6 +33,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -142,7 +143,7 @@ private:
 };
 
 class CaptionUserPreferencesTestingModeToken {
-    WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferencesTestingModeToken);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CaptionUserPreferencesTestingModeToken, WEBCORE_EXPORT);
 public:
     CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
         : m_parent(parent)

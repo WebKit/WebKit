@@ -23,6 +23,7 @@
 
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,10 +51,10 @@ public:
     SVGAnimatedLength& fyAnimated() { return m_fy; }
     SVGAnimatedLength& frAnimated() { return m_fr; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
+
 private:
     SVGRadialGradientElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

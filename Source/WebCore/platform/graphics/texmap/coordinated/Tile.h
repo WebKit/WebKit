@@ -31,13 +31,14 @@
 #include "IntPoint.h"
 #include "IntPointHash.h"
 #include "IntRect.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TiledBackingStore;
 
 class Tile {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Tile);
 public:
     typedef IntPoint Coordinate;
 

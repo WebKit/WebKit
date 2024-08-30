@@ -29,8 +29,6 @@
 #include "config.h"
 #include "NicosiaBuffer.h"
 
-#include <wtf/FastMalloc.h>
-
 #if USE(SKIA)
 #include "FontRenderOptions.h"
 #include "GLContext.h"

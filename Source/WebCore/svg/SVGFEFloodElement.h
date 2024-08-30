@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,10 +32,10 @@ class SVGFEFloodElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFEFloodElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEFloodElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEFloodElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEFloodElement, SVGFilterPrimitiveStandardAttributes>;
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;

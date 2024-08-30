@@ -33,6 +33,7 @@
 #include "IntRect.h"
 #include "ResourceLoadPriority.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ enum class ShouldUpgradeLocalhostAndIPAddress : bool { No, Yes };
 
 // Do not use this type directly.  Use ResourceRequest instead.
 class ResourceRequestBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ResourceRequestBase);
 public:
     
     enum class SameSiteDisposition : uint8_t { Unspecified, SameSite, CrossSite };

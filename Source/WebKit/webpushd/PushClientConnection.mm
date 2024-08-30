@@ -44,7 +44,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/MakeString.h>
+#import <wtf/text/TextStream.h>
 
 #if PLATFORM(MAC)
 #import <bsm/libbsm.h>
@@ -109,6 +109,11 @@ static String bundleIdentifierFromAuditToken(audit_token_t token)
 static bool isValidPushPartition(String partition)
 {
 #if PLATFORM(IOS)
+    // We allow the client to not specify a partition at all at connection setup time. In this case,
+    // we select the partition dynamically (see subscriptionSetIdentifierForOrigin).
+    if (partition.isEmpty())
+        return true;
+
     // On iOS, the push partition is expected to match the format of a web clip identifier.
     auto isASCIIDigitOrUpper = [](UChar character) {
         return isASCIIDigit(character) || isASCIIUpper(character);
@@ -215,13 +220,71 @@ void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector
     WebPushDaemon::singleton().getPushTopicsForTesting(*this, WTFMove(completionHandler));
 }
 
-WebCore::PushSubscriptionSetIdentifier PushClientConnection::subscriptionSetIdentifier() const
+#if PLATFORM(IOS)
+// FIXME: this should be cached rather than needing to walk through the web clips directory every time.
+static String webClipIdentifierForOrigin(const WebCore::SecurityOriginData& origin)
 {
-    return {
-        hostAppCodeSigningIdentifier(),
-        pushPartitionString(),
-        dataStoreIdentifier()
-    };
+    RetainPtr<NSString> oldestMatchingIdentifier;
+    WallTime oldestMatchingCreationTime = WallTime::infinity();
+
+    @autoreleasepool {
+        NSArray *webClips = [UIWebClip webClips];
+
+        for (UIWebClip *webClip in webClips) {
+            NSString *identifier = [webClip identifier];
+            if (!identifier)
+                continue;
+
+            auto clipOrigin = WebCore::SecurityOriginData::fromURL(webClip.pageURL);
+            if (origin != clipOrigin)
+                continue;
+
+            NSString *path = [UIWebClip pathForWebClipWithIdentifier:identifier];
+            if (!path)
+                continue;
+
+            auto maybeCreationTime = FileSystem::fileCreationTime(path);
+            if (!maybeCreationTime)
+                continue;
+            auto creationTime = *maybeCreationTime;
+
+            if (creationTime < oldestMatchingCreationTime) {
+                oldestMatchingIdentifier = identifier;
+                oldestMatchingCreationTime = creationTime;
+            }
+        }
+    }
+
+    return oldestMatchingIdentifier.get();
+}
+#endif
+
+std::optional<WebCore::PushSubscriptionSetIdentifier> PushClientConnection::subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData& origin) const
+{
+    String pushPartitionString = m_pushPartitionString;
+
+#if PLATFORM(IOS)
+    if (pushPartitionString.isEmpty()) {
+        // On iOS, when the client doesn't explicitly specify a push partition (web clip id), we
+        // implicitly choose the oldest web clip associated with that origin.
+        pushPartitionString = webClipIdentifierForOrigin(origin);
+        if (pushPartitionString.isEmpty())
+            return std::nullopt;
+    }
+#endif
+
+    return WebCore::PushSubscriptionSetIdentifier { hostAppCodeSigningIdentifier(), pushPartitionString, dataStoreIdentifier() };
+}
+
+String PushClientConnection::debugDescription() const
+{
+    TextStream textStream;
+    textStream << m_hostAppCodeSigningIdentifier;
+    if (!m_pushPartitionString.isEmpty())
+        textStream << " | part: " << m_pushPartitionString;
+    if (m_dataStoreIdentifier)
+        textStream << " | ds: " << m_dataStoreIdentifier->toString();
+    return textStream.release();
 }
 
 void PushClientConnection::connectionClosed()
@@ -332,10 +395,10 @@ void PushClientConnection::getNotifications(const URL& registrationURL, const St
 #endif
 }
 
-void PushClientConnection::cancelNotification(const WTF::UUID& notificationID)
+void PushClientConnection::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
 {
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
-    WebPushDaemon::singleton().cancelNotification(*this, notificationID);
+    WebPushDaemon::singleton().cancelNotification(*this, WTFMove(origin), notificationID);
 #endif
 }
 

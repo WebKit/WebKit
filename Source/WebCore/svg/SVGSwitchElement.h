@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,10 +32,10 @@ class SVGSwitchElement final : public SVGGraphicsElement {
 public:
     static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
+
 private:
     SVGSwitchElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
 
     bool isValid() const final { return SVGTests::isValid(); }
 

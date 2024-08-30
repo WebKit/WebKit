@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AccessibilityObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -208,7 +209,7 @@ private:
 };
 
 class AXTextMarkerRange {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AXTextMarkerRange);
     friend bool operator==(const AXTextMarkerRange&, const AXTextMarkerRange&);
     friend bool operator<(const AXTextMarkerRange&, const AXTextMarkerRange&);
     friend bool operator>(const AXTextMarkerRange&, const AXTextMarkerRange&);
@@ -235,6 +236,11 @@ public:
 #if PLATFORM(MAC)
     RetainPtr<AXTextMarkerRangeRef> platformData() const;
     operator AXTextMarkerRangeRef() const { return platformData().autorelease(); }
+#elif PLATFORM(IOS_FAMILY)
+    // There is no iOS native type for a TextMarkerRange analogous to AXTextMarkerRangeRef on Mac.
+    // Instead, an NSArray of 2 elements is used.
+    AXTextMarkerRange(NSArray *);
+    RetainPtr<NSArray> platformData() const;
 #endif
 
 #if PLATFORM(COCOA)

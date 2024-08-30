@@ -77,7 +77,7 @@ void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
     
     id parentWrapper = nil;
     if (parent) {
-        if (parent->accessibilityIsIgnored())
+        if (parent->isIgnored())
             parent = parent->parentObjectUnignored();
         parentWrapper = parent->wrapper();
     }

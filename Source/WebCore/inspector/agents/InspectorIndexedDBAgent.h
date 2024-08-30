@@ -45,8 +45,8 @@ namespace WebCore {
 class Page;
 
 class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
-    WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorIndexedDBAgent);
+    WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
 public:
     InspectorIndexedDBAgent(PageAgentContext&);
     ~InspectorIndexedDBAgent();

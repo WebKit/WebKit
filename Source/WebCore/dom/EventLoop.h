@@ -34,6 +34,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -48,8 +49,8 @@ class ScriptExecutionContext;
 class TimerAlignment;
 
 class EventLoopTask {
+    WTF_MAKE_TZONE_ALLOCATED(EventLoopTask);
     WTF_MAKE_NONCOPYABLE(EventLoopTask);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     virtual ~EventLoopTask() = default;
@@ -68,7 +69,7 @@ private:
 };
 
 class EventLoopTimerHandle {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(EventLoopTimerHandle);
 public:
     EventLoopTimerHandle();
     EventLoopTimerHandle(EventLoopTimer&);
@@ -154,8 +155,8 @@ private:
 };
 
 class EventLoopTaskGroup final : public CanMakeWeakPtr<EventLoopTaskGroup>, public CanMakeCheckedPtr<EventLoopTaskGroup> {
+    WTF_MAKE_TZONE_ALLOCATED(EventLoopTaskGroup);
     WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventLoopTaskGroup);
 public:
     EventLoopTaskGroup(EventLoop& eventLoop)

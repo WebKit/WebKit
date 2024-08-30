@@ -106,6 +106,8 @@ void generateToAir(Procedure& procedure)
 
 #if USE(JSVALUE32_64)
     lowerInt64(procedure);
+    if (procedure.optLevel() >= 2)
+        reduceStrength(procedure);
 #endif
 
     if (procedure.optLevel() >= 2) {

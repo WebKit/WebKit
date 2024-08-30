@@ -26,6 +26,7 @@
 #include "HitTestRequest.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class Scrollbar;
 enum class HitTestProgress { Stop, Continue };
 
 class HitTestResult {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HitTestResult, WEBCORE_EXPORT);
 public:
     using NodeSet = ListHashSet<Ref<Node>>;
 

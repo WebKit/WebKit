@@ -35,6 +35,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,8 @@ namespace WebCore {
 // (e.g. JPEGImageDecoder). This base manages the ScalableImageDecoderFrame cache.
 
 class ScalableImageDecoder : public ImageDecoder {
-    WTF_MAKE_NONCOPYABLE(ScalableImageDecoder); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScalableImageDecoder);
+    WTF_MAKE_NONCOPYABLE(ScalableImageDecoder);
 public:
     ScalableImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
         : m_premultiplyAlpha(alphaOption == AlphaOption::Premultiplied)

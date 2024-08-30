@@ -24,6 +24,7 @@
 #include "OpenXRUtils.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace PlatformXR {
@@ -34,7 +35,7 @@ struct OpenXRExtensionMethods {
 };
 
 class OpenXRExtensions final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRExtensions);
     WTF_MAKE_NONCOPYABLE(OpenXRExtensions);
 public:
     static std::unique_ptr<OpenXRExtensions> create();

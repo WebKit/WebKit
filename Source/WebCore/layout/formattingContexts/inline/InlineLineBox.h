@@ -29,7 +29,7 @@
 #include "InlineLine.h"
 #include "InlineRect.h"
 #include "LayoutElementBox.h"
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -57,7 +57,7 @@ class RubyFormattingContext;
 // The resulting rectangular area that contains the boxes that form a single line of inline-level content is called a line box.
 // https://www.w3.org/TR/css-inline-3/#model
 class LineBox {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LineBox);
 public:
     LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount);
 

@@ -22,6 +22,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,10 +42,10 @@ public:
     SVGAnimatedLength& widthAnimated() { return m_width; }
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement>;
+
 private:
     SVGForeignObjectElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

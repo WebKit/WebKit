@@ -34,7 +34,6 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
 #include "PlatformMediaSessionManager.h"
-#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 

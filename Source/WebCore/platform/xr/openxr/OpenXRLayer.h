@@ -26,13 +26,14 @@
 #include "PlatformXR.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace PlatformXR {
 
 class OpenXRLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRLayer);
     WTF_MAKE_NONCOPYABLE(OpenXRLayer);
 public:
     virtual ~OpenXRLayer() = default;
@@ -45,7 +46,7 @@ protected:
 };
 
 class OpenXRLayerProjection final: public OpenXRLayer  {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRLayerProjection);
     WTF_MAKE_NONCOPYABLE(OpenXRLayerProjection);
 public:
     static std::unique_ptr<OpenXRLayerProjection> create(XrInstance, XrSession, uint32_t width, uint32_t height, int64_t format, uint32_t sampleCount);

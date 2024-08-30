@@ -53,7 +53,7 @@ public:
     UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&);
     void removeDeviceChangeObserver(UserMediaClient::DeviceChangeObserverToken);
 
-    void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&);
+    void updateCaptureState(const Document&, bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
     void logGetUserMediaDenial(Document&);
     void logGetDisplayMediaDenial(Document&);
@@ -92,9 +92,9 @@ inline void UserMediaController::removeDeviceChangeObserver(UserMediaClient::Dev
     m_client->removeDeviceChangeObserver(token);
 }
 
-inline void UserMediaController::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
+inline void UserMediaController::updateCaptureState(const Document& document, bool isActive, MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
-    m_client->updateCaptureState(isActive, kind, WTFMove(completionHandler));
+    m_client->updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
 }
 
 } // namespace WebCore

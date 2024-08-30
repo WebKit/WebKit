@@ -49,7 +49,7 @@ BitmapTexturePool::BitmapTexturePool()
 {
 }
 
-RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
+Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
 {
     Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(),
         [&](Entry& entry) {
@@ -70,7 +70,7 @@ RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Opt
     scheduleReleaseUnusedTextures();
 
     selectedEntry->markIsInUse();
-    return selectedEntry->m_texture.copyRef();
+    return selectedEntry->m_texture;
 }
 
 void BitmapTexturePool::scheduleReleaseUnusedTextures()

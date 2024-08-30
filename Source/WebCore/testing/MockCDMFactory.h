@@ -36,6 +36,7 @@
 #include "MediaKeysRequirement.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -109,7 +110,7 @@ private:
 };
 
 class MockCDM : public CDMPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MockCDM);
 public:
     MockCDM(WeakPtr<MockCDMFactory>);
 

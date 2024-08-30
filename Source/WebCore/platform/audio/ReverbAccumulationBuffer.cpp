@@ -33,10 +33,13 @@
 #include "ReverbAccumulationBuffer.h"
 
 #include "VectorMath.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #include <algorithm>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReverbAccumulationBuffer);
 
 ReverbAccumulationBuffer::ReverbAccumulationBuffer(size_t length)
     : m_buffer(length)

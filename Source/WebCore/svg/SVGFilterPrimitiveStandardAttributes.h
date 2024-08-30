@@ -26,6 +26,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

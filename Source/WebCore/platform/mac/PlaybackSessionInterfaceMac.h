@@ -31,6 +31,7 @@
 #include "PlaybackSessionModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +46,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceMac>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceMac> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceMac);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceMac);
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);

@@ -98,6 +98,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
         breakAndComputeBidiLevels(inlineItemList);
     }
+    computeInlineBoxBoundaryTextSpacingsIfNeeded();
     computeInlineTextItemWidths(inlineItemList);
 
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
@@ -132,6 +133,60 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     }
     ASSERT(inlineBoxStart == inlineBoxEnd);
 #endif
+}
+
+void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded()
+{
+    if (!m_hasTextAutospace)
+        return;
+
+    char32_t lastCharacterFromPreviousRun = 0;
+    size_t lastCharacterDepth = 0;
+    size_t currentCharacterDepth = 0;
+    InlineBoxBoundaryTextSpacings spacings;
+    Vector<unsigned> inlineBoxStartIndexesOnInlineItemsList;
+    bool processInlineBoxBoundary = false;
+    auto& inlineItemList = inlineContentCache().inlineItems().content();
+    for (unsigned inlineItemIndex = 0; inlineItemIndex < inlineItemList.size(); ++inlineItemIndex) {
+        auto& inlineItem = inlineItemList[inlineItemIndex];
+        if (inlineItem.isInlineBoxStart()) {
+            inlineBoxStartIndexesOnInlineItemsList.append(inlineItemIndex);
+            ++currentCharacterDepth;
+            continue;
+        }
+        if (inlineItem.isInlineBoxEnd()) {
+            --currentCharacterDepth;
+            processInlineBoxBoundary = true;
+            continue;
+        }
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        if (!inlineTextItem)
+            continue;
+
+        auto start = inlineTextItem->start();
+        auto length = inlineTextItem->length();
+        auto& inlineTextBox = inlineTextItem->inlineTextBox();
+        if (!processInlineBoxBoundary || !lastCharacterFromPreviousRun) {
+            lastCharacterFromPreviousRun = inlineTextBox.content().characterAt(start + length - 1);
+            lastCharacterDepth = currentCharacterDepth;
+            processInlineBoxBoundary = false;
+            continue;
+        }
+
+        size_t boundaryDepth = std::min(currentCharacterDepth, lastCharacterDepth);
+        ASSERT((inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth)) >= 0);
+        size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth);
+        const RenderStyle& boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
+        const TextAutospace& boundaryTextAutospace = boundaryOwnerStyle.textAutospace();
+        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox.content().characterAt(start), lastCharacterFromPreviousRun))
+            spacings.add(inlineBoxStartIndexesOnInlineItemsList[boundaryIndex], TextAutospace::textAutospaceSize(boundaryOwnerStyle.fontCascade().primaryFont()));
+
+        lastCharacterFromPreviousRun = inlineTextBox.content().characterAt(start + length - 1);
+        lastCharacterDepth = currentCharacterDepth;
+        processInlineBoxBoundary = false;
+    }
+    if (!spacings.isEmpty())
+        inlineContentCache().setInlineBoxBoundaryTextSpacings(WTFMove(spacings));
 }
 
 static inline bool isTextOrLineBreak(const Box& layoutBox)
@@ -255,6 +310,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
     while (!layoutQueue.isEmpty()) {
         while (true) {
             auto layoutBox = layoutQueue.last();
+            m_hasTextAutospace |= !layoutBox->style().textAutospace().isNoAutospace();
             auto isInlineBoxWithInlineContent = layoutBox->isInlineBox() && !layoutBox->isInlineTextBox() && !layoutBox->isLineBreakBox() && !layoutBox->isOutOfFlowPositioned();
             if (!isInlineBoxWithInlineContent)
                 break;
@@ -681,10 +737,15 @@ static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& in
 void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemList)
 {
     TextSpacing::SpacingState spacingState;
-    for (auto& inlineItem : inlineItemList) {
+    auto& inlineBoxBoundaryTextSpacings = inlineContentCache().inlineBoxBoundaryTextSpacings();
+    for (size_t inlineItemIndex = 0; inlineItemIndex < inlineItemList.size(); ++inlineItemIndex) {
+        auto extraInlineTextSpacing= 0.f;
+        auto& inlineItem = inlineItemList[inlineItemIndex];
         auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
-        if (!inlineTextItem)
+        if (!inlineTextItem) {
+            spacingState.lastCharacterClassFromPreviousRun = TextSpacing::CharacterClass::Undefined;
             continue;
+        }
 
         auto& inlineTextBox = inlineTextItem->inlineTextBox();
         auto start = inlineTextItem->start();
@@ -692,7 +753,10 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
         auto needsMeasuring = length && !inlineTextItem->isZeroWidthSpaceSeparator();
         if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, inlineTextItem->isWhitespace()))
             continue;
-        inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState));
+        if (auto inlineBoxBoundaryTextSpacing = inlineBoxBoundaryTextSpacings.find(inlineItemIndex); inlineBoxBoundaryTextSpacing != inlineBoxBoundaryTextSpacings.end())
+            extraInlineTextSpacing = inlineBoxBoundaryTextSpacing->value;
+
+        inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState) + extraInlineTextSpacing);
         spacingState.lastCharacterClassFromPreviousRun = inlineItem.style().textAutospace().isNoAutospace() ? TextSpacing::CharacterClass::Undefined : TextSpacing::characterClass(inlineTextBox.content().characterAt(start + length - 1));
     }
 }

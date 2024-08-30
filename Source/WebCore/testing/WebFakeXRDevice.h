@@ -39,6 +39,7 @@
 #include "WebFakeXRInputController.h"
 #include "XRVisibilityState.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ private:
 };
 
 class SimulatedXRDevice final : public PlatformXR::Device {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedXRDevice);
 public:
     SimulatedXRDevice();
     virtual ~SimulatedXRDevice();

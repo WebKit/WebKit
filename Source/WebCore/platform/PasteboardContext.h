@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class PasteboardContext {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PasteboardContext);
 public:
     virtual ~PasteboardContext() = default;
 

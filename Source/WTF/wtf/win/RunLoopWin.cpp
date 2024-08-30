@@ -31,6 +31,8 @@
 namespace WTF {
 
 static const UINT PerformWorkMessage = WM_USER + 1;
+static const UINT SetTimerMessage = WM_USER + 2;
+static const UINT KillTimerMessage = WM_USER + 3;
 static const LPCWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
 
 LRESULT CALLBACK RunLoop::RunLoopWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -55,8 +57,21 @@ LRESULT RunLoop::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case PerformWorkMessage:
         performWork();
         return 0;
+    case SetTimerMessage:
+        ::SetTimer(hWnd, wParam, lParam, nullptr);
+        return 0;
+    case KillTimerMessage:
+        ::KillTimer(hWnd, wParam);
+        return 0;
     case WM_TIMER:
-        bitwise_cast<RunLoop::TimerBase*>(wParam)->timerFired();
+        RunLoop::TimerBase* timer = nullptr;
+        {
+            Locker locker { m_loopLock };
+            if (m_liveTimers.contains(wParam))
+                timer = bitwise_cast<RunLoop::TimerBase*>(wParam);
+        }
+        if (timer != nullptr)
+            timer->timerFired();
         return 0;
     }
 
@@ -170,7 +185,8 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
     m_isActive = true;
     m_interval = interval;
     m_nextFireDate = MonotonicTime::timePointFromNow(m_interval);
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), interval.millisecondsAs<UINT>(), nullptr);
+    m_runLoop->m_liveTimers.add(bitwise_cast<uintptr_t>(this));
+    ::PostMessage(m_runLoop->m_runLoopMessageWindow, SetTimerMessage, bitwise_cast<uintptr_t>(this), interval.millisecondsAs<UINT>());
 }
 
 void RunLoop::TimerBase::stop()
@@ -180,7 +196,8 @@ void RunLoop::TimerBase::stop()
         return;
 
     m_isActive = false;
-    ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
+    m_runLoop->m_liveTimers.remove(bitwise_cast<uintptr_t>(this));
+    ::PostMessage(m_runLoop->m_runLoopMessageWindow, KillTimerMessage, bitwise_cast<uintptr_t>(this), 0LL);
 }
 
 bool RunLoop::TimerBase::isActiveWithLock() const

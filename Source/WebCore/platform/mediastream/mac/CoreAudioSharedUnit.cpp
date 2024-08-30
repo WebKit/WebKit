@@ -45,6 +45,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -71,7 +72,7 @@ void CoreAudioSharedUnit::AudioUnitDeallocator::operator()(AudioUnit unit) const
 }
 
 class CoreAudioSharedInternalUnit final :  public CoreAudioSharedUnit::InternalUnit {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CoreAudioSharedInternalUnit);
 public:
     static Expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
     CoreAudioSharedInternalUnit(CoreAudioSharedUnit::StoredAudioUnit&&, bool shouldUseVPIO);

@@ -31,8 +31,11 @@
 #include "Element.h"
 #include "PendingScript.h"
 #include "ScriptElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptRunner);
 
 ScriptRunner::ScriptRunner(Document& document)
     : m_document(document)

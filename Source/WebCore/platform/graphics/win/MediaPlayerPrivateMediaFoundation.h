@@ -43,6 +43,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/win/Win32Handle.h>
@@ -53,7 +54,7 @@ class MediaPlayerPrivateMediaFoundation final
     : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation>
     , public RefCounted<MediaPlayerPrivateMediaFoundation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
 public:
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
@@ -189,7 +190,7 @@ private:
     typedef Deque<COMPtr<IMFSample>> VideoSampleList;
 
     class VideoSamplePool {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(VideoSamplePool);
     public:
         VideoSamplePool() = default;
         virtual ~VideoSamplePool() = default;
@@ -211,7 +212,7 @@ private:
     class Direct3DPresenter;
 
     class VideoScheduler {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(VideoScheduler);
     public:
         VideoScheduler() = default;
         virtual ~VideoScheduler() = default;
@@ -257,7 +258,7 @@ private:
     };
 
     class Direct3DPresenter {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Direct3DPresenter);
     public:
         Direct3DPresenter();
         ~Direct3DPresenter();
@@ -320,7 +321,7 @@ private:
         , public IMFVideoDisplayControl
         , public IMFAsyncCallback
         , public MediaPlayerListener {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(CustomVideoPresenter);
     public:
         CustomVideoPresenter(MediaPlayerPrivateMediaFoundation*);
         ~CustomVideoPresenter();

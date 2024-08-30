@@ -64,7 +64,6 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VM.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/ResourceUsage.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/MakeString.h>

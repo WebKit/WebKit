@@ -15,7 +15,6 @@ GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/RemoteImageBuffer.cpp
 GPUProcess/graphics/RemoteImageBufferSet.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
-GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp

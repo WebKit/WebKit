@@ -28,6 +28,7 @@
 
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 // FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types.
@@ -40,7 +41,7 @@ struct PODIntervalNodeUpdater;
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
 template<typename T, typename UserData> class PODIntervalTree final : public PODRedBlackTree<PODInterval<T, UserData>, PODIntervalNodeUpdater> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PODIntervalTree);
 public:
     using IntervalType = PODInterval<T, UserData>;
     class OverlapsSearchAdapter;

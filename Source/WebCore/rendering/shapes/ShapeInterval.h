@@ -29,13 +29,14 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 template <typename T>
 class ShapeInterval {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ShapeInterval);
 public:
     ShapeInterval()
         : m_x1(-1)

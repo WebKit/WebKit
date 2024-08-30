@@ -195,7 +195,13 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
 
     const uint8_t* data = uint8Array->typedVector();
     size_t length = uint8Array->length();
-    return JSValue::encode(jsString(vm, base64EncodeToString({ data, length }, options)));
+    auto result = base64EncodeToStringReturnNullIfOverflow({ data, length }, options);
+    if (UNLIKELY(result.isNull())) {
+        throwOutOfMemoryError(globalObject, scope, "generated stirng is too long"_s);
+        return { };
+    }
+
+    return JSValue::encode(jsString(vm, WTFMove(result)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject, CallFrame* callFrame))

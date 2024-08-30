@@ -102,7 +102,7 @@ namespace WebCore {
 using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptRequest, InspectorNetworkAgent::AgentPendingInterceptRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptRequest, InspectorNetworkAgent::PendingInterceptRequest);
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptResponse, InspectorNetworkAgent::PendingInterceptResponse);
 
 namespace {

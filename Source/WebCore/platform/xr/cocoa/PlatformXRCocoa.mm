@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformXRCocoa.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
 
@@ -36,7 +37,7 @@ using namespace WebCore;
 namespace PlatformXR {
 
 struct Instance::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Impl);
 public:
     Impl() = default;
     ~Impl() = default;

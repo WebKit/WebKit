@@ -101,9 +101,9 @@ bool AccessibilityMenuListOption::canSetSelectedAttribute() const
     return isEnabled();
 }
 
-bool AccessibilityMenuListOption::computeAccessibilityIsIgnored() const
+bool AccessibilityMenuListOption::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 LayoutRect AccessibilityMenuListOption::elementRect() const

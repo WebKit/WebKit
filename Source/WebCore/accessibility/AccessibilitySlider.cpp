@@ -99,7 +99,7 @@ void AccessibilitySlider::addChildren()
 
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
-    if (thumb->accessibilityIsIgnored())
+    if (thumb->isIgnored())
         cache->remove(thumb->objectID());
     else
         addChild(thumb.ptr());
@@ -176,9 +176,9 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     return LayoutRect();
 }
 
-bool AccessibilitySliderThumb::computeAccessibilityIsIgnored() const
+bool AccessibilitySliderThumb::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 } // namespace WebCore

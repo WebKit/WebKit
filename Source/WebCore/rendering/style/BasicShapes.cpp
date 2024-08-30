@@ -44,10 +44,13 @@
 #include "SVGPathUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShape);
 
 void BasicShapeCenterCoordinate::updateComputedLength()
 {

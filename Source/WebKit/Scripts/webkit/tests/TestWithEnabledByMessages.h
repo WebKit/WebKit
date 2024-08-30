@@ -86,11 +86,29 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-class MultiConditionallyEnabled {
+class ConditionallyEnabledAnd {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_MultiConditionallyEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledAnd; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+private:
+    std::tuple<> m_arguments;
+};
+
+class ConditionallyEnabledOr {
+public:
+    using Arguments = std::tuple<>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledBy_ConditionallyEnabledOr; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;

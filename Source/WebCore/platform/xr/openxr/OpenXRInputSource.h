@@ -25,12 +25,13 @@
 #include "OpenXRUtils.h"
 
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace PlatformXR {
 
 class OpenXRInputSource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRInputSource);
     WTF_MAKE_NONCOPYABLE(OpenXRInputSource);
 public:
     using SuggestedBindings = HashMap<const char*, Vector<XrActionSuggestedBinding>>;

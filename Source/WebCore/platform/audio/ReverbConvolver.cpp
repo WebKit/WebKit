@@ -35,8 +35,11 @@
 #include "VectorMath.h"
 #include "AudioBus.h"
 #include <mutex>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReverbConvolver);
 
 constexpr int InputBufferSize = 8 * 16384;
 

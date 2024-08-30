@@ -1219,7 +1219,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.clear_written_files()
         details, err, _ = logging_run(
-            ['--pixel-tests', '--new-baseline', 'passes/image.html', 'failures/expected/missing_image.html'],
+            ['--pixel-tests', '--new-baseline', '--add-redundant-platform-results', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)

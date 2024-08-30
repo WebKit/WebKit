@@ -33,6 +33,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
     , private NowPlayingManagerClient
     , private AudioHardwareListener::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerCocoa);
 public:
     MediaSessionManagerCocoa();
     
@@ -74,10 +75,8 @@ public:
     static WEBCORE_EXPORT bool mediaSourceInlinePaintingEnabled();
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    static WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
-    static WEBCORE_EXPORT bool sampleBufferContentKeySessionSupportEnabled();
-#endif
+    static WEBCORE_EXPORT void setShouldUseModernAVContentKeySession(bool);
+    static WEBCORE_EXPORT bool shouldUseModernAVContentKeySession();
 
     static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch, double rate);
 

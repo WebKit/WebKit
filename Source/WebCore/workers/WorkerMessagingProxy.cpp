@@ -53,8 +53,11 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagingProxy);
 
 // WorkerUserGestureForwarder is a ThreadSafeRefCounted utility class indended for
 // holding a non-thread-safe RefCounted UserGestureToken. Because UserGestureToken

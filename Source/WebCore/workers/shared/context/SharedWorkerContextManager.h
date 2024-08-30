@@ -28,6 +28,7 @@
 #include "SharedWorkerIdentifier.h"
 #include "TransferredMessagePort.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class ScriptExecutionContext;
 class SharedWorkerThreadProxy;
 
 class SharedWorkerContextManager {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedWorkerContextManager, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static SharedWorkerContextManager& singleton();
 
@@ -45,7 +47,7 @@ public:
     WEBCORE_EXPORT void stopAllSharedWorkers();
 
     class Connection {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection, WEBCORE_EXPORT);
     public:
         virtual ~Connection() { }
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;

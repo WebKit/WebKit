@@ -37,9 +37,12 @@
 #endif
 
 #include "VectorMath.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DirectConvolver);
+
 DirectConvolver::DirectConvolver(size_t inputBlockSize)
     : m_inputBlockSize(inputBlockSize)
     , m_buffer(inputBlockSize * 2)

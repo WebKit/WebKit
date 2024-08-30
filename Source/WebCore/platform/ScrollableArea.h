@@ -34,8 +34,8 @@
 #include "Scrollbar.h"
 #include "ScrollbarColor.h"
 #include <wtf/CheckedPtr.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -81,7 +81,7 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
 }
 
 class ScrollableArea : public CanMakeWeakPtr<ScrollableArea> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollableArea);
 public:
     // CheckedPtr interface
     virtual uint32_t ptrCount() const = 0;

@@ -831,6 +831,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_setFont:(NSFont *)font sender:(id)sender WK_API_AVAILABLE(macos(13.3));
 
+- (void)_showWritingTools WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 @end
 
 @interface WKWebView (WKWindowSnapshot)

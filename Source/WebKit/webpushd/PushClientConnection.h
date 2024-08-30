@@ -75,12 +75,15 @@ class PushClientConnection : public RefCounted<PushClientConnection>, public Ide
 public:
     static RefPtr<PushClientConnection> create(xpc_connection_t, IPC::Decoder&);
 
-    WebCore::PushSubscriptionSetIdentifier subscriptionSetIdentifier() const;
+    std::optional<WebCore::PushSubscriptionSetIdentifier> subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData&) const;
     const String& hostAppCodeSigningIdentifier() const { return m_hostAppCodeSigningIdentifier; }
     bool hostAppHasPushInjectEntitlement() const { return m_hostAppHasPushInjectEntitlement; };
-
-    const String& pushPartitionString() const { return m_pushPartitionString; }
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+
+    // You almost certainly do not want to use this and should probably use subscriptionSetIdentifierForOrigin instead.
+    const String& pushPartitionIfExists() const { return m_pushPartitionString; }
+
+    String debugDescription() const;
 
     void connectionClosed();
 
@@ -114,7 +117,7 @@ private:
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>, CompletionHandler<void()>&&);
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
-    void cancelNotification(const WTF::UUID& notificationID);
+    void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
     void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
 

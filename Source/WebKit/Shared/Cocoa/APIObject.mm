@@ -112,6 +112,7 @@
 #import "WKWebExtensionInternal.h"
 #import "WKWebExtensionMatchPatternInternal.h"
 #import "WKWebExtensionMessagePortInternal.h"
+#import "_WKWebExtensionSidebarInternal.h"
 #endif
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -437,7 +438,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     case Type::WebExtensionMessagePort:
         wrapper = [WKWebExtensionMessagePort alloc];
         break;
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    case Type::WebExtensionSidebar:
+        wrapper = [_WKWebExtensionSidebar alloc];
+        break;
 #endif
+#endif // ENABLE(WK_WEB_EXTENSIONS)
 
     case Type::WebsiteDataRecord:
         wrapper = [WKWebsiteDataRecord alloc];

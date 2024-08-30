@@ -60,6 +60,7 @@ static const NSString * const kURLArgumentString = @"--url";
 @end
 
 @interface WebViewController () <WKNavigationDelegate> {
+    WKWebsiteDataStore *_dataStore;
     WKWebView *_currentWebView;
     NSURL *_initialURL;
 }
@@ -162,6 +163,16 @@ void* URLContext = &URLContext;
     return _currentWebView;
 }
 
+- (WKWebsiteDataStore *)dataStore
+{
+    if (!_dataStore) {
+        _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
+        dataStoreConfiguration.webPushMachServiceName = @"com.apple.webkit.webpushd.service";
+        _dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration];
+    }
+    return _dataStore;
+}
+
 - (void)setCurrentWebView:(WKWebView *)webView
 {
     [_currentWebView removeObserver:self forKeyPath:@"estimatedProgress" context:EstimatedProgressContext];
@@ -211,11 +222,7 @@ void* URLContext = &URLContext;
     configuration.preferences._notificationEventEnabled = YES;
     configuration.preferences._appBadgeEnabled = YES;
     configuration.preferences.elementFullscreenEnabled = YES;
-
-    _WKWebsiteDataStoreConfiguration *dataStoreConfiguration = [[_WKWebsiteDataStoreConfiguration alloc] init];
-    dataStoreConfiguration.webPushMachServiceName = @"com.apple.webkit.webpushd.service";
-    // FIXME: Set an appropriate webPushPartitionString
-    configuration.websiteDataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration];
+    configuration.websiteDataStore = [self dataStore];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.webViewContainer.bounds configuration:configuration];
     webView.inspectable = YES;

@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "InlineIteratorSVGTextBox.h"
 #include "Path.h"
 #include "SVGTextChunkBuilder.h"
 #include "SVGTextFragment.h"
@@ -52,7 +53,7 @@ public:
     void beginTextPathLayout(RenderSVGTextPath&, SVGTextLayoutEngine& lineLayout);
     void endTextPathLayout();
 
-    void layoutInlineTextBox(SVGInlineTextBox&);
+    void layoutInlineTextBox(InlineIterator::SVGTextBoxIterator);
     void finishLayout();
 
 private:
@@ -60,15 +61,15 @@ private:
     void updateCurrentTextPosition(float x, float y, float glyphAdvance);
     void updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
-    void recordTextFragment(SVGInlineTextBox&, Vector<SVGTextMetrics>&);
+    void recordTextFragment(InlineIterator::SVGTextBoxIterator, const Vector<SVGTextMetrics>&);
     bool parentDefinesTextLength(RenderObject*) const;
 
-    void layoutTextOnLineOrPath(SVGInlineTextBox&, RenderSVGInlineText&, const RenderStyle&);
-    void finalizeTransformMatrices(Vector<SVGInlineTextBox*>&);
+    void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const RenderStyle&);
+    void finalizeTransformMatrices(Vector<InlineIterator::SVGTextBoxIterator>&);
 
     bool currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
     bool currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
-    bool currentVisualCharacterMetrics(const SVGInlineTextBox&, Vector<SVGTextMetrics>&, SVGTextMetrics&);
+    bool currentVisualCharacterMetrics(const InlineIterator::SVGTextBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
 
     void advanceToNextLogicalCharacter(const SVGTextMetrics&);
     void advanceToNextVisualCharacter(const SVGTextMetrics&);
@@ -76,8 +77,8 @@ private:
 private:
     Vector<SVGTextLayoutAttributes*>& m_layoutAttributes;
 
-    Vector<SVGInlineTextBox*> m_lineLayoutBoxes;
-    Vector<SVGInlineTextBox*> m_pathLayoutBoxes;
+    Vector<InlineIterator::SVGTextBoxIterator> m_lineLayoutBoxes;
+    Vector<InlineIterator::SVGTextBoxIterator> m_pathLayoutBoxes;
     SVGTextChunkBuilder m_chunkLayoutBuilder;
 
     SVGTextFragment m_currentTextFragment;

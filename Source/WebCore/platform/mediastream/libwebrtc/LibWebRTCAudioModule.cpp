@@ -30,13 +30,15 @@
 
 #include "LibWebRTCAudioFormat.h"
 #include "Logging.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "IncomingAudioMediaStreamTrackRendererUnit.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCAudioModule);
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
     : m_queue(WorkQueue::create("WebKitWebRTCAudioModule"_s, WorkQueue::QOS::UserInteractive))

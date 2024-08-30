@@ -29,6 +29,7 @@
 
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVContentKeyRequest;
 
@@ -37,7 +38,7 @@ namespace WebCore {
 struct FourCC;
 
 class CDMFactoryFairPlayStreaming final : public CDMFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMFactoryFairPlayStreaming);
 public:
     static CDMFactoryFairPlayStreaming& singleton();
 
@@ -52,7 +53,7 @@ private:
 };
 
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateFairPlayStreaming);
 public:
     CDMPrivateFairPlayStreaming(const CDMPrivateClient&);
     virtual ~CDMPrivateFairPlayStreaming();

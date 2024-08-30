@@ -31,12 +31,17 @@
 
 namespace WebCore {
 
-SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, unsigned first, unsigned limit)
+SVGChunkTransformMapKey makeSVGChunkTransformMapKey(InlineIterator::SVGTextBoxIterator textBox)
+{
+    return { &textBox->renderer(), textBox->start() };
+}
+
+SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lineLayoutBoxes, unsigned first, unsigned limit)
 {
     ASSERT(first < limit);
     ASSERT(limit <= lineLayoutBoxes.size());
 
-    const SVGInlineTextBox* box = lineLayoutBoxes[first];
+    auto box = lineLayoutBoxes[first];
     const RenderStyle& style = box->renderer().style();
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
@@ -79,7 +84,7 @@ SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, uns
 unsigned SVGTextChunk::totalCharacters() const
 {
     unsigned characters = 0;
-    for (auto* box : m_boxes) {
+    for (auto& box : m_boxes) {
         for (auto& fragment : box->textFragments())
             characters += fragment.length;
     }
@@ -91,7 +96,7 @@ float SVGTextChunk::totalLength() const
     const SVGTextFragment* firstFragment = nullptr;
     const SVGTextFragment* lastFragment = nullptr;
 
-    for (auto* box : m_boxes) {
+    for (auto& box : m_boxes) {
         auto& fragments = box->textFragments();
         if (fragments.size()) {
             firstFragment = &(*fragments.begin());
@@ -127,7 +132,7 @@ float SVGTextChunk::totalAnchorShift() const
     return m_chunkStyle & RightToLeftText ? -length : 0;
 }
 
-void SVGTextChunk::layout(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+void SVGTextChunk::layout(SVGChunkTransformMap& textBoxTransformations) const
 {
     if (hasDesiredTextLength()) {
         if (hasLengthAdjustSpacing())
@@ -151,35 +156,36 @@ void SVGTextChunk::processTextLengthSpacingCorrection() const
     bool isVerticalText = m_chunkStyle & VerticalText;
     unsigned atCharacter = 0;
 
-    for (auto* box : m_boxes) {
+    for (auto& box : m_boxes) {
         for (auto& fragment : box->textFragments()) {
+            auto& mutableFragment = const_cast<SVGTextFragment&>(fragment);
             if (isVerticalText)
-                fragment.y += textLengthShift * atCharacter;
+                mutableFragment.y += textLengthShift * atCharacter;
             else
-                fragment.x += textLengthShift * atCharacter;
-            
+                mutableFragment.x += textLengthShift * atCharacter;
+
             atCharacter += fragment.length;
         }
     }
 }
 
-void SVGTextChunk::buildBoxTransformations(HashMap<SVGInlineTextBox*, AffineTransform>& textBoxTransformations) const
+void SVGTextChunk::buildBoxTransformations(SVGChunkTransformMap& textBoxTransformations) const
 {
     AffineTransform spacingAndGlyphsTransform;
     bool foundFirstFragment = false;
 
-    for (auto* box : m_boxes) {
+    for (auto& box : m_boxes) {
         if (!foundFirstFragment) {
             if (!boxSpacingAndGlyphsTransform(box, spacingAndGlyphsTransform))
                 continue;
             foundFirstFragment = true;
         }
 
-        textBoxTransformations.set(box, spacingAndGlyphsTransform);
+        textBoxTransformations.set(makeSVGChunkTransformMapKey(box), spacingAndGlyphsTransform);
     }
 }
 
-bool SVGTextChunk::boxSpacingAndGlyphsTransform(const SVGInlineTextBox* box, AffineTransform& spacingAndGlyphsTransform) const
+bool SVGTextChunk::boxSpacingAndGlyphsTransform(InlineIterator::SVGTextBoxIterator box, AffineTransform& spacingAndGlyphsTransform) const
 {
     auto& fragments = box->textFragments();
     if (fragments.isEmpty())
@@ -204,12 +210,13 @@ void SVGTextChunk::processTextAnchorCorrection() const
     float textAnchorShift = totalAnchorShift();
     bool isVerticalText = m_chunkStyle & VerticalText;
 
-    for (auto* box : m_boxes) {
+    for (auto& box : m_boxes) {
         for (auto& fragment : box->textFragments()) {
+            auto& mutableFragment = const_cast<SVGTextFragment&>(fragment);
             if (isVerticalText)
-                fragment.y += textAnchorShift;
+                mutableFragment.y += textAnchorShift;
             else
-                fragment.x += textAnchorShift;
+                mutableFragment.x += textAnchorShift;
         }
     }
 }

@@ -25,8 +25,8 @@
 #include "AnimationUtilities.h"
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace WTF {
@@ -61,7 +61,7 @@ struct BlendingContext;
 class CalculationValue;
 
 struct Length {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Length);
 public:
     Length(LengthType = LengthType::Auto);
 

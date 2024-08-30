@@ -38,6 +38,7 @@
 #include "GStreamerEMEUtilities.h"
 #include "MediaKeyStatus.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -53,7 +54,7 @@ using UniqueThunderSystem = std::unique_ptr<OpenCDMSystem, ThunderSystemDeleter>
 } // namespace Thunder
 
 class CDMFactoryThunder final : public CDMFactory, public CDMProxyFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMFactoryThunder);
 public:
     static CDMFactoryThunder& singleton();
 
@@ -70,7 +71,7 @@ private:
 };
 
 class CDMPrivateThunder final : public CDMPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateThunder);
 public:
     CDMPrivateThunder(const String& keySystem);
     virtual ~CDMPrivateThunder() = default;

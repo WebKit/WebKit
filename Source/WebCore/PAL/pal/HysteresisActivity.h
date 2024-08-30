@@ -27,6 +27,7 @@
 
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
 
@@ -35,7 +36,7 @@ static const Seconds defaultHysteresisDuration { 5_s };
 enum class HysteresisState : bool { Started, Stopped };
 
 class HysteresisActivity {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HysteresisActivity);
 public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))

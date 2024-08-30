@@ -33,9 +33,12 @@
 #include "FFTConvolver.h"
 
 #include "VectorMath.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
     
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FFTConvolver);
+
 FFTConvolver::FFTConvolver(size_t fftSize)
     : m_frame(fftSize)
     , m_inputBuffer(fftSize) // 2nd half of buffer is always zeroed

@@ -597,15 +597,24 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
-LineEndingEllipsisPolicy InlineFormattingUtils::lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed)
+LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed)
 {
     if (numberOfVisibleLinesAllowed && *numberOfVisibleLinesAllowed == numberOfLinesWithInlineContent)
-        return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+        return LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
 
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
-    return LineEndingEllipsisPolicy::NoEllipsis;
+        return LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection;
+    return LineEndingTruncationPolicy::NoTruncation;
+}
+
+bool InlineFormattingUtils::shouldDiscardRemainingContentInBlockDirection(size_t numberOfLinesWithInlineContent) const
+{
+    auto lineClamp = formattingContext().layoutState().parentBlockLayoutState().lineClamp();
+    if (!lineClamp || !lineClamp->shouldDiscardOverflow)
+        return false;
+    ASSERT(!lineClamp->isLegacy);
+    return lineClamp->maximumLines == numberOfLinesWithInlineContent;
 }
 
 }

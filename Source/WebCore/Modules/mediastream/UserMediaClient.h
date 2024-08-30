@@ -62,7 +62,7 @@ public:
     virtual DeviceChangeObserverToken addDeviceChangeObserver(Function<void()>&&) = 0;
     virtual void removeDeviceChangeObserver(DeviceChangeObserverToken) = 0;
 
-    virtual void updateCaptureState(bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
+    virtual void updateCaptureState(const Document&, bool isActive, MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<Exception>&&)>&&) = 0;
 
 protected:
     virtual ~UserMediaClient() = default;

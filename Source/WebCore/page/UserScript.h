@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class UserScript {
-    WTF_MAKE_TZONE_ALLOCATED(UserScript);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript, WEBCORE_EXPORT);
 public:
     ~UserScript() = default;
     UserScript(const UserScript&) = default;

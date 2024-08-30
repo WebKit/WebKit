@@ -37,9 +37,12 @@
 #include <cmath>
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatQuad);
 
 inline float dot(const FloatSize& a, const FloatSize& b)
 {

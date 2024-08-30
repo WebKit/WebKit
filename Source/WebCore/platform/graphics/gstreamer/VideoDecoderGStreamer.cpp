@@ -26,10 +26,13 @@
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
 #include "VideoFrameGStreamer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerVideoDecoder);
 
 GST_DEBUG_CATEGORY(webkit_video_decoder_debug);
 #define GST_CAT_DEFAULT webkit_video_decoder_debug
@@ -42,7 +45,7 @@ static WorkQueue& gstDecoderWorkQueue()
 
 class GStreamerInternalVideoDecoder : public ThreadSafeRefCounted<GStreamerInternalVideoDecoder>
     , public CanMakeWeakPtr<GStreamerInternalVideoDecoder, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalVideoDecoder);
 
 public:
     static Ref<GStreamerInternalVideoDecoder> create(const String& codecName, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, VideoDecoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)

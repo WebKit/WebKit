@@ -74,7 +74,6 @@ struct CSSParserContext {
     bool shouldIgnoreImportRules : 1 { false };
 
     // Settings, excluding those affecting properties.
-    bool colorContrastEnabled : 1 { false };
     bool counterStyleAtRuleImageSymbolsEnabled : 1 { false };
     bool springTimingFunctionEnabled : 1 { false };
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)

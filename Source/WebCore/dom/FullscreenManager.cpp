@@ -50,8 +50,11 @@
 #include "RenderBlock.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FullscreenManager);
 
 using namespace HTMLNames;
 

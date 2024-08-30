@@ -40,6 +40,11 @@ bool TextAutospace::shouldApplySpacing(CharacterClass firstCharacterClass, Chara
     return false;
 }
 
+bool TextAutospace::shouldApplySpacing(char32_t firstCharacter, char32_t secondCharacter) const
+{
+    return shouldApplySpacing(TextSpacing::characterClass(firstCharacter), TextSpacing::characterClass(secondCharacter));
+}
+
 float TextAutospace::textAutospaceSize(const Font& font)
 {
     // https://www.w3.org/TR/css-text-4/#text-autospace-property

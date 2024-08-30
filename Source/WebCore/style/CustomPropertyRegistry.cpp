@@ -36,9 +36,12 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "WebAnimation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomPropertyRegistry);
 
 CustomPropertyRegistry::CustomPropertyRegistry(Scope& scope)
     : m_scope(scope)

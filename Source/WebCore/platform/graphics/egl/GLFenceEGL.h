@@ -28,7 +28,7 @@ namespace WebCore {
 class GLFenceEGL final : public GLFence {
 public:
     static std::unique_ptr<GLFence> create();
-#if OS(LINUX)
+#if OS(UNIX)
     static std::unique_ptr<GLFence> createExportable();
     static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
 #endif
@@ -38,7 +38,7 @@ public:
 private:
     void clientWait() override;
     void serverWait() override;
-#if OS(LINUX)
+#if OS(UNIX)
     WTF::UnixFileDescriptor exportFD() override;
 #endif
 

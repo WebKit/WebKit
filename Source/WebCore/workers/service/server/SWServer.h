@@ -49,6 +49,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/URLHash.h>
@@ -82,10 +83,10 @@ struct ServiceWorkerRegistrationData;
 struct WorkerFetchResult;
 
 class SWServer : public RefCounted<SWServer>, public CanMakeWeakPtr<SWServer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServer, WEBCORE_EXPORT);
 public:
     class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr<Connection> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection, WEBCORE_EXPORT);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Connection);
         friend class SWServer;
     public:

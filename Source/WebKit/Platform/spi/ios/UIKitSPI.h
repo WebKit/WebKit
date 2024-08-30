@@ -1047,12 +1047,6 @@ extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserIn
 @property (nonatomic, copy) id badgeValue;
 @end
 
-#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE)
-typedef NS_ENUM(NSInteger, UIFocusItemDeferralMode) {
-    UIFocusItemDeferralModeNever = 2
-};
-#endif
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
@@ -1252,6 +1246,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 
 @class UITextInputArrowKeyHistory;
+
+@interface UIApplication (InternalBSAction)
+- (void)_registerInternalBSActionHandler:(id<_UIApplicationBSActionHandler>)handler;
+@end
 
 WTF_EXTERN_C_BEGIN
 

@@ -1913,6 +1913,11 @@ void WebChromeClient::clearAnimationsForActiveWritingToolsSession()
 
 #endif
 
+void WebChromeClient::setIsInRedo(bool isInRedo)
+{
+    protectedPage()->setIsInRedo(isInRedo);
+}
+
 void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
 {
     protectedPage()->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);

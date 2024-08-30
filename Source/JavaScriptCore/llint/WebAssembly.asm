@@ -871,7 +871,11 @@ end
     move cfr, a1
     cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
 
+if ARMv7
+    branchIfException(.handleException)
+else
     btpnz r1, .handleException
+end
 
     # Clean up and return
     restoreJSEntrypointInterpreterRegisters()
@@ -1911,6 +1915,10 @@ end)
 
 wasmOp(tail_call_indirect, WasmTailCallIndirect, macro(ctx)
     slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_indirect)
+end)
+
+wasmOp(tail_call_ref, WasmTailCallRef, macro(ctx)
+    slowPathForWasmTailCall(ctx, _slow_path_wasm_tail_call_ref)
 end)
 
 slowWasmOp(call_builtin)

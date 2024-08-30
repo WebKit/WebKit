@@ -35,13 +35,14 @@
 #include <array>
 #include <wtf/HashMap.h>
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 struct FontDescriptionKeyRareData : public RefCounted<FontDescriptionKeyRareData> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FontDescriptionKeyRareData);
 public:
     static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette, FontSizeAdjust&& fontSizeAdjust)
     {
@@ -257,8 +258,8 @@ struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
 };
 
 class FontCascadeCache {
+    WTF_MAKE_TZONE_ALLOCATED(FontCascadeCache);
     WTF_MAKE_NONCOPYABLE(FontCascadeCache);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     FontCascadeCache() = default;
 

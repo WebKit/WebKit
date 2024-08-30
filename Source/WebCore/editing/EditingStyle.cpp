@@ -63,6 +63,7 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -158,10 +159,10 @@ template<typename T> CSSValueID identifierForStyleProperty(T& style, CSSProperty
     auto value = extractPropertyValue(style, propertyID);
     if (auto fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value.get())) {
         ASSERT(propertyID == CSSPropertyFontStyle);
-        return fontStyleValue->obliqueAngle().doubleValue(CSSUnitType::CSS_DEG) >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
+        return fontStyleValue->obliqueAngle().resolveAsAngleDeprecated() >= italicThreshold() ? CSSValueItalic : CSSValueNormal;
     }
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get())) {
-        if (propertyID == CSSPropertyFontWeight && primitiveValue->doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
+        if (propertyID == CSSPropertyFontWeight && primitiveValue->isNumber() && primitiveValue->resolveAsNumberDeprecated() >= boldThreshold())
             return CSSValueBold;
         auto identifier = primitiveValue->valueID();
         if (identifier == CSSValueOblique) {
@@ -180,7 +181,7 @@ static bool hasTransparentBackgroundColor(StyleProperties*);
 static RefPtr<CSSValue> backgroundColorInEffect(Node*);
 
 class HTMLElementEquivalent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTMLElementEquivalent);
 public:
     HTMLElementEquivalent(CSSPropertyID, CSSValueID primitiveValue, const QualifiedName& tagName);
     virtual ~HTMLElementEquivalent() = default;
@@ -298,7 +299,7 @@ static bool fontWeightValueIsBold(CSSValue& fontWeight)
         return false;
 
     ASSERT(primitiveValue->isNumber());
-    return primitiveValue->floatValue() >= static_cast<float>(boldThreshold());
+    return primitiveValue->resolveAsNumberDeprecated<float>() >= static_cast<float>(boldThreshold());
 }
 
 class HTMLFontWeightEquivalent : public HTMLElementEquivalent {
@@ -604,7 +605,7 @@ void EditingStyle::extractFontSizeDelta()
     if (!primitiveValue->isPx())
         return;
 
-    m_fontSizeDelta = primitiveValue->floatValue();
+    m_fontSizeDelta = primitiveValue->resolveAsLengthDeprecated<float>();
     m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
 }
 
@@ -1968,7 +1969,7 @@ static bool isCSSValueLength(CSSPrimitiveValue* value)
 int legacyFontSizeFromCSSValue(Document& document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
 {
     if (isCSSValueLength(value)) {
-        int pixelFontSize = value->intValue(CSSUnitType::CSS_PX);
+        int pixelFontSize = value->resolveAsLengthDeprecated<int>();
         int legacyFontSize = Style::legacyFontSizeForPixelSize(pixelFontSize, shouldUseFixedFontDefaultSize, document);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;

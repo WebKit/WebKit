@@ -74,10 +74,10 @@ public:
     // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
     bool requiresConversionData() const;
 
-    // FIXME: Remove `doubleValueDeprecated` once all callers have moved to call `doubleValue` with `CSSToLengthConversionData`.
+    double doubleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    double doubleValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     double doubleValueDeprecated(const CSSCalcSymbolTable&) const;
 
-    double doubleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     double computeLengthPx(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 

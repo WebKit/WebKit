@@ -36,12 +36,15 @@
 #include "VectorMath.h"
 #include <complex>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FFTFrame);
 
 void FFTFrame::doPaddedFFT(const float* data, size_t dataSize)
 {

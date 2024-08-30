@@ -23,6 +23,7 @@
 
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

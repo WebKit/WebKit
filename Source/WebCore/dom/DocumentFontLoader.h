@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "Document.h"
 #include "Timer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 class CachedFont;
 
 class DocumentFontLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DocumentFontLoader);
 public:
     DocumentFontLoader(Document&);
     ~DocumentFontLoader();

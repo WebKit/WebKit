@@ -919,7 +919,9 @@ public:
 
     virtual bool hasBoldFont() const = 0;
     virtual bool hasItalicFont() const = 0;
-    virtual Vector<CharacterRange> spellCheckerResultRanges() const = 0;
+
+    // Returns all ranges of misspellings contained within the object.
+    virtual Vector<AXTextMarkerRange> misspellingRanges() const = 0;
     virtual std::optional<SimpleRange> misspellingRange(const SimpleRange& start, AccessibilitySearchDirection) const = 0;
     virtual std::optional<SimpleRange> visibleCharacterRange() const = 0;
     virtual bool hasPlainText() const = 0;
@@ -948,7 +950,7 @@ public:
     virtual Node* node() const = 0;
     virtual RenderObject* renderer() const = 0;
 
-    virtual bool accessibilityIsIgnored() const = 0;
+    virtual bool isIgnored() const = 0;
 
     virtual unsigned blockquoteLevel() const = 0;
     virtual unsigned headingLevel() const = 0;

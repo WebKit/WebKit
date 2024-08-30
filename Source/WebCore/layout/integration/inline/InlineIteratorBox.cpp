@@ -62,6 +62,11 @@ bool BoxIterator::atEnd() const
     });
 }
 
+bool Box::isSVGText() const
+{
+    return isText() && renderer().isRenderSVGInlineText();
+}
+
 LeafBoxIterator Box::nextOnLine() const
 {
     return LeafBoxIterator(*this).traverseNextOnLine();

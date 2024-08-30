@@ -60,6 +60,7 @@ enum class SessionType : uint8_t {
 
 enum class SessionCompositionType : uint8_t {
     None,
+    Compose,
     SmartReply,
     Other,
 };

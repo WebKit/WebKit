@@ -66,10 +66,16 @@ async function testTrackMuteUnmute(test, track, action, stateCallback, muteCallb
     await waitForAction(action);
     await waitForMuteEvent(track);
 
+    testRunner.setCameraPermission(false);
+    testRunner.setMicrophonePermission(false);
+
     internals.withUserGesture(() => {
         promise = stateCallback(true);
     });
     await promise_rejects_dom(test, "NotAllowedError", promise);
+
+    testRunner.setCameraPermission(true);
+    testRunner.setMicrophonePermission(true);
 
     await muteCallback(false);
     await waitForAction(action);

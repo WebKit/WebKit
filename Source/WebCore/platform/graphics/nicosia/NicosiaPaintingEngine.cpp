@@ -32,9 +32,12 @@
 #include "NicosiaPaintingEngineBasic.h"
 #include "NicosiaPaintingEngineThreaded.h"
 #include <wtf/NumberOfCores.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace Nicosia {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintingEngine);
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {

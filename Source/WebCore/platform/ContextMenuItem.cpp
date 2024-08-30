@@ -27,10 +27,13 @@
 #include "ContextMenuItem.h"
 
 #include "ContextMenu.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTEXT_MENUS)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContextMenuItem);
 
 ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
     : m_type(type)

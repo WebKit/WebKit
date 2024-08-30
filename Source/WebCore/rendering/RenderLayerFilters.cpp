@@ -40,8 +40,11 @@
 #include "RenderSVGShape.h"
 #include "RenderStyleInlines.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerFilters);
 
 RenderLayerFilters::RenderLayerFilters(RenderLayer& layer)
     : m_layer(layer)

@@ -67,7 +67,7 @@ using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
 class ScrollingCoordinator : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingCoordinator> {
-    WTF_MAKE_TZONE_ALLOCATED(ScrollingCoordinator);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingCoordinator, WEBCORE_EXPORT);
 public:
     static Ref<ScrollingCoordinator> create(Page*);
     virtual ~ScrollingCoordinator();
@@ -194,6 +194,8 @@ public:
 
     virtual void willDestroyScrollableArea(ScrollableArea&) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) { }
+
+    virtual void scrollableAreaWillBeDetached(ScrollableArea&) { }
 
     virtual void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> /* nominalFramesPerSecond */) { }
 

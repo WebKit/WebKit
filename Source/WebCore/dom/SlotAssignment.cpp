@@ -31,8 +31,13 @@
 #include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotAssignment);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NamedSlotAssignment);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NamedSlotAssignmentSlot, NamedSlotAssignment::Slot);
 
 using namespace HTMLNames;
 

@@ -23,6 +23,7 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -30,7 +31,7 @@ class FEColorMatrix;
 class PixelBuffer;
 
 class FEColorMatrixSoftwareApplier final : public FilterEffectConcreteApplier<FEColorMatrix> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEColorMatrixSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FEColorMatrix>;
 
 public:

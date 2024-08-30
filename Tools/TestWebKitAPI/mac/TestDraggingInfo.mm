@@ -100,23 +100,26 @@
         if (classObject != NSFilePromiseReceiver.class)
             continue;
 
-        id promisedTypeIdentifiers = [_pasteboard propertyListForType:NSFilesPromisePboardType];
-        if (![promisedTypeIdentifiers isKindOfClass:NSArray.class])
-            break;
+        RetainPtr promisedTypeIdentifiers = dynamic_objc_cast<NSArray>([_pasteboard propertyListForType:NSFilesPromisePboardType]);
+        RetainPtr externalPromisedFiles = [_dragAndDropSimulator externalPromisedFiles];
+        RELEASE_ASSERT([promisedTypeIdentifiers count] == [externalPromisedFiles count]);
 
-        for (id object in promisedTypeIdentifiers) {
-            if (![object isKindOfClass:NSString.class])
+        for (id object in promisedTypeIdentifiers.get())
+            RELEASE_ASSERT([object isKindOfClass:NSString.class]);
+
+        NSUInteger itemIndex = 0;
+        for (NSURL *promisedFileURL in externalPromisedFiles.get()) {
+            RetainPtr receiver = adoptNS([[TestFilePromiseReceiver alloc] initWithTypeIdentifier:[promisedTypeIdentifiers objectAtIndex:itemIndex] fileURL:promisedFileURL]);
+            [receiver setDraggingSource:_source.get().get()];
+            [_filePromiseReceivers addObject:receiver.get()];
+
+            RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+            block(item.get(), 0, &stop);
+            if (stop)
                 break;
+
+            itemIndex++;
         }
-
-        auto receiver = adoptNS([[TestFilePromiseReceiver alloc] initWithPromisedTypeIdentifiers:promisedTypeIdentifiers dragAndDropSimulator:_dragAndDropSimulator.getAutoreleased()]);
-        [receiver setDraggingSource:_source.get().get()];
-        [_filePromiseReceivers addObject:receiver.get()];
-
-        auto item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
-        block(item.get(), 0, &stop);
-        if (stop)
-            break;
     }
 }
 

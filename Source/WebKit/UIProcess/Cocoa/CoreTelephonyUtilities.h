@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if HAVE(CORE_TELEPHONY)
 
 namespace WTF {

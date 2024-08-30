@@ -33,6 +33,7 @@
 #include "PlatformMediaSession.h"
 #include "Timer.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -68,7 +69,7 @@ struct MediaPositionState;
 enum class MediaSessionPlaybackState : uint8_t;
 
 class MediaElementSession final : public PlatformMediaSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaElementSession);
 public:
     explicit MediaElementSession(HTMLMediaElement&);
     virtual ~MediaElementSession();

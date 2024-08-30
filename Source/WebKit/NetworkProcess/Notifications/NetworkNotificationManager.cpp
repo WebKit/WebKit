@@ -43,11 +43,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
-// FIXME: instead of passing in ephemeral session state, we should probably just avoid constructing this object altogether.
-NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, bool isEphemeralSession, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
-    : m_isEphemeralSession(isEphemeralSession)
+NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
-    if (!webPushMachServiceName.isEmpty() && !isEphemeralSession)
+    if (!webPushMachServiceName.isEmpty())
         m_connection = makeUnique<WebPushD::Connection>(webPushMachServiceName.utf8(), WTFMove(configuration));
 }
 
@@ -106,12 +104,12 @@ void NetworkNotificationManager::getNotifications(const URL& registrationURL, co
     m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { registrationURL, tag }, WTFMove(completionHandler));
 }
 
-void NetworkNotificationManager::cancelNotification(const WTF::UUID& notificationID)
+void NetworkNotificationManager::cancelNotification(WebCore::SecurityOriginData&& origin, const WTF::UUID& notificationID)
 {
     if (!m_connection)
         return;
 
-    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { notificationID });
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { WTFMove(origin), notificationID });
 }
 
 void NetworkNotificationManager::clearNotifications(const Vector<WTF::UUID>&)
@@ -128,9 +126,6 @@ void NetworkNotificationManager::didDestroyNotification(const WTF::UUID&)
 
 void NetworkNotificationManager::requestPermission(WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_isEphemeralSession)
-        return completionHandler(false);
-
     if (!m_connection) {
         RELEASE_LOG_ERROR(Push, "requestPermission failed: no active connection to webpushd");
         return completionHandler(false);
@@ -169,13 +164,8 @@ void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std:
 
 void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    if (m_isEphemeralSession) {
-        completionHandler(std::optional<WebCore::PushSubscriptionData> { });
-        return;
-    }
-
     if (!m_connection) {
-        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
+        completionHandler(std::optional<WebCore::PushSubscriptionData> { });
         return;
     }
 

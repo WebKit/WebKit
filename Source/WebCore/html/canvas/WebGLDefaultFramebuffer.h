@@ -28,12 +28,13 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLRenderingContextBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Implementation for the WebGL context default framebuffer.
 class WebGLDefaultFramebuffer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebGLDefaultFramebuffer);
     WTF_MAKE_NONCOPYABLE(WebGLDefaultFramebuffer);
 public:
     static std::unique_ptr<WebGLDefaultFramebuffer> create(WebGLRenderingContextBase&, IntSize);

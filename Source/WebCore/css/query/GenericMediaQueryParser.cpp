@@ -231,7 +231,10 @@ static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range)
     if (!rightValue)
         return nullptr;
 
-    return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
+    return CSSAspectRatioValue::create(
+        leftValue->resolveAsNumberDeprecated<float>(),
+        rightValue->resolveAsNumberDeprecated<float>()
+    );
 }
 
 RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext&)
@@ -273,7 +276,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
         case FeatureSchema::ValueType::Length:
             if (!primitiveValue)
                 return false;
-            if (primitiveValue->isInteger() && !primitiveValue->intValue())
+            if (primitiveValue->isInteger() && !primitiveValue->resolveAsIntegerDeprecated())
                 return true;
             return primitiveValue->isLength();
 
@@ -285,9 +288,10 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
 
         case FeatureSchema::ValueType::Ratio:
             if (primitiveValue && primitiveValue->isNumberOrInteger()) {
-                if (primitiveValue->floatValue() < 0)
+                auto number = primitiveValue->template resolveAsNumberDeprecated<float>();
+                if (number < 0)
                     return false;
-                value = CSSAspectRatioValue::create(primitiveValue->floatValue(), 1);
+                value = CSSAspectRatioValue::create(number, 1);
                 return true;
             }
             return is<CSSAspectRatioValue>(value.get());

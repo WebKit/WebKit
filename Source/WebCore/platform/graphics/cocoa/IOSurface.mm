@@ -39,6 +39,7 @@
 #import <wtf/EnumTraits.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -47,6 +48,8 @@
 #import <pal/cocoa/QuartzCoreSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IOSurface);
 
 static auto surfaceNameToNSString(IOSurface::Name name)
 {

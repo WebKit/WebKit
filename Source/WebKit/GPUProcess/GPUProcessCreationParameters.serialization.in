@@ -33,8 +33,8 @@
 #endif
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled;
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    bool shouldUseModernAVContentKeySession;
 #endif
 
     ProcessID parentPID;

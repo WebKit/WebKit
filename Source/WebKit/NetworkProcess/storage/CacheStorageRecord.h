@@ -51,6 +51,19 @@ struct CacheStorageRecordInformation {
             varyHeaders = { };
     }
 
+    CacheStorageRecordInformation isolatedCopy() && {
+        return {
+            crossThreadCopy(WTFMove(key)),
+            insertionTime,
+            identifier,
+            updateResponseCounter,
+            size,
+            crossThreadCopy(WTFMove(url)),
+            hasVaryStar,
+            crossThreadCopy(WTFMove(varyHeaders))
+        };
+    }
+
     NetworkCache::Key key;
     double insertionTime { 0 };
     uint64_t identifier { 0 };
@@ -79,6 +92,20 @@ struct CacheStorageRecord {
         , responseBodySize(responseBodySize)
         , responseBody(WTFMove(responseBody))
     {
+    }
+
+    CacheStorageRecord isolatedCopy() && {
+        return {
+            crossThreadCopy(WTFMove(info)),
+            requestHeadersGuard,
+            crossThreadCopy(WTFMove(request)),
+            options,
+            crossThreadCopy(WTFMove(referrer)),
+            responseHeadersGuard,
+            crossThreadCopy(WTFMove(responseData)),
+            responseBodySize,
+            WebCore::DOMCacheEngine::isolatedResponseBody(WTFMove(responseBody))
+        };
     }
 
     CacheStorageRecordInformation info;

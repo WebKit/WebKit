@@ -898,6 +898,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                     context.matchedHostPseudoClass |= subcontext.matchedHostPseudoClass;
 
                     // Pseudo elements are not valid inside :is()/:matches()
+                    // They should also have a specificity of 0 (CSSSelector::simpleSelectorSpecificity)
                     if (localDynamicPseudoIdSet)
                         continue;
 

@@ -159,6 +159,12 @@ WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 // Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
 
 JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;
+JSC_SEC_LD_FLAGS[sdk=macosx*] = -framework BrowserEngineCore;
+JSC_SEC_LD_FLAGS[sdk=macosx13*] = ;
+JSC_SEC_LD_FLAGS[sdk=macosx14.0*] = ;
+JSC_SEC_LD_FLAGS[sdk=macosx14.1*] = ;
+JSC_SEC_LD_FLAGS[sdk=macosx14.2*] = ;
+JSC_SEC_LD_FLAGS[sdk=macosx14.3*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;

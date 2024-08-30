@@ -22,13 +22,14 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "LegacyRenderSVGResource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderObject;
 
 class LegacyRenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceSolidColor);
 public:
     LegacyRenderSVGResourceSolidColor();
     virtual ~LegacyRenderSVGResourceSolidColor();

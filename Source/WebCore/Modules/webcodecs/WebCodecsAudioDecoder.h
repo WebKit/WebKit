@@ -34,6 +34,7 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include "WebCodecsAudioDecoderConfig.h"
 #include "WebCodecsAudioDecoderSupport.h"
+#include "WebCodecsBaseClass.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsEncodedAudioChunkType.h"
@@ -47,7 +48,8 @@ class WebCodecsErrorCallback;
 class WebCodecsAudioDataOutputCallback;
 
 class WebCodecsAudioDecoder
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioDecoder>
+    : private WebCodecsBaseClass
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioDecoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioDecoder);

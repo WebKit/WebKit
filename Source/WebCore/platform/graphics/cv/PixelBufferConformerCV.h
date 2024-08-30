@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGImage* CGImageRef;
@@ -35,7 +36,7 @@ typedef struct __CVBuffer *CVPixelBufferRef;
 namespace WebCore {
 
 class PixelBufferConformerCV {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PixelBufferConformerCV, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);

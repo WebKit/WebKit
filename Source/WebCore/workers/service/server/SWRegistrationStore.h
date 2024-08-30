@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class ServiceWorkerRegistrationKey;
 struct ServiceWorkerContextData;
 
 class SWRegistrationStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SWRegistrationStore);
 public:
     virtual ~SWRegistrationStore() = default;
     virtual void clearAll(CompletionHandler<void()>&&) = 0;

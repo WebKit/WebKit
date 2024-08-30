@@ -96,7 +96,7 @@ class VisitedLinkStore;
 class WebRTCProvider;
 
 class PageConfiguration {
-    WTF_MAKE_TZONE_ALLOCATED(PageConfiguration);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PageConfiguration, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(PageConfiguration);
 public:
 

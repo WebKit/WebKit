@@ -42,7 +42,7 @@ class TrustedHTML;
 struct SimpleRange;
 
 class Range final : public AbstractRange, public CanMakeSingleThreadWeakPtr<Range> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Range);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Range, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);

@@ -2018,6 +2018,7 @@ private:
         const Identifier* lastPrivateName { nullptr };
         bool allowAwait { true };
         bool isParsingClassFieldInitializer { false };
+        bool classFieldInitMasksAsync { false };
     };
 
     // If you're using this directly, you probably should be using

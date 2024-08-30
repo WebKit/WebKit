@@ -54,6 +54,7 @@ public:
     Box(PathVariant&&);
 
     bool isText() const;
+    bool isSVGText() const;
     bool isInlineBox() const;
     bool isRootInlineBox() const;
     bool isLineBreak() const;
@@ -148,6 +149,21 @@ public:
     LeafBoxIterator& traversePreviousOnLine();
     LeafBoxIterator& traverseNextOnLineIgnoringLineBreak();
     LeafBoxIterator& traversePreviousOnLineIgnoringLineBreak();
+};
+
+template<class IteratorType>
+class BoxRange {
+public:
+    BoxRange(IteratorType begin)
+        : m_begin(begin)
+    {
+    }
+
+    IteratorType begin() const { return m_begin; }
+    EndIterator end() const { return { }; }
+
+private:
+    IteratorType m_begin;
 };
 
 LeafBoxIterator boxFor(const RenderLineBreak&);

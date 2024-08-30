@@ -28,8 +28,11 @@
 
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSUnresolvedColor);
 
 CSSUnresolvedColor::~CSSUnresolvedColor() = default;
 

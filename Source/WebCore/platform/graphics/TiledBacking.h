@@ -29,8 +29,8 @@
 #include "PlatformLayerIdentifier.h"
 #include "TileGridIdentifier.h"
 #include <wtf/CheckedRef.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -87,7 +87,7 @@ public:
 
 
 class TiledBacking : public CanMakeCheckedPtr<TiledBacking> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TiledBacking);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TiledBacking);
 public:
     virtual ~TiledBacking() = default;

@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #define LOG_TILING 0
 
@@ -46,7 +47,7 @@ namespace WebCore {
 class LegacyTileGridTile;
 
 class LegacyTileGrid {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LegacyTileGrid);
 public:
     typedef IntPoint TileIndex;
 

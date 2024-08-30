@@ -843,6 +843,67 @@ void PushDatabase::removeRecordsBySubscriptionSetAndSecurityOrigin(const PushSub
     });
 }
 
+void PushDatabase::removeRecordsByBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&& completionHandler)
+{
+    dispatchOnWorkQueue([this, bundleIdentifier = crossThreadCopy(bundleIdentifier), dataStoreIdentifier, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto scope = makeScopeExit([&completionHandler] {
+            completeOnMainQueue(WTFMove(completionHandler), Vector<RemovedPushRecord> { });
+        });
+
+        Vector<RemovedPushRecord> removedPushRecords;
+        SQLiteTransaction transaction(m_db);
+        transaction.begin();
+
+        {
+            auto sql = bindStatementOnQueue(
+                "SELECT sub.subscriptionSetID, sub.rowid, sub.topic, sub.serverVAPIDPublicKey "
+                "FROM SubscriptionSets ss "
+                "JOIN Subscriptions sub "
+                "ON ss.rowid = sub.subscriptionSetID "
+                "WHERE ss.bundleID = ? AND ss.dataStoreUUID = ?"_s,
+                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                uuidToSpan(dataStoreIdentifier));
+            if (!sql)
+                return;
+
+            while (sql->step() == SQLITE_ROW) {
+                auto identifier = LegacyNullableObjectIdentifier<PushSubscriptionIdentifierType>(sql->columnInt(1));
+                auto topic = sql->columnText(2);
+                auto serverVAPIDPublicKey = sql->columnBlob(3);
+                removedPushRecords.append({ identifier, WTFMove(topic), WTFMove(serverVAPIDPublicKey) });
+            }
+        }
+
+        {
+            auto sql = bindStatementOnQueue(
+                "DELETE FROM Subscriptions "
+                "WHERE subscriptionSetID IN ("
+                "    SELECT rowid FROM SubscriptionSets "
+                "    WHERE bundleID = ? AND dataStoreUUID = ? "
+                ")"_s,
+                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                uuidToSpan(dataStoreIdentifier));
+            if (!sql || sql->step() != SQLITE_DONE)
+                return;
+        }
+
+        {
+            auto sql = bindStatementOnQueue(
+                "DELETE FROM SubscriptionSets "
+                "WHERE bundleID = ? AND dataStoreUUID = ?"_s,
+                !bundleIdentifier.isNull() ? bundleIdentifier : emptyString(),
+                uuidToSpan(dataStoreIdentifier));
+            if (!sql || sql->step() != SQLITE_DONE)
+                return;
+        }
+
+        transaction.commit();
+
+        scope.release();
+        completeOnMainQueue(WTFMove(completionHandler), WTFMove(removedPushRecords));
+    });
+}
+
 void PushDatabase::setPushesEnabled(const PushSubscriptionSetIdentifier& subscriptionSetIdentifier, bool enabled, CompletionHandler<void(bool recordsChanged)>&& completionHandler)
 {
     dispatchOnWorkQueue([this, subscriptionSetIdentifier = crossThreadCopy(subscriptionSetIdentifier), enabled, completionHandler = WTFMove(completionHandler)]() mutable {

@@ -789,6 +789,14 @@ WASM_SLOW_PATH_DECL(tail_call_indirect)
     return doWasmCallIndirect(partiallyConstructedCalleeFrame, callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }
 
+WASM_SLOW_PATH_DECL(tail_call_ref)
+{
+    auto instruction = pc->as<WasmTailCallRef>();
+    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
+    Register* partiallyConstructedCalleeFrame = &callFrame->registers()[-safeCast<int>(instruction.m_stackOffset)];
+    return doWasmCallRef(partiallyConstructedCalleeFrame, callFrame, instance, reference, instruction.m_typeIndex);
+}
+
 static size_t jsrSize()
 {
     static size_t jsrSize = 0;

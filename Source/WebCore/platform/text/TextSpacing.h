@@ -107,6 +107,7 @@ public:
     Options options() { return m_options; }
     friend bool operator==(const TextAutospace&, const TextAutospace&) = default;
     bool shouldApplySpacing(TextSpacing::CharacterClass firstCharacterClass, TextSpacing::CharacterClass secondCharacterClass) const;
+    bool shouldApplySpacing(char32_t firstCharacter, char32_t secondCharacter) const;
     static float textAutospaceSize(const Font&);
 
 private:

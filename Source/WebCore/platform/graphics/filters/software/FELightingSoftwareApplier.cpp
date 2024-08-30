@@ -31,8 +31,11 @@
 #include "FELighting.h"
 #include "FELightingSoftwareApplierInlines.h"
 #include "Filter.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingSoftwareApplier);
 
 void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector, float alpha)
 {

@@ -989,9 +989,9 @@ std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexi
         return { };
 
     auto& layoutState = *view().frameView().layoutContext().layoutState();
-    auto ancestorLineClamp = layoutState.lineClamp();
+    auto ancestorLineClamp = layoutState.legacyLineClamp();
     auto restoreAncestorLineClamp = makeScopeExit([&] {
-        layoutState.setLineClamp(ancestorLineClamp);
+        layoutState.setLegacyLineClamp(ancestorLineClamp);
     });
 
     auto lineCountForLineClamp = [&]() -> size_t {
@@ -1013,7 +1013,7 @@ std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexi
         return std::max<size_t>(1, (numberOfLines + 1) * lineClamp.value() / 100.f);
     };
 
-    layoutState.setLineClamp(RenderLayoutState::LineClamp { lineCountForLineClamp(), { }, { }, { } });
+    layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { lineCountForLineClamp(), { }, { }, { } });
     for (auto* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;
@@ -1021,7 +1021,7 @@ std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexi
         child->layoutIfNeeded();
     }
 
-    auto lineClamp = *layoutState.lineClamp();
+    auto lineClamp = *layoutState.legacyLineClamp();
     if (!lineClamp.clampedContentLogicalHeight) {
         // We've managed to run line clamping but it came back with no clamped content (i.e. there are fewer lines than the line-clamp limit).
         return RenderDeprecatedFlexibleBox::ClampedContent { };

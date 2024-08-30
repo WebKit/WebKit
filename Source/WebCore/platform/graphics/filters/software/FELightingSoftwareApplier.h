@@ -32,13 +32,14 @@
 #include "FilterEffectApplier.h"
 #include "FilterImageVector.h"
 #include "LightSource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FELighting;
 
 class FELightingSoftwareApplier : public FilterEffectConcreteApplier<FELighting> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FELightingSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FELighting>;
 
 protected:

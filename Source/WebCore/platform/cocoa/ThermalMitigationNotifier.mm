@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import <Foundation/NSProcessInfo.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 static bool isThermalMitigationEnabled()
@@ -79,6 +80,8 @@ static bool isThermalMitigationEnabled()
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThermalMitigationNotifier);
 
 ThermalMitigationNotifier::ThermalMitigationNotifier(ThermalMitigationChangeCallback&& callback)
     : m_observer(adoptNS([[WebThermalMitigationObserver alloc] initWithNotifier:*this]))

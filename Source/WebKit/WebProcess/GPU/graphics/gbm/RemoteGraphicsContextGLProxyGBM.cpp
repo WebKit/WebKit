@@ -93,6 +93,8 @@ DisplayDelegate::~DisplayDelegate()
 }
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyGBM);
 public:
     RemoteGraphicsContextGLProxyGBM(const WebCore::GraphicsContextGLAttributes&, WTF::SerialFunctionDispatcher&);
     virtual ~RemoteGraphicsContextGLProxyGBM() = default;

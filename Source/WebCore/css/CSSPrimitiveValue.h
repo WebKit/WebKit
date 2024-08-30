@@ -71,14 +71,16 @@ class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);
 
-    static double computeDegrees(CSSUnitType, double angle);
-    static double computeRadians(CSSUnitType, double angle);
+    enum class AngleUnit { Degrees, Radians, Gradians, Turns, Canonical = Degrees };
+    template<AngleUnit, typename T = double> static T computeAngle(CSSUnitType, T angle);
+    static double computeDegrees(CSSUnitType unit, double angle) { return computeAngle<AngleUnit::Degrees>(unit, angle); }
+    static double computeRadians(CSSUnitType unit, double angle) { return computeAngle<AngleUnit::Radians>(unit, angle); }
 
     enum class TimeUnit { Seconds, Milliseconds, Canonical = Seconds };
-    template<typename T, TimeUnit> static T computeTime(CSSUnitType, T time);
+    template<TimeUnit, typename T = double> static T computeTime(CSSUnitType, T time);
 
-    enum class FrequencyUnit { Hz, kHz, Canonical = Hz };
-    template<typename T, FrequencyUnit> static T computeFrequency(CSSUnitType, T frequency);
+    enum class ResolutionUnit { Dppx, X, Dpi, Dpcm, Canonical = Dppx };
+    template<ResolutionUnit, typename T = double> static T computeResolution(CSSUnitType, T resolution);
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
@@ -93,7 +95,7 @@ public:
     bool isNumberOrInteger() const { return isNumber() || isInteger(); }
     bool isPercentage() const { return primitiveType() == CSSUnitType::CSS_PERCENTAGE; }
     bool isPx() const { return primitiveType() == CSSUnitType::CSS_PX; }
-    bool isTime() const { return unitCategory(primitiveUnitType()) == CSSUnitCategory::Time; }
+    bool isTime() const { return unitCategory(primitiveType()) == CSSUnitCategory::Time; }
     bool isFrequency() const { return unitCategory(primitiveType()) == CSSUnitCategory::Frequency; }
     bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
     bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER; }
@@ -155,42 +157,66 @@ public:
     ~CSSPrimitiveValue();
 
     CSSUnitType primitiveType() const;
-    ExceptionOr<float> getFloatValue(CSSUnitType) const;
 
-    double computeDegrees() const;
-    template<typename T, TimeUnit> T computeTime() const;
-    template<typename T, FrequencyUnit> T computeFrequency() const;
+    // Exposed for DeprecatedCSSOMPrimitiveValue. Throws if conversion to `targetUnit` is not allowed.
+    ExceptionOr<float> getFloatValueDeprecated(CSSUnitType targetUnit) const;
 
-    template<typename T> T computeLength(const CSSToLengthConversionData&) const;
+    // MARK: Integer (requires `isInteger() == true`)
+    template<typename T = int> T resolveAsInteger(const CSSToLengthConversionData&) const;
+    template<typename T = int> T resolveAsIntegerNoConversionDataRequired() const;
+    template<typename T = int> T resolveAsIntegerDeprecated() const;
+
+    // MARK: Number (requires `isNumberOrInteger() == true`)
+    template<typename T = double> T resolveAsNumber(const CSSToLengthConversionData&) const;
+    template<typename T = double> T resolveAsNumberNoConversionDataRequired() const;
+    template<typename T = double> T resolveAsNumberDeprecated() const;
+
+    // MARK: Percentage (requires `isPercentage() == true`)
+    template<typename T = double> T resolveAsPercentage(const CSSToLengthConversionData&) const;
+    template<typename T = double> T resolveAsPercentageNoConversionDataRequired() const;
+    template<typename T = double> T resolveAsPercentageDeprecated() const;
+
+    // MARK: Angle (requires `isAngle() == true`)
+    template<typename T = double, AngleUnit = AngleUnit::Canonical> T resolveAsAngle(const CSSToLengthConversionData&) const;
+    template<typename T = double, AngleUnit = AngleUnit::Canonical> T resolveAsAngleNoConversionDataRequired() const;
+    template<typename T = double, AngleUnit = AngleUnit::Canonical> T resolveAsAngleDeprecated() const;
+
+    // MARK: Time (requires `isTime() == true`)
+    template<typename T = double, TimeUnit = TimeUnit::Canonical> T resolveAsTime(const CSSToLengthConversionData&) const;
+    template<typename T = double, TimeUnit = TimeUnit::Canonical> T resolveAsTimeNoConversionDataRequired() const;
+
+    // MARK: Resolution (requires `isResolution() == true`)
+    template<typename T = double, ResolutionUnit = ResolutionUnit::Canonical> T resolveAsResolution(const CSSToLengthConversionData&) const;
+    template<typename T = double, ResolutionUnit = ResolutionUnit::Canonical> T resolveAsResolutionNoConversionDataRequired() const;
+    template<typename T = double, ResolutionUnit = ResolutionUnit::Canonical> T resolveAsResolutionDeprecated() const;
+
+    // MARK: Flex (requires `isFlex() == true`)
+    template<typename T = double> T resolveAsFlex(const CSSToLengthConversionData&) const;
+    template<typename T = double> T resolveAsFlexNoConversionDataRequired() const;
+
+    // MARK: Length (requires `isLength() == true`)
+    template<typename T = double> T resolveAsLength(const CSSToLengthConversionData&) const;
+    template<typename T = double> T resolveAsLengthNoConversionDataRequired() const;
+    template<typename T = double> T resolveAsLengthDeprecated() const;
+    bool convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData&) const;
     template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
-    bool convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData&) const;
+    // MARK: Non-converting
+    template<typename T = double> inline T value(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValue(conversionData)); }
+    template<typename T = double> inline T valueNoConversionDataRequired() const { return clampTo<T>(doubleValueNoConversionDataRequired()); }
 
-    double doubleValue(CSSUnitType) const;
-
-    // It's usually wrong to call this; it can trigger type conversion in calc without sufficient context to resolve relative length units.
-    double doubleValue() const;
-
-    double doubleValueDividingBy100IfPercentage() const;
+    // MARK: Divides value by 100 if percentage.
+    template<typename T = double> inline T valueDividingBy100IfPercentage(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValueDividingBy100IfPercentage(conversionData)); }
+    template<typename T = double> inline T valueDividingBy100IfPercentageNoConversionDataRequired() const { return clampTo<T>(doubleValueDividingBy100IfPercentageNoConversionDataRequired()); }
+    template<typename T = double> inline T valueDividingBy100IfPercentageDeprecated() const { return clampTo<T>(doubleValueDividingBy100IfPercentageDeprecated()); }
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> isZero() const;
     std::optional<bool> isPositive() const;
     std::optional<bool> isNegative() const;
 
-    template<typename T> inline T value(CSSUnitType type) const { return clampTo<T>(doubleValue(type)); }
-    template<typename T> inline T value() const { return clampTo<T>(doubleValue()); }
-
-    float floatValue(CSSUnitType type) const { return value<float>(type); }
-    float floatValue() const { return value<float>(); }
-
-    int intValue(CSSUnitType type) const { return value<int>(type); }
-    int intValue() const { return value<int>(); }
-
     WEBCORE_EXPORT String stringValue() const;
-
     const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
-
     const CSSAnchorValue* cssAnchorValue() const { return isAnchor() ? m_value.anchor : nullptr; }
 
     String customCSSText() const;
@@ -234,9 +260,29 @@ private:
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = enumToUnderlyingType(type); }
 
-    std::optional<double> doubleValueInternal(CSSUnitType targetUnitType) const;
+    // MARK: Length converting
+    double resolveAsLengthDouble(const CSSToLengthConversionData&) const;
 
-    double computeLengthDouble(const CSSToLengthConversionData&) const;
+    // MARK: Arbitrarily converting
+    double doubleValue(CSSUnitType targetUnit, const CSSToLengthConversionData&) const;
+    double doubleValueNoConversionDataRequired(CSSUnitType targetUnit) const;
+    double doubleValueDeprecated(CSSUnitType targetUnit) const;
+
+    template<typename T = double> inline T value(CSSUnitType targetUnit, const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValue(targetUnit, conversionData)); }
+    template<typename T = double> inline T valueNoConversionDataRequired(CSSUnitType targetUnit) const { return clampTo<T>(doubleValueNoConversionDataRequired(targetUnit)); }
+    template<typename T = double> inline T valueDeprecated(CSSUnitType targetUnit) const { return clampTo<T>(doubleValueDeprecated(targetUnit)); }
+
+    // MARK: Non-converting
+    double doubleValue(const CSSToLengthConversionData&) const;
+    double doubleValueNoConversionDataRequired() const;
+    double doubleValueDeprecated() const;
+    double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
+    double doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
+    double doubleValueDividingBy100IfPercentageDeprecated() const;
+    template<typename T = double> inline T valueDeprecated() const { return clampTo<T>(doubleValueDeprecated()); }
+
+    std::optional<double> doubleValueInternal(CSSUnitType targetUnit, const CSSToLengthConversionData&) const;
+    std::optional<double> doubleValueInternalDeprecated(CSSUnitType targetUnit) const;
 
     bool addDerivedHash(Hasher&) const;
 
@@ -330,85 +376,299 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
     return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewportCSSUnitType;
 }
 
-inline double CSSPrimitiveValue::computeDegrees(CSSUnitType type, double angle)
+// MARK: Integer
+
+template<typename T> T CSSPrimitiveValue::resolveAsInteger(const CSSToLengthConversionData& conversionData) const
 {
-    switch (type) {
-    case CSSUnitType::CSS_DEG:
-        return angle;
-    case CSSUnitType::CSS_RAD:
-        return rad2deg(angle);
-    case CSSUnitType::CSS_GRAD:
-        return grad2deg(angle);
-    case CSSUnitType::CSS_TURN:
-        return turn2deg(angle);
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
+    ASSERT(isInteger());
+    return value<T>(conversionData);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsIntegerNoConversionDataRequired() const
+{
+    ASSERT(isInteger());
+    return valueNoConversionDataRequired<T>();
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsIntegerDeprecated() const
+{
+    ASSERT(isInteger());
+    return valueDeprecated<T>();
+}
+
+// MARK: Number
+
+template<typename T> T CSSPrimitiveValue::resolveAsNumber(const CSSToLengthConversionData& conversionData) const
+{
+    ASSERT(isNumberOrInteger());
+    return value<T>(CSSUnitType::CSS_NUMBER, conversionData);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsNumberNoConversionDataRequired() const
+{
+    ASSERT(isNumberOrInteger());
+    return valueNoConversionDataRequired<T>(CSSUnitType::CSS_NUMBER);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsNumberDeprecated() const
+{
+    ASSERT(isNumberOrInteger());
+    return valueDeprecated<T>(CSSUnitType::CSS_NUMBER);
+}
+
+// MARK: Percentage
+
+template<typename T> T CSSPrimitiveValue::resolveAsPercentage(const CSSToLengthConversionData& conversionData) const
+{
+    ASSERT(isPercentage());
+    return value<T>(conversionData);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsPercentageNoConversionDataRequired() const
+{
+    ASSERT(isPercentage());
+    return valueNoConversionDataRequired<T>();
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsPercentageDeprecated() const
+{
+    ASSERT(isPercentage());
+    return valueDeprecated<T>();
+}
+
+// MARK: Angle
+
+template<CSSPrimitiveValue::AngleUnit angleUnit, typename T> T CSSPrimitiveValue::computeAngle(CSSUnitType type, T angle)
+{
+    if constexpr (angleUnit == AngleUnit::Degrees) {
+        switch (type) {
+        case CSSUnitType::CSS_DEG:
+            return angle;
+        case CSSUnitType::CSS_RAD:
+            return rad2deg(angle);
+        case CSSUnitType::CSS_GRAD:
+            return grad2deg(angle);
+        case CSSUnitType::CSS_TURN:
+            return turn2deg(angle);
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (angleUnit == AngleUnit::Radians) {
+        switch (type) {
+        case CSSUnitType::CSS_DEG:
+            return deg2rad(angle);
+        case CSSUnitType::CSS_RAD:
+            return angle;
+        case CSSUnitType::CSS_GRAD:
+            return grad2rad(angle);
+        case CSSUnitType::CSS_TURN:
+            return turn2rad(angle);
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (angleUnit == AngleUnit::Gradians) {
+        switch (type) {
+        case CSSUnitType::CSS_DEG:
+            return deg2grad(angle);
+        case CSSUnitType::CSS_RAD:
+            return rad2grad(angle);
+        case CSSUnitType::CSS_GRAD:
+            return angle;
+        case CSSUnitType::CSS_TURN:
+            return turn2grad(angle);
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (angleUnit == AngleUnit::Turns) {
+        switch (type) {
+        case CSSUnitType::CSS_DEG:
+            return deg2turn(angle);
+        case CSSUnitType::CSS_RAD:
+            return rad2Turn(angle);
+        case CSSUnitType::CSS_GRAD:
+            return grad2turn(angle);
+        case CSSUnitType::CSS_TURN:
+            return angle;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
 }
 
-inline double CSSPrimitiveValue::computeRadians(CSSUnitType type, double angle)
+template<typename T, CSSPrimitiveValue::AngleUnit angleUnit> T CSSPrimitiveValue::resolveAsAngle(const CSSToLengthConversionData& conversionData) const
 {
-    switch (type) {
-    case CSSUnitType::CSS_DEG:
-        return deg2rad(angle);
-    case CSSUnitType::CSS_RAD:
-        return angle;
-    case CSSUnitType::CSS_GRAD:
-        return grad2rad(angle);
-    case CSSUnitType::CSS_TURN:
-        return turn2rad(angle);
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
+    ASSERT(isAngle());
+    return clampTo<T>(computeAngle<angleUnit>(primitiveType(), value<double>(conversionData)));
 }
 
-template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime(CSSUnitType type, T value)
+template<typename T, CSSPrimitiveValue::AngleUnit angleUnit> T CSSPrimitiveValue::resolveAsAngleNoConversionDataRequired() const
+{
+    ASSERT(isAngle());
+    return clampTo<T>(computeAngle<angleUnit>(primitiveType(), valueNoConversionDataRequired<double>()));
+}
+
+template<typename T, CSSPrimitiveValue::AngleUnit angleUnit> T CSSPrimitiveValue::resolveAsAngleDeprecated() const
+{
+    ASSERT(isAngle());
+    return clampTo<T>(computeAngle<angleUnit>(primitiveType(), valueDeprecated<double>()));
+}
+
+// MARK: Time
+
+template<CSSPrimitiveValue::TimeUnit timeUnit, typename T> inline T CSSPrimitiveValue::computeTime(CSSUnitType type, T value)
 {
     if constexpr (timeUnit == TimeUnit::Seconds) {
-        if (type == CSSUnitType::CSS_S)
+        switch (type) {
+        case CSSUnitType::CSS_S:
             return value;
-        if (type == CSSUnitType::CSS_MS)
+        case CSSUnitType::CSS_MS:
             return value / 1000;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
     } else if constexpr (timeUnit == TimeUnit::Milliseconds) {
-        if (type == CSSUnitType::CSS_S)
+        switch (type) {
+        case CSSUnitType::CSS_S:
             return value * 1000;
-        if (type == CSSUnitType::CSS_MS)
+        case CSSUnitType::CSS_MS:
             return value;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    }
+}
+
+template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> T CSSPrimitiveValue::resolveAsTime(const CSSToLengthConversionData& conversionData) const
+{
+    ASSERT(isTime());
+    return clampTo<T>(computeTime<timeUnit>(primitiveType(), value<double>(conversionData)));
+}
+
+template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> T CSSPrimitiveValue::resolveAsTimeNoConversionDataRequired() const
+{
+    ASSERT(isTime());
+    return clampTo<T>(computeTime<timeUnit>(primitiveType(), valueNoConversionDataRequired<double>()));
+}
+
+// MARK: Resolution
+
+template<CSSPrimitiveValue::ResolutionUnit resolutionUnit, typename T> inline T CSSPrimitiveValue::computeResolution(CSSUnitType type, T resolution)
+{
+    if constexpr (resolutionUnit == ResolutionUnit::Dppx) {
+        switch (type) {
+        case CSSUnitType::CSS_DPPX:
+            return resolution;
+        case CSSUnitType::CSS_X:
+            return resolution * CSS::dppxPerX;
+        case CSSUnitType::CSS_DPI:
+            return resolution * CSS::dppxPerDpi;
+        case CSSUnitType::CSS_DPCM:
+            return resolution * CSS::dppxPerDpcm;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (resolutionUnit == ResolutionUnit::X) {
+        switch (type) {
+        case CSSUnitType::CSS_DPPX:
+            return resolution / CSS::dppxPerX;
+        case CSSUnitType::CSS_X:
+            return resolution;
+        case CSSUnitType::CSS_DPI:
+            return resolution * CSS::dppxPerDpi / CSS::dppxPerX;
+        case CSSUnitType::CSS_DPCM:
+            return resolution * CSS::dppxPerDpcm / CSS::dppxPerX;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (resolutionUnit == ResolutionUnit::Dpi) {
+        switch (type) {
+        case CSSUnitType::CSS_DPPX:
+            return resolution / CSS::dppxPerDpi;
+        case CSSUnitType::CSS_X:
+            return resolution * CSS::dppxPerX / CSS::dppxPerDpi;
+        case CSSUnitType::CSS_DPI:
+            return resolution;
+        case CSSUnitType::CSS_DPCM:
+            return resolution * CSS::dppxPerDpcm / CSS::dppxPerDpi;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+    } else if constexpr (resolutionUnit == ResolutionUnit::Dpcm) {
+        switch (type) {
+        case CSSUnitType::CSS_DPPX:
+            return resolution / CSS::dppxPerDpcm;
+        case CSSUnitType::CSS_X:
+            return resolution * CSS::dppxPerX / CSS::dppxPerDpcm;
+        case CSSUnitType::CSS_DPI:
+            return resolution * CSS::dppxPerDpi / CSS::dppxPerDpcm;
+        case CSSUnitType::CSS_DPCM:
+            return resolution;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
 
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const
+template<typename T, CSSPrimitiveValue::ResolutionUnit resolutionUnit> T CSSPrimitiveValue::resolveAsResolution(const CSSToLengthConversionData& conversionData) const
 {
-    return computeTime<T, timeUnit>(primitiveType(), value<T>());
+    ASSERT(isResolution());
+    return clampTo<T>(computeResolution<resolutionUnit>(primitiveType(), value<double>(conversionData)));
 }
 
-template<typename T, CSSPrimitiveValue::FrequencyUnit frequencyUnit> inline T CSSPrimitiveValue::computeFrequency(CSSUnitType type, T value)
+template<typename T, CSSPrimitiveValue::ResolutionUnit resolutionUnit> T CSSPrimitiveValue::resolveAsResolutionNoConversionDataRequired() const
 {
-    if constexpr (frequencyUnit == FrequencyUnit::Hz) {
-        if (type == CSSUnitType::CSS_HZ)
-            return value;
-        if (type == CSSUnitType::CSS_KHZ)
-            return value * 1000;
-    } else if constexpr (frequencyUnit == FrequencyUnit::kHz) {
-        if (type == CSSUnitType::CSS_HZ)
-            return value / 1000;
-        if (type == CSSUnitType::CSS_KHZ)
-            return value;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    ASSERT(isResolution());
+    return clampTo<T>(computeResolution<resolutionUnit>(primitiveType(), valueNoConversionDataRequired<double>()));
 }
 
-template<typename T, CSSPrimitiveValue::FrequencyUnit frequencyUnit> inline T CSSPrimitiveValue::computeFrequency() const
+template<typename T, CSSPrimitiveValue::ResolutionUnit resolutionUnit> T CSSPrimitiveValue::resolveAsResolutionDeprecated() const
 {
-    return computeFrequency<T, frequencyUnit>(primitiveType(), value<T>());
+    ASSERT(isResolution());
+    return clampTo<T>(computeResolution<resolutionUnit>(primitiveType(), valueDeprecated<double>()));
 }
+
+// MARK: Flex
+
+template<typename T> T CSSPrimitiveValue::resolveAsFlex(const CSSToLengthConversionData& conversionData) const
+{
+    ASSERT(isFlex());
+    return value<T>(conversionData);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsFlexNoConversionDataRequired() const
+{
+    ASSERT(isFlex());
+    return valueNoConversionDataRequired<T>();
+}
+
+// MARK: Length
+
+template<typename T> T CSSPrimitiveValue::resolveAsLengthNoConversionDataRequired() const
+{
+    ASSERT(isLength());
+    return valueNoConversionDataRequired<T>(CSSUnitType::CSS_PX);
+}
+
+template<typename T> T CSSPrimitiveValue::resolveAsLengthDeprecated() const
+{
+    ASSERT(isLength());
+    return valueDeprecated<T>(CSSUnitType::CSS_PX);
+}
+
+// MARK: valueID(...)
 
 inline CSSValueID valueID(const CSSPrimitiveValue& value)
 {
@@ -512,10 +772,16 @@ inline bool CSSValue::isInteger() const
     return value && value->isInteger();
 }
 
-inline int CSSValue::integer() const
+inline int CSSValue::integer(const CSSToLengthConversionData& conversionData) const
 {
     ASSERT(isInteger());
-    return downcast<CSSPrimitiveValue>(*this).intValue();
+    return downcast<CSSPrimitiveValue>(*this).resolveAsInteger(conversionData);
+}
+
+inline int CSSValue::integerDeprecated() const
+{
+    ASSERT(isInteger());
+    return downcast<CSSPrimitiveValue>(*this).resolveAsIntegerDeprecated();
 }
 
 void add(Hasher&, const CSSPrimitiveValue&);

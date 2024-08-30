@@ -68,6 +68,7 @@
 #import "_WKContentRuleListActionInternal.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKPageLoadTimingInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <JavaScriptCore/ConsoleTypes.h>
@@ -240,6 +241,7 @@ void NavigationState::setNavigationDelegate(id<WKNavigationDelegate> delegate)
 #if HAVE(APP_SSO)
     m_navigationDelegateMethods.webViewDecidePolicyForSOAuthorizationLoadWithCurrentPolicyForExtensionCompletionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForSOAuthorizationLoadWithCurrentPolicy:forExtension:completionHandler:)];
 #endif
+    m_navigationDelegateMethods.webViewDidGeneratePageLoadTiming = [delegate respondsToSelector:@selector(_webView:didGeneratePageLoadTiming:)];
 }
 
 RetainPtr<id<WKHistoryDelegatePrivate>> NavigationState::historyDelegate() const
@@ -1674,6 +1676,17 @@ void NavigationState::didSwapWebProcesses()
     if (m_networkActivity && webView)
         m_networkActivity = webView->_page->legacyMainFrameProcess().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();
 #endif
+}
+
+void NavigationState::didGeneratePageLoadTiming(const WebPageLoadTiming& timing)
+{
+    if (!m_navigationDelegateMethods.webViewDidGeneratePageLoadTiming)
+        return;
+    auto delegate = navigationDelegate();
+    if (!delegate)
+        return;
+    RetainPtr wkPageLoadTiming = adoptNS([[_WKPageLoadTiming alloc] _initWithTiming:timing]);
+    [static_cast<id<WKNavigationDelegatePrivate>>(delegate) _webView:webView().get() didGeneratePageLoadTiming:wkPageLoadTiming.get()];
 }
 
 } // namespace WebKit

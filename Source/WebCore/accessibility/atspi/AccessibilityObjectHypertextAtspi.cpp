@@ -63,7 +63,7 @@ unsigned AccessibilityObjectAtspi::hyperlinkCount() const
     unsigned linkCount = 0;
     const auto& children = m_coreObject->children();
     for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
+        if (child->isIgnored())
             continue;
 
         auto* wrapper = child->wrapper();
@@ -85,7 +85,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::hyperlink(unsigned index) co
 
     int linkIndex = -1;
     for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
+        if (child->isIgnored())
             continue;
 
         auto* wrapper = child->wrapper();

@@ -49,6 +49,7 @@ public:
 
     void addPath(const PathSkia&, const AffineTransform&);
 
+    bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
     void add(PathMoveTo) final;
     void add(PathLineTo) final;

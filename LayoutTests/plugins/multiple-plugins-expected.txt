@@ -1,5 +1,0 @@
-Test that we can create two plugins, and independently clean each. Prints "SUCCESS" on success, "FAILURE" on failure.
-Got testObj1 property
-Got testObj2 property
-Got testObj2 property
-SUCCESS

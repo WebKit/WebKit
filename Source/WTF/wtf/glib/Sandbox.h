@@ -26,6 +26,7 @@ namespace WTF {
 WTF_EXPORT_PRIVATE bool isInsideFlatpak();
 WTF_EXPORT_PRIVATE bool isInsideUnsupportedContainer();
 WTF_EXPORT_PRIVATE bool isInsideSnap();
+WTF_EXPORT_PRIVATE bool shouldUseBubblewrap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
 
 WTF_EXPORT_PRIVATE const CString& sandboxedUserRuntimeDirectory();
@@ -35,6 +36,7 @@ WTF_EXPORT_PRIVATE const CString& sandboxedUserRuntimeDirectory();
 using WTF::isInsideFlatpak;
 using WTF::isInsideUnsupportedContainer;
 using WTF::isInsideSnap;
+using WTF::shouldUseBubblewrap;
 using WTF::shouldUsePortal;
 
 using WTF::sandboxedUserRuntimeDirectory;

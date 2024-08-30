@@ -28,6 +28,7 @@
 #include "MediaPlayerEnums.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -36,7 +37,7 @@ namespace WebCore {
 class ContentType;
 
 class WEBCORE_EXPORT MIMETypeCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MIMETypeCache);
 public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;

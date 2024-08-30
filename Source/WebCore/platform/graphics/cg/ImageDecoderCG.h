@@ -27,6 +27,7 @@
 
 #include "ImageDecoder.h"
 #include <atomic>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 
@@ -35,7 +36,7 @@ namespace WebCore {
 class SharedBuffer;
 
 class ImageDecoderCG final : public ImageDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImageDecoderCG);
 public:
     ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 

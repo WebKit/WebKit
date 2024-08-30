@@ -38,8 +38,11 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyTileGrid);
 
 LegacyTileGrid::LegacyTileGrid(LegacyTileCache& tileCache, const IntSize& tileSize)
     : m_tileCache(tileCache)

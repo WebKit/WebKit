@@ -32,8 +32,11 @@
 #include "Page.h"
 #include "Timer.h"
 #include "WindowEventLoop.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdleCallbackController);
 
 IdleCallbackController::IdleCallbackController(Document& document)
     : m_document(document)

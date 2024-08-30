@@ -344,7 +344,7 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
     while (!nodeStack.isEmpty()) {
         for (auto* node = nodeStack.takeLast(); node; node = node->nextSibling()) {
             if (auto* axObject = getOrCreate(*node)) {
-                if (!axObject->computeAccessibilityIsIgnored())
+                if (!axObject->computeIsIgnored())
                     return true;
 
 #if USE(ATSPI)
@@ -527,7 +527,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
             return dynamicDowncast<AccessibilityObject>(descendant);
     }
 
-    if (focus->accessibilityIsIgnored())
+    if (focus->isIgnored())
         return focus->parentObjectUnignored();
     return focus;
 }
@@ -902,7 +902,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isP
     cacheAndInitializeWrapper(*newObject, &node);
     // Compute the object's initial ignored status.
     newObject->recomputeIsIgnored();
-    // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
+    // Sometimes asking isIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
     if (newObject->isDetached())
         return nullptr;
@@ -926,7 +926,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
     cacheAndInitializeWrapper(object.get(), &renderer);
     // Compute the object's initial ignored status.
     object->recomputeIsIgnored();
-    // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
+    // Sometimes asking isIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
     if (object->isDetached())
         return nullptr;
@@ -2068,7 +2068,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
 #if PLATFORM(COCOA) || USE(ATSPI)
     AccessibilityObject* object = getOrCreate(*node);
-    if (object && object->accessibilityIsIgnored()) {
+    if (object && object->isIgnored()) {
 #if PLATFORM(COCOA)
         if (position.atLastEditingPositionForNode()) {
             if (AccessibilityObject* nextSibling = object->nextSiblingUnignored(1))
@@ -2863,7 +2863,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
         behaviors.add(TextIteratorBehavior::EntersTextControls);
     TextIterator iterator(range, behaviors);
     
-    // Enable the cache here for accessibilityIsIgnored calls in replacedNodeNeedsCharacter
+    // Enable the cache here for isIgnored calls in replacedNodeNeedsCharacter.
     AXAttributeCacheEnabler enableCache(this);
 
     // When the range has zero length, there might be replaced node or brTag that we need to increment the characterOffset.
@@ -4953,9 +4953,9 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
-            if (origin && origin->accessibilityIsIgnored())
+            if (origin && origin->isIgnored())
                 deferAddUnconnectedNode(*origin);
-            if (target && target->accessibilityIsIgnored())
+            if (target && target->isIgnored())
                 deferAddUnconnectedNode(*target);
         }
 #endif

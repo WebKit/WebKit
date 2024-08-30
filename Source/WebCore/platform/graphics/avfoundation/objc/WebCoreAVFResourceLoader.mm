@@ -42,6 +42,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/MakeString.h>
@@ -52,8 +53,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreAVFResourceLoader);
+
 class CachedResourceMediaLoader final : CachedRawResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedResourceMediaLoader);
 public:
     static std::unique_ptr<CachedResourceMediaLoader> create(WebCoreAVFResourceLoader&, CachedResourceLoader&, ResourceRequest&&);
     ~CachedResourceMediaLoader() { stop(); }
@@ -142,7 +145,7 @@ void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const Sha
 }
 
 class PlatformResourceMediaLoader final : public PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformResourceMediaLoader);
 public:
     static RefPtr<PlatformResourceMediaLoader> create(WebCoreAVFResourceLoader&, PlatformMediaResourceLoader&, ResourceRequest&&);
     ~PlatformResourceMediaLoader() = default;
@@ -231,7 +234,7 @@ void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, const Sha
 }
 
 class DataURLResourceMediaLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataURLResourceMediaLoader);
 public:
     DataURLResourceMediaLoader(WebCoreAVFResourceLoader&, ResourceRequest&&);
 

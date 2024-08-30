@@ -38,12 +38,14 @@
 #include <cstdint>
 #include <memory>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextureMapper;
 
 class TextureMapperPlatformLayerProxyDMABuf final : public TextureMapperPlatformLayerProxy {
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperPlatformLayerProxyDMABuf);
 public:
     static Ref<TextureMapperPlatformLayerProxy> create(ContentType contentType)
     {
@@ -58,7 +60,7 @@ public:
     WEBCORE_EXPORT void swapBuffer() override;
 
     class DMABufLayer : public ThreadSafeRefCounted<DMABufLayer>, public TextureMapperPlatformLayer {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(DMABufLayer);
     public:
         explicit DMABufLayer(DMABufObject&&, OptionSet<TextureMapperFlags> = { });
         virtual ~DMABufLayer();

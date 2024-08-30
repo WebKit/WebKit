@@ -25,6 +25,7 @@
 #include "Path.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 

@@ -22,6 +22,7 @@
 
 #include "FEDisplacementMap.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
  
@@ -82,10 +83,10 @@ public:
     SVGAnimatedEnumeration& yChannelSelectorAnimated() { return m_yChannelSelector; }
     SVGAnimatedNumber& scaleAnimated() { return m_scale; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

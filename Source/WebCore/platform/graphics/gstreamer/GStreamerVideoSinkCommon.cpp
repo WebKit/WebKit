@@ -23,6 +23,7 @@
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/app/gstappsink.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
@@ -30,7 +31,7 @@ GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
 
 class WebKitVideoSinkProbe {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitVideoSinkProbe);
 public:
 
     WebKitVideoSinkProbe(MediaPlayerPrivateGStreamer* player)
@@ -101,7 +102,6 @@ public:
             gst_query_add_allocation_pool(query, nullptr, size, 3, 0);
         }
 
-#if USE(GSTREAMER_GL)
         // FIXME: Verify the following comment. Investigate what actually should be done here.
         //
         // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
@@ -124,7 +124,6 @@ public:
             GST_DEBUG_OBJECT(pad, "Flushing current buffer in response to %" GST_PTR_FORMAT, info->data);
             player->flushCurrentBuffer();
         }
-#endif
 
         return GST_PAD_PROBE_OK;
     }

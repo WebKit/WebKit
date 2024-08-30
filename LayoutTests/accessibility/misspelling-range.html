@@ -12,9 +12,9 @@ wrods is misspelled aab lotsi nowadays. euep.
 
 <script>
 let output = "This tests that misspelling ranges are properly retrieved in the fashion that a spell checker would.\n\n";
-jsTestIsAsync = true;
 
 if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
     var content = document.getElementById("content");
     content.focus();
     var text = accessibilityController.focusedElement;
@@ -37,9 +37,9 @@ if (window.accessibilityController && window.internals) {
         startMarker = null;
         await waitFor(() => {
             misspellingRange = text.misspellingTextMarkerRange(startRange, true);
-            startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
-            return text.indexForTextMarker(startMarker) >= 0;
+            return text.stringForTextMarkerRange(misspellingRange) == "wrods";
         });
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
         output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
         endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
         output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;

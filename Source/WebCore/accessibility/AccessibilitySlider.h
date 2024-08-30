@@ -73,7 +73,7 @@ private:
     AccessibilitySliderThumb();
 
     bool isSliderThumb() const override { return true; }
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 };
 
 } // namespace WebCore

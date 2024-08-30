@@ -32,8 +32,11 @@
 #include "RenderBoxModelObject.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageQualityController);
 
 static const double cInterpolationCutoff = 800. * 800.;
 static const Seconds lowQualityTimeThreshold { 500_ms };

@@ -25,12 +25,15 @@
 
 #include "config.h"
 #include "NowPlayingManager.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "MediaSessionManagerCocoa.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NowPlayingManager);
 
 NowPlayingManager::NowPlayingManager() = default;
 NowPlayingManager::~NowPlayingManager() = default;

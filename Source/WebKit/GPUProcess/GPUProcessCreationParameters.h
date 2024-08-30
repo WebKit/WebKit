@@ -47,8 +47,8 @@ struct GPUProcessCreationParameters {
     SandboxExtension::Handle launchServicesExtensionHandle;
 #endif
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled { false };
+#if USE(MODERN_AVCONTENTKEYSESSION)
+    bool shouldUseModernAVContentKeySession { false };
 #endif
     ProcessID parentPID;
 

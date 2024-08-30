@@ -44,8 +44,11 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionModelMediaElement);
 
 PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)

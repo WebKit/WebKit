@@ -371,12 +371,15 @@ bool AccessibilityObject::isNonNativeTextControl() const
     return (isARIATextControl() || hasContentEditableAttributeSet()) && !isNativeTextControl();
 }
 
-Vector<CharacterRange> AccessibilityObject::spellCheckerResultRanges() const
+Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
 {
-    if (!node())
+    AXTRACE("AccessibilityObject::misspellingRanges"_s);
+
+    RefPtr node = this->node();
+    if (!node)
         return { };
 
-    auto* frame = node()->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return { };
 
@@ -384,20 +387,33 @@ Vector<CharacterRange> AccessibilityObject::spellCheckerResultRanges() const
     if (!textChecker)
         return { };
 
-    if (unifiedTextCheckerEnabled(frame)) {
-        Vector<TextCheckingResult> results;
-        checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, results, frame->selection().selection());
-        return results.map([] (const auto& result) {
-            return result.range;
-        });
+    // In order to resolve to the correct ranges, Editor::rangeForTextCheckingResult(...)
+    // assumes that the selection is within the Node for which text we are calling checkTextOfParagraph.
+    // Therefore, remember the current selection, set it to the beginning of the Node and restore it aftwards.
+    auto originalSelection = frame->selection().selection();
+    if (auto range = simpleRange()) {
+        // Passing UserTriggered::No, which is the default value, guaranties that accessibility is not notified of text selection changes.
+        frame->selection().setSelectedRange(SimpleRange { range->start, range->start }, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+    }
+
+    Vector<AXTextMarkerRange> ranges;
+    if (unifiedTextCheckerEnabled(frame.get())) {
+        Vector<TextCheckingResult> misspellings;
+        checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
+        for (auto& misspelling : misspellings) {
+            if (auto range = frame->editor().rangeForTextCheckingResult(misspelling))
+                ranges.append(range);
+        }
     } else {
         int location = -1;
         int length = 0;
         textChecker->checkSpellingOfString(stringValue(), &location, &length);
         if (location > -1 && length > 0)
-            return { { static_cast<uint64_t>(location), static_cast<uint64_t>(length) } };
-        return { };
+            ranges = { { treeID(), objectID(), static_cast<unsigned>(location), static_cast<unsigned>(length) } };
     }
+
+    frame->selection().setSelectedRange(originalSelection.range(), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+    return ranges;
 }
 
 std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& start, AccessibilitySearchDirection direction) const
@@ -482,7 +498,7 @@ unsigned AccessibilityObject::blockquoteLevel() const
 AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
-        return !object.accessibilityIsIgnored();
+        return !object.isIgnored();
     });
 }
 
@@ -501,7 +517,7 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) c
     ASSERT(limit);
 
     for (auto sibling = iterator(nextSibling()); limit && sibling; --limit, ++sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -512,7 +528,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limi
     ASSERT(limit);
 
     for (auto sibling = iterator(previousSibling()); limit && sibling; --limit, --sibling) {
-        if (!sibling->accessibilityIsIgnored())
+        if (!sibling->isIgnored())
             return sibling.ptr();
     }
     return nullptr;
@@ -556,7 +572,7 @@ FloatRect AccessibilityObject::relativeFrame() const
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
     return WebCore::firstAccessibleObjectFromNode(node, [] (const AccessibilityObject& accessible) {
-        return !accessible.accessibilityIsIgnored();
+        return !accessible.isIgnored();
     });
 }
 
@@ -650,7 +666,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
-    if (child->accessibilityIsIgnored()) {
+    if (child->isIgnored()) {
         if (descendIfIgnored == DescendIfIgnored::Yes) {
             unsigned insertionIndex = index;
             auto childAncestorFlags = child->computeAncestorFlags();
@@ -664,7 +680,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
                     // Even though `child` is ignored, we still need to set ancestry flags based on it.
                     grandchild->initializeAncestorFlags(childAncestorFlags);
                     grandchild->addAncestorFlags(thisAncestorFlags);
-                    // Calls to `child->accessibilityIsIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
+                    // Calls to `child->isIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
                     if (insertionIndex > m_children.size())
                         break;
                     m_children.insert(insertionIndex, grandchild);
@@ -1656,7 +1672,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
     // create an AX object, but skip it if it is not supposed to be seen
     if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
         if (auto* axObject = cache->getOrCreate(*replacedNode))
-            return !axObject->accessibilityIsIgnored();
+            return !axObject->isIgnored();
     }
 
     return true;
@@ -2012,7 +2028,7 @@ void AccessibilityObject::updateBackingStore()
     
     // Updating the layout may delete this object.
     RefPtr<AccessibilityObject> protectedThis(this);
-    if (auto* document = this->document()) {
+    if (RefPtr document = this->document()) {
         if (!Accessibility::inRenderTreeOrStyleUpdate(*document))
             document->updateLayoutIgnorePendingStylesheets();
     }
@@ -2744,7 +2760,7 @@ String AccessibilityObject::computedRoleString() const
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     AccessibilityRole role = roleValue();
 
-    if (role == AccessibilityRole::Image && accessibilityIsIgnored())
+    if (role == AccessibilityRole::Image && isIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
 
     // We do compute a role string for block elements with author-provided roles.
@@ -3840,7 +3856,7 @@ bool AccessibilityObject::scrollByPage(ScrollByPageDirection direction) const
     
     if (newScrollPosition != scrollPosition) {
         scrollParent->scrollTo(newScrollPosition);
-        document()->updateLayoutIgnorePendingStylesheets();
+        protectedDocument()->updateLayoutIgnorePendingStylesheets();
         return true;
     }
     
@@ -3900,7 +3916,7 @@ bool AccessibilityObject::isFileUploadButton() const
     return input && input->isFileUpload();
 }
 
-bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
+bool AccessibilityObject::isIgnoredByDefault() const
 {
     return defaultObjectInclusion() == AccessibilityObjectInclusion::IgnoreObject;
 }
@@ -3995,7 +4011,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     return accessibilityPlatformIncludesObject();
 }
     
-bool AccessibilityObject::accessibilityIsIgnored() const
+bool AccessibilityObject::isIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;
     auto* axObjectCache = this->axObjectCache();
@@ -4014,23 +4030,23 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         }
     }
 
-    bool ignored = accessibilityIsIgnoredWithoutCache(axObjectCache);
+    bool ignored = isIgnoredWithoutCache(axObjectCache);
 
-    // Refetch the attribute cache in case it was enabled as part of computing accessibilityIsIgnored.
+    // Refetch the attribute cache in case it was enabled as part of computing isIgnored.
     if (axObjectCache && (attributeCache = axObjectCache->computedObjectAttributeCache()))
         attributeCache->setIgnored(objectID(), ignored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
 
     return ignored;
 }
 
-bool AccessibilityObject::accessibilityIsIgnoredWithoutCache(AXObjectCache* cache) const
+bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
 {
     // If we are in the midst of retrieving the current modal node, we only need to consider whether the object
-    // is inherently ignored via computeAccessibilityIsIgnored. Also, calling ignoredFromModalPresence
+    // is inherently ignored via computeIsIgnored. Also, calling ignoredFromModalPresence
     // in this state would cause infinite recursion.
     bool ignored = cache && cache->isRetrievingCurrentModalNode() ? false : ignoredFromModalPresence();
     if (!ignored)
-        ignored = computeAccessibilityIsIgnored();
+        ignored = computeIsIgnored();
 
     auto previousLastKnownIsIgnoredValue = m_lastKnownIsIgnoredValue;
     const_cast<AccessibilityObject*>(this)->setLastKnownIsIgnoredValue(ignored);

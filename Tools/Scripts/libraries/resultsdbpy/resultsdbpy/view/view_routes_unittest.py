@@ -116,6 +116,7 @@ class WebSiteUnittest(WebSiteTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_constants(self, client, **kwargs):
+        self.maxDiff = None
         response = client.get(f'{self.URL}/assets/js/constants.js')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -147,6 +148,10 @@ const XCODE_CLOUD_SUITES = [
     'Build',
 ];
 const DEFAULT_ARCHITECTURE = null;
+const TESTS_LIMITS = JSON.parse('{"max": 50000, "default": 5000}');
+const SUITES_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const COMMITS_LIMITS = JSON.parse('{"max": 10000, "default": 1000}');
+const DASHBOARD_QUERY = JSON.parse('[]');
 
-export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE}''',
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
         )

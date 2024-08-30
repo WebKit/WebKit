@@ -52,9 +52,13 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SWServer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SWServerConnection, SWServer::Connection);
 
 static const unsigned defaultMaxRegistrationCount = 3;
 

@@ -810,7 +810,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     if (mergeDestination == startOfParagraphToMove)
         return;
-        
+
+    VisiblePosition currentStartOfParagraphToMove = startOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
     VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
     
     if (mergeDestination == endOfParagraphToMove)
@@ -847,8 +848,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block
     // removals that it does cause the insertion of *another* placeholder.
     bool needPlaceholder = m_needPlaceholder;
-    bool paragraphToMergeIsEmpty = (startOfParagraphToMove == endOfParagraphToMove);
-    moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination, false, !paragraphToMergeIsEmpty);
+    bool paragraphToMergeIsEmpty = (currentStartOfParagraphToMove == endOfParagraphToMove);
+    moveParagraph(currentStartOfParagraphToMove, endOfParagraphToMove, mergeDestination, false, !paragraphToMergeIsEmpty);
     m_needPlaceholder = needPlaceholder;
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
 

@@ -29,6 +29,7 @@
 #include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(WIN)
@@ -216,7 +217,7 @@ struct FontPlatformSerializedData {
 
 // This class is conceptually immutable. Once created, no instances should ever change (in an observable way).
 class FontPlatformData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FontPlatformData, WEBCORE_EXPORT);
 public:
     struct CreationData;
     struct FontVariationAxis {

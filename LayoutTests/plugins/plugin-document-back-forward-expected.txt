@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Plugin Loaded!
-CONSOLE MESSAGE: Plugin Loaded!
-

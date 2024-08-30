@@ -41,7 +41,9 @@
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceTVOS.h>
 #import <WebCore/VideoPresentationInterfaceAVKit.h>
+#import <WebCore/VideoPresentationInterfaceTVOS.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/CheckedRef.h>
 #import <wtf/FastMalloc.h>

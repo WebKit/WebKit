@@ -26,6 +26,7 @@
 #include "PlatformLayer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class MediaPlayerPrivateHolePunch
     , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
     , public RefCounted<MediaPlayerPrivateHolePunch>
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateHolePunch);
 public:
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();

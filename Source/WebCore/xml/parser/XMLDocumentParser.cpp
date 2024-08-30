@@ -55,10 +55,13 @@
 #include "TextResourceDecoder.h"
 #include "XMLNSNames.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLDocumentParser);
 
 using namespace HTMLNames;
 

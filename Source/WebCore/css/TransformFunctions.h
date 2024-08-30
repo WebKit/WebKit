@@ -45,7 +45,7 @@ std::optional<TransformOperations> transformsForValue(const CSSValue&, const CSS
 RefPtr<TransformOperation> transformForValue(const CSSValue&, const CSSToLengthConversionData&);
 Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
 RefPtr<TranslateTransformOperation> translateForValue(const CSSValue&, const CSSToLengthConversionData&);
-RefPtr<RotateTransformOperation> rotateForValue(const CSSValue&);
-RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue&);
+RefPtr<RotateTransformOperation> rotateForValue(const CSSValue&, const CSSToLengthConversionData&);
+RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue&, const CSSToLengthConversionData&);
 
 } // namespace WebCore

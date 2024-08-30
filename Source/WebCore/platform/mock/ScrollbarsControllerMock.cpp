@@ -33,9 +33,12 @@
 #include "ScrollbarsControllerMock.h"
 
 #include "ScrollableArea.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMock);
 
 ScrollbarsControllerMock::ScrollbarsControllerMock(ScrollableArea& scrollableArea, Function<void(const String&)>&& logger)
     : ScrollbarsController(scrollableArea)

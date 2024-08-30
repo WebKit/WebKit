@@ -74,6 +74,24 @@ PathCairo::PathCairo(RefPtr<cairo_t>&& platformPath, RefPtr<PathStream>&& elemen
     ASSERT(m_platformPath);
 }
 
+bool PathCairo::definitelyEqual(const PathImpl& otherImpl) const
+{
+    RefPtr otherAsPathCairo = dynamicDowncast<PathCairo>(otherImpl);
+    if (!otherAsPathCairo) {
+        // We could convert other to a platform path to compare, but that would be expensive.
+        return false;
+    }
+
+    if (otherAsPathCairo.get() == this)
+        return true;
+
+    if (m_elementsStream && otherAsPathCairo->m_elementsStream)
+        return m_elementsStream->definitelyEqual(*otherAsPathCairo->m_elementsStream);
+
+    // There doesn't seem to be an API to compare cairo_path_t.
+    return false;
+}
+
 Ref<PathImpl> PathCairo::copy() const
 {
     auto platformPathCopy = adoptRef(cairo_create(adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1)).get()));

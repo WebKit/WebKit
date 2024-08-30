@@ -452,7 +452,7 @@ private:
     void repaintForIncrementalLoad();
 
     void didChangeScrollOffset() override;
-    void didChangeIsInWindow();
+    void didChangeIsInWindow() override;
     bool isInWindow() const;
 
     void didChangeSettings() override;
@@ -474,7 +474,6 @@ private:
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     void positionOverflowControlsLayers();
 
-    WebCore::ScrollingCoordinator* scrollingCoordinator();
     void createScrollingNodeIfNecessary();
 
     void revealPDFDestination(PDFDestination *);

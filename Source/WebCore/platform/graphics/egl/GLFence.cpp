@@ -23,6 +23,7 @@
 #include "GLContext.h"
 #include "GLFenceEGL.h"
 #include "GLFenceGL.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -31,6 +32,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GLFence);
 
 const GLFence::Capabilities& GLFence::capabilities()
 {
@@ -46,7 +49,7 @@ const GLFence::Capabilities& GLFence::capabilities()
             capabilities.eglSupported = extensions.KHR_fence_sync;
             capabilities.eglServerWaitSupported = extensions.KHR_wait_sync;
         }
-#if OS(LINUX)
+#if OS(UNIX)
         capabilities.eglExportableSupported = extensions.ANDROID_native_fence_sync;
 #endif
         capabilities.glSupported = GLContext::versionFromString(reinterpret_cast<const char*>(glGetString(GL_VERSION))) >= 300;
@@ -78,7 +81,7 @@ std::unique_ptr<GLFence> GLFence::create()
     return nullptr;
 }
 
-#if OS(LINUX)
+#if OS(UNIX)
 std::unique_ptr<GLFence> GLFence::createExportable()
 {
     if (!GLContextWrapper::currentContext())

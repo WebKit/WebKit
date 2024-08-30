@@ -34,6 +34,7 @@
 #include "ResourceRequest.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,8 +44,8 @@ class ResourceError;
 class FragmentedSharedBuffer;
 
 class CurlRequest final : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient, public CurlMultipartHandleClient, public CanMakeThreadSafeCheckedPtr<CurlRequest> {
+    WTF_MAKE_TZONE_ALLOCATED(CurlRequest);
     WTF_MAKE_NONCOPYABLE(CurlRequest);
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CurlRequest);
 public:
     enum class CaptureNetworkLoadMetrics : uint8_t {

@@ -26,11 +26,12 @@
 #pragma once
 
 #include "RenderOverflow.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class RenderBoxFragmentInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RenderBoxFragmentInfo);
     WTF_MAKE_NONCOPYABLE(RenderBoxFragmentInfo);
 public:
     RenderBoxFragmentInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)

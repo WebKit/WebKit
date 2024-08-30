@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "AXLogger.h"
 #import "AXSearchManager.h"
 #import "AccessibilityAttachment.h"
 #import "AccessibilityMediaObject.h"
@@ -56,6 +57,7 @@
 #import "SelectionGeometry.h"
 #import "SimpleRange.h"
 #import "TextIterator.h"
+#import "VisiblePosition.h"
 #import "WAKScrollView.h"
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
@@ -124,22 +126,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 #pragma mark Accessibility Text Marker
 
-@interface WebAccessibilityTextMarker : NSObject
-{
-    AXObjectCache* _cache;
-    TextMarkerData _textMarkerData;
-}
-
-+ (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(VisiblePosition&)visiblePos cache:(AXObjectCache*)cache;
-+ (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache;
-+ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache;
-
-- (TextMarkerData)textMarkerData;
-@end
-
 @implementation WebAccessibilityTextMarker
 
-- (id)initWithTextMarker:(TextMarkerData *)data cache:(AXObjectCache*)cache
+- (id)initWithTextMarker:(const TextMarkerData *)data cache:(AXObjectCache*)cache
 {
     if (!(self = [super init]))
         return nil;
@@ -340,7 +329,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Tab:
     case AccessibilityRole::TextField:
     case AccessibilityRole::ToggleButton:
-        return !self.axBackingObject->accessibilityIsIgnored();
+        return !self.axBackingObject->isIgnored();
     default:
         return false;
     }
@@ -1668,7 +1657,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     if (result) {
         auto notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled).createNSString();
-        [self accessibilityOverrideProcessNotification:notificationName.get()];
+        [self accessibilityOverrideProcessNotification:notificationName.get() notificationData:nil];
 
         CGPoint scrollPos = [self _accessibilityScrollPosition];
         NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
@@ -1677,13 +1666,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.
     return result;
-}
-
-// FIXME: remove this first overload once the system Accessibility bundle has been updated to the second overload.
-- (void)accessibilityOverrideProcessNotification:(NSString *)notificationName
-{
-    // This is overridden by the Accessibility system to post-process notifications.
-    // When it is done, it will call back into handleNotificationRelayToChrome.
 }
 
 - (void)accessibilityOverrideProcessNotification:(NSString *)notificationName notificationData:(NSData *)notificationData
@@ -2210,10 +2192,13 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    auto range = [self rangeForTextMarkers:markers];
-    if (!range)
+
+    AXTextMarkerRange axRange { markers };
+    if (!axRange)
         return nil;
-    return self.axBackingObject->stringForRange(*range);
+
+    auto range = axRange.simpleRange();
+    return range ? self.axBackingObject->stringForRange(*range) : String();
 }
 
 // This method is intended to return an array of strings and accessibility elements that
@@ -2546,16 +2531,32 @@ static RenderObject* rendererForView(WAKView* view)
     return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:lineStart cache:self.axBackingObject->axObjectCache()];
 }
 
-- (NSArray *)misspellingTextMarkerRange:(NSArray *)startTextMarkerRange forward:(BOOL)forward
+- (NSArray *)misspellingTextMarkerRange:(NSArray *)startMarkers forward:(BOOL)forward
 {
+    AXTRACE("misspellingTextMarkerRange:forward:"_s);
+
     if (![self _prepareAccessibilityCall])
         return nil;
-    auto startRange = [self rangeForTextMarkers:startTextMarkerRange];
+
+    AXTextMarkerRange startRange { startMarkers };
     if (!startRange)
         return nil;
-    auto misspellingRange = self.axBackingObject->misspellingRange(*startRange,
-        forward ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous);
-    return [self textMarkersForRange:misspellingRange];
+    AXLOG(makeString("start range: "_s, startRange.debugDescription()));
+
+    auto characterRange = startRange.characterRange();
+    if (!characterRange)
+        return nil;
+
+    RefPtr startObject = forward ? startRange.end().object() : startRange.start().object();
+    auto misspellingRange = AXSearchManager().findMatchingRange(AccessibilitySearchCriteria {
+        self.axBackingObject, startObject.get(), *characterRange,
+        forward ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous,
+        { AccessibilitySearchKey::MisspelledWord }, { }, 1
+    });
+    AXLOG(makeString("misspellingRange: "_s, misspellingRange ? misspellingRange->debugDescription() : "null"_s));
+    if (misspellingRange)
+        return misspellingRange->platformData().autorelease();
+    return nil;
 }
 
 - (WebAccessibilityTextMarker *)nextMarkerForMarker:(WebAccessibilityTextMarker *)marker

@@ -35,8 +35,11 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleChange.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderFirstLetter, RenderTreeBuilder::FirstLetter);
 
 static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& firstLetterContainer)
 {

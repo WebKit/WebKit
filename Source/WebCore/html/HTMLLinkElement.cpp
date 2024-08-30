@@ -88,7 +88,7 @@ static LinkEventSender& linkLoadEventSender()
 }
 
 class ExpectIdTargetObserver final : public IdTargetObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ExpectIdTargetObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExpectIdTargetObserver);
 public:
     ExpectIdTargetObserver(const AtomString& id, HTMLLinkElement&);

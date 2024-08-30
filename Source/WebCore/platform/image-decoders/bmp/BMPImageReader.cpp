@@ -30,8 +30,11 @@
 
 #include "config.h"
 #include "BMPImageReader.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BMPImageReader);
 
 BMPImageReader::BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask)
     : m_parent(parent)

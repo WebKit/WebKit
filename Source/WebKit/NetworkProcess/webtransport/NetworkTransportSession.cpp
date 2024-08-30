@@ -38,21 +38,18 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportSession);
 
-void NetworkTransportSession::initialize(NetworkConnectionToWebProcess& connection, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&& completionHandler)
+#if !PLATFORM(COCOA)
+void NetworkTransportSession::initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&& completionHandler)
 {
-    completionHandler(makeUnique<NetworkTransportSession>(connection));
+    completionHandler(nullptr);
 }
-
-NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection)
-    : m_connection(connection)
-{
-}
+#endif
 
 NetworkTransportSession::~NetworkTransportSession() = default;
 
 IPC::Connection* NetworkTransportSession::messageSenderConnection() const
 {
-    return m_connection ? &m_connection->connection() : nullptr;
+    return m_connectionToWebProcess ? &m_connectionToWebProcess->connection() : nullptr;
 }
 
 uint64_t NetworkTransportSession::messageSenderDestinationID() const
@@ -60,11 +57,12 @@ uint64_t NetworkTransportSession::messageSenderDestinationID() const
     return identifier().toUInt64();
 }
 
+#if !PLATFORM(COCOA)
 void NetworkTransportSession::sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: Implement.
     completionHandler();
 }
+#endif
 
 void NetworkTransportSession::sendStreamSendBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void()>&& completionHandler)
 {
@@ -84,6 +82,7 @@ void NetworkTransportSession::streamSendBytes(WebTransportStreamIdentifier ident
 
 void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebTransportStreamIdentifier>)>&& completionHandler)
 {
+    // FIXME: Use nw_connection_group_extract_connection to implement this on Cocoa platforms.
     auto identifier = WebTransportStreamIdentifier::generate();
     ASSERT(!m_sendStreams.contains(identifier));
     m_sendStreams.set(identifier, makeUniqueRef<NetworkTransportSendStream>());
@@ -92,6 +91,7 @@ void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandl
 
 void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebTransportStreamIdentifier>)>&& completionHandler)
 {
+    // FIXME: Use nw_connection_group_extract_connection to implement this on Cocoa platforms.
     auto identifier = WebTransportStreamIdentifier::generate();
     ASSERT(!m_bidirectionalStreams.contains(identifier));
     m_bidirectionalStreams.set(identifier, makeUniqueRef<NetworkTransportBidirectionalStream>(*this));
@@ -117,7 +117,6 @@ void NetworkTransportSession::terminate(uint32_t, CString&&)
 
 void NetworkTransportSession::receiveDatagram(std::span<const uint8_t> datagram)
 {
-    // FIXME: Implement something that calls this.
     send(Messages::WebTransportSession::ReceiveDatagram(datagram));
 }
 

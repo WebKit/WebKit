@@ -27,6 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVOutputContext;
@@ -58,7 +59,7 @@ public:
 };
 
 class AVPlaybackTargetPicker : public CanMakeWeakPtr<AVPlaybackTargetPicker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AVPlaybackTargetPicker);
     WTF_MAKE_NONCOPYABLE(AVPlaybackTargetPicker);
 public:
     explicit AVPlaybackTargetPicker(AVPlaybackTargetPickerClient& client)

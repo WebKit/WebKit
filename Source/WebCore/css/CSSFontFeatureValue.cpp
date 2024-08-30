@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, int value)
+CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, Ref<CSSPrimitiveValue>&& value)
     : CSSValue(FontFeatureClass)
     , m_tag(WTFMove(tag))
-    , m_value(value)
+    , m_value(WTFMove(value))
 {
 }
 
@@ -45,15 +45,15 @@ String CSSFontFeatureValue::customCSSText() const
     for (char c : m_tag)
         builder.append(c);
     builder.append('"');
-    // Omit the value if it's 1 as 1 is implied by default.
-    if (m_value != 1)
-        builder.append(' ', m_value);
+    // Omit the value if it's `1` as `1` is implied by default.
+    if (m_value->isCalculated() || m_value->resolveAsIntegerNoConversionDataRequired() != 1)
+        builder.append(' ', m_value->customCSSText());
     return builder.toString();
 }
 
 bool CSSFontFeatureValue::equals(const CSSFontFeatureValue& other) const
 {
-    return m_tag == other.m_tag && m_value == other.m_value;
+    return m_tag == other.m_tag && compareCSSValue(m_value, other.m_value);
 }
 
 }

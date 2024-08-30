@@ -2376,6 +2376,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h
 
+    platform/video-codecs/VideoCodecType.h
+
     platform/xr/PlatformXR.h
 
     plugins/PluginData.h
@@ -2465,6 +2467,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/shapes/ShapeOutsideInfo.h
 
     rendering/style/BasicShapes.h
+    rendering/style/BlockEllipsis.h
     rendering/style/BorderData.h
     rendering/style/BorderValue.h
     rendering/style/CounterDirectives.h

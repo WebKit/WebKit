@@ -86,6 +86,8 @@ public:
     ScrollingStateTree* stateTreeForNodeID(ScrollingNodeID) const;
     std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
 
+    WEBCORE_EXPORT void scrollableAreaWillBeDetached(ScrollableArea&) override;
+
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
 

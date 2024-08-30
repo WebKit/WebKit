@@ -1,0 +1,15 @@
+A1
+A2
+
+FAIL Trailing declarations apply after any preceding rules assert_equals: expected "PASS" but got "FAIL"
+FAIL Trailing declarations apply after any preceding rules (no leading) assert_equals: expected "PASS" but got "FAIL"
+FAIL Trailing declarations apply after any preceding rules (multiple) assert_equals: expected "PASS" but got "FAIL"
+PASS Nested declarations rule has same specificity as outer selector
+PASS Nested declarations rule has top-level specificity behavior
+FAIL Nested declarations rule has top-level specificity behavior (max matching) assert_equals: expected "PASS" but got "FAIL"
+FAIL Bare declartaion in nested grouping rule can match pseudo-element assert_equals: expected "PASS" but got "FAIL"
+FAIL Nested group rules have top-level specificity behavior assert_equals: expected "PASS" but got "FAIL"
+FAIL Nested @scope rules behave like :where(:scope) assert_equals: expected "PASS" but got "FAIL"
+FAIL Nested @scope rules behave like :where(:scope) (trailing) assert_equals: expected "PASS" but got "FAIL"
+FAIL Nested declarations rule responds to parent selector text change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

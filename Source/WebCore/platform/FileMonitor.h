@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +43,7 @@
 namespace WebCore {
 
 class FileMonitor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FileMonitor, WEBCORE_EXPORT);
 public:
     enum class FileChangeType { Modification, Removal };
 

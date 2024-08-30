@@ -34,8 +34,11 @@
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCProvider);
 
 #if !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
 UniqueRef<WebRTCProvider> WebRTCProvider::create()

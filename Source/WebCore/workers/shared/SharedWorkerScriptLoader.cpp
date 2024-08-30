@@ -33,8 +33,11 @@
 #include "WorkerInitializationData.h"
 #include "WorkerRunLoop.h"
 #include "WorkerScriptLoader.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerScriptLoader);
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& worker, WorkerOptions&& options)
     : m_options(WTFMove(options))

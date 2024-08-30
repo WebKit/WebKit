@@ -47,8 +47,10 @@ void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         return IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
     if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature)
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::MultiConditionallyEnabled::name() && sharedPreferences.someFeature && sharedPreferences.otherFeature)
-        return IPC::handleMessage<Messages::TestWithEnabledBy::MultiConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::multiConditionallyEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && (sharedPreferences.someFeature && sharedPreferences.otherFeature))
+        return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledAnd>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledAnd);
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && (sharedPreferences.someFeature || sharedPreferences.otherFeature))
+        return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledOr>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledOr);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -72,9 +74,13 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 {
     return jsValueForDecodedArguments<Messages::TestWithEnabledBy::ConditionallyEnabled::Arguments>(globalObject, decoder);
 }
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledBy_MultiConditionallyEnabled>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledAnd>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
-    return jsValueForDecodedArguments<Messages::TestWithEnabledBy::MultiConditionallyEnabled::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithEnabledBy::ConditionallyEnabledAnd::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledOr>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithEnabledBy::ConditionallyEnabledOr::Arguments>(globalObject, decoder);
 }
 
 }

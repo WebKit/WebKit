@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
@@ -46,7 +47,7 @@ namespace WebCore {
 enum class VideoFrameRotation : uint16_t;
 
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LocalSampleBufferDisplayLayer);
 public:
     static RefPtr<LocalSampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
 

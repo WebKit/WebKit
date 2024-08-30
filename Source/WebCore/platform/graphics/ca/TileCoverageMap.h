@@ -33,6 +33,7 @@
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,7 +43,8 @@ class IntRect;
 class TileController;
 
 class TileCoverageMap : public PlatformCALayerClient {
-    WTF_MAKE_NONCOPYABLE(TileCoverageMap); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TileCoverageMap);
+    WTF_MAKE_NONCOPYABLE(TileCoverageMap);
 public:
     TileCoverageMap(const TileController&);
     ~TileCoverageMap();

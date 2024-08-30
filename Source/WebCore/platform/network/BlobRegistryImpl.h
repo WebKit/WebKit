@@ -36,6 +36,7 @@
 #include "SecurityOriginData.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +51,7 @@ struct PolicyContainer;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class WEBCORE_EXPORT BlobRegistryImpl {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BlobRegistryImpl);
 public:
     virtual ~BlobRegistryImpl();
 

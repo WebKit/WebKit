@@ -26,11 +26,12 @@
 #pragma once
 
 #include "GraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class GraphicsContextStateSaver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GraphicsContextStateSaver);
 public:
     GraphicsContextStateSaver(GraphicsContext& context, bool saveAndRestore = true)
         : m_context(context)

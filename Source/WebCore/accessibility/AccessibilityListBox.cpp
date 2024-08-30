@@ -156,7 +156,7 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
         }
     }
     
-    if (listBoxOption && !listBoxOption->accessibilityIsIgnored())
+    if (listBoxOption && !listBoxOption->isIgnored())
         return listBoxOption;
     
     return axObjectCache()->getOrCreate(renderer());

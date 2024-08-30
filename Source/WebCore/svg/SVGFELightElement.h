@@ -24,6 +24,7 @@
 
 #include "LightSource.h"
 #include "SVGElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,14 +59,14 @@ public:
     SVGAnimatedNumber& specularExponentAnimated() { return m_specularExponent; }
     SVGAnimatedNumber& limitingConeAngleAnimated() { return m_limitingConeAngle; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFELightElement, SVGElement>;
+
 protected:
     SVGFELightElement(const QualifiedName&, Document&);
 
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
 private:
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFELightElement, SVGElement>;
-
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;

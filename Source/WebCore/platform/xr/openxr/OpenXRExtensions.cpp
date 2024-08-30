@@ -20,12 +20,15 @@
 
 #include "config.h"
 #include "OpenXRExtensions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 using namespace WebCore;
 
 namespace PlatformXR {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRExtensions);
 
 std::unique_ptr<OpenXRExtensions> OpenXRExtensions::create()
 {

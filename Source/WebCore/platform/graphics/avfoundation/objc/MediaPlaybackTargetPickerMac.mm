@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(AVROUTEPICKERVIEW)
 #import "AVRoutePickerViewTargetPicker.h"
@@ -48,6 +49,8 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVOutputDeviceMenuController)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlaybackTargetPickerMac);
 
 MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)

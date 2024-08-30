@@ -30,6 +30,7 @@
 #include "LibWebRTCMacros.h"
 #include "Timer.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -46,7 +47,7 @@ class IncomingAudioMediaStreamTrackRendererUnit;
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
 class LibWebRTCAudioModule : public webrtc::AudioDeviceModule {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCAudioModule);
 public:
     LibWebRTCAudioModule();
     ~LibWebRTCAudioModule();

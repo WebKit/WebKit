@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,13 +41,15 @@ class QualifiedName;
 // NOTE: The HTML5 spec uses a backwards (grows downward) stack.  We're using
 // more standard (grows upwards) stack terminology here.
 class HTMLElementStack {
-    WTF_MAKE_NONCOPYABLE(HTMLElementStack); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HTMLElementStack);
+    WTF_MAKE_NONCOPYABLE(HTMLElementStack);
 public:
     HTMLElementStack() = default;
     ~HTMLElementStack();
 
     class ElementRecord {
-        WTF_MAKE_NONCOPYABLE(ElementRecord); WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ElementRecord);
+        WTF_MAKE_NONCOPYABLE(ElementRecord);
     public:
         ElementRecord(HTMLStackItem&&, std::unique_ptr<ElementRecord>);
         ~ElementRecord();

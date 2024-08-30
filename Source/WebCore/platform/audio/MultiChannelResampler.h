@@ -31,6 +31,7 @@
 
 #include <memory>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class AudioBus;
 class SincResampler;
 
 class MultiChannelResampler final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MultiChannelResampler);
 public:   
     // requestFrames constrols the size of the buffer in frames when provideInput is called.
     MultiChannelResampler(double scaleFactor, unsigned numberOfChannels, unsigned requestFrames, Function<void(AudioBus*, size_t framesToProcess)>&& provideInput);

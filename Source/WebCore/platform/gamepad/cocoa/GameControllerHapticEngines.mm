@@ -36,11 +36,14 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import "GameControllerSoftLink.h"
 #import "CoreHapticsSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerHapticEngines);
 
 std::unique_ptr<GameControllerHapticEngines> GameControllerHapticEngines::create(GCController *gamepad)
 {

@@ -31,7 +31,7 @@
 #include "LibWebRTCMacros.h"
 #include "Logging.h"
 #include <algorithm>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -68,7 +68,7 @@ extern "C" int I420Copy(const uint8_t* src_y,
 namespace WebCore {
 
 class Dav1dDecoder final : public webrtc::VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Dav1dDecoder);
 public:
     Dav1dDecoder();
     ~Dav1dDecoder();

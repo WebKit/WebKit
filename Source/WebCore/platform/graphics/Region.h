@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -84,7 +85,7 @@ public:
     };
 
     class Shape {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Shape, WEBCORE_EXPORT);
     public:
         Shape() = default;
         Shape(const IntRect&);

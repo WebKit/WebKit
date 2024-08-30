@@ -31,6 +31,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,8 +59,8 @@ WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 
 template<typename T>
 class AXTreeStore {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AXTreeStore);
     WTF_MAKE_NONCOPYABLE(AXTreeStore);
-    WTF_MAKE_FAST_ALLOCATED;
     friend WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 public:
     AXID treeID() const { return m_id; }

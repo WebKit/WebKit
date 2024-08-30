@@ -36,9 +36,12 @@
 #include "ServiceWorkerUpdateViaCache.h"
 #include "WorkerFetchResult.h"
 #include "WorkerType.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SWServerJobQueue);
 
 SWServerJobQueue::SWServerJobQueue(SWServer& server, const ServiceWorkerRegistrationKey& key)
     : m_jobTimer(*this, &SWServerJobQueue::runNextJobSynchronously)

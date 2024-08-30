@@ -1025,6 +1025,11 @@ void PluginView::windowActivityDidChange()
     protectedPlugin()->windowActivityDidChange();
 }
 
+void PluginView::didChangeIsInWindow()
+{
+    protectedPlugin()->didChangeIsInWindow();
+}
+
 void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
 {
     if (!m_isInitialized)

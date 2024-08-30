@@ -1022,12 +1022,12 @@ RTCRtpCapabilities GStreamerRegistryScanner::videoRtpCapabilities(Configuration 
     return capabilies;
 }
 
-static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExtensions(const Vector<const char*>& candidates)
+static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExtensions(const Vector<ASCIILiteral>& candidates)
 {
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> extensions;
     for (const auto& uri : candidates) {
-        if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri)))
-            extensions.append({ String::fromLatin1(uri) });
+        if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri.characters())))
+            extensions.append(makeString(span(uri)));
     }
     return extensions;
 }
@@ -1090,7 +1090,7 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
             element = gst_element_factory_make("webkitvideoencoder", nullptr);
 
         if (element) {
-            Vector<String> profiles = {
+            Vector<ASCIILiteral> profiles = {
                 "42e01f"_s,
                 "640c1f"_s,
                 "42001f"_s,
@@ -1142,15 +1142,21 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
 
 Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::audioRtpExtensions()
 {
-    if (!m_audioRtpExtensions)
-        m_audioRtpExtensions = probeRtpExtensions(m_allAudioRtpExtensions);
+    if (!m_audioRtpExtensions) {
+        auto extensions = m_commonRtpExtensions;
+        extensions.appendVector(m_allAudioRtpExtensions);
+        m_audioRtpExtensions = probeRtpExtensions(extensions);
+    }
     return *m_audioRtpExtensions;
 }
 
 Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::videoRtpExtensions()
 {
-    if (!m_videoRtpExtensions)
-        m_videoRtpExtensions = probeRtpExtensions(m_allVideoRtpExtensions);
+    if (!m_videoRtpExtensions) {
+        auto extensions = m_commonRtpExtensions;
+        extensions.appendVector(m_allVideoRtpExtensions);
+        m_videoRtpExtensions = probeRtpExtensions(extensions);
+    }
     return *m_videoRtpExtensions;
 }
 

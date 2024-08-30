@@ -799,9 +799,9 @@ String MediaKeySession::mediaKeysStorageDirectory() const
 
 CDMKeyGroupingStrategy MediaKeySession::keyGroupingStrategy() const
 {
-#if HAVE(AVCONTENTKEYSPECIFIER)
+#if USE(MODERN_AVCONTENTKEYSESSION)
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && document->settings().sampleBufferContentKeySessionSupportEnabled())
+    if (document && document->settings().shouldUseModernAVContentKeySession())
         return CDMKeyGroupingStrategy::BuiltIn;
 #endif
 

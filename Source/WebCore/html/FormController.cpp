@@ -28,12 +28,15 @@
 #include "ScriptDisallowedScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormController);
 
 HTMLFormElement* FormController::ownerForm(const FormListedElement& control)
 {
@@ -158,9 +161,12 @@ void FormController::SavedFormState::appendReferencedFilePaths(Vector<String>& v
 
 // ----------------------------------------------------------------------------
 
+
 class FormController::FormKeyGenerator {
+    typedef FormController::FormKeyGenerator FormControllerFormKeyGenerator;
+
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FormControllerFormKeyGenerator);
     WTF_MAKE_NONCOPYABLE(FormKeyGenerator);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     FormKeyGenerator() = default;

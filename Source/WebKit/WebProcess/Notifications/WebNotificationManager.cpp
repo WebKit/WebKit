@@ -230,7 +230,8 @@ void WebNotificationManager::cancel(NotificationData&& notification, WebPage* pa
     auto identifier = notification.notificationID;
     ASSERT(notification.isPersistent() || m_nonPersistentNotificationsContexts.contains(identifier));
 
-    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(identifier), page))
+    auto origin = WebCore::SecurityOriginData::fromURL(URL { notification.originString });
+    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(WTFMove(origin), identifier), page))
         return;
 #else
     UNUSED_PARAM(notification);

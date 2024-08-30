@@ -29,6 +29,7 @@
 #include "ImageFrame.h"
 #include "ScalableImageDecoder.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
@@ -43,6 +44,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoder);
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 using FactoryVector = Vector<ImageDecoder::ImageDecoderFactory>;

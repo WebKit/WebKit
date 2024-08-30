@@ -21,6 +21,7 @@
 
 #include "GraphicsContextGL.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -35,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GLContext);
 
 const char* GLContext::errorString(int statusCode)
 {

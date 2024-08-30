@@ -33,6 +33,7 @@
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ struct WorkerFetchResult;
 struct WorkerInitializationData;
 
 class SharedWorkerScriptLoader : private WorkerScriptLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SharedWorkerScriptLoader);
 public:
     SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);
 

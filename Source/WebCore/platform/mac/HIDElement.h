@@ -29,11 +29,12 @@
 
 #include <IOKit/hid/IOHIDDevice.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HIDElement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HIDElement);
 public:
     explicit HIDElement(IOHIDElementRef);
 

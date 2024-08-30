@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include "LayoutUnit.h"
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGRect CGRect;
@@ -64,7 +65,7 @@ class FloatRect;
 class LayoutRect;
 
 class IntRect {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IntRect);
 public:
     IntRect() = default;
     IntRect(const IntPoint& location, const IntSize& size)

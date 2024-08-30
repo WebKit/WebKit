@@ -82,10 +82,13 @@
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InputType);
 
 using namespace HTMLNames;
 

@@ -41,6 +41,7 @@ public:
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
+    const SVGTextLayoutAttributes* layoutAttributes() const { return &m_layoutAttributes; }
 
     // computeScalingFactor() returns the font-size scaling factor, ignoring the text-rendering mode.
     // scalingFactor() takes it into account, and thus returns 1 whenever text-rendering is set to 'geometricPrecision'.

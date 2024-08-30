@@ -29,10 +29,10 @@
 
 #include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include "CAAudioStreamDescription.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -53,7 +53,7 @@ class IncomingAudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTra
     , public LoggerHelper
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IncomingAudioMediaStreamTrackRendererUnit);
 public:
     explicit IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule&);
     ~IncomingAudioMediaStreamTrackRendererUnit();

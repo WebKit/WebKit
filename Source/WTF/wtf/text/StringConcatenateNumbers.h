@@ -71,8 +71,7 @@ class StringTypeAdapter<FloatingPoint, typename std::enable_if_t<std::is_floatin
 public:
     StringTypeAdapter(FloatingPoint number)
     {
-        numberToString(number, m_buffer);
-        m_length = std::strlen(&m_buffer[0]);
+        m_length = numberToStringAndSize(number, m_buffer);
     }
 
     unsigned length() const { return m_length; }

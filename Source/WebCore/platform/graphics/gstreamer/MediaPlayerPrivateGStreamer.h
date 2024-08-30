@@ -49,19 +49,16 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 typedef struct _GstMpegtsSection GstMpegtsSection;
 
-#if USE(GSTREAMER_GL)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
 #include <epoxy/gl.h>
-#define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
-#undef GST_USE_UNSTABLE_API
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "CDMProxy.h"
@@ -109,7 +106,7 @@ class MediaPlayerPrivateGStreamer
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateGStreamer);
 public:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
@@ -208,9 +205,7 @@ public:
     void handleMessage(GstMessage*);
 
     void triggerRepaint(GRefPtr<GstSample>&&);
-#if USE(GSTREAMER_GL)
     void flushCurrentBuffer();
-#endif
 
     void handleTextSample(GRefPtr<GstSample>&&, const String& streamId);
 
@@ -272,9 +267,8 @@ protected:
 #if USE(TEXTURE_MAPPER_DMABUF)
     GstElement* createVideoSinkDMABuf();
 #endif
-#if USE(GSTREAMER_GL)
+
     GstElement* createVideoSinkGL();
-#endif
 
 #if USE(TEXTURE_MAPPER)
     void pushTextureToCompositor();
@@ -401,6 +395,7 @@ protected:
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     GstSeekFlags m_seekFlags;
+    bool m_ignoreErrors { false };
 
     String errorMessage() const override { return m_errorMessage; }
 

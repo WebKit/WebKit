@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "VideoDecoder.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
 class LibWebRTCVPXInternalVideoDecoder;
 
 class LibWebRTCVPXVideoDecoder : public VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCVPXVideoDecoder);
 public:
     enum class Type {
         VP8,

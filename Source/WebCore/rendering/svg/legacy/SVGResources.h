@@ -26,6 +26,8 @@
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -40,7 +42,8 @@ class SVGRenderStyle;
 
 // Holds a set of resources associated with a RenderObject
 class SVGResources {
-    WTF_MAKE_NONCOPYABLE(SVGResources); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGResources);
+    WTF_MAKE_NONCOPYABLE(SVGResources);
 public:
     SVGResources();
 
@@ -109,7 +112,7 @@ private:
     // masker:  'container elements' and 'graphics elements'
     // -> a, circle, defs, ellipse, glyph, g, image, line, marker, mask, missing-glyph, path, pattern, polygon, polyline, rect, svg, switch, symbol, text, use
     struct ClipperFilterMaskerData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipperFilterMaskerData);
     public:
         ClipperFilterMaskerData() = default;
         SingleThreadWeakPtr<LegacyRenderSVGResourceClipper> clipper;
@@ -120,7 +123,7 @@ private:
     // From SVG 1.1 2nd Edition
     // marker: line, path, polygon, polyline
     struct MarkerData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(MarkerData);
     public:
         MarkerData() = default;
         SingleThreadWeakPtr<LegacyRenderSVGResourceMarker> markerStart;
@@ -133,7 +136,7 @@ private:
     // stroke:     'shapes' and 'text content elements'
     // -> altGlyph, circle, ellipse, line, path, polygon, polyline, rect, text, textPath, tref, tspan
     struct FillStrokeData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(FillStrokeData);
     public:
         FillStrokeData() = default;
         SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> fill;

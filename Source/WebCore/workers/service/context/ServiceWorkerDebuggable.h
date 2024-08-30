@@ -30,13 +30,14 @@
 #include "ServiceWorkerContextData.h"
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ServiceWorkerThreadProxy;
 
 class ServiceWorkerDebuggable final : public Inspector::RemoteInspectionTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerDebuggable);
     WTF_MAKE_NONCOPYABLE(ServiceWorkerDebuggable);
 public:
     ServiceWorkerDebuggable(ServiceWorkerThreadProxy&, const ServiceWorkerContextData&);

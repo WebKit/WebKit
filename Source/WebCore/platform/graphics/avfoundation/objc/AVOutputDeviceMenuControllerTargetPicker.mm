@@ -34,6 +34,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -56,6 +57,8 @@ static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicke
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AVOutputDeviceMenuControllerTargetPicker);
 
 AVOutputDeviceMenuControllerTargetPicker::AVOutputDeviceMenuControllerTargetPicker(AVPlaybackTargetPickerClient& client)
     : AVPlaybackTargetPicker(client)

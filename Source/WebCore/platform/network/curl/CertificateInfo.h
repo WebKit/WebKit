@@ -27,6 +27,7 @@
 
 #include "CertificateSummary.h"
 #include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
@@ -35,7 +36,7 @@
 namespace WebCore {
 
 class CertificateInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CertificateInfo);
 public:
     using Certificate = Vector<uint8_t>;
     using CertificateChain = Vector<Certificate>;

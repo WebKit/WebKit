@@ -25,6 +25,7 @@
 
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if !PLATFORM(COCOA)
 #include "BMPImageDecoder.h"
@@ -56,6 +57,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(JxlSignatureCheck);
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScalableImageDecoder);
 
 namespace {
 

@@ -29,8 +29,11 @@
 #if ENABLE(MEDIA_RECORDER)
 
 #include "MediaStreamPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivate);
 
 constexpr unsigned SmallAudioBitRate = 8000;
 constexpr unsigned SmallVideoBitRate = 80000;

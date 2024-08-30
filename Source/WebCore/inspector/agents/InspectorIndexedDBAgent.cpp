@@ -74,7 +74,7 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(x);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorIndexedDBAgent);
 
 namespace {
 

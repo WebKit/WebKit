@@ -35,6 +35,7 @@
 - (void)removeDeliveredNotificationsWithIdentifiers:(NSArray<NSString *> *) identifiers;
 - (void)getNotificationSettingsWithCompletionHandler:(void(^)(UNNotificationSettings *settings))completionHandler;
 - (void)requestAuthorizationWithOptions:(UNAuthorizationOptions)options completionHandler:(void (^)(BOOL granted, NSError *))completionHandler;
+- (void)setNotificationCategories:(NSSet<UNNotificationCategory *> *) categories;
 - (NSNumber *)getAppBadgeForTesting;
 - (UNNotificationSettings *)notificationSettings;
 @end

@@ -29,6 +29,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
 
@@ -37,7 +38,7 @@ namespace WebCore {
 class HIDElement;
 
 class HIDDevice {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HIDDevice);
 public:
     explicit HIDDevice(IOHIDDeviceRef);
 

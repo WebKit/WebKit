@@ -30,6 +30,7 @@
 #include "SVGPropertyAccessorImpl.h"
 #include "SVGPropertyRegistry.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ struct SVGAttributeHashTranslator {
 
 template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry : public SVGPropertyRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPropertyOwnerRegistry);
 public:
     SVGPropertyOwnerRegistry(OwnerType& owner)
         : m_owner(owner)

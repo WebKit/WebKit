@@ -39,9 +39,9 @@ class BlockFormattingContext;
 class BlockLayoutState {
 public:
     struct LineClamp {
-        size_t allowedLineCount() const { return std::max(maximumLineCount - currentLineCount, static_cast<size_t>(0)); }
-        size_t maximumLineCount { 0 };
-        size_t currentLineCount { 0 };
+        size_t maximumLines { 0 };
+        bool shouldDiscardOverflow { false };
+        bool isLegacy { true };
     };
     enum class TextBoxTrimSide : uint8_t {
         Start = 1 << 0,

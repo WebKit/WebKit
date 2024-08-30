@@ -24,12 +24,14 @@
 #include "Document.h"
 #include "QualifiedName.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGElement;
 
 class SVGURIReference {
+    WTF_MAKE_TZONE_ALLOCATED(SVGURIReference);
     WTF_MAKE_NONCOPYABLE(SVGURIReference);
 public:
     virtual ~SVGURIReference() = default;
@@ -56,7 +58,11 @@ public:
         return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 
+#if 0
+    typedef SVGPropertyOwnerRegistry<SVGURIReference> PropertyRegistry;
+#else
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
+#endif
 
     String href() const { return m_href->currentValue(); }
     SVGAnimatedString& hrefAnimated() { return m_href; }

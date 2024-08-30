@@ -28,6 +28,7 @@
 #include "PublicSuffixStore.h"
 #include "SecurityOriginData.h"
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -35,7 +36,7 @@
 namespace WebCore {
 
 class RegistrableDomain {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RegistrableDomain);
 public:
     RegistrableDomain() = default;
 

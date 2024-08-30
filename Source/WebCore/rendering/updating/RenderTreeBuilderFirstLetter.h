@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class RenderText;
 class RenderTextFragment;
 
 class RenderTreeBuilder::FirstLetter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FirstLetter);
 public:
     explicit FirstLetter(RenderTreeBuilder&);
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "NetworkCacheData.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/SHA1.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,12 +88,28 @@ public:
 
     static String partitionToPartitionHashAsString(const String& partition, const Salt&);
 
+    Key isolatedCopy() && { return {
+        crossThreadCopy(WTFMove(m_partition)),
+        crossThreadCopy(WTFMove(m_type)),
+        crossThreadCopy(WTFMove(m_identifier)),
+        crossThreadCopy(WTFMove(m_range)),
+        m_hash,
+        m_partitionHash
+    }; }
+
 private:
     friend struct WTF::Persistence::Coder<Key>;
     static String hashAsString(const HashType&);
     HashType computeHash(const Salt&) const;
     HashType computePartitionHash(const Salt&) const;
     static HashType partitionToPartitionHash(const String& partition, const Salt&);
+    Key(String&& partition, String&& type, String&& identifier, String&& range, HashType hash, HashType partitionHash)
+        : m_partition(WTFMove(partition))
+        , m_type(WTFMove(type))
+        , m_identifier(WTFMove(identifier))
+        , m_range(WTFMove(range))
+        , m_hash(hash)
+        , m_partitionHash(partitionHash) { }
 
     String m_partition;
     String m_type;

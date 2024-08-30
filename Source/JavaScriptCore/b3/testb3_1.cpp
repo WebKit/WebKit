@@ -26,7 +26,7 @@
 #include "config.h"
 #include "testb3.h"
 
-#if ENABLE(B3_JIT) && !CPU(ARM)
+#if ENABLE(B3_JIT)
 
 Lock crashLock;
 
@@ -50,6 +50,15 @@ bool shouldRun(const TestConfig* config, const char* testName)
             }
         }
     }
+
+    if (!filter && isARM_THUMB2()) {
+        for (auto& failingTest : {
+#include "testb3_failingArmV7Tests.inc"
+        }) {
+            if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound)
+                return false;
+        }
+    }
     return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
 }
 
@@ -58,16 +67,13 @@ void testRotR(T valueInt, int32_t shift)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    
-    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    if (sizeof(T) == 4)
-        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
-    
-    Value* ammount = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    auto arguments = cCallArgumentValues<T, int32_t>(proc, root);
+
+    Value* value = arguments[0];
+    Value* amount = arguments[1];
     root->appendNewControlValue(proc, Return, Origin(),
-        root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
-    
+        root->appendNew<Value>(proc, RotR, Origin(), value, amount));
+
     CHECK_EQ(compileAndRun<T>(proc, valueInt, shift), rotateRight(valueInt, shift));
 }
 
@@ -76,13 +82,10 @@ void testRotL(T valueInt, int32_t shift)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<T, int32_t>(proc, root);
     
-    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    if (sizeof(T) == 4)
-        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
-    
-    Value* ammount = root->appendNew<Value>(proc, Trunc, Origin(),
-        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* value = arguments[0];
+    Value* ammount = arguments[1];
     root->appendNewControlValue(proc, Return, Origin(),
         root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
     
@@ -95,11 +98,9 @@ void testRotRWithImmShift(T valueInt, int32_t shift)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<T>(proc, root);
     
-    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    if (sizeof(T) == 4)
-        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
-    
+    Value* value = arguments[0];
     Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
     root->appendNewControlValue(proc, Return, Origin(),
         root->appendNew<Value>(proc, RotR, Origin(), value, ammount));
@@ -112,11 +113,9 @@ void testRotLWithImmShift(T valueInt, int32_t shift)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<T>(proc, root);
     
-    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    if (sizeof(T) == 4)
-        value = root->appendNew<Value>(proc, Trunc, Origin(), value);
-    
+    Value* value = arguments[0];
     Value* ammount = root->appendIntConstant(proc, Origin(), Int32, shift);
     root->appendNewControlValue(proc, Return, Origin(),
         root->appendNew<Value>(proc, RotL, Origin(), value, ammount));
@@ -128,8 +127,8 @@ template<typename T>
 void testComputeDivisionMagic(T value, T magicMultiplier, unsigned shift)
 {
     DivisionMagic<T> magic = computeDivisionMagic(value);
-    CHECK(magic.magicMultiplier == magicMultiplier);
-    CHECK(magic.shift == shift);
+    CHECK_EQ(magic.magicMultiplier, magicMultiplier);
+    CHECK_EQ(magic.shift, shift);
 }
 
 void run(const TestConfig* config)
@@ -165,12 +164,14 @@ void run(const TestConfig* config)
 
     RUN(testShlArgs(1, 0));
     RUN(testShlArgs(1, 1));
+    RUN(testShlArgs(1, 32));
     RUN(testShlArgs(1, 62));
     RUN(testShlArgs(0xffffffffffffffff, 0));
     RUN(testShlArgs(0xffffffffffffffff, 1));
     RUN(testShlArgs(0xffffffffffffffff, 63));
     RUN(testShlImms(1, 0));
     RUN(testShlImms(1, 1));
+    RUN(testShlImms(1, 32));
     RUN(testShlImms(1, 62));
     RUN(testShlImms(1, 65));
     RUN(testShlImms(0xffffffffffffffff, 0));
@@ -178,6 +179,7 @@ void run(const TestConfig* config)
     RUN(testShlImms(0xffffffffffffffff, 63));
     RUN(testShlArgImm(1, 0));
     RUN(testShlArgImm(1, 1));
+    RUN(testShlArgImm(1, 32));
     RUN(testShlArgImm(1, 62));
     RUN(testShlArgImm(1, 65));
     RUN(testShlArgImm(0xffffffffffffffff, 0));
@@ -467,8 +469,8 @@ void run(const TestConfig* config)
 
     RUN(testSimplePatchpoint());
     RUN(testSimplePatchpointWithoutOuputClobbersGPArgs());
-    RUN(testSimplePatchpointWithOuputClobbersGPArgs());
     RUN(testSimplePatchpointWithoutOuputClobbersFPArgs());
+    RUN(testSimplePatchpointWithOuputClobbersGPArgs());
     RUN(testSimplePatchpointWithOuputClobbersFPArgs());
     RUN(testPatchpointWithEarlyClobber());
     RUN(testPatchpointCallArg());
@@ -481,8 +483,11 @@ void run(const TestConfig* config)
     RUN(testPatchpointAnyImm(ValueRep::WarmAny));
     RUN(testPatchpointAnyImm(ValueRep::ColdAny));
     RUN(testPatchpointAnyImm(ValueRep::LateColdAny));
-    RUN(testPatchpointManyWarmAnyImms());
-    RUN(testPatchpointManyColdAnyImms());
+    if constexpr (!is32Bit()) {
+        // Can't handle ConstDoubleValue arguments to patchpoints on 32 bits.
+        RUN(testPatchpointManyWarmAnyImms());
+        RUN(testPatchpointManyColdAnyImms());
+    }
     RUN(testPatchpointWithRegisterResult());
     RUN(testPatchpointWithStackArgumentResult());
     RUN(testPatchpointWithAnyResult());
@@ -633,7 +638,7 @@ void run(const TestConfig* config)
     RUN(testTruncFold(-1));
     RUN(testTruncFold(1000000000000ll));
     RUN(testTruncFold(-1000000000000ll));
-    
+
     RUN(testZExt32(0));
     RUN(testZExt32(1));
     RUN(testZExt32(-1));
@@ -743,7 +748,7 @@ void run(const TestConfig* config)
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
     RUN(testTrivialInfiniteLoop());
     RUN(testFoldPathEqual());
-    
+
     RUN(testRShiftSelf32());
     RUN(testURShiftSelf32());
     RUN(testLShiftSelf32());
@@ -758,7 +763,7 @@ void run(const TestConfig* config)
     RUN(testInterpreter());
     RUN(testReduceStrengthCheckBottomUseInAnotherBlock());
     RUN(testResetReachabilityDanglingReference());
-    
+
     RUN(testEntrySwitchSimple());
     RUN(testEntrySwitchNoEntrySwitch());
     RUN(testEntrySwitchWithCommonPaths());
@@ -824,7 +829,10 @@ void run(const TestConfig* config)
 
     addAtomicTests(config, tasks);
     RUN(testDepend32());
-    RUN(testDepend64());
+    if constexpr (!is32Bit()) {
+        // Test only applicable on 64-bits.
+        RUN(testDepend64());
+    }
 
     RUN(testWasmBoundsCheck(0));
     RUN(testWasmBoundsCheck(100));
@@ -845,7 +853,7 @@ void run(const TestConfig* config)
     RUN(testFloatEqualOrUnorderedFolding());
     RUN(testFloatEqualOrUnorderedFoldingNaN());
     RUN(testFloatEqualOrUnorderedDontFold());
-    
+
     RUN(testShuffleDoesntTrashCalleeSaves());
     RUN(testDemotePatchpointTerminal());
 
@@ -930,6 +938,8 @@ void run(const TestConfig* config)
     crashLock.unlock();
 }
 
+bool g_dumpB3AfterGeneration = false;
+
 #if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 extern const JSC::JITOperationAnnotation startOfJITOperationsInTestB3 __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const JSC::JITOperationAnnotation endOfJITOperationsInTestB3 __asm("section$end$__DATA_CONST$__jsc_ops");
@@ -947,6 +957,8 @@ int main(int argc, char** argv)
                 usage();
         } else if (!strcmp(argv[i], "-list"))
             config.mode = TestConfig::Mode::ListTests;
+        else if (!strcmp(argv[i], "-printir"))
+            g_dumpB3AfterGeneration = true;
         else {
             // for backwards compatibility
             config.filter = argv[i];

@@ -34,9 +34,12 @@
 #include "DateComponents.h"
 #include "DateTimeFormat.h"
 #include "LocalizedStrings.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Locale);
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 

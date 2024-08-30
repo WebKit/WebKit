@@ -27,6 +27,7 @@
 
 #include "AnimationEffectPhase.h"
 #include "EffectTiming.h"
+#include "TimingFunction.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
@@ -39,6 +40,7 @@ struct ComputedEffectTiming : EffectTiming {
     MarkableDouble currentIteration;
     double endTime;
     double activeDuration;
+    TimingFunction::Before before { TimingFunction::Before::No };
 };
 
 } // namespace WebCore

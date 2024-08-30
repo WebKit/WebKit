@@ -26,13 +26,14 @@
 #pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CryptoAlgorithmParameters {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmParameters);
 public:
     enum class Class : uint8_t {
         None,

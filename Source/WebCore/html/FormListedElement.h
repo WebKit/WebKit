@@ -25,6 +25,7 @@
 
 #include "FormAssociatedElement.h"
 #include "Node.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,8 +41,8 @@ class ValidityState;
 
 // https://html.spec.whatwg.org/multipage/forms.html#category-listed
 class FormListedElement : public FormAssociatedElement {
+    WTF_MAKE_TZONE_ALLOCATED(FormListedElement);
     WTF_MAKE_NONCOPYABLE(FormListedElement);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~FormListedElement();
 

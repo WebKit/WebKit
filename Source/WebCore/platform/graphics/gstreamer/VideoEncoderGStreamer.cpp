@@ -27,16 +27,16 @@
 #include "GStreamerRegistryScanner.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include "VideoFrameGStreamer.h"
+#include <gst/gl/gstglmemory.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
-#if USE(GSTREAMER_GL)
-#include <gst/gl/gstglmemory.h>
-#endif
-
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerVideoEncoder);
 
 GST_DEBUG_CATEGORY(webkit_video_encoder_debug);
 #define GST_CAT_DEFAULT webkit_video_encoder_debug
@@ -48,8 +48,8 @@ static WorkQueue& gstEncoderWorkQueue()
 }
 
 class GStreamerInternalVideoEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalVideoEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalVideoEncoder);
     WTF_MAKE_NONCOPYABLE(GStreamerInternalVideoEncoder);
-    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static Ref<GStreamerInternalVideoEncoder> create(VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback) { return adoptRef(*new GStreamerInternalVideoEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback))); }

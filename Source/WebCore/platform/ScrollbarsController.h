@@ -28,7 +28,7 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "UserInterfaceLayoutDirection.h"
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +40,7 @@ enum class ScrollbarOrientation : uint8_t;
 enum class ScrollbarWidth : uint8_t;
 
 class ScrollbarsController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollbarsController, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(ScrollbarsController);
 public:
     WEBCORE_EXPORT static std::unique_ptr<ScrollbarsController> create(ScrollableArea&);

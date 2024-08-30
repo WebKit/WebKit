@@ -34,6 +34,7 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class TrackBuffer final
     : public LoggerHelper
 #endif
 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TrackBuffer);
 public:
     static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&);
     static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, const MediaTime&);

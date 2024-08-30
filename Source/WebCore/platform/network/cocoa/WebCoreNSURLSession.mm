@@ -37,6 +37,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/FunctionDispatcher.h>
 #import <wtf/Lock.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -622,7 +623,7 @@ NS_ASSUME_NONNULL_END
 namespace WebCore {
 
 class WebCoreNSURLSessionDataTaskClient : public PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebCoreNSURLSessionDataTaskClient);
 public:
     WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task, RefCountedSerialFunctionDispatcher& target)
         : m_task(task)

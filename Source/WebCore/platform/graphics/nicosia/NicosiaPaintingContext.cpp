@@ -28,12 +28,15 @@
 
 #include "config.h"
 #include "NicosiaPaintingContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO)
 #include "NicosiaPaintingContextCairo.h"
 #endif
 
 namespace Nicosia {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintingContext);
 
 #if USE(CAIRO)
 using ForPaintingClass = PaintingContextCairo::ForPainting;

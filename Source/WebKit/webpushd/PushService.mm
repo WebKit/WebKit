@@ -681,6 +681,25 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
         m_database->removeRecordsBySubscriptionSet(identifier, WTFMove(removedRecordsHandler));
 }
 
+void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bundleIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, CompletionHandler<void(unsigned)>&& handler)
+{
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s | ds: %{public}s", bundleIdentifier.utf8().data(), dataStoreIdentifier ? dataStoreIdentifier->toString().ascii().data() : "default");
+    m_database->removeRecordsByBundleIdentifierAndDataStore(bundleIdentifier, dataStoreIdentifier, [this, weakThis = WeakPtr { *this }, handler = WTFMove(handler)](auto&& removedRecords) mutable {
+        if (!weakThis)
+            return handler(removedRecords.size());
+
+        for (auto& record : removedRecords) {
+            m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+            });
+        }
+
+        updateTopicLists([count = removedRecords.size(), handler = WTFMove(handler)]() mutable {
+            handler(count);
+        });
+    });
+}
+
 #if PLATFORM(IOS)
 
 void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundleIdentifiers, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)

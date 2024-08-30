@@ -35,8 +35,11 @@
 #include "NativeImage.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/effects/SkImageFilters.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEGaussianBlurSkiaApplier);
 
 bool FEGaussianBlurSkiaApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {

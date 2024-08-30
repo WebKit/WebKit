@@ -30,6 +30,7 @@
 #include "IntSize.h"
 #include "NativeImage.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ static const int cairoMaxImageSize = 32768;
 #endif
 
 class ImageBackingStore {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBackingStore);
 public:
     static std::unique_ptr<ImageBackingStore> create(const IntSize& size, bool premultiplyAlpha = true)
     {

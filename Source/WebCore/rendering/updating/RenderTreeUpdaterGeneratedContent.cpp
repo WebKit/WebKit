@@ -42,8 +42,11 @@
 #include "RenderView.h"
 #include "StyleTreeResolver.h"
 #include "WritingSuggestionData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeUpdaterGeneratedContent, RenderTreeUpdater::GeneratedContent);
 
 RenderTreeUpdater::GeneratedContent::GeneratedContent(RenderTreeUpdater& updater)
     : m_updater(updater)

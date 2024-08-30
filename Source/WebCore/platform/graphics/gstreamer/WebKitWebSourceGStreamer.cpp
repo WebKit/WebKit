@@ -37,6 +37,7 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -56,7 +57,7 @@ using namespace WebCore;
 #define LOW_QUEUE_FACTOR_THRESHOLD 0.2
 
 class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedResourceStreamingClient);
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&, unsigned requestNumber);
@@ -748,11 +749,11 @@ static gboolean webKitWebSrcIsSeekable(GstBaseSrc* baseSrc)
 
 static gboolean webKitWebSrcDoSeek(GstBaseSrc* baseSrc, GstSegment* segment)
 {
-    // This function is mutually exclusive with create(). It's only called when we're transitioning to >=PAUSED and
-    // between flushes. In any case, basesrc holds the STREAM_LOCK, so we know create() is not running.
+    // This function is mutually exclusive with create(). It's only called when we're transitioning to >=PAUSED,
+    // continuing seamless looping, or between flushes. In any case, basesrc holds the STREAM_LOCK, so we know create() is not running.
     // Also, both webKitWebSrcUnLock() and webKitWebSrcUnLockStop() are guaranteed to be called *before* this function.
     // [See gst_base_src_perform_seek()].
-    ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || GST_PAD_IS_FLUSHING(baseSrc->srcpad));
+    ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || GST_ELEMENT(baseSrc)->current_state == GST_STATE_PLAYING || GST_PAD_IS_FLUSHING(baseSrc->srcpad));
 
     // Except for the initial seek, this function is only called if isSeekable() returns true.
     ASSERT(GST_ELEMENT(baseSrc)->current_state < GST_STATE_PAUSED || webKitWebSrcIsSeekable(baseSrc));

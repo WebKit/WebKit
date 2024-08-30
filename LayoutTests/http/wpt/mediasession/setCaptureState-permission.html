@@ -1,0 +1,54 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getTracks()[0];
+
+    testRunner.setCaptureState(false, true, true);
+    testRunner.setCameraPermission(false);
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setCameraActive(true);
+    });
+    await promise_rejects_dom(test, "NotAllowedError", promise);
+
+    testRunner.setCameraPermission(true);
+
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setCameraActive(true);
+    });
+    return promise;
+}, "setCameraActive after user muted");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    testRunner.setCaptureState(true, false, true);
+    testRunner.setMicrophonePermission(false);
+
+    await new Promise(resolve => track.onmute = resolve);
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setMicrophoneActive(true);
+    });
+    await promise_rejects_dom(test, "NotAllowedError", promise);
+
+    testRunner.setMicrophonePermission(true);
+
+    internals.withUserGesture(() => {
+        promise = navigator.mediaSession.setMicrophoneActive(true);
+    });
+    return promise;
+}, "setMicrophoneActive after user muted");
+
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@
 
 #include <CoreMedia/CoreMedia.h>
 #include <VideoToolbox/VTErrors.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -36,7 +37,7 @@ typedef struct OpaqueVTCompressionSession *VTCompressionSessionRef;
 namespace WebCore {
 
 class VideoSampleBufferCompressor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VideoSampleBufferCompressor);
 public:
     static std::unique_ptr<VideoSampleBufferCompressor> create(String mimeType, CMBufferQueueTriggerCallback, void* callbackObject);
     ~VideoSampleBufferCompressor();

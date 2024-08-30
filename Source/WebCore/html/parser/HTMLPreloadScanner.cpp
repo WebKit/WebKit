@@ -48,9 +48,13 @@
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TokenPreloadScanner);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLPreloadScanner);
 
 using namespace HTMLNames;
 

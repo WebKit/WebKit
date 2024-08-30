@@ -25,6 +25,7 @@
 #include "CachedSVGDocumentClient.h"
 #include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -53,6 +54,8 @@ public:
     SVGAnimatedLength& widthAnimated() { return m_width; }
     SVGAnimatedLength& heightAnimated() { return m_height; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGURIReference>;
+
 private:
     SVGUseElement(const QualifiedName&, Document&);
 
@@ -60,8 +63,6 @@ private:
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGURIReference>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

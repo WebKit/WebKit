@@ -41,6 +41,7 @@
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -51,6 +52,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AVTrackPrivateAVFObjCImpl);
 
 static NSArray* assetTrackConfigurationKeyNames()
 {

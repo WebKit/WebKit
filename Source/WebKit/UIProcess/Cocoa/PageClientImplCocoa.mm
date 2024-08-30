@@ -31,6 +31,7 @@
 #import "WKWebViewInternal.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/TextAnimationTypes.h>
+#import <WebCore/WritingToolsTypes.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>

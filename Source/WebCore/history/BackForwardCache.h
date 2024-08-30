@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,8 +40,8 @@ class Page;
 enum class PruningReason { None, ProcessSuspended, MemoryPressure, ReachedMaxSize };
 
 class BackForwardCache {
+    WTF_MAKE_TZONE_ALLOCATED(BackForwardCache);
     WTF_MAKE_NONCOPYABLE(BackForwardCache);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Function to obtain the global back/forward cache.
     WEBCORE_EXPORT static BackForwardCache& singleton();

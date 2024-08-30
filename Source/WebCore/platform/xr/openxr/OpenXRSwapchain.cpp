@@ -21,10 +21,13 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 #include "OpenXRSwapchain.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
 namespace PlatformXR {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRSwapchain);
 
 std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrInstance instance, XrSession session, const XrSwapchainCreateInfo& info)
 {

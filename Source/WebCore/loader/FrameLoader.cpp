@@ -93,6 +93,7 @@
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
 #include "Navigation.h"
+#include "NavigationActivation.h"
 #include "NavigationDisabler.h"
 #include "NavigationNavigationType.h"
 #include "NavigationScheduler.h"
@@ -375,7 +376,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& 
 
 FrameLoader::~FrameLoader()
 {
-    m_frame->setOpener(nullptr);
+    m_frame->disownOpener();
     m_frame->detachFromAllOpenedFrames();
 
     if (RefPtr networkingContext = m_networkingContext)
@@ -2246,6 +2247,34 @@ void FrameLoader::commitProvisionalLoad()
         frame->document() ? frame->document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
         pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>", cachedPage.get());
 
+    if (RefPtr document = m_frame->document()) {
+        bool canTriggerCrossDocumentViewTransition = false;
+        RefPtr<NavigationActivation> activation;
+        if (pdl) {
+            canTriggerCrossDocumentViewTransition = pdl->navigationCanTriggerCrossDocumentViewTransition(*document);
+
+            RefPtr domWindow = document->domWindow();
+            auto navigationAPIType = pdl->triggeringAction().navigationAPIType();
+            if (domWindow && navigationAPIType) {
+                // FIXME: The NavigationActivation for pageswap should be created after the global
+                // history update, but before the unload event (which might be delayed). Those steps
+                // are currently intertwined, so this creates a fake/detached new history entry to
+                // use for this purpose.
+                RefPtr<HistoryItem> newItem;
+                if (RefPtr page = frame->page(); page && *navigationAPIType != NavigationNavigationType::Reload)
+                    newItem = frame->checkedHistory()->createItemWithLoader(page->historyItemClient(), pdl.get());
+
+                activation = domWindow->protectedNavigation()->createForPageswapEvent(newItem.get(), pdl.get());
+            }
+        }
+        document->dispatchPageswapEvent(canTriggerCrossDocumentViewTransition, WTFMove(activation));
+
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#deactivate-a-document-for-a-cross-document-navigation
+        // FIXME: If the pageswap event resulted in starting a view-transition, then the
+        // 'proceedWithNavigationAfterViewTransitionCapture' steps should proceed after the next
+        // rendering update (which includes firing the unload event for the old Document).
+    }
+
     if (RefPtr document = frame->document()) {
         // In the case where we're restoring from a cached page, our document will not
         // be connected to its frame yet, so the following call with be a no-op. We will
@@ -2393,13 +2422,6 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
     m_client->setCopiesOnScroll();
     m_frame->checkedHistory()->updateForCommit();
-
-    if (RefPtr document = m_frame->document()) {
-        bool canTriggerCrossDocumentViewTransition = false;
-        if (m_provisionalDocumentLoader)
-            canTriggerCrossDocumentViewTransition = m_provisionalDocumentLoader->navigationCanTriggerCrossDocumentViewTransition(*document);
-        document->dispatchPageswapEvent(canTriggerCrossDocumentViewTransition);
-    }
 
     // The call to closeURL() invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
@@ -4038,7 +4060,8 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->protectedPage()->setOpenedByDOM();
     mainFrameLoader->m_client->dispatchShow();
     if (openerPolicy == NewFrameOpenerPolicy::Allow) {
-        mainFrame->setOpener(frame.ptr());
+        ASSERT(mainFrame->opener() == frame.ptr());
+        mainFrame->page()->setOpenedByDOMWithOpener(true);
         mainFrame->protectedDocument()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
@@ -4614,7 +4637,7 @@ bool LocalFrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
+RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
     ASSERT(request.resourceRequest().httpMethod() == "GET"_s);
@@ -4626,11 +4649,12 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame, Fra
         return nullptr;
 
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {
-        if (RefPtr frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.protectedDocument().get())) {
+        if (RefPtr frame = openerFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.protectedDocument().get())) {
             if (!isSelfTargetFrameName(request.frameName())) {
                 if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
                     page->chrome().focus();
             }
+            frame->updateOpener(openerFrame);
             return frame;
         }
     }
@@ -4762,7 +4786,7 @@ void FrameLoader::switchBrowsingContextsGroup()
 {
     // Disown opener.
     Ref frame = m_frame.get();
-    frame->setOpener(nullptr);
+    frame->disownOpener();
     if (RefPtr page = m_frame->page())
         page->setOpenedByDOMWithOpener(false);
 

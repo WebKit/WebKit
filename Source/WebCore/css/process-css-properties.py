@@ -3522,7 +3522,7 @@ class GenerateStyleBuilderGenerated:
                 elif property.codegen_properties.color_property and not property.codegen_properties.visited_link_color_support:
                     return f"builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), ForVisitedLink::No)"
                 else:
-                    return "fromCSSValueDeducingType(value)"
+                    return "fromCSSValueDeducingType(builderState, value)"
 
             if property in self.style_properties.all_by_name["font"].codegen_properties.longhands and "Initial" not in property.codegen_properties.custom and not property.codegen_properties.converter:
                 to.write(f"if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {{")

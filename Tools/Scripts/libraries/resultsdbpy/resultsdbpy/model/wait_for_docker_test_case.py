@@ -32,7 +32,7 @@ from resultsdbpy.model.docker import Docker
 class WaitForDockerTestCase(unittest.TestCase):
 
     def setUp(self):
-        if Docker.is_running() and int(os.environ.get('slow_tests', '0')):
+        if int(os.environ.get('slow_tests', '0')) and Docker.is_running():
             with Docker.instance():
                 StrictRedis().flushdb()
         FakeStrictRedis().flushdb()

@@ -1472,7 +1472,7 @@ void LocalDOMWindow::setStatus(const String& string)
 void LocalDOMWindow::disownOpener()
 {
     if (RefPtr frame = this->frame())
-        frame->setOpener(nullptr);
+        frame->disownOpener();
 }
 
 String LocalDOMWindow::origin() const
@@ -2586,16 +2586,16 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->protectedSecurityOrigin(), WTFMove(resourceRequest), frameName, initiatedByMainFrame };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
 
-    // We pass the opener frame for the lookupFrame in case the active frame is different from
-    // the opener frame, and the name references a frame relative to the opener frame.
     bool created;
-    RefPtr newFrame = WebCore::createWindow(*activeFrame, openerFrame, WTFMove(frameLoadRequest), windowFeatures, created);
+    RefPtr newFrame = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), windowFeatures, created);
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
     bool noopener = windowFeatures.wantsNoOpener();
-    if (!noopener)
-        newFrame->setOpener(&openerFrame);
+    if (!noopener) {
+        ASSERT(newFrame->opener() == &openerFrame);
+        newFrame->page()->setOpenedByDOMWithOpener(true);
+    }
 
     if (created)
         newFrame->protectedPage()->setOpenedByDOM();

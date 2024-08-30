@@ -37,9 +37,12 @@
 #include "ServiceWorkerRegistration.h"
 #include "WorkerFetchResult.h"
 #include "WorkerRunLoop.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerJob);
 
 ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, RefPtr<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     : m_client(client)

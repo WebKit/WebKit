@@ -63,7 +63,6 @@ public:
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;
-    void setOpener(WindowProxy*);
     void frameDetached();
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
 

@@ -197,9 +197,9 @@ void UserMediaPermissionRequestManager::removeDeviceChangeObserver(UserMediaClie
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
-void UserMediaPermissionRequestManager::updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+void UserMediaPermissionRequestManager::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    m_page.updateCaptureState(isActive, kind, WTFMove(completionHandler));
+    m_page.updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
 }
 
 void UserMediaPermissionRequestManager::captureDevicesChanged()

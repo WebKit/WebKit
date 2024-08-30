@@ -125,6 +125,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<Seconds> s
     computedTiming.progress = resolvedTiming.transformedProgress;
     computedTiming.currentIteration = resolvedTiming.currentIteration;
     computedTiming.phase = resolvedTiming.phase;
+    computedTiming.before = resolvedTiming.before;
     return computedTiming;
 }
 

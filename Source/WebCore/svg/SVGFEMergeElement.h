@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,10 +32,10 @@ class SVGFEMergeElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFEMergeElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFEMergeElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
 
     void childrenChanged(const ChildChange&) override;
 

@@ -62,14 +62,6 @@
 namespace WebCore {
 using namespace WebCore::Adwaita;
 
-static inline Color getAccentColor(const RenderObject& renderObject)
-{
-    if (!renderObject.style().hasAutoAccentColor())
-        return renderObject.style().usedAccentColor(renderObject.styleColorOptions());
-
-    return systemAccentColor();
-}
-
 RenderTheme& RenderTheme::singleton()
 {
     static MainThreadNeverDestroyed<RenderThemeAdwaita> theme;

@@ -30,8 +30,11 @@
 #include "HTMLNames.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncodingRegistry.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMetaCharsetParser);
 
 using namespace HTMLNames;
 

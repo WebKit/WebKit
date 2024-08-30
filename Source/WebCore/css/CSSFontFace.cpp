@@ -303,7 +303,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
         for (auto& rangeValue : *list) {
             auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
-            settings.insert({ feature.tag(), feature.value() });
+            settings.insert({ feature.tag(), feature.value()->resolveAsIntegerDeprecated() });
         }
     }
 
@@ -322,7 +322,7 @@ void CSSFontFace::setSizeAdjust(CSSValue& value)
     mutableProperties().setProperty(CSSPropertySizeAdjust, &value);
 
     auto& sizeAdjustValue = downcast<CSSPrimitiveValue>(value);
-    auto sizeAdjust = sizeAdjustValue.floatValue() / 100;
+    auto sizeAdjust = sizeAdjustValue.resolveAsPercentageDeprecated<float>() / 100;
 
     if (m_sizeAdjust == sizeAdjust)
         return;

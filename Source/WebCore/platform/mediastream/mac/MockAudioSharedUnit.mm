@@ -44,6 +44,7 @@
 #import <AudioToolbox/AudioConverter.h>
 #import <CoreAudio/CoreAudioTypes.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
@@ -109,7 +110,7 @@ private:
 };
 
 class MockAudioSharedInternalUnit :  public CoreAudioSharedUnit::InternalUnit {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockAudioSharedInternalUnit);
 public:
     explicit MockAudioSharedInternalUnit(bool enableEchoCancellation);
     ~MockAudioSharedInternalUnit();

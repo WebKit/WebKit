@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformScreen.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -46,7 +47,8 @@ class GPU;
 }
 
 class GraphicsClient {
-    WTF_MAKE_NONCOPYABLE(GraphicsClient); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GraphicsClient);
+    WTF_MAKE_NONCOPYABLE(GraphicsClient);
 public:
     GraphicsClient() = default;
     virtual ~GraphicsClient() = default;

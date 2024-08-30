@@ -27,6 +27,7 @@
 #define PlatformLocale_h
 
 #include <wtf/Language.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +39,8 @@ class FontCascade;
 #endif
 
 class Locale {
-    WTF_MAKE_NONCOPYABLE(Locale); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Locale);
+    WTF_MAKE_NONCOPYABLE(Locale);
 
 public:
     static std::unique_ptr<Locale> create(const AtomString& localeIdentifier);

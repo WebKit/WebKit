@@ -1,5 +1,5 @@
 
-FAIL CSSViewTransitionRule is correctly parsed and accessible via CSSOM. assert_equals: expected "" but got "none"
+PASS CSSViewTransitionRule is correctly parsed and accessible via CSSOM.
 PASS `navigation: auto` is correctly parsed.
 PASS `navigation: none` is correctly parsed.
 PASS @view-transition fails parsing with a preamble

@@ -31,8 +31,11 @@
 #include "GtkUtilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderThemeScrollbar);
 
 static HashMap<unsigned, std::unique_ptr<RenderThemeScrollbar>>& widgetMap()
 {

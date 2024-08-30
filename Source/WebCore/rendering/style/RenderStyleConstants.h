@@ -912,6 +912,11 @@ enum class LineClamp : bool {
     Percentage
 };
 
+enum class OverflowContinue : bool {
+    Auto,
+    Discard
+};
+
 enum class Hyphens : uint8_t {
     None,
     Manual,
@@ -1034,6 +1039,11 @@ enum class RubyAlign : uint8_t {
     Center,
     SpaceBetween,
     SpaceAround
+};
+
+enum class RubyOverhang : bool {
+    Auto,
+    None
 };
 
 #if ENABLE(DARK_MODE_CSS)
@@ -1294,6 +1304,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ReflectionDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, Resize);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyAlign);
+WTF::TextStream& operator<<(WTF::TextStream&, RubyOverhang);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
@@ -1335,5 +1346,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
+WTF::TextStream& operator<<(WTF::TextStream&, OverflowContinue);
 
 } // namespace WebCore

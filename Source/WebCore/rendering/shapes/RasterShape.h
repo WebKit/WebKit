@@ -33,12 +33,13 @@
 #include "Shape.h"
 #include "ShapeInterval.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class RasterShapeIntervals {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RasterShapeIntervals);
 public:
     explicit RasterShapeIntervals(unsigned size, int offset = 0)
         : m_intervals(clampTo<int>(size))

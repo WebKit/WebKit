@@ -27,6 +27,7 @@
 
 #include "LegacyCDMSession.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,7 +50,7 @@ namespace WebCore {
 class MediaPlayerPrivateAVFoundationObjC;
 
 class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public CanMakeWeakPtr<CDMSessionAVFoundationObjC> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationObjC);
 public:
     CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
     virtual ~CDMSessionAVFoundationObjC();

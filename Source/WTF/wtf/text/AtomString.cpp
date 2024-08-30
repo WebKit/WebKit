@@ -108,13 +108,15 @@ AtomString AtomString::number(unsigned long long number)
 AtomString AtomString::number(float number)
 {
     NumberToStringBuffer buffer;
-    return AtomString::fromLatin1(numberToString(number, buffer));
+    size_t length = numberToStringAndSize(number, buffer);
+    return AtomString { std::span { bitwise_cast<const LChar*>(buffer.data()), length } };
 }
 
 AtomString AtomString::number(double number)
 {
     NumberToStringBuffer buffer;
-    return AtomString::fromLatin1(numberToString(number, buffer));
+    size_t length = numberToStringAndSize(number, buffer);
+    return AtomString { std::span { bitwise_cast<const LChar*>(buffer.data()), length } };
 }
 
 AtomString AtomString::fromUTF8Internal(std::span<const char> characters)

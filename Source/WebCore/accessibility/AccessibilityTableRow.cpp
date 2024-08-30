@@ -84,7 +84,7 @@ AccessibilityObject* AccessibilityTableRow::observableObject() const
     return parentTable();
 }
     
-bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
+bool AccessibilityTableRow::computeIsIgnored() const
 {    
     AccessibilityObjectInclusion decision = defaultObjectInclusion();
     if (decision == AccessibilityObjectInclusion::IncludeObject)
@@ -93,7 +93,7 @@ bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
         return true;
     
     if (!isTableRow())
-        return AccessibilityRenderObject::computeAccessibilityIsIgnored();
+        return AccessibilityRenderObject::computeIsIgnored();
 
     return isDOMHidden() || ignoredFromPresentationalRole();
 }

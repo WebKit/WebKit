@@ -31,6 +31,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
 };
 
 class FileIconLoader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FileIconLoader);
 public:
     explicit FileIconLoader(FileIconLoaderClient&);
 

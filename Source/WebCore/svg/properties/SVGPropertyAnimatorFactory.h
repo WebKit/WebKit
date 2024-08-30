@@ -31,11 +31,12 @@
 #include "SVGValuePropertyAnimatorImpl.h"
 #include "SVGValuePropertyListAnimatorImpl.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class SVGPropertyAnimatorFactory {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPropertyAnimatorFactory);
 public:
     SVGPropertyAnimatorFactory() = default;
 

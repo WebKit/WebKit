@@ -33,6 +33,7 @@
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class TextStream;
@@ -52,7 +53,7 @@ enum class ScrollSnapState {
 };
 
 class ScrollSnapAnimatorState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ScrollSnapAnimatorState);
 public:
     ScrollSnapAnimatorState(ScrollingEffectsController& scrollController)
         : m_scrollController(scrollController)

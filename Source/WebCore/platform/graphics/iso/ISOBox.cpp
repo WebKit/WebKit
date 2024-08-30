@@ -27,10 +27,13 @@
 #include "ISOBox.h"
 
 #include <JavaScriptCore/DataView.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using JSC::DataView;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ISOBox);
 
 ISOBox::ISOBox() = default;
 ISOBox::~ISOBox() = default;

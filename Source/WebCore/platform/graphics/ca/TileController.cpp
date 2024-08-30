@@ -39,6 +39,7 @@
 #include <utility>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
@@ -51,6 +52,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TileController);
 
 static const Seconds tileSizeUpdateDelay { 500_ms };
 

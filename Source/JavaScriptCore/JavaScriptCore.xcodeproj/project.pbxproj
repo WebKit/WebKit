@@ -864,7 +864,7 @@
 		276B38D92A71D26400252F4E /* JSAsyncGeneratorFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B42A71D25A00252F4E /* JSAsyncGeneratorFunctionInlines.h */; };
 		276B38DA2A71D26400252F4E /* JSCalleeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B52A71D25A00252F4E /* JSCalleeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		276B38DB2A71D26400252F4E /* NumberConstructorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B62A71D25A00252F4E /* NumberConstructorInlines.h */; };
-		276B38DC2A71D26400252F4E /* IteratorPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B72A71D25B00252F4E /* IteratorPrototypeInlines.h */; };
+		276B38DC2A71D26400252F4E /* JSIteratorPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B72A71D25B00252F4E /* JSIteratorPrototypeInlines.h */; };
 		276B38DD2A71D26400252F4E /* JSCustomSetterFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B82A71D25B00252F4E /* JSCustomSetterFunctionInlines.h */; };
 		276B38DE2A71D26400252F4E /* NullGetterFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B92A71D25B00252F4E /* NullGetterFunctionInlines.h */; };
 		276B38DF2A71D26400252F4E /* ProxyObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38BA2A71D25B00252F4E /* ProxyObjectInlines.h */; };
@@ -1280,7 +1280,7 @@
 		70B791971C024A29002481E2 /* GeneratorFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918A1C024432002481E2 /* GeneratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918D1C024462002481E2 /* JSGeneratorFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DC3E081B2DF2C700054299 /* IteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		70DC3E0A1B2DF2C700054299 /* JSIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DC3E081B2DF2C700054299 /* JSIteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70EC0EC71AA0D7DA00B6AAFA /* StringIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EC11AA0D7DA00B6AAFA /* StringIteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3841,7 +3841,7 @@
 		276B38B42A71D25A00252F4E /* JSAsyncGeneratorFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAsyncGeneratorFunctionInlines.h; sourceTree = "<group>"; };
 		276B38B52A71D25A00252F4E /* JSCalleeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCalleeInlines.h; sourceTree = "<group>"; };
 		276B38B62A71D25A00252F4E /* NumberConstructorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberConstructorInlines.h; sourceTree = "<group>"; };
-		276B38B72A71D25B00252F4E /* IteratorPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPrototypeInlines.h; sourceTree = "<group>"; };
+		276B38B72A71D25B00252F4E /* JSIteratorPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIteratorPrototypeInlines.h; sourceTree = "<group>"; };
 		276B38B82A71D25B00252F4E /* JSCustomSetterFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomSetterFunctionInlines.h; sourceTree = "<group>"; };
 		276B38B92A71D25B00252F4E /* NullGetterFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullGetterFunctionInlines.h; sourceTree = "<group>"; };
 		276B38BA2A71D25B00252F4E /* ProxyObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyObjectInlines.h; sourceTree = "<group>"; };
@@ -4459,8 +4459,8 @@
 		70B7918E1C0244C9002481E2 /* SourceCodeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceCodeKey.h; sourceTree = "<group>"; };
 		70B7918F1C0244EC002481E2 /* GeneratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GeneratorPrototype.js; sourceTree = "<group>"; };
 		70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorPrototype.lut.h; sourceTree = "<group>"; };
-		70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorPrototype.cpp; sourceTree = "<group>"; };
-		70DC3E081B2DF2C700054299 /* IteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPrototype.h; sourceTree = "<group>"; };
+		70DC3E071B2DF2C700054299 /* JSIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIteratorPrototype.cpp; sourceTree = "<group>"; };
+		70DC3E081B2DF2C700054299 /* JSIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIteratorPrototype.h; sourceTree = "<group>"; };
 		70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntAssembly.h; sourceTree = "<group>"; };
 		70EC0EBC1AA0D7DA00B6AAFA /* JSStringIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringIterator.cpp; sourceTree = "<group>"; };
 		70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringIterator.h; sourceTree = "<group>"; };
@@ -8274,9 +8274,6 @@
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,
 				70113D491A8DB093003848C4 /* IteratorOperations.cpp */,
 				70113D4A1A8DB093003848C4 /* IteratorOperations.h */,
-				70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */,
-				70DC3E081B2DF2C700054299 /* IteratorPrototype.h */,
-				276B38B72A71D25B00252F4E /* IteratorPrototypeInlines.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
 				938772E5038BFE19008635CE /* JSArray.h */,
 				0F2B66B417B6B5AB00A7AE3F /* JSArrayBuffer.cpp */,
@@ -8391,6 +8388,9 @@
 				05517CA12C74004700ED0CD5 /* JSIterator.h */,
 				05517CA22C74004700ED0CD5 /* JSIteratorConstructor.cpp */,
 				05517CA02C74004700ED0CD5 /* JSIteratorConstructor.h */,
+				70DC3E071B2DF2C700054299 /* JSIteratorPrototype.cpp */,
+				70DC3E081B2DF2C700054299 /* JSIteratorPrototype.h */,
+				276B38B72A71D25B00252F4E /* JSIteratorPrototypeInlines.h */,
 				14DA818F0D99FD2000B0A4FB /* JSLexicalEnvironment.cpp */,
 				14DA818E0D99FD2000B0A4FB /* JSLexicalEnvironment.h */,
 				276B39032A71D2B300252F4E /* JSLexicalEnvironmentInlines.h */,
@@ -11117,8 +11117,6 @@
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
 				53D41EC923C0081A00AE984B /* IterationModeMetadata.h in Headers */,
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
-				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
-				276B38DC2A71D26400252F4E /* IteratorPrototypeInlines.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
@@ -11267,6 +11265,8 @@
 				E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */,
 				E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */,
 				E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */,
+				70DC3E0A1B2DF2C700054299 /* JSIteratorPrototype.h in Headers */,
+				276B38DC2A71D26400252F4E /* JSIteratorPrototypeInlines.h in Headers */,
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
 				276B391B2A71D2B600252F4E /* JSLexicalEnvironmentInlines.h in Headers */,

@@ -26,9 +26,12 @@
 #include "Matrix3DTransformOperation.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TransformOperations);
 
 TransformOperations::TransformOperations(Ref<TransformOperation>&& operation)
     : m_operations({ WTFMove(operation) })

@@ -53,6 +53,14 @@ static constexpr bool fullGPUProcessEnabledValue = false;
 #endif
 #endif
 
+#if ENABLE(UNIFIED_PDF)
+#if ENABLE(UNIFIED_PDF_FOR_TESTING)
+static constexpr bool unifiedPDFEnabledValue = true;
+#else
+static constexpr bool unifiedPDFEnabledValue = false;
+#endif
+#endif
+
 #if PLATFORM(MAC)
 static constexpr bool eventHandlerDrivenSmoothKeyboardScrollingEnabledValue = true;
 #else
@@ -132,7 +140,9 @@ const TestFeatures& TestOptions::defaults()
             { "TabsToLinks", false },
             { "TextAutosizingEnabled", false },
             { "TextAutosizingUsesIdempotentMode", false },
-            { "UnifiedPDFEnabled", false },
+#if ENABLE(UNIFIED_PDF)
+            { "UnifiedPDFEnabled", unifiedPDFEnabledValue },
+#endif
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
 #if ENABLE(WEBGL)

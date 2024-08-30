@@ -262,11 +262,19 @@ void AsyncScrollingCoordinator::frameViewWillBeDetached(LocalFrameView& frameVie
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    RefPtr node = dynamicDowncast<ScrollingStateScrollingNode>(stateNodeForScrollableArea(frameView));
+    scrollableAreaWillBeDetached(frameView);
+}
+
+void AsyncScrollingCoordinator::scrollableAreaWillBeDetached(ScrollableArea& area)
+{
+    ASSERT(isMainThread());
+    ASSERT(page());
+
+    RefPtr node = dynamicDowncast<ScrollingStateScrollingNode>(stateNodeForScrollableArea(area));
     if (!node)
         return;
 
-    node->setScrollPosition(frameView.scrollPosition());
+    node->setScrollPosition(area.scrollPosition());
 }
 
 void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const LocalFrameView& frameView)

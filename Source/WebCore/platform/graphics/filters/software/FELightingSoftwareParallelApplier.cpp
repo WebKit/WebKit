@@ -32,8 +32,11 @@
 #include "FELightingSoftwareApplierInlines.h"
 #include "ImageBuffer.h"
 #include <wtf/ParallelJobs.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FELightingSoftwareParallelApplier);
 
 // This appears to read from and write to the same pixel buffer, but it only reads the alpha channel, and writes the non-alpha channels.
 void FELightingSoftwareParallelApplier::applyPlatformPaint(const LightingData& data, const LightSource::PaintingData& paintingData, int startY, int endY)

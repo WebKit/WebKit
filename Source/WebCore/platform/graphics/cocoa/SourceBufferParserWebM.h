@@ -41,6 +41,7 @@
 #include <wtf/Deque.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -58,7 +59,7 @@ struct TrackInfo;
 class WebMParser
     : private webm::Callback
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebMParser, WEBCORE_EXPORT);
 public:
     class Callback {
     public:
@@ -125,7 +126,7 @@ public:
     using ConsumeFrameDataResult = std::variant<MediaTime, webm::Status>;
 
     class TrackData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(TrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<TrackData>
         {
@@ -321,7 +322,7 @@ class SourceBufferParserWebM
     : public SourceBufferParser
     , public WebMParser::Callback
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SourceBufferParserWebM);
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static std::span<const ASCIILiteral> supportedMIMETypes();

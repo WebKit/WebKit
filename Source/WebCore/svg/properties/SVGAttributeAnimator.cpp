@@ -30,8 +30,11 @@
 #include "CSSPropertyParser.h"
 #include "MutableStyleProperties.h"
 #include "SVGElementInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAttributeAnimator);
 
 bool SVGAttributeAnimator::isAnimatedStylePropertyAnimator(const SVGElement& targetElement) const
 {

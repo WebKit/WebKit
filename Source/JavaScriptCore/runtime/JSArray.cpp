@@ -823,24 +823,45 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
             return nullptr;
 
         Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(arrayType);
-        if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+        IndexingType indexingType = resultStructure->indexingType();
+        if (UNLIKELY(hasAnyArrayStorage(indexingType)))
             return nullptr;
 
         ASSERT(!globalObject->isHavingABadTime());
-        ObjectInitializationScope scope(vm);
-        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
-        if (UNLIKELY(!resultArray))
+        if (UNLIKELY(count > MAX_STORAGE_VECTOR_LENGTH))
             return nullptr;
 
-        auto& resultButterfly = *resultArray->butterfly();
-        if (arrayType == ArrayWithDouble) {
-            // Double array storage do not need to be safe against GC since they are not scanned.
-            memcpy(resultButterfly.contiguousDouble().data(), source->butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
-        } else
-            gcSafeMemcpy(resultButterfly.contiguous().data(), source->butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+        ASSERT(!resultStructure->outOfLineCapacity()); // JSArray's initial Structure should not have any properties.
+        uint32_t initialLength = static_cast<uint32_t>(count);
+        unsigned vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, initialLength);
+        void* memory = vm.auxiliarySpace().allocate(vm, Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), nullptr, AllocationFailureMode::ReturnNull);
+        if (UNLIKELY(!memory))
+            return nullptr;
 
-        ASSERT(resultButterfly.publicLength() == count);
-        return resultArray;
+        auto* butterfly = Butterfly::fromBase(memory, 0, 0);
+        butterfly->setVectorLength(vectorLength);
+        butterfly->setPublicLength(initialLength);
+        // We initialize Butterfly first before setting it to JSArray. In that case, butterfly is not scannoed so that we can safely use memcpy here.
+        memcpy(butterfly->contiguous().data(), source->butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * initialLength);
+        if (size_t remaining = vectorLength - initialLength; remaining) {
+            if (hasDouble(indexingType)) {
+#if OS(DARWIN)
+                constexpr double pattern = PNaN;
+                memset_pattern8(static_cast<void*>(butterfly->contiguous().data() + initialLength), &pattern, sizeof(JSValue) * remaining);
+#else
+                for (unsigned i = initialLength; i < vectorLength; ++i)
+                    butterfly->contiguousDouble().atUnsafe(i) = PNaN;
+#endif
+            } else {
+#if USE(JSVALUE64)
+                memset(static_cast<void*>(butterfly->contiguous().data() + initialLength), 0, sizeof(JSValue) * remaining);
+#else
+                for (unsigned i = initialLength; i < vectorLength; ++i)
+                    butterfly->contiguous().atUnsafe(i).clear();
+#endif
+            }
+        }
+        return createWithButterfly(vm, nullptr, resultStructure, butterfly);
     }
     case ArrayWithArrayStorage: {
         if (count >= MIN_SPARSE_ARRAY_INDEX || sourceStructure->holesMustForwardToPrototype(source))

@@ -33,8 +33,11 @@
 #include "RetrieveRecordsOptions.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchEngine);
 
 BackgroundFetchEngine::BackgroundFetchEngine(SWServer& server)
     : m_server(server)

@@ -29,8 +29,11 @@
 #if ENABLE(VIDEO)
 
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackConfiguration);
 
 Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
 {

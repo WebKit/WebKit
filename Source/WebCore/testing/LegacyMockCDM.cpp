@@ -34,11 +34,14 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint8Array.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyMockCDM);
+
 class MockCDMSession : public LegacyCDMSession {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockCDMSession);
 public:
     MockCDMSession(LegacyCDMSessionClient&);
     virtual ~MockCDMSession() = default;

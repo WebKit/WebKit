@@ -48,6 +48,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/JSONValues.h>
 #import <wtf/LoggerHelper.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
@@ -258,8 +259,8 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
         return nullptr;
 
     auto storageURL = this->storageURL();
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (!MediaSessionManagerCocoa::shouldUseModernAVContentKeySession()) {
         if (!persistentStateAllowed() || !storageURL) {
             IGNORE_NULL_CHECK_WARNINGS_BEGIN
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];
@@ -298,7 +299,9 @@ RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpect
 }
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector {
-    WTF_MAKE_FAST_ALLOCATED;
+    typedef CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector CDMInstanceSessionFairPlayStreamingAVFObjCUpdateResponseCollector;
+
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CDMInstanceSessionFairPlayStreamingAVFObjCUpdateResponseCollector);
 public:
     using KeyType = RetainPtr<AVContentKeyRequest>;
     using ValueType = RetainPtr<NSData>;
@@ -1651,13 +1654,13 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
 {
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 
-#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS) && HAVE(AVCONTENTKEYSPECIFIER)
+#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
     AVContentKey *contentKey = request.contentKey;
     if (!contentKey)
         return std::nullopt;
 
     // FIXME (118150407): Remove staging code once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders
-    if (MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && [contentKey respondsToSelector:@selector(externalContentProtectionStatus)])
+    if (MediaSessionManagerCocoa::shouldUseModernAVContentKeySession() && [contentKey respondsToSelector:@selector(externalContentProtectionStatus)])
         return keyStatusForContentProtectionStatus([contentKey externalContentProtectionStatus]);
 #endif
 
@@ -1720,8 +1723,8 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup(KeyGroupin
     }
 
     auto storageURL = m_instance->storageURL();
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (!MediaSessionManagerCocoa::shouldUseModernAVContentKeySession()) {
         if (!m_instance->persistentStateAllowed() || !storageURL) {
             IGNORE_NULL_CHECK_WARNINGS_BEGIN
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];

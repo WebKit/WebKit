@@ -62,12 +62,15 @@
 #include "UserContentURLPattern.h"
 #include "UserStyleSheet.h"
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Scope);
 
 Scope::Scope(Document& document)
     : m_document(document)

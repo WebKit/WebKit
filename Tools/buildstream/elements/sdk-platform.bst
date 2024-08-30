@@ -46,6 +46,7 @@ depends:
 - sdk/sccache.bst
 - sdk/sparkle-cdm.bst
 - sdk/svt-av1.bst
+- sdk/sysprof-capture.bst
 - sdk/unifdef.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst

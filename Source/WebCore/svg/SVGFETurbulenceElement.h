@@ -23,6 +23,7 @@
 
 #include "FETurbulence.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -110,10 +111,10 @@ public:
     SVGAnimatedEnumeration& stitchTilesAnimated() { return m_stitchTiles; }
     SVGAnimatedEnumeration& typeAnimated() { return m_type; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

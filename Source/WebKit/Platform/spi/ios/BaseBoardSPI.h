@@ -25,6 +25,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <BaseBoard/BSAction.h>
 #import <BaseBoard/BSInvalidatable.h>
 
 #else
@@ -43,6 +44,7 @@
 
 @interface BSActionResponse : NSObject
 + (instancetype)response;
++ (instancetype)responseForError:(NSError *)error;
 @property (nonatomic, retain, readonly) NSError *error;
 @end
 
@@ -54,9 +56,20 @@ typedef void(^BSActionResponseHandler)(BSActionResponse *response);
 
 @interface BSAction : NSObject
 - (instancetype)initWithInfo:(BSSettings *)info responder:(BSActionResponder *)responder;
+- (BOOL)canSendResponse;
 - (void)sendResponse:(BSActionResponse *)response;
 @property (nonatomic, copy, readonly) BSSettings *info;
 @end
 
-
 #endif // USE(APPLE_INTERNAL_SDK)
+
+typedef NS_ENUM(NSInteger, UIActionType) {
+    UIActionTypeNotificationResponse = 26,
+};
+
+@class UNNotificationResponse;
+
+@interface BSAction ()
+@property (nonatomic, readonly) UIActionType UIActionType;
+- (UNNotificationResponse *)response;
+@end

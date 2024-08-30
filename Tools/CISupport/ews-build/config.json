@@ -172,6 +172,9 @@
     { "name": "ews228", "platform": "visionos-simulator-1" },
     { "name": "ews229", "platform": "visionos-simulator-1" },
     { "name": "ews230", "platform": "visionos-simulator-1" },
+    { "name": "ews238", "platform": "*" },
+    { "name": "ews239", "platform": "*" },
+    { "name": "ews240", "platform": "*" },
     { "name": "webkit-cq-01", "platform": "mac-ventura" },
     { "name": "webkit-cq-02", "platform": "mac-ventura" },
     { "name": "webkit-cq-03", "platform": "mac-ventura" },
@@ -285,13 +288,13 @@
       "name": "watchOS-10-Build-EWS", "shortname": "watch", "icon": "buildOnly",
       "factory": "watchOSBuildFactory", "platform": "watchos-10",
       "configuration": "release", "architectures": ["arm64_32", "arm64"],
-      "workernames": ["ews163", "ews164", "ews165"]
+      "workernames": ["ews163", "ews164", "ews165", "ews238", "ews239"]
     },
     {
       "name": "watchOS-10-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
       "factory": "watchOSBuildFactory", "platform": "watchos-simulator-10",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["ews164", "ews165", "ews166"]
+      "workernames": ["ews164", "ews165", "ews166", "ews240"]
     },
     {
       "name": "tvOS-17-Build-EWS", "shortname": "tv", "icon": "buildOnly",

@@ -28,6 +28,7 @@
 #include "QualifiedName.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGAttributeAnimator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class SVGProperty;
 
 template<typename OwnerType>
 class SVGMemberAccessor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGMemberAccessor);
 public:
     virtual ~SVGMemberAccessor() = default;
 

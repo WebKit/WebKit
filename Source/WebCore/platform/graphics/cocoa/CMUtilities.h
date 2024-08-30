@@ -30,6 +30,7 @@
 #include <memory>
 #include <wtf/Expected.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
@@ -48,7 +49,7 @@ WEBCORE_EXPORT RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrac
 WEBCORE_EXPORT Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlock&&, CMFormatDescriptionRef = nullptr);
 
 class PacketDurationParser final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PacketDurationParser);
 public:
     explicit PacketDurationParser(const AudioInfo&);
     ~PacketDurationParser();

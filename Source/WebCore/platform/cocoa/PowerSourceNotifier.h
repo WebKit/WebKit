@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PowerSourceN
 namespace WebCore {
 
 class PowerSourceNotifier : public CanMakeWeakPtr<PowerSourceNotifier> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerSourceNotifier, WEBCORE_EXPORT);
 public:
     using PowerSourceNotifierCallback = Function<void(bool hasAC)>;
     WEBCORE_EXPORT explicit PowerSourceNotifier(PowerSourceNotifierCallback&&);

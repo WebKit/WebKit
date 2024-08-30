@@ -32,9 +32,12 @@
 
 #include "FontCache.h"
 #include "FontCascade.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SystemFallbackFontCache);
 
 SystemFallbackFontCache& SystemFallbackFontCache::forCurrentThread()
 {

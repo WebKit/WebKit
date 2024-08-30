@@ -74,6 +74,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/ASCIICType.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -131,7 +132,7 @@ static const CGFloat defaultFontSize = 12;
 static const CGFloat minimumFontSize = 1;
 
 class HTMLConverterCaches {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HTMLConverterCaches);
 public:
     String propertyValueForNode(Node&, CSSPropertyID );
     bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);
@@ -640,28 +641,15 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
 {
-    // FIXME: Use CSSPrimitiveValue::computeValue.
     switch (primitiveValue.primitiveType()) {
     case CSSUnitType::CSS_PX:
-        result = primitiveValue.floatValue(CSSUnitType::CSS_PX);
-        return true;
     case CSSUnitType::CSS_PT:
-        result = 4 * primitiveValue.floatValue(CSSUnitType::CSS_PT) / 3;
-        return true;
     case CSSUnitType::CSS_PC:
-        result = 16 * primitiveValue.floatValue(CSSUnitType::CSS_PC);
-        return true;
     case CSSUnitType::CSS_CM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 2.54;
-        return true;
     case CSSUnitType::CSS_MM:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / 25.4;
-        return true;
     case CSSUnitType::CSS_Q:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_PC) / (25.4 * 4.0);
-        return true;
     case CSSUnitType::CSS_IN:
-        result = 96 * primitiveValue.floatValue(CSSUnitType::CSS_IN);
+        result = primitiveValue.resolveAsLengthDeprecated();
         return true;
     default:
         return false;

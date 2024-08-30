@@ -29,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -349,7 +350,7 @@ struct FrameData {
 };
 
 class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Device);
     WTF_MAKE_NONCOPYABLE(Device);
 public:
     virtual ~Device() = default;

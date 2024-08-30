@@ -28,11 +28,15 @@
 #include "GlyphBuffer.h"
 #include "Latin1TextIterator.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include "TextSpacing.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WidthIterator);
 
 using namespace WTF::Unicode;
 
@@ -182,7 +186,7 @@ void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, GlyphBufferAdv
 
 bool WidthIterator::hasExtraSpacing() const
 {
-    return (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run->spacingDisabled();
+    return (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion || !m_font->textAutospace().isNoAutospace()) && !m_run->spacingDisabled();
 }
 
 static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
@@ -609,7 +613,9 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         }
     }
 
+    auto previousCharacterClass = m_run->textSpacingState().lastCharacterClassFromPreviousRun;
     float position = m_run->xPos() + startingRunWidth;
+    const auto& textAutospace = m_font->textAutospace();
     for (auto i = characterStartIndex; i < characterDestinationIndex; ++i) {
         auto& glyphIndexRange = characterIndexToGlyphIndexRange[i];
         if (!glyphIndexRange)
@@ -617,6 +623,18 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
 
         auto width = calculateAdditionalWidth(glyphBuffer, i, glyphIndexRange->leadingGlyphIndex, glyphIndexRange->trailingGlyphIndex, position);
         applyAdditionalWidth(glyphBuffer, glyphIndexRange.value(), width.left, width.right, width.leftExpansion, width.rightExpansion);
+
+        auto textAutospaceSpacing = 0.f;
+        auto characterClass = TextSpacing::CharacterClass::Undefined;
+        if (!textAutospace.isNoAutospace()) {
+            characterClass = TextSpacing::characterClass(m_run.get()[i]);
+            if (textAutospace.shouldApplySpacing(characterClass, previousCharacterClass)) {
+                textAutospaceSpacing = TextAutospace::textAutospaceSize(glyphBuffer.fontAt(glyphIndexRange->leadingGlyphIndex));
+                glyphBuffer.expandAdvanceToLogicalRight(glyphIndexRange->leadingGlyphIndex, textAutospaceSpacing);
+                m_runWidthSoFar += textAutospaceSpacing;
+            }
+        }
+        previousCharacterClass = characterClass;
 
         m_isAfterExpansion = (ltr() && width.rightExpansion) || (rtl() && width.leftExpansion);
 

@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-struct SVGTextFragment;
-
 namespace InlineIterator {
 
 class TextBox : public Box {
@@ -48,9 +46,6 @@ public:
     TextBoxSelectableRange selectableRange() const;
 
     const FontCascade& fontCascade() const;
-
-    FloatRect calculateBoundariesIncludingSVGTransform() const;
-    const Vector<SVGTextFragment>& svgTextFragments() const;
 
     inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
@@ -86,25 +81,11 @@ private:
     const TextBox& get() const { return downcast<TextBox>(m_box); }
 };
 
-class TextBoxRange {
-public:
-    TextBoxRange(TextBoxIterator begin)
-        : m_begin(begin)
-    {
-    }
-
-    TextBoxIterator begin() const { return m_begin; }
-    EndIterator end() const { return { }; }
-
-private:
-    TextBoxIterator m_begin;
-};
-
 TextBoxIterator firstTextBoxFor(const RenderText&);
 TextBoxIterator textBoxFor(const LegacyInlineTextBox*);
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
-TextBoxRange textBoxesFor(const RenderText&);
+BoxRange<TextBoxIterator> textBoxesFor(const RenderText&);
 
 inline bool TextBox::hasHyphen() const
 {

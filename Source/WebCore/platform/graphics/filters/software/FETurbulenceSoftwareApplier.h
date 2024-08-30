@@ -30,6 +30,7 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class FETurbulence;
 enum class TurbulenceType : uint8_t;
 
 class FETurbulenceSoftwareApplier final : public FilterEffectConcreteApplier<FETurbulence> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FETurbulenceSoftwareApplier);
     using Base = FilterEffectConcreteApplier<FETurbulence>;
 
 public:

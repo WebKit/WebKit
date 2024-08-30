@@ -37,6 +37,7 @@
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -91,6 +92,7 @@ struct ImageBufferParameters {
 };
 
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBuffer, WEBCORE_EXPORT);
 public:
     using Parameters = ImageBufferParameters;
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, OptionSet<ImageBufferOptions> = { }, GraphicsClient* graphicsClient = nullptr);
@@ -248,8 +250,8 @@ protected:
 };
 
 class SerializedImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SerializedImageBuffer, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(SerializedImageBuffer);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
 
     SerializedImageBuffer() = default;

@@ -29,6 +29,7 @@
 #include "MatchResult.h"
 #include "WebAnimationTypes.h"
 #include <wtf/BitSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class StyleResolver;
 namespace Style {
 
 class PropertyCascade {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PropertyCascade);
 public:
     using PropertyBitSet = WTF::BitSet<lastLowPriorityProperty + 1>;
 

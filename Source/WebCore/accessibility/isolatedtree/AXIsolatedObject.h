@@ -239,7 +239,7 @@ private:
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
     // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
-    bool accessibilityIsIgnored() const final { return false; }
+    bool isIgnored() const final { return false; }
     unsigned blockquoteLevel() const final { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     unsigned headingLevel() const final { return unsignedAttributeValue(AXPropertyName::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXPropertyName::ButtonState); }
@@ -469,7 +469,7 @@ private:
     bool isSelectedOptionActive() const final;
     bool hasBoldFont() const final { return boolAttributeValue(AXPropertyName::HasBoldFont); }
     bool hasItalicFont() const final { return boolAttributeValue(AXPropertyName::HasItalicFont); }
-    Vector<CharacterRange> spellCheckerResultRanges() const final;
+    Vector<AXTextMarkerRange> misspellingRanges() const final;
     bool hasPlainText() const final { return boolAttributeValue(AXPropertyName::HasPlainText); }
     bool hasSameFont(const AXCoreObject&) const final;
     bool hasSameFontColor(const AXCoreObject&) const final;

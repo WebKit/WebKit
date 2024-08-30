@@ -65,6 +65,20 @@ PathSkia::PathSkia(const SkPath& platformPath)
 {
 }
 
+bool PathSkia::definitelyEqual(const PathImpl& otherImpl) const
+{
+    RefPtr otherAsPathSkia = dynamicDowncast<PathSkia>(otherImpl);
+    if (!otherAsPathSkia) {
+        // We could convert other to a platform path to compare, but that would be expensive.
+        return false;
+    }
+
+    if (otherAsPathSkia.get() == this)
+        return true;
+
+    return m_platformPath == otherAsPathSkia->m_platformPath;
+}
+
 Ref<PathImpl> PathSkia::copy() const
 {
     return adoptRef(*new PathSkia(m_platformPath));

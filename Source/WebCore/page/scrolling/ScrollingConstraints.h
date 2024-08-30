@@ -53,7 +53,7 @@ private:
 // ViewportConstraints classes encapsulate data and logic required to reposition elements whose layout
 // depends on the viewport rect (positions fixed and sticky), when scrolling and zooming.
 class ViewportConstraints {
-    WTF_MAKE_TZONE_ALLOCATED(ViewportConstraints);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ViewportConstraints, WEBCORE_EXPORT);
 public:
     enum ConstraintType {
         FixedPositionConstraint,

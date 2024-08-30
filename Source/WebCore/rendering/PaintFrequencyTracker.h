@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 // This class is used to detect when we are painting frequently so that - even in a painting model
@@ -32,7 +34,7 @@ namespace WebCore {
 // animating. Once we transition fully to display lists, we can probably just pull from the previous
 // paint's display list if it is still around and get rid of this code.
 class PaintFrequencyTracker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PaintFrequencyTracker);
 
 public:
     PaintFrequencyTracker() = default;

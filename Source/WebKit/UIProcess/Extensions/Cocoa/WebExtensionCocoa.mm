@@ -1109,6 +1109,11 @@ void WebExtension::populateActionPropertiesIfNeeded()
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+bool WebExtension::hasSidebar()
+{
+    return objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey) || hasRequestedPermission(WKWebExtensionPermissionSidePanel);
+}
+
 CocoaImage *WebExtension::sidebarIcon(CGSize idealSize)
 {
     // FIXME: <https://webkit.org/b/276833> implement this
@@ -1165,7 +1170,7 @@ void WebExtension::populateSidePanelProperties(RetainPtr<NSDictionary> sidePanel
     m_sidebarTitle = nil;
     m_sidebarDocumentPath = objectForKey<NSString>(sidePanelDictionary, sidePanelPathManifestKey);
 }
-#endif
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError)
 {

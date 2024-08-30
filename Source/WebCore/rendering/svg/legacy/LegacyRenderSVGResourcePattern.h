@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct PatternData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PatternData);
 public:
     RefPtr<Pattern> pattern;
     AffineTransform transform;

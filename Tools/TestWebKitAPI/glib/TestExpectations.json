@@ -105,9 +105,6 @@
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"}}
             },
-            "/webkit/WebKitWebView/external-audio-rendering": {
-                "expected": {"wpe": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/262625"}}
-            },
             "/webkit/WebKitWebView/cut-copy-paste/editable": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
             },

@@ -26,12 +26,13 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 template<typename DecorationType>
 class SVGDecoratedProperty : public RefCounted<SVGDecoratedProperty<DecorationType>> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGDecoratedProperty);
 public:
     SVGDecoratedProperty() = default;
     virtual ~SVGDecoratedProperty() = default;

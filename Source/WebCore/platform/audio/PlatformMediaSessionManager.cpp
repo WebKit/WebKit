@@ -31,11 +31,15 @@
 #include "Logging.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
+#include <wtf/TZoneMallocInlines.h>
+
 #if PLATFORM(COCOA)
 #include "VP9UtilitiesCocoa.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformMediaSessionManager);
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 

@@ -33,8 +33,12 @@
 #include "DRMDeviceManager.h"
 #include <gbm.h>
 #include <wtf/SafeStrerror.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GBMBufferSwapchain);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(GBMBufferSwapchainBuffer, GBMBufferSwapchain::Buffer);
 
 GBMBufferSwapchain::GBMBufferSwapchain(BufferSwapchainSize size)
 {

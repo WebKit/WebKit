@@ -27,13 +27,14 @@
 
 #include "AudioStreamDescription.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
 
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CAAudioStreamDescription);
 public:
     CAAudioStreamDescription(const AudioStreamBasicDescription&);
     CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);

@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
-#if OS(LINUX)
+#if OS(UNIX)
 #include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
@@ -31,12 +31,12 @@ typedef struct __GLsync* GLsync;
 namespace WebCore {
 
 class GLFence {
+    WTF_MAKE_TZONE_ALLOCATED(GLFence);
     WTF_MAKE_NONCOPYABLE(GLFence);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static bool isSupported();
     WEBCORE_EXPORT static std::unique_ptr<GLFence> create();
-#if OS(LINUX)
+#if OS(UNIX)
     WEBCORE_EXPORT static std::unique_ptr<GLFence> createExportable();
     WEBCORE_EXPORT static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
 #endif
@@ -44,7 +44,7 @@ public:
 
     virtual void clientWait() = 0;
     virtual void serverWait() = 0;
-#if OS(LINUX)
+#if OS(UNIX)
     virtual WTF::UnixFileDescriptor exportFD() { return { }; }
 #endif
 

@@ -137,6 +137,11 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
     });
 }
 
+- (void)setNotificationCategories:(NSSet<UNNotificationCategory *> *) categories
+{
+    // No-op. Stubbed out for compatibiltiy with UNUserNotificationCenter.
+}
+
 - (UNNotificationSettings *)notificationSettings
 {
     RetainPtr settings = [UNMutableNotificationSettings emptySettings];

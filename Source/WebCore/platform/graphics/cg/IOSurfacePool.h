@@ -37,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,8 +45,8 @@ namespace WebCore {
 class DestinatationColorSpace;
 
 class IOSurfacePool : public ThreadSafeRefCounted<IOSurfacePool> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurfacePool, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(IOSurfacePool);
-    WTF_MAKE_FAST_ALLOCATED;
     friend class LazyNeverDestroyed<IOSurfacePool>;
 
 public:

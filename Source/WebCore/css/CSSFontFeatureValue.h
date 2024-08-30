@@ -30,24 +30,26 @@
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
+
 class CSSFontFeatureValue final : public CSSValue {
 public:
-    static Ref<CSSFontFeatureValue> create(FontTag&& tag, int value)
+    static Ref<CSSFontFeatureValue> create(FontTag&& tag, Ref<CSSPrimitiveValue>&& value)
     {
-        return adoptRef(*new CSSFontFeatureValue(WTFMove(tag), value));
+        return adoptRef(*new CSSFontFeatureValue(WTFMove(tag), WTFMove(value)));
     }
 
     const FontTag& tag() const { return m_tag; }
-    int value() const { return m_value; }
+    const Ref<CSSPrimitiveValue>& value() const { return m_value; }
     String customCSSText() const;
 
     bool equals(const CSSFontFeatureValue&) const;
 
 private:
-    CSSFontFeatureValue(FontTag&&, int);
+    CSSFontFeatureValue(FontTag&&, Ref<CSSPrimitiveValue>&&);
 
     FontTag m_tag;
-    const int m_value;
+    Ref<CSSPrimitiveValue> m_value;
 };
 
 } // namespace WebCore

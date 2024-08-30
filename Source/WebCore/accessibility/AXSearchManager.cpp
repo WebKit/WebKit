@@ -123,9 +123,11 @@ bool AXSearchManager::matchForSearchKeyAtIndex(RefPtr<AXCoreObject> axObject, co
     case AccessibilitySearchKey::LiveRegion:
         return axObject->supportsLiveRegion();
     case AccessibilitySearchKey::MisspelledWord: {
-        auto ranges = axObject->spellCheckerResultRanges();
-        m_spellCheckerResultRanges.set(axObject->objectID(), ranges);
-        return !ranges.isEmpty();
+        auto ranges = axObject->misspellingRanges();
+        bool hasMisspelling = !ranges.isEmpty();
+        if (hasMisspelling)
+            m_misspellingRanges.set(axObject->objectID(), WTFMove(ranges));
+        return hasMisspelling;
     }
     case AccessibilitySearchKey::Outline:
         return axObject->isTree();
@@ -232,10 +234,10 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     size_t endIndex = isForward ? 0 : childrenSize;
 
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object.get())) {
+    if (startObject && startObject->isIgnored() && startObject->isDescendantOfObject(object.get())) {
         RefPtr<AXCoreObject> parentObject = startObject->parentObject();
         // Go up the parent chain to find the highest ancestor that's also being ignored.
-        while (parentObject && parentObject->accessibilityIsIgnored()) {
+        while (parentObject && parentObject->isIgnored()) {
             if (parentObject == object)
                 break;
             startObject = parentObject;
@@ -247,7 +249,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
         ASSERT(is<AccessibilityObject>(startObject));
         auto* newStartObject = dynamicDowncast<AccessibilityObject>(startObject.get());
         // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        if (newStartObject && newStartObject->accessibilityIsIgnored())
+        if (newStartObject && newStartObject->isIgnored())
             newStartObject = isForward ? newStartObject->previousSiblingUnignored() : newStartObject->nextSiblingUnignored();
         startObject = newStartObject;
     }
@@ -273,7 +275,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
 
 AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsInternal(const AccessibilitySearchCriteria& criteria)
 {
-    AXTRACE("Accessibility::findMatchingObjectsInternal"_s);
+    AXTRACE("AXSearchManager::findMatchingObjectsInternal"_s);
     AXLOG(criteria);
 
     AXCoreObject::AccessibilityChildrenVector results;
@@ -333,6 +335,8 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
 
 std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(AccessibilitySearchCriteria&& criteria)
 {
+    AXTRACE("AXSearchManager::findMatchingRange"_s);
+
     // Currently, this method only supports searching for the next/previous misspelling.
     // FIXME: support other types of ranges, like italicized.
     if (criteria.searchKeys.size() != 1 || criteria.searchKeys[0] != AccessibilitySearchKey::MisspelledWord || criteria.resultsLimit != 1) {
@@ -344,24 +348,24 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
     RefPtr startObject = criteria.startObject;
     if (!startObject)
         startObject = criteria.anchorObject;
+    AXLOG(startObject);
 
     bool forward = criteria.searchDirection == AccessibilitySearchDirection::Next;
     if (match(startObject, criteria)) {
-        AXTextMarkerRange startRange { startObject->treeID(), startObject->objectID(), criteria.startRange };
-        const auto& characterRanges = m_spellCheckerResultRanges.get(startObject->objectID());
-        ASSERT(!characterRanges.isEmpty());
+        ASSERT(m_misspellingRanges.contains(startObject->objectID()));
+        const auto& ranges = m_misspellingRanges.get(startObject->objectID());
+        ASSERT(!ranges.isEmpty());
 
+        AXTextMarkerRange startRange { startObject->treeID(), startObject->objectID(), criteria.startRange };
         if (forward) {
-            for (auto it = characterRanges.begin(); it != characterRanges.end(); ++it) {
-                AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
-                if (range > startRange)
-                    return range;
+            for (auto it = ranges.begin(); it != ranges.end(); ++it) {
+                if (*it > startRange)
+                    return *it;
             }
         } else {
-            for (auto it = characterRanges.rbegin(); it != characterRanges.rend(); ++it) {
-                AXTextMarkerRange range { startObject->treeID(), startObject->objectID(), *it };
-                if (range < startRange)
-                    return range;
+            for (auto it = ranges.rbegin(); it != ranges.rend(); ++it) {
+                if (*it < startRange)
+                    return *it;
             }
         }
     }
@@ -370,10 +374,11 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
     auto objects = findMatchingObjectsInternal(criteria);
     if (!objects.isEmpty() && objects[0]) {
         auto& object = *objects[0];
-        const auto& characterRanges = m_spellCheckerResultRanges.get(object.objectID());
-        ASSERT(!characterRanges.isEmpty());
-        auto& characterRange = forward ? characterRanges[0] : characterRanges.last();
-        return { { object.treeID(), object.objectID(), characterRange } };
+        AXLOG(object);
+        ASSERT(m_misspellingRanges.contains(object.objectID()));
+        const auto& ranges = m_misspellingRanges.get(object.objectID());
+        ASSERT(!ranges.isEmpty());
+        return forward ? ranges[0] : ranges.last();
     }
     return std::nullopt;
 }

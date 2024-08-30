@@ -128,13 +128,13 @@ RemoteVideoCodecFactory::~RemoteVideoCodecFactory()
 {
 }
 
-static bool shouldUseLocalDecoder(std::optional<VideoCodecType> type, const WebCore::VideoDecoder::Config& config)
+static bool shouldUseLocalDecoder(std::optional<WebCore::VideoCodecType> type, const WebCore::VideoDecoder::Config& config)
 {
     if (!type)
         return true;
 
 #if PLATFORM(MAC)
-    if (*type == VideoCodecType::VP9 && config.decoding == WebCore::VideoDecoder::HardwareAcceleration::No)
+    if (*type == WebCore::VideoCodecType::VP9 && config.decoding == WebCore::VideoDecoder::HardwareAcceleration::No)
         return true;
 #endif
 
@@ -179,7 +179,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
     }
 
     std::map<std::string, std::string> parameters;
-    if (type == VideoCodecType::H264) {
+    if (type == WebCore::VideoCodecType::H264) {
         if (auto position = codec.find('.');position != notFound && position != codec.length()) {
             auto profileLevelId = spanReinterpretCast<const char>(codec.span8().subspan(position + 1));
             parameters["profile-level-id"] = std::string(profileLevelId.data(), profileLevelId.size());

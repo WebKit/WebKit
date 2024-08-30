@@ -23,6 +23,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ private:
 // The rule owns the live list.
 template <class Rule>
 class LiveCSSRuleList final : public CSSRuleList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LiveCSSRuleList);
 public:
     LiveCSSRuleList(Rule& rule)
         : m_rule(rule)

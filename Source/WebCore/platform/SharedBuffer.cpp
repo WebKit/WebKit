@@ -32,6 +32,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <algorithm>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/UTF8Conversion.h>
@@ -44,6 +45,8 @@ static constexpr bool useUnixDomainSockets = false;
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedBufferBuilder);
 
 Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create()
 {

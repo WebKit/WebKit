@@ -28,6 +28,7 @@
 #include <optional>
 #include <tuple>
 #include <variant>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -184,7 +185,7 @@ struct Tree {
 // Math Operators.
 
 struct Sum {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sum);
 public:
     static constexpr auto op = Operator::Sum;
 
@@ -194,7 +195,7 @@ public:
 };
 
 struct Product {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Product);
 public:
     static constexpr auto op = Operator::Product;
 
@@ -204,7 +205,7 @@ public:
 };
 
 struct Negate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Negate);
 public:
     static constexpr auto op = Operator::Negate;
 
@@ -214,7 +215,7 @@ public:
 };
 
 struct Invert {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Invert);
 public:
     static constexpr auto op = Operator::Invert;
 
@@ -227,7 +228,7 @@ public:
 
 // Comparison Functions - https://drafts.csswg.org/css-values-4/#comp-func
 struct Min {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Min);
 public:
     static constexpr auto op = Operator::Min;
 
@@ -237,7 +238,7 @@ public:
 };
 
 struct Max {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Max);
 public:
     static constexpr auto op = Operator::Max;
 
@@ -247,7 +248,7 @@ public:
 };
 
 struct Clamp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Clamp);
 public:
     static constexpr auto op = Operator::Clamp;
 
@@ -260,7 +261,7 @@ public:
 
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
 struct RoundNearest {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundNearest);
 public:
     static constexpr auto op = Operator::Nearest;
 
@@ -271,7 +272,7 @@ public:
 };
 
 struct RoundUp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundUp);
 public:
     static constexpr auto op = Operator::Up;
 
@@ -282,7 +283,7 @@ public:
 };
 
 struct RoundDown {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundDown);
 public:
     static constexpr auto op = Operator::Down;
 
@@ -293,7 +294,7 @@ public:
 };
 
 struct RoundToZero {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundToZero);
 public:
     static constexpr auto op = Operator::ToZero;
 
@@ -304,7 +305,7 @@ public:
 };
 
 struct Mod {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Mod);
 public:
     static constexpr auto op = Operator::Mod;
 
@@ -315,7 +316,7 @@ public:
 };
 
 struct Rem {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Rem);
 public:
     static constexpr auto op = Operator::Rem;
 
@@ -327,7 +328,7 @@ public:
 
 // Trigonometric Functions - https://drafts.csswg.org/css-values-4/#trig-funcs
 struct Sin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sin);
 public:
     static constexpr auto op = Operator::Sin;
 
@@ -337,7 +338,7 @@ public:
 };
 
 struct Cos {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Cos);
 public:
     static constexpr auto op = Operator::Cos;
 
@@ -347,7 +348,7 @@ public:
 };
 
 struct Tan {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Tan);
 public:
     static constexpr auto op = Operator::Tan;
 
@@ -357,7 +358,7 @@ public:
 };
 
 struct Asin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Asin);
 public:
     static constexpr auto op = Operator::Asin;
 
@@ -367,7 +368,7 @@ public:
 };
 
 struct Acos {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Acos);
 public:
     static constexpr auto op = Operator::Acos;
 
@@ -377,7 +378,7 @@ public:
 };
 
 struct Atan {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Atan);
 public:
     static constexpr auto op = Operator::Atan;
 
@@ -387,7 +388,7 @@ public:
 };
 
 struct Atan2 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Atan2);
 public:
     static constexpr auto op = Operator::Atan2;
 
@@ -399,7 +400,7 @@ public:
 
 // Exponential Functions - https://drafts.csswg.org/css-values-4/#exponent-funcs
 struct Pow {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Atan2);
 public:
     static constexpr auto op = Operator::Pow;
 
@@ -410,7 +411,7 @@ public:
 };
 
 struct Sqrt {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sqrt);
 public:
     static constexpr auto op = Operator::Sqrt;
 
@@ -420,7 +421,7 @@ public:
 };
 
 struct Hypot {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Hypot);
 public:
     static constexpr auto op = Operator::Hypot;
 
@@ -430,7 +431,7 @@ public:
 };
 
 struct Log {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Log);
 public:
     static constexpr auto op = Operator::Log;
 
@@ -441,7 +442,7 @@ public:
 };
 
 struct Exp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Exp);
 public:
     static constexpr auto op = Operator::Exp;
 
@@ -452,7 +453,7 @@ public:
 
 // Sign-Related Functions - https://drafts.csswg.org/css-values-4/#sign-funcs
 struct Abs {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Abs);
 public:
     static constexpr auto op = Operator::Abs;
 
@@ -462,7 +463,7 @@ public:
 };
 
 struct Sign {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sign);
 public:
     static constexpr auto op = Operator::Sign;
 
@@ -473,7 +474,7 @@ public:
 
 // Non-standard
 struct Blend {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Blend);
 public:
     static constexpr auto op = Operator::Blend;
 

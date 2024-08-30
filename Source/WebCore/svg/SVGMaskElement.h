@@ -24,6 +24,7 @@
 #include "SVGNames.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -51,10 +52,10 @@ public:
 
     FloatRect calculateMaskContentRepaintRect(RepaintRectCalculation);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
+
 private:
     SVGMaskElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

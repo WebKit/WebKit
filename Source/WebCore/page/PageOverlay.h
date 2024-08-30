@@ -62,7 +62,7 @@ public:
 };
 
 class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeWeakPtr<PageOverlay> {
-    WTF_MAKE_TZONE_ALLOCATED(PageOverlay);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PageOverlay, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(PageOverlay);
 public:
     enum class OverlayType : bool {

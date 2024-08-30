@@ -2800,10 +2800,13 @@ _wasm_trampoline_wasm_call_indirect_wide32:
 _wasm_trampoline_wasm_call_ref_wide32:
 _wasm_trampoline_wasm_tail_call:
 _wasm_trampoline_wasm_tail_call_indirect:
+_wasm_trampoline_wasm_tail_call_ref:
 _wasm_trampoline_wasm_tail_call_wide16:
 _wasm_trampoline_wasm_tail_call_indirect_wide16:
+_wasm_trampoline_wasm_tail_call_ref_wide16:
 _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
+_wasm_trampoline_wasm_tail_call_ref_wide32:
     crash()
 
 end # WEBASSEMBLY

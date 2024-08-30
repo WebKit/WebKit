@@ -123,30 +123,27 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
     }
 
     auto args = consumeFunction(range);
-    double position;
+    RefPtr<CSSPrimitiveValue> position;
     switch (id) {
     case CSSValueFrom:
-        position = 0;
+        position = CSSPrimitiveValue::create(0);
         break;
     case CSSValueTo:
-        position = 1;
+        position = CSSPrimitiveValue::create(1);
         break;
-    case CSSValueColorStop: {
-        auto value = consumePercentOrNumberRaw(args);
-        if (!value)
+    case CSSValueColorStop:
+        position = consumePercentOrNumber(args);
+        if (!position)
             return false;
-        position = transformRaw<PercentOrNumberDividedBy100Transformer>(*value);
-
         if (!consumeCommaIncludingWhitespace(args))
             return false;
         break;
-    }
     default:
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    stop.position = CSSPrimitiveValue::create(position);
+    stop.position = WTFMove(position);
     stop.color = consumeDeprecatedGradientStopColor(args, context);
     return stop.color && args.atEnd();
 }

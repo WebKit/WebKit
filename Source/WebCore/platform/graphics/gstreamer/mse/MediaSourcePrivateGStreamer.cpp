@@ -129,9 +129,23 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
     }
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Marking EOS, status is %s", statusString);
 #endif
-    if (endOfStreamStatus == EndOfStreamStatus::NoError)
+    if (endOfStreamStatus == EndOfStreamStatus::NoError) {
         m_playerPrivate.setNetworkState(MediaPlayer::NetworkState::Loaded);
+
+        auto bufferedRanges = buffered();
+        if (!bufferedRanges.length()) {
+            GST_DEBUG("EOS with no buffers");
+            m_playerPrivate.setEosWithNoBuffers(true);
+        }
+    }
     MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
+}
+
+void MediaSourcePrivateGStreamer::unmarkEndOfStream()
+{
+    ASSERT(isMainThread());
+    m_playerPrivate.setEosWithNoBuffers(false);
+    MediaSourcePrivate::unmarkEndOfStream();
 }
 
 MediaPlayer::ReadyState MediaSourcePrivateGStreamer::mediaPlayerReadyState() const

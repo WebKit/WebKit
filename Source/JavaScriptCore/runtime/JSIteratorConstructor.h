@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class IteratorPrototype;
+class JSIteratorPrototype;
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iterator-constructor
 class JSIteratorConstructor final : public InternalFunction {
@@ -38,14 +38,14 @@ public:
     typedef InternalFunction Base;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSIteratorConstructor* create(VM&, Structure*, IteratorPrototype*);
+    static JSIteratorConstructor* create(VM&, Structure*, JSIteratorPrototype*);
 
     DECLARE_INFO;
     DECLARE_VISIT_CHILDREN;
 private:
     JSIteratorConstructor(VM&, Structure*);
 
-    void finishCreation(VM&, IteratorPrototype*);
+    void finishCreation(VM&, JSIteratorPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSIteratorConstructor, InternalFunction);
 

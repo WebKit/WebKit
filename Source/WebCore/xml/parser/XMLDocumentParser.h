@@ -34,6 +34,7 @@
 #include <libxml/xmlstring.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
@@ -63,7 +64,7 @@ private:
 };
 
 class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient, public CanMakeCheckedPtr<XMLDocumentParser> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XMLDocumentParser);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XMLDocumentParser);
 public:
     enum class IsInFrameView : bool { No, Yes };

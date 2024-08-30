@@ -32,11 +32,14 @@
 #include "Logging.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/StackTrace.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PixelBufferConformerCV);
 
 #if RELEASE_LOG_DISABLED
 #define RELEASE_LOG_STACKTRACE(channel) ((void)0)

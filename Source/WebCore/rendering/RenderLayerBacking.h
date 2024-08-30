@@ -32,6 +32,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "ScrollingCoordinator.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
@@ -57,7 +58,8 @@ enum CompositingLayerType {
 // There is one RenderLayerBacking for each RenderLayer that is composited.
 
 class RenderLayerBacking final : public GraphicsLayerClient {
-    WTF_MAKE_NONCOPYABLE(RenderLayerBacking); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RenderLayerBacking);
+    WTF_MAKE_NONCOPYABLE(RenderLayerBacking);
 public:
     explicit RenderLayerBacking(RenderLayer&);
     ~RenderLayerBacking();

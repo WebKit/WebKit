@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 // All of these methods should be called on the Main Thread.
 // Used to send messages to the WorkerInspector on the WorkerThread.
@@ -40,8 +41,8 @@ namespace WebCore {
 class ServiceWorkerThreadProxy;
 
 class ServiceWorkerInspectorProxy {
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerInspectorProxy);
     WTF_MAKE_NONCOPYABLE(ServiceWorkerInspectorProxy);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ServiceWorkerInspectorProxy(ServiceWorkerThreadProxy&);
     ~ServiceWorkerInspectorProxy();

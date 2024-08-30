@@ -30,6 +30,7 @@
 #include "IntPoint.h"
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(CG)
 typedef struct CGPoint CGPoint;
@@ -55,7 +56,7 @@ class IntSize;
 class FloatRect;
 
 class FloatPoint {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FloatPoint);
 public:
     constexpr FloatPoint() = default;
     constexpr FloatPoint(float x, float y) : m_x(x), m_y(y) { }

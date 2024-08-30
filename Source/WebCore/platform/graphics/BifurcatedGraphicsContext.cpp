@@ -159,9 +159,15 @@ void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::beginTransparencyLayer(CompositeOperator, BlendMode)
+void BifurcatedGraphicsContext::beginTransparencyLayer(CompositeOperator compositeOperator, BlendMode blendMode)
 {
-    beginTransparencyLayer(1);
+    GraphicsContext::beginTransparencyLayer(compositeOperator, blendMode);
+    m_primaryContext.beginTransparencyLayer(compositeOperator, blendMode);
+    m_secondaryContext.beginTransparencyLayer(compositeOperator, blendMode);
+
+    GraphicsContext::save(GraphicsContextState::Purpose::TransparencyLayer);
+
+    VERIFY_STATE_SYNCHRONIZATION();
 }
 
 void BifurcatedGraphicsContext::endTransparencyLayer()

@@ -94,6 +94,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(RenderObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderObjectRenderObjectRareData, RenderObject::RenderObjectRareData);
 
 #if ASSERT_ENABLED
 
@@ -1472,6 +1473,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         stream << "[" << renderElement->layoutIdentifier() << "]";
     else
         stream << "[n/a]";
+    stream << "overhang:]" << (int)style().rubyOverhang();
     stream.nextLine();
 }
 

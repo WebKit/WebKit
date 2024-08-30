@@ -32,6 +32,7 @@
 #include "WebAudioSourceProviderCocoa.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ class MediaStreamTrackAudioSourceProviderCocoa final
     , MediaStreamTrackPrivateObserver
     , RealtimeMediaSource::AudioSampleObserver
     , public CanMakeCheckedPtr<MediaStreamTrackAudioSourceProviderCocoa> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackAudioSourceProviderCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStreamTrackAudioSourceProviderCocoa);
 public:
     static Ref<MediaStreamTrackAudioSourceProviderCocoa> create(MediaStreamTrackPrivate&);

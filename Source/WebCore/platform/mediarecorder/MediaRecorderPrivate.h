@@ -30,6 +30,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MEDIA_RECORDER)
 
@@ -52,7 +53,7 @@ class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
     , public RealtimeMediaSource::VideoFrameObserver
     , public CanMakeCheckedPtr<MediaRecorderPrivate> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivate);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivate);
 public:
     ~MediaRecorderPrivate();

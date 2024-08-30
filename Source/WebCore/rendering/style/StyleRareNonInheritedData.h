@@ -112,6 +112,10 @@ public:
 
     LineClampValue lineClamp; // An Apple extension.
     
+    size_t maxLines { 0 };
+
+    OverflowContinue overflowContinue { OverflowContinue::Auto };
+
     IntSize initialLetter;
 
     DataRef<StyleMarqueeData> marquee; // Marquee properties

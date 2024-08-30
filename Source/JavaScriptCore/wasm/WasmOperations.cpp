@@ -328,7 +328,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
 
     const auto& wasmCC = wasmCallingConvention().callInformationFor(typeDefinition, CallRole::Caller);
     const auto& jsCC = jsCallingConvention().callInformationFor(typeDefinition, CallRole::Callee);
-    const auto& jsCallerCC = jsCallingConvention().callInformationFor(typeDefinition, CallRole::Caller);
 
     if (Options::useWasmSIMD() && (wasmCC.argumentsOrResultsIncludeV128))
         OPERATION_RETURN(scope, 0);

@@ -27,11 +27,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UNNotificationResponse;
+
+WK_EXTERN NSString * const _WKWebPushActionTypePushEvent;
+WK_EXTERN NSString * const _WKWebPushActionTypeNotificationClick;
+WK_EXTERN NSString * const _WKWebPushActionTypeNotificationClose;
+
 WK_EXTERN
 @interface _WKWebPushAction : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 + (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary;
++ (_WKWebPushAction *)_webPushActionWithNotificationResponse:(UNNotificationResponse *)response;
 
 @property (nonatomic, readonly) NSNumber *version;
 @property (nonatomic, readonly) NSString *pushPartition;

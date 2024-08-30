@@ -63,7 +63,7 @@ void ServiceWorkerNotificationHandler::showNotification(IPC::Connection& connect
     dataStore->showPersistentNotification(&connection, data);
 }
 
-void ServiceWorkerNotificationHandler::cancelNotification(const WTF::UUID& notificationID)
+void ServiceWorkerNotificationHandler::cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID)
 {
     if (auto* dataStore = dataStoreForNotificationID(notificationID))
         dataStore->cancelServiceWorkerNotification(notificationID);

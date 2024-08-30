@@ -41,8 +41,12 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextSizeAdjustment.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAutoSizingValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAutoSizing);
 
 static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
 {

@@ -7,4 +7,6 @@ PASS Property font-feature-settings value '"liga" 0'
 PASS Property font-feature-settings value '"tnum", "hist"'
 PASS Property font-feature-settings value '"PKRN"'
 PASS Property font-feature-settings value '"dlig", "smcp", "dlig" 0'
+PASS Property font-feature-settings value '"liga" calc(10 + (sign(2cqw - 10px) * 5))'
+PASS Property font-feature-settings value '"liga" calc(10 + (sign(2cqw - 10px) * 5)), "dlig" calc(20 + (sign(2cqw - 10px) * 5))'
 

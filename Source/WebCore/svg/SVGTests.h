@@ -23,6 +23,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,8 @@ class SVGPropertyOwnerRegistry;
 class SVGTests;
 
 class SVGConditionalProcessingAttributes {
-    WTF_MAKE_NONCOPYABLE(SVGConditionalProcessingAttributes); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGConditionalProcessingAttributes);
+    WTF_MAKE_NONCOPYABLE(SVGConditionalProcessingAttributes);
 public:
     SVGConditionalProcessingAttributes(SVGElement& contextElement);
 

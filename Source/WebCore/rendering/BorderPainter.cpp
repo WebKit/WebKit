@@ -241,10 +241,10 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         if (!styleImage)
             return false;
 
-        if (!styleImage->isLoaded(&m_renderer))
+        if (!styleImage->isLoaded(m_renderer.ptr()))
             return false;
 
-        if (!styleImage->canRender(&m_renderer, style.usedZoom()))
+        if (!styleImage->canRender(m_renderer.ptr(), style.usedZoom()))
             return false;
 
         auto rectWithOutsets = rect;
@@ -255,7 +255,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (rect.isEmpty() && !paintsBorderImage(rect, style.borderImage()))
         return;
 
-    auto rectToClipOut = const_cast<RenderElement&>(m_renderer).paintRectToClipOutFromBorder(rect);
+    auto rectToClipOut = const_cast<RenderElement&>(m_renderer.get()).paintRectToClipOutFromBorder(rect);
     bool appliedClipAlready = !rectToClipOut.isEmpty();
     GraphicsContextStateSaver stateSave(graphicsContext, appliedClipAlready);
     if (!rectToClipOut.isEmpty())
@@ -308,22 +308,22 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
 
 void BorderPainter::paintOutline(const LayoutRect& paintRect) const
 {
-    auto& styleToUse = m_renderer.style();
+    auto& styleToUse = m_renderer->style();
     auto outlineWidth = floorToDevicePixel(styleToUse.outlineWidth(), document().deviceScaleFactor());
     auto outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !m_renderer.theme().supportsFocusRing(styleToUse)) {
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !m_renderer->theme().supportsFocusRing(styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         LayoutRect paintRectToUse { paintRect };
-        if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer))
-            paintRectToUse = m_renderer.theme().adjustedPaintRect(*box, paintRectToUse);
-        m_renderer.addFocusRingRects(focusRingRects, paintRectToUse.location(), m_paintInfo.paintContainer);
-        m_renderer.paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(m_renderer.get()))
+            paintRectToUse = m_renderer->theme().adjustedPaintRect(*box, paintRectToUse);
+        m_renderer->addFocusRingRects(focusRingRects, paintRectToUse.location(), m_paintInfo.paintContainer);
+        m_renderer->paintFocusRing(m_paintInfo, styleToUse, focusRingRects);
     }
 
-    if (m_renderer.hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !m_renderer.theme().supportsFocusRing(styleToUse))
-        m_renderer.addPDFURLRect(m_paintInfo, paintRect.location());
+    if (m_renderer->hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !m_renderer->theme().supportsFocusRing(styleToUse))
+        m_renderer->addPDFURLRect(m_paintInfo, paintRect.location());
 
     if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On || styleToUse.outlineStyle() == BorderStyle::None)
         return;
@@ -393,7 +393,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
         return;
     }
 
-    auto& styleToUse = m_renderer.style();
+    auto& styleToUse = m_renderer->style();
     auto outlineOffset = styleToUse.outlineOffset();
     auto outlineWidth = styleToUse.outlineWidth();
     auto deviceScaleFactor = document().deviceScaleFactor();
@@ -588,13 +588,13 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     if (!styleImage)
         return false;
 
-    if (!styleImage->isLoaded(&m_renderer))
+    if (!styleImage->isLoaded(m_renderer.ptr()))
         return true; // Never paint a nine-piece image incrementally, but don't paint the fallback borders either.
 
-    if (!styleImage->canRender(&m_renderer, style.usedZoom()))
+    if (!styleImage->canRender(m_renderer.ptr(), style.usedZoom()))
         return false;
 
-    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer);
+    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer.get());
     if (!modelObject)
         return false;
 
@@ -611,7 +611,7 @@ bool BorderPainter::paintNinePieceImage(const LayoutRect& rect, const RenderStyl
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
     styleImage->setContainerContextForRenderer(m_renderer, source, style.usedZoom());
 
-    ninePieceImage.paint(m_paintInfo.context(), &m_renderer, style, destination, source, deviceScaleFactor, op);
+    ninePieceImage.paint(m_paintInfo.context(), m_renderer.ptr(), style, destination, source, deviceScaleFactor, op);
     return true;
 }
 
@@ -1441,7 +1441,7 @@ Color BorderPainter::calculateBorderStyleColor(const BorderStyle& style, const B
 
 const Document& BorderPainter::document() const
 {
-    return m_renderer.document();
+    return m_renderer->document();
 }
 
 }

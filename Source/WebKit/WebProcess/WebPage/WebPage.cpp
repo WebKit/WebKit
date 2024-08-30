@@ -958,7 +958,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setMuted(parameters.muted, [] { });
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
-    m_page->addLayoutMilestones({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout });
+    // We use LayoutMilestone::DidFirstMeaningfulPaint to generte WKPageLoadTiming.
+    m_page->addLayoutMilestones({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, LayoutMilestone::DidFirstMeaningfulPaint });
 
     auto& webProcess = WebProcess::singleton();
     webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_identifier, *this);
@@ -4080,6 +4081,11 @@ void WebPage::updateIsInWindow(bool isInitialState)
 
     if (isInWindow)
         layoutIfNeeded();
+
+#if ENABLE(PDF_PLUGIN)
+    for (auto& pluginView : m_pluginViews)
+        pluginView.didChangeIsInWindow();
+#endif
 }
 
 void WebPage::visibilityDidChange()
@@ -5512,9 +5518,9 @@ void WebPage::reapplyEditCommand(WebUndoStepID stepID)
     if (!step)
         return;
 
-    m_isInRedo = true;
+    setIsInRedo(true);
     step->step().reapply();
-    m_isInRedo = false;
+    setIsInRedo(false);
 }
 
 void WebPage::didRemoveEditCommand(WebUndoStepID commandID)
@@ -6628,6 +6634,11 @@ void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& pri
 
 void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request)
 {
+    ASSERT(!m_networkResourceRequestIdentifiersForPageLoadTiming.contains(identifier));
+    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
+        send(Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming());
+    m_networkResourceRequestIdentifiersForPageLoadTiming.add(identifier);
+
     if (!request.url().protocolIsInHTTPFamily())
         return;
 
@@ -6643,6 +6654,11 @@ void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, c
 
 void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier)
 {
+    auto didRemove = m_networkResourceRequestIdentifiersForPageLoadTiming.remove(identifier);
+    ASSERT_UNUSED(didRemove, didRemove);
+    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
+        send(Messages::WebPageProxy::EndNetworkRequestsForPageLoadTiming(WallTime::now()));
+
     if (!m_trackedNetworkResourceRequestIdentifiers.remove(identifier))
         return;
 
@@ -8168,7 +8184,7 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
         updateIntrinsicContentSizeIfNeeded(localMainFrameView()->autoSizingIntrinsicContentSize());
     }
 
-    send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones));
+    send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones, WallTime::now()));
 }
 
 void WebPage::didRestoreScrollPosition()
@@ -9962,9 +9978,18 @@ void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(co
 }
 
 #if ENABLE(MEDIA_STREAM)
-void WebPage::updateCaptureState(bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+void WebPage::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::ValidateCaptureStateUpdate(isActive, kind), [weakThis = WeakPtr { *this }, isActive, kind, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
+    RefPtr frame = document.frame();
+    if (!frame) {
+        completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "no frame available"_s });
+        return;
+    }
+
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
+    ASSERT(webFrame);
+
+    sendWithAsyncReply(Messages::WebPageProxy::ValidateCaptureStateUpdate(UserMediaRequestIdentifier::generate(), document.clientOrigin(), webFrame->frameID(), isActive, kind), [weakThis = WeakPtr { *this }, isActive, kind, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
         completionHandler(WTFMove(error));
         if (error)
             return;

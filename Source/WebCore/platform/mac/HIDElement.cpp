@@ -31,8 +31,11 @@
 #include "Logging.h"
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDValue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HIDElement);
 
 HIDElement::HIDElement(IOHIDElementRef element)
     : m_physicalMin(IOHIDElementGetPhysicalMin(element))

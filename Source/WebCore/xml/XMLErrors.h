@@ -29,6 +29,7 @@
 #pragma once
 
 #include <libxml/parser.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 class Document;
 
 class XMLErrors {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(XMLErrors);
 public:
     explicit XMLErrors(Document&);
 

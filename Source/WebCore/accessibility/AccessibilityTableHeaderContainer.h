@@ -48,7 +48,7 @@ public:
 private:
     AccessibilityTableHeaderContainer();
     
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 
     LayoutRect m_headerRect;
 }; 

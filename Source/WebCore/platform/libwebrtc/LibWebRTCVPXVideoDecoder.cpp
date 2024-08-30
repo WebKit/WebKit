@@ -33,8 +33,8 @@
 #include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
 #include "VideoFrameLibWebRTC.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
@@ -54,6 +54,8 @@ ALLOW_UNUSED_PARAMETERS_END
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoDecoder);
 
 static WorkQueue& vpxDecoderQueue()
 {

@@ -24,8 +24,8 @@
 #pragma once
 
 #include "FloatPoint.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,7 +50,8 @@ enum PathParsingMode {
 };
 
 class SVGPathConsumer : public CanMakeSingleThreadWeakPtr<SVGPathConsumer> {
-    WTF_MAKE_NONCOPYABLE(SVGPathConsumer); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGPathConsumer);
+    WTF_MAKE_NONCOPYABLE(SVGPathConsumer);
 public:
     SVGPathConsumer() = default;
     virtual void incrementPathSegmentCount() = 0;

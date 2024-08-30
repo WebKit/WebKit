@@ -31,11 +31,13 @@
 
 #include "AudioArray.h"
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 // ReverbInputBuffer is used to buffer input samples for deferred processing by the background threads.
 class ReverbInputBuffer final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ReverbInputBuffer);
 public:
     explicit ReverbInputBuffer(size_t length);
 

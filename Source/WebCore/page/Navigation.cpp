@@ -147,6 +147,44 @@ void Navigation::updateForActivation(HistoryItem* previousItem, std::optional<Na
     m_activation = NavigationActivation::create(*type, *currentEntry(), WTFMove(previousEntry));
 }
 
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#fire-the-pageswap-event
+RefPtr<NavigationActivation> Navigation::createForPageswapEvent(HistoryItem* newItem, DocumentLoader* documentLoader)
+{
+    auto type = documentLoader->triggeringAction().navigationAPIType();
+    if (!type || !frame())
+        return nullptr;
+
+    // Skip cross-origin requests, or if any cross-origin redirects have been made.
+    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(window()->protectedDocument()->securityOrigin());
+    if (!isSameOrigin || !documentLoader->request().isSameSite())
+        return nullptr;
+
+    RefPtr<NavigationHistoryEntry> oldEntry;
+    if (frame()->document() && frame()->document()->settings().navigationAPIEnabled())
+        oldEntry = currentEntry();
+    else if (RefPtr currentItem = frame()->checkedHistory()->currentItem())
+        oldEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *currentItem);
+
+    RefPtr<NavigationHistoryEntry> newEntry;
+    if (*type == NavigationNavigationType::Reload) {
+        newEntry = oldEntry;
+    } else if (*type == NavigationNavigationType::Traverse) {
+        ASSERT(newItem);
+        // FIXME: For a traverse navigation, we should be identifying the right existing history
+        // entry for 'newEntry' instead of allocating a new one.
+        if (newItem)
+            newEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *newItem);
+    } else {
+        ASSERT(newItem);
+        if (newItem)
+            newEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *newItem);
+    }
+
+    if (newEntry)
+        return NavigationActivation::create(*type, newEntry.releaseNonNull(), WTFMove(oldEntry));
+    return nullptr;
+}
+
 const Vector<Ref<NavigationHistoryEntry>>& Navigation::entries() const
 {
     static NeverDestroyed<Vector<Ref<NavigationHistoryEntry>>> emptyEntries;
@@ -282,7 +320,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-navigate
 Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    auto newURL = window()->document()->completeURL(url);
+    auto newURL = window()->document()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     const URL& currentURL = scriptExecutionContext()->url();
 
     if (!newURL.isValid())
@@ -595,7 +633,8 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
     auto domException = createDOMException(*globalObject, exception.isolatedCopy());
 
-    event.signal()->signalAbort(domException);
+    if (event.signal())
+        event.signal()->signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
@@ -611,6 +650,57 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     }
 }
 
+struct AwaitingPromiseData : public RefCounted<AwaitingPromiseData> {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    Function<void()> fulfilledCallback;
+    Function<void(JSC::JSValue)> rejectionCallback;
+    size_t remainingPromises = 0;
+    bool rejected = false;
+
+    AwaitingPromiseData() = delete;
+    AwaitingPromiseData(Function<void()>&& fulfilledCallback, Function<void(JSC::JSValue)>&& rejectionCallback, size_t remainingPromises)
+        : fulfilledCallback(WTFMove(fulfilledCallback))
+        , rejectionCallback(WTFMove(rejectionCallback))
+        , remainingPromises(remainingPromises)
+    {
+    }
+};
+
+// https://webidl.spec.whatwg.org/#wait-for-all
+static void waitForAllPromises(const Vector<RefPtr<DOMPromise>>& promises, Function<void()>&& fulfilledCallback, Function<void(JSC::JSValue)>&& rejectionCallback)
+{
+    Ref awaitingData = adoptRef(*new AwaitingPromiseData(WTFMove(fulfilledCallback), WTFMove(rejectionCallback), promises.size()));
+
+    for (const auto& promise : promises) {
+        // At any point between promises the frame could have been detached.
+        // FIXME: There is possibly a better way to handle this rather than just never complete.
+        if (promise->isSuspended())
+            return;
+
+        promise->whenSettled([awaitingData, promise] () mutable {
+            if (promise->isSuspended())
+                return;
+
+            switch (promise->status()) {
+            case DOMPromise::Status::Fulfilled:
+                if (--awaitingData->remainingPromises > 0)
+                    break;
+                awaitingData->fulfilledCallback();
+                break;
+            case DOMPromise::Status::Rejected:
+                if (awaitingData->rejected)
+                    break;
+                awaitingData->rejected = true;
+                awaitingData->rejectionCallback(promise->result());
+                break;
+            case DOMPromise::Status::Pending:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        });
+    }
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
 bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
@@ -621,7 +711,14 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         return true;
     }
 
+    bool wasBeingDispatched = m_ongoingNavigateEvent ? m_ongoingNavigateEvent->isBeingDispatched() : false;
+
     abortOngoingNavigationIfNeeded();
+
+    // Prevent recursion on synchronous history navigation steps issued
+    // from the navigate event handler.
+    if (wasBeingDispatched && classicHistoryAPIState)
+        return true;
 
     promoteUpcomingAPIMethodTracker(destination->key());
 
@@ -682,8 +779,6 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         // FIXME: If navigationType is "traverse", then consume history-action user activation.
         if (!event->signal()->aborted())
             abortOngoingNavigation(event);
-        else
-            m_ongoingNavigateEvent = nullptr;
         return false;
     }
 
@@ -715,48 +810,74 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     if (endResultIsSameDocument) {
         Vector<RefPtr<DOMPromise>> promiseList;
-        bool failure = false;
 
         for (auto& handler : event->handlers()) {
             auto callbackResult = handler->handleEvent();
             if (callbackResult.type() == CallbackResultType::Success)
                 promiseList.append(callbackResult.releaseReturnValue());
-            else
-                failure = true;
-            // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
-        }
-
-        // FIXME: Step 33.4: We need to wait for all promises.
-
-        if (document->isFullyActive() && !abortController->signal().aborted()) {
-            // If a new event has been dispatched in our event handler then we were aborted above.
-            if (m_ongoingNavigateEvent != event.ptr())
-                return false;
-
-            m_ongoingNavigateEvent = nullptr;
-
-            event->finish();
-
-            if (!failure) {
-                dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
-
-                if (RefPtr transition = std::exchange(m_transition, nullptr))
-                    transition->resolvePromise();
-
-                if (apiMethodTracker)
-                    resolveFinishedPromise(apiMethodTracker.get());
-            } else {
-                // FIXME: Fill in error information with exception from promise calls above.
-                auto exception = Exception(ExceptionCode::UnknownError);
-                dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), { }, 0, 0, { }));
-
-                if (RefPtr transition = std::exchange(m_transition, nullptr))
-                    transition->rejectPromise(exception);
+            else if (callbackResult.type() == CallbackResultType::ExceptionThrown) {
+                // FIXME: We need to keep around the failure reason but the generated handleEvent() catches and consumes it.
+                auto promiseAndWrapper = createPromiseAndWrapper(*document);
+                promiseAndWrapper.second->reject(ExceptionCode::TypeError);
+                promiseList.append(WTFMove(promiseAndWrapper.first));
             }
-        } else {
-            // FIXME: and the following failure steps given reason rejectionReason:
-            m_ongoingNavigateEvent = nullptr;
         }
+
+        if (promiseList.isEmpty()) {
+            auto promiseAndWrapper = createPromiseAndWrapper(*document);
+            promiseAndWrapper.second->resolveWithCallback([](JSDOMGlobalObject&) {
+                return JSC::jsUndefined();
+            });
+            promiseList.append(WTFMove(promiseAndWrapper.first));
+        }
+
+        waitForAllPromises(promiseList, [this, abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }]() mutable {
+            if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !m_ongoingNavigateEvent)
+                return;
+
+            RefPtr strongThis = weakThis.get();
+
+            m_ongoingNavigateEvent->finish();
+            m_ongoingNavigateEvent = nullptr;
+
+            dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
+
+            if (RefPtr transition = std::exchange(m_transition, nullptr))
+                transition->resolvePromise();
+
+            m_ongoingNavigateEvent = nullptr;
+
+            if (apiMethodTracker)
+                resolveFinishedPromise(apiMethodTracker.get());
+
+        }, [this, abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }](JSC::JSValue result) mutable {
+            if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !m_ongoingNavigateEvent)
+                return;
+
+            RefPtr strongThis = weakThis.get();
+
+            m_ongoingNavigateEvent->finish();
+            m_ongoingNavigateEvent = nullptr;
+
+            // FIXME: Fill in error information.
+            String errorMessage;
+            if (auto* error = jsDynamicCast<JSC::ErrorInstance*>(result))
+                errorMessage = makeString("Uncaught "_s, error->sanitizedToString(protectedScriptExecutionContext()->globalObject()));
+            auto exception = Exception(ExceptionCode::UnknownError, errorMessage);
+
+            // FIXME: Set line/column numbers.
+            dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), document->url().stringWithoutFragmentIdentifier(), 1, 1, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
+
+            if (RefPtr transition = std::exchange(m_transition, nullptr))
+                transition->rejectPromise(exception);
+
+            if (apiMethodTracker)
+                apiMethodTracker->finishedPromise->reject<IDLAny>(result, RejectAsHandled::Yes);
+        });
+
+        // If a new event has been dispatched in our event handler then we were aborted above.
+        if (m_ongoingNavigateEvent != event.ptr())
+            return false;
     } else if (apiMethodTracker)
         cleanupAPIMethodTracker(apiMethodTracker.get());
     else {

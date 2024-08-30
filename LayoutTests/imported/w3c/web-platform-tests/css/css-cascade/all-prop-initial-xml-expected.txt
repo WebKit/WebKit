@@ -33,6 +33,7 @@ PASS background-position-y
 PASS background-repeat
 PASS background-size
 PASS baseline-shift
+PASS block-ellipsis
 PASS block-size
 PASS block-step-insert
 PASS block-step-size
@@ -108,6 +109,7 @@ PASS container-name
 PASS container-type
 PASS content
 PASS content-visibility
+PASS continue
 PASS counter-increment
 PASS counter-reset
 PASS counter-set
@@ -221,6 +223,7 @@ PASS math-style
 PASS max-block-size
 PASS max-height
 PASS max-inline-size
+PASS max-lines
 PASS max-width
 PASS min-block-size
 PASS min-height
@@ -271,6 +274,7 @@ PASS right
 PASS rotate
 PASS row-gap
 PASS ruby-align
+PASS ruby-overhang
 PASS ruby-position
 PASS rx
 PASS ry

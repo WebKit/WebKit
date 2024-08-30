@@ -32,8 +32,11 @@
 #include "ScrollAnimator.h"
 #include "ScrollTypes.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardScrollingAnimator);
 
 KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)

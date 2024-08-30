@@ -29,6 +29,7 @@
 
 #include "PlatformVideoTrackConfiguration.h"
 #include "VideoColorSpace.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ namespace WebCore {
 using VideoTrackConfigurationInit = PlatformVideoTrackConfiguration;
 
 class VideoTrackConfiguration : public RefCounted<VideoTrackConfiguration> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackConfiguration);
 public:
     static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTFMove(init))); }
     static Ref<VideoTrackConfiguration> create() { return adoptRef(*new VideoTrackConfiguration()); }

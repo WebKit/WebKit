@@ -21,13 +21,14 @@
 #include "Image.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class SelectionData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SelectionData);
 public:
     void setText(const String&);
     const String& text() const { return m_text; }

@@ -29,6 +29,7 @@
 #include "StyleChange.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ struct TextUpdate {
 };
 
 class Update final : public CanMakeCheckedPtr<Update> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Update);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Update);
 public:
     Update(Document&);

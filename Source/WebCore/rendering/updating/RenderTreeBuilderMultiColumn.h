@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class RenderBlockFlow;
 class RenderMultiColumnFlow;
 
 class RenderTreeBuilder::MultiColumn {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MultiColumn);
 public:
     MultiColumn(RenderTreeBuilder&);
 

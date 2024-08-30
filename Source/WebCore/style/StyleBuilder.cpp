@@ -51,9 +51,12 @@
 #include "StylePropertyShorthand.h"
 
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Builder);
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
@@ -569,11 +572,11 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomProp
 static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
 {
     auto mmLength = [](double mm) {
-        return CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM).get().computeLength<Length>({ });
+        return Length(CSS::pixelsPerMm * mm, LengthType::Fixed);
     };
 
     auto inchLength = [](double inch) {
-        return CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN).get().computeLength<Length>({ });
+        return Length(CSS::pixelsPerInch * inch, LengthType::Fixed);
     };
 
     static NeverDestroyed<Length> a5Width(mmLength(148));
@@ -676,8 +679,8 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
             if (!second->isLength())
                 return;
             auto conversionData = m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-            width = first->computeLength<Length>(conversionData);
-            height = second->computeLength<Length>(conversionData);
+            width = first->resolveAsLength<Length>(conversionData);
+            height = second->resolveAsLength<Length>(conversionData);
         } else {
             // <page-size> <orientation>
             // The value order is guaranteed. See CSSParser::parseSizeParameter.
@@ -690,7 +693,7 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
         if (primitiveValue->isLength()) {
             // <length>
             pageSizeType = PageSizeType::Resolved;
-            width = height = primitiveValue->computeLength<Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            width = height = primitiveValue->resolveAsLength<Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         } else {
             switch (primitiveValue->valueID()) {
             case CSSValueInvalid:

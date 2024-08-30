@@ -28,6 +28,7 @@
 #include "HTMLTokenizer.h"
 #include "SegmentedString.h"
 #include <pal/text/TextEncoding.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 class TextCodec;
@@ -36,7 +37,8 @@ class TextCodec;
 namespace WebCore {
 
 class HTMLMetaCharsetParser {
-    WTF_MAKE_NONCOPYABLE(HTMLMetaCharsetParser); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HTMLMetaCharsetParser);
+    WTF_MAKE_NONCOPYABLE(HTMLMetaCharsetParser);
 public:
     HTMLMetaCharsetParser();
 

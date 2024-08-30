@@ -44,6 +44,7 @@ def bracket_if_needed(condition):
 
 def parse(file):
     receiver_enabled_by = None
+    receiver_enabled_by_conjunction = None
     receiver_attributes = None
     shared_preferences_needs_connection = False
     destination = None
@@ -61,7 +62,7 @@ def parse(file):
                 match = re.match(r'(?P<name>\w+)\s*=\s*(?P<value>.+)', attribute)
                 if match:
                     if match.group('name') == 'EnabledBy':
-                        receiver_enabled_by = re.split(r'\s*&&\s*', match.group('value'))
+                        (receiver_enabled_by, receiver_enabled_by_conjunction) = parse_enabled_by_string(match.group('value'))
                         continue
                 elif attribute == 'SharedPreferencesNeedsConnection':
                     shared_preferences_needs_connection = True
@@ -105,13 +106,14 @@ def parse(file):
 
             enabled_if = None
             enabled_by = None
+            enabled_by_conjunction = None
             if options_string:
                 match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
                 if match:
                     enabled_if = match.groups()[0]
-                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&]+)))(?:, |$)?", options_string)
+                match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&\|]+)))(?:, |$)?", options_string)
                 if match:
-                    enabled_by = re.split(r'\s*&&\s*', match.groups()[0])
+                    (enabled_by, enabled_by_conjunction) = parse_enabled_by_string(match.groups()[0])
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -124,8 +126,8 @@ def parse(file):
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace)
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by, enabled_by_conjunction))
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_conjunction, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace)
 
 
 def parse_attributes_string(attributes_string):
@@ -180,3 +182,25 @@ def parse_parameters_string(parameters_string):
 
         parameters.append(model.Parameter(kind=parameter_kind, type=parameter_type, name=parameter_name, attributes=parse_attributes_string(attributes_string)))
     return parameters
+
+
+def parse_enabled_by_string(enabled_by_string):
+    enabled_by = None
+    enabled_by_conjunction = None
+
+    has_and_conjunction = '&&' in enabled_by_string
+    has_or_conjunction = '||' in enabled_by_string
+
+    if has_and_conjunction and has_or_conjunction:
+        raise Exception('ERROR: EnabledBy cannot contain both && and || conjunctions')
+    elif has_and_conjunction:
+        enabled_by = re.split(r'\s*&&\s*', enabled_by_string)
+        enabled_by_conjunction = '&&'
+    elif has_or_conjunction:
+        enabled_by = re.split(r'\s*\|\|\s*', enabled_by_string)
+        enabled_by_conjunction = '||'
+    else:
+        enabled_by = [enabled_by_string.strip()]
+        enabled_by_conjunction = None
+
+    return enabled_by, enabled_by_conjunction

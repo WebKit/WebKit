@@ -955,6 +955,15 @@ TextStream& operator<<(TextStream& ts, RubyAlign alignment)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, RubyOverhang overhang)
+{
+    switch (overhang) {
+    case RubyOverhang::Auto: ts << "auto"; break;
+    case RubyOverhang::None: ts << "none"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ScrollSnapAxis axis)
 {
     switch (axis) {
@@ -1415,6 +1424,19 @@ TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsic
         break;
     case ContainIntrinsicSizeType::AutoAndNone:
         ts << "autoandnone";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
+{
+    switch (overflowContinue) {
+    case OverflowContinue::Auto:
+        ts << "auto";
+        break;
+    case OverflowContinue::Discard:
+        ts << "discard";
         break;
     }
     return ts;

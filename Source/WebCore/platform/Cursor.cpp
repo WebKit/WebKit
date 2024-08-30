@@ -31,8 +31,11 @@
 #include "NotImplemented.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Cursor);
 
 IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
 {

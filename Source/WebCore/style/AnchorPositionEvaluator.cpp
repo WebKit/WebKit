@@ -43,9 +43,12 @@
 #include "WritingMode.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore::Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
 {
@@ -268,7 +271,7 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
     if (anchorSideID == CSSValueCenter || anchorSideID == CSSValueInvalid) {
         double percentage = 0.5;
         if (anchorSideID != CSSValueCenter)
-            percentage = dynamicDowncast<CSSPrimitiveValue>(anchorValue.anchorSide())->doubleValueDividingBy100IfPercentage();
+            percentage = dynamicDowncast<CSSPrimitiveValue>(anchorValue.anchorSide())->valueDividingBy100IfPercentageDeprecated<double>();
 
         // We assume that the "start" side always is either the top or left side of the anchor element.
         // However, if that is not the case, we should take the complement of the percentage.

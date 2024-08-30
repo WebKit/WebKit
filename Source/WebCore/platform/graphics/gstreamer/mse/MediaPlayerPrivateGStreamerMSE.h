@@ -84,6 +84,8 @@ public:
     void startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks);
     WebKitMediaSrc* webKitMediaSrc() { return reinterpret_cast<WebKitMediaSrc*>(m_source.get()); }
 
+    void setEosWithNoBuffers(bool);
+
 #if !RELEASE_LOG_DISABLED
     WTFLogChannel& logChannel() const final { return WebCore::LogMediaSource; }
 #endif
@@ -120,6 +122,7 @@ private:
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
 
     bool m_isWaitingForPreroll = true;
+    bool m_isEosWithNoBuffers = false;
     MediaPlayer::ReadyState m_mediaSourceReadyState = MediaPlayer::ReadyState::HaveNothing;
     MediaPlayer::NetworkState m_mediaSourceNetworkState = MediaPlayer::NetworkState::Empty;
 

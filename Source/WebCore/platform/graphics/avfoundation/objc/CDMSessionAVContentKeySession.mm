@@ -47,6 +47,7 @@
 #import <objc/objc-runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -110,6 +111,8 @@ typedef NSString *AVContentKeySystem;
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionAVContentKeySession);
 
 constexpr Seconds kDidProvideContentKeyRequestTimeout { 5_s };
 
@@ -467,8 +470,8 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
         storageURL = [NSURL fileURLWithPath:storagePath];
     }
 
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled() && [PAL::getAVContentKeySessionClass() respondsToSelector:@selector(contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:storageDirectoryAtURL:)]) {
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (!MediaSessionManagerCocoa::shouldUseModernAVContentKeySession()) {
         m_contentKeySession = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
     } else
 #endif
@@ -477,8 +480,8 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
     else
         m_contentKeySession = adoptNS([PAL::allocAVContentKeySessionInstance() initWithStorageDirectoryAtURL:storageURL]);
 
-#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
-    if (MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled())
+#if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE)
+    if (MediaSessionManagerCocoa::shouldUseModernAVContentKeySession())
         [m_contentKeySession setDelegate:m_contentKeySessionDelegate.get() queue:m_delegateQueue->dispatchQueue()];
     else
 #endif

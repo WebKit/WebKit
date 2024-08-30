@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "Supplementable.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ASCIILiteral.h>
 #include "TrustedTypePolicyFactory.h"
 #include "WorkerGlobalScope.h"
@@ -39,7 +40,7 @@
 namespace WebCore {
 
 class DOMWindowTrustedTypes : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMWindowTrustedTypes);
 public:
     explicit DOMWindowTrustedTypes(LocalDOMWindow&);
     virtual ~DOMWindowTrustedTypes() = default;
@@ -85,7 +86,7 @@ TrustedTypePolicyFactory* WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(DO
 }
 
 class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerGlobalScopeTrustedTypes);
 public:
     explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
     virtual ~WorkerGlobalScopeTrustedTypes() = default;

@@ -29,6 +29,7 @@
 
 #include "HIDElement.h"
 #include "SharedGamepadValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ enum class HIDInputType {
 };
 
 class HIDGamepadElement : public HIDElement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HIDGamepadElement);
 public:
     virtual ~HIDGamepadElement() { }
 

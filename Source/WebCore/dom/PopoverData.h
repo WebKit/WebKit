@@ -28,6 +28,7 @@
 #include "Element.h"
 #include "HTMLElement.h"
 #include "HTMLFormControlElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ struct PopoverToggleEventData {
 };
 
 class PopoverData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PopoverData);
 public:
     PopoverData() = default;
 

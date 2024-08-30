@@ -24,6 +24,7 @@
 #include "SVGNames.h"
 #include "SVGTextContentElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -121,13 +122,13 @@ public:
     SVGAnimatedEnumeration& methodAnimated() { return m_method; }
     SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
+
 private:
     SVGTextPathElement(const QualifiedName&, Document&);
     virtual ~SVGTextPathElement();
 
     void didFinishInsertingNode() override;
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

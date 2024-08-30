@@ -59,7 +59,7 @@ WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const Resour
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions&);
 
 using ResponseBody = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
-ResponseBody isolatedResponseBody(const ResponseBody&);
+WEBCORE_EXPORT ResponseBody isolatedResponseBody(const ResponseBody&);
 WEBCORE_EXPORT ResponseBody copyResponseBody(const ResponseBody&);
 
 struct Record {

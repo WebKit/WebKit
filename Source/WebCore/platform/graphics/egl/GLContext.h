@@ -23,6 +23,7 @@
 #include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 #include <EGL/eglplatform.h>
@@ -44,7 +45,8 @@ typedef void* EGLSurface;
 namespace WebCore {
 
 class GLContext final : public GLContextWrapper {
-    WTF_MAKE_NONCOPYABLE(GLContext); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GLContext);
+    WTF_MAKE_NONCOPYABLE(GLContext);
 public:
     WEBCORE_EXPORT static std::unique_ptr<GLContext> create(GLNativeWindowType, PlatformDisplay&);
     static std::unique_ptr<GLContext> createOffscreen(PlatformDisplay&);

@@ -1,0 +1,36 @@
+<style>
+.max_content {
+  width: max-content;
+}
+
+.nested_flex {
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  margin-left: 100px;
+}
+
+td {
+  background-color: green;
+  color: transparent;
+  font-familiy: Ahem;
+  font-size: 20px;
+  height: 100px;
+}
+
+.nested_grid {
+  display: grid;
+}
+</style>
+<!-- nested_grid box should stay as wide as its content is -->
+<div class=max_content>
+  <div class=nested_flex>
+    <table>
+      <td>
+        <div class=nested_grid>XXX</div>
+      </td>
+    </table>
+  </div>
+</div>

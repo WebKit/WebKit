@@ -28,6 +28,7 @@
 #if USE(SKIA)
 
 #include "FilterEffectApplier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class FEComponentTransfer;
 struct ComponentTransferFunction;
 
 class FEComponentTransferSkiaApplier final : public FilterEffectConcreteApplier<FEComponentTransfer> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEComponentTransferSkiaApplier);
     using Base = FilterEffectConcreteApplier<FEComponentTransfer>;
 
 public:

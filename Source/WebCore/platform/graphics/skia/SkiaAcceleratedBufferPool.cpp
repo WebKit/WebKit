@@ -37,8 +37,11 @@
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
 #include <skia/gpu/gl/GrGLInterface.h>
 #include <skia/gpu/gl/GrGLTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaAcceleratedBufferPool);
 
 SkiaAcceleratedBufferPool::SkiaAcceleratedBufferPool()
     : m_releaseUnusedBuffersTimer(RunLoop::main(), this, &SkiaAcceleratedBufferPool::releaseUnusedBuffersTimerFired)

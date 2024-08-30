@@ -32,8 +32,11 @@
 #include "LibWebRTCAudioFormat.h"
 #include "LibWebRTCProvider.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeOutgoingAudioSourceCocoa);
 
 static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRate, size_t channelCount)
 {

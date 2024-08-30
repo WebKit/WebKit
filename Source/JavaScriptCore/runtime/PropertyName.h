@@ -164,8 +164,8 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
 
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
-    const char* indexString = WTF::numberToString(index, buffer);
-    return equal(propertyName, indexString);
+    size_t length = WTF::numberToStringAndSize(index, buffer);
+    return equal(propertyName, std::span { bitwise_cast<const LChar*>(buffer.data()), length });
 }
 
 } // namespace JSC

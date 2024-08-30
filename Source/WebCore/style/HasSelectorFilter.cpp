@@ -30,8 +30,11 @@
 #include "SelectorFilter.h"
 #include "StyleRule.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HasSelectorFilter);
 
 // FIXME: Support additional pseudo-classes.
 static constexpr unsigned HoverSalt = 101;

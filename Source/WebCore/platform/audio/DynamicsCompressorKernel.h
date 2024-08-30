@@ -31,12 +31,13 @@
 
 #include "AudioArray.h"
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class DynamicsCompressorKernel final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DynamicsCompressorKernel);
 public:
     explicit DynamicsCompressorKernel(float sampleRate, unsigned numberOfChannels);
 

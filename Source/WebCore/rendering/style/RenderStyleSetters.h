@@ -93,6 +93,7 @@ inline void RenderStyle::setBackgroundSize(FillSizeType b) { SET_DOUBLY_NESTED(m
 inline void RenderStyle::setBackgroundSizeLength(LengthSize&& size) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_sizeLength, WTFMove(size)); }
 inline void RenderStyle::setBackgroundXPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_xPosition, WTFMove(length)); }
 inline void RenderStyle::setBackgroundYPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_yPosition, WTFMove(length)); }
+inline void RenderStyle::setBlockEllipsis(const BlockEllipsis& value) { SET(m_rareInheritedData, blockEllipsis, value); }
 inline void RenderStyle::setBlockStepInsert(BlockStepInsert newBlockStepInsert) { SET_NESTED(m_nonInheritedData, rareData, blockStepInsert, static_cast<unsigned>(newBlockStepInsert)); }
 inline void RenderStyle::setBlockStepSize(std::optional<Length> length) { SET_NESTED(m_nonInheritedData, rareData, blockStepSize, WTFMove(length)); }
 inline void RenderStyle::setBorderBottomColor(const StyleColor& value) { SET_NESTED_BORDER_COLOR(m_nonInheritedData, surroundData, border.m_bottom, value); }
@@ -230,6 +231,7 @@ inline void RenderStyle::setMaskYPosition(Length&& length) { SET_DOUBLY_NESTED(m
 inline void RenderStyle::setMasonryAutoFlow(MasonryAutoFlow flow) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, masonryAutoFlow, flow); }
 inline void RenderStyle::setMathStyle(const MathStyle& style) { SET(m_rareInheritedData, mathStyle, static_cast<unsigned>(style)); }
 inline void RenderStyle::setMaxHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxHeight, WTFMove(length)); }
+inline void RenderStyle::setMaxLines(size_t value) { SET_NESTED(m_nonInheritedData, rareData, maxLines, value); }
 inline void RenderStyle::setMaxWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxWidth, WTFMove(length)); }
 inline void RenderStyle::setMinHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minHeight, WTFMove(length)); }
 inline void RenderStyle::setMinWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minWidth, WTFMove(length)); }
@@ -251,6 +253,7 @@ inline void RenderStyle::setOutlineStyle(BorderStyle style) { SET_NESTED(m_nonIn
 inline void RenderStyle::setOutlineStyleIsAuto(OutlineIsAuto isAuto) { SET_NESTED(m_nonInheritedData, backgroundData, outline.m_isAuto, static_cast<unsigned>(isAuto)); }
 inline void RenderStyle::setOutlineWidth(float width) { SET_NESTED(m_nonInheritedData, backgroundData, outline.m_width, width); }
 inline void RenderStyle::setOverflowAnchor(OverflowAnchor a) { SET_NESTED(m_nonInheritedData, rareData, overflowAnchor, static_cast<unsigned>(a)); }
+inline void RenderStyle::setOverflowContinue(OverflowContinue value) { SET_NESTED(m_nonInheritedData, rareData, overflowContinue, value); }
 inline void RenderStyle::setOverflowWrap(OverflowWrap rule) { SET(m_rareInheritedData, overflowWrap, static_cast<unsigned>(rule)); }
 inline void RenderStyle::setOverscrollBehaviorX(OverscrollBehavior value) { SET_NESTED(m_nonInheritedData, rareData, overscrollBehaviorX, static_cast<unsigned>(value)); }
 inline void RenderStyle::setOverscrollBehaviorY(OverscrollBehavior value) { SET_NESTED(m_nonInheritedData, rareData, overscrollBehaviorY, static_cast<unsigned>(value)); }
@@ -271,6 +274,7 @@ inline void RenderStyle::setRight(Length&& length) { SET_NESTED(m_nonInheritedDa
 inline void RenderStyle::setRowGap(GapLength&& gapLength) { SET_NESTED(m_nonInheritedData, rareData, rowGap, WTFMove(gapLength)); }
 inline void RenderStyle::setRubyPosition(RubyPosition position) { SET(m_rareInheritedData, rubyPosition, static_cast<unsigned>(position)); }
 inline void RenderStyle::setRubyAlign(RubyAlign alignment) { SET(m_rareInheritedData, rubyAlign, static_cast<unsigned>(alignment)); }
+inline void RenderStyle::setRubyOverhang(RubyOverhang overhang) { SET(m_rareInheritedData, rubyOverhang, static_cast<unsigned>(overhang)); }
 inline void RenderStyle::setScrollTimelineAxes(const Vector<ScrollAxis>& axes) { SET_NESTED(m_nonInheritedData, rareData, scrollTimelineAxes, axes); }
 inline void RenderStyle::setScrollTimelineNames(const Vector<AtomString>& names) { SET_NESTED(m_nonInheritedData, rareData, scrollTimelineNames, names); }
 inline void RenderStyle::setViewTimelineAxes(const Vector<ScrollAxis>& axes) { SET_NESTED(m_nonInheritedData, rareData, viewTimelineAxes, axes); }

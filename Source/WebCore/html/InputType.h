@@ -35,11 +35,11 @@
 #include "HTMLInputElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "RenderPtr.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -70,7 +70,7 @@ enum class DateComponentsType : uint8_t;
 // Do not expose instances of InputType and classes derived from it to classes
 // other than HTMLInputElement.
 class InputType : public RefCounted<InputType> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InputType);
 public:
     enum class Type : uint32_t {
         Button          = 1 << 0,

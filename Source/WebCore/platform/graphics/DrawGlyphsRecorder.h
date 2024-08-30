@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "Pattern.h"
 #include "TextFlags.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 #if USE(CORE_TEXT)
@@ -48,7 +49,7 @@ class GlyphBuffer;
 class GraphicsContext;
 
 class DrawGlyphsRecorder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DrawGlyphsRecorder);
     WTF_MAKE_NONCOPYABLE(DrawGlyphsRecorder);
 public:
     enum class DeriveFontFromContext : bool { No, Yes };

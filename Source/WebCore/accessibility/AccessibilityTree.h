@@ -42,7 +42,7 @@ public:
 private:
     explicit AccessibilityTree(RenderObject&);
     explicit AccessibilityTree(Node&);
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;
     bool isTreeValid() const;
 };

@@ -25,10 +25,13 @@
 
 #import "config.h"
 #import "KillRing.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KillRing);
 
 extern "C" {
 

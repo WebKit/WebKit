@@ -32,8 +32,11 @@
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include <limits>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadImageObserver);
 
 class LazyImageLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:

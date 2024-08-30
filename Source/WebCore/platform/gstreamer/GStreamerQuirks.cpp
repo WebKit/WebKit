@@ -36,9 +36,15 @@
 #include "GStreamerQuirkWesteros.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirkBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirk);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerHolePunchQuirk);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerQuirksManager);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_quirks_debug);
 #define GST_CAT_DEFAULT webkit_quirks_debug

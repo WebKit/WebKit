@@ -40,10 +40,10 @@
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <memory>
-#include <wtf/FastMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -58,7 +58,7 @@ struct WorkerFetchResult;
 enum class CertificateInfoPolicy : uint8_t;
 
 class WorkerScriptLoader final : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WorkerScriptLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerScriptLoader);
 public:
     static Ref<WorkerScriptLoader> create()

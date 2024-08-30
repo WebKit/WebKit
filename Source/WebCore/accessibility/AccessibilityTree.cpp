@@ -62,9 +62,9 @@ Ref<AccessibilityTree> AccessibilityTree::create(Node& node)
     return adoptRef(*new AccessibilityTree(node));
 }
 
-bool AccessibilityTree::computeAccessibilityIsIgnored() const
+bool AccessibilityTree::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 AccessibilityRole AccessibilityTree::determineAccessibilityRole()

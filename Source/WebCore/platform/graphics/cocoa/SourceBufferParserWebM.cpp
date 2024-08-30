@@ -45,6 +45,7 @@
 #include <wtf/Algorithms.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StdList.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/darwin/WeakLinking.h>
 #include <wtf/spi/darwin/OSVariantSPI.h>
 
@@ -233,6 +234,10 @@ template<> struct LogArgument<webm::Id> {
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMParser);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserTrackData, WebMParser::TrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferParserWebM);
+
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
 constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
 
@@ -253,8 +258,10 @@ static Status segmentReadErrorToWebmStatus(SourceBufferParser::Segment::ReadErro
     }
 }
 
+typedef WebMParser::SegmentReader WebMParserSegmentReader;
+
 class WebMParser::SegmentReader final : public webm::Reader {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebMParserSegmentReader);
 public:
     void appendSegment(SourceBufferParser::Segment&& segment)
     {
@@ -426,7 +433,7 @@ private:
 };
 
 class MediaDescriptionWebM final : public MediaDescription {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaDescriptionWebM);
 public:
     static Ref<MediaDescriptionWebM> create(webm::TrackEntry&& track)
     {

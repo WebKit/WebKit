@@ -24,5 +24,6 @@
 messages -> TestWithEnabledBy {
     AlwaysEnabled(String url)
     [EnabledBy=SomeFeature] ConditionallyEnabled(String url)
-    [EnabledBy=SomeFeature && OtherFeature] MultiConditionallyEnabled()
+    [EnabledBy=SomeFeature && OtherFeature] ConditionallyEnabledAnd()
+    [EnabledBy=SomeFeature || OtherFeature] ConditionallyEnabledOr()
 }

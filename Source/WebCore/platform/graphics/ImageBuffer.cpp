@@ -38,6 +38,7 @@
 #include "MIMETypeRegistry.h"
 #include "ProcessCapabilities.h"
 #include "TransparencyLayerContextSwitcher.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
@@ -62,6 +63,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SerializedImageBuffer);
 
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
@@ -136,6 +140,7 @@ RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<S
 // The default serialization of an ImageBuffer just assumes that we can
 // pass it as-is, as long as this is the only reference.
 class DefaultSerializedImageBuffer : public SerializedImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DefaultSerializedImageBuffer);
 public:
     DefaultSerializedImageBuffer(ImageBuffer* image)
         : m_buffer(image)

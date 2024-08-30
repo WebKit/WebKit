@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
@@ -177,8 +178,8 @@ bool canHyphenate(const AtomString& localeIdentifier)
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(HyphenationDictionary);
     WTF_MAKE_NONCOPYABLE(HyphenationDictionary);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef std::unique_ptr<HyphenDict, void(*)(HyphenDict*)> HyphenDictUniquePtr;
 

@@ -29,6 +29,8 @@
 #ifndef Distance_h
 #define Distance_h
 
+#include <wtf/TZoneMalloc.h>
+
 namespace WebCore {
 
 // Distance models are defined according to the OpenAL specification:
@@ -41,7 +43,7 @@ enum class DistanceModelType {
 };
 
 class DistanceEffect final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DistanceEffect);
 public:
     DistanceEffect();
 

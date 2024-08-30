@@ -126,9 +126,9 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
 void SVGRootInlineBox::layoutCharactersInTextBoxes(LegacyInlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
 {
     for (auto* child = start->firstChild(); child; child = child->nextOnLine()) {
-        if (auto* textBox = dynamicDowncast<SVGInlineTextBox>(*child)) {
-            ASSERT(is<RenderSVGInlineText>(textBox->renderer()));
-            characterLayout.layoutInlineTextBox(*textBox);
+        if (auto* legacyTextBox = dynamicDowncast<SVGInlineTextBox>(*child)) {
+            ASSERT(is<RenderSVGInlineText>(legacyTextBox->renderer()));
+            characterLayout.layoutInlineTextBox(InlineIterator::svgTextBoxFor(legacyTextBox));
         } else {
             // Skip generated content.
             RefPtr node = child->renderer().node();

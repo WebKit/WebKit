@@ -35,9 +35,9 @@ AccessibilityMockObject::AccessibilityMockObject()
 
 AccessibilityMockObject::~AccessibilityMockObject() = default;
     
-bool AccessibilityMockObject::computeAccessibilityIsIgnored() const
+bool AccessibilityMockObject::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
     
 }

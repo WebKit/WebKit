@@ -22,9 +22,9 @@
 #if ENABLE(XSLT)
 
 #include <libxml/tree.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -32,7 +32,8 @@ namespace WebCore {
 typedef xmlDocPtr PlatformTransformSource;
 
 class TransformSource {
-    WTF_MAKE_NONCOPYABLE(TransformSource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TransformSource);
+    WTF_MAKE_NONCOPYABLE(TransformSource);
 public:
     explicit TransformSource(const PlatformTransformSource&);
     ~TransformSource();

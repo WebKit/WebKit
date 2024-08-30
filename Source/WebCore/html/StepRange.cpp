@@ -25,8 +25,12 @@
 #include "HTMLParserIdioms.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StepRange);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StepRangeStepDescription, StepRange::StepDescription);
 
 using namespace HTMLNames;
 

@@ -2201,7 +2201,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_clearOpener
 {
     if (auto coreFrame = _private->coreFrame)
-        coreFrame->setOpener(nullptr);
+        coreFrame->disownOpener();
 }
 
 - (BOOL)hasRichlyEditableDragCaret

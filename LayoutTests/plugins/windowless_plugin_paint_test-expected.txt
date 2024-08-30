@@ -1,3 +1,0 @@
-This tests that dynamically added windowless plugins receive paint events on creation.
-SUCCESS
-

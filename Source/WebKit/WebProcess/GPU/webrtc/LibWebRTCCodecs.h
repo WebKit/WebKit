@@ -34,10 +34,10 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
-#include "VideoCodecType.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoder.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <map>
@@ -78,8 +78,8 @@ public:
     static void setWebRTCMediaPipelineAdditionalLoggingEnabled(bool);
     static void initializeIfNeeded();
 
-    std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
-    std::optional<VideoCodecType> videoEncoderTypeFromWebCodec(const String&);
+    std::optional<WebCore::VideoCodecType> videoCodecTypeFromWebCodec(const String&);
+    std::optional<WebCore::VideoCodecType> videoEncoderTypeFromWebCodec(const String&);
 
     using DecoderCallback = Function<void(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp)>;
     struct Decoder {
@@ -93,7 +93,7 @@ public:
         };
 
         VideoDecoderIdentifier identifier;
-        VideoCodecType type;
+        WebCore::VideoCodecType type;
         String codec;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         DecoderCallback decoderCallback;
@@ -105,8 +105,8 @@ public:
         Lock flushCallbacksLock;
     };
 
-    Decoder* createDecoder(VideoCodecType);
-    void createDecoderAndWaitUntilReady(VideoCodecType, const String& codec, Function<void(Decoder*)>&&);
+    Decoder* createDecoder(WebCore::VideoCodecType);
+    void createDecoderAndWaitUntilReady(WebCore::VideoCodecType, const String& codec, Function<void(Decoder*)>&&);
 
     int32_t releaseDecoder(Decoder&);
     void flushDecoder(Decoder&, Function<void()>&&);
@@ -131,7 +131,7 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(Encoder);
     public:
         VideoEncoderIdentifier identifier;
-        VideoCodecType type;
+        WebCore::VideoCodecType type;
         String codec;
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
@@ -149,9 +149,9 @@ public:
         WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
     };
 
-    Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
+    Encoder* createEncoder(WebCore::VideoCodecType, const std::map<std::string, std::string>&);
 #if ENABLE(WEB_CODECS)
-    void createEncoderAndWaitUntilInitialized(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, const WebCore::VideoEncoder::Config&, Function<void(Encoder*)>&&);
+    void createEncoderAndWaitUntilInitialized(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, const WebCore::VideoEncoder::Config&, Function<void(Encoder*)>&&);
 #endif
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
@@ -211,8 +211,8 @@ private:
 
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
 
-    Decoder* createDecoderInternal(VideoCodecType, const String& codec, Function<void(Decoder(*))>&&);
-    Encoder* createEncoderInternal(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
+    Decoder* createDecoderInternal(WebCore::VideoCodecType, const String& codec, Function<void(Decoder(*))>&&);
+    Encoder* createEncoderInternal(WebCore::VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
     template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration, Function<void(bool)>&&);
     void initializeEncoderInternal(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height, Function<void(bool)>&&);

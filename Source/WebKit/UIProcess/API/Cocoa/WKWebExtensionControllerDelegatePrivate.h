@@ -25,6 +25,8 @@
 
 #import <WebKit/WKWebExtensionControllerDelegate.h>
 
+@class _WKWebExtensionSidebar;
+
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -66,6 +68,35 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  @discussion The app can use this to setup additional properties on the web view before it is loaded. Default implementation does nothing.
  */
 - (void)_webExtensionController:(WKWebExtensionController *)controller didCreateBackgroundWebView:(WKWebView *)webView forExtensionContext:(WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when a sidebar is requested to be opened.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which should be displayed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block to be called once the sidebar has been opened.
+ @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to open. Implementing this method
+ is needed if the app intends to support programmatically showing the sidebar from the extension.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller presentSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when a sidebar is requested to be closed.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which should be closed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block to be called once the sidebar has been closed.
+ @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to close. Implementing this method is needed if the app intends to support programmatically closing the sidebar from the extension.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller closeSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when a sidebar's properties must be re-queried by the browser.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar whose properties must be re-queried.
+ @param context The context within which the web extension is running.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didUpdateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
 
 @end
 

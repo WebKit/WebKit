@@ -31,9 +31,7 @@ namespace WebCore {
 
 GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, OptionSet<TextureMapperFlags> flags, bool gstGLEnabled)
     : m_videoDecoderPlatform(videoDecoderPlatform)
-#if USE(GSTREAMER_GL)
     , m_flags(flags)
-#endif
 {
     RELEASE_ASSERT(GST_IS_SAMPLE(sample));
 
@@ -47,7 +45,6 @@ GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVid
     if (UNLIKELY(!GST_IS_BUFFER(m_buffer.get())))
         return;
 
-#if USE(GSTREAMER_GL)
     if (m_hasAlphaChannel)
         m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
 
@@ -61,13 +58,7 @@ GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVid
             m_textureID = *reinterpret_cast<GLuint*>(m_videoFrame.data[0]);
             m_hasMappedTextures = true;
         }
-    } else
-#else
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(gstGLEnabled);
-#endif // USE(GSTREAMER_GL)
-
-    {
+    } else {
         m_textureID = 0;
         m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), GST_MAP_READ);
         if (m_isMapped) {
@@ -85,7 +76,6 @@ GstVideoFrameHolder::~GstVideoFrameHolder()
     gst_video_frame_unmap(&m_videoFrame);
 }
 
-#if USE(GSTREAMER_GL)
 void GstVideoFrameHolder::waitForCPUSync()
 {
     // No need for OpenGL synchronization when using the OpenMAX decoder.
@@ -99,7 +89,6 @@ void GstVideoFrameHolder::waitForCPUSync()
         gst_gl_sync_meta_wait_cpu(meta, context);
     }
 }
-#endif // USE(GSTREAMER_GL)
 
 void GstVideoFrameHolder::updateTexture(BitmapTexture& texture)
 {
@@ -133,10 +122,8 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
 
     using Buffer = TextureMapperPlatformLayerBuffer;
 
-#if USE(GSTREAMER_GL)
     if (m_textureTarget == GST_GL_TEXTURE_TARGET_EXTERNAL_OES)
         return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::ExternalOESTexture { m_textureID } }, m_size, m_flags, GL_DONT_CARE);
-#endif
 
     if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))
         return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { m_textureID } }, m_size, m_flags, GL_RGBA);

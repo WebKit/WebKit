@@ -27,6 +27,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,7 +35,7 @@ namespace WebCore {
 
 // This class uses copy-on-write semantics.
 class StorageMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StorageMap, WEBCORE_EXPORT);
 public:
     // Quota size measured in bytes.
     WEBCORE_EXPORT explicit StorageMap(unsigned quotaSize);

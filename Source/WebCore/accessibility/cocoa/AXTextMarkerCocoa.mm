@@ -67,6 +67,7 @@ RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const
 }
 
 #if PLATFORM(MAC)
+
 AXTextMarkerRange::AXTextMarkerRange(AXTextMarkerRangeRef textMarkerRangeRef)
 {
     if (!textMarkerRangeRef || CFGetTypeID(textMarkerRangeRef) != AXTextMarkerRangeGetTypeID()) {
@@ -91,7 +92,40 @@ RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange::platformData() const
         , m_end.platformData().autorelease()
     ));
 }
-#endif // PLATFORM(MAC)
+
+#elif PLATFORM(IOS_FAMILY)
+
+AXTextMarkerRange::AXTextMarkerRange(NSArray *markers)
+{
+    if (markers.count != 2)
+        return;
+
+    WebAccessibilityTextMarker *start = [markers objectAtIndex:0];
+    WebAccessibilityTextMarker *end = [markers objectAtIndex:1];
+    if (![start isKindOfClass:[WebAccessibilityTextMarker class]] || ![end isKindOfClass:[WebAccessibilityTextMarker class]])
+        return;
+
+    m_start = { [start textMarkerData ] };
+    m_end = { [end textMarkerData] };
+}
+
+RetainPtr<NSArray> AXTextMarkerRange::platformData() const
+{
+    if (!*this)
+        return nil;
+
+    RefPtr object = m_start.object();
+    ASSERT(object); // Since *this is not null.
+    auto* cache = object->axObjectCache();
+    if (!cache)
+        return nil;
+    return adoptNS(@[
+        adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_start.m_data cache:cache]).autorelease(),
+        adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_end.m_data cache:cache]).autorelease()
+    ]);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 std::optional<NSRange> AXTextMarkerRange::nsRange() const
 {

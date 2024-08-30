@@ -29,6 +29,7 @@
 #include "Bridge.h"
 #include <JavaScriptCore/JSString.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC  {
@@ -47,7 +48,7 @@ class RootObject;
 class RuntimeObject;
 
 class Field {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Field);
 public:
     virtual JSValue valueFromInstance(JSGlobalObject*, const Instance*) const = 0;
     virtual bool setValueToInstance(JSGlobalObject*, const Instance*, JSValue) const = 0;
@@ -56,7 +57,8 @@ public:
 };
 
 class Class {
-    WTF_MAKE_NONCOPYABLE(Class); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Class);
+    WTF_MAKE_NONCOPYABLE(Class);
 public:
     Class() = default;
     virtual Method* methodNamed(PropertyName, Instance*) const = 0;

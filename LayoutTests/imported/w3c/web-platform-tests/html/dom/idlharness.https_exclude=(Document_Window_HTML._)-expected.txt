@@ -1347,6 +1347,8 @@ FAIL External interface: window.external must inherit property "AddSearchProvide
 FAIL External interface: window.external must inherit property "IsSearchProviderInstalled()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS SVGElement interface: attribute onabort
 PASS SVGElement interface: attribute onauxclick
+PASS SVGElement interface: attribute onbeforeinput
+PASS SVGElement interface: attribute onbeforetoggle
 PASS SVGElement interface: attribute onblur
 PASS SVGElement interface: attribute oncancel
 PASS SVGElement interface: attribute oncanplay

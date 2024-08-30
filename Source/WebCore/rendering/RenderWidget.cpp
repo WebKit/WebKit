@@ -383,7 +383,8 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
 
 IntRect RenderWidget::windowClipRect() const
 {
-    return intersection(view().frameView().contentsToWindow(m_clipRect), view().frameView().windowClipRect());
+    Ref frameView = view().frameView();
+    return intersection(frameView->contentsToWindow(m_clipRect), frameView->windowClipRect());
 }
 
 void RenderWidget::setSelectionState(HighlightState state)
@@ -469,7 +470,7 @@ RenderBox* RenderWidget::embeddedContentBox() const
 {
     if (!is<RenderEmbeddedObject>(this))
         return nullptr;
-    auto* frameView = dynamicDowncast<LocalFrameView>(widget());
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(widget());
     return frameView ? frameView->embeddedContentBox() : nullptr;
 }
 

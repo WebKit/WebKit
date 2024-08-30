@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SQLiteStatement;
 
 class SQLiteStatementAutoResetScope {
-    WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope, WEBCORE_EXPORT);
+    WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope);
 public:
     WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(SQLiteStatement* = nullptr);
     WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&& other);

@@ -22,6 +22,7 @@
 
 #include "SVGElement.h"
 #include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,10 +43,10 @@ public:
     float dy() const { return m_dy; }
     void setDy(float);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGlyphRefElement, SVGElement, SVGURIReference>;
+
 private:
     SVGGlyphRefElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGlyphRefElement, SVGElement, SVGURIReference>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }

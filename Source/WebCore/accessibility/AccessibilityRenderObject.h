@@ -149,7 +149,7 @@ protected:
 
     bool shouldIgnoreAttributeRole() const override;
     AccessibilityRole determineAccessibilityRole() override;
-    bool computeAccessibilityIsIgnored() const override;
+    bool computeIsIgnored() const override;
 
 #if ENABLE(MATHML)
     virtual bool isIgnoredElementWithinMathTree() const;

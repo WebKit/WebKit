@@ -25,8 +25,11 @@
 #include "TiledBackingStoreClient.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledBackingStore);
 
 static const int defaultTileDimension = 512;
 

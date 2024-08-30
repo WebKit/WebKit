@@ -736,7 +736,7 @@ private:
 };
 
 class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public ActiveDOMObject, public FileReaderLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingImageBitmap);
 public:
     // ActiveDOMObject.
     void ref() const final { RefCounted::ref(); }

@@ -40,6 +40,7 @@
 #include "RenderTheme.h"
 #include "Supplementable.h"
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioContext.h"
@@ -128,7 +129,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InternalSettingsWrapper);
 public:
     explicit InternalSettingsWrapper(Page* page)
         : m_internalSettings(InternalSettings::create(page)) { }

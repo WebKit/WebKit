@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class RenderSVGRoot;
 class RenderSVGText;
 
 class RenderTreeBuilder::SVG {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVG);
 public:
     SVG(RenderTreeBuilder&);
 

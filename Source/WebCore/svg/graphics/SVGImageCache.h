@@ -23,6 +23,7 @@
 #include "Image.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class SVGImageForContainer;
 class RenderObject;
 
 class SVGImageCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SVGImageCache, WEBCORE_EXPORT);
 public:
     explicit SVGImageCache(SVGImage*);
     ~SVGImageCache();

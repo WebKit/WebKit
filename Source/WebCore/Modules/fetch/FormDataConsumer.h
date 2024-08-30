@@ -28,7 +28,6 @@
 #include "ExceptionOr.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <span>
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>

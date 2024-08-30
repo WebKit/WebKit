@@ -24,14 +24,21 @@
  */
 
 #import "config.h"
-#import "_WKWebPushAction.h"
+#import "_WKWebPushActionInternal.h"
 
+#import "Logging.h"
+#import "UserNotificationsSPI.h"
 #import "WebPushDaemonConstants.h"
+
+NSString * const _WKWebPushActionTypePushEvent = @"_WKWebPushActionTypePushEvent";
+NSString * const _WKWebPushActionTypeNotificationClick = @"_WKWebPushActionTypeNotificationClick";
+NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeNotificationClose";
 
 @interface _WKWebPushAction ()
 @property (nonatomic, readwrite) NSNumber *version;
 @property (nonatomic, readwrite) NSString *pushPartition;
 @property (nonatomic, readwrite) NSString *type;
+@property (nonatomic, readwrite) std::optional<WebCore::NotificationData> coreNotificationData;
 @end
 
 @implementation _WKWebPushAction
@@ -57,5 +64,35 @@
 
     return [result autorelease];
 }
+
++ (_WKWebPushAction *)_webPushActionWithNotificationResponse:(UNNotificationResponse *)response
+{
+#if PLATFORM(IOS)
+    if (![response.notification.sourceIdentifier hasPrefix:@"com.apple.WebKit.PushBundle."])
+        return nil;
+
+    auto notificationData = WebCore::NotificationData::fromDictionary(response.notification.request.content.userInfo);
+    if (!notificationData)
+        return nil;
+
+    _WKWebPushAction *result = [[[_WKWebPushAction alloc] init] autorelease];
+
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier])
+        result.type = _WKWebPushActionTypeNotificationClick;
+    else if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier])
+        result.type = _WKWebPushActionTypeNotificationClose;
+    else {
+        RELEASE_LOG_ERROR(Push, "Unknown notification response action identifier encountered: %@", response.actionIdentifier);
+        return nil;
+    }
+
+    result.coreNotificationData = WTFMove(notificationData);
+
+    return result;
+#else
+    return nil;
+#endif
+}
+
 
 @end

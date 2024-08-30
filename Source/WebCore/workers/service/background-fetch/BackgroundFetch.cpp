@@ -36,9 +36,13 @@
 #include "RetrieveRecordsOptions.h"
 #include "SWServerRegistration.h"
 #include "WebCorePersistentCoders.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetch);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(BackgroundFetchRecord, BackgroundFetch::Record);
 
 static const unsigned backgroundFetchCurrentVersion = 1;
 

@@ -27,15 +27,15 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "NicosiaBuffer.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class SkiaAcceleratedBufferPool {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SkiaAcceleratedBufferPool);
     WTF_MAKE_NONCOPYABLE(SkiaAcceleratedBufferPool);
 public:
     SkiaAcceleratedBufferPool();

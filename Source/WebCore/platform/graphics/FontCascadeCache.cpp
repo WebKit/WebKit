@@ -32,8 +32,12 @@
 
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontDescriptionKeyRareData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascadeCache);
 
 FontFamilyName::FontFamilyName() = default;
 

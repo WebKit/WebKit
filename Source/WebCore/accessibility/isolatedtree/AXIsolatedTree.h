@@ -433,7 +433,6 @@ private:
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
     constexpr void updatingSubtree(AccessibilityObject* axObject) { m_rootOfSubtreeBeingUpdated = axObject; }
-    RefPtr<AXIsolatedObject> retrieveObjectForIDFromMainThread(const AXID) const;
 
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     struct NodeChange {

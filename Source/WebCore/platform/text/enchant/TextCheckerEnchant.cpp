@@ -25,11 +25,14 @@
 #include <unicode/ubrk.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCheckerEnchant);
 
 TextCheckerEnchant& TextCheckerEnchant::singleton()
 {

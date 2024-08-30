@@ -27,6 +27,7 @@
 
 #include "Supplementable.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class UserActivation;
 class Navigator;
 
 class NavigatorUserActivation final : public Supplement<Navigator> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NavigatorUserActivation);
 public:
     explicit NavigatorUserActivation(Navigator&);
     ~NavigatorUserActivation();

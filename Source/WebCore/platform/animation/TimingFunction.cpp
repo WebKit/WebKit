@@ -102,7 +102,7 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     return ts;
 }
 
-double TimingFunction::transformProgress(double progress, double duration, bool before) const
+double TimingFunction::transformProgress(double progress, double duration, Before before) const
 {
     switch (type()) {
     case Type::CubicBezierFunction: {
@@ -128,7 +128,7 @@ double TimingFunction::transformProgress(double progress, double duration, bool 
         //    - the before flag is set, and
         //    - input progress value × steps mod 1 equals zero (that is, if input progress value × steps is integral), then
         //    decrement current step by one.
-        if (before && !fmod(progress * steps, 1))
+        if (before == Before::Yes && !fmod(progress * steps, 1))
             currentStep--;
         // 4. If input progress value ≥ 0 and current step < 0, let current step be zero.
         if (progress >= 0 && currentStep < 0)

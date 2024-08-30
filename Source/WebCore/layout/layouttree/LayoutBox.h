@@ -206,7 +206,7 @@ private:
     friend class LayoutState;
 
     class BoxRareData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(BoxRareData);
     public:
         BoxRareData() = default;
 

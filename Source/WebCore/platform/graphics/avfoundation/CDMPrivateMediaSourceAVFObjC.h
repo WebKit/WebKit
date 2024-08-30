@@ -29,6 +29,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #include "LegacyCDMPrivate.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class LegacyCDM;
 class CDMSessionMediaSourceAVFObjC;
 
 class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CDMPrivateMediaSourceAVFObjC);
 public:
     explicit CDMPrivateMediaSourceAVFObjC(LegacyCDM* cdm)
         : m_cdm(cdm)

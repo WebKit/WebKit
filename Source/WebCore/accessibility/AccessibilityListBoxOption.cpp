@@ -102,16 +102,13 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     return { };
 }
 
-bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
+bool AccessibilityListBoxOption::computeIsIgnored() const
 {
-    if (!m_node)
-        return true;
-
-    if (accessibilityIsIgnoredByDefault())
+    if (!m_node || isIgnoredByDefault())
         return true;
 
     auto* parent = parentObject();
-    return parent ? parent->accessibilityIsIgnored() : true;
+    return parent ? parent->isIgnored() : true;
 }
 
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const

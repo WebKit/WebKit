@@ -1853,6 +1853,7 @@ layout/integration/inline/InlineIteratorBox.cpp
 layout/integration/inline/InlineIteratorInlineBox.cpp
 layout/integration/inline/InlineIteratorLineBox.cpp
 layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp
+layout/integration/inline/InlineIteratorSVGTextBox.cpp
 layout/integration/inline/InlineIteratorTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContent.cpp

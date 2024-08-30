@@ -49,6 +49,7 @@
 #include "StyleTreeResolver.h"
 #include "WindowEventLoop.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(TOUCH_EVENTS)
@@ -57,6 +58,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedFrame);
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
 

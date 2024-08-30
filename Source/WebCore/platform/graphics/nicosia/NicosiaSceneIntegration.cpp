@@ -31,8 +31,11 @@
 
 #include "NicosiaCompositionLayer.h"
 #include "NicosiaScene.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Nicosia {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SceneIntegrationUpdateScope, SceneIntegration::UpdateScope);
 
 SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {

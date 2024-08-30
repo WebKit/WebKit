@@ -1815,8 +1815,13 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 }
                 case op_call_ignore_result:
                     return { };
-                default:
+                default: {
+                    auto* valueProfile = profiledBlock->tryGetValueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
+                    if (!valueProfile)
+                        return { };
+
                     return MethodOfGettingAValueProfile::bytecodeValueProfile(node->origin.semantic);
+                }
                 }
             }
 

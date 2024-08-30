@@ -24,6 +24,7 @@
 #include "FEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -97,10 +98,10 @@ public:
     SVGAnimatedNumber& k3Animated() { return m_k3; }
     SVGAnimatedNumber& k4Animated() { return m_k4; }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
+
 private:
     SVGFECompositeElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

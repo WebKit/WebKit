@@ -208,6 +208,7 @@ public:
         OK = 0,
         NotEqual = 1,
         TimedOut = 2,
+        Terminated = 3,
     };
 
     JS_EXPORT_PRIVATE WaitSyncResult waitSync(VM&, int32_t* ptr, int32_t expected, Seconds timeout);

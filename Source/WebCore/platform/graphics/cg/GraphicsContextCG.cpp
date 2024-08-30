@@ -1034,7 +1034,9 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
 
 void GraphicsContextCG::beginTransparencyLayer(CompositeOperator, BlendMode)
 {
-    beginTransparencyLayer(1);
+    // Passing state().alpha() to beginTransparencyLayer(opacity) will
+    // preserve the current global alpha.
+    beginTransparencyLayer(state().alpha());
 }
 
 void GraphicsContextCG::endTransparencyLayer()

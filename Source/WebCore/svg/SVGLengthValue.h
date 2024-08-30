@@ -24,6 +24,7 @@
 #include "ExceptionOr.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyTraits.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ enum class SVGLengthNegativeValuesMode : uint8_t {
 enum class ShouldConvertNumberToPxLength : bool { No, Yes };
 
 class SVGLengthValue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SVGLengthValue);
 public:
     SVGLengthValue(SVGLengthMode = SVGLengthMode::Other, const String& valueAsString = { });
     SVGLengthValue(float valueInSpecifiedUnits, SVGLengthType, SVGLengthMode = SVGLengthMode::Other);

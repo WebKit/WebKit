@@ -121,6 +121,12 @@
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
+- (void)_webView:(WKWebView *)webView didGeneratePageLoadTiming:(_WKPageLoadTiming *)timing
+{
+    if (_didGeneratePageLoadTiming)
+        _didGeneratePageLoadTiming(timing);
+}
+
 - (void)allowAnyTLSCertificate
 {
     EXPECT_FALSE(self.didReceiveAuthenticationChallenge);

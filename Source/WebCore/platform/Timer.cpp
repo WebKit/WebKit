@@ -47,6 +47,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TimerBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Timer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeferrableOneShotTimer);
+
 class TimerHeapReference;
 
 // Timers are stored in a heap data structure, used to implement a priority queue.

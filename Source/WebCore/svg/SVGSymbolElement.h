@@ -23,6 +23,7 @@
 
 #include "SVGFitToViewBox.h"
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -32,10 +33,10 @@ class SVGSymbolElement final : public SVGGraphicsElement, public SVGFitToViewBox
 public:
     static Ref<SVGSymbolElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
+
 private:
     SVGSymbolElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;

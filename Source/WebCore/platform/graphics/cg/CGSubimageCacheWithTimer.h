@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 #define CACHE_SUBIMAGES 1
 
@@ -43,7 +44,8 @@ namespace WebCore {
 #if CACHE_SUBIMAGES
 
 class CGSubimageCacheWithTimer {
-    WTF_MAKE_NONCOPYABLE(CGSubimageCacheWithTimer); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CGSubimageCacheWithTimer);
+    WTF_MAKE_NONCOPYABLE(CGSubimageCacheWithTimer);
 
 public:
     struct CacheEntry {

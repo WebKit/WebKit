@@ -33,8 +33,11 @@
 #include "ZeroPole.h"
 
 #include "DenormalDisabler.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ZeroPole);
 
 void ZeroPole::process(const float *source, float *destination, unsigned framesToProcess)
 {

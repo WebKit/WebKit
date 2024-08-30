@@ -160,7 +160,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (address)
         parameters.accessibilityBusAddress = String::fromUTF8(address);
     else
-        parameters.accessibilityBusAddress = m_sandboxEnabled ? sandboxedAccessibilityBusAddress() : accessibilityBusAddress();
+        parameters.accessibilityBusAddress = m_sandboxEnabled && shouldUseBubblewrap() ? sandboxedAccessibilityBusAddress() : accessibilityBusAddress();
 #endif
 
 #if PLATFORM(GTK)
@@ -213,7 +213,8 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
 
     m_sandboxEnabled = true;
 #if USE(ATSPI)
-    m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(sandboxedUserRuntimeDirectory().data()), "at-spi-bus"_s));
+    if (shouldUseBubblewrap())
+        m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(sandboxedUserRuntimeDirectory().data()), "at-spi-bus"_s));
 #endif
 }
 

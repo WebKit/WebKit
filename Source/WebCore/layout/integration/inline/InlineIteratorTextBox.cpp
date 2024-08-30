@@ -31,10 +31,8 @@
 #include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderCombineText.h"
-#include "RenderSVGInlineText.h"
 #include "RenderStyleInlines.h"
 #include "SVGInlineTextBox.h"
-#include "SVGTextFragment.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -50,28 +48,6 @@ const FontCascade& TextBox::fontCascade() const
         return renderer->textCombineFont();
 
     return style().fontCascade();
-}
-
-FloatRect TextBox::calculateBoundariesIncludingSVGTransform() const
-{
-    if (auto* svgText = dynamicDowncast<SVGInlineTextBox>(legacyInlineBox()))
-        return svgText->calculateBoundaries();
-    return visualRectIgnoringBlockDirection();
-}
-
-const Vector<SVGTextFragment>& TextBox::svgTextFragments() const
-{
-    static NeverDestroyed<Vector<SVGTextFragment>> emptyFragments;
-
-    auto* svgInlineText = dynamicDowncast<RenderSVGInlineText>(renderer());
-    if (!svgInlineText)
-        return emptyFragments;
-
-    if (auto* svgText = dynamicDowncast<SVGInlineTextBox>(legacyInlineBox()))
-        return svgText->textFragments();
-
-    // FIXME: Implement.
-    return emptyFragments;
 }
 
 TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
@@ -116,7 +92,7 @@ TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent& content, size
     return { BoxModernPath { content, boxIndex } };
 }
 
-TextBoxRange textBoxesFor(const RenderText& text)
+BoxRange<TextBoxIterator> textBoxesFor(const RenderText& text)
 {
     return { firstTextBoxFor(text) };
 }

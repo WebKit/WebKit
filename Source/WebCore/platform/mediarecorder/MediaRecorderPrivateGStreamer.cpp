@@ -33,8 +33,12 @@
 #include <gst/app/gstappsink.h>
 #include <gst/transcoder/gsttranscoder.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateGStreamer);
 
 GST_DEBUG_CATEGORY(webkit_media_recorder_debug);
 #define GST_CAT_DEFAULT webkit_media_recorder_debug

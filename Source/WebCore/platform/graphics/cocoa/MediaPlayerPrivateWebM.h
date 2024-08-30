@@ -37,6 +37,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -77,7 +78,7 @@ class MediaPlayerPrivateWebM
     , public WebMResourceClientParent
     , public WebAVSampleBufferListenerClient
     , private LoggerHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateWebM);
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();

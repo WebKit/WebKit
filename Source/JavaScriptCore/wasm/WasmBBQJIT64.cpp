@@ -4909,7 +4909,7 @@ Location BBQJIT::allocateRegisterPair()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType)
 {
     Value callee = args.takeLast();
     const TypeDefinition& signature = originalSignature.expand();
@@ -4953,7 +4953,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
 
     }
 
-    emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, signature, args, results);
+    if (callType == CallType::Call)
+        emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, signature, args, results);
+    else
+        emitIndirectTailCall("ReturnCallRef", callee, calleeInstance, calleeCode, signature, args);
     return { };
 }
 

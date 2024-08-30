@@ -31,6 +31,7 @@
 #include "CalculationTree.h"
 #include <variant>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -201,14 +202,14 @@ struct Tree {
     Stage stage;
     ValueRange range;
 
-    // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::deprecatedDoubleValue` that the evaluation results will be incorrect.
+    // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::doubleValueDeprecated` that the evaluation results will be incorrect.
     bool requiresConversionData = false;
 
     bool operator==(const Tree&) const = default;
 };
 
 struct Sum {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sum);
 public:
     using Base = Calculation::Sum;
 
@@ -218,7 +219,7 @@ public:
 };
 
 struct Product {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Product);
 public:
     using Base = Calculation::Product;
 
@@ -228,7 +229,7 @@ public:
 };
 
 struct Negate {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Negate);
 public:
     using Base = Calculation::Negate;
 
@@ -238,7 +239,7 @@ public:
 };
 
 struct Invert {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Invert);
 public:
     using Base = Calculation::Invert;
 
@@ -251,7 +252,7 @@ public:
 
 // Comparison Functions - https://drafts.csswg.org/css-values-4/#comp-func
 struct Min {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Min);
 public:
     using Base = Calculation::Min;
     static constexpr auto id = CSSValueMin;
@@ -269,7 +270,7 @@ public:
 };
 
 struct Max {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Max);
 public:
     using Base = Calculation::Max;
     static constexpr auto id = CSSValueMax;
@@ -287,7 +288,7 @@ public:
 };
 
 struct Clamp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Clamp);
 public:
     using Base = Calculation::Clamp;
     static constexpr auto id = CSSValueClamp;
@@ -308,7 +309,7 @@ public:
 
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
 struct RoundNearest {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundNearest);
 public:
     using Base = Calculation::RoundNearest;
     static constexpr auto id = CSSValueNearest;
@@ -335,7 +336,7 @@ public:
 };
 
 struct RoundUp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundUp);
 public:
     using Base = Calculation::RoundUp;
     static constexpr auto id = CSSValueUp;
@@ -362,7 +363,7 @@ public:
 };
 
 struct RoundDown {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundDown);
 public:
     using Base = Calculation::RoundDown;
     static constexpr auto id = CSSValueDown;
@@ -389,7 +390,7 @@ public:
 };
 
 struct RoundToZero {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RoundToZero);
 public:
     using Base = Calculation::RoundToZero;
     static constexpr auto id = CSSValueToZero;
@@ -416,7 +417,7 @@ public:
 };
 
 struct Mod {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Mod);
 public:
     using Base = Calculation::Mod;
     static constexpr auto id = CSSValueMod;
@@ -436,7 +437,7 @@ public:
 };
 
 struct Rem {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Rem);
 public:
     using Base = Calculation::Rem;
     static constexpr auto id = CSSValueRem;
@@ -457,7 +458,7 @@ public:
 
 // Trigonometric Functions - https://drafts.csswg.org/css-values-4/#trig-funcs
 struct Sin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sin);
 public:
     using Base = Calculation::Sin;
     static constexpr auto id = CSSValueSin;
@@ -474,7 +475,7 @@ public:
 };
 
 struct Cos {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Cos);
 public:
     using Base = Calculation::Cos;
     static constexpr auto id = CSSValueCos;
@@ -491,7 +492,7 @@ public:
 };
 
 struct Tan {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Tan);
 public:
     using Base = Calculation::Tan;
     static constexpr auto id = CSSValueTan;
@@ -508,7 +509,7 @@ public:
 };
 
 struct Asin {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Asin);
 public:
     using Base = Calculation::Asin;
     static constexpr auto id = CSSValueAsin;
@@ -525,7 +526,7 @@ public:
 };
 
 struct Acos {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Acos);
 public:
     using Base = Calculation::Acos;
     static constexpr auto id = CSSValueAcos;
@@ -542,7 +543,7 @@ public:
 };
 
 struct Atan {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Atan);
 public:
     using Base = Calculation::Atan;
     static constexpr auto id = CSSValueAtan;
@@ -559,7 +560,7 @@ public:
 };
 
 struct Atan2 {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Atan2);
 public:
     using Base = Calculation::Atan2;
     static constexpr auto id = CSSValueAtan2;
@@ -579,7 +580,7 @@ public:
 
 // Exponential Functions - https://drafts.csswg.org/css-values-4/#exponent-funcs
 struct Pow {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Pow);
 public:
     using Base = Calculation::Pow;
     static constexpr auto id = CSSValuePow;
@@ -598,7 +599,7 @@ public:
 };
 
 struct Sqrt {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sqrt);
 public:
     using Base = Calculation::Sqrt;
     static constexpr auto id = CSSValueSqrt;
@@ -615,7 +616,7 @@ public:
 };
 
 struct Hypot {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Hypot);
 public:
     using Base = Calculation::Hypot;
     static constexpr auto id = CSSValueHypot;
@@ -633,7 +634,7 @@ public:
 };
 
 struct Log {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Log);
 public:
     using Base = Calculation::Log;
     static constexpr auto id = CSSValueLog;
@@ -652,7 +653,7 @@ public:
 };
 
 struct Exp {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Exp);
 public:
     using Base = Calculation::Exp;
     static constexpr auto id = CSSValueExp;
@@ -670,7 +671,7 @@ public:
 
 // Sign-Related Functions - https://drafts.csswg.org/css-values-4/#sign-funcs
 struct Abs {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Abs);
 public:
     using Base = Calculation::Abs;
     static constexpr auto id = CSSValueAbs;
@@ -687,7 +688,7 @@ public:
 };
 
 struct Sign {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Sign);
 public:
     using Base = Calculation::Sign;
     static constexpr auto id = CSSValueSign;

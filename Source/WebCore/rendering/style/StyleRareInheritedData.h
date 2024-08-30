@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "BlockEllipsis.h"
 #include "Length.h"
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
@@ -140,6 +141,7 @@ public:
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
     unsigned rubyPosition : 2; // RubyPosition
     unsigned rubyAlign : 2; // RubyAlign
+    unsigned rubyOverhang : 1; // RubyOverhang
     unsigned textZoom: 1; // TextZoom
 
 #if PLATFORM(IOS_FAMILY)
@@ -203,6 +205,8 @@ public:
     ListStyleType listStyleType;
 
     Markable<ScrollbarColor> scrollbarColor;
+
+    BlockEllipsis blockEllipsis;
 
 private:
     StyleRareInheritedData();

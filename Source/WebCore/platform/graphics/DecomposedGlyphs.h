@@ -27,11 +27,12 @@
 
 #include "PositionedGlyphs.h"
 #include "RenderingResource.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DecomposedGlyphs final : public RenderingResource {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DecomposedGlyphs);
 public:
     static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
     static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(PositionedGlyphs&&, RenderingResourceIdentifier);

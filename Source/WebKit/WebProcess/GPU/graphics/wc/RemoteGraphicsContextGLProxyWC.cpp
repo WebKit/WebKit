@@ -63,6 +63,8 @@ private:
 };
 
 class RemoteGraphicsContextGLProxyWC final : public RemoteGraphicsContextGLProxy {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyWC);
 public:
     // RemoteGraphicsContextGLProxy overrides.
     void prepareForDisplay() final;

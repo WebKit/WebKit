@@ -63,7 +63,7 @@ private:
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
 };
 
 } // namespace WebCore 

@@ -39,9 +39,13 @@
 #include "RenderFragmentContainer.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutsideDeltas);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutsideInfo);
 
 static LayoutUnit logicalLeftOffset(const RenderBox&);
 static LayoutUnit logicalTopOffset(const RenderBox&);

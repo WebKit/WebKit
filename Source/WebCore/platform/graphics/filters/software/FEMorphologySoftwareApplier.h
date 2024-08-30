@@ -27,6 +27,7 @@
 #include "FilterEffectApplier.h"
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ class FEMorphology;
 enum class MorphologyOperatorType : uint8_t;
 
 class FEMorphologySoftwareApplier final : public FilterEffectConcreteApplier<FEMorphology> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FEMorphologySoftwareApplier);
     using Base = FilterEffectConcreteApplier<FEMorphology>;
 
 public:

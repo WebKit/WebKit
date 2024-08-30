@@ -23,6 +23,7 @@
 
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,12 +38,12 @@ public:
 
     size_t approximateMemoryCost() const override;
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement>;
+
 protected:
     SVGPolyElement(const QualifiedName&, Document&);
 
 private:
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement>;
-
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 

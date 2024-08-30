@@ -35,9 +35,12 @@
 #include "Region.h"
 #include "TransformationMatrix.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AffineTransform);
 
 void AffineTransform::makeIdentity()
 {

@@ -290,9 +290,6 @@ const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const Qualified
     static NeverDestroyed map = [] {
         EventHandlerNameMap map;
         JSHTMLElement::forEachEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
-            // FIXME: Remove this special case. This has an [EventHandler] line in the IDL but was not historically in this map.
-            if (attributeName == oncuechangeAttr.get().localName())
-                return;
             map.add(attributeName, eventName);
         });
         // FIXME: Remove these special cases. These are not in IDL with [EventHandler] but were historically in this map.

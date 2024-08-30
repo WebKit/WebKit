@@ -56,7 +56,7 @@ class DOMTimer;
 class Element;
 
 class ContentChangeObserver : public CanMakeWeakPtr<ContentChangeObserver> {
-    WTF_MAKE_TZONE_ALLOCATED(ContentChangeObserver);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentChangeObserver, WEBCORE_EXPORT);
 public:
     ContentChangeObserver(Document&);
 

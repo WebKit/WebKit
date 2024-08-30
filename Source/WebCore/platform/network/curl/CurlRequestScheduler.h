@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ namespace WebCore {
 class CurlRequestSchedulerClient;
 
 class CurlRequestScheduler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlRequestScheduler);
     WTF_MAKE_NONCOPYABLE(CurlRequestScheduler);
     friend NeverDestroyed<CurlRequestScheduler>;
 public:

@@ -28,6 +28,7 @@
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSHTTPCookieStorage;
@@ -46,7 +47,7 @@ namespace WebCore {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on a non-main thread.
 class WEBCORE_EXPORT CookieStorageObserver : public CanMakeWeakPtr<CookieStorageObserver, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CookieStorageObserver);
     WTF_MAKE_NONCOPYABLE(CookieStorageObserver);
 public:
     explicit CookieStorageObserver(NSHTTPCookieStorage *);

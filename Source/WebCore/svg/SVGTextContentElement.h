@@ -22,6 +22,7 @@
 #pragma once
 
 #include "SVGGraphicsElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -81,7 +82,7 @@ public:
     int getCharNumAtPosition(DOMPointInit&&);
     ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
-    static SVGTextContentElement* elementFromRenderer(RenderObject*);
+    static const SVGTextContentElement* elementFromRenderer(const RenderObject*);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement>;
 

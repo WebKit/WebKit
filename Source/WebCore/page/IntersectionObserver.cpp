@@ -65,9 +65,9 @@ static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
         if (!parsedValue || parsedValue->isCalculated())
             return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
         if (parsedValue->isPercentage())
-            margins.append(Length(parsedValue->doubleValue(), LengthType::Percent));
+            margins.append(Length(parsedValue->resolveAsPercentageNoConversionDataRequired(), LengthType::Percent));
         else if (parsedValue->isPx())
-            margins.append(Length(parsedValue->intValue(), LengthType::Fixed));
+            margins.append(Length(parsedValue->resolveAsLengthNoConversionDataRequired<int>(), LengthType::Fixed));
         else
             return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
     }

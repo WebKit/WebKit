@@ -34,6 +34,7 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import <JavaScriptCore/RegularExpression.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/StringView.h>
 
@@ -42,6 +43,8 @@
 using JSC::Yarr::RegularExpression;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivateMediaSourceAVFObjC);
 
 auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> std::optional<KeySystemParameters>
 {

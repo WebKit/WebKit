@@ -45,9 +45,12 @@
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerScriptLoader);
 
 static Lock workerScriptLoaderControlledCallbackMapLock;
 static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)

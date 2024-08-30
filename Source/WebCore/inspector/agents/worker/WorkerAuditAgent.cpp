@@ -32,8 +32,7 @@
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/JSCInlines.h>
-WTF_MAKE_TZONE_ALLOCATED_IMPL(x);
-
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

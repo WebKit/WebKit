@@ -31,8 +31,11 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderTreeBuilder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderTable, RenderTreeBuilder::Table);
 
 RenderTreeBuilder::Table::Table(RenderTreeBuilder& builder)
     : m_builder(builder)

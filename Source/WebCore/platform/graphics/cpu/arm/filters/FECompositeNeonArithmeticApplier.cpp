@@ -33,8 +33,11 @@
 #include "FEComposite.h"
 #include "NEONHelpers.h"
 #include <arm_neon.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FECompositeNeonArithmeticApplier);
 
 FECompositeNeonArithmeticApplier::FECompositeNeonArithmeticApplier(const FEComposite& effect)
     : Base(effect)

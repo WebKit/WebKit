@@ -109,7 +109,7 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!numericType || !primitiveValue)
         return Exception { ExceptionCode::InvalidAccessError };
-    return primitiveValue->getFloatValue(*numericType);
+    return primitiveValue->getFloatValueDeprecated(*numericType);
 }
 
 ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const

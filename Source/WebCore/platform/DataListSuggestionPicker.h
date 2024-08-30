@@ -28,6 +28,7 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include "DataListSuggestionInformation.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,7 +44,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataListSugg
 namespace WebCore {
 
 class DataListSuggestionPicker : public CanMakeWeakPtr<DataListSuggestionPicker> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataListSuggestionPicker);
 public:
     virtual ~DataListSuggestionPicker() = default;
 

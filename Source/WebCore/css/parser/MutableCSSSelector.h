@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSSelector.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -31,7 +32,7 @@ class MutableCSSSelector;
 using MutableCSSSelectorList = Vector<std::unique_ptr<MutableCSSSelector>>;
 
 class MutableCSSSelector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MutableCSSSelector);
 public:
     enum class Combinator {
         Child,

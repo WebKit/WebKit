@@ -33,13 +33,14 @@
 #include "Path.h"
 #include <array>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 const float cGlyphSizeUnknown = -1;
 
 template<class T> class GlyphMetricsMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GlyphMetricsMap);
 public:
     T metricsForGlyph(Glyph glyph)
     {
@@ -58,7 +59,7 @@ public:
 
 private:
     class GlyphMetricsPage {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(GlyphMetricsPage);
     public:
         static const size_t size = 16;
 

@@ -28,11 +28,12 @@
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #include "PlaybackSessionInterfaceIOS.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit final : public PlaybackSessionInterfaceIOS {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceAVKit);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceAVKit);
 public:
     static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel&);

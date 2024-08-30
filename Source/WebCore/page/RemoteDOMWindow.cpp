@@ -93,12 +93,6 @@ unsigned RemoteDOMWindow::length() const
     return m_frame->tree().childCount();
 }
 
-void RemoteDOMWindow::setOpener(WindowProxy*)
-{
-    // FIXME: <rdar://118263373> Implement.
-    // JSDOMWindow::setOpener has some security checks. Are they needed here?
-}
-
 ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)
 {
     RefPtr sourceDocument = incumbentWindow.document();

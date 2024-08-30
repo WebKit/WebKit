@@ -27,6 +27,7 @@
 #include "CSSRegisteredCustomProperty.h"
 #include "StyleRule.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ namespace Style {
 class Scope;
 
 class CustomPropertyRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CustomPropertyRegistry);
 public:
     CustomPropertyRegistry(Scope&);
 

@@ -29,9 +29,12 @@
 #include "GraphicsLayer.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingCoordinator.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerAncestorClippingStack);
 
 LayerAncestorClippingStack::LayerAncestorClippingStack(Vector<CompositedClipData>&& clipDataStack)
     : m_stack(WTF::map(WTFMove(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTFMove(clipDataEntry), { }, nullptr, nullptr }; }))

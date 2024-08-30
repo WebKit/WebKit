@@ -31,9 +31,12 @@
 #include "config.h"
 #include "FileStream.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileStream);
 
 FileStream::FileStream()
     : m_handle(FileSystem::invalidPlatformFileHandle)

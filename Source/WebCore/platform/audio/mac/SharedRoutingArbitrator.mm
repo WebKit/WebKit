@@ -31,10 +31,13 @@
 #import "Logging.h"
 #import <wtf/LoggerHelper.h>
 #import <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedRoutingArbitratorToken);
 
 #define TOKEN_LOGIDENTIFIER(token) WTF::Logger::LogSiteIdentifier(logClassName(), __func__, token.logIdentifier())
 

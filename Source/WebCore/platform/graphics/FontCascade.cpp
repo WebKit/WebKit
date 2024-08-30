@@ -39,10 +39,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascade);
 
 using namespace WTF::Unicode;
 
@@ -628,10 +631,6 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 {
     if (s_codePath != CodePath::Auto)
         return s_codePath;
-
-    // FIXME: add support for text-autospace on simple path (rdar://133319627).
-    if (textAutospace().hasIdeographAlpha())
-        return CodePath::Complex;
 
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050

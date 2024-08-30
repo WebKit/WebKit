@@ -22,7 +22,7 @@
 
 messages -> NotificationManagerMessageHandler NotRefCounted {
     ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
-    CancelNotification(WTF::UUID notificationID)
+    CancelNotification(WebCore::SecurityOriginData origin, WTF::UUID notificationID)
     ClearNotifications(Vector<WTF::UUID> notificationIDs)
     DidDestroyNotification(WTF::UUID notificationID)
     PageWasNotifiedOfNotificationPermission()

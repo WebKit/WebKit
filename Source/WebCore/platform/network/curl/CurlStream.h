@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CurlContext.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
@@ -40,7 +41,7 @@ using CurlStreamID = uint16_t;
 const CurlStreamID invalidCurlStreamID = 0;
 
 class CurlStream {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CurlStream);
     WTF_MAKE_NONCOPYABLE(CurlStream);
 public:
     using LocalhostAlias = CurlHandle::LocalhostAlias;

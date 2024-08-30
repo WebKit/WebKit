@@ -31,8 +31,12 @@
 #include "SharedWorkerThread.h"
 #include "SharedWorkerThreadProxy.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerContextManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SharedWorkerContextManagerConnection, SharedWorkerContextManager::Connection);
 
 SharedWorkerContextManager& SharedWorkerContextManager::singleton()
 {

@@ -104,7 +104,7 @@ String WritingToolsController::plainText(const SimpleRange& range)
 
 #pragma mark - Static utility helper methods.
 
-static std::optional<SimpleRange> contextRangeForDocument(const Document& document)
+static std::optional<SimpleRange> contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
 {
     // If the selection is a range, the range of the context should be the range of the paragraph
     // surrounding the selection range, unless such a range is empty.
@@ -113,15 +113,27 @@ static std::optional<SimpleRange> contextRangeForDocument(const Document& docume
 
     auto selection = document.selection().selection();
 
-    if (selection.isRange()) {
-        auto startOfFirstParagraph = startOfParagraph(selection.start());
-        auto endOfLastParagraph = endOfParagraph(selection.end());
-
-        auto paragraphRange = makeSimpleRange(startOfFirstParagraph, endOfLastParagraph);
-
-        if (paragraphRange && hasAnyPlainText(*paragraphRange, defaultTextIteratorBehaviors))
-            return paragraphRange;
+    if (session && session->compositionType == WritingTools::Session::CompositionType::SmartReply) {
+        // The session context range for Smart Replies should only be the selected text range (it should not be expanded).
+        return selection.firstRange();
     }
+
+    if (!session || session->compositionType != WritingTools::Session::CompositionType::Compose) {
+        // If the session is a Compose session, the range should be the range of the entire editable content.
+
+        if (selection.isRange()) {
+            auto startOfFirstParagraph = startOfParagraph(selection.start());
+            auto endOfLastParagraph = endOfParagraph(selection.end());
+
+            auto paragraphRange = makeSimpleRange(startOfFirstParagraph, endOfLastParagraph);
+
+            if (paragraphRange && hasAnyPlainText(*paragraphRange, defaultTextIteratorBehaviors))
+                return paragraphRange;
+        }
+    }
+
+    if (selection.isNone())
+        return makeRangeSelectingNodeContents(document);
 
     auto startOfFirstEditableContent = startOfEditableContent(selection.start());
     auto endOfLastEditableContent = endOfEditableContent(selection.end());
@@ -153,14 +165,12 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
         return;
     }
 
-    auto contextRange = contextRangeForDocument(*document);
+    auto contextRange = contextRangeForSession(*document, session);
     if (!contextRange) {
         RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => no context range", session ? session->identifier.toString().utf8().data() : "");
         completionHandler({ });
         return;
     }
-
-    auto selectedTextRange = document->selection().selection().firstRange();
 
     if (session && session->compositionType == WritingTools::Session::CompositionType::SmartReply) {
         // Smart replies are a unique use case of the Writing Tools delegate methods;
@@ -169,7 +179,7 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 
         ASSERT(session->type == WritingTools::Session::Type::Composition);
 
-        m_state = CompositionState { { }, { WritingToolsCompositionCommand::create(Ref { *document }, *selectedTextRange) }, *session };
+        m_state = CompositionState { { }, { WritingToolsCompositionCommand::create(Ref { *document }, *contextRange) }, *session };
 
         completionHandler({ { WTF::UUID { 0 }, AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:@""])), CharacterRange { 0, 0 } } });
         return;
@@ -178,8 +188,10 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     // The attributed string produced uses all `IncludedElement`s so that no information is lost; each element
     // will be encoded as an NSTextAttachment.
 
+    auto selectedTextRange = document->selection().selection().firstRange();
+
     auto attributedStringFromRange = editingAttributedString(*contextRange, { IncludedElement::Images, IncludedElement::Attachments, IncludedElement::PreservedContent });
-    auto selectedTextCharacterRange = characterRange(*contextRange, *selectedTextRange);
+    auto selectedTextCharacterRange = selectedTextRange ? characterRange(*contextRange, *selectedTextRange) : CharacterRange { };
 
     if (attributedStringFromRange.string.isEmpty())
         RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().data() : "");
@@ -366,10 +378,8 @@ void WritingToolsController::showSelection() const
     }
 
     CheckedPtr state = std::get_if<CompositionState>(&m_state);
-    if (!state) {
-        ASSERT_NOT_REACHED();
+    if (!state)
         return;
-    }
 
     if (state->reappliedCommands.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -866,6 +876,8 @@ void WritingToolsController::showRewrittenCompositionForSession()
 
     auto& stack = state->unappliedCommands;
 
+    m_page->chrome().client().setIsInRedo(true);
+
     while (!stack.isEmpty()) {
         auto oldSize = stack.size();
 
@@ -874,6 +886,8 @@ void WritingToolsController::showRewrittenCompositionForSession()
 
         RELEASE_ASSERT(oldSize > stack.size());
     }
+
+    m_page->chrome().client().setIsInRedo(false);
 }
 
 void WritingToolsController::restartCompositionForSession()

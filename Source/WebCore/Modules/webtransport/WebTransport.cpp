@@ -121,14 +121,6 @@ void WebTransport::initializeOverHTTP(SocketProvider& provider, ScriptExecutionC
     });
 }
 
-static std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(JSDOMGlobalObject& globalObject)
-{
-    JSC::JSLockHolder lock(globalObject.vm());
-    auto deferredPromise = DeferredPromise::create(globalObject);
-    auto domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
-    return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
-}
-
 WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& incomingBidirectionalStreams, Ref<ReadableStream>&& incomingUnidirectionalStreams, WebTransportCongestionControl congestionControl, Ref<WebTransportDatagramDuplexStream>&& datagrams, Ref<DatagramSource>&& datagramSource, Ref<WebTransportReceiveStreamSource>&& receiveStreamSource, Ref<WebTransportBidirectionalStreamSource>&& bidirectionalStreamSource)
     : ActiveDOMObject(&context)
     , m_incomingBidirectionalStreams(WTFMove(incomingBidirectionalStreams))

@@ -32,6 +32,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
+#if PLATFORM(COCOA)
+#include <Network/Network.h>
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebKit {
 class NetworkTransportSession;
 }
@@ -59,7 +64,9 @@ class NetworkTransportSession : public IPC::MessageReceiver, public IPC::Message
 public:
     static void initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&&);
 
-    NetworkTransportSession(NetworkConnectionToWebProcess&);
+#if PLATFORM(COCOA)
+    NetworkTransportSession(NetworkConnectionToWebProcess&, nw_connection_group_t, nw_endpoint_t);
+#endif
     ~NetworkTransportSession();
 
     void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&);
@@ -84,7 +91,12 @@ private:
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportReceiveStream>> m_receiveStreams;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportSendStream>> m_sendStreams;
-    WeakPtr<NetworkConnectionToWebProcess> m_connection;
+    WeakPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
+
+#if PLATFORM(COCOA)
+    RetainPtr<nw_connection_group_t> m_connectionGroup;
+    RetainPtr<nw_endpoint_t> m_endpoint;
+#endif
 };
 
 }

@@ -23,6 +23,7 @@
 #include "FilterOperations.h"
 #include "NicosiaAnimation.h"
 #include "TextureMapperSolidColorLayer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -50,8 +51,8 @@ public:
 };
 
 class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
+    WTF_MAKE_TZONE_ALLOCATED(TextureMapperLayer);
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     TextureMapperLayer(Damage::ShouldPropagate = Damage::ShouldPropagate::No);
     virtual ~TextureMapperLayer();

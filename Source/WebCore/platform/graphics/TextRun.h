@@ -28,6 +28,7 @@
 #include "TextSpacing.h"
 #include "WritingMode.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class Font;
 struct GlyphData;
 
 class TextRun final : public CanMakeCheckedPtr<TextRun> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TextRun);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextRun);
     friend void add(Hasher&, const TextRun&);
 public:

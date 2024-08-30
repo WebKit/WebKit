@@ -28,8 +28,11 @@
 
 #include "SQLiteStatement.h"
 #include <utility>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteStatementAutoResetScope);
 
 SQLiteStatementAutoResetScope::SQLiteStatementAutoResetScope(SQLiteStatement *statement)
     : m_statement(statement)

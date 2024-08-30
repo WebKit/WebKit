@@ -98,6 +98,7 @@ OS_OBJECT_DECL(nw_endpoint);
 OS_OBJECT_DECL(nw_resolver);
 OS_OBJECT_DECL(nw_parameters);
 OS_OBJECT_DECL(nw_proxy_config);
+OS_OBJECT_DECL(nw_protocol_options);
 #else
 struct nw_array;
 typedef struct nw_array *nw_array_t;
@@ -113,6 +114,8 @@ struct nw_parameters;
 typedef struct nw_parameters *nw_parameters_t;
 struct nw_proxy_config;
 typedef struct nw_proxy_config *nw_proxy_config_t;
+struct nw_protocol_options;
+typedef struct nw_protocol_options *nw_protocol_options_t;
 #endif // OS_OBJECT_USE_OBJC
 
 #if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -145,6 +148,7 @@ void nw_parameters_set_context(nw_parameters_t, nw_context_t);
 nw_context_t nw_context_create(const char *);
 size_t nw_array_get_count(nw_array_t);
 nw_object_t nw_array_get_object_at_index(nw_array_t, size_t);
+nw_protocol_options_t nw_http2_create_options();
 #ifdef __cplusplus
 }
 #endif

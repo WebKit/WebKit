@@ -32,6 +32,7 @@
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +46,7 @@ struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 class WEBCORE_EXPORT WebRTCProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCProvider);
 public:
     static UniqueRef<WebRTCProvider> create();
     WebRTCProvider() = default;

@@ -48,10 +48,13 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcess);
 
 // We wouldn't want the ModelProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
 // WebProcess has a chance to schedule work after the ModelProcess gets launched. For this reason, we make sure that the ModelProcess never

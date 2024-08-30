@@ -32,7 +32,7 @@
 #include "AudioArray.h"
 
 #if USE(GSTREAMER)
-#include <gst/fft/gstfftf32.h>
+#include "GUniquePtrGStreamer.h"
 #endif // USE(GSTREAMER)
 
 #if USE(ACCELERATE)
@@ -41,6 +41,7 @@
 
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ namespace WebCore {
 // and reverse FFT, internally storing the resultant frequency-domain data.
 
 class FFTFrame {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FFTFrame);
 public:
     // The constructors, destructor, and methods up to the CROSS-PLATFORM section have platform-dependent implementations.
 
@@ -105,8 +106,8 @@ private:
 #endif
 
 #if USE(GSTREAMER)
-    GstFFTF32* m_fft;
-    GstFFTF32* m_inverseFft;
+    GUniquePtr<GstFFTF32> m_fft;
+    GUniquePtr<GstFFTF32> m_inverseFft;
     UniqueArray<GstFFTF32Complex> m_complexData;
 #endif // USE(GSTREAMER)
 

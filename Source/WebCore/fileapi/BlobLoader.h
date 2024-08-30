@@ -33,11 +33,12 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class BlobLoader final : public FileReaderLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BlobLoader);
 public:
     explicit BlobLoader(CompletionHandler<void(BlobLoader&)>&&);
     ~BlobLoader();

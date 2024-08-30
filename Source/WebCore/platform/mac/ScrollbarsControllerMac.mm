@@ -42,9 +42,13 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerMac);
 
 static ScrollbarThemeMac* macScrollbarTheme()
 {

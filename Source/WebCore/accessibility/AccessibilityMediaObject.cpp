@@ -53,9 +53,9 @@ Ref<AccessibilityMediaObject> AccessibilityMediaObject::create(RenderObject& ren
     return adoptRef(*new AccessibilityMediaObject(renderer));
 }
 
-bool AccessibilityMediaObject::computeAccessibilityIsIgnored() const
+bool AccessibilityMediaObject::computeIsIgnored() const
 {
-    return accessibilityIsIgnoredByDefault();
+    return isIgnoredByDefault();
 }
 
 HTMLMediaElement* AccessibilityMediaObject::mediaElement() const

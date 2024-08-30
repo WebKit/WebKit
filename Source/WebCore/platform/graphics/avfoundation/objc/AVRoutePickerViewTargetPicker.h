@@ -28,6 +28,7 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "AVPlaybackTargetPicker.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVRouteDetector;
 OBJC_CLASS AVRoutePickerView;
@@ -45,7 +46,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AVRoutePicke
 namespace WebCore {
 
 class AVRoutePickerViewTargetPicker final : public AVPlaybackTargetPicker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AVRoutePickerViewTargetPicker);
     WTF_MAKE_NONCOPYABLE(AVRoutePickerViewTargetPicker);
 public:
     explicit AVRoutePickerViewTargetPicker(AVPlaybackTargetPickerClient&);

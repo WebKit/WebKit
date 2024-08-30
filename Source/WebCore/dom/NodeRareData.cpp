@@ -32,8 +32,11 @@
 #include "NodeRareData.h"
 
 #include "Page.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NodeMutationObserverData);
 
 struct SameSizeAsNodeRareData {
     void* m_pointer[2];

@@ -26,13 +26,13 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CryptoClient {
-    WTF_MAKE_TZONE_ALLOCATED(CryptoClient);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoClient);
 protected:
     CryptoClient() = default;
 public:

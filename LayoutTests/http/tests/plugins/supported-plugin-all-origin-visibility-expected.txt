@@ -1,3 +1,0 @@
-
-PASS Ensure plugins visibility for supported plug-in for all origins
-

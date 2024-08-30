@@ -26,6 +26,7 @@
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include "SVGZoomAndPan.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class SVGViewElement final : public SVGElement, public SVGFitToViewBox, public S
 public:
     static Ref<SVGViewElement> create(const QualifiedName&, Document&);
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGFitToViewBox>;
     using SVGElement::ref;
     using SVGElement::deref;
 
@@ -44,8 +46,6 @@ public:
 
 private:
     SVGViewElement(const QualifiedName&, Document&);
-
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGFitToViewBox>;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) override;

@@ -4430,6 +4430,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)shouldAllowHighlightLinkCreation
 {
+    URL url { _page->currentURL() };
+    if (!url.isValid() || !url.protocolIsInHTTPFamily())
+        return NO;
+
     auto editorState = _page->editorState();
     return editorState.selectionIsRange && !editorState.isContentEditable && !editorState.selectionIsRangeInsideImageOverlay;
 }
@@ -11408,7 +11412,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 #endif
 
     if (auto menu = self.scrollToTextFragmentGenerationMenu)
-        [builder insertSiblingMenu:menu afterMenuForIdentifier:UIMenuStandardEdit];
+        [builder insertSiblingMenu:menu beforeMenuForIdentifier:UIMenuShare];
 }
 
 - (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
@@ -11438,7 +11442,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (UIMenu *)scrollToTextFragmentGenerationMenu
 {
-    if (!_page->preferences().scrollToTextFragmentGenerationEnabled() || !_page->editorState().selectionIsRange || !self.shouldAllowHighlightLinkCreation)
+    if (!_page->preferences().scrollToTextFragmentGenerationEnabled() || !self.shouldAllowHighlightLinkCreation)
         return nil;
 
     return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkToHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {

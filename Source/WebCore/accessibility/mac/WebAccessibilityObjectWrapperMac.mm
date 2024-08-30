@@ -2508,7 +2508,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];
-    return backingObject->accessibilityIsIgnored();
+    return backingObject->isIgnored();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -3350,7 +3350,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:AXMisspellingTextMarkerRangeAttribute]) {
         return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&dictionary, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
-            auto* backingObject = protectedSelf.get().axBackingObject;
+            RefPtr<AXCoreObject> backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
 
@@ -3358,13 +3358,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!criteria.first)
                 return nil;
 
-            auto range = criteria.first.simpleRange();
-            if (!range)
+            auto characterRange = criteria.first.characterRange();
+            if (!characterRange)
                 return nil;
 
-            if (auto misspellRange = backingObject->misspellingRange(*range, criteria.second))
-                return AXTextMarkerRange(*misspellRange).platformData();
-            return nil;
+            RefPtr startObject = criteria.second == AccessibilitySearchDirection::Next ? criteria.first.end().object() : criteria.first.start().object();
+            auto misspellingRange = AXSearchManager().findMatchingRange(AccessibilitySearchCriteria {
+                backingObject.get(), startObject.get(), *characterRange,
+                criteria.second,
+                { AccessibilitySearchKey::MisspelledWord }, { }, 1
+            });
+            if (!misspellingRange)
+                return nil;
+            return misspellingRange->platformData();
         });
     }
 

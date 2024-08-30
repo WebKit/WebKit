@@ -1080,14 +1080,14 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     return false;
 }
 
-bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
+bool AccessibilityRenderObject::computeIsIgnored() const
 {
 #ifndef NDEBUG
     ASSERT(m_initialized);
 #endif
 
     if (!m_renderer)
-        return AccessibilityNodeObject::computeAccessibilityIsIgnored();
+        return AccessibilityNodeObject::computeIsIgnored();
 
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
@@ -1182,7 +1182,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             if (ancestor->roleValue() == AccessibilityRole::TextField)
                 return true;
 
-            if (checkForIgnored && !ancestor->accessibilityIsIgnored()) {
+            if (checkForIgnored && !ancestor->isIgnored()) {
                 checkForIgnored = false;
                 // Static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level.
                 if (ancestor->isMenuItem() || ancestor->isMenuButton())
@@ -1457,7 +1457,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         return { };
 
     // FIXME: Need to handle PseudoId::FirstLetter. Right now, it will be chopped off from the other
-    // other text in the line, and AccessibilityRenderObject::computeAccessibilityIsIgnored ignores the
+    // other text in the line, and AccessibilityRenderObject::computeIsIgnored ignores the
     // first-letter RenderText, meaning we can't recover it later by combining text across AX objects.
 
     Vector<AXTextRun> runs;
@@ -1660,7 +1660,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         if (auto* renderer = current->renderer()) {
             RefPtr<AccessibilityObject> axObject = document.axObjectCache()->getOrCreate(*renderer);
             ASSERT(axObject);
-            if (!axObject->accessibilityIsIgnored() && axObject->isLink())
+            if (!axObject->isIgnored() && axObject->isLink())
                 result.append(axObject);
         } else {
             auto* parent = current->parentNode();
@@ -2035,7 +2035,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
     result = result->elementAccessibilityHitTest(point);
 
-    if (result && result->accessibilityIsIgnored()) {
+    if (result && result->isIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
         auto* controlObject = result->controlForLabelElement();
         if (controlObject && !controlObject->titleUIElement())
@@ -2273,7 +2273,7 @@ void AccessibilityRenderObject::addImageMapChildren()
         areaObject.setHTMLAreaElement(&area);
         areaObject.setHTMLMapElement(map.get());
         areaObject.setParent(this);
-        if (!areaObject.accessibilityIsIgnored())
+        if (!areaObject.isIgnored())
             addChild(&areaObject);
         else
             axObjectCache()->remove(areaObject.objectID());
@@ -2392,7 +2392,7 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
 {
     // Only the unignored parent should set the attachment parent, because that's what is reflected in the AX 
     // hierarchy to the client.
-    if (accessibilityIsIgnored())
+    if (isIgnored())
         return;
     
     for (const auto& child : m_children) {
@@ -2443,7 +2443,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
         if (child->renderer()) {
             // Find out where the last render sibling is located within m_children.
             AXCoreObject* childObject = axObjectCache()->get(child->renderer());
-            if (childObject && childObject->accessibilityIsIgnored()) {
+            if (childObject && childObject->isIgnored()) {
                 auto& children = childObject->children();
                 if (children.size())
                     childObject = children.last().get();
@@ -2471,7 +2471,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
 #if USE(ATSPI)
 RenderObject* AccessibilityRenderObject::markerRenderer() const
 {
-    if (accessibilityIsIgnored() || !isListItem() || !m_renderer || !m_renderer->isRenderListItem())
+    if (isIgnored() || !isListItem() || !m_renderer || !m_renderer->isRenderListItem())
         return nullptr;
 
     return uncheckedDowncast<RenderListItem>(*m_renderer).markerRenderer();

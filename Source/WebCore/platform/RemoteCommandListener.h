@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class RemoteCommandListenerClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RemoteCommandListenerClient() = default;
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) = 0;

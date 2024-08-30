@@ -28,8 +28,11 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingMomentumCalculator);
 
 static const Seconds scrollSnapAnimationDuration = 1_s;
 static inline float projectedInertialScrollDistance(float initialWheelDelta)

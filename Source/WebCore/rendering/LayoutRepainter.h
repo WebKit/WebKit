@@ -42,7 +42,7 @@ public:
     bool repaintAfterLayout();
 
 private:
-    RenderElement& m_renderer;
+    CheckedRef<RenderElement> m_renderer;
     const RenderLayerModelObject* m_repaintContainer { nullptr };
     // We store these values as LayoutRects, but the final invalidations will be pixel snapped
     RenderObject::RepaintRects m_oldRects;

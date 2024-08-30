@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextCodec.h"
 #include <unicode/uchar.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -34,6 +35,8 @@
 #include <cstdio>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodec);
 
 int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {

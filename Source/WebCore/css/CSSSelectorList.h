@@ -28,6 +28,7 @@
 #include "CSSSelector.h"
 #include <iterator>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class MutableCSSSelector;
 using MutableCSSSelectorList = Vector<std::unique_ptr<MutableCSSSelector>>;
 
 class CSSSelectorList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CSSSelectorList);
 public:
     CSSSelectorList() = default;
     CSSSelectorList(const CSSSelectorList&);

@@ -1,0 +1,4 @@
+
+PASS setCameraActive after user muted
+PASS setMicrophoneActive after user muted
+

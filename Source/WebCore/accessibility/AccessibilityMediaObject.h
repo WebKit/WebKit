@@ -51,7 +51,7 @@ public:
 private:
     enum class AXSeekDirection : bool { Backward, Forward };
     explicit AccessibilityMediaObject(RenderObject&);
-    bool computeAccessibilityIsIgnored() const final;
+    bool computeIsIgnored() const final;
     bool isMediaObject() const final { return true; }
     
     String stringValue() const override;

@@ -49,11 +49,11 @@
 #include <SourceBufferParserWebM.h>
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/NativePromise.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <pal/cf/AudioToolboxSoftLink.h>
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -128,7 +128,7 @@ private:
 };
 
 class AudioFileReaderWebMData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioFileReaderWebMData);
 
 public:
     Ref<SharedBuffer> m_buffer;
