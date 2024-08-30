@@ -222,6 +222,7 @@ PASS math-style
 PASS max-block-size
 PASS max-height
 PASS max-inline-size
+PASS max-lines
 PASS max-width
 PASS min-block-size
 PASS min-height

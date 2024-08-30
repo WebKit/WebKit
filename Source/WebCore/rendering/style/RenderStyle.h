@@ -1014,6 +1014,7 @@ public:
     inline OptionSet<LineBoxContain> lineBoxContain() const;
     inline const LineClampValue& lineClamp() const;
     inline const BlockEllipsis& blockEllipsis() const;
+    inline size_t maxLines() const;
     inline const IntSize& initialLetter() const;
     inline int initialLetterDrop() const;
     inline int initialLetterHeight() const;
@@ -1577,6 +1578,7 @@ public:
     inline void setLineBoxContain(OptionSet<LineBoxContain>);
     inline void setLineClamp(LineClampValue);
     
+    inline void setMaxLines(size_t);
     inline void setBlockEllipsis(const BlockEllipsis&);
 
     inline void setInitialLetter(const IntSize&);
@@ -2109,6 +2111,7 @@ public:
     static constexpr IntSize initialInitialLetter();
     static constexpr LineClampValue initialLineClamp();
     static inline BlockEllipsis initialBlockEllipsis();
+    static constexpr size_t initialMaxLines() { return 0; }
     static constexpr TextSecurity initialTextSecurity();
     static constexpr InputSecurity initialInputSecurity();
 

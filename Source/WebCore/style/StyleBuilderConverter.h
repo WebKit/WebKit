@@ -228,6 +228,7 @@ public:
     static Vector<AtomString> convertAnchorName(BuilderState&, const CSSValue&);
 
     static BlockEllipsis convertBlockEllipsis(BuilderState&, const CSSValue&);
+    static size_t convertMaxLines(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2244,6 +2245,13 @@ inline BlockEllipsis BuilderConverter::convertBlockEllipsis(BuilderState& builde
         return { BlockEllipsis::Type::Auto, { } };
     return { BlockEllipsis::Type::String, AtomString { convertString(builderState, value) } };
 
+}
+
+inline size_t BuilderConverter::convertMaxLines(BuilderState& builderState, const CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
+        return 0;
+    return convertNumber<size_t>(builderState, value);
 }
 
 } // namespace Style

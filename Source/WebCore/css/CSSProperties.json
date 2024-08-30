@@ -4714,6 +4714,20 @@
                 "url": "https://www.w3.org/TR/css-logical/#dimension-properties"
             }
         },
+        "max-lines": {
+            "inherited": false,
+            "codegen-properties": {
+                "converter": "MaxLines",
+                "parser-grammar": "none | <integer [1,inf]>",
+                "parser-exported": true,
+                "settings-flag": "cssLineClampEnabled"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-overflow-4/#max-lines"
+            },
+            "status": "in development"
+        },
         "max-width": {
             "codegen-properties": {
                 "initial": "initialMaxSize",

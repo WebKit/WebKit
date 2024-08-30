@@ -881,6 +881,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.textBoxEdge != second.textBoxEdge)
         return true;
 
+    if (first.maxLines != second.maxLines)
+        return true;
+
     return false;
 }
 
@@ -1942,6 +1945,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollSnapType);
         if (first.textBoxEdge != second.textBoxEdge)
             changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
+        if (first.maxLines != second.maxLines)
+            changingProperties.m_properties.set(CSSPropertyMaxLines);
 
         // Non animated styles are followings.
         // customProperties

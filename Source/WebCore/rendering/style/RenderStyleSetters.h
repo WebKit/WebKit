@@ -231,6 +231,7 @@ inline void RenderStyle::setMaskYPosition(Length&& length) { SET_DOUBLY_NESTED(m
 inline void RenderStyle::setMasonryAutoFlow(MasonryAutoFlow flow) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, masonryAutoFlow, flow); }
 inline void RenderStyle::setMathStyle(const MathStyle& style) { SET(m_rareInheritedData, mathStyle, static_cast<unsigned>(style)); }
 inline void RenderStyle::setMaxHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxHeight, WTFMove(length)); }
+inline void RenderStyle::setMaxLines(size_t value) { SET_NESTED(m_nonInheritedData, rareData, maxLines, value); }
 inline void RenderStyle::setMaxWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_maxWidth, WTFMove(length)); }
 inline void RenderStyle::setMinHeight(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minHeight, WTFMove(length)); }
 inline void RenderStyle::setMinWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_minWidth, WTFMove(length)); }
