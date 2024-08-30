@@ -76,8 +76,18 @@ bool AXLogger::shouldLog()
 AXLogger::AXLogger(const String& methodName)
     : m_methodName(methodName)
 {
-    if (auto* channel = getLogChannel("Accessibility"_s))
-        channel->level = WTFLogLevel::Debug;
+    auto initializeAXChannel = [] () {
+        static std::atomic<bool> initialized = false;
+        if (initialized)
+            return;
+
+        if (auto* channel = getLogChannel("Accessibility"_s)) {
+            LogAccessibility.state = WTFLogChannelState::On;
+            channel->level = WTFLogLevel::Debug;
+            initialized = true;
+        }
+    };
+    initializeAXChannel();
 
     if (shouldLog()) {
         if (!m_methodName.isEmpty())
@@ -671,8 +681,12 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role", object.roleValue());
 
-    if (auto* axObject = dynamicDowncast<AccessibilityObject>(object); axObject && axObject->renderer())
-        stream.dumpProperty("renderName", axObject->renderer()->renderName());
+    if (auto* axObject = dynamicDowncast<AccessibilityObject>(object)) {
+        if (auto* renderer = axObject->renderer())
+            stream.dumpProperty("renderer", renderer->debugDescription());
+        else if (auto* node = axObject->node())
+            stream.dumpProperty("node", node->debugDescription());
+    }
 
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
