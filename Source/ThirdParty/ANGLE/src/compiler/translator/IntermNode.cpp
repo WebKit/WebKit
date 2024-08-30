@@ -203,14 +203,28 @@ void PropagatePrecisionIfApplicable(TIntermTyped *node, TPrecision precision)
 
 TIntermExpression::TIntermExpression(const TType &t) : TIntermTyped(), mType(t) {}
 
-#define REPLACE_IF_IS(node, type, original, replacement) \
-    do                                                   \
-    {                                                    \
-        if (node == original)                            \
-        {                                                \
-            node = static_cast<type *>(replacement);     \
-            return true;                                 \
-        }                                                \
+#define REPLACE_IF_IS(node, conversionFunc, original, replacement)                             \
+    do                                                                                         \
+    {                                                                                          \
+        if (node == original)                                                                  \
+        {                                                                                      \
+            if (replacement == nullptr)                                                        \
+            {                                                                                  \
+                node = nullptr;                                                                \
+            }                                                                                  \
+            else                                                                               \
+            {                                                                                  \
+                auto replacementCasted = replacement->conversionFunc();                        \
+                if (replacementCasted == nullptr)                                              \
+                {                                                                              \
+                    FATAL() << "Replacing a node with a node of invalid type: calling "        \
+                               "replacement." #conversionFunc "() should not return nullptr."; \
+                    return false;                                                              \
+                }                                                                              \
+                node = replacementCasted;                                                      \
+            }                                                                                  \
+            return true;                                                                       \
+        }                                                                                      \
     } while (0)
 
 size_t TIntermSymbol::getChildCount() const
@@ -269,10 +283,10 @@ TIntermNode *TIntermLoop::getChildNode(size_t index) const
 bool TIntermLoop::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     ASSERT(original != nullptr);  // This risks replacing multiple children.
-    REPLACE_IF_IS(mInit, TIntermNode, original, replacement);
-    REPLACE_IF_IS(mCond, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mExpr, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mBody, TIntermBlock, original, replacement);
+    REPLACE_IF_IS(mInit, getAsNode, original, replacement);
+    REPLACE_IF_IS(mCond, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mExpr, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mBody, getAsBlock, original, replacement);
     return false;
 }
 
@@ -294,7 +308,7 @@ TIntermNode *TIntermBranch::getChildNode(size_t index) const
 
 bool TIntermBranch::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mExpression, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mExpression, getAsTyped, original, replacement);
     return false;
 }
 
@@ -313,7 +327,7 @@ TIntermNode *TIntermSwizzle::getChildNode(size_t index) const
 bool TIntermSwizzle::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
     ASSERT(original->getAsTyped()->getType() == replacement->getAsTyped()->getType());
-    REPLACE_IF_IS(mOperand, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mOperand, getAsTyped, original, replacement);
     return false;
 }
 
@@ -334,8 +348,8 @@ TIntermNode *TIntermBinary::getChildNode(size_t index) const
 
 bool TIntermBinary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mLeft, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mRight, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mLeft, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mRight, getAsTyped, original, replacement);
     return false;
 }
 
@@ -358,7 +372,7 @@ bool TIntermUnary::replaceChildNode(TIntermNode *original, TIntermNode *replacem
     ASSERT(original->getAsTyped()->getType() == replacement->getAsTyped()->getType() ||
            (mOp == EOpArrayLength && (original->getAsTyped()->getQualifier() == EvqClipDistance ||
                                       original->getAsTyped()->getQualifier() == EvqCullDistance)));
-    REPLACE_IF_IS(mOperand, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mOperand, getAsTyped, original, replacement);
     return false;
 }
 
@@ -377,7 +391,7 @@ TIntermNode *TIntermGlobalQualifierDeclaration::getChildNode(size_t index) const
 bool TIntermGlobalQualifierDeclaration::replaceChildNode(TIntermNode *original,
                                                          TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mSymbol, TIntermSymbol, original, replacement);
+    REPLACE_IF_IS(mSymbol, getAsSymbolNode, original, replacement);
     return false;
 }
 
@@ -398,8 +412,8 @@ TIntermNode *TIntermFunctionDefinition::getChildNode(size_t index) const
 
 bool TIntermFunctionDefinition::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mPrototype, TIntermFunctionPrototype, original, replacement);
-    REPLACE_IF_IS(mBody, TIntermBlock, original, replacement);
+    REPLACE_IF_IS(mPrototype, getAsFunctionPrototypeNode, original, replacement);
+    REPLACE_IF_IS(mBody, getAsBlock, original, replacement);
     return false;
 }
 
@@ -532,7 +546,7 @@ bool TIntermAggregateBase::replaceChildNodeInternal(TIntermNode *original, TInte
 {
     for (size_t ii = 0; ii < getSequence()->size(); ++ii)
     {
-        REPLACE_IF_IS((*getSequence())[ii], TIntermNode, original, replacement);
+        REPLACE_IF_IS((*getSequence())[ii], getAsNode, original, replacement);
     }
     return false;
 }
@@ -1040,9 +1054,9 @@ TIntermNode *TIntermTernary::getChildNode(size_t index) const
 
 bool TIntermTernary::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mCondition, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mTrueExpression, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mFalseExpression, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mCondition, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mTrueExpression, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mFalseExpression, getAsTyped, original, replacement);
     return false;
 }
 
@@ -1066,9 +1080,9 @@ TIntermNode *TIntermIfElse::getChildNode(size_t index) const
 
 bool TIntermIfElse::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mCondition, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mTrueBlock, TIntermBlock, original, replacement);
-    REPLACE_IF_IS(mFalseBlock, TIntermBlock, original, replacement);
+    REPLACE_IF_IS(mCondition, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mTrueBlock, getAsBlock, original, replacement);
+    REPLACE_IF_IS(mFalseBlock, getAsBlock, original, replacement);
     return false;
 }
 
@@ -1089,8 +1103,8 @@ TIntermNode *TIntermSwitch::getChildNode(size_t index) const
 
 bool TIntermSwitch::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mInit, TIntermTyped, original, replacement);
-    REPLACE_IF_IS(mStatementList, TIntermBlock, original, replacement);
+    REPLACE_IF_IS(mInit, getAsTyped, original, replacement);
+    REPLACE_IF_IS(mStatementList, getAsBlock, original, replacement);
     ASSERT(mStatementList);
     return false;
 }
@@ -1111,7 +1125,7 @@ TIntermNode *TIntermCase::getChildNode(size_t index) const
 
 bool TIntermCase::replaceChildNode(TIntermNode *original, TIntermNode *replacement)
 {
-    REPLACE_IF_IS(mCondition, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(mCondition, getAsTyped, original, replacement);
     return false;
 }
 

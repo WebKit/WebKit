@@ -212,7 +212,9 @@ ContextMtl::ContextMtl(const gl::State &state,
     : ContextImpl(state, errorSet),
       mtl::Context(display),
       mCmdBuffer(&display->cmdQueue()),
-      mRenderEncoder(&mCmdBuffer, mOcclusionQueryPool),
+      mRenderEncoder(&mCmdBuffer,
+                     mOcclusionQueryPool,
+                     display->getFeatures().emulateDontCareLoadWithRandomClear.enabled),
       mBlitEncoder(&mCmdBuffer),
       mComputeEncoder(&mCmdBuffer),
       mDriverUniforms{},
@@ -1640,18 +1642,21 @@ angle::Result ContextMtl::memoryBarrier(const gl::Context *context, GLbitfield b
         UNIMPLEMENTED();
         return angle::Result::Stop;
     }
-    mtl::BarrierScope scope;
+    MTLBarrierScope scope;
     switch (barriers)
     {
         case GL_ALL_BARRIER_BITS:
             scope = MTLBarrierScopeTextures | MTLBarrierScopeBuffers;
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
             if (getDisplay()->hasFragmentMemoryBarriers())
             {
-                scope |= mtl::kBarrierScopeRenderTargets;
+                scope |= MTLBarrierScopeRenderTargets;
             }
+#endif
             break;
         case GL_SHADER_IMAGE_ACCESS_BARRIER_BIT:
             scope = MTLBarrierScopeTextures;
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
             if (getDisplay()->hasFragmentMemoryBarriers())
             {
                 // SHADER_IMAGE_ACCESS_BARRIER_BIT (and SHADER_STORAGE_BARRIER_BIT) require that all
@@ -1662,8 +1667,9 @@ angle::Result ContextMtl::memoryBarrier(const gl::Context *context, GLbitfield b
                 // NOTE: Apple Silicon doesn't support MTLBarrierScopeRenderTargets. This seems to
                 // work anyway though, and on that hardware we use programmable blending for pixel
                 // local storage instead of read_write textures anyway.
-                scope |= mtl::kBarrierScopeRenderTargets;
+                scope |= MTLBarrierScopeRenderTargets;
             }
+#endif
             break;
         default:
             UNIMPLEMENTED();
@@ -1671,7 +1677,7 @@ angle::Result ContextMtl::memoryBarrier(const gl::Context *context, GLbitfield b
     }
     // The GL API doesn't provide a distinction between different shader stages.
     // ES 3.0 doesn't have compute.
-    mtl::RenderStages stages = MTLRenderStageVertex;
+    MTLRenderStages stages = MTLRenderStageVertex;
     if (getDisplay()->hasFragmentMemoryBarriers())
     {
         stages |= MTLRenderStageFragment;
@@ -2041,7 +2047,7 @@ mtl::RenderCommandEncoder *ContextMtl::getTextureRenderCommandEncoder(
     rpDesc.colorAttachments[0].level        = index.getNativeLevel();
     rpDesc.colorAttachments[0].sliceOrDepth = index.hasLayer() ? index.getLayerIndex() : 0;
     rpDesc.numColorAttachments              = 1;
-    rpDesc.sampleCount                      = textureTarget->samples();
+    rpDesc.rasterSampleCount                = textureTarget->samples();
 
     return getRenderPassCommandEncoder(rpDesc);
 }
@@ -2056,7 +2062,7 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderTargetCommandEncoderWithClear(
     mtl::RenderPassDesc rpDesc;
     renderTarget.toRenderPassAttachmentDesc(&rpDesc.colorAttachments[0]);
     rpDesc.numColorAttachments = 1;
-    rpDesc.sampleCount         = renderTarget.getRenderSamples();
+    rpDesc.rasterSampleCount   = renderTarget.getRenderSamples();
 
     if (clearColor.valid())
     {
@@ -2442,7 +2448,6 @@ void ContextMtl::onTransformFeedbackInactive(const gl::Context *context, Transfo
     endEncoding(true);
 }
 
-#if ANGLE_MTL_EVENT_AVAILABLE
 uint64_t ContextMtl::queueEventSignal(id<MTLEvent> event, uint64_t value)
 {
     ensureCommandBufferReady();
@@ -2462,7 +2467,6 @@ void ContextMtl::serverWaitEvent(id<MTLEvent> event, uint64_t value)
 
     mCmdBuffer.serverWaitEvent(event, value);
 }
-#endif
 
 void ContextMtl::updateProgramExecutable(const gl::Context *context)
 {
@@ -3001,7 +3005,7 @@ angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
                                                  bool *isPipelineDescChanged)
 {
     ASSERT(mRenderEncoder.valid());
-    mtl::PrimitiveTopologyClass topologyClass = mtl::GetPrimitiveTopologyClass(primitiveMode);
+    MTLPrimitiveTopologyClass topologyClass = mtl::GetPrimitiveTopologyClass(primitiveMode);
 
     bool rppChange = mDirtyBits.test(DIRTY_BIT_RENDER_PIPELINE) ||
                      topologyClass != mRenderPipelineDesc.inputPrimitiveTopology;
@@ -3037,7 +3041,7 @@ angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
         mRenderPipelineDesc.inputPrimitiveTopology = topologyClass;
         mRenderPipelineDesc.alphaToCoverageEnabled =
             mState.isSampleAlphaToCoverageEnabled() &&
-            mRenderPipelineDesc.outputDescriptor.sampleCount > 1 &&
+            mRenderPipelineDesc.outputDescriptor.rasterSampleCount > 1 &&
             !getDisplay()->getFeatures().emulateAlphaToCoverage.enabled;
 
         mRenderPipelineDesc.outputDescriptor.updateEnabledDrawBuffers(

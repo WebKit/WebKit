@@ -1074,6 +1074,8 @@ deqp_khr_gl_sources = [
   "$deqp_path/external/openglcts/modules/gl/gl3cGLSLnoperspectiveTests.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cGPUShader5Tests.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cGPUShader5Tests.hpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cPrimitiveRestart.cpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cPrimitiveRestart.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTestPackages.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTextureSizePromotion.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTextureSizePromotion.hpp",
@@ -1200,6 +1202,8 @@ deqp_khr_gles2_sources = [
 deqp_khr_gles3_sources = [
   "$deqp_path/external/openglcts/modules/gles3/es3cCopyTexImageConversionsTests.cpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cCopyTexImageConversionsTests.hpp",
+  "$deqp_path/external/openglcts/modules/gles3/es3cDriverErrorTests.cpp",
+  "$deqp_path/external/openglcts/modules/gles3/es3cDriverErrorTests.hpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cNumberParsingTests.cpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cNumberParsingTests.hpp",
   "$deqp_path/external/openglcts/modules/gles3/es3cTestPackage.cpp",

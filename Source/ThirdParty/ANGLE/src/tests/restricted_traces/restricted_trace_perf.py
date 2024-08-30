@@ -961,6 +961,9 @@ def run_traces(args):
 
     android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
     angle_version = run_command('git rev-parse HEAD').stdout.strip()
+    origin_main_version = run_command('git rev-parse origin/main').stdout.strip()
+    if origin_main_version != angle_version:
+        angle_version += ' (origin/main %s)' % origin_main_version
     # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
 
     summary_writer.writerow([

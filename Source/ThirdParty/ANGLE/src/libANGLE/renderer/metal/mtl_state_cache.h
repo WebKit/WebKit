@@ -221,23 +221,8 @@ struct RenderPipelineOutputDesc
     uint16_t stencilAttachmentPixelFormat : 16;
 
     uint8_t numColorAttachments;
-    uint8_t sampleCount;
+    uint8_t rasterSampleCount;
 };
-
-// Some SDK levels don't declare MTLPrimitiveTopologyClass. Needs to do compile time check here:
-#if !(TARGET_OS_OSX || TARGET_OS_MACCATALYST) && \
-    (!defined(__IPHONE_12_0) || ANGLE_IOS_DEPLOY_TARGET < __IPHONE_12_0)
-#    define ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE 0
-using PrimitiveTopologyClass                                     = uint32_t;
-constexpr PrimitiveTopologyClass kPrimitiveTopologyClassTriangle = 0;
-constexpr PrimitiveTopologyClass kPrimitiveTopologyClassPoint    = 0;
-#else
-#    define ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE 1
-using PrimitiveTopologyClass = MTLPrimitiveTopologyClass;
-constexpr PrimitiveTopologyClass kPrimitiveTopologyClassTriangle =
-    MTLPrimitiveTopologyClassTriangle;
-constexpr PrimitiveTopologyClass kPrimitiveTopologyClassPoint = MTLPrimitiveTopologyClassPoint;
-#endif
 
 enum class RenderPipelineRasterization : uint32_t
 {
@@ -281,7 +266,7 @@ struct alignas(4) RenderPipelineDesc
 
     RenderPipelineOutputDesc outputDescriptor;
 
-    // Use uint8_t instead of PrimitiveTopologyClass to compact space.
+    // Use uint8_t instead of MTLPrimitiveTopologyClass to compact space.
     uint8_t inputPrimitiveTopology : 2;
 
     bool alphaToCoverageEnabled : 1;
@@ -411,7 +396,7 @@ struct RenderPassDesc
     inline bool operator!=(const RenderPassDesc &other) const { return !(*this == other); }
 
     uint32_t numColorAttachments = 0;
-    uint32_t sampleCount         = 1;
+    uint32_t rasterSampleCount   = 1;
     uint32_t defaultWidth        = 0;
     uint32_t defaultHeight       = 0;
 };

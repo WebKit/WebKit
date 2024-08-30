@@ -1424,6 +1424,13 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
     ANGLE_TRY(mRenderer->getRenderPassCommandBufferHelper(
         this, &mCommandPools.renderPassPool, &mRenderPassCommandsAllocator, &mRenderPassCommands));
 
+    // Allocate queueSerial index and generate queue serial for commands.
+    ANGLE_TRY(allocateQueueSerialIndex());
+
+    // Initialize serials to be valid but appear submitted and finished.
+    mLastFlushedQueueSerial   = QueueSerial(mCurrentQueueSerialIndex, Serial());
+    mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
+
     if (mGpuEventsEnabled)
     {
         // GPU events should only be available if timestamp queries are available.
@@ -1469,13 +1476,6 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
             ANGLE_TRY(vk::GetImpl(context.second)->flushOutsideRenderPassCommands());
         }
     }
-
-    // Allocate queueSerial index and generate queue serial for commands.
-    ANGLE_TRY(allocateQueueSerialIndex());
-
-    // Initialize serials to be valid but appear submitted and finished.
-    mLastFlushedQueueSerial   = QueueSerial(mCurrentQueueSerialIndex, Serial());
-    mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
 
     return angle::Result::Continue;
 }
@@ -4065,7 +4065,7 @@ angle::Result ContextVk::drawArrays(const gl::Context *context,
         uint32_t numIndices;
         ANGLE_TRY(setupLineLoopDraw(context, mode, first, count, gl::DrawElementsType::InvalidEnum,
                                     nullptr, &numIndices));
-        vk::LineLoopHelper::Draw(numIndices, 0, mRenderPassCommandBuffer);
+        LineLoopHelper::Draw(numIndices, 0, mRenderPassCommandBuffer);
     }
     else
     {
@@ -4135,7 +4135,7 @@ angle::Result ContextVk::drawElements(const gl::Context *context,
     {
         uint32_t indexCount;
         ANGLE_TRY(setupLineLoopDraw(context, mode, 0, count, type, indices, &indexCount));
-        vk::LineLoopHelper::Draw(indexCount, 0, mRenderPassCommandBuffer);
+        LineLoopHelper::Draw(indexCount, 0, mRenderPassCommandBuffer);
     }
     else
     {
@@ -4157,7 +4157,7 @@ angle::Result ContextVk::drawElementsBaseVertex(const gl::Context *context,
     {
         uint32_t indexCount;
         ANGLE_TRY(setupLineLoopDraw(context, mode, 0, count, type, indices, &indexCount));
-        vk::LineLoopHelper::Draw(indexCount, baseVertex, mRenderPassCommandBuffer);
+        LineLoopHelper::Draw(indexCount, baseVertex, mRenderPassCommandBuffer);
     }
     else
     {
@@ -7352,10 +7352,11 @@ angle::Result ContextVk::initBufferForImageCopy(vk::BufferHelper *bufferHelper,
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::initBufferForVertexConversion(vk::BufferHelper *bufferHelper,
+angle::Result ContextVk::initBufferForVertexConversion(ConversionBuffer *conversionBuffer,
                                                        size_t size,
                                                        vk::MemoryHostVisibility hostVisibility)
 {
+    vk::BufferHelper *bufferHelper = conversionBuffer->getBuffer();
     if (bufferHelper->valid())
     {
         // If size is big enough and it is idle, then just reuse the existing buffer. Or if current
@@ -7380,6 +7381,9 @@ angle::Result ContextVk::initBufferForVertexConversion(vk::BufferHelper *bufferH
 
         bufferHelper->release(mRenderer);
     }
+
+    //  Mark entire buffer dirty if we have to reallocate the buffer.
+    conversionBuffer->setEntireBufferDirty();
 
     uint32_t memoryTypeIndex = mRenderer->getVertexConversionBufferMemoryTypeIndex(hostVisibility);
     size_t alignment         = static_cast<size_t>(mRenderer->getVertexConversionBufferAlignment());

@@ -386,10 +386,15 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.depth_stencil_clear.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.dither.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.draw.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.api.attachment_query_tex2d = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.api.delete_tex_2d_attached_to_bound_fbo = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.api.delete_tex_2d_attached_to_not_bound_fbo = FAIL
+356399840 WGPU : dEQP-GLES2.functional.fbo.api.texture_levels = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fragment_ops.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_input.renderbuffer_framebuffer = FAIL
+356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_input.shader_program = FAIL
 356399840 WGPU : dEQP-GLES2.functional.lifetime.attach.deleted_output.renderbuffer_framebuffer = FAIL
 356399840 WGPU : dEQP-GLES2.functional.negative_api.texture.generatemipmap_npot_wdt_hgt = FAIL
 356399840 WGPU : dEQP-GLES2.functional.polygon_offset.* = FAIL

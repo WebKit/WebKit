@@ -77,6 +77,7 @@ struct GPUTestConfig
         kConditionGalaxyA54,
         kConditionGalaxyS22,
         kConditionGalaxyS23,
+        kConditionGalaxyS24,
         kConditionGalaxyQualcomm,
         kConditionFindX6,
         kConditionNVIDIAQuadroP400,

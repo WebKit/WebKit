@@ -15,7 +15,7 @@
 #include "common/apple_platform_utils.h"
 
 #if ANGLE_ENABLE_CGL
-#include "common/gl/cgl/FunctionsCGL.h"
+#    include "common/gl/cgl/FunctionsCGL.h"
 #endif
 
 #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000

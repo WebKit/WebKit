@@ -11,14 +11,12 @@
 #define LIBANGLE_RENDERER_VULKAN_VERTEXARRAYVK_H_
 
 #include "libANGLE/renderer/VertexArrayImpl.h"
+#include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace rx
 {
-class BufferVk;
-struct ConversionBuffer;
-
 enum class BufferBindingDirty
 {
     No,
@@ -167,20 +165,15 @@ class VertexArrayVk : public VertexArrayImpl
 
     angle::Result convertVertexBufferGPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
-                                         const gl::VertexBinding &binding,
-                                         size_t attribIndex,
-                                         const vk::Format &vertexFormat,
-                                         ConversionBuffer *conversion,
-                                         GLuint relativeOffset,
-                                         bool compressed);
+                                         VertexConversionBuffer *conversion,
+                                         const angle::Format &srcFormat,
+                                         const angle::Format &dstFormat);
     angle::Result convertVertexBufferCPU(ContextVk *contextVk,
                                          BufferVk *srcBuffer,
-                                         const gl::VertexBinding &binding,
-                                         size_t attribIndex,
-                                         const vk::Format &vertexFormat,
-                                         ConversionBuffer *conversion,
-                                         GLuint relativeOffset,
-                                         bool compress);
+                                         VertexConversionBuffer *conversion,
+                                         const angle::Format &srcFormat,
+                                         const angle::Format &dstFormat,
+                                         const VertexCopyFunction vertexLoadFunction);
 
     angle::Result syncDirtyAttrib(ContextVk *contextVk,
                                   const gl::VertexAttribute &attrib,
@@ -205,11 +198,11 @@ class VertexArrayVk : public VertexArrayImpl
     // Cached element array buffers for improving performance.
     vk::BufferHelperQueue mCachedStreamIndexBuffers;
 
-    vk::BufferHelper mStreamedIndexData;
-    vk::BufferHelper mTranslatedByteIndexData;
-    vk::BufferHelper mTranslatedByteIndirectData;
+    ConversionBuffer mStreamedIndexData;
+    ConversionBuffer mTranslatedByteIndexData;
+    ConversionBuffer mTranslatedByteIndirectData;
 
-    vk::LineLoopHelper mLineLoopHelper;
+    LineLoopHelper mLineLoopHelper;
     Optional<GLint> mLineLoopBufferFirstIndex;
     Optional<size_t> mLineLoopBufferLastIndex;
     bool mDirtyLineLoopTranslation;

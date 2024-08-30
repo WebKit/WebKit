@@ -424,6 +424,21 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/42263158"
     };
 
+    FeatureInfo supportsShaderInt8 = {
+        "supportsShaderInt8",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_shader_float16_int8 extension "
+        "and has the shaderInt8 feature",
+        &members,
+    };
+
+    FeatureInfo supportsShaderFloat64 = {
+        "supportsShaderFloat64",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the shaderFloat64 bit of VkPhysicalDeviceFeatures",
+        &members,
+    };
+
     FeatureInfo allowGenerateMipmapWithCompute = {
         "allowGenerateMipmapWithCompute",
         FeatureCategory::VulkanFeatures,

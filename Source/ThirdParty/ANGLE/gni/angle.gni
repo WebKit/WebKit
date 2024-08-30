@@ -350,7 +350,7 @@ angle_remove_configs = []
 if (angle_has_build) {
   angle_remove_configs += [ "//build/config/compiler:default_include_dirs" ]
 
-  if (is_clang) {
+  if (is_clang && !is_nacl) {
     angle_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 

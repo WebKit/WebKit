@@ -899,7 +899,7 @@ RenderTargetMtl *FramebufferMtl::getColorReadRenderTargetNoCache(const gl::Conte
 
 int FramebufferMtl::getSamples() const
 {
-    return mRenderPassDesc.sampleCount;
+    return mRenderPassDesc.rasterSampleCount;
 }
 
 gl::Rectangle FramebufferMtl::getCompleteRenderArea() const
@@ -1121,7 +1121,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
     mRenderPassAttachmentsSameColorType   = true;
     uint32_t maxColorAttachments = static_cast<uint32_t>(mState.getColorAttachments().size());
     desc.numColorAttachments     = 0;
-    desc.sampleCount             = 1;
+    desc.rasterSampleCount       = 1;
     for (uint32_t colorIndexGL = 0; colorIndexGL < maxColorAttachments; ++colorIndexGL)
     {
         ASSERT(colorIndexGL < mColorRenderTargets.size());
@@ -1146,7 +1146,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
 #endif
 
             desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
-            desc.sampleCount = std::max(desc.sampleCount, colorRenderTarget->getRenderSamples());
+            desc.rasterSampleCount =
+                std::max(desc.rasterSampleCount, colorRenderTarget->getRenderSamples());
 
             if (!mRenderPassFirstColorAttachmentFormat)
             {
@@ -1178,7 +1179,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
             mDepthResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.depthAttachment);
         }
 #endif
-        desc.sampleCount = std::max(desc.sampleCount, mDepthRenderTarget->getRenderSamples());
+        desc.rasterSampleCount =
+            std::max(desc.rasterSampleCount, mDepthRenderTarget->getRenderSamples());
     }
     else
     {
@@ -1194,7 +1196,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
             mStencilResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.stencilAttachment);
         }
 #endif
-        desc.sampleCount = std::max(desc.sampleCount, mStencilRenderTarget->getRenderSamples());
+        desc.rasterSampleCount =
+            std::max(desc.rasterSampleCount, mStencilRenderTarget->getRenderSamples());
     }
     else
     {

@@ -115,6 +115,8 @@ class TIntermNode : angle::NonCopyable
     // node and it is replaced; otherwise, return false.
     virtual bool replaceChildNode(TIntermNode *original, TIntermNode *replacement) = 0;
 
+    TIntermNode *getAsNode() { return this; }
+
   protected:
     TSourceLoc mLine;
 };

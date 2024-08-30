@@ -318,7 +318,6 @@ b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.shader_multisample_interpolation.
 b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
 b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-input-case5 = SKIP
 b/267953710 GALAXYS22 VULKAN : KHR-GLES31.core.vertex_attrib_binding.basic-input-case6 = SKIP
-350994515 GALAXYS22 VULKAN : KHR-GLES31.core.shader_image_load_store.basic-allTargets-loadStoreCS = SKIP
 
 // Pixel 6
 345306326 PIXEL6 VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_invariance.invariance_rule* = SKIP

@@ -430,16 +430,7 @@ Texture::Texture(ContextMtl *context,
 
         if (memoryLess)
         {
-            bool supportsMemoryless = false;
-#if (TARGET_OS_IOS || TARGET_OS_TV) && !TARGET_OS_MACCATALYST
-            supportsMemoryless = true;
-#else
-            if (ANGLE_APPLE_AVAILABLE_XC(11.0, 14.1))
-            {
-                supportsMemoryless = context->getDisplay()->supportsAppleGPUFamily(1);
-            }
-#endif
-            if (supportsMemoryless)
+            if (context->getDisplay()->supportsAppleGPUFamily(1))
             {
                 desc.resourceOptions = MTLResourceStorageModeMemoryless;
             }
@@ -508,10 +499,10 @@ Texture::Texture(ContextMtl *context,
             desc.usage |= MTLTextureUsageRenderTarget;
         }
 
-#if (TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_WATCH) && !TARGET_OS_MACCATALYST
-        desc.resourceOptions = MTLResourceStorageModeShared;
-#else
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         desc.resourceOptions = MTLResourceStorageModeManaged;
+#else
+        desc.resourceOptions = MTLResourceStorageModeShared;
 #endif
 
         if (!renderTargetOnly)
@@ -566,11 +557,10 @@ Texture::Texture(Texture *original,
                  MTLTextureType textureType,
                  NSRange levels,
                  NSRange slices,
-                 const TextureSwizzleChannels &swizzle)
+                 const MTLTextureSwizzleChannels &swizzle)
     : Resource(original),
       mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
 {
-#if ANGLE_MTL_SWIZZLE_AVAILABLE
     ANGLE_MTL_OBJC_SCOPE
     {
         auto view = [original->get() newTextureViewWithPixelFormat:pixelFormat
@@ -583,9 +573,6 @@ Texture::Texture(Texture *original,
         // Texture views consume no additional memory
         mEstimatedByteSize = 0;
     }
-#else
-    UNREACHABLE();
-#endif
 }
 
 void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
@@ -794,16 +781,10 @@ TextureRef Texture::createViewWithCompatibleFormat(MTLPixelFormat format)
 TextureRef Texture::createMipsSwizzleView(const MipmapNativeLevel &baseLevel,
                                           uint32_t levels,
                                           MTLPixelFormat format,
-                                          const TextureSwizzleChannels &swizzle)
+                                          const MTLTextureSwizzleChannels &swizzle)
 {
-#if ANGLE_MTL_SWIZZLE_AVAILABLE
     return TextureRef(new Texture(this, format, textureType(), NSMakeRange(baseLevel.get(), levels),
                                   NSMakeRange(0, cubeFacesOrArrayLength()), swizzle));
-#else
-    WARN() << "Texture swizzle is not supported on pre iOS 13.0 and macOS 15.0";
-    UNIMPLEMENTED();
-    return createMipsView(baseLevel, levels);
-#endif
 }
 
 MTLPixelFormat Texture::pixelFormat() const
