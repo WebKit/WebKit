@@ -7784,6 +7784,7 @@ void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier
 
 void WebPageProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier)
 {
+    WEBPAGEPROXY_RELEASE_LOG(Fullscreen, "didCleanupFullscreen");
     protectedPageClient()->didCleanupFullscreen();
 }
 

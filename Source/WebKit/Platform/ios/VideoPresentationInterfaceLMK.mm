@@ -113,6 +113,7 @@ void VideoPresentationInterfaceLMK::setupPlayerViewController()
 
 void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_playerViewController = nil;
 }
 
@@ -204,6 +205,7 @@ void VideoPresentationInterfaceLMK::ensurePlayableViewController()
     if (m_playerViewController)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_playerViewController = [linearMediaPlayer() makeViewController];
     [m_playerViewController view].alpha = 0;
 }
