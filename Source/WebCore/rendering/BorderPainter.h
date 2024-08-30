@@ -62,7 +62,7 @@ private:
 
     const Document& document() const;
 
-    const RenderElement& m_renderer;
+    CheckedRef<const RenderElement> m_renderer;
     const PaintInfo& m_paintInfo;
 };
 

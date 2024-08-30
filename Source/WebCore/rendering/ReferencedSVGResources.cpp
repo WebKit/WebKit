@@ -54,21 +54,21 @@ public:
 
     void resourceChanged(SVGElement&) final;
 
-    const RenderElement& renderer() const final { return m_clientRenderer; }
+    const RenderElement& renderer() const final { return m_clientRenderer.get(); }
 
 private:
-    RenderElement& m_clientRenderer;
+    CheckedRef<RenderElement> m_clientRenderer;
 };
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSSVGResourceElementClient);
 
 void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
 {
-    if (m_clientRenderer.renderTreeBeingDestroyed())
+    if (m_clientRenderer->renderTreeBeingDestroyed())
         return;
 
-    if (!m_clientRenderer.document().settings().layerBasedSVGEngineEnabled()) {
-        m_clientRenderer.repaint();
+    if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled()) {
+        m_clientRenderer->repaint();
         return;
     }
 
@@ -76,10 +76,10 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     // once during layout, or if the shape itself changes. Here we manually update the marker positions without
     // requiring a relayout. Instead we can simply repaint the path - via the updateLayerPosition() logic, properly
     // repainting the old repaint boundaries and the new ones (after the marker change).
-    if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer); pathClientRenderer && is<SVGMarkerElement>(element))
+    if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer.get()); pathClientRenderer && is<SVGMarkerElement>(element))
         pathClientRenderer->updateMarkerPositions();
 
-    m_clientRenderer.repaintOldAndNewPositionsForSVGRenderer();
+    m_clientRenderer->repaintOldAndNewPositionsForSVGRenderer();
 }
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReferencedSVGResources);
@@ -91,7 +91,7 @@ ReferencedSVGResources::ReferencedSVGResources(RenderElement& renderer)
 
 ReferencedSVGResources::~ReferencedSVGResources()
 {
-    Ref treeScope = m_renderer.treeScopeForSVGReferences();
+    Ref treeScope = m_renderer->treeScopeForSVGReferences();
     for (auto& targetID : copyToVector(m_elementClients.keys()))
         removeClientForTarget(treeScope, targetID);
 }

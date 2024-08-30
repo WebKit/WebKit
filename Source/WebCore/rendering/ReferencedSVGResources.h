@@ -83,7 +83,7 @@ private:
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(TreeScope&, const AtomString&);
 
-    RenderElement& m_renderer;
+    CheckedRef<RenderElement> m_renderer;
     MemoryCompactRobinHoodHashMap<AtomString, std::unique_ptr<CSSSVGResourceElementClient>> m_elementClients;
 };
 
