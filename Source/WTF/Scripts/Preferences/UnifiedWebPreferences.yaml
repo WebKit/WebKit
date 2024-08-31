@@ -1278,17 +1278,17 @@ CSSRubyAlignEnabled:
 
 CSSRubyOverhangEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS ruby-overhang property"
   humanReadableDescription: "Enable ruby-overhang"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScopeAtRuleEnabled:
   type: bool
